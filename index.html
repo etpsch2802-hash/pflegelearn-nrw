@@ -19,6 +19,7 @@
 <!-- PWA Manifest (extern) -->
 <link rel="manifest" href="manifest.json">
 <!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
 <link rel="shortcut icon" href="favicon.png">
 <!-- Apple Touch Icon -->
@@ -26,12 +27,12 @@
 <!-- Open Graph (Logo beim Teilen via WhatsApp/Social) -->
 <meta property="og:title" content="PflegeLearn NRW – KI-Lernassistent">
 <meta property="og:description" content="Die smarte Lernapp für Pflegeausbildung in NRW. Mit KI-Assistent, Quizzen und Pflegeplanungen.">
-<meta property="og:image" content="https://pflegelearnnrw.netlify.app/icon-512.png">
-<meta property="og:url" content="https://pflegelearnnrw.netlify.app">
+<meta property="og:image" content="https://pflegelearn-nrw.vercel.app/icon-512.png">
+<meta property="og:url" content="https://pflegelearn-nrw.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PflegeLearn NRW">
-<meta name="twitter:image" content="https://pflegelearnnrw.netlify.app/icon-512.png">
+<meta name="twitter:image" content="https://pflegelearn-nrw.vercel.app/icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -231,6 +232,53 @@
   /* NAV DROPDOWN */
   .nav-drop-btn{display:block;width:100%;background:none;border:none;text-align:left;padding:9px 12px;border-radius:9px;color:#ddf0fb;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s}
   .nav-drop-btn:hover,.nav-drop-btn:active{background:rgba(56,189,248,.1)}
+
+  /* LIGHT MODE */
+  body.light-mode { background:#eef2f7; color:#0f172a; }
+  body.light-mode .page { background:#eef2f7; }
+  body.light-mode .chat-page { background:#eef2f7; }
+  body.light-mode .header { background:rgba(255,255,255,.96); border-color:rgba(30,64,128,.15); box-shadow:0 2px 12px rgba(0,0,0,.1); }
+  body.light-mode .logo-title { color:#1e4080; }
+  body.light-mode .logo-title span { color:#0369a1; }
+  body.light-mode .logo-sub { color:#64748b; }
+  body.light-mode .hero h1 { color:#0f172a; }
+  body.light-mode .hero h1 span { color:#0369a1; }
+  body.light-mode .hero p { color:#475569; }
+  body.light-mode .section-label { color:#64748b; }
+  body.light-mode .ausb-card { background:white; border-color:rgba(30,64,128,.15); color:#0f172a; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  body.light-mode .ausb-name { color:#0f172a; }
+  body.light-mode .ausb-sub { color:#64748b; }
+  body.light-mode .bottom-card { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  body.light-mode .bottom-card-title { color:#0f172a; }
+  body.light-mode .bottom-card-sub { color:#64748b; }
+  body.light-mode .question-card { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  body.light-mode .q-text { color:#0f172a; }
+  body.light-mode .opt-btn { background:white; border-color:rgba(30,64,128,.2); color:#0f172a; }
+  body.light-mode .explanation { background:rgba(3,105,161,.06); border-color:rgba(3,105,161,.2); color:#0f172a; }
+  body.light-mode .bubble.ai { background:rgba(255,255,255,.9); border-color:rgba(3,105,161,.2); color:#0f172a; }
+  body.light-mode .bubble.user { background:linear-gradient(135deg,#0369a1,#0284c7); color:white; }
+  body.light-mode input, body.light-mode select { background:white; color:#0f172a; border-color:rgba(30,64,128,.2); }
+  body.light-mode input::placeholder { color:#94a3b8; }
+  body.light-mode .modal-box { background:white; }
+  body.light-mode .modal-title { color:#0f172a; }
+  body.light-mode .modal-desc { color:#334155; }
+  body.light-mode .modal-grid-item { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.08); }
+  body.light-mode .modal-grid-val { color:#475569; }
+  body.light-mode .mt-card { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  body.light-mode .mt-card-name { color:#0f172a; }
+  body.light-mode .mt-card-sub { color:#64748b; }
+  body.light-mode .mt-section { background:rgba(0,0,0,.03); border-color:rgba(0,0,0,.08); }
+  body.light-mode .mt-section-title { color:#0f172a; }
+  body.light-mode .mt-item { color:#334155; }
+  body.light-mode .hbtn-back { background:rgba(3,105,161,.1); border-color:rgba(3,105,161,.25); color:#0369a1; }
+  body.light-mode .chat-input { background:rgba(0,0,0,.05); border-color:rgba(30,64,128,.2); color:#0f172a; }
+  body.light-mode #nav-dropdown { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 8px 32px rgba(0,0,0,.15); }
+  body.light-mode .nav-drop-btn { color:#0f172a; }
+  body.light-mode .result-box { background:white; border-color:rgba(3,105,161,.2); }
+  body.light-mode .result-msg { color:#64748b; }
+  body.light-mode .footer-note { background:rgba(3,105,161,.04); border-color:rgba(3,105,161,.1); color:#64748b; }
+  body.light-mode #search-overlay { background:rgba(238,242,247,.97); }
+  body.light-mode #search-input { background:white; color:#0f172a; border-color:rgba(30,64,128,.25); }
 </style>
 </head>
 <body>
@@ -404,7 +452,7 @@
         <button class="bottom-card" onclick="showScreen('prophylaxen')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399">
           <div class="bottom-card-icon">🛡️</div>
           <div class="bottom-card-title">Prophylaxen</div>
-          <div class="bottom-card-sub">13 Prophylaxen komplett</div>
+          <div class="bottom-card-sub">16 Prophylaxen komplett</div>
         </button>
         <button class="bottom-card" onclick="showScreen('atl')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15">
           <div class="bottom-card-icon">📋</div>
@@ -1054,6 +1102,18 @@ const QUIZ_FRAGEN = [
   {kat:"altenpflege",frage:"Was ist Sterbebegleitung und welche Zeichen des Sterbens sind zu beobachten?",opt:["Nichts tun","Aktive Begleitung: Mundpflege, Schmerzkontrolle, Würde, Familie einbeziehen – Zeichen: Rasselatmung, Cheyne-Stokes, Livores, kühle Extremitäten, Bewusstlosigkeit","Sofort Reanimation","Arzt anrufen und warten"],k:1,erkl:"Sterbezeichen: Rasselatmung (Sekret), Cheyne-Stokes-Atmung (periodisch), Totenflecken (Livores), kühle/blaue Extremitäten, Bewusstlosigkeit, fehlende Reflexe. Pflegerische Maßnahmen: Mundpflege (wichtigste Maßnahme!), Lagerung, Schmerzkontrolle, Familie informieren und einbeziehen, ruhige Atmosphäre.",s:"mittel"},
   {kat:"altenpflege",frage:"Was ist das Konzept der Aktivierenden Therapie in der Altenpflege?",opt:["Patient erholt sich selbst","Gezielte Förderung verbliebener Fähigkeiten durch Ergotherapie, Physiotherapie, kognitive Aktivierung, Alltagsaktivitäten – Erhalt von Autonomie und Lebensqualität","Nur medikamentöse Therapie","Bettruhe verordnen"],k:1,erkl:"Aktivierende Therapie: Ergotherapie (ADL-Training, Handwerken), Physiotherapie (Mobilisation, Gleichgewicht), kognitive Aktivierung (Gedächtnistraining, Biografie), 10-Minuten-Aktivierung (Alltagsgegenstände). Ziel: Autonomie erhalten, Pflegebedürftigkeit verzögern, Lebensqualität steigern.",s:"mittel"},
   {kat:"altenpflege",frage:"Was ist der Unterschied zwischen ambulanter und stationärer Altenpflege?",opt:["Kein Unterschied","Ambulant = Pflege zu Hause durch Dienst/Angehörige; Stationär = Umzug in Pflegeeinrichtung (Pflegeheim). Zwischenformen: Tagespflege, Kurzzeitpflege, betreutes Wohnen","Ambulant ist teurer","Stationär ist immer besser"],k:1,erkl:"Ambulante Pflege: Patient bleibt zu Hause, ambulanter Dienst kommt. SGB XI: Sachleistung bis PG5 2.200€/Monat. Stationäre Pflege: Umzug ins Pflegeheim, Eigenanteil gestiegen. Zwischenformen: Tagespflege (tagsüber), Kurzzeitpflege (bis 8 Wo.), Nachtpflege, betreutes Wohnen.",s:"mittel"},
+
+  {kat:"pflegeplanung",frage:"Wie lange muss die hygienische Händedesinfektion mindestens dauern?",opt:["10 Sekunden","30 Sekunden (EN 1500) – alle 6 Schritte einbeziehen","60 Sekunden","5 Sekunden reichen"],k:1,erkl:"EN 1500 schreibt mind. 30 Sekunden vor. 6 Schritte: Handfläche/Handfläche, Handrücken, Finger verschränkt, Fingeraußenseiten, Daumen, Fingerkuppen. Mindestmenge 3–5 ml. NICHT abwischen – trocknen lassen!",s:"leicht"},
+  {kat:"pflegeplanung",frage:"Wann müssen Hände gewaschen (nicht desinfiziert) werden?",opt:["Immer vor der Desinfektion","Nur wenn sichtbar verschmutzt oder nach Clostridium-difficile-Kontakt (Sporenbildner – Alkohol unwirksam)","Nach jedem Patientenkontakt","Niemals – Desinfektion reicht immer"],k:1,erkl:"C. difficile bildet Sporen, die durch Alkohol nicht abgetötet werden → mechanisches Händewaschen nötig. Ansonsten gilt: Hände waschen macht Schutzflora kaputt und schädigt die Haut. Desinfektion ist effektiver als Waschen!",s:"mittel"},
+  {kat:"pflegeplanung",frage:"Was sind die 5 Momente der WHO-Händehygiene?",opt:["Vor/nach der Pause · Nach der Toilette · Vor dem Essen","Vor Patientenkontakt · Vor aseptischer Tätigkeit · Nach Kontakt mit infektiösem Material · Nach Patientenkontakt · Nach Patientenumgebung","Morgens · Mittags · Abends · Nach Blut · Nach WC","Beim Betreten · Beim Verlassen · Beim Verbandswechsel"],k:1,erkl:"WHO 5 Momente: 1.Vor Patientenkontakt 2.Vor aseptischer Tätigkeit (wichtigster Moment!) 3.Nach Kontakt mit Körperflüssigkeiten 4.Nach Patientenkontakt 5.Nach Kontakt mit Patientenumgebung. Moment 2 schützt den Patienten, alle anderen schützen auch die Pflegenden.",s:"mittel"},
+  {kat:"pflegeplanung",frage:"Wann sollten Einmalhandschuhe NICHT getragen werden?",opt:["Bei Blutentnahme","Beim normalen Patientenkontakt ohne Körperflüssigkeitskontakt (z.B. Blutdruckmessen, Begrüßung)","Bei Wundversorgung","Bei Katheteranlage"],k:1,erkl:"Dauerhaftes Tragen ohne Indikation: falsches Sicherheitsgefühl (Desinfektion wird vergessen), Handschuhe werden zum Übertragungsweg, Hautschäden. Handschuhe ersetzen die Händedesinfektion NICHT – auch nach Handschuhwechsel desinfizieren!",s:"leicht"},
+  {kat:"pflegeplanung",frage:"Welche Handschuhe werden bei sterilen Eingriffen verwendet?",opt:["Normale Untersuchungshandschuhe","Sterile OP-Handschuhe aus geschlossener, unversehrter, nicht abgelaufener Verpackung","Haushaltshandschuhe","Latexfreie Handschuhe nur bei Allergie"],k:1,erkl:"Sterile Handschuhe: Anlegen mit Non-Touch-Technik. Vor Öffnen: Verpackung auf Unversehrtheit und Ablaufdatum prüfen. Indikationen: OP, sterile Katheterisierung, Wundversorgung bei tiefen/kontaminierten Wunden, Legen von ZVK.",s:"mittel"},
+  {kat:"pflegeplanung",frage:"Was ist bei der Isolierung eines MRSA-Patienten zu beachten?",opt:["Nur Handschuhe nötig","Einzelzimmer + Kittel + Handschuhe + FFP2-Maske + Händedesinfektion beim Verlassen des Zimmers","Nur Maske tragen","Patient darf nicht besucht werden"],k:1,erkl:"MRSA-Isolierung: Einzelzimmer (eigenes Bad), Schutzkittel, Handschuhe, FFP2-Maske bei engem Kontakt. Beim Verlassen: PSA im Zimmer ablegen → Händedesinfektion. Besuch möglich (Kittel + Handschuhe). Patienten aufklären und einbeziehen! Screening: Nasen-Rachen-Abstrich.",s:"schwer"},
+  {kat:"pflegeplanung",frage:"Was gilt bei Clostridium-difficile-Infektion bezüglich Händehygiene?",opt:["Händedesinfektion mit Alkohol wie normal","Händewaschen statt Alkohol-Desinfektion (C. diff. bildet Sporen – Alkohol unwirksam!)","Keine besondere Hygiene nötig","Nur Handschuhe reichen"],k:1,erkl:"C. difficile = Sporenbildner! Sporen sind alkoholresistent → mechanisches Waschen mit Wasser und Seife + Einmalhandtuch. Zusätzlich: Einzelzimmer, Einmalschürze, Handschuhe, Flächendesinfektion mit sporozid wirksamen Mitteln. Keine Darmtransitkost!",s:"schwer"},
+  {kat:"pflegeplanung",frage:"In welcher Reihenfolge wird PSA angelegt?",opt:["Handschuhe → Kittel → Maske → Brille","Kittel → Maske/Atemschutz → Schutzbrille → Handschuhe","Maske → Brille → Kittel → Handschuhe","Alles gleichzeitig"],k:1,erkl:"PSA anlegen: 1. Kittel (Körper schützen) 2. Maske/Atemschutz 3. Schutzbrille 4. Handschuhe (zuletzt – direkter Kontakt). Ablegen umgekehrt: 1. Handschuhe (kontaminiert!) 2. Kittel 3. Brille 4. Maske → dann Händedesinfektion.",s:"mittel"},
+  {kat:"pflegeplanung",frage:"Was regelt §23 IfSG für Krankenhäuser?",opt:["Nur Meldepflichten","Surveillance-Pflicht für nosokomiale Infektionen + MRSA/VRE-Monitoring + Hygienekommission + Krankenhaushygieniker","Nur Personalregelungen","Abrechnungsregeln"],k:1,erkl:"§23 IfSG: Krankenhäuser müssen nosokomiale Infektionen und Erreger mit speziellen Resistenzen (MRSA, VRE, ESBL) erfassen und bewerten. Pflicht: Hygienekommission, Krankenhaushygieniker oder -fachkraft, Surveillance-System (z.B. KISS). Ziel: Infektionsraten senken durch systematische Überwachung.",s:"schwer"},
+  {kat:"pflegeplanung",frage:"Was ist der häufigste Fehler bei der hygienischen Händedesinfektion?",opt:["Zu viel Desinfektionsmittel","Fingerkuppen und Daumen werden nicht ausreichend einmassiert – sind die häufigste Keimzone","Zu langes Einreiben","Falsche Reihenfolge"],k:1,erkl:"Studien zeigen: Fingerkuppen (v.a. unter Fingernägeln) und Daumen werden bei 90% der Anwendungen unzureichend desinfiziert. Daher eigener Schritt für jede Zone. Langen Fingernägeln, Ringen, Uhren verhindern wirksame Desinfektion → verboten im Pflegedienst!",s:"leicht"},
+  {kat:"pflegeplanung",frage:"Welche Wäsche kommt in den roten Sack?",opt:["Alle Patientenwäsche","Infektionswäsche (von Isolierpatienten, stark kontaminierte Wäsche) – direkt im Zimmer verschließen, nicht ausschütteln","Nur OP-Wäsche","Normale Bettwäsche"],k:1,erkl:"Wäschesortierung: Roter Sack = Infektionswäsche (MRSA, C. diff., Norovirus, stark blutig/kontaminiert) → direkt verschließen, nicht im Zimmer sortieren, Handschuhe + Kittel. Weißer Sack = normale Wäsche. Wäsche NIE ausschütteln → Aerosolbildung → Keimverbreitung!",s:"leicht"}
 ];
 
 const KATS = [
@@ -1283,6 +1343,10 @@ const LOKAL_WISSEN = {
   "bobath": "Bobath-Konzept: Rehabilitation nach Schlaganfall. Betroffene Körperseite aktiv einbeziehen, nicht kompensieren. Patient von betroffener Seite ansprechen. Fördert Neuroplastizität.",
   "nrs": "NRS = Numerische Rating-Skala für Schmerzen: 0 (kein Schmerz) bis 10 (maximal). Ab NRS ≥4 = Handlungsbedarf. Wirkungskontrolle 30-60 Min. nach Analgetikum.",
   "vap": "VAP = Ventilator-assoziierte Pneumonie. Prophylaxe: Oberkörperhochlagerung 30-45°, Mundpflege Chlorhexidin, Cuff-Druck 20-30 cmH₂O, tägliche Extubationsüberprüfung.",
+  "haendedesinfektion": "Hygienische Händedesinfektion: mind. 30 Sekunden (EN 1500), 3–5 ml Alkoholgel, 6 Schritte (Handflächen, Handrücken, Finger verschränkt, Außenseiten, Daumen, Fingerkuppen). 5 WHO-Momente: vor Patientenkontakt, vor aseptischer Tätigkeit, nach Körperflüssigkeiten, nach Patientenkontakt, nach Patientenumgebung. Hände waschen NUR bei sichtbarer Verschmutzung oder C. difficile (Sporenbildner – alkoholresistent!).",
+  "handschuhe": "Handschuhe: JA bei Blut/Körperflüssigkeiten, Schleimhäuten, Wundversorgung, Katheter, Isolationspatienten. NEIN bei normalem Patientenkontakt ohne Körperflüssigkeiten (Blutdruckmessen, Begrüßung). Handschuhe ersetzen Händedesinfektion NICHT – nach jedem Wechsel desinfizieren! Typen: Untersuchungshandschuhe (nicht-steril), sterile OP-Handschuhe, Haushaltshandschuhe, Chemikalienschutz.",
+  "krankenhaushygiene": "Krankenhaushygiene: ~400.000–600.000 nosokomiale Infektionen/Jahr in D. Isolierung: MRSA = Einzelzimmer + Kittel + Handschuhe + FFP2. C. difficile = Waschen statt Alkohol. Norovirus = Waschen. TBC = FFP3 + Unterdruckraum. PSA anlegen: Kittel → Maske → Brille → Handschuhe. Ablegen umgekehrt, dann HD. §23 IfSG = Surveillance-Pflicht. Abfall: A=normal, B=infektiös, Sharpsafe für Nadeln – NIEMALS recappen!",
+  "mrsa": "MRSA = Methicillinresistenter Staphylococcus aureus. Isolierung: Einzelzimmer, Kittel + Handschuhe + FFP2. Screening: Nasen-Rachen-Abstrich. Behandlung: Vancomycin, Linezolid, Daptomycin. Sanierung: Mupirocin-Nasensalbe 5 Tage + antiseptische Ganzkörperwaschung + Haare waschen. Meldepflicht §6/§7 IfSG.",
   "weaning": "Weaning = Entwöhnung vom Beatmungsgerät. SBT-Test → T-Stück/PSV → Extubation. Voraussetzungen: FiO₂ <0,5, PEEP ≤8, stabile Hämodynamik.",
   "ecmo": "ECMO = Extrakorporale Membranoxygenierung. VV-ECMO: Lungenersatz bei ARDS. VA-ECMO: Herz-Lungen-Ersatz bei kardiogenem Schock. Beide: Antikoagulation mit Heparin.",
   "aedl": "AEDL = Aktivitäten und existentielle Erfahrungen des Lebens nach Krohwinkel. 13 Bereiche: Kommunizieren, Bewegen, Vitale Funktionen, Pflegen, Essen/Trinken, Ausscheiden, Kleiden, Ruhen, Beschäftigen, Mann/Frau, Sichern, Soziales, Existentielles.",
@@ -3459,7 +3523,7 @@ function applyUpdate() {
 function toggleDarkMode() {
   const isDark = document.body.classList.toggle('light-mode');
   const btn = document.getElementById('btn-darkmode');
-  if (btn) btn.innerHTML = isDark ? '🌙' : '☀️';
+  if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
   localStorage.setItem('pl_lightmode', isDark ? '1' : '0');
 }
 
@@ -3531,56 +3595,7 @@ function doSearch() {
         '</button>';
     }).join('');
 }
-// Light Mode CSS
-const lightModeStyle = document.createElement('style');
-lightModeStyle.textContent = `
-body.light-mode { background:#eef2f7; color:#0f172a; }
-body.light-mode .page { background:#eef2f7; }
-body.light-mode .chat-page { background:#eef2f7; }
-body.light-mode .header { background:rgba(255,255,255,.96); border-color:rgba(30,64,128,.15); box-shadow:0 2px 12px rgba(0,0,0,.1); }
-body.light-mode .logo-title { color:#1e4080; }
-body.light-mode .logo-title span { color:#0369a1; }
-body.light-mode .logo-sub { color:#64748b; }
-body.light-mode .hero h1 { color:#0f172a; }
-body.light-mode .hero h1 span { color:#0369a1; }
-body.light-mode .hero p { color:#475569; }
-body.light-mode .section-label { color:#64748b; }
-body.light-mode .ausb-card { background:white; border-color:rgba(30,64,128,.15); color:#0f172a; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-body.light-mode .ausb-name { color:#0f172a; }
-body.light-mode .ausb-sub { color:#64748b; }
-body.light-mode .bottom-card { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 2px 8px rgba(0,0,0,.06); }
-body.light-mode .bottom-card-title { color:#0f172a; }
-body.light-mode .bottom-card-sub { color:#64748b; }
-body.light-mode .question-card { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 2px 8px rgba(0,0,0,.06); }
-body.light-mode .q-text { color:#0f172a; }
-body.light-mode .opt-btn { background:white; border-color:rgba(30,64,128,.2); color:#0f172a; }
-body.light-mode .explanation { background:rgba(3,105,161,.06); border-color:rgba(3,105,161,.2); color:#0f172a; }
-body.light-mode .bubble.ai { background:rgba(255,255,255,.9); border-color:rgba(3,105,161,.2); color:#0f172a; }
-body.light-mode .bubble.user { background:linear-gradient(135deg,#0369a1,#0284c7); color:white; }
-body.light-mode input, body.light-mode select { background:white; color:#0f172a; border-color:rgba(30,64,128,.2); }
-body.light-mode input::placeholder { color:#94a3b8; }
-body.light-mode .modal-box { background:white; }
-body.light-mode .modal-title { color:#0f172a; }
-body.light-mode .modal-desc { color:#334155; }
-body.light-mode .modal-grid-item { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.08); }
-body.light-mode .modal-grid-val { color:#475569; }
-body.light-mode .mt-card { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 2px 8px rgba(0,0,0,.06); }
-body.light-mode .mt-card-name { color:#0f172a; }
-body.light-mode .mt-card-sub { color:#64748b; }
-body.light-mode .mt-section { background:rgba(0,0,0,.03); border-color:rgba(0,0,0,.08); }
-body.light-mode .mt-section-title { color:#0f172a; }
-body.light-mode .mt-item { color:#334155; }
-body.light-mode .hbtn-back { background:rgba(3,105,161,.1); border-color:rgba(3,105,161,.25); color:#0369a1; }
-body.light-mode .chat-input { background:rgba(0,0,0,.05); border-color:rgba(30,64,128,.2); color:#0f172a; }
-body.light-mode #nav-dropdown { background:white; border-color:rgba(30,64,128,.15); box-shadow:0 8px 32px rgba(0,0,0,.15); }
-body.light-mode .nav-drop-btn { color:#0f172a; }
-body.light-mode .result-box { background:white; border-color:rgba(3,105,161,.2); }
-body.light-mode .result-msg { color:#64748b; }
-body.light-mode .footer-note { background:rgba(3,105,161,.04); border-color:rgba(3,105,161,.1); color:#64748b; }
-body.light-mode #search-overlay { background:rgba(238,242,247,.97); }
-body.light-mode #search-input { background:white; color:#0f172a; border-color:rgba(30,64,128,.25); }
-`;
-document.head.appendChild(lightModeStyle);
+
 if (localStorage.getItem('pl_lightmode') === '1') toggleDarkMode();
 
 // ─── QUIZ FORTSCHRITTSBALKEN ──────────────────────────────────────────────────
@@ -3671,7 +3686,7 @@ function generateLernnachweis() {
     </div>
   </div>
   <div class="footer">
-    <div>PflegeLearn NRW · pflegelearnnrw.netlify.app</div>
+    <div>PflegeLearn NRW · pflegelearn-nrw.vercel.app</div>
     <div>Entwickelt von Patrick Schenkelberger · Fachpfleger Anästhesie & Intensivmedizin NRW</div>
     <div style="margin-top:8px;font-size:10px">Dieser Lernnachweis ist kein staatlich anerkanntes Zertifikat.</div>
   </div>
@@ -4029,27 +4044,25 @@ function adminTabExtended(tab) {
   if (tab === 'liste') renderTokenListe();
 }
 
-// ─── NETLIFY FUNCTIONS VORBEREITUNG ──────────────────────────────────────────
-// Wenn NETLIFY_AI_ENDPOINT gesetzt ist, wird dieser statt Gemini direkt verwendet
-// → API Key ist dann sicher in Netlify Functions versteckt
-const NETLIFY_AI_ENDPOINT = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
-  ? '/.netlify/functions/ai'
-  : null;
-
+// ─── KI SYSTEM – Gemini Direct ───────────────────────────────────────────────
 async function callAI(prompt, systemPrompt) {
-  // Netlify Function (API-Key sicher im Backend)
-  if (NETLIFY_AI_ENDPOINT) {
-    const res = await fetch(NETLIFY_AI_ENDPOINT, {
+  // Versuche zuerst Gemini
+  try {
+    const body = {
+      contents: [{ parts: [{ text: (systemPrompt ? systemPrompt + '\n\n' : '') + prompt }] }],
+      generationConfig: { maxOutputTokens: 800, temperature: 0.7 }
+    };
+    const res = await fetch(GEMINI_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, system: systemPrompt })
+      body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error('Netlify Function Fehler');
-    const d = await res.json();
-    return d.text || d.content || '';
-  }
-  // Fallback: direkte API (nur für lokale Entwicklung)
-  throw new Error('Kein API-Endpunkt konfiguriert');
+    if (res.ok) {
+      const data = await res.json();
+      return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+    }
+  } catch(e) { console.warn('Gemini:', e); }
+  return null;
 }
 
 // ─── STRIPE VORBEREITUNG ──────────────────────────────────────────────────────
@@ -4160,7 +4173,32 @@ const PROPHYLAXEN = [
   { id:"parotitis", name:"Parotitisprophylaxe", icon:"🦷",
     definition:"Verhütung der Ohrspeicheldrüsenentzündung durch ausreichende Speichelproduktion und Mundpflege.",
     risikofaktoren:["Dehydration","Mundatmung","NPO (Nahrungskarenz)","Immunsuppression","Anticholinergika"],
-    massnahmen:["Ausreichend Flüssigkeit","Regelmäßige Mundpflege","Kaugummi kauen (Speichelfluss ↑)","Saure Drops (Speichelproduktion ↑)","Mundatmung vermeiden: Nasenpflege","Ohrspeicheldrüse beobachten (Schwellung, Schmerz)"] }
+    massnahmen:["Ausreichend Flüssigkeit","Regelmäßige Mundpflege","Kaugummi kauen (Speichelfluss ↑)","Saure Drops (Speichelproduktion ↑)","Mundatmung vermeiden: Nasenpflege","Ohrspeicheldrüse beobachten (Schwellung, Schmerz)"] },
+
+  { id:"haendedesinfektion", name:"Hygienische Händedesinfektion", icon:"🙌",
+    definition:"Die hygienische Händedesinfektion ist die wichtigste Einzelmaßnahme zur Verhütung nosokomialer Infektionen. Sie reduziert die transiente Keimflora auf ein sicheres Niveau (WHO, KRINKO 2016).",
+    indikationen:["1. Vor Patientenkontakt","2. Vor aseptischen Tätigkeiten (Wundversorgung, Katheter, Infusion)","3. Nach Kontakt mit potenziell infektiösem Material (Blut, Körperflüssigkeiten)","4. Nach Patientenkontakt","5. Nach Kontakt mit Patientenumgebung (Klingel, Bettgitter, Nachttisch)"],
+    durchfuehrung:["Mindestens 3–5 ml alkoholisches Händedesinfektionsmittel entnehmen","Einreiben mindestens 30 Sekunden (EN 1500)","Schritt 1: Handfläche auf Handfläche reiben","Schritt 2: Rechte Handfläche über linken Handrücken, wechseln","Schritt 3: Handfläche auf Handfläche mit verschränkten Fingern","Schritt 4: Außenseite der Finger durch Einschlagen","Schritt 5: Daumen eingeschlossen in anderer Hand, wechseln","Schritt 6: Fingerkuppen kreisend in Handfläche, wechseln","Hände trocknen lassen – NICHT abwischen!"],
+    massnahmen:["Hände waschen NUR wenn sichtbar verschmutzt oder nach C.-difficile-Kontakt (Sporenbildner – Alkohol unwirksam!)","Vor Desinfektion: Hände TROCKEN (feuchte Hände reduzieren Wirksamkeit)","Handschuhe ersetzen Händedesinfektion NICHT","Kein Schmuck, keine Uhren, keine langen Fingernägel, kein Nagellack","Hautschutz: vor Dienst → Schutzpräparat · während Dienst → Pflegecreme · nach Dienst → rückfettende Creme"],
+    haeufige_fehler:["Zu wenig Desinfektionsmittel aufgetragen (verdampft zu schnell)","Fingerkuppen und Daumen vergessen – häufigste Fehlerzone!","Handschuhe abziehen ohne anschließende Desinfektion","Hautschutz vernachlässigt → Hautschäden → Keimreservoir"],
+    expertenstandard:"WHO-Leitlinie Händehygiene 2009 · KRINKO-Empfehlung Händehygiene 2016 · EN 1500" },
+
+  { id:"handschuhe", name:"Handschuhe – Wann ja, wann nein?", icon:"🧤",
+    definition:"Handschuhe schützen Patient und Pflegende. Falscher Einsatz macht Handschuhe selbst zum Übertragungsweg. Sie ersetzen die Händedesinfektion NICHT.",
+    massnahmen:["Nach jedem Handschuhwechsel: Händedesinfektion!","Handschuhe direkt nach Gebrauch entsorgen – nicht in Taschen tragen","Handschuhgröße wählen: zu eng → reißen · zu weit → rutschen","Latexallergie: Nitril-Handschuhe verwenden"],
+    wann_ja:["Kontakt mit Blut, Körperflüssigkeiten, Sekreten, Exkreten","Kontakt mit Schleimhäuten oder nicht-intakter Haut","Legen / Pflege von Gefäßzugängen, Kathetern, Drainagen","Wundversorgung","Kontakt mit kontaminierten Materialien (Verbände, Wäsche)","Umgang mit Reinigungs- und Desinfektionsmitteln (Schutzhandschuhe)","Isolationspflichtige Patienten (MRSA, VRE, Noro etc.)"],
+    wann_nein:["Normaler Patientenkontakt ohne Körperflüssigkeitskontakt (Begrüßung, Blutdruck messen)","Medikamente richten ohne Kontaminationsrisiko","Dauerhaftes Tragen ohne Indikation → Übertragungsweg + falsche Sicherheit"],
+    wieso_nicht_immer:["Handschuhe haben mikro-poröse Defekte – kein 100% Schutz","Beim Aus-/Anziehen leichte Kontamination der Hände möglich","Falsches Sicherheitsgefühl: Desinfektion wird vergessen","Erhöhtes Übertragungsrisiko bei Wechsel ohne Händedesinfektion"],
+    handschuhtypen:["Untersuchungshandschuhe (Nitril/Latex): nicht-steril, allgemeiner Schutz","Sterile OP-Handschuhe: aseptische Eingriffe, sterile Katheterisierung","Haushaltshandschuhe: Reinigung und Flächendesinfektion","Chemikalienschutzhandschuhe: Desinfektionsmittelkonzentrate"],
+    expertenstandard:"TRBA 250 (Biologische Arbeitsstoffe im Gesundheitswesen) · KRINKO 2016" },
+
+  { id:"krankenhausgiene", name:"Allgemeine Krankenhaushygiene", icon:"🏥",
+    definition:"Krankenhaushygiene umfasst alle Maßnahmen zur Verhütung nosokomialer Infektionen. Ca. 400.000–600.000 nosokomiale Infektionen jährlich in Deutschland, ca. 10.000–15.000 Todesfälle.",
+    massnahmen:["Flächendesinfektion: täglich patientennahe Flächen (Bettgitter, Nachttisch, Klingel), nach Entlassung Schlussdesinfektion","Wischdesinfektion: von rein nach unrein · von oben nach unten · Einwirkzeit beachten","Abfall: Gruppe A (Hausmüll) · Gruppe B (infektiös) · Gruppe C (Zytostatika) · Sharpsafe für Nadeln","Kanülen NIEMALS recappen – Nadelstichverletzungsgefahr!","Infektionswäsche: roter Sack, direkt verschließen, nicht ausschütteln","PSA anlegen: Kittel → Maske → Brille → Handschuhe","PSA ablegen: Handschuhe → Kittel → Brille → Maske → Händedesinfektion"],
+    isolationen:["MRSA: Einzelzimmer, Kittel + Handschuhe + FFP2","VRE: Einzelzimmer, Kittel + Handschuhe","Norovirus/C. difficile: Einzelzimmer, Händewaschen (kein Alkohol!), Kittel + Handschuhe","Tröpfchen (Influenza, COVID): chirurgischer MNS oder FFP2","Aerogen (TBC): Einzelzimmer mit Unterdruck, FFP3"],
+    risikofaktoren:["Liegekatheter (CAUTI-Risiko: täglich Notwendigkeit prüfen!)","Gefäßzugänge (ZVK-assoziierte Sepsis)","Beatmung (VAP)","Postoperative Wundinfektionen","Immunsupprimierte Patienten"],
+    meldepflicht:["Nosokomiale MRSA/VRE/ESBL-Infektionen: Meldepflicht §6/§7 IfSG","Ausbrüche (≥2 Erkrankungen, epidemiolog. Zusammenhang): sofortige Meldung ans Gesundheitsamt","Krankenhäuser: Surveillance-Pflicht nach §23 IfSG","Schulungspflicht: mind. 1× jährlich"],
+    expertenstandard:"Infektionsschutzgesetz (IfSG) §23, §36 · KRINKO-Empfehlungen · Hygieneverordnung NRW" }
 ];
 
 // ─── KINäSTHETIK ──────────────────────────────────────────────

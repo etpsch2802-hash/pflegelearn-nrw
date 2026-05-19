@@ -1,7 +1,7 @@
 {
   "name": "PflegeLearn NRW",
   "short_name": "PflegeLearn",
-  "description": "KI-Lernassistent für Pflegeausbildung in NRW",
+  "description": "Lernassistent für Pflegeausbildung in NRW",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -12,12 +12,14 @@
     {
       "src": "favicon.png",
       "sizes": "32x32",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "apple-touch-icon.png",
       "sizes": "180x180",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon-192.png",
@@ -33,7 +35,6 @@
     }
   ],
   "categories": ["education", "medical"],
-  "screenshots": [],
   "shortcuts": [
     {
       "name": "Quiz starten",
