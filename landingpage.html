@@ -288,7 +288,7 @@ footer {
     <img src="icon-192.png" alt="PflegeLearn NRW" style="width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(56,189,248,.4))">
     <span class="nav-logo-text">PflegeLearn <span>NRW</span></span>
   </a>
-  <a class="nav-cta" href="https://pflegelearnnrw.netlify.app" target="_blank">🚀 App öffnen</a>
+  <a class="nav-cta" href="https://pflegelearn-nrw.vercel.app" target="_blank">🚀 App öffnen</a>
 </nav>
 
 <!-- HERO -->
@@ -297,7 +297,7 @@ footer {
   <h1>Schlauer lernen.<br><em>Besser bestehen.</em></h1>
   <p>Der erste digitale Lernassistent für alle 7 Pflegeausbildungswege in NRW – mit KI-Unterstützung, Prüfungsquiz, Krankheitsbildern und persönlichem Lernplan.</p>
   <div class="hero-btns">
-    <a class="btn-primary" href="https://pflegelearnnrw.netlify.app" target="_blank">🚀 Kostenlos testen</a>
+    <a class="btn-primary" href="https://pflegelearn-nrw.vercel.app" target="_blank">🚀 Kostenlos testen</a>
     <a class="btn-secondary" href="mailto:pflegelearn.nrw@gmail.com">✉️ Demo-Zugang anfragen</a>
   </div>
 </div>
@@ -382,37 +382,115 @@ footer {
 
 <!-- PRICING -->
 <section>
-  <div class="section-tag">Preise</div>
-  <div class="section-title">Einfach & fair</div>
+  <div class="section-tag">Preise & Pakete</div>
+  <div class="section-title">Für jeden Ausbildungsweg das passende Paket</div>
   <div class="section-sub">Starte kostenlos mit dem Demo-Zugang – kein Kreditkarte nötig.</div>
-  <div class="pricing-grid">
+
+  <!-- PAKET KARTEN -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:24px">
+
+    <!-- BASIS -->
     <div class="price-card">
-      <div class="price-card-title">Demo</div>
-      <div class="price-amount">Gratis</div>
-      <div class="price-period">7 Tage Vollzugang</div>
+      <div class="price-card-title">🟢 Basis</div>
+      <div class="price-amount" style="font-size:28px">4,99€</div>
+      <div class="price-period">/ Monat · auch als 3, 6, 12 Monate</div>
+      <div style="font-size:10px;color:var(--muted);margin:8px 0 12px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:8px;line-height:1.6">
+        3 Mon: 12,99€ · 6 Mon: 23,99€ · Jahr: 44,99€
+      </div>
       <ul class="price-features">
-        <li>Alle Inhalte freigeschaltet</li>
-        <li>Kein Kreditkarte nötig</li>
-        <li>Code per E-Mail</li>
-        <li>Personalisierter Zugang</li>
+        <li>Pflegefachassistenz & Anerkennungsschüler</li>
+        <li>Quiz: Pflegehelfer + Anerkennung</li>
+        <li>KI-Assistent unbegrenzt</li>
+        <li>Lernstatistik & Fortschritt</li>
+        <li>Offline-Nutzung (PWA)</li>
       </ul>
-      <a class="btn-secondary" style="display:block;text-align:center" href="mailto:pflegelearn.nrw@gmail.com">Code anfragen</a>
+      <div style="font-size:10px;color:var(--muted);margin:8px 0 14px">❌ Medizintechnik · ❌ Medikamente</div>
+      <a class="btn-secondary" style="display:block;text-align:center" href="mailto:pflegelearn.nrw@gmail.com">Basis anfragen</a>
     </div>
+
+    <!-- STANDARD -->
+    <div class="price-card" style="border-color:rgba(56,189,248,.3)">
+      <div class="price-card-title">🔵 Standard</div>
+      <div class="price-amount" style="font-size:28px">9,99€</div>
+      <div class="price-period">/ Monat · auch als 3, 6, 12 Monate</div>
+      <div style="font-size:10px;color:var(--muted);margin:8px 0 12px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:8px;line-height:1.6">
+        3 Mon: 25,99€ · 6 Mon: 49,99€ · Jahr: 89,99€
+      </div>
+      <ul class="price-features">
+        <li>✅ Alles aus Basis</li>
+        <li>GPA + Psychiatrie + Pädiatrie + Altenpflege</li>
+        <li>120+ Fragen (9 Kategorien)</li>
+        <li>Medikamenten-Modul</li>
+        <li>Pflegeplanung & Krankheitsbilder</li>
+      </ul>
+      <div style="font-size:10px;color:var(--muted);margin:8px 0 14px">❌ Medizintechnik</div>
+      <a class="btn-secondary" style="display:block;text-align:center;border-color:rgba(56,189,248,.3);color:var(--sky)" href="mailto:pflegelearn.nrw@gmail.com">Standard anfragen</a>
+    </div>
+
+    <!-- PRO -->
     <div class="price-card featured">
       <div class="price-card-badge">Empfohlen</div>
-      <div class="price-card-title">Vollzugang</div>
-      <div class="price-amount">4,99€</div>
-      <div class="price-period">pro Monat · jederzeit kündbar</div>
+      <div class="price-card-title">🟣 Pro</div>
+      <div class="price-amount" style="font-size:28px">14,99€</div>
+      <div class="price-period">/ Monat · auch als 3, 6, 12 Monate</div>
+      <div style="font-size:10px;color:var(--muted);margin:8px 0 12px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:8px;line-height:1.6">
+        3 Mon: 38,99€ · 6 Mon: 74,99€ · Jahr: 134,99€
+      </div>
       <ul class="price-features">
-        <li>Unbegrenzter Zugriff</li>
-        <li>Neue Inhalte inklusive</li>
-        <li>Alle 7 Ausbildungswege</li>
-        <li>Offline-Nutzung (PWA)</li>
-        <li>Priorisierter Support</li>
+        <li>✅ Alles aus Standard</li>
+        <li>Alle 7 Ausbildungsbereiche</li>
+        <li>256+ Fragen (15 Kategorien)</li>
+        <li>Medizintechnik (ECMO, BLS, ACLS…)</li>
+        <li>Prioritäts-Support</li>
       </ul>
-      <a class="btn-primary" style="display:block;text-align:center" href="mailto:pflegelearn.nrw@gmail.com">Jetzt starten</a>
+      <div style="height:14px"></div>
+      <a class="btn-primary" style="display:block;text-align:center" href="mailto:pflegelearn.nrw@gmail.com">Pro anfragen</a>
     </div>
+
   </div>
+
+  <!-- PRÜFUNGSBOOST + SCHULLIZENZ -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px">
+
+    <div class="price-card" style="border-color:rgba(250,204,21,.25);background:rgba(250,204,21,.04)">
+      <div class="price-card-title" style="color:#facc15">⚡ Prüfungsboost</div>
+      <div class="price-amount" style="font-size:28px;color:#facc15">14,99€</div>
+      <div class="price-period">einmalig · zeitlich begrenzt</div>
+      <ul class="price-features" style="margin:12px 0 16px">
+        <li>Intensiver Prüfungsmodus</li>
+        <li>Alle Kategorien freigeschaltet</li>
+        <li>Ideal zur Prüfungsvorbereitung</li>
+        <li>Kein Abo – einmaliger Kauf</li>
+      </ul>
+      <a class="btn-secondary" style="display:block;text-align:center;border-color:rgba(250,204,21,.3);color:#facc15" href="mailto:pflegelearn.nrw@gmail.com">Boost anfragen</a>
+    </div>
+
+    <div class="price-card" style="border-color:rgba(167,139,250,.25);background:rgba(167,139,250,.04)">
+      <div class="price-card-title" style="color:#a78bfa">🏫 Schullizenz</div>
+      <div class="price-amount" style="font-size:22px;color:#a78bfa">Auf Anfrage</div>
+      <div class="price-period">für Pflegeschulen & Bildungszentren</div>
+      <ul class="price-features" style="margin:12px 0 16px">
+        <li>Unbegrenzte Schüler-Zugänge</li>
+        <li>Alle Inhalte für Lehrkräfte</li>
+        <li>Individuelles Lizenzmodell (B2B)</li>
+        <li>Direkte Partnerschaft</li>
+      </ul>
+      <a class="btn-secondary" style="display:block;text-align:center;border-color:rgba(167,139,250,.3);color:#a78bfa" href="mailto:pflegelearn.nrw@gmail.com">Schullizenz anfragen</a>
+    </div>
+
+  </div>
+
+  <!-- DEMO -->
+  <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:16px;padding:24px;text-align:center">
+    <div style="font-size:28px;font-weight:900;color:#34d399;margin-bottom:4px">🎁 Demo-Zugang · Gratis</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+      5 Tage kostenlos testen · Kein Kreditkarte · Code per E-Mail<br>
+      <strong style="color:#34d399">Schüler-Demo:</strong> GPA-Grundlagen · 5 Fragen · 3 KI-Nachrichten<br>
+      <strong style="color:#34d399">Kollegen-Demo:</strong> Erweitert · Medizintechnik + Medikamente · 20 Fragen
+    </div>
+    <a class="btn-primary" style="display:inline-block;background:linear-gradient(135deg,#059669,#34d399)" href="mailto:pflegelearn.nrw@gmail.com">Kostenlos testen → pflegelearn.nrw@gmail.com</a>
+  </div>
+
 </section>
 
 <hr class="full-divider">
@@ -437,7 +515,7 @@ footer {
   <div class="footer-copy">© 2025 PflegeLearn NRW · Alle Rechte vorbehalten · Unbefugte Weitergabe von Zugangscodes führt zur Sperrung.</div>
   <div style="display:flex;gap:16px">
     <a class="footer-link" href="mailto:pflegelearn.nrw@gmail.com">Kontakt</a>
-    <a class="footer-link" href="https://pflegelearnnrw.netlify.app" target="_blank">App öffnen</a>
+    <a class="footer-link" href="https://pflegelearn-nrw.vercel.app" target="_blank">App öffnen</a>
   </div>
 </footer>
 
