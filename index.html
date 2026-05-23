@@ -17,6 +17,7 @@
 <meta property="og:type" content="website">
 <title>PflegeLearn NRW</title>
 <!-- PWA Manifest (extern) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link rel="manifest" href="manifest.json">
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -313,7 +314,13 @@
     <button class="pw-btn" style="margin-top:12px" onclick="checkPW()">Anmelden →</button>
     <div class="pw-error" id="pw-error" style="display:none"></div>
   </div>
-  <div style="margin-top:14px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
+
+  <!-- 7 TAGE GRATIS BUTTON -->
+  <button onclick="showScreen('registrierung')" style="width:100%;max-width:320px;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.05));border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:14px;color:#34d399;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:12px">
+    🎁 7 Tage kostenlos testen
+  </button>
+
+  <div style="margin-top:12px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
     <div style="font-size:10px;color:#4a7a9b;line-height:1.7">
       🔑 Noch kein Zugangscode?<br>
       <span style="color:#38bdf8">pflegelearn.nrw@gmail.com</span><br>
@@ -406,6 +413,69 @@
 </div>
 
 <!-- HOME -->
+<!-- REGISTRIERUNG SCREEN -->
+<div class="page" id="screen-registrierung">
+  <div class="hero" style="margin-bottom:20px">
+    <img src="icon-192.png" style="width:72px;height:72px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(56,189,248,.5))">
+    <h1>7 Tage <span>kostenlos</span></h1>
+    <p>Vollzugang · Keine Kreditkarte · Sofort starten</p>
+  </div>
+
+  <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:14px;padding:14px;margin-bottom:20px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ 256 Prüfungsfragen · 7 Ausbildungswege</div>
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ Krankheitsbilder · Prophylaxen · ATL · Wundversorgung</div>
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ Taschenkarten · Lernplan · Medizintechnik</div>
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ Nach 7 Tagen frei wählbares Paket ab 4,99€/Monat</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px">
+    <div style="font-size:10px;color:#4a7a9b;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">👤 Deine Daten</div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">Vor- und Nachname *</div>
+      <input id="reg-name" type="text" placeholder="Max Mustermann" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit">
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">E-Mail-Adresse *</div>
+      <input id="reg-email" type="email" placeholder="deine@email.de" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit">
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">Ausbildungsweg</div>
+      <select id="reg-ausbildung" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit">
+        <option value="">Bitte wählen...</option>
+        <option value="Pflegefachassistenz">Pflegefachassistenz</option>
+        <option value="Anerkennungsschüler/in">Anerkennungsschüler/in</option>
+        <option value="Generalistische Pflege (GPA)">Generalistische Pflege (GPA)</option>
+        <option value="Fachpflege Anästhesie">Fachpflege Anästhesie</option>
+        <option value="ATA">ATA – Anästhesietechnische Assistenz</option>
+        <option value="Fachpflege Intensiv">Fachpflege Intensiv</option>
+        <option value="OTA">OTA – Operationstechnische Assistenz</option>
+        <option value="Schüler/in allgemein">Schüler/in (allgemein)</option>
+        <option value="Pflegefachkraft">Pflegefachkraft (bereits examiniert)</option>
+      </select>
+    </div>
+
+    <button onclick="submitRegistrierung()" id="reg-btn" style="width:100%;background:linear-gradient(135deg,#0369a1,#38bdf8);border:none;border-radius:12px;padding:15px;color:white;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 8px 24px rgba(3,105,161,.35)">
+      🚀 Kostenlos registrieren
+    </button>
+
+    <div style="font-size:10px;color:#4a7a9b;text-align:center;margin-top:12px;line-height:1.6">
+      Du erhältst deinen Zugangscode innerhalb von 24 Stunden per E-Mail.<br>
+      Kein Abo · Keine Kreditkarte · Jederzeit kündbar
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:16px">
+    <button onclick="showScreen('home')" style="background:none;border:none;color:#4a7a9b;font-size:12px;font-family:inherit;cursor:pointer">
+      Bereits registriert? → Zum Login
+    </button>
+  </div>
+</div>
+
 <div class="page active" id="screen-home">
   <div class="hero">
     <img src="icon-192.png" alt="PflegeLearn NRW" style="width:90px;height:90px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 18px rgba(56,189,248,.35))">
@@ -3628,6 +3698,75 @@ function toggleDarkMode() {
   const btn = document.getElementById('btn-darkmode');
   if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
   localStorage.setItem('pl_lightmode', isDark ? '1' : '0');
+}
+
+// ─── EMAILJS REGISTRIERUNG ────────────────────────────────────
+const EMAILJS_SERVICE  = 'service_8hn8nqi';
+const EMAILJS_TEMPLATE = 'g7jbwbc';
+const EMAILJS_KEY      = 'RfDxGv-ZhHvNIKZ9I';
+
+if (typeof emailjs !== 'undefined') {
+  emailjs.init({ publicKey: EMAILJS_KEY });
+}
+
+async function submitRegistrierung() {
+  const name       = document.getElementById('reg-name').value.trim();
+  const email      = document.getElementById('reg-email').value.trim();
+  const ausbildung = document.getElementById('reg-ausbildung').value;
+  const btn        = document.getElementById('reg-btn');
+
+  if (!name)  { alert('Bitte Name eingeben!'); return; }
+  if (!email || !email.includes('@')) { alert('Bitte gültige E-Mail eingeben!'); return; }
+
+  btn.innerHTML = '⏳ Wird gesendet...';
+  btn.disabled = true;
+
+  const now = new Date();
+  const datum = now.toLocaleDateString('de-DE') + ' ' + now.toLocaleTimeString('de-DE');
+
+  try {
+    if (typeof emailjs === 'undefined') throw new Error('EmailJS nicht geladen');
+
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+      name:       name,
+      email:      email,
+      ausbildung: ausbildung || 'Nicht angegeben',
+      datum:      datum,
+      message:    'Neue Registrierung – bitte Token zusenden!'
+    });
+
+    btn.innerHTML = '✅ Erfolgreich gesendet!';
+    btn.style.background = 'linear-gradient(135deg,#059669,#34d399)';
+
+    // Erfolgs-Modal
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px';
+    modal.innerHTML =
+      '<div style="background:linear-gradient(145deg,#0d2135,#091525);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:30px;max-width:380px;width:100%;text-align:center">' +
+        '<div style="font-size:52px;margin-bottom:12px">🎉</div>' +
+        '<div style="font-size:20px;font-weight:900;color:#34d399;margin-bottom:8px">Registrierung erfolgreich!</div>' +
+        '<div style="font-size:13px;color:#94a3b8;line-height:1.7;margin-bottom:20px">' +
+          'Hallo <strong style="color:#ddf0fb">' + name + '</strong>!<br>' +
+          'Dein persönlicher Zugangscode wird innerhalb von <strong style="color:#38bdf8">24 Stunden</strong> an<br>' +
+          '<strong style="color:#38bdf8">' + email + '</strong><br>gesendet.' +
+        '</div>' +
+        '<div style="background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);border-radius:10px;padding:12px;margin-bottom:20px;font-size:11px;color:#fbbf24;line-height:1.6">' +
+          '💡 Bitte auch den Spam-Ordner prüfen!' +
+        '</div>' +
+        '<button onclick="this.closest(\'div[style]\').remove();showScreen(\'home\')" style="width:100%;background:linear-gradient(135deg,#0369a1,#38bdf8);border:none;border-radius:12px;padding:14px;color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">' +
+          '✅ Verstanden – Zum Login' +
+        '</button>' +
+      '</div>';
+    document.body.appendChild(modal);
+
+  } catch(e) {
+    console.error('EmailJS Fehler:', e);
+    btn.innerHTML = '❌ Fehler – Bitte direkt mailen';
+    btn.style.background = 'rgba(248,113,133,.2)';
+    btn.disabled = false;
+    // Fallback: direkte E-Mail
+    window.location.href = 'mailto:pflegelearn.nrw@gmail.com?subject=Registrierung PflegeLearn NRW&body=Name: ' + encodeURIComponent(name) + '%0AE-Mail: ' + encodeURIComponent(email) + '%0AAusbildung: ' + encodeURIComponent(ausbildung);
+  }
 }
 
 // ─── ACCORDION ─────────────────────────────────────────────────
