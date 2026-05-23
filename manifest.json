@@ -4,7 +4,7 @@
   "description": "Lernassistent für Pflegeausbildung in NRW",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0b1a35",
   "theme_color": "#1e4080",
   "lang": "de",
