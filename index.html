@@ -486,14 +486,14 @@
   </div>
   <div class="section-label" style="display:none"></div>
   <!-- ── KI-ASSISTENT (Featured, immer sichtbar) ── -->
-  <div style="width:100%;background:linear-gradient(135deg,rgba(56,189,248,.06),rgba(56,189,248,.02));border:1px solid rgba(56,189,248,.15);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px">
+  <button onclick="startChat(null,'Hallo! Ich bin dein Lernassistent für Pflege NRW 🩺 Was möchtest du lernen oder wissen?')" style="width:100%;background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(56,189,248,.04));border:1px solid rgba(56,189,248,.3);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
     <div style="font-size:32px">🤖</div>
     <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#38bdf8">KI-Assistent</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">🔧 In Vorbereitung · Kommt bald</div>
+      <div style="font-size:15px;font-weight:700;color:#38bdf8">KI-Assistent fragen</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Stelle jede Frage · Sofortantwort</div>
     </div>
-    <div style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.25);border-radius:8px;padding:4px 10px;font-size:9px;font-weight:700;color:#facc15;letter-spacing:1px">BALD</div>
-  </div>
+    <div style="margin-left:auto;font-size:20px;color:#38bdf8">›</div>
+  </button>
 
   <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
   <div class="acc-wrap" id="acc-ausb">
@@ -1414,8 +1414,7 @@ function showTyping() {
 function removeTyping() { const t = document.getElementById("typing"); if (t) t.remove(); }
 
 // ─── HYBRID KI SYSTEM ────────────────────────────────────────────────────────
-const GEMINI_KEY = "AIzaSyCsIZqqYpJOmz1Gt5P_RjYx__6-GqiLUIs";
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_KEY;
+// KI-Endpunkt → Vercel Serverless (Key sicher im Backend)
 
 // Lokale Wissensdatenbank für häufige Begriffe (kostenlos, sofort)
 const LOKAL_WISSEN = {
@@ -1464,30 +1463,25 @@ function checkLokalWissen(frage) {
   return null;
 }
 
-async function callGemini(messages, systemPrompt) {
-  const contents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{text: m.content}]
-  }));
+// ─── KI PROXY (Vercel Serverless) ─────────────────────────────
+// API Key ist sicher im Backend – kein CORS-Problem mehr
+const KI_ENDPOINT = '/api/chat';
 
-  const response = await fetch(GEMINI_URL, {
+async function callGemini(messages, systemPrompt) {
+  const response = await fetch(KI_ENDPOINT, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      system_instruction: {parts: [{text: systemPrompt}]},
-      contents: contents,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 800,
-      }
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, systemPrompt })
   });
 
-  const data = await response.json();
-  if (data.candidates && data.candidates[0]) {
-    return data.candidates[0].content.parts[0].text;
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || 'KI nicht erreichbar');
   }
-  throw new Error('Keine Antwort von Gemini');
+
+  const data = await response.json();
+  if (!data.reply) throw new Error('Keine Antwort');
+  return data.reply;
 }
 
 async function sendMsg(text) {
@@ -3119,9 +3113,9 @@ init();
 
 const TOKEN_DB = {
   "NeleLily2916": { name:"Patrick", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
-  "TEST-PFLEGE-2026-T001": { name:"Tester 1", bereich:"alle", ablauf:"2026-05-28", aktiv:true },
-  "TEST-PFLEGE-2026-T002": { name:"Tester 2", bereich:"alle", ablauf:"2026-05-28", aktiv:true },
-  "TEST-PFLEGE-2026-T003": { name:"Tester 3", bereich:"alle", ablauf:"2026-05-28", aktiv:true },
+  "TEST-PFLEGE-2026-T001": { name:"Tester 1", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  "TEST-PFLEGE-2026-T002": { name:"Tester 2", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  "TEST-PFLEGE-2026-T003": { name:"Tester 3", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
 };
 
 // Bereichs-Konfiguration: Was darf welcher Bereich sehen?
@@ -4294,23 +4288,16 @@ function adminTabExtended(tab) {
 
 // ─── KI SYSTEM – Gemini Direct ───────────────────────────────────────────────
 async function callAI(prompt, systemPrompt) {
-  // Versuche zuerst Gemini
   try {
-    const body = {
-      contents: [{ parts: [{ text: (systemPrompt ? systemPrompt + '\n\n' : '') + prompt }] }],
-      generationConfig: { maxOutputTokens: 800, temperature: 0.7 }
-    };
-    const res = await fetch(GEMINI_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-    }
-  } catch(e) { console.warn('Gemini:', e); }
-  return null;
+    const reply = await callGemini(
+      [{ role: 'user', content: prompt }],
+      systemPrompt
+    );
+    return reply;
+  } catch(e) {
+    console.warn('callAI Fehler:', e);
+    return null;
+  }
 }
 
 // ─── STRIPE VORBEREITUNG ──────────────────────────────────────────────────────
