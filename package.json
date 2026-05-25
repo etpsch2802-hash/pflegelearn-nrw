@@ -1,8 +1,8 @@
-
 {
   "name": "pflegelearn-nrw",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {},
   "dependencies": {
     "@google/genai": "^0.1.1"
   }
