@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "scripts": {
+    "build": "echo 'Statische Seite bereitgestellt'"
+  },
   "dependencies": {
     "@google/genai": "^0.1.1"
   }
