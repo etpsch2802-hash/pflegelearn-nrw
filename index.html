@@ -1465,7 +1465,7 @@ function checkLokalWissen(frage) {
 
 // ─── KI PROXY (Vercel Serverless) ─────────────────────────────
 // API Key ist sicher im Backend – kein CORS-Problem mehr
-const KI_ENDPOINT = '/api/chat';
+const KI_ENDPOINT = '/api/chat.js';
 
 async function callGemini(messages, systemPrompt) {
   const response = await fetch(KI_ENDPOINT, {
