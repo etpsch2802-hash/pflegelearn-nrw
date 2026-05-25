@@ -29,9 +29,15 @@ export default async function handler(req, res) {
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
 
+    c// Wir holen uns den System-Prompt aus dem Frontend-Request, falls vorhanden
+    const systemInstruction = body.systemPrompt || "Du bist ein hilfreicher Lernassistent.";
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: messages,
+      config: {
+        systemInstruction: systemInstruction
+      }
     });
 
     // WICHTIG: Das 'await' vor response.text() fängt die Antwort sauber ab
