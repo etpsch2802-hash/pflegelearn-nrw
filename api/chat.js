@@ -1,4 +1,4 @@
-import { GoogleGenAI } from 'https://esm.sh/@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body;
+   const { messages } = req.body;
     
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: message,
+   contents: messages,
     });
 
     return res.status(200).json({ text: response.text });
