@@ -24,7 +24,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'API-Schlüssel fehlt im System' });
     }
 
-    // Wir holen uns die Frage aus der App (z.B. "copd")
     const lastMessage = messages[messages.length - 1];
     const userPrompt = lastMessage ? (lastMessage.content || lastMessage.text || "") : "";
 
@@ -33,8 +32,6 @@ export default async function handler(req, res) {
     }
 
     const systemInstruction = body.systemPrompt || "Du bist ein hilfreicher Lernassistent.";
-
-    // Wir rufen Gemini direkt über die Web-Schnittstelle auf – OHNE import-Bibliothek!
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     
     const apiResponse = await fetch(apiUrl, {
@@ -60,7 +57,6 @@ export default async function handler(req, res) {
     const data = await apiResponse.json();
     const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Keine Antwort erhalten.";
 
-    // Rückgabe an deine App
     return res.status(200).json({ reply: aiText });
 
   } catch (error) {
