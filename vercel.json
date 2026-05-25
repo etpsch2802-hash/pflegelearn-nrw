@@ -1,10 +1,16 @@
+
 {
-  "functions": {
-    "api/chat.js": {
-      "runtime": "edge"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/chat.js",
+      "use": "@vercel/node"
     }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "api/chat.js"
+    }
   ]
-}
+} 
