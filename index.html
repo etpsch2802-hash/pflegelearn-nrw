@@ -323,6 +323,7 @@
     💳 Direkt Vollzugriff freischalten
 </a>
 
+
   <div style="margin-top:12px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
     <div style="font-size:10px;color:#4a7a9b;line-height:1.7">
       🔑 Noch kein Zugangscode?<br>
@@ -547,7 +548,7 @@
         <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa;grid-column:span 2">
           <div class="bottom-card-icon">📇</div>
           <div class="bottom-card-title">Taschenkarten</div>
-          <div class="bottom-card-sub">15 Karten · Kasack-Format · Druckfertig</div>
+          <div class="bottom-card-sub">38 Karten · Kasack-Format · Druckfertig</div>
         </button>
         <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
           <div class="bottom-card-icon">🏥</div>
@@ -952,13 +953,13 @@ const QUIZ_FRAGEN = [
 {kat:"pflegehelfer",frage:"Was ist Behandlungspflege?",opt:["Körperpflege und Lagerung","Ärztlich verordnete Maßnahmen","Ernährungsberatung","Physiotherapie"],k:1,erkl:"Behandlungspflege = ärztlich verordnete Maßnahmen die an qualifiziertes Pflegepersonal delegiert werden. Kein eigenständiges Handeln ohne Anordnung.",s:"mittel"},
 {kat:"pflegehelfer",frage:"Was gehört zur Grundpflege?",opt:["Injektionen und Infusionen","Körperpflege, Lagerung","Wundversorgung","EKG"],k:1,erkl:"Grundpflege = ATL-Unterstützung ohne ärztliche Anordnung.",s:"leicht"},
 {kat:"pflegehelfer",frage:"Was bedeutet aktivierende Pflege?",opt:["Pflegeperson übernimmt alles","Förderung der Selbstständigkeit des Patienten","Vollständige Bettruhe","Mehr Medikamente geben"],k:1,erkl:"Aktivierende Pflege fördert vorhandene Fähigkeiten. Ziel: Selbstständigkeit erhalten/wiederherstellen.",s:"leicht"},
-{kat:"pflegehelfer",frage:"Was ist ein Dekubitus?",opt:["Wundinfektion durch Bakterien","Druckgeschwür durch anhaltenden","Musklentzündung","Blutvergiftung"],k:1,erkl:"Dekubitus = druckbedingte Gewebeschädigung. Grad I-IV. Prädilektionsstellen: Steißbein, Fersen, Knöchel.",s:"leicht"},
-{kat:"pflegehelfer",frage:"Wie oft sollte ein immobiler Patient umgelagert werden?",opt:["Alle 6-8 Stunden","Alle 2-4 Stunden je nach","Einmal täglich","Nur bei Schmerzen"],k:1,erkl:"Laut Expertenstandard: individuell je nach Risiko, Standard alle 2-4h. Druckentlastung wichtiger als feste Intervalle.",s:"mittel"},
+{kat:"pflegehelfer",frage:"Was ist ein Dekubitus?",opt:["Wundinfektion durch Bakterien","Druckgeschwür durch anhaltenden Druck","Musklentzündung","Blutvergiftung"],k:1,erkl:"Dekubitus = druckbedingte Gewebeschädigung. Grad I-IV. Prädilektionsstellen: Steißbein, Fersen, Knöchel.",s:"leicht"},
+{kat:"pflegehelfer",frage:"Wie oft sollte ein immobiler Patient umgelagert werden?",opt:["Alle 6-8 Stunden","Alle 2-4 Stunden (Risikopatient)","Einmal täglich","Nur bei Schmerzen"],k:1,erkl:"Laut Expertenstandard: individuell je nach Risiko, Standard alle 2-4h. Druckentlastung wichtiger als feste Intervalle.",s:"mittel"},
 {kat:"pflegehelfer",frage:"Was gilt rechtlich für die Pflegedokumentation?",opt:["Kann auch von Angehörigen gemacht werden","Zeitnah, vollständig, korrekt, leserlich","Nur Probleme dokumentieren","Einmal täglich reicht"],k:1,erkl:"Pflegedokumentation ist rechtlich bindend: nicht dokumentiert gilt als nicht durchgeführt.",s:"mittel"},
 {kat:"pflegehelfer",frage:"Was sind Ressourcen in der Pflege?",opt:["Probleme des Patienten","Vorhandene Fähigkeiten","Medikamentenliste","Arztdiagnosen"],k:1,erkl:"Ressourcen = Stärken des Patienten: z.B. 'Kann rechtes Bein heben', 'Motiviert', 'Familienhilfe'. Basis für aktivierende Pflege.",s:"mittel"},
 {kat:"pflegehelfer",frage:"Was bedeutet AEDL nach Krohwinkel?",opt:["Ärztliche Erstdiagnose-Liste","Aktivitäten und existentielle","Ambulante Tagespflegeleistungen","Aufnahmeprozedere"],k:1,erkl:"AEDL (Krohwinkel): 13 Lebensbereiche u.a. Kommunizieren, Bewegen, Vitale Funktionen, Pflegen, Essen/Trinken, Ausscheiden, Kleiden, Ruhen, Beschäftigen, Soziales.",s:"schwer"},
 {kat:"pflegehelfer",frage:"Was ist bei der Messung des Blutdrucks zu beachten?",opt:["Direkt nach dem Sport messen","5 Min. Ruhe, Arm auf Herzhöhe","Nur im Stehen messen","Nur rechten Arm"],k:1,erkl:"Korrekte RR-Messung: 5 Min. Ruhe, sitzen, Arm auf Herzhöhe, korrekte Manschette, beide Arme vergleichen.",s:"leicht"},
-{kat:"pflegehelfer",frage:"Was ist Kinästhetik?",opt:["Entspannungstechnik","Bewegungslehre zur","Beatmungsverfahren","Wundbehandlung"],k:1,erkl:"Kinästhetik: Pflegende nutzen natürliche Körperbewegungen, minimaler Kraftaufwand, Eigenaktivität des Patienten fördern.",s:"mittel"},
+{kat:"pflegehelfer",frage:"Was ist Kinästhetik?",opt:["Entspannungstechnik","Bewegungslehre zur Selbstpflege","Beatmungsverfahren","Wundbehandlung"],k:1,erkl:"Kinästhetik: Pflegende nutzen natürliche Körperbewegungen, minimaler Kraftaufwand, Eigenaktivität des Patienten fördern.",s:"mittel"},
 {kat:"pflegehelfer",frage:"Was sind prophylaktische Pflegemaßnahmen?",opt:["Maßnahmen nach Komplikation","Vorbeugende Maßnahmen: Dekubitus-","Nur ärztlich verordnet","Nur für ältere Patienten"],k:1,erkl:"Prophylaxen: Dekubitusprophylaxe (Lagerung), Pneumonieprophylaxe (Oberkörperhochlagerung, Atemübungen), Thromboseprophylaxe (Kompressionsstrümpfe, Mobilisation), Sturzprophylaxe.",s:"leicht"},
 {kat:"pflegehelfer",frage:"Welche Lagerung hilft bei Pneumonieprophylaxe?",opt:["Flachlagerung","Oberkörperhochlagerung 30-45°","Bauchlagerung","Linksseitenlage"],k:1,erkl:"OK-Hochlagerung 30-45°: erleichtert Atmung, Sekretabfluss, verhindert Aspiration. Zusätzlich: Atemübungen, Mobilisation.",s:"mittel"},
 {kat:"pflegehelfer",frage:"Was ist die 6-R-Regel bei der Medikamentengabe?",opt:["6 Stunden Abstand","Richtiger Patient, Medikament","6 Tabletten täglich","6-mal täglich kontrollieren"],k:1,erkl:"6-R-Regel: Richtiger Patient, Richtiges Medikament, Richtige Dosis, Richtiger Zeitpunkt, Richtiger Weg, Richtige Dokumentation.",s:"mittel"},
@@ -970,20 +971,20 @@ const QUIZ_FRAGEN = [
 {kat:"anerkennung",frage:"Was ist ein Defizitbescheid?",opt:["Ablehnungsbescheid","Dokument das wesentliche","Sprachzeugnis","Arbeitsvertrag"],k:1,erkl:"Defizitbescheid: dokumentiert konkret Abweichungen der ausländischen Ausbildung von der deutschen. Grundlage für Anpassungslehrgang oder Kenntnisprüfung.",s:"mittel"},
 {kat:"anerkennung",frage:"Welches Sprachniveau ist für den Anpassungslehrgang erforderlich?",opt:["A2","B1","B2","C1"],k:2,erkl:"B2-Deutschkenntnisse Pflicht – nötig für Fachunterricht und Patientenkommunikation.",s:"leicht"},
 {kat:"anerkennung",frage:"Welche zwei Wege zur Anerkennung haben Drittstaaten-Pflegekräfte?",opt:["Sprachkurs oder Praktikum","Anpassungslehrgang ODER Kenntnisprüfung","Vollstudium oder Quereinsteiger","Nostrifikation oder EU-Richtlinie"],k:1,erkl:"Drittstaaten: Anpassungslehrgang (praxisorientiert bis 18 Monate) ODER Kenntnisprüfung (schriftlich+mündlich+praktisch).",s:"mittel"},
-{kat:"anerkennung",frage:"Was bedeutet Berufserlaubnis auf Zeit?",opt:["Unbefristete Berufsurkunde","Befristete Erlaubnis zur","Urlaubsregelung","Probearbeitsvertrag"],k:1,erkl:"Berufserlaubnis auf Zeit (§64 PflBG): ermöglicht Berufsausübung während laufendem Anerkennungsverfahren. Befristet, widerrufbar.",s:"schwer"},
+{kat:"anerkennung",frage:"Was bedeutet Berufserlaubnis auf Zeit?",opt:["Unbefristete Berufsurkunde","Befristete Berufserlaubnis bis zur Anerkennung","Urlaubsregelung","Probearbeitsvertrag"],k:1,erkl:"Berufserlaubnis auf Zeit (§64 PflBG): ermöglicht Berufsausübung während laufendem Anerkennungsverfahren. Befristet, widerrufbar.",s:"schwer"},
 {kat:"anerkennung",frage:"Was ist die Schweigepflicht in der Pflege?",opt:["Pflege darf nichts sagen","Alle patientenbezogenen Infos vertraulich","Nur der Arzt hat Schweigepflicht","Angehörige dürfen immer informiert werden"],k:1,erkl:"Schweigepflicht §203 StGB: alle Heilberufsangehörigen. Verletzung = Straftat. Ausnahme: Kindeswohlgefährdung.",s:"mittel"},
 {kat:"anerkennung",frage:"Was sind die Pflegegrade in Deutschland?",opt:["1-3","1-5","0-4","A-D"],k:1,erkl:"Pflegegrade 1-5 nach SGB XI seit 2017. PG1 = geringe Beeinträchtigung, PG5 = schwerste Beeinträchtigung. Einstufung durch MDK.",s:"leicht"},
 {kat:"anerkennung",frage:"Was ist das SGB XI?",opt:["Krankenversicherungsgesetz","Soziale Pflegeversicherung","Berufsrecht der Pflege","Arbeitsschutzgesetz"],k:1,erkl:"SGB XI = Sozialgesetzbuch XI = Soziale Pflegeversicherung seit 1995. Regelt Leistungen bei Pflegebedürftigkeit.",s:"mittel"},
 {kat:"anerkennung",frage:"Was bedeutet Fixierung in der Pflege rechtlich?",opt:["Lagerungstechnik","Freiheitsentziehende","Verbandsmaterial","Mobilisationsübung"],k:1,erkl:"Fixierung = FEM. Richterliche Genehmigung oder Betreuungseinwilligung Pflicht! Ohne Genehmigung = Freiheitsberaubung §239 StGB.",s:"schwer"},
 {kat:"anerkennung",frage:"Was sind Expertenstandards der DNQP?",opt:["Nur für Ärzte","Wissenschaftlich begründete","Internationale Pflegestandards","MDK-Prüfungsrichtlinien"],k:1,erkl:"DNQP-Expertenstandards: Dekubitusprophylaxe, Sturzprophylaxe, Schmerzmanagement, Ernährungsmanagement, Kontinenzförderung. Maßstab guter Pflege.",s:"schwer"},
 {kat:"anerkennung",frage:"Was ist der Unterschied Grundpflege vs. Behandlungspflege?",opt:["Kein Unterschied","Grundpflege = ATL ohne ärztl.","Grundpflege ist nur für Ärzte","Behandlungspflege darf jeder"],k:1,erkl:"Grundpflege: ATL-Unterstützung (Waschen, Mobilisation). Behandlungspflege: ärztliche Anordnung nötig (Verbandswechsel, Injektion, Katheter).",s:"mittel"},
-{kat:"anerkennung",frage:"Was ist Delegation in der Pflege?",opt:["Aufgaben an Angehörige","Ärztliche Maßnahmen an","Urlaubsvertretung","Dienstplangestaltung"],k:1,erkl:"Delegation: Arzt überträgt vorbehaltene Aufgaben an qualifiziertes Pflegepersonal. Voraussetzungen: Anordnung, Qualifikation, Einweisung. Verantwortung bleibt beim Arzt.",s:"mittel"},
-{kat:"anerkennung",frage:"Was ist Bezugspflege?",opt:["Jede Pflegekraft pflegt alle Patienten","Kontinuierliche Zuständigkeit einer","Pflege nur durch Angehörige","Tägliches Teamwechsel"],k:1,erkl:"Bezugspflege (Primary Nursing): eine PK kontinuierlich für bestimmte Patienten zuständig. Vorteile: Beziehungskontinuität, bessere Patientenkenntnis.",s:"mittel"},
+{kat:"anerkennung",frage:"Was ist Delegation in der Pflege?",opt:["Aufgaben an Angehörige","Ärztliche Aufgaben an Pflegepersonal übertragen","Urlaubsvertretung","Dienstplangestaltung"],k:1,erkl:"Delegation: Arzt überträgt vorbehaltene Aufgaben an qualifiziertes Pflegepersonal. Voraussetzungen: Anordnung, Qualifikation, Einweisung. Verantwortung bleibt beim Arzt.",s:"mittel"},
+{kat:"anerkennung",frage:"Was ist Bezugspflege?",opt:["Jede Pflegekraft pflegt alle Patienten","Feste Pflegeperson für einen Patienten","Pflege nur durch Angehörige","Tägliches Teamwechsel"],k:1,erkl:"Bezugspflege (Primary Nursing): eine PK kontinuierlich für bestimmte Patienten zuständig. Vorteile: Beziehungskontinuität, bessere Patientenkenntnis.",s:"mittel"},
 {kat:"anerkennung",frage:"Was ist bei der Übergabe zu beachten?",opt:["Alles laut sagen","Datenschutz wahren, strukturiert","Immer schriftlich ohne Gespräch","Angehörige immer dabei"],k:1,erkl:"SBAR-Übergabe: Situation, Background, Assessment, Recommendation. Datenschutz! Nicht vor anderen Patienten.",s:"mittel"},
 {kat:"anerkennung",frage:"Was ist MRSA und wie wird er übertragen?",opt:["Medikament, Luftübertragung","Methicillin-resistenter","Virus, Tröpfchen","Pilz, Blut"],k:1,erkl:"MRSA Hauptübertragung: Hände des Personals! Deshalb Händedesinfektion vor und nach JEDEM Patientenkontakt.",s:"mittel"},
 {kat:"anerkennung",frage:"Was ist Informed Consent?",opt:["Patient unterschreibt alles blind","Aufklärung vor jeder Maßnahme +","Arzt entscheidet allein","Nur bei Operationen"],k:1,erkl:"Selbstbestimmungsrecht: Aufklärung + Einwilligung vor jeder Maßnahme. Ohne Einwilligung = Körperverletzung §223 StGB.",s:"mittel"},
 {kat:"anerkennung",frage:"Welche Unterlagen sind für Anerkennungsantrag typisch nötig?",opt:["Nur Reisepass","Ausbildungsnachweis +","Nur Sprachzeugnis","Nur Arbeitsvertrag"],k:1,erkl:"Typische Unterlagen: Ausbildungsurkunde + Transcript of Records + begl. Übersetzungen + Sprachnachweis B2 + Identitätsnachweis + Gebühr.",s:"mittel"},
-{kat:"anerkennung",frage:"Was ist der Unterschied Anpassungslehrgang vs. Kenntnisprüfung?",opt:["Kein Unterschied","Anpassungslehrgang = Praxis über","Kenntnisprüfung ist einfacher","Nur für EU-Bürger"],k:1,erkl:"Anpassungslehrgang: praktische Tätigkeit in dt. Einrichtung unter Aufsicht. Kenntnisprüfung: punktuell wie staatl. Abschlussprüfung. Kandidat wählt.",s:"mittel"},
+{kat:"anerkennung",frage:"Was ist der Unterschied Anpassungslehrgang vs. Kenntnisprüfung?",opt:["Kein Unterschied","Anpassungslehrgang = Praxis, Kenntnisprüfung = Examen","Kenntnisprüfung ist einfacher","Nur für EU-Bürger"],k:1,erkl:"Anpassungslehrgang: praktische Tätigkeit in dt. Einrichtung unter Aufsicht. Kenntnisprüfung: punktuell wie staatl. Abschlussprüfung. Kandidat wählt.",s:"mittel"},
 {kat:"anerkennung",frage:"Was ist die Pflegekammer NRW?",opt:["Ein Krankenhaus","Berufsständische","Ein Ausbildungsinstitut","Eine Gewerkschaft"],k:1,erkl:"Pflegekammer NRW: Körperschaft des öffentlichen Rechts. Mitgliedschaft für exam. Pflegefachkräfte Pflicht. Aufgaben: Berufsregister, Weiterbildungsanerkennung (seit 2024), Berufsordnung.",s:"schwer"},
 {kat:"anerkennung",frage:"Was bedeutet Residenzpflicht im Anpassungslehrgang?",opt:["In NRW wohnen müssen","Lehrgang muss in der Einrichtung","Urlaubsverbot","Deutschpflicht im Unterricht"],k:1,erkl:"Anpassungslehrgang NRW: findet in zugelassenen Einrichtungen in NRW statt. Begleitung durch Mentorin/Praxisanleitung. Theorieanteile an Pflegeschule.",s:"schwer"},
 {kat:"gpa",frage:"Seit wann ist die generalistische Pflegeausbildung in Kraft?",opt:["01.01.2018","01.01.2020","01.09.2021","01.01.2022"],k:1,erkl:"PflBG trat 01.01.2020 in Kraft: vereint GKP, Altenpflege und Kinderkrankenpflege.",s:"leicht"},
@@ -1009,33 +1010,33 @@ const QUIZ_FRAGEN = [
 {kat:"pflegeplanung",frage:"Was sind die 4 Hauptbestandteile einer Pflegeplanung?",opt:["Problem, Diagnose, Therapie, Entlassung","Pflegeproblem/Pflegediagnose, Pflegeziel","Anamnese, Befund, Plan, Kontrolle","Aufnahme, Behandlung, Pflege, Entlassung"],k:1,erkl:"Pflegeplanung: 1.Pflegeproblem (aktuell/potenziell), 2.Pflegeziel (SMART), 3.Pflegemaßnahmen (wer, was, wann), 4.Evaluation.",s:"leicht"},
 {kat:"pflegeplanung",frage:"Was muss bei der Formulierung eines Pflegeproblems enthalten sein?",opt:["Nur das Problem","Problem + Ursache (Ätiologie)","Nur ärztliche Diagnose","Nur Medikamentenliste"],k:1,erkl:"Pflegeproblem vollständig: P = Problem + Ä = Ursache/Ätiologie (r/t = related to) + Z = Zeichen (m/d/s = manifested by). Beispiel: Beeinträchtigte Mobilität r/t Schmerzen m/d/s Schonhaltung.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was sind Ressourcen in der Pflegeplanung?",opt:["Nur Material","Vorhandene","Nur Probleme","Nur Diagnosen"],k:1,erkl:"Ressourcen: körperliche (kann Arm heben), kognitive (versteht Anweisungen), soziale (Familienhilfe). Müssen explizit dokumentiert werden!",s:"mittel"},
-{kat:"pflegeplanung",frage:"Was ist ein korrektes SMART-Pflegeziel?",opt:["Patient soll sich besser fühlen","Patient geht am 3. postop. Tag mit","Mobilität verbessern","Schmerzen reduzieren"],k:1,erkl:"SMART: Spezifisch (konkrete Handlung: gehen), Messbar (10m), Attraktiv, Realistisch, Terminiert (3. postop. Tag). Vage Ziele sind nicht auswertbar!",s:"mittel"},
+{kat:"pflegeplanung",frage:"Was ist ein korrektes SMART-Pflegeziel?",opt:["Patient soll sich besser fühlen","Patient geht am 3. Tag mit Hilfe 10m","Mobilität verbessern","Schmerzen reduzieren"],k:1,erkl:"SMART: Spezifisch (konkrete Handlung: gehen), Messbar (10m), Attraktiv, Realistisch, Terminiert (3. postop. Tag). Vage Ziele sind nicht auswertbar!",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was sind potenzielle Pflegeprobleme?",opt:["Bereits eingetretene Probleme","Risiken/Gefährdungen die noch nicht","Ärztliche Diagnosen","Medikamentennebenwirkungen"],k:1,erkl:"Potenzielle Pflegeprobleme = Risiken: z.B. 'Gefahr eines Dekubitus wegen Immobilität'. Erfordern prophylaktische Maßnahmen.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Wie formuliert man konkrete Pflegemaßnahmen?",opt:["Allgemein: Patient pflegen","Konkret: WER, WAS, WANN/WIE OFT","Nur Medikamentengabe","Nur ärztliche Therapien"],k:1,erkl:"Pflegemaßnahmen müssen konkret sein: WER (wer führt durch?), WAS (welche Maßnahme?), WANN/WIE OFT, WIE (Technik), MIT WAS (Hilfsmittel). Keine vagen Formulierungen!",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist der Unterschied Pflegediagnose vs. ärztliche Diagnose?",opt:["Kein Unterschied","Ärztlich = Krankheit/Pathologie","Pflegediagnose weniger wichtig","Ärztlich ist detaillierter"],k:1,erkl:"Ärztlich: Herzinsuffizienz. Pflegediagnose: 'Beeinträchtigte Körperpflege r/t Kurzatmigkeit m/d/s Erschöpfung beim Waschen'. Eigenständige pflegerische Kompetenz!",s:"mittel"},
-{kat:"pflegeplanung",frage:"Was ist Validation nach Naomi Feil?",opt:["Schmerzmessung","Kommunikationsmethode für","Wundbehandlung","Beatmungsstrategie"],k:1,erkl:"Validation: Gefühle und Erleben des dementen Menschen wertschätzen – auch wenn nicht realitätskonform. NICHT korrigieren! Einfühlendes Eingehen auf die subjektive Realität.",s:"schwer"},
+{kat:"pflegeplanung",frage:"Was ist Validation nach Naomi Feil?",opt:["Schmerzmessung","Kommunikationsmethode für Demenzkranke","Wundbehandlung","Beatmungsstrategie"],k:1,erkl:"Validation: Gefühle und Erleben des dementen Menschen wertschätzen – auch wenn nicht realitätskonform. NICHT korrigieren! Einfühlendes Eingehen auf die subjektive Realität.",s:"schwer"},
 {kat:"pflegeplanung",frage:"Was ist das Orem-Pflegemodell?",opt:["AEDL-Modell","","Maslow-Modell","Salutogenese"],k:1,erkl:"Orem: Pflege nur aktiv bei Selbstpflegedefizit. 3 Systeme: voll-kompensierend, teil-kompensierend, unterstützend-edukativ. Ziel: Selbstpflegekompetenz stärken.",s:"schwer"},
 {kat:"pflegeplanung",frage:"Was ist das SBAR-Schema?",opt:["Beatmungseinstellung","Strukturierte Kommunikation","Pflegediagnose","Dekubitusklassifizierung"],k:1,erkl:"SBAR: S=Situation, B=Background (Vorgeschichte), A=Assessment (eigene Einschätzung), R=Recommendation (Empfehlung). Wichtig bei Notfällen, Arztgesprächen, Übergaben.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist die NRS und wie wird sie eingesetzt?",opt:["Nationales Sturzregister","Numerische Rating-Skala","Nutritional Risk Screening","Reanimationsschema"],k:1,erkl:"NRS: Patient bewertet Schmerz 0-10. Ab NRS ≥4 = Handlungsbedarf. Vor und nach Schmerzmedikation dokumentieren. Alternativen: VAS, BPS/CPOT (nicht-kommunikativ).",s:"leicht"},
-{kat:"pflegeplanung",frage:"Was ist Pflegevisite?",opt:["Arztvisite ohne Pflege","Systematische Überprüfung des","Nur Stationsleitung","Nur Schüler"],k:1,erkl:"Pflegevisite: regelmäßige Überprüfung ob Pflegeziele erreicht, Plan aktuell, Patient zufrieden. Bezugspflegekraft + Patient + ggf. Angehörige. Unterschied: keine Arztvisite!",s:"mittel"},
+{kat:"pflegeplanung",frage:"Was ist Pflegevisite?",opt:["Arztvisite ohne Pflege","Systematische Überprüfung des Pflegeprozesses","Nur Stationsleitung","Nur Schüler"],k:1,erkl:"Pflegevisite: regelmäßige Überprüfung ob Pflegeziele erreicht, Plan aktuell, Patient zufrieden. Bezugspflegekraft + Patient + ggf. Angehörige. Unterschied: keine Arztvisite!",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist das Braden-Assessment?",opt:["Ernährungsbewertung","Risikoeinschätzungs-Skala","Sturzrisikotest","Schmerztest"],k:1,erkl:"Braden-Skala: 6 Faktoren bewertet. Max. 23 Punkte. ≤18 Punkte = Dekubitusrisiko. Je niedrigerer Wert desto höheres Risiko. Einzusetzen bei Aufnahme und bei Veränderungen.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist Dekubitus-Kategorie II?",opt:["Nicht-wegdrückbare Rötung","Blasenbildung oder Erosion","Vollhautverlust bis Subkutis","Muskel/Knochen sichtbar"],k:1,erkl:"Dekubitus-Kategorien: I = nicht-wegdrückbare Rötung (Haut intakt), II = Blasen/Erosion (Teilverlust Dermis), III = Vollhautverlust bis Subkutis, IV = Muskeln/Knochen/Sehnen betroffen.",s:"schwer"},
 {kat:"pflegeplanung",frage:"Was ist Pflegeüberleitung?",opt:["Übergabe innerhalb Station","Strukturierte Weitergabe","Fortbildung","Eine Pflegediagnose"],k:1,erkl:"Pflegeüberleitung (Entlassungsmanagement): Pflegeprobleme, Ressourcen, Maßnahmen, Hilfsmittelbedarf, Medikamente, soziale Situation weitergeben. Expertenstandard DNQP.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist Schmerzmanagement nach Expertenstandard?",opt:["Schmerzmittel nur auf Nachfrage","Systematische Einschätzung +","Nur ärztliche Verordnung","Schmerzen selbst beurteilen"],k:1,erkl:"Expertenstandard Schmerz (DNQP): 1.NRS-Einschätzung 2.Ziel mit Patient vereinbaren 3.WHO-Stufenschema + Lagerung/Wärme/Ablenkung 4.Evaluation nach 30-60 Min. 5.Patientenedukation.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist Pflegeanamnese?",opt:["Nur Laborwerte","Ersterhebung: Biografie","Nur Arztdiagnosen","Nur Vitalzeichen"],k:1,erkl:"Pflegeanamnese = Erstassessment: Biografie, ATL/AEDL (was kann Patient selbst?), Ressourcen, aktuelle Probleme, Sozialanamnese, Medikamente, Allergien, Ernährungsgewohnheiten.",s:"mittel"},
 {kat:"pflegeplanung",frage:"Was ist Theorie-Praxis-Transfer?",opt:["Wissen auswendig lernen","Theoretisch gelerntes in der Praxis","Nur Lehrkräfte übertragen Wissen","Praxis zuerst, dann Theorie"],k:1,erkl:"Theorie-Praxis-Transfer: Azubi wendet theoretisches Wissen in Praxis an und reflektiert. Gefördert durch Praxisanleitung (Praxis) + Praxisbegleitung (Schulbesuche) + Lernaufgaben.",s:"mittel"},
-{kat:"pflegeplanung",frage:"Was ist der Pflegebericht?",opt:["Täglicher Arztbericht","Dokumentation von","Nur Vitalzeichen","Nur Medikamente"],k:1,erkl:"Pflegebericht: nicht dokumentiert = nicht getan (rechtlich). Inhalt: Vitalzeichen, Maßnahmen, besondere Ereignisse (Sturz, Schmerzen), Reaktionen, Gespräche. Zeitnah = sofort oder spätestens am selben Tag.",s:"leicht"},
+{kat:"pflegeplanung",frage:"Was ist der Pflegebericht?",opt:["Täglicher Arztbericht","Dokumentation von Pflegeverlauf und Reaktionen","Nur Vitalzeichen","Nur Medikamente"],k:1,erkl:"Pflegebericht: nicht dokumentiert = nicht getan (rechtlich). Inhalt: Vitalzeichen, Maßnahmen, besondere Ereignisse (Sturz, Schmerzen), Reaktionen, Gespräche. Zeitnah = sofort oder spätestens am selben Tag.",s:"leicht"},
 {kat:"pflegeplanung",frage:"Was ist Virginia Hendersons Pflegemodell?",opt:["AEDL","14 Grundbedürfnisse –","Salutogenese","Pflegeprozessmodell"],k:1,erkl:"Henderson (1966): 14 Grundbedürfnisse (Atmen, Essen/Trinken, Ausscheiden, Bewegen, Schlafen, Kleiden, Körpertemperatur, Körperpflege, Gefahrenvermeidung, Kommunizieren, Glauben, Beschäftigung, Spielen/Lernen). Pflege: Hilfe zur Selbstständigkeit.",s:"schwer"},
 {kat:"anaesthesie",frage:"Was bedeutet TIVA?",opt:["Thorakale intraoperative Vitalzeichenanalyse","Totale intravenöse Anästhesie – nur i.v.","Temporäre invasive Ventilation","Titrierte inhalative Vollnarkose"],k:1,erkl:"TIVA = Totale IntraVenöse Anästhesie. Propofol + Remifentanil. Vorteile: kein PONV-Trigger, kein MH-Auslöser.",s:"mittel"},
 {kat:"anaesthesie",frage:"Propofol ist ein…",opt:["Opioid","Einleitungshypnotikum (kein Opioid!)","Muskelrelaxans","Inhalationsanästhetikum"],k:1,erkl:"Propofol: Hypnotikum. NW: Blutdruckabfall, Atemdepression. Vorteile: schnell, steuerbar, angenehmes Erwachen. KEIN Opioid!",s:"leicht"},
 {kat:"anaesthesie",frage:"Wann ist eine Larynxmaske kontraindiziert?",opt:["Ambulante Eingriffe","Aspirationsrisiko: voller","Kinder unter 12","Regionalanästhesie"],k:1,erkl:"LMA = supraglottisch, kein Aspirationsschutz! KI: Aspirationsrisiko. RSI mit Tubus stattdessen.",s:"schwer"},
 {kat:"anaesthesie",frage:"Was ist das Nüchternheitsgebot vor Narkose?",opt:["1h nüchtern","6h feste Nahrung + 2h klare","12h komplett nüchtern","3h nüchtern"],k:1,erkl:"Erwachsene: 6h feste Nahrung/Milch, 2h klare Flüssigkeiten. Ziel: Aspirationsprophylaxe.",s:"mittel"},
 {kat:"anaesthesie",frage:"Was ist maligne Hyperthermie?",opt:["Fieber nach OP","Lebensbedrohliche","Überhitzung OP-Saal","Entzündungsreaktion"],k:1,erkl:"Maligne Hyperthermie: pharmakogenetisch. Trigger: Succinylcholin + volatile Anästhetika. Symptome: Muskelrigidität, Hyperkapnie, Tachykardie, Hyperthermie. Antidot: Dantrolen i.v.!",s:"schwer"},
-{kat:"anaesthesie",frage:"Was ist RSI (Rapid Sequence Induction)?",opt:["Langsame Kindereinleitung","Schnelle Blitzeinleitung bei","Regionale Spinalinjektion","Remifentanil-Infusion"],k:1,erkl:"RSI (Ileuseinleitung): Präoxygenierung → Propofol/Ketamin + Succinylcholin gleichzeitig → Krikoiddruck (Sellick) → sofortige Intubation ohne Maskenbeatmung.",s:"schwer"},
-{kat:"anaesthesie",frage:"Was ist Succinylcholin?",opt:["Schmerzmittel","Depolarisierendes","Hypnotikum","Inhalationsanästhetikum"],k:1,erkl:"Succinylcholin: einziges depolarisierendes MR. Wirkbeginn 60s, Dauer 10-15 Min. Einsatz: RSI. KI: Verbrennungen, Querschnitt, MH-Disposition (Triggersubstanz!).",s:"schwer"},
-{kat:"anaesthesie",frage:"Was ist PONV und wie wird es behandelt?",opt:["Postoperativer Nierendruck","Postoperative Übelkeit/Erbrechen –","Perioperatives Nierenversagen","Postoperative Nervenschäden"],k:1,erkl:"PONV: Apfel-Score Risikofaktoren: weiblich, Nichtraucher, PONV-Vorgeschichte, Opioide. Prophylaxe ab ≥2 Faktoren: Dexamethason 8mg + Ondansetron 4mg, TIVA bevorzugen.",s:"schwer"},
-{kat:"anaesthesie",frage:"Was ist Spinalanästhesie?",opt:["Vollnarkose","Injektion von LA in","Periduralkatheter","Nervenblockade am Arm"],k:1,erkl:"Spinalanästhesie: LA ins Liquor → dichte, schnelle Blockade in 3-5 Min. Typisch: Sectio, Knie-/Hüft-TEP. KI: Koagulopathie, Patientenablehnung.",s:"mittel"},
-{kat:"anaesthesie",frage:"Was ist Awareness unter Narkose?",opt:["Geplantes Aufwachen","Unbeabsichtigtes Bewusstsein","Postoperativer Schmerz","Narkoseüberdosierung"],k:1,erkl:"Awareness: Patient erlangt Bewusstsein, hört Gespräche, spürt evtl. Schmerzen, kann sich nicht bewegen. Prävention: BIS (Bispektral-Index) Ziel 40-60, ausreichende Hypnotikadosis.",s:"schwer"},
+{kat:"anaesthesie",frage:"Was ist RSI (Rapid Sequence Induction)?",opt:["Langsame Kindereinleitung","Schnelle Einleitung bei Aspirationsrisiko","Regionale Spinalinjektion","Remifentanil-Infusion"],k:1,erkl:"RSI (Ileuseinleitung): Präoxygenierung → Propofol/Ketamin + Succinylcholin gleichzeitig → Krikoiddruck (Sellick) → sofortige Intubation ohne Maskenbeatmung.",s:"schwer"},
+{kat:"anaesthesie",frage:"Was ist Succinylcholin?",opt:["Schmerzmittel","Depolarisierendes Muskelrelaxans","Hypnotikum","Inhalationsanästhetikum"],k:1,erkl:"Succinylcholin: einziges depolarisierendes MR. Wirkbeginn 60s, Dauer 10-15 Min. Einsatz: RSI. KI: Verbrennungen, Querschnitt, MH-Disposition (Triggersubstanz!).",s:"schwer"},
+{kat:"anaesthesie",frage:"Was ist PONV und wie wird es behandelt?",opt:["Postoperativer Nierendruck","Postoperative Übelkeit/Erbrechen –","Perioperatives Nierenversagen","Postoperative Nervenschäden möglich"],k:1,erkl:"PONV: Apfel-Score Risikofaktoren: weiblich, Nichtraucher, PONV-Vorgeschichte, Opioide. Prophylaxe ab ≥2 Faktoren: Dexamethason 8mg + Ondansetron 4mg, TIVA bevorzugen.",s:"schwer"},
+{kat:"anaesthesie",frage:"Was ist Spinalanästhesie?",opt:["Vollnarkose","Injektion ins Subarachnoidalraum (Liquor)","Periduralkatheter","Nervenblockade am Arm"],k:1,erkl:"Spinalanästhesie: LA ins Liquor → dichte, schnelle Blockade in 3-5 Min. Typisch: Sectio, Knie-/Hüft-TEP. KI: Koagulopathie, Patientenablehnung.",s:"mittel"},
+{kat:"anaesthesie",frage:"Was ist Awareness unter Narkose?",opt:["Geplantes Aufwachen","Unbeabsichtigtes Aufwachen in Narkose","Postoperativer Schmerz","Narkoseüberdosierung"],k:1,erkl:"Awareness: Patient erlangt Bewusstsein, hört Gespräche, spürt evtl. Schmerzen, kann sich nicht bewegen. Prävention: BIS (Bispektral-Index) Ziel 40-60, ausreichende Hypnotikadosis.",s:"schwer"},
 {kat:"anaesthesie",frage:"Was prüft die Anästhesiepflege vor jeder Narkose?",opt:["Nur Blutdruck","WHO-Checkliste","Nur Medikamente","Nur EKG"],k:1,erkl:"ABCDE-Vorbereitung: A=Airway (Tubus, LMA, Laryngoskop), B=Breathing (Beatmungsgerät), C=Circulation (Venenzugang, Katecholamine), D=Drugs (alle Medikamente), E=Equipment + Patientencheck.",s:"mittel"},
 {kat:"anaesthesie",frage:"Was ist Ketamin?",opt:["Opioid ohne Besonderheit","Dissoziatives Anästhetikum","Muskelrelaxans","Inhalationsanästhetikum"],k:1,erkl:"Ketamin: gut bei Asthma/COPD (Bronchodilatation), Schock (Kreislaufstabilisierung). NW: Halluzinationen → Kombination mit Midazolam! Erhält weitgehend Spontanatmung.",s:"schwer"},
 {kat:"anaesthesie",frage:"Was ist Laryngospasmus?",opt:["Hustenreiz","Reflektorischer","Schlucken","Herzrhythmusstörung"],k:1,erkl:"Laryngospasmus: meist bei Extubation. Symptome: Stridor, Atemnot, SpO₂-Abfall. Therapie: Atemwegssicherung, CPAP-Maske, ggf. Succinylcholin i.v. zur Relaxation.",s:"schwer"},
@@ -1044,7 +1045,7 @@ const QUIZ_FRAGEN = [
 {kat:"anaesthesie",frage:"Was ist perioperative Hypothermie?",opt:["Überhitzung","Unbeabsichtigter","Fieber nach OP","Frostbeulen"],k:1,erkl:"Hypothermie-Prophylaxe: Vorwärmen (Warm Touch), Wärmematte, angewärmte Infusionen, Raumtemperatur ≥21°C. Temperaturmonitoring intraoperativ.",s:"mittel"},
 {kat:"anaesthesie",frage:"Was ist das ABCDE-Schema in der Notfallversorgung?",opt:["Allgemein, Beatmung, Chirurgie, Diagnose, Entlassung","Airway, Breathing, Circulation, Disability (Neurologie)","Anästhesie, Blutdruck, Cortison, Dopamin, EKG","AWR, Blutdruck, Cortison, Diagnostik, Entlassung"],k:1,erkl:"ABCDE: A=Airway frei?, B=Breathing ausreichend?, C=Circulation stabil?, D=Disability (GCS, Pupillen), E=Exposure (Entkleiden, Temperatur). Systematische Notfallversorgung.",s:"mittel"},
 {kat:"anaesthesie",frage:"Was sind Notfallmedikamente im Anästhesiebereich?",opt:["Nur Aspirin","Adrenalin, Atropin","Nur Schmerzmittel","Nur Antibiotika"],k:1,erkl:"Anästhesie-Notfall: Adrenalin (Reanimation/Anaphylaxie), Atropin (Bradykardie), Succinylcholin (Laryngospasmus), Dantrolen (MH!), Naloxon (Opioid-Antagonist), Sugammadex (Muskelrelaxans-Reversal).",s:"schwer"},
-{kat:"anaesthesie",frage:"Was ist Sugammadex?",opt:["Hypnotikum","Spezifischer Antagonist für","Schmerzmittel","Inhalationsanästhetikum"],k:1,erkl:"Sugammadex (Bridion): γ-Cyclodextrin encapsuliert Rocuronium/Vecuronium. Vollständige Reversal in 3-5 Min. auch bei tiefer Blockade. Sicherer als Neostigmin-Atropin.",s:"schwer"},
+{kat:"anaesthesie",frage:"Was ist Sugammadex?",opt:["Hypnotikum","Spezifischer Antagonist für Rocuronium/Vecuronium","Schmerzmittel","Inhalationsanästhetikum"],k:1,erkl:"Sugammadex (Bridion): γ-Cyclodextrin encapsuliert Rocuronium/Vecuronium. Vollständige Reversal in 3-5 Min. auch bei tiefer Blockade. Sicherer als Neostigmin-Atropin.",s:"schwer"},
 {kat:"anaesthesie",frage:"Was ist die ASA-Klassifikation?",opt:["Anästhesie-Sicherheits-Analyse","Klassifikation perioperatives Risiko","Arbeitssicherheit","Aseptische Standards"],k:1,erkl:"ASA: I=gesund, II=leichte Systemerkrankung, III=schwere Erkrankung, IV=lebensbedrohlich, V=moribund, VI=Hirntod. Höhere ASA = höheres OP-Risiko.",s:"mittel"},
 {kat:"ata",frage:"Seit wann ist die ATA-Ausbildung staatlich anerkannt?",opt:["01.01.2018","01.01.2020","01.01.2022","01.01.2024"],k:2,erkl:"ATA-OTA-Gesetz in Kraft seit 01.01.2022. Davor nur DKG-Empfehlung – kein staatl. anerkannter Abschluss.",s:"leicht"},
 {kat:"ata",frage:"Wie viel % des Theorieunterrichts machen ATA und OTA gemeinsam?",opt:["25%","50%","75%","100%"],k:1,erkl:"ATA-OTA-APrV: 50% gemeinsamer Theorieunterricht – effizient bei gleichzeitiger Spezialisierung.",s:"mittel"},
@@ -1055,19 +1056,19 @@ const QUIZ_FRAGEN = [
 {kat:"ata",frage:"Was ist beim Anästhesiegeräte-Check zu prüfen?",opt:["Nur Sauerstoffvorrat","Vollständig: Dichtigkeit","Nur EKG","Nur Blutdruck"],k:1,erkl:"Täglicher Gerätechek: Dichtigkeit Atemkreis, Gasversorgung O₂/Luft, Vaporisatorfüllung, Kapnographie, Absauger, Monitoring-Kabel, Notfallmedikamente griffbereit, Intubationsset komplett. Dokumentation Pflicht!",s:"mittel"},
 {kat:"ata",frage:"Was ist Pulsoxymetrie?",opt:["Blutdruckmessung","Nicht-invasive Messung","Herzrhythmus","Atemfrequenz"],k:1,erkl:"Pulsoxymetrie: SpO₂ mittels rot/infrarot. Normwert ≥95%. Limitierungen: Nagellack, Kreislaufstörungen, CO-Vergiftung. Immer mit klinischem Bild kombinieren!",s:"leicht"},
 {kat:"ata",frage:"Was ist der Sellick-Handgriff?",opt:["Halsmassage","Druck auf Ringknorpel","Beatmungstechnik","Lagerungshandgriff"],k:1,erkl:"Sellick: gezielter Krikoiddruck → Ösophagus-Kompression → verhindert passive Regurgitation. Kontrovers: kann Intubation erschweren. Nur auf Anweisung des Anästhesisten!",s:"schwer"},
-{kat:"ata",frage:"Was ist ATA-OTA-G?",opt:["NRW-Landesverordnung","Bundesgesetz das ATA und","DKG-Empfehlung","EU-Richtlinie"],k:1,erkl:"ATA-OTA-G: Bundesgesetz vom 14.12.2019, in Kraft 01.01.2022. Regelt Berufsbezeichnung, Ausbildungsdauer, Prüfung, Berufsausübung.",s:"mittel"},
-{kat:"ata",frage:"Was ist Narkosetiefe und wie wird sie gemessen?",opt:["Subjektiv wie tief der Patient schläft","Ausreichende Unterdrückung von","Nur Blutdruck","Nur Labor"],k:1,erkl:"Narkosetiefe: klinische Zeichen (RR, HF, Schwitzen) + BIS-Monitor (EEG-basiert, Ziel 40-60). Zu flach → Awareness. Zu tief → Überdosierung.",s:"schwer"},
+{kat:"ata",frage:"Was ist ATA-OTA-G?",opt:["NRW-Landesverordnung","Bundesgesetz das ATA und OTA regelt","DKG-Empfehlung","EU-Richtlinie"],k:1,erkl:"ATA-OTA-G: Bundesgesetz vom 14.12.2019, in Kraft 01.01.2022. Regelt Berufsbezeichnung, Ausbildungsdauer, Prüfung, Berufsausübung.",s:"mittel"},
+{kat:"ata",frage:"Was ist Narkosetiefe und wie wird sie gemessen?",opt:["Subjektiv wie tief der Patient schläft","Unterdrückung von Schmerz, Stress und Abwehr","Nur Blutdruck","Nur Labor"],k:1,erkl:"Narkosetiefe: klinische Zeichen (RR, HF, Schwitzen) + BIS-Monitor (EEG-basiert, Ziel 40-60). Zu flach → Awareness. Zu tief → Überdosierung.",s:"schwer"},
 {kat:"ata",frage:"Was muss bei der AWR-Übergabe dokumentiert werden?",opt:["Nichts, mündlich reicht","OP-Verlauf","Nur Patientenname","Nur OP-Zeit"],k:1,erkl:"Strukturierte Übergabe: Patientenidentifikation, OP-Diagnose, Anästhesieverfahren, Medikamente (Analgetika, Antiemetika), Vitalwerte, Schmerzscore (NRS), Übelkeit, Drainagen, Infusionen.",s:"mittel"},
 {kat:"ata",frage:"Was ist Regionalanästhesie?",opt:["Vollnarkose für eine Region","Betäubung eines Körperbereichs","Nur für Kopf","Immer mit Vollnarkose"],k:1,erkl:"Regionalanästhesie: Spinal, Epidural, Plexus-Blockaden. Vorteile: Patient wach, weniger PONV, bessere postop. Analgesie, frühere Mobilisation.",s:"mittel"},
 {kat:"ata",frage:"Was ist bei einem anaphylaktischen Schock zu tun?",opt:["Abwarten","Auslöser stoppen","Nur RR messen","Patient beruhigen"],k:1,erkl:"Anaphylaxie: auslösendes Mittel sofort stoppen, Adrenalin 0,01mg/kg i.v. oder 0,5mg i.m., 100% O₂, 500-1000ml Volumenbolus, H1/H2-Antihistaminika, Kortison. ATA bereitet Medikamente vor.",s:"schwer"},
 {kat:"ata",frage:"Was ist OP-Schutzausrüstung für ATA?",opt:["Nur Mundschutz","OP-Kleidung, Bereichsschuhe","Keine besondere Ausrüstung","Nur Handschuhe"],k:1,erkl:"OP-Grundausstattung: OP-Kleidung (Hose + Kasack), Bereichsschuhe, Haarschutz (alle Haare bedeckt), MNS. Bei Körperflüssigkeitskontakt: Schutzbrille. Steril: Kittel + Handschuhe.",s:"leicht"},
 {kat:"ata",frage:"Was ist ASA-Klassifikation?",opt:["Anästhesie-Sicherheit","Perioperative","Arbeitssicherheit","Aseptische Standards"],k:1,erkl:"ASA: I=gesund, II=leichte Erkrankung, III=schwere Erkrankung, IV=lebensbedrohlich, V=moribund, VI=Hirntod. Beeinflusst Narkosevorbereitung und Risikomanagement.",s:"mittel"},
-{kat:"ata",frage:"Was ist der Unterschied Respirator vs. Anästhesiegerät?",opt:["Kein Unterschied","Anästhesiegerät: Vaporisor für","Respirator ist älter","Anästhesiegerät nur für Kinder"],k:1,erkl:"Anästhesiegerät: Vaporisor, Kreissystem mit CO₂-Absorber. Respirator: mehr Beatmungsmodi, genauere Lungenmechanik-Überwachung, kein Vaporisor.",s:"schwer"},
+{kat:"ata",frage:"Was ist der Unterschied Respirator vs. Anästhesiegerät?",opt:["Kein Unterschied","Anästhesiegerät mit Vaporisor für Inhalationsgas","Respirator ist älter","Anästhesiegerät nur für Kinder"],k:1,erkl:"Anästhesiegerät: Vaporisor, Kreissystem mit CO₂-Absorber. Respirator: mehr Beatmungsmodi, genauere Lungenmechanik-Überwachung, kein Vaporisor.",s:"schwer"},
 {kat:"ata",frage:"Wozu dient die ATA-Prüfung und wie ist sie aufgebaut?",opt:["Nur Theorie","Schriftlich +","Nur Praktisch","Nur Portfolio"],k:1,erkl:"ATA-Abschlussprüfung (ATA-OTA-APrV): Schriftlich, Mündlich, Praktisch. Alle 3 Teile müssen mindestens 'ausreichend' sein. Zuständig: Bezirksregierungen NRW.",s:"mittel"},
-{kat:"ata",frage:"Was ist Kapnographie in der Anästhesie?",opt:["Blutdruckmessung","Messung des","Herzrhythmusmessung","Sauerstoffmessung"],k:1,erkl:"Kapnographie: etCO₂-Messung. Normwert 35-45 mmHg. Wichtigster Parameter zur Bestätigung korrekter Tubuslage (Kapnographiekurve). Zu hoch → Hypoventilation, zu niedrig → Hyperventilation/Kreislaufproblem.",s:"schwer"},
+{kat:"ata",frage:"Was ist Kapnographie in der Anästhesie?",opt:["Blutdruckmessung","Messung des CO₂ in der Ausatemluft","Herzrhythmusmessung","Sauerstoffmessung"],k:1,erkl:"Kapnographie: etCO₂-Messung. Normwert 35-45 mmHg. Wichtigster Parameter zur Bestätigung korrekter Tubuslage (Kapnographiekurve). Zu hoch → Hypoventilation, zu niedrig → Hyperventilation/Kreislaufproblem.",s:"schwer"},
 {kat:"intensiv",frage:"Was bedeutet PEEP?",opt:["Positive End-Expiratory Pressure","Partial Expiratory Elimination Pressure","Patient Emergency Evaluation Protocol","Pulmonary End Expiratory Peak"],k:0,erkl:"PEEP = Positive End-Expiratory Pressure. Verhindert Alveolenkollaps, verbessert FRC. Typisch 5-10 cmH₂O. Zu hoch → Barotrauma.",s:"mittel"},
 {kat:"intensiv",frage:"Was beschreibt der SOFA-Score?",opt:["Ernährungszustand","Organdysfunktion bei Sepsis","Schmerzintensität","Beatmungsqualität"],k:1,erkl:"SOFA: 6 Systeme bewertet. SOFA ≥2 = Organdysfunktion (Sepsis-3 Definition 2016).",s:"schwer"},
-{kat:"intensiv",frage:"Was ist Weaning?",opt:["Schmerztherapie","Schrittweise Entwöhnung vom","Lagerung bei ARDS","Nierenersatztherapie"],k:1,erkl:"Weaning: Spontaneous Breathing Trial (SBT). Voraussetzungen: FiO₂ <0,5, PEEP ≤8, stabile Hämodynamik. Beobachten: SpO₂, AF, Atemarbeit, Agitation.",s:"mittel"},
+{kat:"intensiv",frage:"Was ist Weaning?",opt:["Schmerztherapie","Schrittweise Entwöhnung vom Beatmungsgerät","Lagerung bei ARDS","Nierenersatztherapie"],k:1,erkl:"Weaning: Spontaneous Breathing Trial (SBT). Voraussetzungen: FiO₂ <0,5, PEEP ≤8, stabile Hämodynamik. Beobachten: SpO₂, AF, Atemarbeit, Agitation.",s:"mittel"},
 {kat:"intensiv",frage:"Was ist ARDS?",opt:["Akute Rückenmarksschädigung","Akutes Lungenversagen (PaO₂/FiO₂","Herzerkrankung","Nierenversagen"],k:1,erkl:"ARDS: diffuses Lungenversagen. Behandlung: Tidalvolumen 6ml/kg Idealgewicht, Plateaudruck <30cmH₂O, PEEP-Optimierung, Bauchlagerung ≥16h/Tag bei schwerem ARDS (PaO₂/FiO₂ <150).",s:"schwer"},
 {kat:"intensiv",frage:"Was ist Sepsis-3-Definition?",opt:["Fieber >38°C","Lebensbedrohliche","Positive Blutkultur","Lokale Entzündung"],k:1,erkl:"Sepsis-3 (2016): Sepsis = Organdysfunktion + SOFA ≥2 + Infektion. Septischer Schock: Sepsis + Vasopressorbedarf + Laktat >2mmol/L trotz Volumen.",s:"schwer"},
 {kat:"intensiv",frage:"Was ist Bauchlagerung und wann?",opt:["Komfortlagerung","Therapeutische","Schluckschutz","Herzentlastung"],k:1,erkl:"Bauchlagerung: Rekrutierung kollabierter dorsaler Alveolen, gleichmäßigere Beatmungsverteilung. Risiken: Druckstellen Gesicht/Knie, Tubusdislokation.",s:"mittel"},
@@ -1320,7 +1321,7 @@ function showScreen(name) {
     setTimeout(() => { renderTokenListe(); renderStats(); renderVorlagen(); }, 50);
   }
   // Neue Screens
-  if (name === "taschenkarten") setTimeout(() => { renderTaschenkarten(); }, 50);
+  if (name === "taschenkarten") { renderTaschenkarten(); }  // fix: synchron
   if (name === "wundversorgung") setTimeout(() => { renderWundversorgung(); }, 50);
   if (name === "prophylaxen")   setTimeout(() => { renderProphylaxen(); }, 50);
   if (name === "kinaesthetik")  setTimeout(() => { renderKinaesthetik(); }, 50);
@@ -2562,6 +2563,163 @@ const KRANKHEITSBILDER = {
   }
 };
 
+// ─── ERWEITERTE KRANKHEITSBILDER ──────────────────────────────
+const KB_EXTRA = {
+  neurologie: { bilder:[
+    { name:"Multiple Sklerose (MS)", icd:"G35", definition:"Chronisch-entzündliche ZNS-Erkrankung mit Demyelinisierung. Schubförmig oder progredient. Häufigste neurologische Erkrankung junger Erwachsener.",
+      symptome:["Sehstörungen (Optikusneuritis)","Sensibilitätsstörungen","Spastik, Lähmungen","Fatigue (Leitsymptom!)","Blasenstörungen","Lhermitte-Zeichen"],
+      diagnostik:["MRT (McDonald-Kriterien)","Liquor (oligoklonale Banden)","Evozierte Potenziale"],
+      therapie:["Schub: Kortison 1g/d i.v. 3-5 Tage","Basistherapie: Interferon-beta, Glatirameracetat","Hochdosis: Natalizumab","Symptomatisch: Baclofen (Spastik)"],
+      pflege:["Fatigue-Management: Energiesparende Techniken","Kühlung bei Hitzeempfindlichkeit","Blasentraining","Kontrakturprophylaxe","Sturzprophylaxe","MS-Schwester einbeziehen"],
+      pflegeplanung:[{p:"Fatigue bei MS",a:"Demyelinisierung, Entzündungsprozesse",z:"Patient plant Aktivitäten energiesparend ein",m:["Ruhezeiten einplanen","Prioritäten setzen","Kühlung bei Hitze","Hilfsmittel nutzen","Ergotherapie"]}]},
+    { name:"Parkinson-Erkrankung", icd:"G20", definition:"Neurodegenerative Erkrankung mit Dopaminmangel. Kardinalsymptome: Tremor, Rigor, Akinese, posturale Instabilität.",
+      symptome:["Ruhetremor (Pillendreher)","Rigor (Zahnradphänomen)","Akinese/Bradykinese","Sturzgefahr!","Hypomimie","Dysphagie","Autonome Störungen: Obstipation, Hypotonie"],
+      diagnostik:["Klinisch","L-Dopa-Test","MRT zum Ausschluss","DaT-SPECT"],
+      therapie:["L-Dopa + Carbidopa (Goldstandard)","Dopaminagonisten","MAO-B-Hemmer: Rasagilin","DBS im Spätstadium"],
+      pflege:["Medikamente pünktlich! On-Off-Phasen beachten","Sturzprophylaxe (Rollator, Stolperfallen)","Dysphagiegerechte Kost","Logopädie, Physiotherapie täglich","Obstipationsprophylaxe"],
+      pflegeplanung:[{p:"Sturzgefahr bei Parkinson",a:"Posturale Instabilität, Freezing",z:"Kein Sturzereignis",m:["Rollator anpassen","Stolperfallen entfernen","Rhythmische Reize (Metronom)","On-Phase für Mobilisation nutzen","Medikamente pünktlich"]}]},
+    { name:"Epilepsie", icd:"G40", definition:"Chronische Erkrankung mit wiederholten epileptischen Anfällen. Fokale oder generalisierte Anfälle. Status epilepticus = Notfall!",
+      symptome:["Tonisch-klonischer Anfall (Grand mal)","Absencen (kurze Bewusstseinspausen)","Fokale Anfälle","Aura als Vorwarnung","Postiktale Verwirrtheit"],
+      diagnostik:["EEG","MRT Schädel","Labor: Elektrolyte, BZ","Antiepileptika-Spiegel"],
+      therapie:["Valproat, Lamotrigin, Levetiracetam","Status: Lorazepam i.v.","Anfallsauslöser meiden"],
+      pflege:["KEINE Gegenstände in Mund!","Anfall beobachten + dokumentieren","Seitenlage nach Anfall","Sturzschutz (Bettgitter polstern)","Bei >5 Min: Arzt rufen (Status!)"],
+      pflegeplanung:[{p:"Verletzungsgefahr bei Anfällen",a:"Tonisch-klonische Anfälle",z:"Patient bleibt unverletzt",m:["Bettgitter polstern","Harte Gegenstände entfernen","Anfall dokumentieren","Seitenlage","Arzt bei >5 Min"]}]},
+    { name:"Meningitis", icd:"G00", definition:"Entzündung der Hirnhäute. Bakteriell = lebensbedrohlich, sofort behandeln! Meldepflicht §6 IfSG.",
+      symptome:["Nackensteifigkeit","Starke Kopfschmerzen","Hohes Fieber","Lichtscheu, Lärmempfindlichkeit","Petechien (Meningokokken!)","Bewusstseinsstörung"],
+      diagnostik:["Lumbalpunktion (Liquor!)","Blutkulturen","CT vor LP bei Papillenödem","Meningokokken-PCR"],
+      therapie:["Sofort Ceftriaxon 2g i.v.","Dexamethason vor/mit AB","Isolation: Tröpfchen bis 24h nach AB"],
+      pflege:["Meldepflicht §6 IfSG!","Einzelzimmer, FFP2, Kittel","Reizabschirmung: dunkel, ruhig","Fiebersenkung, Schmerztherapie","GCS regelmäßig prüfen","Angehörige informieren + ggf. Prophylaxe"],
+      pflegeplanung:[{p:"Infektionsgefahr für andere",a:"Bakterielle Meningitis, Tröpfcheninfektion",z:"Keine Übertragung",m:["Einzelzimmer, Tür zu","FFP2 + Kittel","§6 IfSG melden","Kontakte informieren","Nach 24h AB: Isolation aufheben"]}]},
+    { name:"Bandscheibenvorfall", icd:"M51", definition:"Prolaps des Nucleus pulposus mit Nervenrootdruck. Häufigste Lokalisation: L4/5, L5/S1. Kauda-Syndrom = Notfall!",
+      symptome:["Rückenschmerzen, Ischialgie","Ausstrahlung ins Bein","Lasègue-Zeichen positiv","Kraftminderung, Reflexausfälle","Kauda: Blasen-/Mastdarmstörungen (Notfall!)"],
+      diagnostik:["MRT Wirbelsäule (Goldstandard)","Neurolog. Untersuchung","EMG, NLG"],
+      therapie:["Konservativ: Analgesie, Physiotherapie","Epidurale Steroidinjektionen","OP bei Kauda, Kraftverlust, therapierefraktär"],
+      pflege:["Schmerzassessment NRS","Stufenbettlagerung","Mobilisation mit Korsett","Heben vermeiden (Aufklärung)","Blasenentleerung überwachen"],
+      pflegeplanung:[{p:"Rückenschmerzen NRS 8 bei Bewegung",a:"Nervenwurzelkompression L4/5",z:"NRS ≤4 bei Mobilisation",m:["Analgesie 30 Min vor Mobilisation","Stufenbettlagerung","Physiotherapie","Wärme","Bewegungsaufklärung"]}]},
+    { name:"Demenz (Alzheimer)", icd:"F00", definition:"Chronisch progrediente Hirnleistungsstörung. Häufigste Form (60-70%). Amyloid-Plaques und Tau-Fibrillen.",
+      symptome:["Gedächtnisstörungen (Kurzzeit zuerst)","Orientierungsstörungen","Aphasie, Apraxie","Persönlichkeitsveränderungen","Unruhe, Weglauftendenz","BPSD: Agitation, Psychosen"],
+      diagnostik:["MMST, MoCA","MRT (Hippocampusatrophie)","Liquor (Amyloid, Tau)","Labor: B12, TSH"],
+      therapie:["Donepezil, Rivastigmin, Galantamin","Memantin (mittlere-schwere Demenz)","Kein Heilmittel - nur symptomatisch","Validation, Biographiearbeit"],
+      pflege:["Orientierungshilfen (Beschriftung, Uhr)","Validation nach Feil","Tagesstruktur einhalten","Fixierungsfreie Betreuung","Weglaufschutz","BPSD: Ruhe, Ablenkung vor Medikament"],
+      pflegeplanung:[{p:"Orientierungslosigkeit, Weglauftendenz",a:"Alzheimer mittleres Stadium",z:"Patient findet sich zurecht, kein Weglaufen",m:["Zimmer beschriften","Tagesstruktur","Biographiemappe","Sicherheitssystem prüfen","Zugewandte Kommunikation"]}]},
+    { name:"Guillain-Barré-Syndrom", icd:"G61", definition:"Akute entzündliche Polyneuropathie nach Infektion. Aufsteigende Lähmungen bis zur Atemlähmung möglich!",
+      symptome:["Aufsteigende Lähmungen (Beine nach oben)","Areflexie","Sensibilitätsstörungen","Autonome Störungen: RR-Schwankungen","Respiratorische Insuffizienz (15-30%!)"],
+      diagnostik:["Liquor (zytoalbuminäre Dissoziation)","EMG/NLG","Vitalkapazität!","EKG, RR-Monitoring"],
+      therapie:["IVIG oder Plasmapherese","Beatmung bei AV <15ml/kg","Thromboseprophylaxe","Reha: Physio, Logo, Ergo"],
+      pflege:["Atemfunktion stündlich überwachen!","Notfallausrüstung bereit","Thromboseprophylaxe (vollständige Immobilität)","Schmerztherapie neuropathisch","Psychologische Begleitung"],
+      pflegeplanung:[{p:"Ateminsuffizienz bei GBS",a:"Aufsteigende Lähmung der Atemmuskulatur",z:"Rechtzeitiges Erkennen der Verschlechterung",m:["AF + SpO2 stündlich","Vitalkapazität messen","Notfallausrüstung bereit","Arzt bei SpO2 <94%","Oberkörper 30°"]}]},
+    { name:"Schlaganfall (Nachsorge & Reha)", icd:"I69", definition:"Rehabilitative Phase nach Apoplex. Ziel: Maximale Wiederherstellung der Funktion. Plastizität des Gehirns nutzen. Frühe Mobilisation entscheidend!",
+      symptome:["Hemiparese/-plegie","Aphasie (Broca/Wernicke/global)","Dysphagie (Aspirationsgefahr!)","Hemianopsie","Neglect","Spastik im Verlauf","Depression (häufig post-Stroke)"],
+      diagnostik:["Barthel-Index, FIM","Schlucktest (Daniels, FEES)","Neuropsychologische Testung","Barthel täglich reassessieren"],
+      therapie:["Frühe Mobilisation ab Tag 1","Logopädie: Sprache + Schlucken","Physiotherapie: Bobath, PNF","Ergotherapie: ADL-Training","Antispastika: Baclofen, Botulinumtoxin"],
+      pflege:["Frühmobilisation: passive → assistiv → aktiv","Schlucktest vor jeder Mahlzeit!","Aspirationsprophylaxe: aufrechte Position 90°","Aphasie: einfache Sprache, Ja/Nein-Fragen","Neglect: Ansprache von betroffener Seite","Kontrakturprophylaxe, Lagerung"],
+      pflegeplanung:[{p:"Dysphagie mit Aspirationsgefahr nach Schlaganfall",a:"Zentrale Schluckstörung durch Hirnläsion",z:"Keine Aspiration bei angepasster Kost",m:["Schlucktest täglich","Angedickte Kost nach Logopädie","Aufrechte Position 90°","Kleine langsame Bissen","Logopädie täglich"]}]}
+  ]},
+
+  hno: { bilder:[
+    { name:"Otitis media", icd:"H66", definition:"Akute Mittelohrentzündung, häufig nach Atemwegsinfekt. Komplikation: Mastoiditis.",
+      symptome:["Starke Ohrenschmerzen","Druckgefühl","Hörverlust","Fieber","Spontane Besserung bei Perforation"],
+      diagnostik:["Otoskopie","Audiogramm","Tympanometrie"],
+      therapie:["Analgesie (Ibuprofen)","Abschwellende Nasentropfen","Antibiotika bei Komplikationen","Parazentese bei Ausbleiben der Besserung"],
+      pflege:["Schmerztherapie nach AO","Gehörgang trocken halten","Wärme (Rotlicht)","Mastoiditis-Zeichen beachten (Rötung hinter Ohr)"],
+      pflegeplanung:[{p:"Ohrenschmerzen NRS 7",a:"Akute Otitis media",z:"NRS ≤3 in 24h",m:["Analgesie nach AO","Wärme","Kopfhochlagerung","Antibiotika pünktlich"]}]},
+    { name:"Tonsillitis", icd:"J03", definition:"Akute Mandelentzündung, häufig durch A-Streptokokken. Komplikation: Peritonsillarabszess.",
+      symptome:["Halsschmerzen, Schluckbeschwerden","Fieber >38,5°C","Beläge auf Tonsillen","Lymphknotenschwellung zervikal","Fötor ex ore"],
+      diagnostik:["Rachenabstrich","McIsaac-Score"],
+      therapie:["Penicillin V 10 Tage (KEIN Amoxicillin bei EBV!)","Analgesie, Antipyretika","Abszess: Punktion/Inzision"],
+      pflege:["Kühle weiche Kost (Eis, Joghurt)","Flüssigkeit fördern","Analgesie vor Mahlzeiten","Kieferklemme + Dyspnoe beachten"],
+      pflegeplanung:[{p:"Schluckschmerzen, mangelnde Nahrungsaufnahme",a:"Tonsillitis",z:"Patient trinkt >1,5l täglich",m:["Analgesie 30 Min vor Mahlzeit","Kühle weiche Kost","Eis lutschen","Flüssigkeitsbilanz"]}]},
+    { name:"Sinusitis", icd:"J01", definition:"NNH-Entzündung, meist nach Virusinfekt. Maxillarsinus häufigste Lokalisation. Chronisch: >12 Wochen.",
+      symptome:["Druckschmerz (Gesicht)","Nasale Obstruktion","Eitriger Schnupfen","Hyposmie","Kopfschmerzen"],
+      diagnostik:["Klinisch","CT NNH (chronisch/präoperativ)"],
+      therapie:["Nasenspülung (NaCl 0,9%)","Abschwellende Tropfen max. 7 Tage","Antibiotika bei bakteriellem Verlauf","FESS bei Versagen"],
+      pflege:["Nasenspülung anleiten","Abschwellende Tropfen korrekt","Inhalationen","Kopfhochlagerung"],
+      pflegeplanung:[{p:"Kopfschmerzen NRS 5 durch Sinusitis",a:"Sinusitis maxillaris",z:"NRS ≤2 nach Behandlung",m:["Nasenspülung 3x täglich","Nasentropfen nach AO","Analgesie","Inhalation"]}]},
+    { name:"Epistaxis (Nasenbluten)", icd:"R04.0", definition:"Nasenbluten aus Locus Kiesselbachi (90% anterior). Meist harmlos, selten kreislaufrelevant.",
+      symptome:["Blutung aus Nase","Blut im Rachen (posterior)","Selten: Kreislaufwirksamkeit"],
+      diagnostik:["Klinisch","Rhinoskopie","Labor bei Rezidiv (Gerinnung)"],
+      therapie:["Vorbeugen + Nasenflügel 10-15 Min komprimieren","Kühlung Nacken","Tamponade","Kauterisation"],
+      pflege:["Vorbeugen! (NICHT nach hinten!)","Druck mindestens 10 Min","Kühlung Nacken","Nicht schnäuzen nach Tamponade","Kreislauf überwachen"],
+      pflegeplanung:[{p:"Anhaltende Nasenblutung",a:"Anteriore Epistaxis",z:"Blutung gestillt in 15 Min",m:["Vorbeugen + Druck","Kühlung","Tamponade vorbereiten","Kreislauf überwachen","Arzt bei >15 Min"]}]},
+    { name:"Laryngitis", icd:"J04", definition:"Kehlkopfentzündung, häufig viral. Krupp bei Kindern. Meist selbstlimitierend.",
+      symptome:["Heiserkeit (Leitsymptom)","Trockenhusten","Halsschmerzen","Krupp: bellender Husten, Stridor, Dyspnoe"],
+      diagnostik:["Laryngoskopie bei Rezidiv"],
+      therapie:["Stimmschonung","Inhalationen","Dexamethason bei Krupp","Feuchtigkeit"],
+      pflege:["Stimmschonung (nicht flüstern!)","Feuchte Luft","Inhalationen","Stridor → sofort Arzt!"],
+      pflegeplanung:[{p:"Stimmlosigkeit, Stridor",a:"Laryngitis, Schleimhautschwellung",z:"Keine Stridor, Stimme wieder nutzbar",m:["Stimmruhe","Inhalationen 3x täglich","Feuchtigkeit","Kortison nach AO","Notfall bei Stridor"]}]},
+    { name:"Schwindel (Vertigo)", icd:"R42", definition:"Häufiges Symptom. Peripher: BPLS, M. Menière. Zentral: Hirnstamm, Kleinhirn.",
+      symptome:["Dreh- oder Schwankschwindel","Übelkeit, Erbrechen","Nystagmus","Gangunsicherheit","Tinnitus + Schwerhörigkeit (M. Menière)"],
+      diagnostik:["Dix-Hallpike-Test (BPLS)","MRT (zentral ausschließen)","Audiogramm"],
+      therapie:["BPLS: Epley-Manöver","M. Menière: Betahistin","Vomex bei Übelkeit","Neuritis vestibularis: Steroide"],
+      pflege:["Sturzprophylaxe!","Reizabschirmung","Antiemetika nach AO","Flüssigkeit sichern","Epley-Manöver anleiten"],
+      pflegeplanung:[{p:"Sturzgefahr durch Schwindel",a:"M. Menière, akuter Schub",z:"Kein Sturz, Schwindel NRS ≤4",m:["Bett niedrig","Begleitung bei Mobilisation","Betahistin nach AO","Antiemetika","Reizarme Umgebung"]}]},
+    { name:"Hörminderung & Schwerhörigkeit", icd:"H91", definition:"Schallempfindungs- oder Schallleitungsstörung. Im Alter: Presbyakusis (Hochtonverlust). Häufigste sensorische Einschränkung im Alter.",
+      symptome:["Vermindertes Hörvermögen","TV laut stellen","Nachfragen","Soziale Isolation","Tinnitus möglich"],
+      diagnostik:["Audiogramm","Tympanogramm","Weber- und Rinne-Test"],
+      therapie:["Hörgerät","Cochlea-Implantat bei Taubheit","Cerumen entfernen","OP bei Schallleitungsstörung"],
+      pflege:["Hörgerät einlegen und täglich reinigen","Batterie prüfen","Blickkontakt, deutlich sprechen","Bei Demenz: Hörgerät kann vergessen werden","Bei OP/MRT: Hörgerät herausnehmen"],
+      pflegeplanung:[{p:"Kommunikationsbarriere durch Schwerhörigkeit",a:"Presbyakusis, Hörgerät nicht eingesetzt",z:"Patient versteht Anweisungen",m:["Hörgerät einlegen","Batterie prüfen","Deutlich sprechen","Schriftlich kommunizieren","Ruhige Umgebung"]}]}
+  ]},
+
+  onkologie: { bilder:[
+    { name:"Mammakarzinom", icd:"C50", definition:"Häufigste Krebserkrankung der Frau. Risikofaktoren: Alter, BRCA1/2, Östrogen, Adipositas.",
+      symptome:["Schmerzlose Verhärtung","Einziehung Haut/Brustwarze","Sekretion","Asymmetrie","LK-Schwellung axillär","Peau d'orange"],
+      diagnostik:["Mammographie, Sonographie","Biopsie","Rezeptorstatus: ER, PR, HER2, Ki-67","Staging: CT, Skelettszinti"],
+      therapie:["OP: brusterhaltend oder Mastektomie","Chemo, Antihormon (Tamoxifen)","HER2+: Trastuzumab","Strahlentherapie"],
+      pflege:["KEIN Blutdruck am OP-Arm (Lymphödem-Prophylaxe)!","Redon-Drainage beobachten","Armübungen ab Tag 1","Alopezie: Perückenversorgung","Psychosoziale Begleitung (Körperbild)"],
+      pflegeplanung:[{p:"Lymphödemgefahr nach Axilladissektion",a:"Operative Unterbrechung der Lymphbahnen",z:"Kein Lymphödem",m:["KEIN Blutdruck/Blutentnahme am OP-Arm","Kompressionsärmel","Armhochlagerung","Lymphdrainage","Arzt bei Schwellung"]}]},
+    { name:"Lungenkarzinom", icd:"C34", definition:"Häufigste tumorbedingter Todesursache. 85% NSCLC. Risikofaktor Nr.1: Rauchen.",
+      symptome:["Chronischer Husten, Hämoptysen","Dyspnoe","B-Symptome","Heiserkeit (N. recurrens)","Obere Einflussstauung"],
+      diagnostik:["CT-Thorax","Bronchoskopie + Biopsie","PET-CT","Molekulargenetik (EGFR, ALK, PD-L1)"],
+      therapie:["NSCLC: OP, Strahlen, Chemo, targeted","SCLC: Chemo + Radiatio","Immuntherapie: Pembrolizumab","Palliativ: Symptomkontrolle"],
+      pflege:["Dyspnoe: Oberkörperhoch, O2, Morphin palliativ","Hämoptysen: Ruhe, Arzt sofort","Ernährungsunterstützung","Schmerztherapie WHO-Schema"],
+      pflegeplanung:[{p:"Schwere Dyspnoe bei Lungenkarzinom",a:"Tumorinfiltration, Pleuraerguss",z:"Patient atmet ruhig, subjektive Linderung",m:["O2 nach AO","Oberkörper 45°","Morphin palliativ","Atemübungen","Angehörige einbeziehen"]}]},
+    { name:"Kolorektales Karzinom", icd:"C18-C20", definition:"Zweithäufigste Krebserkrankung. 95% Adenokarzinome. Früherkennung durch Koloskopie ab 50 Jahren!",
+      symptome:["Blut im Stuhl","Änderung Stuhlgewohnheiten","Bleistiftstühle","Bauchschmerzen","B-Symptome","Ileus fortgeschritten"],
+      diagnostik:["Koloskopie mit Biopsie","CEA","CT-Abdomen/Thorax","MRT Rektum"],
+      therapie:["OP: Hemikolektomie, Sigmaresektion","Stoma (temporär/permanent)","Chemo: FOLFOX, FOLFIRI + Bevacizumab","Rektum: neoadjuvante Radiochemotherapie"],
+      pflege:["Stoma-Neuanlage: Stomatherapeutin!","Wund- und Stomapflege täglich","Ernährungsaufbau nach Darm-OP (ERAS)","Anastomosenleck beachten: Fieber, Schmerz"],
+      pflegeplanung:[{p:"Stomapflege-Unsicherheit nach Neuanlage",a:"Kolostomie, erste Erfahrung",z:"Patient versorgt Stoma selbstständig",m:["Stomatherapeutin einbeziehen","Täglich gemeinsam versorgen","Schrittweise Übernahme","Ambulanter Dienst planen"]}]},
+    { name:"Leukämie (AML/ALL/CLL/CML)", icd:"C91-C95", definition:"Maligne Erkrankung des blutbildenden Systems. Akut (AML, ALL): lebensbedrohlich. Chronisch (CLL, CML): langsamer Verlauf.",
+      symptome:["Blutungsneigung (Petechien)","Infektneigung","Anämiesymptome: Müdigkeit, Dyspnoe","Splenomegalie","B-Symptome","Knochenschmerzen"],
+      diagnostik:["Blutbild: Blasten, Panzytopenie","Knochenmarkpunktion (Goldstandard)","Zytogenetik","LDH, Harnsäure"],
+      therapie:["AML: Induktionschemotherapie","ALL: Polychemotherapie, ZNS-Prophylaxe","CML: Imatinib (Tyrosinkinasehemmer!)","Allogene SZT"],
+      pflege:["Umkehrisolation bei Aplasie","Blutungsschutz: weiche Zahnbürste","Schleimhautpflege: Mukositis","Fieber sofort Arzt!","Port aseptisch versorgen"],
+      pflegeplanung:[{p:"Erhöhte Infektgefahr bei Aplasie",a:"Granulozytopenie <500/μl nach Chemo",z:"Keine Infektion während Aplasie",m:["Umkehrisolation","HD-Hygiene alle Besucher","Kein frisches Obst","Fieber >38°C sofort Arzt","Port aseptisch"]}]},
+    { name:"Lymphom (Hodgkin/NHL)", icd:"C81-C85", definition:"Maligne Erkrankung des lymphatischen Systems. Hodgkin (HL): gut heilbar. Non-Hodgkin (NHL): heterogene Gruppe.",
+      symptome:["Schmerzlose LK-Schwellung","B-Symptome","Juckreiz (HL-typisch)","Alkohol-Schmerz (HL)","Splenomegalie"],
+      diagnostik:["LK-Biopsie (Reed-Sternberg bei HL)","PET-CT","Knochenmarkbiopsie","LDH, BSG"],
+      therapie:["Hodgkin: ABVD + Strahlen","Aggressives NHL: R-CHOP","Rituximab","CAR-T-Zell-Therapie","Autologe/allogene SZT"],
+      pflege:["Alopezie: Perückenversorgung, Aufklärung","Übelkeit: Antiemetika prophylaktisch","Kardiotoxizität (LVEF-Kontrolle)","Infektprophylaxe","Psychosoziale Begleitung"],
+      pflegeplanung:[{p:"Übelkeit nach ABVD-Chemo",a:"Emetogenes Potenzial der Chemotherapie",z:"Patient isst 3 Mahlzeiten täglich",m:["Antiemetika prophylaktisch","Ondansetron + Dexa nach AO","Kleine häufige Mahlzeiten","Ingwertee","Flüssigkeitsbilanz"]}]},
+    { name:"Palliativpflege & Sterbebegleitung", icd:"Z51.5", definition:"Palliativpflege = Lebensqualität bei unheilbarer Erkrankung. Ganzheitlich: körperlich, psychisch, sozial, spirituell.",
+      symptome:["Schmerzen","Dyspnoe (Todesangst!)","Übelkeit, Erbrechen","Terminales Delir","Rasselatmung","Fatigue","Angst, Depression"],
+      diagnostik:["IPOS, HOPE-Dokumentation","ECOG-Status","PPI, Surprise-Frage (Prognose)"],
+      therapie:["Schmerztherapie WHO-Stufenschema","Dyspnoe: Morphin (effektivste Maßnahme!)","Terminale Sedierung bei refraktären Symptomen","Palliative Sedierung nach ethischer Prüfung"],
+      pflege:["Mundpflege alle 2h (auch bewusstlos)","Lagerung komfortabel – nicht prophylaktisch!","Reizreduktion, ruhige Atmosphäre","Rasselatmung: Seitenlage, Angehörige aufklären","Keine unnötigen Maßnahmen (Monitoring stopp)","Würde wahren bis zum Tod"],
+      pflegeplanung:[{p:"Starke Schmerzen in der Sterbephase",a:"Fortgeschrittenes Karzinom",z:"Patient ist schmerzfrei und ruhig",m:["Opioid-Titration","Basismedikation sicherstellen","Bedarfsmedikation bereit","Angehörige begleiten","Keine Analgesie-Pausen"]}]},
+    { name:"Tumorkachexie & Ernährung", icd:"R64", definition:"Metabolisches Syndrom mit Gewichtsverlust >5%, Muskelabbau, Anorexie. Nicht durch mehr Essen reversibel!",
+      symptome:["Gewichtsverlust >5% in 6 Monaten","Muskelatrophie","Anorexie","Fatigue","Ödeme (Hypoalbuminämie)"],
+      diagnostik:["NRS-2002 (Screening)","Albumin, Präalbumin","BMI, Gewichtsverlauf"],
+      therapie:["Ernährungsberatung","Hochkalorische Trinknahrung","Megestrolacetat, Kortison kurzfristig","PEG wenn Schlucken unmöglich"],
+      pflege:["NRS-2002 bei Aufnahme und wöchentlich","Gewicht täglich","Lieblingsspeisen, kleine Portionen","Trinknahrung als Ergänzung","Kachexie ist nicht durch Willen heilbar (aufklären!)"],
+      pflegeplanung:[{p:"Tumorkachexie, BMI 17, Gewichtsverlust 8kg",a:"Metabolische Störung",z:"Kein weiterer Gewichtsverlust",m:["NRS-2002 wöchentlich","Trinknahrung 2x täglich","Lieblingsspeisen","Kleine häufige Mahlzeiten","Ernährungsberaterin"]}]},
+    { name:"Prostatakarzinom", icd:"C61", definition:"Häufigster Tumor des Mannes. PSA-Screening ermöglicht Frühdiagnose. Metastasierung: Knochen!",
+      symptome:["Früh: asymptomatisch","Miktionsstörungen","Hämaturie","Knochenschmerzen (Metastasen)","PSA erhöht"],
+      diagnostik:["PSA-Wert","Tastuntersuchung rektal","Biopsie transrektal","MRT Prostata","Knochenszinti"],
+      therapie:["Active Surveillance (niedriges Risiko)","Radikale Prostatektomie","Strahlentherapie","ADT: Leuprorelin","Docetaxel (kastrationsresistent)"],
+      pflege:["Dauerkatheter 7-14 Tage postop","Beckenbodentraining ab Katheterentfernung","Inkontinenzeinlagen","Knochenschmerzen: Schmerztherapie + Sturzprophylaxe","ADT-NW: Hitzewallungen, Osteoporose"],
+      pflegeplanung:[{p:"Harninkontinenz nach Prostatektomie",a:"Sphinkterschwäche nach OP",z:"Patient führt Beckenbodentraining durch",m:["Beckenbodenübungen 3x täglich","Inkontinenzeinlagen","Trinkprotokoll","Kontinenz-Schwester","Geduld: Wochen bis Monate"]}]}
+  ]}
+};
+
+// Merge extra KB into main KRANKHEITSBILDER
+Object.keys(KB_EXTRA).forEach(function(fach) {
+  if (KRANKHEITSBILDER[fach]) {
+    KRANKHEITSBILDER[fach].bilder = KRANKHEITSBILDER[fach].bilder.concat(KB_EXTRA[fach].bilder);
+  }
+});
+
 // Krankheitsbilder Screen initialisieren
 let currentKBFach = 'innere';
 let currentKBBild = null;
@@ -3115,10 +3273,18 @@ init();
 // Ablauf: YYYY-MM-DD
 
 const TOKEN_DB = {
-  "NeleLily2916": { name:"Patrick", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
-  "TEST-PFLEGE-2026-T001": { name:"Tester 1", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
-  "TEST-PFLEGE-2026-T002": { name:"Tester 2", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
-  "TEST-PFLEGE-2026-T003": { name:"Tester 3", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  "NeleLily2916":         { name:"Patrick",  bereich:"alle", ablauf:"2099-12-31", aktiv:true },
+  "TEST-PFLEGE-2026-T001":{ name:"Tester 1", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  "TEST-PFLEGE-2026-T002":{ name:"Tester 2", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  "TEST-PFLEGE-2026-T003":{ name:"Tester 3", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  "PROBE-2026-P001":      { name:"Probe 1",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P002":      { name:"Probe 2",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P003":      { name:"Probe 3",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P004":      { name:"Probe 4",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P005":      { name:"Probe 5",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P006":      { name:"Probe 6",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P007":      { name:"Probe 7",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "PROBE-2026-P008":      { name:"Probe 8",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
 };
 
 // Bereichs-Konfiguration: Was darf welcher Bereich sehen?
@@ -4608,7 +4774,9 @@ const PFLEGEPLANUNGEN_ATL = [
   {atl:"Schlafen und ruhen", icon:"😴", problem:"P: Patient schläft aufgrund von Schmerzen und nächtlicher Dyspnoe weniger als 4h durch", aet:"Ä: Chronische Schmerzen + nächtliche Dyspnoe bei Herzinsuffizienz", ziel:"Z: Patient schläft innerhalb von 5 Tagen mindestens 6h durch", massnahmen:["Schmerzassessment abends (NRS)","Schmerzmedikation vor dem Schlafen","Oberkörperhochlagerung 30–45°","Ruhige Atmosphäre, Geräuschminimierung","Schlafrituale beibehalten","Keine stimulierenden Getränke ab 14h"], ressourcen:["Kennt eigene Einschlafrituale","Akzeptiert Lagerungshilfen"]},
   {atl:"Sich beschäftigen", icon:"🎯", problem:"P: Patient wirkt antriebslos und zieht sich sozial zurück seit Erkrankung", aet:"Ä: Reaktive Depression nach Schlaganfall", ziel:"Z: Patient nimmt innerhalb von 2 Wochen an einer Gruppenaktivität teil", massnahmen:["Interessen und Hobbys erfragen (Biografie)","Ergotherapie einbeziehen","Aktivierungsangebote anbieten","Psychologische Begleitung","Angehörige in Besuche einbeziehen"], ressourcen:["War früher gesellig","Interessiert sich für Bücher"]},
   {atl:"Sinn finden / existenzielle Erfahrungen", icon:"🙏", problem:"P: Patient äußert Hoffnungslosigkeit nach Diagnose terminales Karzinom", aet:"Ä: Terminale Krebserkrankung, unverarbeitete Trauer", ziel:"Z: Patient benennt innerhalb einer Woche mind. eine Ressource, die ihm Halt gibt", massnahmen:["Aktives Zuhören, Raum für Gefühle","Nicht beruhigen oder rationalisieren","Seelsorger anbieten","Palliativteam einbeziehen","Letzte Wünsche erfragen und dokumentieren"], ressourcen:["Familiäre Bindungen stark","Gläubig"]},
-  {atl:"Soziale Bereiche sichern", icon:"👥", problem:"P: Patient hat Angst, nach Klinikaufenthalt nicht mehr allein wohnen zu können", aet:"Ä: Funktionseinschränkung nach Hüft-TEP, soziale Isolation", ziel:"Z: Patient kennt bis zur Entlassung alle ihm zustehenden Unterstützungsangebote", massnahmen:["Sozialdienst einbeziehen","Pflegegrad beantragen (MDK)","Häusliche Pflegedienste vorstellen","Hilfsmittel verordnen (Rollator, Badewannensitz)","Entlassungsmanagement strukturiert"], ressourcen:["Tochter wohnt in der Nähe","Finanziell abgesichert"]}
+  {atl:"Soziale Bereiche sichern", icon:"👥", problem:"P: Patient hat Angst, nach Klinikaufenthalt nicht mehr allein wohnen zu können", aet:"Ä: Funktionseinschränkung nach Hüft-TEP, soziale Isolation", ziel:"Z: Patient kennt bis zur Entlassung alle ihm zustehenden Unterstützungsangebote", massnahmen:["Sozialdienst einbeziehen","Pflegegrad beantragen (MDK)","Häusliche Pflegedienste vorstellen","Hilfsmittel verordnen (Rollator, Badewannensitz)","Entlassungsmanagement strukturiert"], ressourcen:["Tochter wohnt in der Nähe","Finanziell abgesichert"]},
+  {atl:"Für eine sichere Umgebung sorgen", icon:"🦺", problem:"P: Patient ist sturzgefährdet und kann Gefahren nicht selbst einschätzen", aet:"Ä: Gangunsicherheit, Schwindel durch Antihypertensiva, Verwirrtheit, Sehstörungen", ziel:"Z: Kein Sturzereignis während des Aufenthalts · Patient klingelt vor dem Aufstehen", massnahmen:["Bett in niedrigster Position, Bremsen feststellen","Klingel in Reichweite – täglich prüfen","Rutschfeste Schuhe anziehen","Nachts Orientierungslicht einschalten","Toilettenstuhl ans Bett stellen","Sturzprotokoll führen","Hüftprotektor bei Hochrisikopatienten","Medikamente auf sturzfördernde Wirkung prüfen (Arzt)"], ressourcen:["Kooperationsbereitschaft vorhanden","Versteht Anweisungen","Angehörige unterstützen"]},
+  {atl:"Mit Schmerzen und Symptomen umgehen", icon:"😣", problem:"P: Patient leidet unter starken Schmerzen (NRS 7/10) und kann diese nicht selbst kontrollieren", aet:"Ä: Postoperativer Schmerz, chronische Grunderkrankung, unzureichende Analgesie", ziel:"Z: NRS ≤3 in Ruhe · NRS ≤5 bei Belastung · Patient kennt Schmerzskala", massnahmen:["NRS systematisch erheben: Ruhe, Belastung, Verbandswechsel","Analgesie nach AO pünktlich – nicht abwarten!","30 Min vor VW: Analgesie prüfen","Schmerzprotokoll führen","Nicht-medikamentös: Lagerung, Wärme/Kälte, Ablenkung","Bei NRS >6: Arzt informieren","BESD-Skala bei Demenz oder Bewusstlosigkeit","Breakthrough-Schmerz dokumentieren"], ressourcen:["Patient kann Schmerz beschreiben","Analgesie ist angeordnet","Möchte aktiv mitmachen"]}
 ];
 
 // ─── MEDIKAMENTE ERWEITERT ────────────────────────────────────
@@ -4758,6 +4926,171 @@ const TASCHENKARTEN = [
       { label:'Merke!', punkte:['Schmerz ist immer subjektiv!','Vor VW: Analgesie prüfen (30 Min. vorher)'] }
     ]
   }
+,
+  // ─── NEU: Alle in Deutschland üblichen Taschenkarten ───────────────────────
+  { id:'abcde', titel:'ABCDE-Schema Notfall', icon:'🚨', farbe:'#ef4444',
+    vorderseite:[
+      { label:'A – Airway (Atemweg)', punkte:['Atemweg frei? → Kopf überstrecken / Jaw-thrust','Fremdkörper? → entfernen','Obstruktion? → Guedel-/Wendl-Tubus'] },
+      { label:'B – Breathing (Atmung)', punkte:['SpO₂, Atemfrequenz, Atemtiefe','O₂-Gabe: Ziel SpO₂ ≥94% (COPD: 88-92%)','Beutel-Maske-Beatmung wenn nötig'] },
+      { label:'C – Circulation (Kreislauf)', punkte:['RR, HF, Rekapillarisierung (< 2s)','2 großlumige Zugänge, Volumen','Blutungsquelle komprimieren'] },
+      { label:'D + E', punkte:['D: GCS, Pupillen (Größe/Reaktion/Seitengleich)','E: Entkleiden, Temp, Verletzungen','SAMPLE-Anamnese starten'] }
+    ]
+  },
+  { id:'gcs', titel:'Glasgow Coma Scale (GCS)', icon:'🧠', farbe:'#8b5cf6',
+    vorderseite:[
+      { label:'Augen öffnen (1–4)', punkte:['4 = Spontan','3 = auf Ansprache','2 = auf Schmerzreiz','1 = kein Öffnen'] },
+      { label:'Verbal (1–5)', punkte:['5 = orientiert','4 = verwirrt','3 = unzusammenhängende Worte','2 = unverständliche Laute','1 = keine Reaktion'] },
+      { label:'Motorik (1–6)', punkte:['6 = befolgt Aufforderungen','5 = gezielte Schmerzabwehr','4 = ungezielte Abwehr','3 = Beugesynergismen','2 = Strecksynergismen','1 = keine Reaktion','⚠️ GCS ≤ 8 = Intubation!'] }
+    ]
+  },
+  { id:'sbar', titel:'SBAR-Übergabe', icon:'💬', farbe:'#0ea5e9',
+    vorderseite:[
+      { label:'S – Situation', punkte:['Wer bin ich? Welche Station?','Patient: Name, Zimmer, Diagnose','Aktuelles Problem in 1 Satz'] },
+      { label:'B – Background', punkte:['Relevante Vorerkrankungen','Aktuelle Medikamente','Letzte Vitalzeichen, BZ, Labor'] },
+      { label:'A – Assessment', punkte:['Meine Einschätzung: Was glaube ich?','Dringlichkeit einschätzen','„Ich mache mir Sorgen weil..."'] },
+      { label:'R – Recommendation', punkte:['Was brauche ich von Ihnen?','Konkrete Bitte: Visitenkommen? Anordnung? Rückruf?','Zeitrahmen nennen'] }
+    ]
+  },
+  { id:'qsofa', titel:'Sepsis-Erkennung (qSOFA)', icon:'🦠', farbe:'#dc2626',
+    vorderseite:[
+      { label:'qSOFA – je 1 Punkt', punkte:['RR systolisch ≤ 100 mmHg','Atemfrequenz ≥ 22/min','Bewusstseinsveränderung (GCS < 15)','⚠️ qSOFA ≥ 2 → Sepsisverdacht!'] },
+      { label:'Sofortmaßnahmen (1h-Bundle)', punkte:['Blutkultur (2 Paare) VOR Antibiose!','Laktat-Messung (> 2 = kritisch)','Breitband-Antibiotikum i.v.','500ml Kristalloid-Bolus (bei Hypotonie)','Arzt sofort informieren!'] },
+      { label:'SIRS-Kriterien', punkte:['Temp > 38°C oder < 36°C','HF > 90/min','AF > 20/min oder pCO₂ < 32','Leuko > 12.000 oder < 4.000'] }
+    ]
+  },
+  { id:'anaphylaxie', titel:'Anaphylaxie Notfall', icon:'⚡', farbe:'#f97316',
+    vorderseite:[
+      { label:'Schweregrade (I–IV)', punkte:['I: Haut (Urtikaria, Flush, Juckreiz)','II: Haut + Kreislauf/Abdomen','III: Bronchospasmus, Schock','IV: Herz-Kreislauf-Stillstand'] },
+      { label:'Sofortmaßnahmen', punkte:['Auslöser SOFORT stoppen!','Adrenalin 0,5mg i.m. Oberschenkel (immer!)','O₂ 10-15 l/min','Venenzugang, 500-1000ml Kristalloid','Flachlagerung + Beine hoch (Schock)'] },
+      { label:'Folgemedikation', punkte:['H1: Dimetinden (Fenistil) i.v.','H2: Ranitidin oder Cimetidin i.v.','Kortison: Prednisolon 250-1000mg i.v.','Bei Bronchospasmus: Salbutamol inhalativ','Notarzt rufen!'] }
+    ]
+  },
+  { id:'hypo', titel:'Hypoglykämie & Hyperglykämie', icon:'🩺', farbe:'#10b981',
+    vorderseite:[
+      { label:'Hypoglykämie (BZ < 70 mg/dl)', punkte:['Wach: 20g KH oral (4x Traubenzucker)','Bewusstlos: Glukose 40% i.v. 20-40ml','Oder: Glukagon 1mg i.m./s.c.','BZ-Kontrolle nach 15 Min.','Ursache klären!'] },
+      { label:'Hyperglykämie (BZ > 300 + Keton)', punkte:['DKA: Kussmaul-Atmung, Acetongeruch','Flüssigkeit 0,9% NaCl (Arzt-AO)','Insulin i.v. nach Anordnung','Elektrolyte: K+ engmaschig!','Arzt sofort informieren'] },
+      { label:'Normwerte', punkte:['Nüchtern: 70-100 mg/dl','2h postprandial: < 140 mg/dl','HbA1c-Ziel: < 7%','⚠️ < 50 mg/dl = Notfall!'] }
+    ]
+  },
+  { id:'ekg', titel:'EKG-Grundlagen', icon:'❤️‍🔥', farbe:'#e11d48',
+    vorderseite:[
+      { label:'Normaler Sinusrhythmus', punkte:['HF 60-100/min, regelmäßig','P-Welle vor jedem QRS','PQ-Zeit: 120-200ms','QRS-Breite: < 120ms','QT-Zeit: < 440ms (Männer)'] },
+      { label:'Alarmzeichen – sofort Arzt!', punkte:['VF/VT: Defibrillation!','Asystolie: CPR sofort','STEMI: ST-Hebung ≥ 2mm','AV-Block III°: kein P→QRS','Schrittmacher-Versagen'] },
+      { label:'Häufige Arrhythmien', punkte:['VHF: unregelmäßig, kein P','VES: breiter QRS, kompensatorische Pause','LBBB/RBBB: QRS > 120ms','WPW: kurzes PQ, Delta-Welle','Torsade de pointes: Drehbewegung'] }
+    ]
+  },
+  { id:'blasenkatheter', titel:'Blasenkatheter-Pflege', icon:'🔵', farbe:'#6366f1',
+    vorderseite:[
+      { label:'Katheteranlage – aseptisch!', punkte:['Sterile Handschuhe + Kittel','Desinfektion Meatus 3x (außen→innen)','Charrière: Frauen 12-14 Ch, Männer 14-18 Ch','Blockung: 5-10ml steriles Aqua dest.','Fixierung: Schenkel innen (Frauen), Bauch (Männer)'] },
+      { label:'CAUTI-Prophylaxe', punkte:['Tägliche Indikationsprüfung! (= wichtigste Maßnahme!)','Geschlossenes System IMMER erhalten','Beutel IMMER unter Blasenniveau','Intimhygiene 2x täglich (Wasser, kein Desinfektionsmittel)','Kein Abklemmen!'] },
+      { label:'Warnsymptome', punkte:['Trüber/übelriechender Urin','Fieber + Flanken-/Bauchschmerz','Blut im Urin → Arzt','Beutel voll oder kein Urin (Stau?)','Urinmenge < 0,5ml/kg/h'] }
+    ]
+  },
+  { id:'magensonde', titel:'Magensonde (NGS)', icon:'🟡', farbe:'#d97706',
+    vorderseite:[
+      { label:'Anlage', punkte:['Größe: Erwachsene 12-16 Ch','Länge messen: Nase-Ohr-Nabel (ca. 50-60cm)','Kopf leicht vorbeugen beim Einführen','Lagekontrolle: Aspiration (pH ≤ 5.5) + Röntgen!','Fixierung: Nasenpflaster, täglich wechseln'] },
+      { label:'Ernährungsmanagement', punkte:['30-45° Oberkörperhochlagerung IMMER','Sondenkost-Temperatur: Zimmertemperatur','Spülung: 20-50ml Wasser vor/nach Gabe','Restvolumen-Check alle 4h (> 200ml = Arzt!)','Schlauch alle 24h wechseln'] },
+      { label:'Medikamentengabe', punkte:['Nur flüssige/lösliche Medikamente!','Tabletten mörsern + auflösen (Rückfrage Apotheke)','Interaktionen beachten (pH-abhängig)','Spülung VOR und NACH Medikament','Retard-Tabletten NIEMALS mörsern!'] }
+    ]
+  },
+  { id:'news2', titel:'NEWS2-Score', icon:'📈', farbe:'#7c3aed',
+    vorderseite:[
+      { label:'Parameter (je 0-3 Punkte)', punkte:['Atemfrequenz: 12-20 = 0, < 8 = 3','SpO₂ (Skala 1): ≥ 96 = 0, ≤ 91 = 3','SpO₂ (Skala 2, COPD): 88-92 = 0','Systol. RR: 111-219 = 0, ≤ 90 = 3','Puls: 51-90 = 0, ≤ 40 = 3','Temperatur: 36.1-38.0 = 0','Bewusstsein: alert = 0, CVPU = 3'] },
+      { label:'Auswertung + Reaktion', punkte:['0 = niedrig, min. 12h-Monitoring','1-4 = gering, mind. 4-6h','5-6 = mittel → Arzt sofort, mind. 1h','≥ 7 = HOCH → Notfallteam!','Neu: O₂-Gabe = automatisch +2 Punkte'] }
+    ]
+  },
+  { id:'delir', titel:'Delir-Erkennung (CAM-ICU)', icon:'😵', farbe:'#0891b2',
+    vorderseite:[
+      { label:'CAM-ICU – 4 Kriterien', punkte:['1. Akuter Beginn/Fluktuierender Verlauf','2. Unaufmerksamkeit (Buchstaben-Test: SAVEAHAART)','3. Desorganisiertes Denken','4. Veränderte Bewusstseinslage (RASS ≠ 0)','⚠️ Delir = Kriterien 1+2 + (3 ODER 4)!'] },
+      { label:'Nicht-pharmakologische Therapie', punkte:['Tag-Nacht-Rhythmus (Licht, Uhren, Kalender)','Frühmobilisation täglich','Orientierungshilfen: Brille, Hörgerät!','Schlaf fördern: Lärm/Licht reduzieren','Familie einbeziehen, vertraute Stimmen'] },
+      { label:'RASS-Skala', punkte:['+4 Streitlustig, +3 Sehr agitiert','0 = Alert/wach (Ziel)','−1 Schläfrig, −2 Leichte Sedierung','−3 Moderate, −4 Tiefe Sedierung','−5 Nicht erweckbar'] }
+    ]
+  },
+  { id:'fem', titel:'Fixierung/FEM – Rechtliches', icon:'⚖️', farbe:'#64748b',
+    vorderseite:[
+      { label:'Grundsatz', punkte:['FEM = Letztes Mittel!','Erst: alle Alternativen ausschöpfen','Sensormatten, Hüftprotektoren, Bettrandschutz','Stuhlalarm, Betreuung intensivieren','Pflegebett absenken'] },
+      { label:'Rechtliche Voraussetzungen', punkte:['Richterliche Genehmigung (§1906 BGB) ODER','Betreuungsrechtliche Einwilligung','Notfall: ohne Genehmigung max. bis Richterentscheid','Dokumentation: Grund, Zeit, Art, Kontrollen','1:1-Betreuung Pflicht!'] },
+      { label:'Überwachung bei Fixierung', punkte:['Vitalzeichen alle 30 Min.','Durchblutung, Atmung prüfen','Toilettengang anbieten!','Ablösen sobald möglich','Nachgespräch führen','PsychKG NRW beachten'] }
+    ]
+  },
+  { id:'drainagen', titel:'Drainagen-Pflege', icon:'🔩', farbe:'#059669',
+    vorderseite:[
+      { label:'Allgemeine Regeln', punkte:['Immer geschlossenes System!','Niemals höher als Ableitstelle platzieren','Drainagevolumen täglich dokumentieren','Farbe, Konsistenz, Geruch beurteilen','Eintrittsstelle täglich inspizieren'] },
+      { label:'Thoraxdrainage', punkte:['Drainageflasche: 2/3 Wasser (Wasserventil!)','Luft/Blut in Kammer = Komplikation → Arzt!','Patient: keine tiefen Atemzüge vermeiden','Klemmen NUR auf ärztliche Anordnung','Milkingsysteme nach Standard'] },
+      { label:'Abdominaldrainage (JP, Redon)', punkte:['Redon: Unterdruck täglich prüfen','JP-Drain: Kammer komprimieren nach Entleerung','Auslitern, Dokumentation, Kultur bei Infektion','Zug-Test täglich (zieht → fest verankert)','Entfernung nach ärztl. AO: Asepsis!'] }
+    ]
+  },
+  { id:'transfusion', titel:'Bluttransfusion', icon:'🩸', farbe:'#b91c1c',
+    vorderseite:[
+      { label:'Vor der Transfusion', punkte:['Aufklärung + Einwilligung (schriftlich)!','Blutgruppe + Kreuzprobe liegt vor?','Produktidentifikation: Konserve ≠ Patient → STOPP','Bettseitige Kontrolle: 2-Personen-Prinzip','Venenzugang 16-18 G, nur NaCl 0,9%'] },
+      { label:'Während der Transfusion', punkte:['Erste 15 Min.: langsam! (ca. 20-30 Tr./min)','Patient nicht allein lassen!','Vitalzeichen: vorher, nach 15 Min., nach Abschluss','EK: max. 4h, TK: max. 30 Min., FFP: max. 6h'] },
+      { label:'Transfusionsreaktion → STOPP!', punkte:['Sofort stoppen, Zugang OFFEN halten','Arzt sofort!','Fieber, Schüttelfrost, Juckreiz, RR-Abfall','Blut + Konserve aufbewahren','Transfusionsreaktion meldepflichtig'] }
+    ]
+  },
+  { id:'kinderreanimation', titel:'Kinderreanimation (PBLS)', icon:'👶', farbe:'#ec4899',
+    vorderseite:[
+      { label:'Wichtigste Unterschiede (vs. BLS)', punkte:['ZUERST 5 initiale Beatmungen!','Dann: 15:2 (nicht 30:2!)','Drucktiefe: 1/3 Thoraxtiefe (4-5cm)','Säugling: 2 Finger, Kind: 1-2 Handballen','Frequenz: 100-120/min (wie Erwachsene)'] },
+      { label:'Besonderheiten', punkte:['Kopf neutral (Säugling) / leicht überstreckt','Mund-zu-Mund-Nase (Säugling!)','AED: ab 1. Lebensjahr, Kinderpads ≤ 25kg','Adrenalin: 0,01mg/kg i.v. (= 0,1ml/kg 1:10.000)','IO-Nadel wenn kein i.v.-Zugang in 2 Versuchen'] },
+      { label:'Atemwege Kind', punkte:['Säugling atmet nasal → Nase freihalten!','Pseudokrupp: kühle Luft + Kortison','Epiglottitis: Kind ruhig halten, kein Spatel!','Fremdkörper: Rückenschläge + Heimlich ab 1J.'] }
+    ]
+  },
+  { id:'who_schmerz', titel:'WHO-Schmerztherapie', icon:'💊', farbe:'#dc2626',
+    vorderseite:[
+      { label:'Stufe 1: Nicht-Opioide', punkte:['Paracetamol 500-1000mg alle 4-6h (max. 4g/d)','Ibuprofen 400-800mg alle 6-8h (mit Mahlzeit!)','Metamizol 500-1000mg alle 6h (langsam i.v.!)','Diclofenac 50-100mg alle 8-12h','± Adjuvanzien (Antikonvulsiva, Antidepressiva)'] },
+      { label:'Stufe 2: Schwache Opioide', punkte:['Tramadol 50-100mg alle 6-8h','Tilidin/Naloxon 50/4-100/8mg','Cave: Übelkeit, Schwindel!','Immer mit Laxans!','Kombination mit Stufe-1 möglich'] },
+      { label:'Stufe 3: Starke Opioide', punkte:['Morphin retardiert alle 8-12h','Oxycodon alle 12h, Fentanyl-Pflaster 72h','IMMER Laxans von Anfang an (Macrogol)!','Antiemetikum für die ersten Tage','NRS-Kontrolle vor/nach Gabe dokumentieren'] }
+    ]
+  },
+  { id:'beatmung_basics', titel:'Beatmung Grundlagen', icon:'💨', farbe:'#0369a1',
+    vorderseite:[
+      { label:'Startparameter (Erwachsener)', punkte:['Tidalvolumen: 6-8ml/kg Idealgewicht','Frequenz: 12-16/min','PEEP: 5-8 cmH₂O (Standard)','FiO₂: Start 1,0 → titrieren auf SpO₂ ≥94%','Plateaudruck: < 30 cmH₂O (Lungenprotektion)'] },
+      { label:'Alarme → Ursachen', punkte:['Hoher Druck: Husten, Sekret, Tubusabknick, PNX','Niedriges TV: Leck, Cuff-Druckverlust','Apnoe: Tubusverlegung/-dislokation → sofort!','Niedrige SpO₂: Tubuslage, Absaugen, FiO₂ ↑','Kapno ↑: Hypoventilation, ↓: Fehlage/PE'] },
+      { label:'VAP-Prophylaxe (Bundle)', punkte:['OK 30-45° hochlagern IMMER','Cuff-Druck 20-30 cmH₂O halten','Mundpflege Chlorhexidin 2x täglich','Subglottische Absaugung (falls Tubus)','Tägliche Extubationsprüfung!'] }
+    ]
+  },
+  { id:'fluessigkeitsbilanz', titel:'Flüssigkeitsbilanz', icon:'💧', farbe:'#0284c7',
+    vorderseite:[
+      { label:'Einfuhr dokumentieren', punkte:['Trinkmenge (Becher abmessen!)','Infusionen + Medikamente i.v.','Enterale/parenterale Ernährung','Blutprodukte, Spülungen','Ziel: exakte ml-Angaben'] },
+      { label:'Ausfuhr dokumentieren', punkte:['Urin (Dauerkatheter: exakt; ohne: schätzen)','Erbrechen, Drainagen, Wundexsudat','Stuhl (schätzen: gering/mittel/viel)','Perspiratio: ca. 500-700ml/24h (unsichtbar)','Fieber: +200ml/°C über 37°C'] },
+      { label:'Auswertung', punkte:['Ausgeglichene Bilanz = Einfuhr ≈ Ausfuhr','+ Bilanz: Ödemgefahr, Herzinsuffizienz','− Bilanz: Dehydration, Nierenversagen','Tägliche Gewichtskontrolle! (1kg ≈ 1L)','> +1kg/Tag → Arzt informieren'] }
+    ]
+  },
+  { id:'sturzprotokoll', titel:'Nach einem Sturz', icon:'⚠️', farbe:'#f59e0b',
+    vorderseite:[
+      { label:'Sofortmaßnahmen', punkte:['Patient NICHT sofort aufheben!','Ersteinschätzung: Bewusstsein, Atmung, Puls','Verletzungen prüfen: Kopf, Hüfte, Handgelenk','Bei Verdacht Fraktur: ruhig lagern, Notarzt','Vitalzeichen, Schmerz-NRS, Pupillen'] },
+      { label:'Dokumentation (sofort!)', punkte:['Zeitpunkt, Ort, Sturzhergangsbeschreibung','Wer war dabei? Zeugen?','Vorgefundene Situation','Durchgeführte Maßnahmen','Arztinfo + Angehörigeninfo'] },
+      { label:'Nachbearbeitung', punkte:['Sturzprotokoll ausfüllen','CIRS-Meldung erwägen','Sturzrisiko neu bewerten (Morse/STRATIFY)','Maßnahmenplan anpassen','Patientengespräch + Edukation'] }
+    ]
+  },
+  { id:'tracheostoma_pflege', titel:'Tracheostoma Pflege', icon:'🌬️', farbe:'#14b8a6',
+    vorderseite:[
+      { label:'Absaugung (nur bei Bedarf!)', punkte:['Präoxygenieren: FiO₂ ↑ für 2 Min.','Steriler Katheter: max. Kanülendurchmesser','Einführtiefe: max. 0,5cm über Kanülenspitze','Sog: max. 150-200 cmH₂O','Max. 15 Sekunden pro Absaugvorgang!'] },
+      { label:'Innenkanüle & HME-Filter', punkte:['Innenkanüle alle 8h reinigen/wechseln','HME-Filter alle 24h wechseln (Befeuchtung!)','Stoma täglich mit NaCl-Kompressen reinigen','Cuff-Druck: 20-25 cmH₂O (Manometer!)','Sprechventil: nur bei bewusstem, stabilen Pat.'] },
+      { label:'Notfall – Kanüle verlegt/herausgefallen', punkte:['Ruhe! Sauerstoff sofort anlegen','Absaugen versuchen','Kanüle wechseln (immer bereit haben!)','Notfallset am Bett: Kanülen (gleiche + eine Nr. kleiner)','Notarzt wenn keine Ventilation möglich'] }
+    ]
+  },
+  { id:'infektionsschutz_praxis', titel:'Schutzausrüstung PSA', icon:'🥼', farbe:'#7c3aed',
+    vorderseite:[
+      { label:'Anlegen (in dieser Reihenfolge)', punkte:['1. Kittel (hinten binden)','2. Maske/FFP2 (Nasenbügel anformen!)','3. Schutzbrille','4. Handschuhe (über Kittelärmel ziehen)','Vor Anlegen: Händedesinfektion!'] },
+      { label:'Ablegen (in dieser Reihenfolge)', punkte:['1. Handschuhe (nach innen stülpen)','2. Kittel (nach innen rollen)','3. Schutzbrille (an Bügeln absetzen)','4. Maske (Bänder lösen, nicht vorne anfassen)','Nach jedem Schritt: Händedesinfektion!'] },
+      { label:'Masken-Übersicht', punkte:['MNS/OP-Maske: Tröpfcheninfektionen','FFP2: MRSA, COVID, Influenza','FFP3: Offene TBC, SARS','Wechsel: MNS nach 3-4h, FFP2 nach 8h','Feuchte Masken SOFORT wechseln!'] }
+    ]
+  },
+  { id:'sample', titel:'SAMPLE-Anamnese Notfall', icon:'📋', farbe:'#0f766e',
+    vorderseite:[
+      { label:'S – Symptome', punkte:['Hauptbeschwerde in eigenen Worten','Lokalisation, Charakter, Intensität (NRS)','Beginn, Verlauf, auslösende Faktoren','Begleitsymptome'] },
+      { label:'A – Allergien / M – Medikamente', punkte:['A: Allergien auf Medikamente, Latex, Lebensmittel','M: Aktuelle Dauermedikation (auch freiverkäuflich!)','Letzte Einnahme, Dosierung','Blutgerinnungshemmer besonders wichtig!'] },
+      { label:'P – Probleme / L – Letzte Mahlzeit / E – Ereignis', punkte:['P: Bekannte Erkrankungen, Operationen, Krankenhausaufenthalte','L: Letzte Nahrungsaufnahme (Narkose-relevant!)','E: Was ist passiert? Hergang, Unfallmechanismus','Immer bei Trauma: ATLS-Schema'] }
+    ]
+  },
+  { id:'medikamente_intensiv', titel:'Intensiv-Medikamente', icon:'💉', farbe:'#1d4ed8',
+    vorderseite:[
+      { label:'Vasopressoren/Katecholamine', punkte:['Noradrenalin: 0,01-1,0 µg/kg/min (First-Line Sepsis)','Adrenalin: 0,01-0,5 µg/kg/min','Dobutamin: 2-20 µg/kg/min (Kardiogen. Schock)','Vasopressin: 0,03-0,04 E/min (Add-on)','NIEMALS unterbrechen → Backup-Perfusor!'] },
+      { label:'Sedierung/Analgesie (PADIS)', punkte:['Analgesie ZUERST! (Pain before sedation)','Propofol: 0,3-4 mg/kg/h (max. 48h!)','Midazolam: 0,03-0,2 mg/kg/h','Dexmedetomidin: 0,2-1,4 µg/kg/h (kooperativ!)','Ziel: RASS -1 bis 0 (leicht sediert)'] },
+      { label:'Häufige i.v.-Perfusoren', punkte:['Heparin: nach aPTT 60-80s','Insulin: BZ-Protokoll, Ziel 140-180 mg/dl','Furosemid: 5-40mg/h (Diurese-Protokoll)','Amiodaron: 900mg/24h Erhalt nach Bolus','Kalium: max. 20 mmol/h über ZVK!'] }
+    ]
+  }
+
 ];
 
 function renderTaschenkarten() {
@@ -4767,6 +5100,9 @@ function renderTaschenkarten() {
     document.body.appendChild(d);
   }
   const screen = document.getElementById('screen-taschenkarten');
+  // Sicherstellen dass der Screen aktiv ist (Fix für 1-Klick)
+  document.querySelectorAll('.page, .chat-page').forEach(p => p.classList.remove('active'));
+  screen.classList.add('active');
 
   screen.innerHTML = `
     <div class="hero" style="margin-bottom:14px">
