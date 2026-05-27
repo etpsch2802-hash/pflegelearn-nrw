@@ -390,6 +390,7 @@
   <button onclick="navGo('quizSelect')" class="nav-drop-btn">📝 Quiz</button>
   <button onclick="navGo('lernplan')" class="nav-drop-btn">📅 Lernplan</button>
   <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn">🏥 Krankheitsbilder</button>
+  <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
   <button onclick="navGo('wundversorgung')" class="nav-drop-btn">🩹 Wundversorgung</button>
   <button onclick="navGo('prophylaxen')" class="nav-drop-btn">🛡️ Prophylaxen</button>
   <button onclick="navGo('atl')" class="nav-drop-btn">📋 ATL Pflegeplanung</button>
@@ -549,6 +550,11 @@
           <div class="bottom-card-icon">📇</div>
           <div class="bottom-card-title">Taschenkarten</div>
           <div class="bottom-card-sub">38 Karten · Kasack-Format · Druckfertig</div>
+        </button>
+        <button class="bottom-card" onclick="showScreen('scores')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8;grid-column:span 2">
+          <div class="bottom-card-icon">📊</div>
+          <div class="bottom-card-title">Assessment-Scores</div>
+          <div class="bottom-card-sub">Braden · GCS · NEWS2 · Barthel · SOFA · 29 Skalen</div>
         </button>
         <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
           <div class="bottom-card-icon">🏥</div>
@@ -1327,6 +1333,7 @@ function showScreen(name) {
   if (name === "kinaesthetik")  setTimeout(() => { renderKinaesthetik(); }, 50);
   if (name === "bobath")        setTimeout(() => { renderBobath(); }, 50);
   if (name === "atl")           setTimeout(() => { renderATL(); }, 50);
+  if (name === "scores")        { renderScores(); }
   if (name === "medNeu")        setTimeout(() => { renderMedNeu(); }, 50);
 }
 
@@ -5709,6 +5716,599 @@ function renderMedNeu(kat) {
 }
 
 // ─── HTML-SCREENS DYNAMISCH EINF üGEN ──────────────────────────
+
+
+// ─── PFLEGE-SCORES & ASSESSMENT-SKALEN ──────────────────────────────────────
+const SCORES = [
+  {
+    id: 'braden', name: 'Braden-Skala', icon: '🛏️', farbe: '#f43f5e',
+    kategorie: 'Dekubitus', zweck: 'Dekubitusrisiko-Assessment',
+    standard: 'DNQP-Expertenstandard Dekubitusprophylaxe 2017',
+    items: [
+      { name: 'Sensorisches Empfindungsvermögen', punkte: '1–4', beschreibung: '1=vollständig eingeschränkt, 4=nicht eingeschränkt' },
+      { name: 'Feuchtigkeit', punkte: '1–4', beschreibung: '1=ständig feucht, 4=selten feucht' },
+      { name: 'Aktivität', punkte: '1–4', beschreibung: '1=bettlägerig, 4=geht häufig' },
+      { name: 'Mobilität', punkte: '1–4', beschreibung: '1=vollständig immobil, 4=unbeschränkt mobil' },
+      { name: 'Ernährung', punkte: '1–4', beschreibung: '1=sehr schlecht, 4=ausgezeichnet' },
+      { name: 'Reibung & Scherkräfte', punkte: '1–3', beschreibung: '1=Problem, 2=potenz. Problem, 3=kein Problem' },
+    ],
+    auswertung: [
+      { wert: '≤ 9 Punkte', bedeutung: '⛔ Sehr hohes Risiko', massnahme: 'Spezialmtratze + Umlagerung 2h' },
+      { wert: '10–12', bedeutung: '🔴 Hohes Risiko', massnahme: 'Wechseldruckmatratze, 2–3h Umlagerung' },
+      { wert: '13–14', bedeutung: '🟠 Mittleres Risiko', massnahme: 'Schaumstoffmatratze, 4h Umlagerung' },
+      { wert: '15–18', bedeutung: '🟡 Leichtes Risiko', massnahme: 'Präventive Maßnahmen, Hautinspektion' },
+      { wert: '19–23', bedeutung: '🟢 Kein Risiko', massnahme: 'Regelmäßige Reassessment' },
+    ],
+    hinweis: 'Erhebung: Aufnahme + bei jeder wesentlichen Veränderung. Maximal 23 Punkte.'
+  },
+  {
+    id: 'norton', name: 'Norton-Skala', icon: '🛏️', farbe: '#f43f5e',
+    kategorie: 'Dekubitus', zweck: 'Alternative Dekubitusrisikoeinschätzung (ältere Skala)',
+    items: [
+      { name: 'Allgemeinzustand', punkte: '1–4', beschreibung: '4=gut, 3=leidlich, 2=schlecht, 1=sehr schlecht' },
+      { name: 'Geistiger Zustand', punkte: '1–4', beschreibung: '4=klar, 3=apathisch, 2=verwirrt, 1=stupurös' },
+      { name: 'Aktivität', punkte: '1–4', beschreibung: '4=geht allein, 3=geht mit Hilfe, 2=sitzt, 1=bettlägerig' },
+      { name: 'Mobilität', punkte: '1–4', beschreibung: '4=voll, 3=leicht eingeschränkt, 2=sehr eingeschränkt, 1=immobil' },
+      { name: 'Inkontinenz', punkte: '1–4', beschreibung: '4=keine, 3=manchmal, 2=meistens Urin, 1=Stuhl+Urin' },
+    ],
+    auswertung: [
+      { wert: '≤ 12', bedeutung: '🔴 Hohes Risiko', massnahme: 'Sofortige Dekubitusprophylaxe' },
+      { wert: '13–14', bedeutung: '🟠 Mittleres Risiko', massnahme: 'Prophylaktische Maßnahmen' },
+      { wert: '≥ 15', bedeutung: '🟢 Kein Risiko', massnahme: 'Regelmäßige Kontrolle' },
+    ],
+    hinweis: 'Max. 20 Punkte. Weniger Items als Braden → oft als Schnellscreen genutzt.'
+  },
+  {
+    id: 'morse', name: 'Morse Sturzskala', icon: '⚠️', farbe: '#f59e0b',
+    kategorie: 'Sturz', zweck: 'Sturzrisikoeinschätzung bei Erwachsenen',
+    standard: 'DNQP-Expertenstandard Sturzprophylaxe 2013/2019',
+    items: [
+      { name: 'Sturzvorgeschichte (letzte 3 Monate)', punkte: 'Ja=25 / Nein=0', beschreibung: '' },
+      { name: 'Sekundärdiagnose', punkte: 'Ja=15 / Nein=0', beschreibung: '≥2 Diagnosen' },
+      { name: 'Gehhilfen', punkte: '0/15/30', beschreibung: '0=keine/Bettruhe, 15=Krücken/Stock/Rollator, 30=Möbel' },
+      { name: 'i.v.-Zugang / Infusionstherapie', punkte: 'Ja=20 / Nein=0', beschreibung: '' },
+      { name: 'Gang', punkte: '0/10/20', beschreibung: '0=normal/Rollstuhl/bettlägerig, 10=schwach, 20=eingeschränkt' },
+      { name: 'Geistiger Zustand', punkte: '0/15', beschreibung: '0=orientiert, 15=vergisst Einschränkungen' },
+    ],
+    auswertung: [
+      { wert: '0–24', bedeutung: '🟢 Kein/geringes Risiko', massnahme: 'Basismaßnahmen' },
+      { wert: '25–44', bedeutung: '🟡 Mittleres Risiko', massnahme: 'Sturzprophylaxe-Programm' },
+      { wert: '≥ 45', bedeutung: '🔴 Hohes Risiko', massnahme: 'Alle Maßnahmen + Intensivmonitoring' },
+    ],
+    hinweis: 'Max. 125 Punkte. Re-Assessment bei jeder Zustandsveränderung!'
+  },
+  {
+    id: 'stratify', name: 'STRATIFY-Skala', icon: '⚠️', farbe: '#f59e0b',
+    kategorie: 'Sturz', zweck: 'Sturzrisikoscreen (St. Thomas Risk Assessment)',
+    items: [
+      { name: 'Patient präsentiert sich/wird mit Sturz eingeliefert', punkte: 'Ja=1', beschreibung: '' },
+      { name: 'Patient agitiert', punkte: 'Ja=1', beschreibung: 'unruhig, verwirrt, desorientiert' },
+      { name: 'Sehbeeinträchtigung', punkte: 'Ja=1', beschreibung: 'die die Alltagsfunktion beeinträchtigt' },
+      { name: 'Häufige Toilettengänge', punkte: 'Ja=1', beschreibung: 'Harndrang, Inkontinenz' },
+      { name: 'Gehtransfer-Score ≥ 3', punkte: 'Ja=1', beschreibung: 'Transfer + Gang beurteilen (0–6)' },
+    ],
+    auswertung: [
+      { wert: '0', bedeutung: '🟢 Niedrig', massnahme: 'Basismaßnahmen' },
+      { wert: '1', bedeutung: '🟡 Mittel', massnahme: 'Erweiterte Prophylaxe' },
+      { wert: '≥ 2', bedeutung: '🔴 Hoch', massnahme: 'Alle Maßnahmen, engmaschige Beobachtung' },
+    ],
+    hinweis: 'Schnell durchführbar (5 Items). Ergänzend zu Morse einsetzbar.'
+  },
+  {
+    id: 'nrs_schmerz', name: 'NRS – Schmerzskala', icon: '😣', farbe: '#ef4444',
+    kategorie: 'Schmerz', zweck: 'Numerische Selbsteinschätzung Schmerzintensität',
+    standard: 'DNQP-Expertenstandard Schmerzmanagement 2020',
+    items: [
+      { name: '0', punkte: '', beschreibung: 'Kein Schmerz' },
+      { name: '1–3', punkte: '', beschreibung: 'Leichter Schmerz (kaum beeinträchtigend)' },
+      { name: '4–6', punkte: '', beschreibung: 'Mäßiger Schmerz (beeinträchtigend)' },
+      { name: '7–9', punkte: '', beschreibung: 'Starker Schmerz (stark beeinträchtigend)' },
+      { name: '10', punkte: '', beschreibung: 'Stärkster vorstellbarer Schmerz' },
+    ],
+    auswertung: [
+      { wert: '0', bedeutung: '🟢 Kein Schmerz', massnahme: 'Weiter beobachten' },
+      { wert: '1–3', bedeutung: '🟡 Leicht', massnahme: 'Nicht-pharmakologische Maßnahmen' },
+      { wert: '≥ 4', bedeutung: '🔴 Handlungsbedarf!', massnahme: 'Analgesie nach AO, Wirkungskontrolle nach 30–60 Min.' },
+    ],
+    hinweis: 'Immer vor + nach Analgesie dokumentieren! Ziel: NRS ≤ 3 in Ruhe, ≤ 5 bei Bewegung.'
+  },
+  {
+    id: 'besd', name: 'BESD-Skala', icon: '😣', farbe: '#ef4444',
+    kategorie: 'Schmerz', zweck: 'Beurteilung von Schmerzen bei Demenz (Beobachtungsskala)',
+    items: [
+      { name: 'Atmung', punkte: '0–2', beschreibung: '0=normal, 1=gelegentlich gestört, 2=laut/schwer' },
+      { name: 'Negative Lautäußerungen', punkte: '0–2', beschreibung: '0=keine, 1=gelegentlich stöhnen, 2=wiederholt schreien' },
+      { name: 'Gesichtsausdruck', punkte: '0–2', beschreibung: '0=lächelnd, 1=traurig/ängstlich, 2=grimassiert' },
+      { name: 'Körpersprache', punkte: '0–2', beschreibung: '0=entspannt, 1=angespannt, 2=starr' },
+      { name: 'Tröstbarkeit', punkte: '0–2', beschreibung: '0=keine Notwendigkeit, 1=ablenkbar, 2=nicht tröstbar' },
+    ],
+    auswertung: [
+      { wert: '0–2', bedeutung: '🟢 Kein/kaum Schmerz', massnahme: 'Weiter beobachten' },
+      { wert: '3–7', bedeutung: '🟡 Mittlerer Schmerz', massnahme: 'Analgesie erwägen, Arzt informieren' },
+      { wert: '8–10', bedeutung: '🔴 Starker Schmerz', massnahme: 'Sofortige Schmerztherapie + Arzt' },
+    ],
+    hinweis: 'Für Patienten, die sich verbal nicht äußern können. Auch bei Bewusstlosen einsetzbar.'
+  },
+  {
+    id: 'bps', name: 'BPS – Behavioral Pain Scale', icon: '😣', farbe: '#ef4444',
+    kategorie: 'Schmerz', zweck: 'Schmerzerfassung bei sedierten/beatmeten Intensivpatienten',
+    items: [
+      { name: 'Gesichtsausdruck', punkte: '1–4', beschreibung: '1=entspannt, 2=teilweise angespannt, 3=vollständig angespannt, 4=Grimassen' },
+      { name: 'Bewegungen der Arme', punkte: '1–4', beschreibung: '1=keine, 2=teilweise Beugung, 3=vollständige Beugung, 4=dauerhaft eingezogen' },
+      { name: 'Toleranz der Beatmung', punkte: '1–4', beschreibung: '1=toleriert, 2=hustet, 3=kämpft gegen Respirator, 4=Beatmung nicht möglich' },
+    ],
+    auswertung: [
+      { wert: '3', bedeutung: '🟢 Kein Schmerz', massnahme: 'Kein Handlungsbedarf' },
+      { wert: '4–5', bedeutung: '🟡 Leichter Schmerz', massnahme: 'Analgesie erwägen' },
+      { wert: '6–12', bedeutung: '🔴 Schmerz vorhanden!', massnahme: 'Analgesie nach AO (Morphin/Fentanyl), Ursache suchen' },
+    ],
+    hinweis: 'Nur für intubierten/sedierten Patienten. Analgesie VOR Sedierung (PADIS-Leitlinie)!'
+  },
+  {
+    id: 'kuss', name: 'KUSS – Kinderschmerzskala', icon: '👶', farbe: '#ec4899',
+    kategorie: 'Schmerz', zweck: 'Kinder-Unbehagen und Schmerzskala (0–4 Jahre, postoperativ)',
+    items: [
+      { name: 'Weinen', punkte: '0–2', beschreibung: '0=gar nicht, 1=stöhnt/weint, 2=schreit' },
+      { name: 'Gesichtsausdruck', punkte: '0–1', beschreibung: '0=entspannt/lächelt, 1=Mund verkrampft' },
+      { name: 'Rumpfhaltung', punkte: '0–2', beschreibung: '0=neutral, 1=unruhig, 2=aufgebäumt' },
+      { name: 'Beinhaltung', punkte: '0–2', beschreibung: '0=neutral, 1=strampelnd, 2=angezogen' },
+      { name: 'Motorische Unruhe', punkte: '0–2', beschreibung: '0=nicht vorhanden, 1=mäßig, 2=ruhelos' },
+    ],
+    auswertung: [
+      { wert: '0–3', bedeutung: '🟢 Geringer Schmerz', massnahme: 'Nicht-pharmakologische Maßnahmen' },
+      { wert: '4–6', bedeutung: '🟡 Mäßiger Schmerz', massnahme: 'Analgesie nach AO' },
+      { wert: '7–10', bedeutung: '🔴 Starker Schmerz', massnahme: 'Sofortige Analgesie + Arzt' },
+    ],
+    hinweis: 'Für Säuglinge und Kleinkinder. Ab 4 Jahren FACES-Skala bevorzugen.'
+  },
+  {
+    id: 'gcs', name: 'Glasgow Coma Scale (GCS)', icon: '🧠', farbe: '#8b5cf6',
+    kategorie: 'Neurologie', zweck: 'Einschätzung des Bewusstseinszustands',
+    items: [
+      { name: 'Augen öffnen', punkte: '1–4', beschreibung: '4=spontan, 3=auf Ansprache, 2=auf Schmerzreiz, 1=kein Öffnen' },
+      { name: 'Verbale Reaktion', punkte: '1–5', beschreibung: '5=orientiert, 4=verwirrt, 3=Worte, 2=Laute, 1=keine' },
+      { name: 'Motorische Reaktion', punkte: '1–6', beschreibung: '6=befolgt, 5=gezielt, 4=ungezielt, 3=Beugung, 2=Streckung, 1=keine' },
+    ],
+    auswertung: [
+      { wert: '15', bedeutung: '🟢 Volles Bewusstsein', massnahme: 'Regelmäßige Kontrolle' },
+      { wert: '13–14', bedeutung: '🟡 Leichte Bewusstseinsstörung', massnahme: 'Engmaschige Überwachung, Arzt' },
+      { wert: '9–12', bedeutung: '🟠 Mittelschwere Störung', massnahme: 'Intensivüberwachung' },
+      { wert: '≤ 8', bedeutung: '🔴 Schweres Koma → Intubationsindikation!', massnahme: 'Sofort Arzt/Notarzt!' },
+      { wert: '3', bedeutung: '⛔ Tiefstes Koma', massnahme: 'Maximale Intensivtherapie' },
+    ],
+    hinweis: 'Min. 3 Punkte (tiefes Koma), Max. 15 (normal). GCS ≤ 8 = Atemwegsschutz nötig!'
+  },
+  {
+    id: 'rass', name: 'RASS – Richmond Agitation Sedation Scale', icon: '🧠', farbe: '#8b5cf6',
+    kategorie: 'Neurologie', zweck: 'Sedierungs- und Agitationsgrad auf der Intensivstation',
+    items: [
+      { name: '+4 Streitlustig', punkte: '', beschreibung: 'Aggressiv, Gefahr für Personal' },
+      { name: '+3 Sehr agitiert', punkte: '', beschreibung: 'Zieht an Schläuchen/Kathetern' },
+      { name: '+2 Agitiert', punkte: '', beschreibung: 'Häufige ungezielte Bewegungen' },
+      { name: '+1 Unruhig', punkte: '', beschreibung: 'Ängstlich, Bewegungen nicht aggressiv' },
+      { name: '0 Alert/Wach', punkte: '', beschreibung: 'Ziel-RASS bei Routinepflege' },
+      { name: '-1 Schläfrig', punkte: '', beschreibung: 'Nicht ganz wach, aber erweckbar (>10s)' },
+      { name: '-2 Leicht sediert', punkte: '', beschreibung: 'Erwacht kurz auf Stimme (<10s)' },
+      { name: '-3 Mäßig sediert', punkte: '', beschreibung: 'Augenbewegung auf Ansprache, kein Augenkontakt' },
+      { name: '-4 Tief sediert', punkte: '', beschreibung: 'Keine Reaktion auf Sprache, nur auf Schmerzreiz' },
+      { name: '-5 Nicht erweckbar', punkte: '', beschreibung: 'Keine Reaktion auf Stimme/Schmerz' },
+    ],
+    auswertung: [
+      { wert: 'Ziel ICU: -1 bis 0', bedeutung: '✅ Leicht sediert bis wach', massnahme: 'ABCDEF-Bundle anwenden' },
+      { wert: '+1 bis +4', bedeutung: '⚠️ Agitation', massnahme: 'Ursache suchen (Schmerz, Delir, Hypoxie), Analgesie first!' },
+      { wert: '-4 bis -5', bedeutung: '⚠️ Zu tief sediert', massnahme: 'Sedierung reduzieren, Daily Awakening Trial' },
+    ],
+    hinweis: 'RASS-Bestimmung VOR CAM-ICU! Analgesie VOR Sedierung (PADIS 2018).'
+  },
+  {
+    id: 'cam_icu', name: 'CAM-ICU – Delir-Screening', icon: '😵', farbe: '#0891b2',
+    kategorie: 'Neurologie', zweck: 'Delir-Erkennung bei beatmeten/nicht-kommunikativen ICU-Patienten',
+    items: [
+      { name: '1. Akuter Beginn + Fluktuierender Verlauf', punkte: 'Pflicht', beschreibung: 'RASS-Veränderung im Verlauf? Bewusstseinsschwankungen?' },
+      { name: '2. Unaufmerksamkeit', punkte: 'Pflicht', beschreibung: 'Buchstaben-Test: SAVEAHAART – bei "A" Händedruck. Fehler ≥ 3 = positiv' },
+      { name: '3. Desorganisiertes Denken', punkte: 'Alternativ', beschreibung: 'Fragen: Schwimmt ein Stein? Gibt es Fische im Meer? Hebt mal 2 Finger...' },
+      { name: '4. Veränderte Bewusstseinslage', punkte: 'Alternativ', beschreibung: 'RASS ≠ 0 (alert)' },
+    ],
+    auswertung: [
+      { wert: 'Kriterien 1+2 + (3 ODER 4) positiv', bedeutung: '🔴 Delir vorhanden!', massnahme: 'Nicht-pharmak. Therapie starten, Ursachen suchen' },
+      { wert: 'Kriterien 1+2 positiv, 3+4 negativ', bedeutung: '🟢 Kein Delir', massnahme: 'Weiter beobachten' },
+    ],
+    hinweis: 'Nur anwendbar wenn RASS ≥ -3! Täglich erheben. Nu-DESC als Alternative auf Normalstation.'
+  },
+  {
+    id: 'nu_desc', name: 'Nu-DESC – Delir-Screening Normalstation', icon: '😵', farbe: '#0891b2',
+    kategorie: 'Neurologie', zweck: 'Nursing Delirium Screening Scale – einfaches Pflegescreen',
+    items: [
+      { name: 'Desorientierung', punkte: '0–2', beschreibung: '0=keine, 1=leicht, 2=schwer ausgeprägt' },
+      { name: 'Unangemessenes Verhalten', punkte: '0–2', beschreibung: 'Unruhe, Schreien, Ziehen an Kathetern' },
+      { name: 'Unangemessene Kommunikation', punkte: '0–2', beschreibung: 'Zusammenhanglos, unverständlich' },
+      { name: 'Illusionen/Halluzinationen', punkte: '0–2', beschreibung: 'Sieht/hört Dinge die nicht da sind' },
+      { name: 'Psychomotorische Verlangsamung', punkte: '0–2', beschreibung: 'Apathisch, kaum Reaktion' },
+    ],
+    auswertung: [
+      { wert: '≤ 1', bedeutung: '🟢 Kein Delir', massnahme: 'Weiter beobachten, Prävention' },
+      { wert: '≥ 2', bedeutung: '🔴 Delirpositiv!', massnahme: 'Arzt informieren, nicht-pharmak. + pharmak. Therapie' },
+    ],
+    hinweis: 'Schnell durchführbar. Je Schicht erheben. Frühzeichen: Schlafstörung, Unruhe.'
+  },
+  {
+    id: 'news2', name: 'NEWS2 – National Early Warning Score', icon: '📈', farbe: '#7c3aed',
+    kategorie: 'Früherkennung', zweck: 'Früherkennung klinischer Verschlechterung (RCP-Leitlinie)',
+    items: [
+      { name: 'Atemfrequenz (/min)', punkte: '0–3', beschreibung: '≤8=3, 9-11=1, 12-20=0, 21-24=2, ≥25=3' },
+      { name: 'SpO₂ (Skala 1, keine COPD)', punkte: '0–3', beschreibung: '≤91=3, 92-93=2, 94-95=1, ≥96=0' },
+      { name: 'SpO₂ (Skala 2, COPD-Ziel 88-92%)', punkte: '0–3', beschreibung: '≤83=3, 84-85=2, 86-87=1, 88-92=0, 93-94=1, 95-96=2, ≥97=3' },
+      { name: 'O₂-Supplementierung', punkte: '0/2', beschreibung: '0=Raumluft, 2=O₂-Gabe' },
+      { name: 'Syst. Blutdruck (mmHg)', punkte: '0–3', beschreibung: '≤90=3, 91-100=2, 101-110=1, 111-219=0, ≥220=3' },
+      { name: 'Puls (/min)', punkte: '0–3', beschreibung: '≤40=3, 41-50=1, 51-90=0, 91-110=1, 111-130=2, ≥131=3' },
+      { name: 'Bewusstsein', punkte: '0/3', beschreibung: '0=Alert (A), 3=Verwirrt/Stimme/Schmerz/Keine Reaktion (CVPU)' },
+      { name: 'Temperatur (°C)', punkte: '0–3', beschreibung: '≤35.0=3, 35.1-36.0=1, 36.1-38.0=0, 38.1-39.0=1, ≥39.1=2' },
+    ],
+    auswertung: [
+      { wert: '0', bedeutung: '🟢 Niedrig', massnahme: 'Routinemonitoring, mind. 12h' },
+      { wert: '1–4', bedeutung: '🟡 Gering erhöht', massnahme: 'Monitoring mind. alle 4–6h, Arzt informieren' },
+      { wert: '5–6 ODER Einzelparameter ≥ 3', bedeutung: '🟠 Mittel – Arzt sofort!', massnahme: 'Mind. stündliches Monitoring, Arztvorstellung' },
+      { wert: '≥ 7', bedeutung: '🔴 HOCH – Notfallteam!', massnahme: 'Kontinuierliches Monitoring, Notfallreaktion aktivieren' },
+    ],
+    hinweis: 'COPD-Patienten immer Skala 2 verwenden! O₂-Gabe zählt automatisch +2 Punkte.'
+  },
+  {
+    id: 'qsofa', name: 'qSOFA – Sepsis-Schnellscreen', icon: '🦠', farbe: '#dc2626',
+    kategorie: 'Sepsis', zweck: 'Schnellerkennung von Sepsis außerhalb der Intensivstation',
+    items: [
+      { name: 'Atemfrequenz', punkte: '1 Punkt', beschreibung: '≥ 22/min' },
+      { name: 'Bewusstseinsveränderung', punkte: '1 Punkt', beschreibung: 'GCS < 15' },
+      { name: 'Systolischer RR', punkte: '1 Punkt', beschreibung: '≤ 100 mmHg' },
+    ],
+    auswertung: [
+      { wert: '0', bedeutung: '🟢 Niedriges Risiko', massnahme: 'Weiter beobachten' },
+      { wert: '1', bedeutung: '🟡 Erhöhtes Risiko', massnahme: 'Engmaschig überwachen, Infektfokus suchen' },
+      { wert: '≥ 2', bedeutung: '🔴 Sepsisverdacht! 1h-Bundle starten', massnahme: 'Blutkultur → Antibiose → Laktat → Volumen → Arzt sofort!' },
+    ],
+    hinweis: 'Sepsis-3-Definition: SOFA ≥2 + Infektion. Septischer Schock: Vasopressorbedarf + Laktat > 2 mmol/L.'
+  },
+  {
+    id: 'sofa', name: 'SOFA-Score – Organdysfunktion', icon: '🦠', farbe: '#dc2626',
+    kategorie: 'Sepsis', zweck: 'Sequential Organ Failure Assessment – Schweregrad Organversagen',
+    items: [
+      { name: 'Respiration (PaO₂/FiO₂)', punkte: '0–4', beschreibung: '>400=0, 300-400=1, 200-300=2, 100-200=3, <100=4' },
+      { name: 'Koagulation (Thrombozyten)', punkte: '0–4', beschreibung: '>150=0, 100-150=1, 50-100=2, 20-50=3, <20=4' },
+      { name: 'Leber (Bilirubin μmol/L)', punkte: '0–4', beschreibung: '<20=0, 20-32=1, 33-101=2, 102-204=3, >204=4' },
+      { name: 'Kreislauf (MAP/Vasopressoren)', punkte: '0–4', beschreibung: 'MAP ≥70=0, MAP <70=1, Dobu=2, Nora≤0,1=3, Nora>0,1=4' },
+      { name: 'ZNS (GCS)', punkte: '0–4', beschreibung: '15=0, 13-14=1, 10-12=2, 6-9=3, <6=4' },
+      { name: 'Niere (Kreatinin/Urin)', punkte: '0–4', beschreibung: '<110=0, 110-170=1, 171-299=2, 300-440=3, >440=4' },
+    ],
+    auswertung: [
+      { wert: 'SOFA ≥ 2 vs. Baseline', bedeutung: '🔴 Sepsis-Definition erfüllt!', massnahme: 'Sepsis-Bundle starten' },
+      { wert: 'SOFA > 11', bedeutung: '⛔ Mortalität > 50%', massnahme: 'Intensivtherapie, Prognose besprechen' },
+    ],
+    hinweis: 'Max. 24 Punkte. Wird täglich auf ICU erhoben. Wichtig für Sepsis-3-Diagnose.'
+  },
+  {
+    id: 'barthel', name: 'Barthel-Index', icon: '🚶', farbe: '#059669',
+    kategorie: 'Mobilität/Funktion', zweck: 'Selbstständigkeit bei Alltagsaktivitäten (ADL)',
+    items: [
+      { name: 'Essen', punkte: '0/5/10', beschreibung: '10=selbstständig, 5=Hilfe nötig, 0=abhängig' },
+      { name: 'Baden/Duschen', punkte: '0/5', beschreibung: '5=selbstständig, 0=Hilfe nötig' },
+      { name: 'Körperpflege (Waschen, Zähne, Rasieren)', punkte: '0/5', beschreibung: '5=selbstständig, 0=Hilfe nötig' },
+      { name: 'An-/Auskleiden', punkte: '0/5/10', beschreibung: '10=selbstständig, 5=Hilfe nötig, 0=abhängig' },
+      { name: 'Stuhlkontinenz', punkte: '0/5/10', beschreibung: '10=kontinent, 5=gelegentlich, 0=inkontinent' },
+      { name: 'Harnkontinenz', punkte: '0/5/10', beschreibung: '10=kontinent, 5=gelegentlich, 0=inkontinent' },
+      { name: 'Toilettenbenutzung', punkte: '0/5/10', beschreibung: '10=selbstständig, 5=Hilfe nötig, 0=abhängig' },
+      { name: 'Bett-/Stuhltransfer', punkte: '0/5/10/15', beschreibung: '15=selbstständig, 10=geringe Hilfe, 5=erhebliche Hilfe, 0=abhängig' },
+      { name: 'Gehen (auf Stationsebene)', punkte: '0/5/10/15', beschreibung: '15=≥50m selbstständig, 10=Hilfe/Hilfsmittel, 5=Rollstuhl, 0=abhängig' },
+      { name: 'Treppensteigen', punkte: '0/5/10', beschreibung: '10=selbstständig, 5=Hilfe nötig, 0=nicht möglich' },
+    ],
+    auswertung: [
+      { wert: '100', bedeutung: '🟢 Vollständig selbstständig', massnahme: '' },
+      { wert: '80–99', bedeutung: '🟡 Leichte Einschränkung', massnahme: 'Gezielte Förderung' },
+      { wert: '60–79', bedeutung: '🟠 Mittelschwere Einschränkung', massnahme: 'Reha-Maßnahmen' },
+      { wert: '40–59', bedeutung: '🔴 Schwere Einschränkung', massnahme: 'Intensive Pflege + Physio/Ergo' },
+      { wert: '< 40', bedeutung: '⛔ Vollständige Pflegebedürftigkeit', massnahme: 'Vollpflege, Pflegegradantrag' },
+    ],
+    hinweis: 'Standard in der Geriatrie und Rehabilitation. Pflegegrad-Einstufung ergänzend mit NBA.'
+  },
+  {
+    id: 'tinetti', name: 'Tinetti-Test (Gang & Gleichgewicht)', icon: '🚶', farbe: '#059669',
+    kategorie: 'Mobilität/Funktion', zweck: 'Sturz-Risiko durch Gang- und Gleichgewichtsbeurteilung',
+    items: [
+      { name: 'Gleichgewicht (9 Items)', punkte: '0–16', beschreibung: 'Sitzen, Aufstehen, Stehen, Balance, 360°-Drehung, Nudge-Test...' },
+      { name: 'Gang (7 Items)', punkte: '0–12', beschreibung: 'Schrittlänge, Schrittregelmäßigkeit, Symmetrie, Wendung...' },
+    ],
+    auswertung: [
+      { wert: '≥ 24 Punkte (max. 28)', bedeutung: '🟢 Kein Sturzrisiko', massnahme: 'Normale Mobilitätsförderung' },
+      { wert: '19–23', bedeutung: '🟡 Erhöhtes Sturzrisiko', massnahme: 'Gezielte Sturzprophylaxe, Gangtraining' },
+      { wert: '< 19', bedeutung: '🔴 Hohes Sturzrisiko', massnahme: 'Alle Sturzprophylaxe-Maßnahmen, Hilfsmittel, Physio' },
+    ],
+    hinweis: 'Einsatz ab 65J. Durchführung: Patient steht auf, geht 3m, dreht um, setzt sich. Dauer ~10 Min.'
+  },
+  {
+    id: 'mna', name: 'MNA – Mini Nutritional Assessment', icon: '🥗', farbe: '#16a34a',
+    kategorie: 'Ernährung', zweck: 'Mangelernährungs-Screening und -Assessment bei Älteren (≥65J)',
+    standard: 'DNQP-Expertenstandard Ernährungsmanagement 2017',
+    items: [
+      { name: 'Nahrungsaufnahme ↓ (letzte 3 Monate)', punkte: '0–2', beschreibung: '0=schwer, 1=mäßig, 2=keine Verminderung' },
+      { name: 'Gewichtsverlust (letzte 3 Monate)', punkte: '0–3', beschreibung: '0=>3kg, 1=unbekannt, 2=1-3kg, 3=kein Verlust' },
+      { name: 'Mobilität', punkte: '0–2', beschreibung: '0=bettlägerig, 1=Stuhl/Rollstuhl, 2=geht raus' },
+      { name: 'Akute Erkrankung/Stress (letzte 3 Monate)', punkte: '0/2', beschreibung: '0=ja, 2=nein' },
+      { name: 'Neuropsychologische Probleme', punkte: '0–2', beschreibung: '0=schwere Demenz, 1=leichte Demenz, 2=keine' },
+      { name: 'BMI (kg/m²)', punkte: '0–3', beschreibung: '0=<19, 1=19-21, 2=21-23, 3=≥23' },
+    ],
+    auswertung: [
+      { wert: '12–14 Punkte', bedeutung: '🟢 Normaler Ernährungszustand', massnahme: 'Routine' },
+      { wert: '8–11', bedeutung: '🟡 Risiko für Mangelernährung', massnahme: 'Ernährungsintervention + vollständiges MNA' },
+      { wert: '0–7', bedeutung: '🔴 Mangelernährt', massnahme: 'Ernährungstherapie, Diätassistenz, ggf. Sondenernährung' },
+    ],
+    hinweis: 'MNA-SF (Short Form): 6 Fragen als Schnellscreen. Bei ≤11: vollständiges MNA durchführen.'
+  },
+  {
+    id: 'nrs2002', name: 'NRS-2002 – Ernährungsscreening', icon: '🥗', farbe: '#16a34a',
+    kategorie: 'Ernährung', zweck: 'Nutritional Risk Screening im Krankenhaus (ESPEN-Standard)',
+    items: [
+      { name: 'BMI < 20,5 kg/m²', punkte: '1', beschreibung: 'Oder Gewichtsverlust in letzten 3 Monaten' },
+      { name: 'Nahrungsaufnahme ↓ in letzter Woche', punkte: '1', beschreibung: '<75% des normalen Bedarfs' },
+      { name: 'Schwere Erkrankung', punkte: '1', beschreibung: 'Intensivstation, OP, schwere Infektion...' },
+      { name: 'Alter ≥ 70 Jahre', punkte: '1', beschreibung: 'Automatisch +1 Punkt' },
+    ],
+    auswertung: [
+      { wert: '< 3', bedeutung: '🟢 Kein Risiko', massnahme: 'Wöchentliches Screening' },
+      { wert: '≥ 3', bedeutung: '🔴 Ernährungsrisiko!', massnahme: 'Ernährungsplan erstellen, Diätassistenz, Kalorienzählung' },
+    ],
+    hinweis: 'Bei Aufnahme + wöchentlich erheben. ESPEN empfiehlt NRS-2002 für hospitalisierte Patienten.'
+  },
+  {
+    id: 'wells_tvt', name: 'Wells-Score TVT', icon: '🩸', farbe: '#7c3aed',
+    kategorie: 'Thrombose', zweck: 'Klinische Wahrscheinlichkeit einer tiefen Venenthrombose',
+    items: [
+      { name: 'Aktive Krebserkrankung', punkte: '+1', beschreibung: '' },
+      { name: 'Lähmung/Immobilisation der Beine', punkte: '+1', beschreibung: '' },
+      { name: 'Bettruhe > 3 Tage oder OP in letzten 12 Wochen', punkte: '+1', beschreibung: '' },
+      { name: 'Lokaler Druckschmerz entlang des Venensystems', punkte: '+1', beschreibung: '' },
+      { name: 'Beinschwellung', punkte: '+1', beschreibung: '' },
+      { name: 'Wadenschwellung > 3cm vs. Gegenseite', punkte: '+1', beschreibung: '' },
+      { name: 'Eindrückbares Ödem (betroffenem Bein)', punkte: '+1', beschreibung: '' },
+      { name: 'Kollateralvenen (oberflächlich, nicht variköse)', punkte: '+1', beschreibung: '' },
+      { name: 'Alternative Diagnose mindestens so wahrscheinlich', punkte: '-2', beschreibung: '' },
+    ],
+    auswertung: [
+      { wert: '≤ 0', bedeutung: '🟢 Niedrige Wahrscheinlichkeit (<5%)', massnahme: 'D-Dimer-Test → wenn negativ: TVT ausgeschlossen' },
+      { wert: '1–2', bedeutung: '🟡 Mittlere Wahrscheinlichkeit (~17%)', massnahme: 'D-Dimer + Ultraschall' },
+      { wert: '≥ 3', bedeutung: '🔴 Hohe Wahrscheinlichkeit (~53%)', massnahme: 'Sofort Kompressionssonographie, Antikoagulation erwägen' },
+    ],
+    hinweis: 'Wells-Score LE (Lungenembolie) ist ein separater Score!'
+  },
+  {
+    id: 'apfel', name: 'Apfel-Score (PONV)', icon: '🤢', farbe: '#0369a1',
+    kategorie: 'Perioperativ', zweck: 'Risiko für postoperative Übelkeit und Erbrechen',
+    items: [
+      { name: 'Weibliches Geschlecht', punkte: '+1', beschreibung: '' },
+      { name: 'Nichtraucherin', punkte: '+1', beschreibung: '' },
+      { name: 'PONV-Vorgeschichte oder Reisekrankheit', punkte: '+1', beschreibung: '' },
+      { name: 'Postoperative Opioide geplant', punkte: '+1', beschreibung: '' },
+    ],
+    auswertung: [
+      { wert: '0 Faktoren', bedeutung: '🟢 10% PONV-Risiko', massnahme: 'Keine Prophylaxe nötig' },
+      { wert: '1 Faktor', bedeutung: '🟡 21% Risiko', massnahme: 'TIVA bevorzugen' },
+      { wert: '2 Faktoren', bedeutung: '🟠 39% Risiko', massnahme: 'Dexamethason 8mg + Ondansetron 4mg' },
+      { wert: '3–4 Faktoren', bedeutung: '🔴 61–79% Risiko!', massnahme: 'TIVA + Dexamethason + Ondansetron + Aprepitant, O₂ intraop.' },
+    ],
+    hinweis: 'Einfacher 0-4-Punkte-Score. Präoperativ erheben, Anästhesieplan anpassen.'
+  },
+  {
+    id: 'aldrete', name: 'Aldrete-Score (AWR)', icon: '🏥', farbe: '#0369a1',
+    kategorie: 'Perioperativ', zweck: 'Verlegungsfähigkeit aus dem Aufwachraum auf Normalstation',
+    items: [
+      { name: 'Aktivität (Extremitätenbewegung)', punkte: '0–2', beschreibung: '2=alle 4, 1=2 Extremitäten, 0=keine' },
+      { name: 'Atemfunktion', punkte: '0–2', beschreibung: '2=tief atmen + husten, 1=Dyspnoe, 0=Apnoe' },
+      { name: 'Kreislauf (vs. präop. RR)', punkte: '0–2', beschreibung: '2=±20%, 1=±20-50%, 0=>50% Abweichung' },
+      { name: 'Bewusstsein', punkte: '0–2', beschreibung: '2=völlig wach, 1=erweckbar, 0=keine Reaktion' },
+      { name: 'SpO₂', punkte: '0–2', beschreibung: '2=≥92% Raumluft, 1=O₂ nötig, 0=<90% mit O₂' },
+    ],
+    auswertung: [
+      { wert: '≥ 9 von 10', bedeutung: '🟢 Verlegungsfähig', massnahme: 'Auf Normalstation verlegen' },
+      { wert: '< 9', bedeutung: '🔴 Bleibt im AWR', massnahme: 'Weiter überwachen, Ursache behandeln' },
+    ],
+    hinweis: 'Steward-Score für Kinder im AWR! Schmerz-NRS immer miterheben.'
+  },
+  {
+    id: 'mmse', name: 'MMSE – Mini Mental Status', icon: '🧠', farbe: '#6d28d9',
+    kategorie: 'Kognition/Psyche', zweck: 'Kognitive Funktion einschätzen (Demenz-Screening)',
+    items: [
+      { name: 'Orientierung (Zeit + Ort)', punkte: '0–10', beschreibung: 'Jahr, Monat, Datum, Wochentag, Jahreszeit + Ort/Stadt/Bundesland...' },
+      { name: 'Merkfähigkeit (3 Begriffe)', punkte: '0–3', beschreibung: 'Apfel, Tisch, Penny – sofort wiederholen' },
+      { name: 'Aufmerksamkeit (100-7 oder WERST rückwärts)', punkte: '0–5', beschreibung: '5 Subtraktionen oder 5 Buchstaben rückwärts' },
+      { name: 'Erinnerungsfähigkeit', punkte: '0–3', beschreibung: 'Die 3 Begriffe von vorhin erinnern' },
+      { name: 'Sprache + Praxis', punkte: '0–9', beschreibung: 'Benennen (2), Nachsprechen (1), 3-stufiger Befehl (3), Lesen (1), Schreiben (1), Zeichnen (1)' },
+    ],
+    auswertung: [
+      { wert: '27–30', bedeutung: '🟢 Normal', massnahme: 'Regelmäßige Kontrolle' },
+      { wert: '20–26', bedeutung: '🟡 Leichte kognitive Störung', massnahme: 'Weiterführende Diagnostik (MoCA, Arzt)' },
+      { wert: '10–19', bedeutung: '🟠 Mittelschwere Demenz', massnahme: 'Validierende Pflege, Biografie, Sicherheit' },
+      { wert: '< 10', bedeutung: '🔴 Schwere Demenz', massnahme: 'Vollpflege, Validation, Sicherheitsnetz' },
+    ],
+    hinweis: 'Max. 30 Punkte. MoCA ist sensitiver für frühe Störungen. Beide keine Diagnose-Instrumente!'
+  },
+  {
+    id: 'gds', name: 'GDS – Geriatric Depression Scale', icon: '😔', farbe: '#6d28d9',
+    kategorie: 'Kognition/Psyche', zweck: 'Depressionsscreening bei älteren Patienten (Kurzform: 15 Items)',
+    items: [
+      { name: '15 Ja/Nein-Fragen', punkte: 'Auswahl', beschreibung: 'Z.B. "Sind Sie im Grunde mit Ihrem Leben zufrieden?" / "Fühlen Sie sich oft hoffnungslos?" / "Haben Sie Freude an vielen Dingen verloren?"...' },
+    ],
+    auswertung: [
+      { wert: '0–4', bedeutung: '🟢 Kein Hinweis', massnahme: 'Regelmäßige Kontrolle' },
+      { wert: '5–8', bedeutung: '🟡 Hinweis auf Depression', massnahme: 'Arzt informieren, PHQ-9 ergänzen' },
+      { wert: '9–11', bedeutung: '🟠 V.a. moderate Depression', massnahme: 'Psychiatrische Mitbehandlung' },
+      { wert: '12–15', bedeutung: '🔴 V.a. schwere Depression', massnahme: 'Sofortige psychiatrische Vorstellung, Suizidalität prüfen' },
+    ],
+    hinweis: 'Nicht für schwere Demenz geeignet. PHQ-9 als Alternative für alle Altersgruppen.'
+  },
+  {
+    id: 'guss', name: 'GUSS – Dysphagie-Screening', icon: '🍽️', farbe: '#d97706',
+    kategorie: 'Dysphagie', zweck: 'Gugging Swallowing Screen – Schluckstörung nach Schlaganfall',
+    standard: 'Verwendung nach Schlaganfall vor erstem Schluck PFLICHT!',
+    items: [
+      { name: 'Teil 1: Vortest (Wachheit + Husten + Speichelschlucken)', punkte: '0–5', beschreibung: 'Alle 3 ok = Vortest bestanden → Teil 2' },
+      { name: 'Teil 2: Schlucktest (breiig → flüssig → fest)', punkte: '0–5 je', beschreibung: 'Stufe 1: breiig (Pudding), Stufe 2: flüssig, Stufe 3: fest' },
+    ],
+    auswertung: [
+      { wert: '20 Punkte', bedeutung: '🟢 Kein Dysphagie-Risiko', massnahme: 'Normale Kost + Flüssigkeit erlaubt' },
+      { wert: '15–19', bedeutung: '🟡 Leichte Dysphagie', massnahme: 'Weiche Kost, angedickte Flüssigkeiten (IDDSI Level 1-2)' },
+      { wert: '10–14', bedeutung: '🟠 Mittelschwere Dysphagie', massnahme: 'Pürierte Kost, stark angedickt (IDDSI Level 3-4), Logopädie!' },
+      { wert: '0–9', bedeutung: '🔴 Schwere Dysphagie → NPO!', massnahme: 'Nichts per oral, Logopädie dringend, ggf. NGS' },
+    ],
+    hinweis: 'Stille Aspiration (kein Husten!) = lebensgefährlich! KEIN Schluck ohne bestandenem GUSS!'
+  },
+  {
+    id: 'iddsi', name: 'IDDSI – Kostformen Dysphagie', icon: '🍽️', farbe: '#d97706',
+    kategorie: 'Dysphagie', zweck: 'International Dysphagia Diet Standardisation Initiative',
+    items: [
+      { name: 'Level 0 – Dünn flüssig', punkte: '', beschreibung: 'Wasser, Tee, Kaffee – nur wenn GUSS 20!' },
+      { name: 'Level 1 – Leicht verdickt', punkte: '', beschreibung: 'Flüssig aber langsamer' },
+      { name: 'Level 2 – Mäßig verdickt (Nektar)', punkte: '', beschreibung: 'Fließt langsam vom Löffel' },
+      { name: 'Level 3 – Stark verdickt (Sirup)', punkte: '', beschreibung: 'Fließt vom Löffel, behält Form kurz' },
+      { name: 'Level 4 – Püriert', punkte: '', beschreibung: 'Glatt, kein Schlucken nötig, keine Klumpen' },
+      { name: 'Level 5 – Fein püriert/weich-stückig', punkte: '', beschreibung: 'Weich, Klumpen max. 4mm' },
+      { name: 'Level 6 – Weich & mundgerecht', punkte: '', beschreibung: 'Weich, leicht kaupbar' },
+      { name: 'Level 7 – Normale Kost', punkte: '', beschreibung: 'Alles erlaubt (Kein Dysphagie-Risiko)' },
+    ],
+    auswertung: [
+      { wert: 'GUSS 20', bedeutung: '🟢 Level 7', massnahme: 'Normale Kost' },
+      { wert: 'GUSS 15-19', bedeutung: '🟡 Level 5-6', massnahme: 'Weiche Kost, Level 2 Flüssigkeit' },
+      { wert: 'GUSS 10-14', bedeutung: '🟠 Level 4, Level 3 Flüssigkeit', massnahme: 'Logopädie täglich!' },
+      { wert: 'GUSS <10', bedeutung: '🔴 NPO', massnahme: 'Keine orale Ernährung!' },
+    ],
+    hinweis: 'Andickungsmittel: ThickenUp, Nutilis, Resource ThickenUp. Immer IDDSI-Level dokumentieren.'
+  },
+  {
+    id: 'nyha', name: 'NYHA-Klassifikation Herzinsuffizienz', icon: '❤️', farbe: '#e11d48',
+    kategorie: 'Kardiopulmonal', zweck: 'Funktionelle Einschränkung bei Herzinsuffizienz',
+    items: [
+      { name: 'NYHA I', punkte: '', beschreibung: 'Keine Symptome bei normaler körperlicher Belastung' },
+      { name: 'NYHA II', punkte: '', beschreibung: 'Symptome (Dyspnoe, Erschöpfung) bei stärkerer Belastung (Treppensteigen mehrere Etagen)' },
+      { name: 'NYHA III', punkte: '', beschreibung: 'Symptome bei leichter Belastung (Treppensteigen 1 Etage, langsames Gehen)' },
+      { name: 'NYHA IV', punkte: '', beschreibung: 'Symptome in RUHE! Kaum körperliche Aktivität möglich' },
+    ],
+    auswertung: [
+      { wert: 'NYHA I–II', bedeutung: '🟢 Kompensiert', massnahme: 'Medikamentenoptimierung, Gewichtskontrolle täglich' },
+      { wert: 'NYHA III', bedeutung: '🟠 Deutlich eingeschränkt', massnahme: 'Intensivierte Therapie, Diuretika, Hospitalisierung?' },
+      { wert: 'NYHA IV', bedeutung: '🔴 Schwer dekompensiert', massnahme: 'Stationär, i.v.-Diuretika, Sauerstoff, Kardiologie' },
+    ],
+    hinweis: 'Pflegehinweis: Tägliche Gewichtskontrolle! +1kg/Tag = Flüssigkeitsretention → Arzt!'
+  },
+  {
+    id: 'gold', name: 'GOLD-Klassifikation COPD', icon: '🫁', farbe: '#0369a1',
+    kategorie: 'Kardiopulmonal', zweck: 'Schweregradeinteilung der COPD nach Lungenfunktion',
+    items: [
+      { name: 'GOLD 1 – Leicht', punkte: 'FEV1 ≥ 80%', beschreibung: 'Meist nur chronischer Husten' },
+      { name: 'GOLD 2 – Mittel', punkte: 'FEV1 50-79%', beschreibung: 'Belastungsdyspnoe' },
+      { name: 'GOLD 3 – Schwer', punkte: 'FEV1 30-49%', beschreibung: 'Deutliche Dyspnoe, Exazerbationen' },
+      { name: 'GOLD 4 – Sehr schwer', punkte: 'FEV1 < 30%', beschreibung: 'Ruhedyspnoe, Heimsauerstoff' },
+    ],
+    auswertung: [
+      { wert: 'GOLD 1–2', bedeutung: '🟡 Leicht-mittel', massnahme: 'LAMA/LABA-Inhalatoren, Raucherentwöhnung' },
+      { wert: 'GOLD 3–4', bedeutung: '🔴 Schwer', massnahme: 'Kombinationstherapie, Langzeit-O₂, Reha, Palliativ?' },
+    ],
+    hinweis: '⚠️ O₂-Ziel COPD: SpO₂ 88-92%! Nicht höher → Atemdepression! Lippenbremse, Kutschersitz lehren.'
+  },
+  {
+    id: 'epuap', name: 'EPUAP Dekubitus-Kategorien', icon: '🩹', farbe: '#f43f5e',
+    kategorie: 'Dekubitus', zweck: 'International einheitliche Klassifikation von Druckgeschwüren',
+    items: [
+      { name: 'Kategorie I', punkte: '', beschreibung: 'Nicht wegdrückbare Rötung auf intakter Haut. Haut intakt!' },
+      { name: 'Kategorie II', punkte: '', beschreibung: 'Teilverlust der Haut (Dermis). Flache Wunde, Blase, rosarot.' },
+      { name: 'Kategorie III', punkte: '', beschreibung: 'Vollständiger Hautverlust. Subkutanes Fett sichtbar, aber kein Knochen.' },
+      { name: 'Kategorie IV', punkte: '', beschreibung: 'Vollständiger Gewebeverlust. Knochen, Sehnen, Muskeln sichtbar.' },
+      { name: 'Nicht einstufbar', punkte: '', beschreibung: 'Wundgrund durch Schorf verdeckt – echte Tiefe unbekannt.' },
+      { name: 'Tiefe Gewebeschädigung', punkte: '', beschreibung: 'Lila/rotbraune Verfärbung intakter Haut. Druckbedingte Schädigung.' },
+    ],
+    auswertung: [
+      { wert: 'Kat. I', bedeutung: '🟡 Erste Warnstufe!', massnahme: 'Sofortige Druckentlastung, Hautschutz, Dokumentation' },
+      { wert: 'Kat. II–III', bedeutung: '🟠 Wundversorgung', massnahme: 'Feuchte Wundversorgung, Druckentlastung konsequent' },
+      { wert: 'Kat. IV', bedeutung: '🔴 Schwer, chirurgisch?', massnahme: 'Wundexperte, Arzt, chirurgisches Debridement?' },
+    ],
+    hinweis: 'Immer mit Foto + Maßangaben dokumentieren! NERDS-Kriterien für lokale Infektion prüfen.'
+  },
+];
+
+
+// ─── SCORES SCREEN ─────────────────────────────────────────────────────────
+let currentScoresKat = 'alle';
+const SCORES_KATS = [
+  {id:'alle', label:'Alle', icon:'📊'},
+  {id:'Dekubitus', label:'Dekubitus', icon:'🛏️'},
+  {id:'Sturz', label:'Sturz', icon:'⚠️'},
+  {id:'Schmerz', label:'Schmerz', icon:'😣'},
+  {id:'Neurologie', label:'Neurologie', icon:'🧠'},
+  {id:'Früherkennung', label:'Früherkennung', icon:'📈'},
+  {id:'Sepsis', label:'Sepsis', icon:'🦠'},
+  {id:'Mobilität/Funktion', label:'Mobilität', icon:'🚶'},
+  {id:'Ernährung', label:'Ernährung', icon:'🥗'},
+  {id:'Thrombose', label:'Thrombose', icon:'🩸'},
+  {id:'Dysphagie', label:'Dysphagie', icon:'🍽️'},
+  {id:'Kardiopulmonal', label:'Kardio', icon:'❤️'},
+  {id:'Perioperativ', label:'Periop.', icon:'🏥'},
+  {id:'Kognition/Psyche', label:'Psyche', icon:'😔'},
+];
+
+function renderScores(kat) {
+  kat = kat || currentScoresKat || 'alle';
+  currentScoresKat = kat;
+  const el = document.getElementById('scores-content');
+  if (!el) return;
+
+  // Tabs rendern
+  const tabEl = document.getElementById('scores-tabs');
+  if (tabEl) {
+    tabEl.innerHTML = SCORES_KATS.map(k => `
+      <button onclick="renderScores('${k.id}')" style="border-radius:20px;border:1px solid ${k.id===kat?'#38bdf8':'rgba(56,189,248,.25)'};padding:5px 11px;font-size:10px;font-weight:700;background:${k.id===kat?'#38bdf8':'rgba(56,189,248,.08)'};color:${k.id===kat?'white':'#38bdf8'};font-family:inherit;cursor:pointer;white-space:nowrap">${k.icon} ${k.label}</button>`).join('');
+  }
+
+  const liste = kat === 'alle' ? SCORES : SCORES.filter(s => s.kategorie === kat);
+
+  el.innerHTML = liste.map(s => `
+    <div style="background:rgba(255,255,255,.03);border:1px solid ${s.farbe}25;border-radius:16px;padding:18px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:24px">${s.icon}</span>
+        <div style="flex:1">
+          <div style="font-family:'DM Serif Display',serif;font-size:16px;color:#e0f2fe">${s.name}</div>
+          <div style="font-size:10px;color:${s.farbe};margin-top:2px;text-transform:uppercase;letter-spacing:1px">${s.kategorie} · ${s.zweck}</div>
+          ${s.standard ? `<div style="font-size:9px;color:#4a7a9b;margin-top:2px">📋 ${s.standard}</div>` : ''}
+        </div>
+      </div>
+
+      <!-- ITEMS / KRITERIEN -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:9px;color:${s.farbe};font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">📌 ITEMS / KRITERIEN</div>
+        ${s.items.map(item => `
+          <div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+            <div style="flex:1">
+              <span style="font-size:12px;font-weight:700;color:#ddf0fb">${item.name}</span>
+              ${item.punkte ? `<span style="font-size:10px;color:${s.farbe};margin-left:6px">${item.punkte}</span>` : ''}
+              ${item.beschreibung ? `<div style="font-size:11px;color:#64748b;margin-top:2px">${item.beschreibung}</div>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <!-- AUSWERTUNG -->
+      <div style="margin-bottom:10px">
+        <div style="font-size:9px;color:#34d399;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">🎯 AUSWERTUNG</div>
+        ${s.auswertung.map(a => `
+          <div style="background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.12);border-radius:9px;padding:10px;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700;color:#e0f2fe;margin-bottom:3px">${a.wert}</div>
+            <div style="font-size:12px;color:#94a3b8;margin-bottom:3px">${a.bedeutung}</div>
+            ${a.massnahme ? `<div style="font-size:11px;color:#38bdf8">→ ${a.massnahme}</div>` : ''}
+          </div>`).join('')}
+      </div>
+
+      <!-- HINWEIS -->
+      ${s.hinweis ? `
+      <div style="background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.18);border-radius:9px;padding:10px">
+        <div style="font-size:9px;color:#facc15;font-weight:700;margin-bottom:3px">💡 HINWEIS</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.5">${s.hinweis}</div>
+      </div>` : ''}
+    </div>`).join('') || `<div style="color:#4a7a9b;text-align:center;padding:20px">Keine Scores in dieser Kategorie</div>`;
+}
+
 (function injectScreens() {
   // Prophylaxen Screen – ID mit screen- prefix damit originales showScreen funktioniert
   if (!document.getElementById('screen-prophylaxen')) {
@@ -5779,7 +6379,20 @@ function renderMedNeu(kat) {
     document.body.appendChild(d);
   }
 
-  // Screens werden beim Aufruf gerendert – keine dynamischen Kacheln mehr nötig
+  // Scores-Screen
+  if (!document.getElementById('screen-scores')) {
+    const d = document.createElement('div');
+    d.id = 'screen-scores'; d.className = 'page';
+    d.innerHTML = `
+      <div style="margin-bottom:14px">
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">📊 Assessment-Scores</div>
+        <div style="font-size:11px;color:#4a7a9b">29 Skalen · Pflegestandard NRW · Mit Auswertung & Pflegehinweisen</div>
+      </div>
+      <div id="scores-tabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
+      <div id="scores-content"></div>`;
+    document.body.appendChild(d);
+  }
+    // Screens werden beim Aufruf gerendert – keine dynamischen Kacheln mehr nötig
   console.log("✅ PflegeLearn NRW v4.0 – Alle Screens bereit");
 })();
 
