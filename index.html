@@ -65,7 +65,7 @@
   .hbtn-quiz { background:rgba(52,211,153,.1); border-color:rgba(52,211,153,.25); color:var(--c1); }
 
   /* PAGE WRAPPER */
-  .page { display:none; max-width:740px; margin:0 auto; padding:18px 14px; }
+  .page { display:none; max-width:740px; margin:0 auto; padding:18px 14px 16px; }
   .page.active { display:block; }
   .chat-page { display:none; flex-direction:column; max-width:700px; margin:0 auto; padding:0 13px; height:calc(100vh - 62px); }
   .chat-page.active { display:flex; }
@@ -547,42 +547,28 @@
   </div>
 
   <!-- ── AKKORDEON: PFLEGE-WISSEN ── -->
-  <div class="acc-wrap" id="acc-pflege">
-    <button class="acc-header" onclick="toggleAcc('acc-pflege')">
-      <span>🏥 Pflege-Wissen</span>
+  <!-- ── AKKORDEON: KLINISCHES WISSEN ── -->
+  <div class="acc-wrap" id="acc-klinisch">
+    <button class="acc-header" onclick="toggleAcc('acc-klinisch')">
+      <span>🏥 Klinisches Wissen</span>
       <span class="acc-arrow">›</span>
     </button>
     <div class="acc-body">
       <div class="bottom-grid" style="padding:4px 0 8px">
+        <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
+          <div class="bottom-card-icon">🏥</div>
+          <div class="bottom-card-title">Krankheitsbilder</div>
+          <div class="bottom-card-sub">80 KB · Innere · Chirurgie · Neurologie · Onkologie</div>
+        </button>
+        <button class="bottom-card" onclick="showScreen('scores')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8">
+          <div class="bottom-card-icon">📊</div>
+          <div class="bottom-card-title">Assessment-Scores</div>
+          <div class="bottom-card-sub">29 Skalen · Braden · NEWS2 · SOFA</div>
+        </button>
         <button class="bottom-card" onclick="showScreen('wundversorgung')" style="background:rgba(251,113,133,.07);border-color:rgba(251,113,133,.25);color:#fb7185">
           <div class="bottom-card-icon">🩹</div>
           <div class="bottom-card-title">Wundversorgung</div>
           <div class="bottom-card-sub">Wundstatus · Wundauflagen · Dokumentation</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa;grid-column:span 2">
-          <div class="bottom-card-icon">📇</div>
-          <div class="bottom-card-title">Taschenkarten</div>
-          <div class="bottom-card-sub">38 Karten · Kasack-Format · Druckfertig</div>
-        </button>
-        <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
-          <div class="bottom-card-icon">🃏</div>
-          <div class="bottom-card-title">Karteikarten</div>
-          <div class="bottom-card-sub">80 Krankheitsbilder · 480 Karten · Spaced Repetition</div>
-        </button>
-        <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
-          <div class="bottom-card-icon">📝</div>
-          <div class="bottom-card-title">Prüfungssimulator</div>
-          <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('scores')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8;grid-column:span 2">
-          <div class="bottom-card-icon">📊</div>
-          <div class="bottom-card-title">Assessment-Scores</div>
-          <div class="bottom-card-sub">Braden · GCS · NEWS2 · Barthel · SOFA · 29 Skalen</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
-          <div class="bottom-card-icon">🏥</div>
-          <div class="bottom-card-title">Krankheitsbilder</div>
-          <div class="bottom-card-sub">Innere · Chirurgie · Neurologie · Onkologie · uvm.</div>
         </button>
         <button class="bottom-card" onclick="showScreen('prophylaxen')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399">
           <div class="bottom-card-icon">🛡️</div>
@@ -593,6 +579,33 @@
           <div class="bottom-card-icon">📋</div>
           <div class="bottom-card-title">ATL-Pflegeplanung</div>
           <div class="bottom-card-sub">10 ATLs · P+Ä+Z komplett</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AKKORDEON: LERNEN & ÜBEN ── -->
+  <div class="acc-wrap" id="acc-lernen2">
+    <button class="acc-header" onclick="toggleAcc('acc-lernen2')">
+      <span>📖 Lernen & Üben</span>
+      <span class="acc-arrow">›</span>
+    </button>
+    <div class="acc-body">
+      <div class="bottom-grid" style="padding:4px 0 8px">
+        <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+          <div class="bottom-card-icon">🃏</div>
+          <div class="bottom-card-title">Karteikarten</div>
+          <div class="bottom-card-sub">480 Karten · Spaced Repetition</div>
+        </button>
+        <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
+          <div class="bottom-card-icon">📝</div>
+          <div class="bottom-card-title">Prüfungssimulator</div>
+          <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
+        </button>
+        <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+          <div class="bottom-card-icon">📇</div>
+          <div class="bottom-card-title">Taschenkarten</div>
+          <div class="bottom-card-sub">38 Karten · Kasack-Format</div>
         </button>
         <button class="bottom-card" onclick="showScreen('kinaesthetik')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8">
           <div class="bottom-card-icon">🤸</div>
@@ -634,7 +647,7 @@
     </div>
   </div>
 
-  <div class="footer-note" style="margin-top:16px">💡 Entwickelt von einem Ausbilder & Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
+  <div class="footer-note" style="margin-top:8px;margin-bottom:0">💡 Entwickelt von einem Ausbilder & Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
 </div>
 
 <!-- MEDIKAMENTE -->
@@ -1303,7 +1316,7 @@ function renderAusbList() {
       </div>
       <div class="ausb-btns">
         <button class="ausb-btn" style="background:${a.color}12;border-color:${a.color}28;color:${a.color}" onclick="openModal('${a.id}')">Info</button>
-        <button class="ausb-btn" style="background:${a.color}22;border-color:${a.color}40;color:${a.color}" style="opacity:.4;cursor:default">🤖 Bald</button>
+        <button class="ausb-btn" style="background:${a.color}22;border-color:${a.color}40;color:${a.color}" onclick="startAusbChat(a.id,a.title)">🤖 KI-Chat</button>
       </div>
     </div>`).join("");
 }
@@ -7173,6 +7186,13 @@ window.sendFeedback = function() {
   }).catch(() => alert('Fehler beim Senden. Bitte E-Mail an pflegelearn.nrw@gmail.com'));
 };
 
+
+const AUSB_WELCOME = {"pflegehelfer": "Hallo! Ich helfe dir bei der Pflegefachassistenz-Ausbildung in NRW 🤝 Frag mich zu Grundpflege, Behandlungspflege, Prüfungsfragen oder Berufsbild – was möchtest du wissen?", "anerkennung": "Hallo! Ich unterstütze dich als Anerkennungsschüler/in in NRW 🌍 Frag mich zu Defizitfeststellung, Anpassungslehrgang, Prüfungsanforderungen oder spezifischen Pflegethemen – was brauchst du?", "gpa": "Hallo! Ich bin dein Lernbegleiter für die Generalistische Pflegeausbildung NRW 🎓 3 Jahre, alle Bereiche – Frag mich zu Pflegeprozess, ATL, Prüfungsvorbereitung, Krankheitsbilder oder Ausbildungsinhalte!", "anaesthesie": "Hallo! Ich helfe dir bei der Fachpflege Anästhesie 💉 TIVA, Narkoseverfahren, Monitoring, Regionalanästhesie, Notfallmanagement im OP – was möchtest du vertiefen?", "ata": "Hallo! Ich unterstütze dich in der ATA-Ausbildung 🔧 Anästhesiologische Technik, Gerätemanagement, Narkosevorbereitung, ATA-OTA-Gesetz – stell mir deine Fragen!", "intensiv": "Hallo! Ich bin dein KI-Assistent für die Fachpflege Intensivmedizin 🏥 Beatmung, Monitoring, Katecholamine, Sepsis, ARDS – ich helfe dir bei allen Intensivthemen!", "ota": "Hallo! Ich helfe dir bei der OTA-Ausbildung 🔪 OP-Lagerung, Instrumentierkunde, Sterilisation, OP-Hygiene, ATA-OTA-Gesetz – was möchtest du lernen?"};
+
+function startAusbChat(id, title) {
+  const welcome = AUSB_WELCOME[id] || `Hallo! Ich helfe dir bei der Ausbildung: ${title} 🎓 Stelle mir jede Frage zu Inhalten, Prüfungen oder Pflegethemen!`;
+  startChat(id, welcome);
+}
 (function injectScreens() {
   // Prophylaxen Screen – ID mit screen- prefix damit originales showScreen funktioniert
   if (!document.getElementById('screen-prophylaxen')) {
