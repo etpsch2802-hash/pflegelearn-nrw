@@ -408,6 +408,9 @@
   <hr style="border-color:rgba(255,255,255,.08);margin:6px 0">
   <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#94a3b8">🔄 App aktualisieren</button>
   <hr style="border-color:rgba(255,255,255,.08);margin:6px 0">
+  <button onclick="startExam()" class="nav-drop-btn">📝 Prüfungssimulator</button>
+  <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
+  <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
   <button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📄 Impressum</button>
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🔒 Datenschutz</button>
 </div>
@@ -496,21 +499,19 @@
   <div class="hero">
     <img src="icon-192.png" alt="PflegeLearn NRW" style="width:90px;height:90px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 18px rgba(56,189,248,.35))">
     <h1>PflegeLearn <span>NRW</span></h1>
-    <p>7 Ausbildungswege · 256 Fragen · Scores · Krankheitsbilder · Von einem Fachpfleger & Ausbilder NRW</p>
+    <p>7 Ausbildungswege · 256 Fragen · 80 Krankheitsbilder · Scores · Von einem Fachpfleger & Ausbilder NRW</p>
   </div>
+  <div id="home-stats"></div>
   <div class="section-label" style="display:none"></div>
-  <!-- ── KI-ASSISTENT: Temporär deaktiviert für normale User ── -->
-  <!-- KI-Button für Admins: wird per JS eingeblendet -->
-  <div id="ki-admin-btn" style="display:none;margin-bottom:12px">
-    <button onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(56,189,248,.06));border:2px dashed rgba(56,189,248,.4);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
-      <div style="font-size:28px">🤖</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:#38bdf8">KI-Assistent testen</div>
-        <div style="font-size:10px;color:#4a7a9b;margin-top:2px">🔧 Admin-Testmodus · Nur für Patrick sichtbar</div>
-      </div>
-      <div style="margin-left:auto;font-size:18px;color:#38bdf8">›</div>
-    </button>
-  </div>
+  <!-- ── KI-ASSISTENT (aktiv für alle User) ── -->
+  <button onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(56,189,248,.04));border:1px solid rgba(56,189,248,.3);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:32px">🤖</div>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700;color:#38bdf8">KI-Assistent fragen</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Stelle jede Frage · Sofortantwort · Powered by Groq</div>
+    </div>
+    <div style="margin-left:auto;font-size:20px;color:#38bdf8">›</div>
+  </button>
 
   <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
   <div class="acc-wrap" id="acc-ausb">
@@ -562,6 +563,16 @@
           <div class="bottom-card-icon">📇</div>
           <div class="bottom-card-title">Taschenkarten</div>
           <div class="bottom-card-sub">38 Karten · Kasack-Format · Druckfertig</div>
+        </button>
+        <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+          <div class="bottom-card-icon">🃏</div>
+          <div class="bottom-card-title">Karteikarten</div>
+          <div class="bottom-card-sub">80 Krankheitsbilder · 480 Karten · Spaced Repetition</div>
+        </button>
+        <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
+          <div class="bottom-card-icon">📝</div>
+          <div class="bottom-card-title">Prüfungssimulator</div>
+          <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
         </button>
         <button class="bottom-card" onclick="showScreen('scores')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8;grid-column:span 2">
           <div class="bottom-card-icon">📊</div>
@@ -1346,6 +1357,8 @@ function showScreen(name) {
   if (name === "bobath")        setTimeout(() => { renderBobath(); }, 50);
   if (name === "atl")           setTimeout(() => { renderATL(); }, 50);
   if (name === "scores")        { renderScores(); }
+  if (name === "karteikarten")  { renderKarteikarten(); }
+  if (name === "exam")          { /* renderExam() wird von startExam() aufgerufen */ }
   if (name === "medNeu")        setTimeout(() => { renderMedNeu(); }, 50);
 }
 
@@ -2768,6 +2781,323 @@ const KB_EXTRA = {
   ]}
 };
 
+// ─── INNERE MEDIZIN: +5 (aktuell 5, Ziel 10) ─────────────────────────────
+const KB_ADDITIONS = {
+  innere: { bilder: [
+    { name:"Myokardinfarkt (STEMI/NSTEMI)", icd:"I21",
+      definition:"Akuter Verschluss einer Koronararterie durch Thrombus → ischämische Nekrose des Myokards. Häufigste Todesursache in Deutschland.",
+      symptome:["Vernichtungsschmerz retrosternal (>20 Min.)","Ausstrahlung in Arm, Kiefer, Rücken","Schweißausbruch, Übelkeit, Todesangst","Frauen: atypisch – Übelkeit, Erschöpfung","Stummer Infarkt (v.a. Diabetiker)"],
+      diagnostik:["EKG: ST-Hebung (STEMI) / ST-Senkung (NSTEMI)","Troponin I/T (Goldstandard!)","CK-MB, LDH","Koronarangiographie (Goldstandard Therapie)"],
+      therapie:["STEMI: PCI innerhalb 90 Min.!","Thrombolyse wenn PCI nicht möglich","ASS + Heparin sofort","Morphin, Nitroglyzerin, O₂","Betablocker, ACE-Hemmer, Statin"],
+      pflege:["Bettruhe, O₂-Gabe, Monitor","Vitalzeichen alle 15 Min.","Venöser Zugang, Blutabnahme","Angstreduzierung, ruhige Umgebung","Stuhlgang erleichtern (kein Pressen!)","Reha-Vorbereitung"],
+      komplikationen:["Kardiogener Schock","Herzrhythmusstörungen (VF!)","Reinfarkt","Herzwandaneurysma","Herzbeuteltamponade"],
+      merksatz:"HITS = Heparin, Isosorbiddinitrat, Thrombolyse/PCI, Statin + ASS" },
+
+    { name:"Vorhofflimmern (VHF)", icd:"I48",
+      definition:"Häufigste anhaltende Herzrhythmusstörung. Ungeordnete elektrische Aktivität der Vorhöfe → unregelmäßiger Ventrikelrhythmus. Embolierisiko ↑.",
+      symptome:["Herzrasen/-stolpern, Unregelmäßigkeit","Dyspnoe, Leistungsminderung","Schwindel, Synkope","Oft asymptomatisch (Zufallsbefund)"],
+      diagnostik:["EKG: absolut arrhythmisch, kein P","Langzeit-EKG","Echo: Thrombus?","Labor: TSH (Hyperthyreose?)"],
+      therapie:["Frequenzkontrolle: Betablocker, Digitalis","Rhythmuskontrolle: Kardioversion, Amiodaron","Antikoagulation: NOAK/Marcumar (CHA₂DS₂-VASc)","Ablation bei therapierefraktärem VHF"],
+      pflege:["Vitalzeichen, Puls auf Unregelmäßigkeit","Antikoagulation überwachen (Blutungszeichen!)","Sturz­prophylaxe bei alten Patienten","INR-Kontrolle bei Marcumar"],
+      merksatz:"VHF = Vorhofflimmern → Flimmern führt zu Filtern (Thromben) → Schlaganfallrisiko!" },
+
+    { name:"Pneumonie (Lungenentzündung)", icd:"J18",
+      definition:"Entzündung des Lungenparenchyms durch Bakterien (Pneumokokken häufigste), Viren oder Pilze. Community-acquired (CAP) vs. nosokomial (HAP).",
+      symptome:["Fieber ≥38,5°C, Schüttelfrost","Husten mit Auswurf (gelb-grün, rostig)","Dyspnoe, Tachypnoe","Pleuritischer Schmerz","Tachykardie, Hypotonie (bei Sepsis)"],
+      diagnostik:["Auskultation: Knistern, Bronchialatmen","Röntgen: Infiltrat","CRP, PCT, Leuko","Blutkulturen, Sputumkultur","CRB-65-Score (Schwere)"],
+      therapie:["Antibiotika: Amoxicillin (CAP leicht), Levofloxacin","Fiebersenkung, Analgesie","O₂ bei Hypoxie","Ausreichend Flüssigkeit","Frühzeitige Mobilisierung!"],
+      pflege:["Atemübungen, Physiotherapie","Absaugen bei Sekretstau","Oberkörperhochlagerung 30-45°","Flüssigkeitsbilanz, Temp. 4-stündlich","Isolierung bei MRSA/multiresistenten Erregern","Pneumonieprophylaxe DNQP"],
+      merksatz:"Pneumonie = LOKI: Laborwerte↑, O₂↓, Krepitieren, Infiltrat im Röntgen" },
+
+    { name:"Niereninsuffizienz (CKD/AKI)", icd:"N18",
+      definition:"CKD: chronisch-progrediente Abnahme der Nierenfunktion (GFR-Stadien 1-5). AKI: akuter Abfall der Nierenfunktion innerhalb von Stunden/Tagen.",
+      symptome:["Ödeme (Knöchel, periorbitär)","Anurie/Oligurie oder Polyurie","Übelkeit, Erbrechen, Juckreiz","Hypertonie","Urämiesymptome: Verwirrtheit, Perikarditis","Hypervolämie → Lungenödem"],
+      diagnostik:["Kreatinin, Harnstoff, GFR","Elektrolyte (K+!), Säure-Basen","Urinanalyse, Urinmikroskopie","Sonographie: Nierengröße","Renal-Biopsie"],
+      therapie:["CKD: konservativ (RR-Kontrolle, Diät)","AKI: Ursache behandeln, Volumen","Dialyse: Hämodialyse, Peritoneal","Nierentransplantation (CKD 5)"],
+      pflege:["Ein-/Ausfuhrbilanz exakt!","Tägliche Gewichtskontrolle","Hyperkaliämie: K+-arme Diät, EKG!","Dialy­se-Shunt: nicht messen, stechen!","Juckreiz: Hautpflege, Antihistaminika","Ödeme: Lagerung, Kompression"],
+      merksatz:"Niere = ABCDE: Ausscheidung, Blutdruck, Chemie (Elektrolyte), Dialyse, Ernährung" },
+
+    { name:"Asthma bronchiale", icd:"J45",
+      definition:"Chronisch-entzündliche Atemwegserkrankung mit reversibler bronchialer Obstruktion und bronchialer Hyperreagibilität. Anfallsweise Atemnot.",
+      symptome:["Anfallsartige Dyspnoe, Giemen","Husten (v.a. nachts/morgens)","Engegefühl Brust","Exspiratorisches Pfeifen","Status asthmaticus: lebensbedrohlich!"],
+      diagnostik:["Spirometrie: FEV1/FVC < 70% + Reversibilität","Peak-Flow-Messung","Allergiediagnostik (RAST, Pricktest)","Bronchialer Provokationstest"],
+      therapie:["Reliever: SABA (Salbutamol) bei Bedarf","Controller: ICS (Beclometason), LABA","Schwer: Biologika (Omalizumab)","Triggervermeidung: Allergene, Rauchen","Atemphysiotherapie"],
+      pflege:["Inhalationstechnik schulen (häufigster Fehler!)","Peak-Flow-Tagebuch führen","Notfallplan aushändigen","Körperhaltung: Kutschersitz, Lippenbremse","O₂ bei Anfall, ggf. Salbutamol-Inhalation"],
+      merksatz:"Asthma: SABA = Schnelle Antwort Bei Atemnot-Anfall" }
+  ]},
+
+  // ─── CHIRURGIE: +7 (aktuell 3, Ziel 10) ──────────────────────────────────
+  chirurgie: { bilder: [
+    { name:"Ileus (Darmverschluss)", icd:"K56",
+      definition:"Mechanischer Ileus: physische Obstruktion (Tumor, Narbe, Hernie). Paralytischer Ileus: fehlende Peristaltik (postop., Peritonitis, Elektrolytmangel).",
+      symptome:["Krampfartige Bauchschmerzen (mechanisch)","Erbrechen (Fäkalomit = Miserere!)","Stuhl-/Windverhaltung","Geblähtes Abdomen","Auskultation: Totenstille oder Metallklang"],
+      diagnostik:["Röntgen Abdomen: Spiegelbildung","CT-Abdomen (Gold­standard)","Labor: Leuko, CRP, Elektrolyte","Sono: Darmschlingen"],
+      therapie:["Mechanisch: operative Intervention!","Paralytisch: konservativ (Prokinetika, Elektrolyte)","Nasogastrale Sonde, Nahrungskarenz","Flüssig­keitsersatz i.v."],
+      pflege:["NPO (nil per os) streng einhalten","NGS auf Sog, stündliches Auslitern","Bauch­umfang messen","Vitalzeichen, Schmerzerfassung","Lagerung: Oberkörperhochlage","Post-OP: Frühmobilisation!"],
+      merksatz:"Ileus = 4V: Verschluss, Vollständige Stille/Metallklang, Vollständige Karenz, Vermeidung von Peritonitis" },
+
+    { name:"Peritonitis (Bauchfellentzündung)", icd:"K65",
+      definition:"Entzündung des Peritoneums, meist durch Perforation (Appendix, Ulkus, Sigma­divertikel). Lebensbedrohliches Krankheitsbild – Sepsisgefahr!",
+      symptome:["Starker Bauchschmerz, bretthartes Abdomen","Loslassschmerz (Blumberg-Zeichen)","Hochgradiges Fieber, Schüttelfrost","Übelkeit, Erbrechen","Schock: Tachykardie, Hypotonie"],
+      diagnostik:["Klinische Untersuchung (Abwehrspannung!)","Labor: Leuko ↑↑, CRP ↑↑, PCT","CT-Abdomen: freie Luft!","Punktion bei Aszites"],
+      therapie:["Sofort-OP: Herdsanierung, Lavage","Breitband-Antibiotika i.v.","Intensiv­station, Sepsis-Bundle","Stomanlage oft nötig"],
+      pflege:["Engmaschige Vitalzeichen (Sepsis-Monitor!)","Venöse Zugänge, Bilanz","Schmerzmanagement i.v.","Wund- und Drainagepflege","Früh­mobilisation nach Stabilisierung","Ernährung: parenteral initial"],
+      merksatz:"Peritonitis = Abdominale Katastrophe: Brett + Loslassen = Loslassschmerz = Alarm!" },
+
+    { name:"Hernien (Leistenbruch etc.)", icd:"K40",
+      definition:"Ausstülpung von Bauchinhalt durch eine Lücke in der Bauchwand. Leisten­hernie (häufigste), Nabel-, Narbenhernie. Inkarzerierung = Notfall!",
+      symptome:["Sicht-/tastbare Vorwölbung","Schmerz bei Pressen, Husten","Nicht reponibel = Einklemmung!","Einklemmung: starke Schmerzen, Erbrechen, Ileus"],
+      diagnostik:["Klinisch (Palpation im Stehen)","Sonographie","CT bei Unklarheit"],
+      therapie:["Elektiv: laparoskopische oder offene OP (Mesh)","Notfall bei Inkarzeration: sofortige OP"],
+      pflege:["Prä-OP: Rasur, Nüchternheit, Aufklärung","Post-OP: Wundkontrolle, Hoden­schwellung (Leistenhernie)","Schmerzmanagement","Frühmobilisation","Kompression vermeiden","Schweres Heben für 6 Wo. verboten!"],
+      merksatz:"Hernie = Herausquetschen → bei Einklemmung = NEIN (Notfall, Inkarze­ration)!" },
+
+    { name:"Cholezystitis / Cholelithiasis", icd:"K80",
+      definition:"Cholelithiasis: Gallensteine. Cholezystitis: Gallenblasenentzündung (meist durch Steine). Choledocholithiasis: Stein im Gallengang → Ikterus, Cholangitis.",
+      symptome:["Rechtsseitige Oberbauchschmerzen","Koliken: krampfartig, Ausstrahlung rechte Schulter","Übelkeit, Erbrechen, Fieber","Murphy-Zeichen positiv","Ikterus bei Gangbeteiligung"],
+      diagnostik:["Sonographie (Methode der Wahl!)","Labor: Leuko, CRP, Bili, Lipase","MRCP / ERCP bei Gangsteinen","CT"],
+      therapie:["Laparoskopische Cholezystektomie (Standard)","ERCP + Steinextraktion bei Choledochus","Antibiotika bei Entzündung","Konservativ: nur bei OP-Unfähigkeit"],
+      pflege:["Nahrungskarenz prä-OP","Schmerzmanagement (Buscopan, Metamizol)","Post-OP: Wundkontrolle, Drainage","Kostaufbau: fettarm beginnen","Ikterus: Hautpflege (Juckreiz!), Stuhlbeobachtung","Gallenfluss beobachten"],
+      merksatz:"Gallenkolik: 4F = Fat, Female, Forty, Fertile (klassische Risikopatientin)" },
+
+    { name:"Kolonkarzinom", icd:"C18",
+      definition:"Häufigster Tumor des GI-Trakts. Meist aus Adenompolypen entstanden (Adenom-Karzinom-Sequenz). Sigma und Rektum = häufigste Lokalisationen.",
+      symptome:["Blut im Stuhl (okkultes/sichtbares Blut)","Stuhlunregelmäßigkeiten (Diarrhö/Obstipation)","Bleistiftstuhl bei Rektum-Ca","Gewichtsverlust, Anämie","Ileus als Komplikation"],
+      diagnostik:["Koloskopie + Biopsie (Gold­standard)","CT-Abdomen: Staging","CEA-Tumormarker","Stuhltest (FOBT) als Screening"],
+      therapie:["OP: Hemikolektomie, anteriore Resektion","Adjuvante Chemotherapie (FOLFOX)","Strahlentherapie beim Rektumkarzinom","Stoma (temp. oder dauerhaft)"],
+      pflege:["Stomaversorgung schulen (Akzeptanz!)","Wundversorgung, Anastomosenpflege","Ernährung nach Stomaanlage","Psychosoziale Unterstützung, Selbstbild","DGKS/Stomatherapeutin einbeziehen","Nachsorge: Koloskopie alle 3J."],
+      merksatz:"Kolon-Ca: Blut + Bleistiftstuhl + Bauchschmerzen = 3B = Koloskopie!" },
+
+    { name:"Pankreatitis (akut)", icd:"K85",
+      definition:"Akute Entzündung der Bauchspeicheldrüse durch Autodigestion. Häufigste Ursachen: Gallensteine (50%), Alkohol (25%). Schwerste Form: nekrotisierend.",
+      symptome:["Gürtelförmiger Oberbauchschmerz","Ausstrahlung in den Rücken","Übelkeit, Erbrechen, Meteorismus","Fieber, Tachykardie","Cullens-/Grey-Turner-Zeichen (Blutung!)"],
+      diagnostik:["Lipase > 3× Norm (Leitsymptom!)","CT-Abdomen: Nekrosen, Komplikationen","Sono: Gallensteine?","CRP, Leuko, Hkt"],
+      therapie:["Nahrungskarenz initial (24-48h)","Aggressiver Flüssigkeitsersatz!","Analgesie (Metamizol, kein Morphin!)","Antibiotika nur bei Infektion","ERCP bei Cholangitis"],
+      pflege:["NPO: Mundpflege intensiv!","Schmerzerfassung, NRS dokumentieren","Bilanz, Gewicht täglich","Kostaufbau schrittweise (Tee→leichte Kost)","Alkoholberatung initiieren","Komplikationsmonitoring: Blutzucker, Temp."],
+      merksatz:"Pankreatitis: GÜRTEL = Gürtelfömig + Rücken + Lipase ↑ + Erbrechen + Lass (NPO)!" },
+
+    { name:"Frakturversorgung & Ortho-Pflege", icd:"S72",
+      definition:"Knochenbruch durch Trauma oder Osteoporose. Orthopädische Pflege: prä-/postoperative Versorgung bei Frakturen, Endoprothesen und Wirbel­säulen-OPs.",
+      symptome:["Schmerz, Schwellung, Fehlstellung","Funktionsverlust, abnorme Beweglichkeit","Krepitation (Knochenknirschen)","Hämatom","Schock bei Becken-/Oberschenkelfraktur"],
+      diagnostik:["Röntgen (2 Ebenen, Mindeststandard)","CT bei komplexen Frakturen","Gefäß-/Nervenstatus (distal!)","Labor: Hb, Gerinnung"],
+      therapie:["Konservativ: Gips, Orthese, Entlastung","Operativ: Marknagel, Platte, Schrauben","TEP (Hüfte, Knie)","Physiotherapie, Ergotherapie"],
+      pflege:["Lagerung: Antidekubitus, Strecklage","Gipskontrolle: Durchblutung, Motorik, Sensibilität!","Thromboseprophylaxe (Heparin, Strümpfe, Mobilisation)","Schmerzmanagement","Wundkontrolle bei OP","Mobilisation: Schema einhalten (z.B. Teilbelastung 20kg)"],
+      merksatz:"Fraktur-Pflege = 3K: Kreislauf kontrollieren, Komplikationen (DVT, Kompartment) vermeiden, Korrekte Lagerung" }
+  ]},
+
+  // ─── PSYCHOLOGIE: +7 (aktuell 3, Ziel 10) ────────────────────────────────
+  psychologie: { bilder: [
+    { name:"Depression in der Pflege", icd:"F32",
+      definition:"Affektive Störung mit depressiver Stimmung, Antriebslosigkeit und Freudlosigkeit (Anhedonie). Häufig bei Pflegebedürftigen und Pflegenden (Burnout-Assoziation).",
+      symptome:["Gedrückte Stimmung (>2 Wochen)","Interessenverlust, Freudlosigkeit","Antriebslosigkeit, Erschöpfung","Konzentrationsstörungen","Schlafstörungen, Appetitlosigkeit","Suizidgedanken!"],
+      diagnostik:["PHQ-9 (Screening-Instrument)","GDS bei älteren Patienten","Klinisches Interview","Ausschluss: Hypothyreose, Anämie"],
+      therapie:["Psychotherapie (KVT, VT)","Antidepressiva: SSRI, SNRI","Kombination bei Mittelschwerer/Schwerer Depression","Stationäre Aufnahme bei Suizidalität"],
+      pflege:["Validieren, nicht bagatellisieren","Struktur geben, kleine Ziele setzen","Aktivierung ohne Überforderung","Suizidrisiko ansprechen (entlastet!)","Angehörige einbeziehen","Schlaf-Wach-Rhythmus fördern"],
+      merksatz:"3 Kernsymptome Depression: Antrieb↓, Stimmung↓, Anhedonie (A-S-A)" },
+
+    { name:"Demenz – Pflegekommunikation", icd:"F00",
+      definition:"Chronisch-progressive Abnahme kognitiver Funktionen. Alzheimer (60%), vaskuläre Demenz (20%). Kommunikation und Beziehungsgestaltung = Kernkompetenz der Pflege.",
+      symptome:["Gedächtnisverlust (episodisch zuerst)","Orientierungslosigkeit","Sprachfindungsstörungen (Wortfindung)","Verhaltenssymptome: Agitation, Weglaufen","Persönlichkeitsveränderungen"],
+      diagnostik:["MMSE (Mini Mental Status)","MoCA (sensitiver)","CT/MRT: Atrophie","Labor: B12, TSH, Lues (Ausschluss)"],
+      therapie:["Kognitive Stimulation, Biografiearbeit","Realitätsorientierung vs. Validation","Musiktherapie, Milieutherapie","Medikamente: Cholinesterasehemmer (Aricept)","Umgebungsgestaltung"],
+      pflege:["Validation nach Feil: Gefühle akzeptieren","Einfache Sprache, langsam sprechen","10-Minuten-Aktivierungen","Biografiearbeit: Gewohnheiten respektieren","Fixierungsvermeidung (FEM)!","Sicherheitskonzepte: Weglaufschutz"],
+      merksatz:"Demenz-Pflege: SAVE = Sicherheit, Akzeptanz, Validation, Empathie" },
+
+    { name:"Sucht & Abhängigkeit in der Pflege", icd:"F10",
+      definition:"Substanzabhängigkeit (Alkohol häufigste) mit körperlicher und psychischer Abhängigkeit. Pflegerelevant als Begleit­erkrankung und bei Pflegenden selbst.",
+      symptome:["Kontrollverlust, Craving","Toleranzentwicklung","Entzugssymptome bei Stopp","Vernachlässigung sozialer Rollen","Entzugsdelir: Tremor, Verwirrtheit, Krampf!"],
+      diagnostik:["AUDIT-C (Alkohol-Screening)","Labor: GGT, MCV, CDT","Ausschluss Delir anderer Ursache","Fremdanamnese"],
+      therapie:["Entgiftung (stationär)","Qualifizierter Entzug: Clomethiazol, Benzodiazepin","Motivierende Gesprächsführung","Suchtberatung, Selbsthilfegruppen (AA)"],
+      pflege:["Entzugszeichen engmaschig beobachten (CIWA-Skala)","Krampfanfall: sichern, Arzt sofort!","Wernicke-Enzephalopathie: Thiamin i.v.!","Wertfreie Kommunikation","Flüssigkeit und Elektrolyte","Schlafförderung, Reizarmut"],
+      merksatz:"Alkohol-Entzug: CIWA = Clinical Institute Withdrawal Assessment → gefährlich ohne Monitoring!" },
+
+    { name:"Angststörungen bei Patienten", icd:"F41",
+      definition:"Generalisierte Angststörung, Panikstörung, Phobien. Im Krankenhaus häufig als Reaktion auf Erkrankung, OP oder Intensivstation (ICU-PTSD).",
+      symptome:["Herzrasen, Schweißausbruch","Atemnot, Zittern","Kognitive Angst: Katastrophisieren","Panikattacke: plötzlich, maximal 10 Min.","Vermeidungsverhalten"],
+      diagnostik:["GAD-7 (Screening)","Klinisches Gespräch","Körperliche Ursachen ausschließen (Hyperthyreose, Phäochromozytom)"],
+      therapie:["KVT (wirksamste Therapie)","SSRI, SNRI (medikamentös)","Benzodiazepine: nur kurzfristig!","Entspannungsverfahren"],
+      pflege:["Ruhige, vertrauensvolle Atmosphäre","4-7-8-Atemtechnik anleiten","Transparenz: alles erklären, Kontrolle geben","Keine Verniedlichung der Angst!","Bezugspflege (Kontinuität)","Anxiolytika nach AO bei Bedarf"],
+      merksatz:"Angst in der Pflege: RAVE = Ruhig bleiben, Atmen anleiten, Vertrauen aufbauen, Erklären" },
+
+    { name:"Delir – Prävention & Management", icd:"F05",
+      definition:"Akutes hirnorganisches Syndrom mit Bewusstseinsstörung, Desorientiertheit und psychomotorischen Symptomen. Häufig bei älteren Patienten, postoperativ und auf der ICU.",
+      symptome:["Akuter Beginn, fluktuierend!","Desorientiertheit, Verwirrtheit","Hyperaktiv: Agitation, Unruhe, Halluzinationen","Hypoaktiv: Apathie (häufig übersehen!)","Kognitive Beeinträchtigung"],
+      diagnostik:["Nu-DESC (Normalstation)","CAM-ICU (Intensiv)","Ursachensuche: Infekt, Medikamente, Hypoxie, Schmerz, Harnverhalt"],
+      therapie:["Ursache behandeln!","Nicht-pharmakologisch zuerst","Haloperidol bei schwerer Agitation (nach AO)","Dexmedetomidin auf ICU","Physostigmin bei Anticholinergika"],
+      pflege:["ABCDEF-Bundle (ICU)","Tag-Nacht-Rhythmus herstellen","Orientierungshilfen: Uhr, Kalender, Fenster","Brille + Hörgerät anpassen!","Familie einbeziehen, vertraute Stimmen","Frühmobilisation täglich","Keine unnötigen Schlafmittel!"],
+      merksatz:"Delir-Prävention: THINK = Toxine, Hypoxie, Infektion, Nährstoffe, Kontinuität (Schlaf/Wach)" },
+
+    { name:"Chronischer Schmerz & Schmerzmanagement", icd:"G89",
+      definition:"Schmerz >3 Monate, oft mit eigenem Krankheitswert. Biopsychosoziales Modell: körperliche, psychische und soziale Komponenten. DNQP-Standard gilt!",
+      symptome:["Persistierender Schmerz (NRS oft 5-8)","Schlafstörungen, Depression","Rückzug, Vermeidung","Katastrophisieren","Analgetikaabusus"],
+      diagnostik:["NRS, VAS (Schmerz-Selbstbeurteilung)","Schmerzanamnese (OPQRST)","Schmerztagebuch","Psychologisches Assessment"],
+      therapie:["Multimodales Schmerzprogramm","WHO-Stufenschema (angepasst)","Physiotherapie, Ergotherapie","Psychologische Schmerztherapie","Akupunktur, TENS"],
+      pflege:["Schmerzerfassung VOR und NACH Intervention!","NRS bei jedem Patientenkontakt","Nichtmedikamentöse Verfahren: Wärme, Lagerung, Ablenkung","Analgesie nach AO – nicht abwarten!","Schmerzkurve führen","Angehörige in Schmerzmanagement einbeziehen"],
+      merksatz:"DNQP: Schmerz ist immer subjektiv – der Patient ist Experte seines Schmerzes!" },
+
+    { name:"Palliative Pflege & Sterbephase", icd:"Z51.5",
+      definition:"Ganzheitliche Pflege bei unheilbar Kranken. Ziel: Lebensqualität, Symptomkontrolle, Würde. Sterbephase (letzte Tage/Stunden) erfordert spezifische Pflege.",
+      symptome:["Zunehmende Schwäche, Bettlägerigkeit","Rasselatmung (terminales Sekret)","Marmorierung, kühle Extremitäten","Bewusstseinseintrübung, Agitation","Miosekontrolle nachlassend"],
+      diagnostik:["Klinische Beurteilung der Sterbephase","Symptomerfassung: MIDOS, ESAS","Bedürfniserfassung Patient/Familie"],
+      therapie:["Morphin: Dyspnoe + Schmerz","Midazolam: Agitation, Angst","Scopolamin: Rasselatmung (Sekret)","Dexamethason: Übelkeit, Hirndruck","Keine lebens­verlängernden Maßnahmen!"],
+      pflege:["Mundpflege alle 2h (wichtig!)","Positionswechsel sanft, Antidekubitus","Ruhe, gedimmtes Licht, Musik","Angehörige begleiten, Abschiednehmen ermöglichen","Würde bewahren: Privatsphäre","Keine unnötigen Interventionen!","Pflegende: Supervision, Debriefing"],
+      merksatz:"Palliativ = Mantel (pallium): Beschützen, nicht Heilen – Lindern und Begleiten" }
+  ]},
+
+  // ─── GYNÄKOLOGIE: +8 (aktuell 2, Ziel 10) ────────────────────────────────
+  gynaekologie: { bilder: [
+    { name:"Geburtshilfe – Physiologische Geburt", icd:"O80",
+      definition:"Normale Geburt: spontan, Schädellage, 37.-42. SSW. Eröffnungsphase, Austreibungsphase, Nachgeburtsphase. Hebamme als Hauptverantwortliche.",
+      symptome:["Regelmäßige Wehen (alle 5 Min., >30 Sek.)","Muttermund-Eröffnung","Blasensprung (klares Fruchtwasser)","Dammdrück"],
+      diagnostik:["CTG (Herztöne + Wehen)","Vaginaluntersuchung: Muttermundsweite","Amnioskopie bei Mekonium-Verdacht"],
+      therapie:["Physiologische Geburt: keine Intervention nötig","Ggf. PDA, Oxytocin","Vakuumextraktion/Forceps bei Austreibungsstörung","Sectio caesarea"],
+      pflege:["CTG-Monitoring und Interpretation","Wehenbeobachtung, Schmerz­management","Fruchtwasserbeurteilung (Farbe! Grün = Mekonium = Alarm!)","Lagerung: links lateral (Vena-cava-Syndrom!)","Geburtsverletzungen: Dammriss, Episiotomie versorgen","Bonding nach Geburt fördern"],
+      merksatz:"Fruchtwasser: klar = gut, grün/trüb = Mekonium = sofort Arzt!" },
+
+    { name:"Wochenbettbetreuung (Postpartalphase)", icd:"Z39",
+      definition:"6-8 Wochen nach Geburt. Physiologische Rückbildung des Uterus, Milcheinschuss, psychische Anpassung. Komplikationen: Wochenbettdepression, Thrombose, Mastitis.",
+      symptome:["Lochienfluss (normal: erst rot, dann gelb, dann weißlich)","Uterusinvolution: 1 QF/Tag","Milcheinschuss Tag 3-5","Nachschmerzen (Nachwehen)"],
+      diagnostik:["Uterusgröße palpieren","Lochienbeurteilung","Brust­beurteilung","Edinburgh Postnatal Depression Scale (EPDS)"],
+      therapie:["Stillen fördern (on demand)","Oxytocin bei Involutionsstörung","Mastitis: Entleerung, Antibiotika","Wochenbettdepression: Psychotherapie, ggf. Antidepressiva"],
+      pflege:["Tägliche Uterus-/Lochienkontrolle","Stillanleitung und -support","Dammnaht/Wundkontrolle, Sitzbäder","Thromboseprophylaxe (Mobilisation, Strümpfe)","Baby-Blues vs. Wochenbettdepression unterscheiden!","Neugeborenen-Screening"],
+      merksatz:"Wochenbett: MILCH = Mobilisation, Involution, Lochien, Colostrum, Hygiene" },
+
+    { name:"Schwangerschaftskomplikationen", icd:"O26",
+      definition:"Gestationsdiabetes, Placenta praevia, Plazenta­abruptio, Hyperemesis gravidarum. Frühzeitige Erkennung durch Vorsorgeuntersuchungen.",
+      symptome:["Gestationsdiabetes: oft asymptomatisch (Screening!)","Placenta praevia: schmerzlose vaginale Blutung","Abruptio: Schmerz + Blutung + Brettbauch","Hyperemesis: starkes Erbrechen, Gewichtsverlust","Präeklampsie: RR↑, Proteinurie, Ödeme"],
+      diagnostik:["oGTT (24.-28. SSW) für GDM","Sonographie: Plazenta-Lokalisation","CTG bei Blutung","Labor: Proteinurie, Leberenzyme (HELLP)"],
+      therapie:["GDM: Diät, ggf. Insulin","Placenta praevia: Bettruhe, Sectio","Präeklampsie: Magnesium (Eklampsie-Prophylaxe!), Antihypertensiva, ggf. Sectio"],
+      pflege:["BZ-Monitoring, Insulingabe nach AO","Strenge Bettruhe bei Placenta praevia","Vaginale Blutung: sofort Arzt! Kein VU ohne Sono!","RR-Kontrolle 4-stündlich bei Präeklampsie","Mg-Toxizität: Reflexe prüfen! (ASR fehlt = Warnsignal)","CTG-Überwachung"],
+      merksatz:"HELLP = Hämolyse, Elevated Liver enzymes, Low Platelets = Notfall!" },
+
+    { name:"Zervixkarzinom & gynäkologische Karzinome", icd:"C53",
+      definition:"Zervixkarzinom: HPV-assoziiert, Früherkennung durch Pap-Abstrich und HPV-Impfung. Ovarial-Ca: late stage (schleichend). Endometrium-Ca: häufigster gyn. Tumor.",
+      symptome:["Zervix-Ca: Kontaktblutung, Ausfluss","Ovarial-Ca: unspezifisch (Blähungen, Völlegefühl)","Endometrium-Ca: postmenopausale Blutung!","Gewichtsverlust, Fatigue bei Fortgeschrittenem"],
+      diagnostik:["Pap-Abstrich, Kolposkopie","Sonographie (transvaginal)","MRT Becken: Staging","CA-125 (Ovarial-Ca, unspezifisch)","Biopsie"],
+      therapie:["Zervix-Ca: Konisation (früh), Hysterektomie + Radio-/Chemotherapie","Ovarial-Ca: Debulking-OP + Platin-Chemotherapie","Endometrium-Ca: Hysterektomie"],
+      pflege:["Präoperative Aufklärung, Angstbewältigung","Postoperative Überwachung (Blutung, Drainage)","Fatigue-Management bei Chemotherapie","Sexualität und Körperbild ansprechen","HPV-Impfung: Aufklärung (9-14 Jahre, STIKO)","Lymphödem-Prophylaxe nach Lymphadenektomie"],
+      merksatz:"Endometrium-Ca: postmenopausale Blutung = immer abklären! Kein normales Ereignis!" },
+
+    { name:"Fehlgeburt & Interruptio", icd:"O03",
+      definition:"Fehlgeburt (Abort) vor der 24. SSW. Frühabort (<12. SSW) häufig chromosomal. Interruptio = Schwangerschaftsabbruch (legal nach §218a StGB).",
+      symptome:["Blutung, Unterleibschmerzen","Uterus kleiner als Schwangerschaftsalter","Kein Herzschlag in der Sono","Gewebe-Abgang"],
+      diagnostik:["Transvaginaler Ultraschall","β-HCG-Verlauf","Labor: Blutbild, Gerinnung"],
+      therapie:["Abwarten (missed abortion: Spontanabort)","Medikamentöse Einleitung (Mifepristone + Misoprostol)","Curettage/Vakuumaspiration","Rhesusprophylaxe (Rhesus-negativ!)"],
+      pflege:["Einfühlsame, ruhige Kommunikation","Trauer zulassen, nicht beschwichtigen","Schmerzmanagement","Blutung und Vitalzeichen überwachen","Psychologische Nachsorge anbieten","Gruppe 'Verwaiste Eltern' empfehlen"],
+      merksatz:"Rhesus-negativ + Blutung/Abort = IMMER Anti-D-Prophylaxe!" },
+
+    { name:"Inkontinenz bei Frauen", icd:"N39.3",
+      definition:"Belastungsinkontinenz (Stressinkontinenz): Harnverlust bei Husten, Pressen. Dranginkontinenz (OAB): plötzlicher Harndrang. Mischinkontinenz: häufigste Form.",
+      symptome:["Unkontrollierter Harnverlust","Belastung: beim Husten/Pressen","Drang: plötzlicher imperativer Harndrang","Nykturie","Schamgefühl, sozialer Rückzug"],
+      diagnostik:["Miktionsprotokoll (3 Tage!)","Urinanalyse (Infekt ausschließen)","Urodynamik","Perinealsonographie"],
+      therapie:["Beckenbodentraining (erste Wahl!)","Pessare, Scheiden­ring","Medikamente: Anticholinergika, Beta-3-Agonisten","OP: TVT-Band bei Belastungsinkontinenz"],
+      pflege:["Schamfreiheit: Inkontinenz offen ansprechen","Miktionsprotokoll erklären und ausfüllen","Beckenbodenübungen anleiten","Einlagenversorgung: richtige Größe, regelmäßig wechseln","Hautschutz: Inko-Dermatitis vermeiden","Flüssigkeit NICHT einschränken (Fehlvorstellung!)"],
+      merksatz:"Inkontinenz-Pflege: Würde wahren + kein Flüssigkeitsentzug + Protokoll führen!" },
+
+    { name:"Mastitis & Brusterkrankungen", icd:"N61",
+      definition:"Mastitis puerperalis: Stillmastitis durch Milchstau + Keimbesiedelung (Staphylokokken). Mastitis non-puerperalis: bei Nicht-Stillenden. Mammakarzinom: häufigster Tumor der Frau.",
+      symptome:["Mastitis: Rötung, Schwellung, Schmerz, Fieber","Fluktuation = Abszess!","Mamma-Ca: schmerzlose, harte Verhärtung, Hauteinziehung","Peau d'orange","Mamillenretrak­tion"],
+      diagnostik:["Klinik + Palpation","Sonographie: Abszess?","Mammographie, MRT-Mamma","Biopsie bei Malignitätsverdacht"],
+      therapie:["Mastitis: weiter stillen! Kühlen, entleeren, Antibiotika","Abszess: Inzision und Drainage","Mamma-Ca: BET oder Mastektomie + Radiatio + systemisch"],
+      pflege:["Stillberatung: Anlagetechnik, Entleerung","Kühlung, Ibuprofen-AO","Weiter stillen trotz Mastitis!","Mamma-Ca: Körperbild, Sexualität besprechen","Lymphödem nach Axilla-Dissektion: Kompression, kein Blutdruck links!","Onkologische Nachsorge erklären"],
+      merksatz:"Mastitis: KÜHLEN + STILLEN + ANTIBIOTIKA – Abszess = Chirurg!" },
+
+    { name:"Klimakterium & Hormontherapie", icd:"N95.1",
+      definition:"Perimenopause: Übergangsphase mit unregelmäßigen Zyklen. Menopause: letzte Menstruation. Östrogenmangel-Symptome. HRT: Hormon­ersatztherapie – individuell abwägen.",
+      symptome:["Hitzewallungen, Schweißausbrüche","Schlafstörungen","Vaginale Trockenheit, Dyspareunie","Stimmungsschwankungen","Osteoporose-Risiko ↑","Herz-Kreislauf-Risiko ↑"],
+      diagnostik:["FSH ↑, Östradiol ↓","Knochendichtemessung (DXA)","Mammographie, Endometrium-Sono vor HRT"],
+      therapie:["HRT: Östrogen + Gestagen (bei Uterus)","Nur Östrogen: nach Hysterektomie","Tibolon, Phytoöstrogene","Lokale Östrogene: Vaginalatrophie","Nicht-hormonell: Venlafaxin, Clonidin"],
+      pflege:["HRT-Aufklärung: Nutzen vs. Risiko (Thrombose, Ca)","Regelmäßige Mammographie erinnern","Osteoporose-Prophylaxe: Calcium, Vit. D, Bewegung","Vaginale Trockenheit: Pflegetipps, lokale Östrogene OTC","Lebensstilberatung: Rauchen, Bewegung","Klimakterium normalisieren (kein Tabuthema)"],
+      merksatz:"Klimakterium: FSH↑ + Östradiol↓ = Menopause – HRT nur nach individueller Nutzen-Risiko-Abwägung!" }
+  ]},
+
+  // ─── UROLOGIE: +8 (aktuell 2, Ziel 10) ───────────────────────────────────
+  urologie: { bilder: [
+    { name:"Nierenkolik / Urolithiasis", icd:"N20",
+      definition:"Nieren- und Harnleitersteine (Calciumoxalat häufigste). Verlegung des Harnleiters → krampfartige Koliken. Häufig bei Männern 30-60 Jahre.",
+      symptome:["Vernichtungsschmerz, kolikartig","Ausstrahlung: Flanke → Leiste → Genitale","Makrohämaturie","Übelkeit, Erbrechen","Ruhelos (Unterschied zur Peritonitis!)"],
+      diagnostik:["CT-Abdomen nativ (Gold­standard)","Urinanalyse: Hämaturie","Sono: Hydronephrose","Labor: Kreatinin, Entzündungszeichen"],
+      therapie:["Analgesie: Metamizol, Diclofenac, Morphin","Spasmolytika: Buscopan","Spontanpassage <5mm: konservativ, Trinken!","ESWL: Stoßwellen","Ureterenoskopie: Laser-Lithotripsie","Nephrostomie bei Harnstau + Infekt"],
+      pflege:["Schmerzmanagement (NRS!)","Steine sieben (Filter bereitstellen!)","Flüssigkeit 2-3L/Tag","Urinbeobachtung: Steine, Blut","Steinanalyse nach Passage","Rezidivprophylaxe: Ernährungsberatung"],
+      merksatz:"Nierenkolik: KOLIK + Ruhelosigkeit + Hämaturie → Stein! (unterscheidet von Appendizitis: dort ruhige Lage)" },
+
+    { name:"Urosepsis", icd:"A41.51",
+      definition:"Sepsis ausgehend von Harnwegsinfektion. Häufig bei Pyelonephritis, katheter-assoziierten Infektionen, Obstruktion. Gramne­gative Erreger (E. coli).",
+      symptome:["Fieber ≥38,5°C oder Hypothermie","Schüttelfrost","Flankenschmerz, Dysuri","qSOFA ≥ 2: Sepsis-Alarm!","Hypotonie, Tachykardie, Verwirrtheit"],
+      diagnostik:["Urinkul­tur VOR Antibiose!","Blutkultur (2 Paare)","Labor: Laktat, PCT, Kreatinin","Sonographie: Harnstau, Abszess","CT bei Komplikation"],
+      therapie:["1h-Bundle: Breitband-Antibiotika i.v. (Ceftriaxon, Piperacillin/Tazobactam)","Volumentherapie 30ml/kg NaCl 0,9%","Harnableitung (Katheter, Nephrostomie)","Vasopressoren bei septischem Schock"],
+      pflege:["qSOFA täglich erheben!","Urinkultur VOR Antibiose sicherstellen","Einlaufbilanz engmaschig","Antibiotika-Pünktlichkeit (Blutspiegel!)","Katheterpflege nach Standard","Temperatur 4-stündlich"],
+      merksatz:"Urosepsis = BLUT: Blutkulturen zuerst, Lumens (Katheter) entfernen, Urinkultur, Therapie sofort!" },
+
+    { name:"Harnblasenkarzinom", icd:"C67",
+      definition:"Häufigster urologischer Tumor (nach Prostata-Ca). Urothelialkarzinom. Risikofaktor: Rauchen (Nr. 1!), Aniline, Cyclophosphamid. Frühzeichen: Hämaturie!",
+      symptome:["Schmerzlose Makrohämaturie (Leitsymptom!)","Dysurie, Pollakisurie","Spätzeichen: Gewichtsverlust, Schmerzen","Hydronephrose bei fortgeschrittenem Tumor"],
+      diagnostik:["Zystoskopie + Biopsie (Gold­standard)","Sonographie: Blasentumor","CT-Urographie: Staging","Urinzytologie"],
+      therapie:["Nicht-muskelinvasiv: TUR-B + intravesikale Therapie (BCG, Mitomycin)","Muskelinvasiv: radikale Zystektomie + Harnableitung","Neoadjuvante Chemo: Cisplatin-haltig","Immuntherapie: Checkpoint-Inhibitoren"],
+      pflege:["Hämaturie: Farbe, Menge dokumentieren","Nach TUR-B: Blasenspülung, Kathetersorgfalt","Zystektomie: Stomapflege (Ileum-Konduit, Neoblase)","Trinkmengenprotokoll","Rauchstopp dringend empfehlen!","Nachsorge: Zystoskopie alle 3 Monate initial"],
+      merksatz:"Blase-Ca: Schmerzlose Hämaturie + Rauchen = Zystoskopie sofort!" },
+
+    { name:"Erektile Dysfunktion & sexuelle Gesundheit", icd:"N52",
+      definition:"Unfähigkeit, eine für Geschlechtsverkehr ausreichende Erektion zu erreichen/aufrechtzuerhalten. Häufig vaskulär (Arteriosklerose) oder psychogen. Prävalenz steigt mit Alter.",
+      symptome:["Unzureichende Erektion","Libidoverlust","Ejakulationsstörungen","Psychisch: Depression, Beziehungsprobleme","Vaskulär: Risikofaktoren Diabetes, Hypertonie, Rauchen"],
+      diagnostik:["IIEF-5 Fragebogen","Hormonstatus: Testosteron, LH, Prolaktin","RR, Lipide, BZ (kardiovaskuläres Risiko)","Schwellkörpertest"],
+      therapie:["PDE-5-Hemmer: Sildenafil (Viagra), Tadalafil","SKAT: Schwellkörperinjektions-Test","Vakuumpumpe","Penisprothese","Psychotherapie bei psychogener Ursache"],
+      pflege:["Enttabuisierung: aktiv ansprechen!","Risikofaktoren­management (Rauchen, BZ, RR)","Partnereinbeziehung","Medikamenten-Interaktionen prüfen (Nitrate + PDE5 = Kontraindikation!)","Diskretion gewährleisten"],
+      merksatz:"ED + Nitrate = ABSOLUT kontraindiziert mit PDE-5-Hemmern → Lebens­gefahr!" },
+
+    { name:"Nephrolithiasis Prophylaxe & Metabolismus", icd:"N20.0",
+      definition:"Rezidivprophylaxe nach Nierensteinen: Ernährung, Trinkmenge, Medikamente nach Steinanalyse. Hyperurikämie, Hypercalciurie, Hyperoxalurie als Ursachen.",
+      symptome:["Oft asymptomatisch bis zur Kolik","Rezidivrate ohne Prophylaxe 50% in 5 Jahren","Hyperurikämie: Gicht-Anfälle (Podagra)","Kalkherde in der Niere (Nephrocalcinose)"],
+      diagnostik:["24h-Sammelurin: Calcium, Oxalat, Harnsäure","Blut: Harnsäure, Calcium, PTH","Steinanalyse! (Infrarotspektroskopie)","Bildgebung: Nativsonographie"],
+      therapie:["Allgemein: 2-2,5L Trinkmenge täglich","Calciumoxalat: oxalatarm essen, ausreichend Calcium!","Harnsäure: Allopurinol, purinarm essen","Cystin: hohe Trinkmenge, Harnalkalisierung"],
+      pflege:["Trinkprotokoll führen (24h-Sammelurin erklären)","Ernährungsberatung: Steinart-spezifisch","Gewicht normalisieren","Medikamenten-Compliance sichern","Selbst-pH-Messung im Urin schulen","Sportliche Aktivität fördern"],
+      merksatz:"Nierensteinen vorbeugen: 2L trinken + steinart-spezifische Ernährung + Steinanalyse = individuell!" },
+
+    { name:"Inkontinenz beim Mann (Prostatektomie)", icd:"N39.4",
+      definition:"Belastungsinkontinenz nach radikaler Prostatektomie durch Sphinkterläsion. Häufige postoperative Komplikation. Kontinenz­rate 90% nach 1 Jahr.",
+      symptome:["Harnverlust bei Belastung (Husten, Pressen, Sport)","Nykturie, imperativer Harndrang (Drangkomponente)","Nasswerden, sozialer Rückzug","Erektile Dysfunktion (kombiniert häufig)"],
+      diagnostik:["Miktionsprotokoll","Pad-Test (Einlagen wiegen)","Urodynamik","Zystoskopie (Anastomosenstriktur?)"],
+      therapie:["Beckenbodentraining (erste Wahl!)","Biofeedback, Elektrostimulation","AMS 800 artifizieller Sphinkter","Bulking agents","Harndrangbehandlung: Anticholinergika"],
+      pflege:["Prä-OP: Beckenbodenübungen schulen","Post-OP: Miktionsprotokoll","Einlagenversorgung diskret organisieren","Beckenbodenkurs verordnen","Sexuelle Rehabilitation ansprechen","Selbsthilfegruppen empfehlen"],
+      merksatz:"Nach Prostatektomie: Beckenbodentraining sofort beginnen – je früher, desto besser!" },
+
+    { name:"Dialyse & Nierenersatztherapie", icd:"Z49",
+      definition:"Hämodialyse (HD): Blutfilterung extrakorporal (3x/Woche 4h). Peritonealdialyse (PD): über Bauchfell. Shunt-Pflege essenziell. Vorbereitung auf Transplantation.",
+      symptome:["Urämiesymptome: Juckreiz, Übelkeit, Schwäche","Hypervolämie: Ödeme, Dyspnoe","Elektrolytstörungen: Hyperkaliämie!","Anämie (EPO-Mangel)","Knochenstoffwechsel: renale Osteo­dystrophie"],
+      diagnostik:["Kt/V (Dialyseeffizienz)","Elektrolyte, Kreatinin","Hb, EPO-Status","Shunt-Funktion: Auskultation, Doppler"],
+      therapie:["HD: 3x/Woche, 4h (mind.)","PD: täglich, heimbasiert","EPO-Substitution","Phosphatbinder, Vit. D","Transplantation: Goldstandard"],
+      pflege:["Shunt: NIEMALS Stich, RR, Infusion!","Shunt auskultieren (Schwirren = ok)","Gewicht VOR und NACH HD (Zielgewicht!)","Kalium-/Phosphat-Diät schulen","Trinkmengenrestriktion (je nach Restdiurese)","Shuntzugang: aseptisch!"],
+      merksatz:"Shunt = goldene Brücke: NICHTS am Shunt-Arm (kein Blutdruck, keine Nadel, kein Schmuck)!" },
+
+    { name:"Phimose, Paraphimose & urologische Notfälle", icd:"N47",
+      definition:"Phimose: enge Vorhaut, nicht zurückziehbar. Paraphimose: Notfall! Zurückgezogene enge Vorhaut schnürt Eichel ab. Harnverhalt: weitere urologische Notfall.",
+      symptome:["Phimose: erschwerte Miktion, Meatusstenose","Paraphimose: Schwellung, Schmerz, Zyanose der Eichel!","Harnverhalt: Schmerz, gefüllte Blase, kein Harn","Priapismus: Dauererektion >4h, schmerzhaft"],
+      diagnostik:["Klinisch (Blickdiagnose!)","Harnverhalt: Sono-Restharnsbestimmung","Palpation: Blasenfüllung"],
+      therapie:["Phimose: Kortisonsalbe, Zirkumzision","Paraphimose: sofortige manuelle Reposition! Ggf. Dorsalschnitt","Harnverhalt: transurethraler Katheter, ggf. Spinal­nadel suprapubisch","Priapismus: Aspiration, Sympathomimetika"],
+      pflege:["Paraphimose erkennen und sofort Arzt rufen!","Harnverhalt: Einmalkatheter nach AO","Katheterpflege, Dokumentation","Zirkumzision post-OP: Wundkontrolle, Schmerz","Patient aufklären: Vorhaut sanft reinigen, nicht gewaltsam zurückziehen","Intim­hygiene schulen"],
+      merksatz:"Paraphimose = NOTFALL: Eichel eingeschnürt = sofortige Reposition oder Nekrose!" }
+  ]},
+
+  // ─── NEUROLOGIE: +1 (aktuell 9, Ziel 10) ─────────────────────────────────
+  neurologie: { bilder: [
+    { name:"Kopfschmerz & Migräne", icd:"G43",
+      definition:"Migräne: anfallsartiger, meist einseitiger pulsierender Kopfschmerz (4-72h), Übelkeit, Licht-/Lärmempfindlichkeit. Häufigste neurologische Erkrankung Frauen 20-40J.",
+      symptome:["Einseitiger, pulsierender Schmerz","Übelkeit, Erbrechen","Photophobie, Phonophobie","Aura: Sehstörungen, Kribbeln (bei 20%)","Verschlimmerung durch Bewegung"],
+      diagnostik:["Klinisch + Anamnese (Kopfschmerztagebuch)","MRT bei erstmaligem starkem KS! (Ausschluss SAB)","Lumbalpunktion bei V.a. Meningitis"],
+      therapie:["Akut: Triptane (Sumatriptan), NSAR, Antiemetika","Prophylaxe: Betablocker, Topiramat, CGRP-Antikörper (Aimovig)","Nicht-medikamentös: Stressmanagement, Schlafregularität","Auslöser meiden (Triggerfaktoren)"],
+      pflege:["Ruhige, abgedunkelte Umgebung","Kühle Tücher auf die Stirn","Antiemetika vor Analgesie (Resorption!)","Kopfschmerztagebuch führen lassen","Medikamentenübergebrauch ansprechen (MOH >10 Tage/Monat)","Migräne ≠ Einbildung: ernst nehmen!"],
+      merksatz:"Migräne-PULS: Pulsierend, Unilateral, Licht-/Lärmempfindlichkeit, Schmerz + Übelkeit" }
+  ]}
+};
+
+
+// Merge KB_ADDITIONS into KRANKHEITSBILDER
+Object.keys(KB_ADDITIONS).forEach(function(fach) {
+  if (KRANKHEITSBILDER[fach]) {
+    KRANKHEITSBILDER[fach].bilder = KRANKHEITSBILDER[fach].bilder.concat(KB_ADDITIONS[fach].bilder);
+  }
+});
+
 // Merge extra KB into main KRANKHEITSBILDER
 Object.keys(KB_EXTRA).forEach(function(fach) {
   if (KRANKHEITSBILDER[fach]) {
@@ -3518,11 +3848,6 @@ function logLogin(token, name) {
 
 function applyBereichsFilter() {
   if (!currentBereich) return;
-  // KI-Admin-Testbutton nur für Patrick (bereich=alle)
-  const kiAdminBtn = document.getElementById('ki-admin-btn');
-  if (kiAdminBtn) {
-    kiAdminBtn.style.display = (currentUser && currentUser.bereich === 'alle') ? 'block' : 'none';
-  }
   // Admin-Button nur für Vollzugang (bereich === "alle")
   const adminBtn = document.getElementById("btn-admin");
   if (adminBtn) {
@@ -6362,6 +6687,492 @@ function renderScores(kat) {
     </div>`).join('') || `<div style="color:#4a7a9b;text-align:center;padding:20px">Keine Scores in dieser Kategorie</div>`;
 }
 
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FEATURE 1: LERNFORTSCHRITT & STREAK
+// ═══════════════════════════════════════════════════════════════════════════
+const STORAGE_KEY = 'pl_progress_v2';
+
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {}
+}
+
+function updateStreak() {
+  const p = getProgress();
+  const today = new Date().toDateString();
+  if (p.lastDay === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  p.streak = (p.lastDay === yesterday) ? (p.streak || 0) + 1 : 1;
+  p.lastDay = today;
+  p.totalDays = (p.totalDays || 0) + 1;
+  saveProgress(p);
+}
+
+function recordQuizAnswer(correct) {
+  const p = getProgress();
+  p.quizTotal = (p.quizTotal || 0) + 1;
+  if (correct) p.quizCorrect = (p.quizCorrect || 0) + 1;
+  saveProgress(p);
+  updateStreak();
+}
+
+function recordKarteikarte() {
+  const p = getProgress();
+  p.kartenReviewed = (p.kartenReviewed || 0) + 1;
+  saveProgress(p);
+  updateStreak();
+}
+
+function renderHomeStats() {
+  const el = document.getElementById('home-stats');
+  if (!el) return;
+  const p = getProgress();
+  const streak = p.streak || 0;
+  const quizTotal = p.quizTotal || 0;
+  const quizCorrect = p.quizCorrect || 0;
+  const karten = p.kartenReviewed || 0;
+  const pct = quizTotal > 0 ? Math.round(quizCorrect / quizTotal * 100) : 0;
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:22px">🔥</div>
+        <div style="font-size:18px;font-weight:800;color:#fbbf24">${streak}</div>
+        <div style="font-size:9px;color:#64748b">Tage Streak</div>
+      </div>
+      <div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:22px">✅</div>
+        <div style="font-size:18px;font-weight:800;color:#22c55e">${pct}%</div>
+        <div style="font-size:9px;color:#64748b">Quiz-Quote</div>
+      </div>
+      <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:22px">🃏</div>
+        <div style="font-size:18px;font-weight:800;color:#a78bfa">${karten}</div>
+        <div style="font-size:9px;color:#64748b">Karten gelernt</div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FEATURE 2: ONBOARDING TOUR
+// ═══════════════════════════════════════════════════════════════════════════
+function showOnboarding() {
+  if (localStorage.getItem('pl_onboarded')) return;
+  const slides = [
+    { icon:'🎓', title:'Willkommen bei PflegeLearn NRW!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW – von einem Fachpfleger & Ausbilder entwickelt.' },
+    { icon:'📝', title:'256 Prüfungsfragen', text:'Übe mit realistischen Multiple-Choice-Fragen oder starte den Prüfungssimulator mit Zeitlimit und Note.' },
+    { icon:'🃏', title:'Karteikarten & Spaced Repetition', text:'Lerne alle 44 Krankheitsbilder mit Karteikarten – das System zeigt dir schwierige Karten häufiger.' },
+    { icon:'📊', title:'Scores & Taschenkarten', text:'29 Assessment-Skalen und 38 Taschenkarten im Kasack-Format – alles was du auf Station brauchst.' },
+    { icon:'🔥', title:'Täglich lernen, Streak aufbauen!', text:'Dein Lernfortschritt und Streak werden gespeichert. Los geht\'s – deine Prüfung wartet!' },
+  ];
+
+  let current = 0;
+  const overlay = document.createElement('div');
+  overlay.id = 'onboarding-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  function render() {
+    const s = slides[current];
+    overlay.innerHTML = `
+      <div style="max-width:340px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.25);border-radius:22px;padding:32px 24px;text-align:center">
+        <div style="font-size:56px;margin-bottom:16px">${s.icon}</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:#e0f2fe;margin-bottom:12px;line-height:1.3">${s.title}</div>
+        <div style="font-size:14px;color:#94a3b8;line-height:1.7;margin-bottom:24px">${s.text}</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:20px">
+          ${slides.map((_,i) => `<div style="width:8px;height:8px;border-radius:50%;background:${i===current?'#38bdf8':'rgba(56,189,248,.25)'}"></div>`).join('')}
+        </div>
+        <button onclick="nextOnboarding()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:14px;color:white;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer">
+          ${current < slides.length-1 ? 'Weiter →' : '🚀 App starten!'}
+        </button>
+        ${current > 0 ? `<button onclick="prevOnboarding()" style="margin-top:10px;background:none;border:none;color:#4a7a9b;font-size:13px;font-family:inherit;cursor:pointer">← Zurück</button>` : ''}
+      </div>`;
+  }
+
+  window.nextOnboarding = function() {
+    if (current < slides.length - 1) { current++; render(); }
+    else { localStorage.setItem('pl_onboarded', '1'); overlay.remove(); }
+  };
+  window.prevOnboarding = function() { if (current > 0) { current--; render(); } };
+
+  render();
+  document.body.appendChild(overlay);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FEATURE 3: PRÜFUNGSSIMULATOR
+// ═══════════════════════════════════════════════════════════════════════════
+let examState = null;
+
+function startExam() {
+  const allFragen = QUIZ_FRAGEN;
+  const shuffled = [...allFragen].sort(() => Math.random() - 0.5).slice(0, 30);
+  examState = {
+    fragen: shuffled,
+    current: 0,
+    answers: [],
+    startTime: Date.now(),
+    timeLimit: 45 * 60 * 1000, // 45 Minuten
+    timer: null,
+  };
+  showScreen('exam');
+  renderExam();
+}
+
+function renderExam() {
+  const el = document.getElementById('exam-content');
+  if (!el || !examState) return;
+
+  const { fragen, current, startTime, timeLimit } = examState;
+  const q = fragen[current];
+  const elapsed = Date.now() - startTime;
+  const remaining = Math.max(0, timeLimit - elapsed);
+  const mins = Math.floor(remaining / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
+
+  // Timer
+  if (examState.timer) clearInterval(examState.timer);
+  examState.timer = setInterval(() => {
+    const el2 = document.getElementById('exam-timer');
+    if (!el2) { clearInterval(examState.timer); return; }
+    const rem = Math.max(0, timeLimit - (Date.now() - startTime));
+    const m = Math.floor(rem / 60000);
+    const s = Math.floor((rem % 60000) / 1000);
+    el2.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+    el2.style.color = rem < 300000 ? '#ef4444' : '#38bdf8';
+    if (rem === 0) { clearInterval(examState.timer); finishExam(); }
+  }, 1000);
+
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:12px;color:#4a7a9b">Frage ${current+1} / ${fragen.length}</div>
+      <div id="exam-timer" style="font-size:13px;font-weight:700;color:#38bdf8">⏱ ${mins}:${secs.toString().padStart(2,'0')}</div>
+      <div style="font-size:12px;color:#4a7a9b">${Math.round((current/fragen.length)*100)}%</div>
+    </div>
+    <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:12px;padding:4px 0;margin-bottom:4px;height:3px">
+      <div style="height:3px;background:#38bdf8;border-radius:3px;width:${(current/fragen.length)*100}%;transition:.3s"></div>
+    </div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.12);border-radius:14px;padding:18px;margin:14px 0">
+      <div style="font-size:9px;color:#38bdf8;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">${q.kat || 'Allgemein'}</div>
+      <div style="font-size:15px;color:#e0f2fe;font-weight:600;line-height:1.5">${q.frage}</div>
+    </div>
+    ${q.opt.map((opt, i) => `
+      <button onclick="answerExam(${i})" style="width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.15);border-radius:12px;padding:14px;margin-bottom:8px;color:#94a3b8;font-family:inherit;font-size:13px;text-align:left;cursor:pointer;display:flex;gap:10px;align-items:flex-start">
+        <span style="background:rgba(56,189,248,.12);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:#38bdf8;flex-shrink:0">${String.fromCharCode(65+i)}</span>
+        <span>${opt}</span>
+      </button>`).join('')}`;
+}
+
+function answerExam(idx) {
+  if (!examState) return;
+  const q = examState.fragen[examState.current];
+  const correct = idx === q.k;
+  examState.answers.push({ q, chosen: idx, correct });
+  recordQuizAnswer(correct);
+
+  // kurzes Feedback
+  const btns = document.querySelectorAll('#exam-content button[onclick^="answerExam"]');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.k) btn.style.background = 'rgba(34,197,94,.2)';
+    else if (i === idx && !correct) btn.style.background = 'rgba(239,68,68,.2)';
+  });
+
+  setTimeout(() => {
+    examState.current++;
+    if (examState.current >= examState.fragen.length) finishExam();
+    else renderExam();
+  }, 800);
+}
+
+function finishExam() {
+  if (examState.timer) clearInterval(examState.timer);
+  const { answers, fragen, startTime } = examState;
+  const correct = answers.filter(a => a.correct).length;
+  const total = fragen.length;
+  const pct = Math.round(correct / total * 100);
+  const duration = Math.round((Date.now() - startTime) / 1000 / 60);
+
+  // Note berechnen (deutsch)
+  let note = '', noteColor = '';
+  if (pct >= 92) { note = '1 (Sehr gut)'; noteColor = '#22c55e'; }
+  else if (pct >= 81) { note = '2 (Gut)'; noteColor = '#84cc16'; }
+  else if (pct >= 67) { note = '3 (Befriedigend)'; noteColor = '#eab308'; }
+  else if (pct >= 50) { note = '4 (Ausreichend)'; noteColor = '#f97316'; }
+  else if (pct >= 30) { note = '5 (Mangelhaft)'; noteColor = '#ef4444'; }
+  else { note = '6 (Ungenügend)'; noteColor = '#dc2626'; }
+
+  const el = document.getElementById('exam-content');
+  const wrongAnswers = answers.filter(a => !a.correct);
+
+  el.innerHTML = `
+    <div style="text-align:center;padding:20px 0">
+      <div style="font-size:56px;margin-bottom:12px">${pct >= 50 ? '🎉' : '📚'}</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:8px">Prüfung beendet!</div>
+      <div style="font-size:48px;font-weight:800;color:${noteColor};margin:12px 0">${pct}%</div>
+      <div style="font-size:18px;color:${noteColor};font-weight:700;margin-bottom:6px">Note: ${note}</div>
+      <div style="font-size:12px;color:#4a7a9b">${correct} von ${total} richtig · ${duration} Minuten</div>
+    </div>
+
+    ${wrongAnswers.length > 0 ? `
+    <div style="margin:20px 0">
+      <div style="font-size:11px;color:#ef4444;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">❌ Falsch beantwortet (${wrongAnswers.length})</div>
+      ${wrongAnswers.slice(0,10).map(a => `
+        <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="font-size:12px;color:#e0f2fe;margin-bottom:6px">${a.q.frage}</div>
+          <div style="font-size:11px;color:#22c55e">✅ ${a.q.opt[a.q.k]}</div>
+          <div style="font-size:11px;color:#ef4444;margin-top:2px">❌ ${a.q.opt[a.chosen]}</div>
+          ${a.q.erkl ? `<div style="font-size:10px;color:#64748b;margin-top:4px">💡 ${a.q.erkl}</div>` : ''}
+        </div>`).join('')}
+    </div>` : '<div style="color:#22c55e;text-align:center;padding:20px">🏆 Alle Fragen richtig!</div>'}
+
+    <button onclick="startExam()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:14px;color:white;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:10px">🔄 Nochmal versuchen</button>
+    <button onclick="navGo('home')" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;color:#94a3b8;font-size:14px;font-family:inherit;cursor:pointer;margin-top:8px">🏠 Zurück zur Startseite</button>`;
+
+  examState = null;
+  renderHomeStats();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FEATURE 4: KARTEIKARTEN MIT SPACED REPETITION
+// ═══════════════════════════════════════════════════════════════════════════
+const SR_KEY = 'pl_sr_v2';
+
+function getSRData() {
+  try { return JSON.parse(localStorage.getItem(SR_KEY) || '{}'); } catch { return {}; }
+}
+function saveSRData(d) {
+  try { localStorage.setItem(SR_KEY, JSON.stringify(d)); } catch {}
+}
+
+// Generiere Karteikarten dynamisch aus KRANKHEITSBILDER
+function generateKarteikarten() {
+  const karten = [];
+  Object.entries(KRANKHEITSBILDER).forEach(([fach, fachData]) => {
+    if (!fachData.bilder) return;
+    fachData.bilder.forEach(bild => {
+      const base = { fach, fachLabel: fachData.label || fach, name: bild.name, icd: bild.icd || '' };
+
+      if (bild.definition) karten.push({ ...base, id: `${fach}_${bild.name}_def`, typ: 'Definition',
+        frage: `Was ist die Definition von: ${bild.name}?`, antwort: bild.definition });
+
+      if (bild.symptome?.length) karten.push({ ...base, id: `${fach}_${bild.name}_sym`, typ: 'Symptome',
+        frage: `Welche Symptome hat: ${bild.name}?`, antwort: bild.symptome.join(' · ') });
+
+      if (bild.diagnostik?.length) karten.push({ ...base, id: `${fach}_${bild.name}_dia`, typ: 'Diagnostik',
+        frage: `Wie wird diagnostiziert: ${bild.name}?`, antwort: bild.diagnostik.join(' · ') });
+
+      if (bild.therapie?.length) karten.push({ ...base, id: `${fach}_${bild.name}_the`, typ: 'Therapie',
+        frage: `Welche Therapie bei: ${bild.name}?`, antwort: bild.therapie.join(' · ') });
+
+      if (bild.pflege?.length) karten.push({ ...base, id: `${fach}_${bild.name}_pfl`, typ: 'Pflege',
+        frage: `Welche Pflegemaßnahmen bei: ${bild.name}?`, antwort: bild.pflege.join(' · ') });
+
+      if (bild.merksatz) karten.push({ ...base, id: `${fach}_${bild.name}_merk`, typ: 'Merksatz',
+        frage: `Merksatz / Eselsbrücke für: ${bild.name}?`, antwort: bild.merksatz });
+    });
+  });
+  return karten;
+}
+
+let srKarten = [];
+let srIndex = 0;
+let srFlipped = false;
+let srFilter = 'alle';
+
+function initSR() {
+  srKarten = generateKarteikarten();
+}
+
+function getSRDue() {
+  const data = getSRData();
+  const now = Date.now();
+  let due = srKarten.filter(k => {
+    if (srFilter !== 'alle' && k.fach !== srFilter) return false;
+    const d = data[k.id];
+    if (!d) return true; // Neu
+    return d.nextReview <= now;
+  });
+  // Neue zuerst, dann fällige
+  due.sort((a,b) => {
+    const da = data[a.id], db = data[b.id];
+    if (!da && !db) return 0;
+    if (!da) return -1;
+    if (!db) return 1;
+    return da.nextReview - db.nextReview;
+  });
+  return due;
+}
+
+function renderKarteikarten() {
+  if (!srKarten.length) initSR();
+  const el = document.getElementById('sr-content');
+  if (!el) return;
+
+  const data = getSRData();
+  const allDue = getSRDue();
+  const total = srFilter === 'alle' ? srKarten.length : srKarten.filter(k => k.fach === srFilter).length;
+  const learned = srFilter === 'alle'
+    ? Object.keys(data).length
+    : srKarten.filter(k => k.fach === srFilter && data[k.id]).length;
+
+  // Fach-Filter Tabs
+  const faecher = [{ id: 'alle', label: 'Alle' }, ...Object.entries(KRANKHEITSBILDER).map(([id, f]) => ({ id, label: f.label || id }))];
+  const tabsHtml = `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">
+    ${faecher.map(f => `<button onclick="setSRFilter('${f.id}')" style="border-radius:16px;border:1px solid ${f.id===srFilter?'#38bdf8':'rgba(56,189,248,.2)'};padding:4px 10px;font-size:10px;font-weight:700;background:${f.id===srFilter?'#38bdf8':'rgba(56,189,248,.06)'};color:${f.id===srFilter?'white':'#38bdf8'};font-family:inherit;cursor:pointer">${f.label}</button>`).join('')}
+  </div>`;
+
+  if (!allDue.length) {
+    el.innerHTML = tabsHtml + `
+      <div style="text-align:center;padding:40px 20px">
+        <div style="font-size:48px;margin-bottom:12px">🎉</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:#e0f2fe;margin-bottom:8px">Alle Karten gelernt!</div>
+        <div style="font-size:13px;color:#4a7a9b;margin-bottom:20px">${learned} von ${total} Karten abgeschlossen</div>
+        <button onclick="resetSRFilter()" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:10px;padding:10px 20px;color:#38bdf8;font-family:inherit;cursor:pointer">🔄 Alle wiederholen</button>
+      </div>`;
+    return;
+  }
+
+  const karte = allDue[0];
+  const cardData = data[karte.id];
+  const isNew = !cardData;
+  const interval = cardData?.interval || 0;
+
+  el.innerHTML = tabsHtml + `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:11px;color:#4a7a9b">📚 ${allDue.length} offen · ${learned}/${total} gelernt</div>
+      <div style="font-size:10px;background:${isNew?'rgba(56,189,248,.12)':'rgba(34,197,94,.12)'};color:${isNew?'#38bdf8':'#22c55e'};padding:2px 8px;border-radius:10px;font-weight:700">${isNew?'NEU':'Wiederholung'}</div>
+    </div>
+
+    <div id="sr-card" onclick="flipCard()" style="min-height:220px;background:linear-gradient(160deg,rgba(13,33,53,.9),rgba(11,26,46,.9));border:1px solid rgba(56,189,248,.2);border-radius:18px;padding:24px;cursor:pointer;margin-bottom:12px;position:relative">
+      <div style="font-size:9px;color:#38bdf8;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">${karte.fachLabel} · ${karte.typ}</div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:12px">${karte.icd ? `ICD: ${karte.icd}` : ''}</div>
+      <div style="font-size:16px;font-weight:700;color:#e0f2fe;line-height:1.5;margin-bottom:16px">${karte.frage}</div>
+
+      ${srFlipped ? `
+        <div style="border-top:1px solid rgba(56,189,248,.15);padding-top:14px;margin-top:8px">
+          <div style="font-size:10px;color:#34d399;font-weight:700;margin-bottom:6px">ANTWORT:</div>
+          <div style="font-size:14px;color:#94a3b8;line-height:1.6">${karte.antwort}</div>
+        </div>` : `
+        <div style="position:absolute;bottom:20px;right:20px;font-size:11px;color:#4a7a9b">👆 Tippen zum Aufdecken</div>`}
+    </div>
+
+    ${srFlipped ? `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <button onclick="rateSR('again')" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:12px;color:#ef4444;font-weight:700;font-family:inherit;cursor:pointer;font-size:13px">😕<br><span style="font-size:10px">Nochmal</span></button>
+      <button onclick="rateSR('hard')" style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);border-radius:12px;padding:12px;color:#f97316;font-weight:700;font-family:inherit;cursor:pointer;font-size:13px">🤔<br><span style="font-size:10px">Schwer</span></button>
+      <button onclick="rateSR('easy')" style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:12px;color:#22c55e;font-weight:700;font-family:inherit;cursor:pointer;font-size:13px">😊<br><span style="font-size:10px">Leicht</span></button>
+    </div>` : `
+    <div style="text-align:center;color:#4a7a9b;font-size:12px;padding:10px">Karte aufdecken um zu bewerten</div>`}`;
+}
+
+window.flipCard = function() {
+  srFlipped = !srFlipped;
+  renderKarteikarten();
+};
+
+window.setSRFilter = function(filter) {
+  srFilter = filter;
+  srFlipped = false;
+  renderKarteikarten();
+};
+
+window.resetSRFilter = function() {
+  const data = getSRData();
+  const now = Date.now();
+  srKarten.forEach(k => {
+    if (srFilter === 'alle' || k.fach === srFilter) {
+      if (data[k.id]) data[k.id].nextReview = now - 1;
+    }
+  });
+  saveSRData(data);
+  srFlipped = false;
+  renderKarteikarten();
+};
+
+window.rateSR = function(rating) {
+  if (!srKarten.length) return;
+  const due = getSRDue();
+  if (!due.length) return;
+  const karte = due[0];
+  const data = getSRData();
+  const now = Date.now();
+  const d = data[karte.id] || { interval: 0, ease: 2.5, reps: 0 };
+
+  // SM-2 Algorithmus (vereinfacht)
+  let { interval, ease, reps } = d;
+  if (rating === 'again') {
+    interval = 1; reps = 0; ease = Math.max(1.3, ease - 0.2);
+  } else if (rating === 'hard') {
+    interval = Math.max(1, Math.round(interval * 1.2)); ease = Math.max(1.3, ease - 0.15);
+  } else { // easy
+    if (reps === 0) interval = 1;
+    else if (reps === 1) interval = 6;
+    else interval = Math.round(interval * ease);
+    ease = Math.min(3.0, ease + 0.1);
+    reps++;
+  }
+
+  data[karte.id] = {
+    interval,
+    ease,
+    reps,
+    nextReview: now + interval * 24 * 60 * 60 * 1000,
+    lastRating: rating,
+  };
+  saveSRData(data);
+  recordKarteikarte();
+  srFlipped = false;
+  renderKarteikarten();
+  renderHomeStats();
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FEATURE 5: FEEDBACK-BUTTON
+// ═══════════════════════════════════════════════════════════════════════════
+function showFeedback() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="max-width:360px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.2);border-radius:18px;padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe">💬 Feedback / Fehler melden</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 12px;color:#94a3b8;cursor:pointer">✕</button>
+      </div>
+      <select id="fb-type" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:10px;color:#94a3b8;font-family:inherit;margin-bottom:10px">
+        <option value="fehler">❌ Inhaltlicher Fehler</option>
+        <option value="idee">💡 Verbesserungsidee</option>
+        <option value="bug">🐛 Technischer Bug</option>
+        <option value="lob">⭐ Lob</option>
+      </select>
+      <textarea id="fb-text" placeholder="Deine Nachricht..." style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:10px;color:#e0f2fe;font-family:inherit;height:100px;resize:none;box-sizing:border-box;margin-bottom:10px"></textarea>
+      <button onclick="sendFeedback()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:10px;padding:12px;color:white;font-weight:700;font-family:inherit;cursor:pointer">📨 Absenden</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+window.sendFeedback = function() {
+  const type = document.getElementById('fb-type')?.value || 'unbekannt';
+  const text = document.getElementById('fb-text')?.value?.trim() || '';
+  if (!text) { alert('Bitte Nachricht eingeben.'); return; }
+  emailjs.send('service_8hn8nqi', 'g7jbwbc', {
+    to_name: 'Patrick',
+    from_name: `App-Feedback: ${type}`,
+    message: text,
+    reply_to: 'noreply@pflegelearn.de',
+  }).then(() => {
+    document.querySelector('[style*=fixed]')?.remove();
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#22c55e;color:white;padding:10px 20px;border-radius:10px;z-index:9999;font-weight:700';
+    t.textContent = '✅ Feedback gesendet!';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }).catch(() => alert('Fehler beim Senden. Bitte E-Mail an pflegelearn.nrw@gmail.com'));
+};
+
 (function injectScreens() {
   // Prophylaxen Screen – ID mit screen- prefix damit originales showScreen funktioniert
   if (!document.getElementById('screen-prophylaxen')) {
@@ -6429,6 +7240,32 @@ function renderScores(kat) {
         <button class="medneu-tab" data-kat="${t.id}" onclick="renderMedNeu('${t.id}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:7px 12px;color:#38bdf8;font-size:11px;font-weight:600;font-family:inherit">${t.l}</button>`).join('')}
       </div>
       <div id="medneu-content"></div>`;
+    document.body.appendChild(d);
+  }
+
+  // Karteikarten-Screen
+  if (!document.getElementById('screen-karteikarten')) {
+    const d = document.createElement('div');
+    d.id = 'screen-karteikarten'; d.className = 'page';
+    d.innerHTML = `
+      <div style="margin-bottom:14px">
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">🃏 Karteikarten</div>
+        <div style="font-size:11px;color:#4a7a9b">80 Krankheitsbilder · 480 Karten · Spaced Repetition · SM-2 Algorithmus</div>
+      </div>
+      <div id="sr-content"></div>`;
+    document.body.appendChild(d);
+  }
+
+  // Prüfungssimulator-Screen
+  if (!document.getElementById('screen-exam')) {
+    const d = document.createElement('div');
+    d.id = 'screen-exam'; d.className = 'page';
+    d.innerHTML = `
+      <div style="margin-bottom:14px">
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">📝 Prüfungssimulator</div>
+        <div style="font-size:11px;color:#4a7a9b">30 Fragen · 45 Minuten · Deutsche Benotung</div>
+      </div>
+      <div id="exam-content"></div>`;
     document.body.appendChild(d);
   }
 
