@@ -499,8 +499,18 @@
     <p>7 Ausbildungswege · 256 Fragen · Scores · Krankheitsbilder · Von einem Fachpfleger & Ausbilder NRW</p>
   </div>
   <div class="section-label" style="display:none"></div>
-  <!-- ── KI-ASSISTENT: Temporär deaktiviert bis Backend stabil ── -->
-  <!-- <button onclick="startChat(null,'Hallo! Ich bin dein Lernassistent für Pflege NRW 🩺 Was möchtest du lernen oder wissen?')" style="display:none"> ... </button> -->
+  <!-- ── KI-ASSISTENT: Temporär deaktiviert für normale User ── -->
+  <!-- KI-Button für Admins: wird per JS eingeblendet -->
+  <div id="ki-admin-btn" style="display:none;margin-bottom:12px">
+    <button onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(56,189,248,.06));border:2px dashed rgba(56,189,248,.4);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+      <div style="font-size:28px">🤖</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#38bdf8">KI-Assistent testen</div>
+        <div style="font-size:10px;color:#4a7a9b;margin-top:2px">🔧 Admin-Testmodus · Nur für Patrick sichtbar</div>
+      </div>
+      <div style="margin-left:auto;font-size:18px;color:#38bdf8">›</div>
+    </button>
+  </div>
 
   <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
   <div class="acc-wrap" id="acc-ausb">
@@ -3508,6 +3518,11 @@ function logLogin(token, name) {
 
 function applyBereichsFilter() {
   if (!currentBereich) return;
+  // KI-Admin-Testbutton nur für Patrick (bereich=alle)
+  const kiAdminBtn = document.getElementById('ki-admin-btn');
+  if (kiAdminBtn) {
+    kiAdminBtn.style.display = (currentUser && currentUser.bereich === 'alle') ? 'block' : 'none';
+  }
   // Admin-Button nur für Vollzugang (bereich === "alle")
   const adminBtn = document.getElementById("btn-admin");
   if (adminBtn) {
