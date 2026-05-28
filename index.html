@@ -378,7 +378,7 @@
     </div>
   </button>
   <div class="header-btns">
-    <button class="hbtn hbtn-back" id="btn-back" onclick="showScreen('home')" style="display:none">← Start</button>
+    <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none">← Zurück</button>
     <button class="hbtn" id="btn-med" onclick="showScreen('medizintechnik')" style="background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.25);color:#facc15;">⚙️ Technik</button>
     <button class="hbtn hbtn-quiz" id="btn-quiz" onclick="showScreen('quizSelect')">📝 Quiz</button>
     <button class="hbtn" onclick="showScreen('taschenkarten')" title="Taschenkarten" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25);color:#a78bfa">📇</button>
@@ -1338,13 +1338,41 @@ function renderQuizSelect() {
 }
 
 // ─── SCREEN ─────────────────────────────────────────────────────────────────
+
+// ─── NAVIGATION HISTORY ──────────────────────────────────────────────────
+let screenHistory = [];
+
+function goBack() {
+  if (screenHistory.length > 1) {
+    screenHistory.pop(); // aktuellen Screen entfernen
+    const prev = screenHistory.pop(); // vorherigen holen (wird von showScreen wieder gepusht)
+    showScreen(prev);
+  } else {
+    showScreen('home');
+  }
+}
 function showScreen(name) {
   document.querySelectorAll(".page, .chat-page").forEach(p => { p.classList.remove("active"); });
   const el = document.getElementById("screen-" + name);
   if (el) el.classList.add("active");
   currentScreen = name;
+  // History tracking
+  if (name === 'home') {
+    screenHistory = ['home'];
+  } else {
+    if (screenHistory[screenHistory.length - 1] !== name) {
+      screenHistory.push(name);
+    }
+  }
+  // Zurück-Button: zeige "← Zurück" wenn History > 1, sonst verstecken auf Home
   const isHome = name === "home";
-  document.getElementById("btn-back").style.display = isHome ? "none" : "inline-block";
+  const btnBack = document.getElementById("btn-back");
+  if (isHome) {
+    btnBack.style.display = "none";
+  } else {
+    btnBack.style.display = "inline-block";
+    btnBack.textContent = screenHistory.length > 2 ? "← Zurück" : "← Start";
+  }
   document.getElementById("btn-quiz").style.display = isHome ? "inline-block" : "none";
   document.getElementById("btn-med").style.display = isHome ? "inline-block" : "none";
   window.scrollTo(0, 0);
@@ -3128,6 +3156,10 @@ function showKrankheitsbilder() {
 }
 
 function renderKBFaecher() {
+  // KB-Fach-Übersicht: eigene History-Ebene
+  if (screenHistory[screenHistory.length-1] !== 'krankheitsbilder') {
+    screenHistory.push('krankheitsbilder');
+  }
   const el = document.getElementById('kb-faecher');
   if (!el) return;
   const faecher = Object.entries(KRANKHEITSBILDER);
