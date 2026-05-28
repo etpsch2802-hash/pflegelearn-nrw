@@ -1316,7 +1316,7 @@ function renderAusbList() {
       </div>
       <div class="ausb-btns">
         <button class="ausb-btn" style="background:${a.color}12;border-color:${a.color}28;color:${a.color}" onclick="openModal('${a.id}')">Info</button>
-        <button class="ausb-btn" style="background:${a.color}22;border-color:${a.color}40;color:${a.color}" onclick="startAusbChat(a.id,a.title)">🤖 KI-Chat</button>
+        <button class="ausb-btn" style="background:${a.color}22;border-color:${a.color}40;color:${a.color}" onclick="startAusbChat('${a.id}')">🤖 KI-Chat</button>
       </div>
     </div>`).join("");
 }
@@ -3259,7 +3259,7 @@ function openKrankheitsbild(fachId, bildIdx) {
         ${b.fragen.map((frage, fi) => `
           <div style="margin-bottom:12px" id="kb-frage-${fi}">
             <div style="font-size:13px;font-weight:600;color:#e0f2fe;margin-bottom:7px">${fi+1}. ${frage.f}</div>
-            ${frage.opt.map((o, oi) => `
+            ${(kbShuffledFragen[fi] ? kbShuffledFragen[fi].opts : frage.opt).map((o, oi) => `
               <button onclick="answerKBFrage(${fi},${oi},'${fach.farbe}')" id="kb-opt-${fi}-${oi}" style="width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(100,180,220,.11);border-radius:8px;padding:9px 12px;text-align:left;color:var(--text2);font-size:12px;margin-bottom:4px;display:flex;gap:7px;font-family:inherit;cursor:pointer">
                 <span style="font-weight:700;min-width:16px">${['A','B','C','D'][oi]}.</span>${o}
               </button>`).join('')}
@@ -3274,30 +3274,72 @@ function openKrankheitsbild(fachId, bildIdx) {
       </button>
     </div>`;
 
+  shuffleKBFragen(b.fragen);
   showScreen('kb-detail');
 }
 
-function answerKBFrage(frageIdx, antwortIdx, farbe) {
-  const fach = KRANKHEITSBILDER[currentKBBild.fachId];
-  const b = fach.bilder[currentKBBild.bildIdx];
-  const frage = b.fragen[frageIdx];
-  // Color options
-  frage.opt.forEach((_, oi) => {
-    const btn = document.getElementById(`kb-opt-${frageIdx}-${oi}`);
-    if (!btn) return;
-    btn.style.cursor = 'default';
-    if (oi === frage.k) { btn.style.background='rgba(34,197,94,.13)'; btn.style.borderColor='#22c55e'; btn.style.color='#86efac'; }
-    else if (oi === antwortIdx) { btn.style.background='rgba(239,68,68,.13)'; btn.style.borderColor='#ef4444'; btn.style.color='#fca5a5'; }
-    btn.onclick = null;
+
+// ─── KB-FRAGEN SHUFFLE ──────────────────────────────────────────────────────
+let kbShuffledFragen = {}; // speichert shuffled optionen pro frage: {fi: {opts, correctIdx, erkl}}
+
+function shuffleKBFragen(fragen) {
+  kbShuffledFragen = {};
+  fragen.forEach((frage, fi) => {
+    // Optionen mit Index mischen
+    const indexed = frage.opt.map((text, i) => ({ text, isCorrect: i === frage.k }));
+    // Fisher-Yates Shuffle
+    for (let i = indexed.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+    }
+    kbShuffledFragen[fi] = {
+      opts: indexed.map(x => x.text),
+      correctIdx: indexed.findIndex(x => x.isCorrect),
+      erkl: frage.erkl || '',
+    };
   });
+}
+function answerKBFrage(frageIdx, antwortIdx, farbe) {
+  // Nutze shuffled correct index
+  const sf = kbShuffledFragen[frageIdx];
+  const correctIdx = sf ? sf.correctIdx : 0;
+  const optCount = sf ? sf.opts.length : 4;
+
+  for (let oi = 0; oi < optCount; oi++) {
+    const btn = document.getElementById(`kb-opt-${frageIdx}-${oi}`);
+    if (!btn) continue;
+    btn.style.cursor = 'default';
+    btn.onclick = null;
+    if (oi === correctIdx) {
+      btn.style.background = 'rgba(34,197,94,.13)';
+      btn.style.borderColor = '#22c55e';
+      btn.style.color = '#86efac';
+    } else if (oi === antwortIdx && oi !== correctIdx) {
+      btn.style.background = 'rgba(239,68,68,.13)';
+      btn.style.borderColor = '#ef4444';
+      btn.style.color = '#fca5a5';
+    }
+  }
   const erkl = document.getElementById(`kb-erkl-${frageIdx}`);
-  if (erkl) erkl.style.display = 'block';
+  if (erkl) { erkl.style.display = 'block'; if (sf) erkl.textContent = sf.erkl; }
+  recordQuizAnswer(antwortIdx === correctIdx);
 }
 
 function startKBKIChat(fachId, bildIdx) {
   const fach = KRANKHEITSBILDER[fachId];
+  if (!fach || !fach.bilder[bildIdx]) return;
   const b = fach.bilder[bildIdx];
-  appendMsg && appendMsg('ai','🔧 KI-Chat kommt bald!','#38bdf8');
+  const welcome = `Hallo! Du lernst gerade über **${b.name}** (${b.icd || ''}).
+
+Ich kann dir helfen mit:
+• Definition und Pathophysiologie
+• Symptome und Diagnostik
+• Pflegerische Maßnahmen
+• Prüfungsfragen zu diesem Thema
+• Merkhilfen und Eselsbrücken
+
+Was möchtest du wissen?`;
+  startChat(null, welcome);
 }
 
 // ─── MEDIZINTECHNIK DATA ─────────────────────────────────────────────────────
@@ -7221,7 +7263,9 @@ window.sendFeedback = function() {
 
 const AUSB_WELCOME = {"pflegehelfer": "Hallo! Ich helfe dir bei der Pflegefachassistenz-Ausbildung in NRW 🤝 Frag mich zu Grundpflege, Behandlungspflege, Prüfungsfragen oder Berufsbild – was möchtest du wissen?", "anerkennung": "Hallo! Ich unterstütze dich als Anerkennungsschüler/in in NRW 🌍 Frag mich zu Defizitfeststellung, Anpassungslehrgang, Prüfungsanforderungen oder spezifischen Pflegethemen – was brauchst du?", "gpa": "Hallo! Ich bin dein Lernbegleiter für die Generalistische Pflegeausbildung NRW 🎓 3 Jahre, alle Bereiche – Frag mich zu Pflegeprozess, ATL, Prüfungsvorbereitung, Krankheitsbilder oder Ausbildungsinhalte!", "anaesthesie": "Hallo! Ich helfe dir bei der Fachpflege Anästhesie 💉 TIVA, Narkoseverfahren, Monitoring, Regionalanästhesie, Notfallmanagement im OP – was möchtest du vertiefen?", "ata": "Hallo! Ich unterstütze dich in der ATA-Ausbildung 🔧 Anästhesiologische Technik, Gerätemanagement, Narkosevorbereitung, ATA-OTA-Gesetz – stell mir deine Fragen!", "intensiv": "Hallo! Ich bin dein KI-Assistent für die Fachpflege Intensivmedizin 🏥 Beatmung, Monitoring, Katecholamine, Sepsis, ARDS – ich helfe dir bei allen Intensivthemen!", "ota": "Hallo! Ich helfe dir bei der OTA-Ausbildung 🔪 OP-Lagerung, Instrumentierkunde, Sterilisation, OP-Hygiene, ATA-OTA-Gesetz – was möchtest du lernen?"};
 
-function startAusbChat(id, title) {
+function startAusbChat(id) {
+  const a = AUSBILDUNGEN.find(x => x.id === id);
+  const title = a ? a.title : id;
   const welcome = AUSB_WELCOME[id] || `Hallo! Ich helfe dir bei der Ausbildung: ${title} 🎓 Stelle mir jede Frage zu Inhalten, Prüfungen oder Pflegethemen!`;
   startChat(id, welcome);
 }
