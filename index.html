@@ -7485,29 +7485,33 @@ function playHeartbeat() {
   if (!soundEnabled) return;
   const ctx = getAudioCtx();
   if (!ctx) return;
-  const now = ctx.currentTime;
 
-  // Ein Herzschlag = "lub" (S1, tiefer) + "dub" (S2, etwas höher/kürzer)
-  function thump(startOffset, freq, peak, dur) {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, now + startOffset);
-    osc.frequency.exponentialRampToValueAtTime(freq * 0.6, now + startOffset + dur);
-    gain.gain.setValueAtTime(0.0001, now + startOffset);
-    gain.gain.exponentialRampToValueAtTime(peak, now + startOffset + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + startOffset + dur);
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start(now + startOffset);
-    osc.stop(now + startOffset + dur + 0.02);
+  function doBeat() {
+    const now = ctx.currentTime;
+    function thump(startOffset, freq, peak, dur) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + 0.01 + startOffset);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.6, now + 0.01 + startOffset + dur);
+      gain.gain.setValueAtTime(0.0001, now + 0.01 + startOffset);
+      gain.gain.exponentialRampToValueAtTime(peak, now + 0.01 + startOffset + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.01 + startOffset + dur);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(now + 0.01 + startOffset);
+      osc.stop(now + 0.01 + startOffset + dur + 0.05);
+    }
+    thump(0.00, 60, 0.15, 0.16);
+    thump(0.18, 75, 0.10, 0.13);
+    thump(0.72, 60, 0.15, 0.16);
+    thump(0.90, 75, 0.10, 0.13);
   }
 
-  // Leise! peak 0.12-0.15 (lub etwas lauter als dub)
-  // Zwei komplette Herzschläge: lub-dub ... lub-dub
-  thump(0.00, 60, 0.15, 0.16);   // 1. lub
-  thump(0.18, 75, 0.10, 0.13);   // 1. dub
-  thump(0.72, 60, 0.15, 0.16);   // 2. lub
-  thump(0.90, 75, 0.10, 0.13);   // 2. dub
+  if (ctx.state === 'suspended') {
+    ctx.resume().then(doBeat).catch(() => {});
+  } else {
+    doBeat();
+  }
 }
 
 // ─── SOUND-FEEDBACK (Web Audio API, keine Dateien nötig) ────────────────────
@@ -7523,23 +7527,53 @@ function getAudioCtx() {
   return _audioCtx;
 }
 
+// Audio beim ersten User-Klick freischalten (Browser-Autoplay-Policy)
+let _audioUnlocked = false;
+function unlockAudio() {
+  if (_audioUnlocked) return;
+  const ctx = getAudioCtx();
+  if (ctx && ctx.state === 'suspended') ctx.resume();
+  // Stummen Ton spielen zum "Aufwecken"
+  if (ctx) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    gain.gain.value = 0.0001;
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.01);
+  }
+  _audioUnlocked = true;
+}
+document.addEventListener('click', unlockAudio, { once: false });
+document.addEventListener('touchstart', unlockAudio, { once: false });
+
+
 function playTone(freqs, duration, type) {
   if (!soundEnabled) return;
   const ctx = getAudioCtx();
   if (!ctx) return;
-  const now = ctx.currentTime;
-  freqs.forEach((f, i) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type || 'sine';
-    osc.frequency.value = f;
-    const start = now + i * 0.09;
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start(start); osc.stop(start + duration + 0.02);
-  });
+
+  function doPlay() {
+    const now = ctx.currentTime; // currentTime FRISCH nach resume holen!
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.value = f;
+      const start = now + 0.01 + i * 0.09;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(start); osc.stop(start + duration + 0.05);
+    });
+  }
+
+  // Wenn Context suspended: erst resume(), DANN spielen (currentTime ist sonst veraltet)
+  if (ctx.state === 'suspended') {
+    ctx.resume().then(doPlay).catch(() => {});
+  } else {
+    doPlay();
+  }
 }
 
 // Erfolg: aufsteigender freundlicher Dreiklang
