@@ -7728,6 +7728,15 @@ window.addEventListener('load', () => {
   const btn = document.getElementById('sound-toggle-btn');
   if (btn) btn.innerHTML = soundEnabled ? '🔊 Sound: An' : '🔇 Sound: Aus';
 });
+  // Nach deinen bestehenden Funktionsdefinitionen, direkt vor dem schließenden </script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (new URLSearchParams(window.location.search).get('payment') === 'success') {
+    document.querySelector('.pw-screen')?.classList.remove('active');
+    showScreen('home');
+    // URL sauber halten (optional)
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+});
 </script>
 </body>
 </html>
