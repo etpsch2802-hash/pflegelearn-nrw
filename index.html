@@ -490,7 +490,7 @@
   </div>
 
   <div style="text-align:center;margin-top:16px">
-    <button onclick="showScreen('home')" style="background:none;border:none;color:#4a7a9b;font-size:12px;font-family:inherit;cursor:pointer">
+    <button onclick="backToLogin()" style="background:none;border:none;color:#4a7a9b;font-size:12px;font-family:inherit;cursor:pointer">
       Bereits registriert? → Zum Login
     </button>
   </div>
@@ -1358,8 +1358,19 @@ function goBack() {
     showScreen('home');
   }
 }
+
+// ─── ZURÜCK ZUM LOGIN-SCREEN ────────────────────────────────────────────────
+function backToLogin() {
+  document.querySelectorAll('.page, .chat-page').forEach(p => p.classList.remove('active'));
+  const pwS = document.getElementById('pw-screen');
+  if (pwS) pwS.classList.add('active');
+}
+
 function showScreen(name) {
   document.querySelectorAll(".page, .chat-page").forEach(p => { p.classList.remove("active"); });
+  // Login-Screen immer ausblenden wenn ein anderer Screen gezeigt wird
+  const pwS = document.getElementById("pw-screen");
+  if (pwS) pwS.classList.remove("active");
   const el = document.getElementById("screen-" + name);
   if (el) el.classList.add("active");
   currentScreen = name;
