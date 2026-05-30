@@ -7705,43 +7705,50 @@ window.addEventListener('load', function() {
   // URL sofort sauber entfernen
   window.history.replaceState({}, document.title, window.location.pathname);
 
-  // 500ms warten bis App vollständig initialisiert
-  setTimeout(function() {
+  // Mehrfach versuchen bis App bereit ist
+  let attempts = 0;
+  function tryActivateHome() {
+    attempts++;
     try {
       const existingToken = localStorage.getItem('pl_token') || sessionStorage.getItem('pl_token');
-      if (existingToken) { showSuccessToast(); return; }
+      if (existingToken && attempts > 1) { showSuccessToast(); return; }
 
       const tempUser  = localStorage.getItem('pl_stripe_name') || 'Neuer Nutzer';
       const tempToken = 'STRIPE-' + Date.now();
 
-      currentUser    = { token: tempToken, name: tempUser, bereich: 'alle', ablauf: '2027-12-31' };
-      currentBereich = BEREICH_CONFIG ? (BEREICH_CONFIG['alle'] || BEREICH_CONFIG['demo']) : null;
-      kiNachrichtenCount = 0;
+      try { currentUser = { token: tempToken, name: tempUser, bereich: 'alle', ablauf: '2027-12-31' }; } catch(e) {}
+      try { currentBereich = BEREICH_CONFIG['alle']; } catch(e) {}
+      try { kiNachrichtenCount = 0; } catch(e) {}
 
       localStorage.setItem('pl_token', tempToken);
       localStorage.setItem('pl_user', tempUser);
       sessionStorage.setItem('pl_token', tempToken);
       sessionStorage.setItem('pl_user', tempUser);
 
-      // Login-Screen hart ausblenden
-      const ps = document.getElementById('pw-screen');
-      if (ps) { ps.classList.remove('active'); ps.style.display = 'none'; }
+      // Login-Screen HART ausblenden – mehrfach zur Sicherheit
+      ['pw-screen'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) { el.style.cssText += ';display:none!important;visibility:hidden!important;opacity:0!important;'; el.classList.remove('active'); }
+      });
 
-      // Alle Screens ausblenden, Home aktivieren
-      document.querySelectorAll('.page, .chat-page').forEach(el => el.classList.remove('active'));
-      const homeScreen = document.getElementById('screen-home');
-      if (homeScreen) homeScreen.classList.add('active');
+      // Home-Screen aktivieren
+      document.querySelectorAll('.page,.chat-page').forEach(function(el) { el.classList.remove('active'); });
+      const home = document.getElementById('screen-home');
+      if (home) { home.classList.add('active'); home.style.display = 'block'; }
 
-      try { if (typeof applyBereichsFilter === 'function') applyBereichsFilter(); } catch(e) {}
-      try { if (typeof updateUserDisplay   === 'function') updateUserDisplay(tempUser, false); } catch(e) {}
-      try { if (typeof updateStreak        === 'function') updateStreak(); } catch(e) {}
-      try { if (typeof showScreen          === 'function') showScreen('home'); } catch(e) {}
-      try { if (typeof renderHomeStats     === 'function') renderHomeStats(); } catch(e) {}
-      try { if (typeof showOnboarding      === 'function') setTimeout(showOnboarding, 800); } catch(e) {}
+      try { applyBereichsFilter(); } catch(e) {}
+      try { updateUserDisplay(tempUser, false); } catch(e) {}
+      try { updateStreak(); } catch(e) {}
+      try { renderHomeStats(); } catch(e) {}
+      try { if (typeof showOnboarding === 'function') setTimeout(showOnboarding, 1000); } catch(e) {}
 
       showSuccessToast();
-    } catch(e) { console.error('[PaymentSuccess]', e); }
-  }, 500);
+    } catch(e) {
+      console.warn('[PaymentSuccess] Versuch ' + attempts + ' fehlgeschlagen:', e);
+      if (attempts < 5) setTimeout(tryActivateHome, 300);
+    }
+  }
+  setTimeout(tryActivateHome, 500);
 });
 
 function showSuccessToast() {
