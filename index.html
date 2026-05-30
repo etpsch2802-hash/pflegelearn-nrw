@@ -7698,51 +7698,44 @@ function dismissExamenBanner(datum) {
 }
 
 // ─── STRIPE PAYMENT SUCCESS HANDLER ─────────────────────────────────────────
-window.addEventListener('load', function checkPaymentSuccess() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') !== 'success') return;
+window.addEventListener('load', function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') !== 'success') return;
 
-    // URL-Parameter sofort sauber entfernen (kein Reload-Loop)
-    window.history.replaceState({}, document.title, window.location.pathname);
+  // URL sofort sauber entfernen
+  window.history.replaceState({}, document.title, window.location.pathname);
 
-    // Falls bereits eingeloggt: nur Toast zeigen
-    const existingToken = localStorage.getItem('pl_token') || sessionStorage.getItem('pl_token');
-    if (existingToken) {
+  // 500ms warten bis App vollständig initialisiert
+  setTimeout(function() {
+    try {
+      const existingToken = localStorage.getItem('pl_token') || sessionStorage.getItem('pl_token');
+      if (existingToken) { showSuccessToast(); return; }
+
+      const tempUser  = localStorage.getItem('pl_stripe_name') || 'Neuer Nutzer';
+      const tempToken = 'STRIPE-' + Date.now();
+
+      currentUser    = { token: tempToken, name: tempUser, bereich: 'alle', ablauf: '2027-12-31' };
+      currentBereich = BEREICH_CONFIG ? (BEREICH_CONFIG['alle'] || BEREICH_CONFIG['demo']) : null;
+      kiNachrichtenCount = 0;
+
+      localStorage.setItem('pl_token', tempToken);
+      localStorage.setItem('pl_user', tempUser);
+      sessionStorage.setItem('pl_token', tempToken);
+      sessionStorage.setItem('pl_user', tempUser);
+
+      const ps = document.getElementById('pw-screen');
+      if (ps) ps.classList.remove('active');
+
+      if (typeof applyBereichsFilter === 'function') applyBereichsFilter();
+      if (typeof updateUserDisplay   === 'function') updateUserDisplay(tempUser, false);
+      if (typeof updateStreak        === 'function') updateStreak();
+      if (typeof showScreen          === 'function') showScreen('home');
+      if (typeof renderHomeStats     === 'function') renderHomeStats();
+      if (typeof showOnboarding      === 'function') setTimeout(showOnboarding, 800);
+
       showSuccessToast();
-      return;
-    }
-
-    // Käufer-Namen aus localStorage holen
-    const tempUser = localStorage.getItem('pl_stripe_name') || 'Neuer Nutzer';
-    const tempToken = 'STRIPE-' + Date.now();
-
-    // Login mit vollem Zugang
-    currentUser    = { token: tempToken, name: tempUser, bereich: 'alle', ablauf: '2027-12-31' };
-    currentBereich = BEREICH_CONFIG ? (BEREICH_CONFIG['alle'] || BEREICH_CONFIG['demo']) : null;
-    kiNachrichtenCount = 0;
-
-    // localStorage statt sessionStorage → bleibt nach Browser-Neustart erhalten
-    localStorage.setItem('pl_token', tempToken);
-    localStorage.setItem('pl_user', tempUser);
-    sessionStorage.setItem('pl_token', tempToken);
-    sessionStorage.setItem('pl_user', tempUser);
-
-    // Login-Screen ausblenden
-    const ps = document.getElementById('pw-screen');
-    if (ps) ps.classList.remove('active');
-
-    if (typeof applyBereichsFilter === 'function') applyBereichsFilter();
-    if (typeof updateUserDisplay  === 'function') updateUserDisplay(tempUser, false);
-    if (typeof updateStreak       === 'function') updateStreak();
-    if (typeof showScreen         === 'function') showScreen('home');
-    if (typeof renderHomeStats    === 'function') renderHomeStats();
-    if (typeof showOnboarding     === 'function') setTimeout(showOnboarding, 600);
-
-    showSuccessToast();
-  } catch(e) {
-    console.error('[PaymentSuccess]', e);
-  }
+    } catch(e) { console.error('[PaymentSuccess]', e); }
+  }, 500);
 });
 
 function showSuccessToast() {
