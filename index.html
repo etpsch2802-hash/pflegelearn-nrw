@@ -7723,15 +7723,21 @@ window.addEventListener('load', function() {
       sessionStorage.setItem('pl_token', tempToken);
       sessionStorage.setItem('pl_user', tempUser);
 
+      // Login-Screen hart ausblenden
       const ps = document.getElementById('pw-screen');
-      if (ps) ps.classList.remove('active');
+      if (ps) { ps.classList.remove('active'); ps.style.display = 'none'; }
 
-      if (typeof applyBereichsFilter === 'function') applyBereichsFilter();
-      if (typeof updateUserDisplay   === 'function') updateUserDisplay(tempUser, false);
-      if (typeof updateStreak        === 'function') updateStreak();
-      if (typeof showScreen          === 'function') showScreen('home');
-      if (typeof renderHomeStats     === 'function') renderHomeStats();
-      if (typeof showOnboarding      === 'function') setTimeout(showOnboarding, 800);
+      // Alle Screens ausblenden, Home aktivieren
+      document.querySelectorAll('.page, .chat-page').forEach(el => el.classList.remove('active'));
+      const homeScreen = document.getElementById('screen-home');
+      if (homeScreen) homeScreen.classList.add('active');
+
+      try { if (typeof applyBereichsFilter === 'function') applyBereichsFilter(); } catch(e) {}
+      try { if (typeof updateUserDisplay   === 'function') updateUserDisplay(tempUser, false); } catch(e) {}
+      try { if (typeof updateStreak        === 'function') updateStreak(); } catch(e) {}
+      try { if (typeof showScreen          === 'function') showScreen('home'); } catch(e) {}
+      try { if (typeof renderHomeStats     === 'function') renderHomeStats(); } catch(e) {}
+      try { if (typeof showOnboarding      === 'function') setTimeout(showOnboarding, 800); } catch(e) {}
 
       showSuccessToast();
     } catch(e) { console.error('[PaymentSuccess]', e); }
