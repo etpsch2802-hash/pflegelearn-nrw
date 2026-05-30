@@ -6865,6 +6865,155 @@ function recordKarteikarte() {
   updateStreak();
 }
 
+// ── SAISON & FEIERTAGE ──────────────────────────────────────────────────────
+function getSaisonInfo() {
+  const now = new Date();
+  const tag = now.getDate();
+  const monat = now.getMonth() + 1; // 1-12
+  const jahr = now.getFullYear();
+
+  // Osterdatum berechnen (Gauss-Algorithmus)
+  function getOstern(y) {
+    const a = y % 19, b = Math.floor(y/100), c = y % 100;
+    const d = Math.floor(b/4), e = b % 4, f = Math.floor((b+8)/25);
+    const g = Math.floor((b-f+1)/3), h = (19*a+b-d-g+15) % 30;
+    const i = Math.floor(c/4), k = c % 4;
+    const l = (32+2*e+2*i-h-k) % 7;
+    const m = Math.floor((a+11*h+22*l)/451);
+    const monat = Math.floor((h+l-7*m+114)/31);
+    const tag = ((h+l-7*m+114) % 31) + 1;
+    return new Date(y, monat-1, tag);
+  }
+
+  // Ramadan 2025/2026 (ungefähre Daten)
+  const ramadanDaten = {
+    2025: { start: new Date(2025,2,1), end: new Date(2025,2,30) },
+    2026: { start: new Date(2026,1,18), end: new Date(2026,2,19) },
+  };
+
+  // Chanukka (1. Kerzentag)
+  const chanukka = {
+    2025: new Date(2025,11,14),
+    2026: new Date(2026,11,4),
+  };
+
+  const ostern = getOstern(jahr);
+  const karfreitag = new Date(ostern); karfreitag.setDate(ostern.getDate()-2);
+  const ostermontag = new Date(ostern); ostermontag.setDate(ostern.getDate()+1);
+  const pfingsten = new Date(ostern); pfingsten.setDate(ostern.getDate()+49);
+  const himmelfahrt = new Date(ostern); himmelfahrt.setDate(ostern.getDate()+39);
+
+  function istGleich(d1, d2) { return d1.getDate()===d2.getDate() && d1.getMonth()===d2.getMonth(); }
+  function inRange(start, end) { return now >= start && now <= end; }
+  function tageDiff(d) { return Math.round((d-now)/(1000*60*60*24)); }
+
+  // ── FEIERTAGE (Priorität: spezifisch > allgemein) ──
+  // Halloween
+  if (monat===10 && tag===31)
+    return { msg:'🎃 Happy Halloween! Gruselig lernen heute!', color:'#f97316',
+             bg:'rgba(249,115,22,.08)', border:'rgba(249,115,22,.2)' };
+
+  // Allerheiligen (NRW-Feiertag!)
+  if (monat===11 && tag===1)
+    return { msg:'🕯️ Allerheiligen – Stille Zeit zum Lernen.', color:'#94a3b8',
+             bg:'rgba(148,163,184,.06)', border:'rgba(148,163,184,.18)' };
+
+  // Weihnachten
+  if (monat===12 && tag===24)
+    return { msg:'🎄 Frohe Weihnachten! Auch heute ein bisschen lernen? 🎁', color:'#22c55e',
+             bg:'rgba(34,197,94,.08)', border:'rgba(34,197,94,.2)' };
+  if (monat===12 && (tag===25||tag===26))
+    return { msg:'🎄 Schöne Weihnachtstage! Du bist fleißig! ⭐', color:'#22c55e',
+             bg:'rgba(34,197,94,.08)', border:'rgba(34,197,94,.2)' };
+
+  // Silvester / Neujahr
+  if (monat===12 && tag===31)
+    return { msg:'🎆 Guten Rutsch! Lern-Vorsätze für 2026? 😄', color:'#fbbf24',
+             bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.2)' };
+  if (monat===1 && tag===1)
+    return { msg:'🎉 Frohes Neues Jahr! Starker Start! 💪', color:'#fbbf24',
+             bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.2)' };
+
+  // Dreikönige
+  if (monat===1 && tag===6)
+    return { msg:'⭐ Heilige Drei Könige – ein guter Tag zum Lernen!', color:'#fbbf24',
+             bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.2)' };
+
+  // Valentinstag
+  if (monat===2 && tag===14)
+    return { msg:'💝 Valentinstag! Auch Lernliebe zählt! 😄', color:'#f43f5e',
+             bg:'rgba(244,63,94,.08)', border:'rgba(244,63,94,.2)' };
+
+  // Karfreitag
+  if (istGleich(now, karfreitag))
+    return { msg:'✝️ Karfreitag – stiller Tag und guter Lerntag.', color:'#94a3b8',
+             bg:'rgba(148,163,184,.06)', border:'rgba(148,163,184,.18)' };
+
+  // Ostersonntag / Ostermontag
+  if (istGleich(now, ostern))
+    return { msg:'🐣 Frohe Ostern! Eier suchen UND lernen? Perfekt! 😄', color:'#fbbf24',
+             bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.2)' };
+  if (istGleich(now, ostermontag))
+    return { msg:'🐰 Ostermontag – du lernst, während andere schlafen! 💪', color:'#fbbf24',
+             bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.2)' };
+
+  // Himmelfahrt
+  if (istGleich(now, himmelfahrt))
+    return { msg:'🕊️ Christi Himmelfahrt – auch Wissen steigt auf! 📚', color:'#38bdf8',
+             bg:'rgba(56,189,248,.06)', border:'rgba(56,189,248,.12)' };
+
+  // Pfingsten
+  if (istGleich(now, pfingsten))
+    return { msg:'🌿 Pfingstsonntag – ein Hauch von Frühling beim Lernen!', color:'#22c55e',
+             bg:'rgba(34,197,94,.08)', border:'rgba(34,197,94,.2)' };
+
+  // Ramadan
+  const ram = ramadanDaten[jahr];
+  if (ram && inRange(ram.start, ram.end))
+    return { msg:'🌙 Ramadan Mubarak! Kraft und Wissen in dieser besonderen Zeit.', color:'#a78bfa',
+             bg:'rgba(167,139,250,.08)', border:'rgba(167,139,250,.2)' };
+
+  // Eid al-Fitr (Tag nach Ramadan-Ende)
+  if (ram) {
+    const eid = new Date(ram.end); eid.setDate(ram.end.getDate()+1);
+    if (istGleich(now, eid))
+      return { msg:'🌙 Eid Mubarak! Frohes Fest nach dem Ramadan! 🎉', color:'#a78bfa',
+               bg:'rgba(167,139,250,.08)', border:'rgba(167,139,250,.2)' };
+  }
+
+  // Chanukka (8 Tage)
+  const chan = chanukka[jahr];
+  if (chan) {
+    const chanEnde = new Date(chan); chanEnde.setDate(chan.getDate()+7);
+    if (inRange(chan, chanEnde))
+      return { msg:'🕎 Chag Chanukka Sameach! Licht und Wissen gehören zusammen!', color:'#fbbf24',
+               bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.2)' };
+  }
+
+  // Advent (4 Sonntage vor Weihnachten)
+  const weihnachten = new Date(jahr,11,25);
+  const advent1 = new Date(weihnachten);
+  advent1.setDate(weihnachten.getDate() - weihnachten.getDay() - 21);
+  if (inRange(advent1, new Date(jahr,11,23)))
+    return { msg:'🕯️ Schöne Adventszeit! Lernende brauchen Ruhe und Fokus. ✨', color:'#f97316',
+             bg:'rgba(249,115,22,.06)', border:'rgba(249,115,22,.15)' };
+
+  // ── JAHRESZEITEN ──
+  if ((monat===12)||(monat===1)||(monat===2)||(monat===3&&tag<20))
+    return { msg:'❄️ Winterzeit – perfekt zum Lernen drinnen! ☕', color:'#38bdf8',
+             bg:'rgba(56,189,248,.06)', border:'rgba(56,189,248,.12)' };
+  if ((monat===3&&tag>=20)||(monat===4)||(monat===5)||(monat===6&&tag<21))
+    return { msg:'🌸 Frühling – neue Energie, neues Wissen! 🌿', color:'#22c55e',
+             bg:'rgba(34,197,94,.06)', border:'rgba(34,197,94,.12)' };
+  if ((monat===6&&tag>=21)||(monat===7)||(monat===8)||(monat===9&&tag<22))
+    return { msg:'☀️ Sommer – auch im Urlaub ein bisschen lernen! 😎', color:'#fbbf24',
+             bg:'rgba(251,191,36,.06)', border:'rgba(251,191,36,.12)' };
+
+  // Herbst (Standard)
+  return { msg:'🍂 Herbstzeit – ideal für konzentriertes Lernen! 📖', color:'#f97316',
+           bg:'rgba(249,115,22,.06)', border:'rgba(249,115,22,.15)' };
+}
+
 function renderHomeStats() {
   const el = document.getElementById('home-stats');
   if (!el) return;
@@ -6886,10 +7035,14 @@ function renderHomeStats() {
     ? `<div style="font-size:12px;color:#fbbf24;margin-top:5px">🔥 Tag ${streak} in Folge – weiter so!</div>`
     : '';
 
+  // ── SAISON & FEIERTAGE ──
+  const saisonInfo = getSaisonInfo();
+
   el.innerHTML = `
-    <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.12);border-radius:14px;padding:14px 16px;margin-bottom:14px">
+    <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:14px 16px;margin-bottom:14px;transition:all .5s">
       <div style="font-size:18px;font-weight:700;color:#e0f2fe">${gruss}</div>
       ${streakMsg}
+      ${saisonInfo.msg ? `<div style="font-size:12px;color:${saisonInfo.color};margin-top:6px">${saisonInfo.msg}</div>` : ''}
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
