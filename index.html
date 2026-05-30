@@ -7695,7 +7695,7 @@ window.addEventListener('load', function checkPaymentSuccess() {
     window.history.replaceState({}, document.title, window.location.pathname);
 
     // Falls bereits eingeloggt: nur Toast zeigen
-    const existingToken = sessionStorage.getItem('pl_token');
+    const existingToken = localStorage.getItem('pl_token') || sessionStorage.getItem('pl_token');
     if (existingToken) {
       showSuccessToast();
       return;
@@ -7710,6 +7710,9 @@ window.addEventListener('load', function checkPaymentSuccess() {
     currentBereich = BEREICH_CONFIG ? (BEREICH_CONFIG['alle'] || BEREICH_CONFIG['demo']) : null;
     kiNachrichtenCount = 0;
 
+    // localStorage statt sessionStorage → bleibt nach Browser-Neustart erhalten
+    localStorage.setItem('pl_token', tempToken);
+    localStorage.setItem('pl_user', tempUser);
     sessionStorage.setItem('pl_token', tempToken);
     sessionStorage.setItem('pl_user', tempUser);
 
