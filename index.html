@@ -7735,6 +7735,7 @@ window.addEventListener('load', function checkPaymentSuccess() {
     if (typeof applyBereichsFilter === 'function') applyBereichsFilter();
     if (typeof updateUserDisplay  === 'function') updateUserDisplay(tempUser, false);
     if (typeof updateStreak       === 'function') updateStreak();
+    if (typeof showScreen         === 'function') showScreen('home');
     if (typeof renderHomeStats    === 'function') renderHomeStats();
     if (typeof showOnboarding     === 'function') setTimeout(showOnboarding, 600);
 
