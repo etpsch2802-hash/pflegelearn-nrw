@@ -3939,7 +3939,7 @@ function checkPW() {
   updateStreak();
   renderHomeStats();
   logLogin(tokenInput, userName);
-  setTimeout(playHeartbeat, 250);
+  setTimeout(() => { unlockAudio(); playHeartbeat(); }, 400);
   setTimeout(showOnboarding, 500);
   setTimeout(checkExamenReminder, 800);
 }
@@ -6858,7 +6858,22 @@ function renderHomeStats() {
   const karten = p.kartenReviewed || 0;
   const pct = quizTotal > 0 ? Math.round(quizCorrect / quizTotal * 100) : 0;
 
+  // ── PERSONALISIERTE BEGRÜSSUNG ──
+  const vorname = (currentUser?.name || '').split(' ')[0] || 'Hallo';
+  const h = new Date().getHours();
+  const gruss = h < 11 ? `Guten Morgen, ${vorname}! ☀️`
+              : h < 17 ? `Guten Tag, ${vorname}! 👋`
+              : h < 22 ? `Guten Abend, ${vorname}! 🌙`
+              :           `Guten Lerntag, ${vorname}! 📚`;
+  const streakMsg = streak > 1
+    ? `<div style="font-size:12px;color:#fbbf24;margin-top:5px">🔥 Tag ${streak} in Folge – weiter so!</div>`
+    : '';
+
   el.innerHTML = `
+    <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.12);border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:18px;font-weight:700;color:#e0f2fe">${gruss}</div>
+      ${streakMsg}
+    </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:22px">🔥</div>
@@ -7503,19 +7518,22 @@ function playHeartbeat() {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + 0.01 + startOffset);
-      osc.frequency.exponentialRampToValueAtTime(freq * 0.6, now + 0.01 + startOffset + dur);
-      gain.gain.setValueAtTime(0.0001, now + 0.01 + startOffset);
-      gain.gain.exponentialRampToValueAtTime(peak, now + 0.01 + startOffset + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.01 + startOffset + dur);
+      const t = now + 0.01 + startOffset;
+      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.5, t + dur);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(peak, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now + 0.01 + startOffset);
-      osc.stop(now + 0.01 + startOffset + dur + 0.05);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
     }
-    thump(0.00, 60, 0.15, 0.16);
-    thump(0.18, 75, 0.10, 0.13);
-    thump(0.72, 60, 0.15, 0.16);
-    thump(0.90, 75, 0.10, 0.13);
+    // Höhere Frequenzen (140/180 Hz) damit Laptop-Lautsprecher sie wiedergeben
+    // Lauter (0.6/0.45) für deutliche Hörbarkeit
+    thump(0.00, 140, 0.6, 0.18);   // 1. lub
+    thump(0.20, 180, 0.45, 0.14);  // 1. dub
+    thump(0.75, 140, 0.6, 0.18);   // 2. lub
+    thump(0.95, 180, 0.45, 0.14);  // 2. dub
   }
 
   if (ctx.state === 'suspended') {
@@ -7572,7 +7590,7 @@ function playTone(freqs, duration, type) {
       osc.frequency.value = f;
       const start = now + 0.01 + i * 0.09;
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.6, start + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
       osc.connect(gain); gain.connect(ctx.destination);
       osc.start(start); osc.stop(start + duration + 0.05);
@@ -7727,15 +7745,6 @@ function showSuccessToast() {
 window.addEventListener('load', () => {
   const btn = document.getElementById('sound-toggle-btn');
   if (btn) btn.innerHTML = soundEnabled ? '🔊 Sound: An' : '🔇 Sound: Aus';
-});
-  // Nach deinen bestehenden Funktionsdefinitionen, direkt vor dem schließenden </script>
-document.addEventListener('DOMContentLoaded', () => {
-  if (new URLSearchParams(window.location.search).get('payment') === 'success') {
-    document.querySelector('.pw-screen')?.classList.remove('active');
-    showScreen('home');
-    // URL sauber halten (optional)
-    window.history.replaceState({}, '', window.location.pathname);
-  }
 });
 </script>
 </body>
