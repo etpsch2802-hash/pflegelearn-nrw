@@ -389,31 +389,36 @@
 </header>
 
 <!-- NAV DROPDOWN MENU -->
-<div id="nav-dropdown" style="display:none;position:fixed;top:62px;right:10px;z-index:200;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.2);border-radius:14px;padding:10px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.5)">
-  <div style="font-size:9px;color:#4a7a9b;letter-spacing:2px;text-transform:uppercase;padding:4px 8px;margin-bottom:4px">Navigation</div>
-  <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
-  <button onclick="navGo('taschenkarten')" class="nav-drop-btn">📇 Taschenkarten</button>
-  <button onclick="navGo('quizSelect')" class="nav-drop-btn">📝 Quiz</button>
+<div id="nav-dropdown" style="display:none;position:fixed;top:62px;right:10px;z-index:200;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.2);border-radius:14px;padding:10px;min-width:210px;box-shadow:0 8px 32px rgba(0,0,0,.5)">
+  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(56,189,248,0.4);padding:4px 12px 2px">LERNEN</div>
+  <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
   <button onclick="navGo('lernplan')" class="nav-drop-btn">📅 Lernplan</button>
-  <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn">🏥 Krankheitsbilder</button>
-  <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
-  <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
-  <button onclick="navGo('wundversorgung')" class="nav-drop-btn">🩹 Wundversorgung</button>
-  <button onclick="navGo('prophylaxen')" class="nav-drop-btn">🛡️ Prophylaxen</button>
+  <button onclick="startExam()" class="nav-drop-btn">📄 Prüfungssimulator</button>
+  <button onclick="navGo('quizSelect')" class="nav-drop-btn">📝 Quiz</button>
+  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
+  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(56,189,248,0.4);padding:4px 12px 2px">WISSEN</div>
   <button onclick="navGo('atl')" class="nav-drop-btn">📋 ATL Pflegeplanung</button>
-  <button onclick="navGo('kinaesthetik')" class="nav-drop-btn">🤸 Kinästhetik</button>
   <button onclick="navGo('bobath')" class="nav-drop-btn">🧩 Bobath</button>
+  <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn">🏥 Krankheitsbilder</button>
+  <button onclick="navGo('kinaesthetik')" class="nav-drop-btn">🤸 Kinästhetik</button>
+  <button onclick="navGo('prophylaxen')" class="nav-drop-btn">🛡️ Prophylaxen</button>
+  <button onclick="navGo('wundversorgung')" class="nav-drop-btn">🩹 Wundversorgung</button>
+  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
+  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(56,189,248,0.4);padding:4px 12px 2px">MEDIZIN</div>
+  <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
   <button onclick="navGo('medikamente')" class="nav-drop-btn">💊 Medikamente</button>
   <button onclick="navGo('medizintechnik')" class="nav-drop-btn">⚙️ Medizintechnik</button>
-  <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.08);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8">🔧 Admin Panel</button></div>
-  <hr style="border-color:rgba(255,255,255,.08);margin:6px 0">
+  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
+  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(56,189,248,0.4);padding:4px 12px 2px">SONSTIGES</div>
   <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#94a3b8">🔄 App aktualisieren</button>
-  <hr style="border-color:rgba(255,255,255,.08);margin:6px 0">
-  <button onclick="startExam()" class="nav-drop-btn">📝 Prüfungssimulator</button>
-  <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
   <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
+  <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
+  <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
+  <button onclick="navGo('taschenkarten')" class="nav-drop-btn">📇 Taschenkarten</button>
+  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
   <button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📄 Impressum</button>
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🔒 Datenschutz</button>
+  <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.08);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8">🔧 Admin Panel</button></div>
 </div>
 
 <!-- SEARCH OVERLAY -->
