@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<!-- 
+  PflegeLearn NRW - Prüfungs-Portal für Pflegeausbildung
+  Entwickelt von: Patrick Schenkelberger
+  Fachpfleger für Anästhesie & Intensivmedizin NRW
+  Kontakt: pflegelearn.nrw@gmail.com
+  Erstellt: 18.05.2026
+  GitHub: github.com/etpsch2802-hash/pflegelearn-nrw
+  Alle Rechte vorbehalten. Unbefugte Nutzung wird rechtlich verfolgt.
+-->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -6879,8 +6888,17 @@ function renderScores(kat) {
 // ═══════════════════════════════════════════════════════════════════════════
 // FEATURE 1: LERNFORTSCHRITT & STREAK
 // ═══════════════════════════════════════════════════════════════════════════
+const APP_SIGNATURE = {
+  autor: "Patrick Schenkelberger",
+  beruf: "Fachpfleger Anästhesie & Intensivmedizin NRW",
+  erstellt: "2026-05-18",
+  kontakt: "pflegelearn.nrw@gmail.com",
+  repo: "github.com/etpsch2802-hash/pflegelearn-nrw"
+};
 const STORAGE_KEY = 'pl_progress_v2';
 
+// © PflegeLearn NRW | Patrick Schenkelberger | Fachpfleger Anästhesie & Intensivmedizin | 18.05.2026
+// Unbefugtes Kopieren oder Verwenden dieses Codes ist urheberrechtlich geschützt.
 // ── MIGRATIONS-CODE ──────────────────────────────────────────────────────────
 function migrateProgress() {
   try {
