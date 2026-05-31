@@ -6881,6 +6881,42 @@ function renderScores(kat) {
 // ═══════════════════════════════════════════════════════════════════════════
 const STORAGE_KEY = 'pl_progress_v2';
 
+// ── MIGRATIONS-CODE ──────────────────────────────────────────────────────────
+function migrateProgress() {
+  try {
+    if (localStorage.getItem('pl_migrated_v2')) return;
+    const oldKeys = ['pl_progress', 'pl_progress_v1', 'pflegelearn_progress', 'pl_stats'];
+    let rescued = {};
+    for (const key of oldKeys) {
+      try {
+        const old = JSON.parse(localStorage.getItem(key) || '{}');
+        if (old && typeof old === 'object') {
+          if ((old.streak||0) > (rescued.streak||0)) rescued.streak = old.streak;
+          if ((old.quizTotal||0) > (rescued.quizTotal||0)) rescued.quizTotal = old.quizTotal;
+          if ((old.quizCorrect||0) > (rescued.quizCorrect||0)) rescued.quizCorrect = old.quizCorrect;
+          if ((old.kartenReviewed||0) > (rescued.kartenReviewed||0)) rescued.kartenReviewed = old.kartenReviewed;
+          if ((old.totalDays||0) > (rescued.totalDays||0)) rescued.totalDays = old.totalDays;
+          if (old.lastDay) rescued.lastDay = old.lastDay;
+        }
+      } catch(e) {}
+    }
+    if (Object.keys(rescued).length > 0) {
+      const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const merged = {
+        streak:         Math.max(rescued.streak||0, current.streak||0),
+        quizTotal:      Math.max(rescued.quizTotal||0, current.quizTotal||0),
+        quizCorrect:    Math.max(rescued.quizCorrect||0, current.quizCorrect||0),
+        kartenReviewed: Math.max(rescued.kartenReviewed||0, current.kartenReviewed||0),
+        totalDays:      Math.max(rescued.totalDays||0, current.totalDays||0),
+        lastDay:        current.lastDay || rescued.lastDay,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    }
+    localStorage.setItem('pl_migrated_v2', '1');
+  } catch(e) {}
+}
+migrateProgress();
+
 function getProgress() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
 }
