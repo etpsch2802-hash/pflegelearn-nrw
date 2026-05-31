@@ -434,7 +434,7 @@
   <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
   <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),0.4);padding:4px 12px 2px">SONSTIGES</div>
   <button onclick="showThemePicker()" class="nav-drop-btn">🎨 Mein Theme</button>
-  <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: An</button>
+  <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
   <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#94a3b8">🔄 App aktualisieren</button>
   <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
   <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
@@ -6914,6 +6914,12 @@ function applyTheme(themeId) {
 function initTheme() {
   const saved = localStorage.getItem('pl_theme') || 'sky';
   applyTheme(saved);
+  // Effekte-Button Label aktualisieren
+  setTimeout(() => {
+    const btn = document.getElementById('effekte-toggle-btn');
+    if (btn) btn.innerHTML = localStorage.getItem('pl_effekte')==='1' ? '✨ Effekte: An' : '✨ Effekte: Aus';
+    if (localStorage.getItem('pl_effekte')==='1') startPartikel();
+  }, 500);
 }
 
 function showThemePicker() {
@@ -6977,7 +6983,8 @@ function getSaisonPartikel() {
 }
 
 function startPartikel() {
-  if (localStorage.getItem("pl_effekte")==="0") return;
+  // Standard: Effekte aus (nur an wenn explizit aktiviert)
+  if (localStorage.getItem("pl_effekte") !== "1") return;
   stopPartikel();
   let container = document.getElementById("particle-container");
   if (!container) {
@@ -7009,7 +7016,7 @@ function stopPartikel() {
 
 function toggleEffekte() {
   const btn = document.getElementById("effekte-toggle-btn");
-  const an = localStorage.getItem("pl_effekte") !== "0";
+  const an = localStorage.getItem("pl_effekte") === "1";
   if (an) {
     localStorage.setItem("pl_effekte","0");
     stopPartikel();
@@ -7240,6 +7247,12 @@ function applyTheme(themeId) {
 function initTheme() {
   const saved = localStorage.getItem('pl_theme') || 'sky';
   applyTheme(saved);
+  // Effekte-Button Label aktualisieren
+  setTimeout(() => {
+    const btn = document.getElementById('effekte-toggle-btn');
+    if (btn) btn.innerHTML = localStorage.getItem('pl_effekte')==='1' ? '✨ Effekte: An' : '✨ Effekte: Aus';
+    if (localStorage.getItem('pl_effekte')==='1') startPartikel();
+  }, 500);
 }
 
 function showThemePicker() {
