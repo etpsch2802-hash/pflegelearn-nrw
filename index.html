@@ -334,6 +334,10 @@
     <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()">
     <div class="pw-label">🔑 Persönlicher Zugangscode</div>
     <input class="pw-input" id="pw-input" type="text" placeholder="Dein Passwort" onkeydown="if(event.key==='Enter')checkPW()">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;font-size:12px;color:#94a3b8;font-family:'DM Sans',sans-serif">
+      <input type="checkbox" id="remember-me" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer">
+      Angemeldet bleiben
+    </label>
     <button class="pw-btn" style="margin-top:12px" onclick="checkPW()">Anmelden →</button>
     <div class="pw-error" id="pw-error" style="display:none"></div>
   </div>
@@ -3934,6 +3938,21 @@ let currentUser = null;
 let currentBereich = null;
 let kiNachrichtenCount = 0;
 
+// ── AUTO-LOGIN aus localStorage ─────────────────────────────────────────────
+function initSavedLogin() {
+  const savedToken = localStorage.getItem('pl_token');
+  const savedUser  = localStorage.getItem('pl_user');
+  if (savedToken && savedUser) {
+    // Felder vorausfüllen
+    const nameEl  = document.getElementById('pw-name');
+    const tokenEl = document.getElementById('pw-input');
+    const remEl   = document.getElementById('remember-me');
+    if (nameEl)  nameEl.value  = savedUser;
+    if (tokenEl) tokenEl.value = savedToken;
+    if (remEl)   remEl.checked = true;
+  }
+}
+
 function checkPW() {
   const tokenInput = document.getElementById("pw-input").value.trim();
   const nameInput = document.getElementById("pw-name").value.trim();
@@ -3968,6 +3987,11 @@ function checkPW() {
   currentBereich = BEREICH_CONFIG[token.bereich] || BEREICH_CONFIG["demo"];
   kiNachrichtenCount = 0;
 
+  const rememberMe = document.getElementById('remember-me')?.checked;
+  if (rememberMe) {
+    localStorage.setItem('pl_token', tokenInput);
+    localStorage.setItem('pl_user', userName);
+  }
   sessionStorage.setItem("pl_token", tokenInput);
   sessionStorage.setItem("pl_user", userName);
 
@@ -6949,6 +6973,8 @@ function showThemePicker() {
 
 // Theme beim Start laden
 initTheme();
+// Gespeicherte Login-Daten vorausfüllen
+document.addEventListener('DOMContentLoaded', initSavedLogin);
 
 
 // ── SAISONALE PARTIKEL ──────────────────────────────────────────────────────
@@ -7282,6 +7308,8 @@ function showThemePicker() {
 
 // Theme beim Start laden
 initTheme();
+// Gespeicherte Login-Daten vorausfüllen
+document.addEventListener('DOMContentLoaded', initSavedLogin);
 
 // ── SAISON & FEIERTAGE ──
   const saisonInfo = getSaisonInfo();
