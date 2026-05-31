@@ -512,7 +512,7 @@
   <div class="section-label" style="display:none"></div>
   <!-- ── KI-ASSISTENT (aktiv für alle User) ── -->
   <button onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.04));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
-    <div style="font-size:32px">🤖</div>
+    <div style="font-size:32px" id="ki-home-icon">🤖</div>
     <div style="flex:1">
       <div style="font-size:15px;font-weight:700;color:#38bdf8">KI-Assistent fragen</div>
       <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Stelle jede Frage · Sofortantwort · Powered by Groq</div>
@@ -7069,6 +7069,19 @@ function getSaisonInfo() {
            bg:'rgba(249,115,22,.06)', border:'rgba(249,115,22,.15)' };
 }
 
+function getKIIcon() {
+  const saison = getSaisonInfo();
+  if (!saison.msg) return '🤖';
+  const emoji = saison.msg.split(' ')[0];
+  const map = {
+    '🎃':'🎃', '🎄':'🎅', '🎆':'🎆', '🎉':'🎉',
+    '🐣':'🐣', '🌙':'🌙', '🕎':'🕎', '💝':'💝',
+    '🌸':'🌸', '☀️':'😎', '🍂':'🍂', '❄️':'⛄',
+    '🕯️':'🕯️', '✝️':'✝️', '🌿':'🌿', '🕊️':'🕊️',
+  };
+  return map[emoji] || '🤖';
+}
+
 function renderHomeStats() {
   const el = document.getElementById('home-stats');
   if (!el) return;
@@ -7146,6 +7159,10 @@ initTheme();
 
 // ── SAISON & FEIERTAGE ──
   const saisonInfo = getSaisonInfo();
+
+  // KI-Icon saisonal aktualisieren
+  const kiIconEl = document.getElementById('ki-home-icon');
+  if (kiIconEl) kiIconEl.textContent = getKIIcon();
 
   el.innerHTML = `
     <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:14px 16px;margin-bottom:14px;transition:all .5s">
