@@ -34,19 +34,21 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["education", "medical"],
+  "categories": [
+    "education",
+    "medical"
+  ],
   "shortcuts": [
     {
       "name": "Quiz starten",
       "short_name": "Quiz",
       "url": "/?screen=quiz",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "KI-Assistent",
-      "short_name": "KI-Chat",
-      "url": "/?screen=ki",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
