@@ -8011,18 +8011,34 @@ function showDatenschutz() {
       </div>
       <div style="font-size:13px;color:#94a3b8;line-height:1.8">
         <strong style="color:#ddf0fb">1. Verantwortlicher</strong><br>
-        Patrick Schenkelberger, pflegelearn.nrw@gmail.com<br><br>
-        <strong style="color:#ddf0fb">2. Erhobene Daten</strong><br>
-        Bei der Registrierung werden Name und E-Mail-Adresse erhoben und ausschließlich zur Zusendung des Zugangscodes genutzt. Es erfolgt keine Weitergabe an Dritte.<br><br>
-        <strong style="color:#ddf0fb">3. Lokale Datenspeicherung</strong><br>
-        Die App speichert Lernfortschritte und Einstellungen ausschließlich lokal im Browser (localStorage/sessionStorage). Keine Übertragung an externe Server.<br><br>
-        <strong style="color:#ddf0fd">4. Zahlungsabwicklung</strong><br>
-        Zahlungen werden über Stripe verarbeitet. Es gelten die Datenschutzbestimmungen von Stripe Inc. (stripe.com/de/privacy).<br><br>
-        <strong style="color:#ddf0fb">5. Hosting</strong><br>
-        Diese App wird über Vercel (vercel.com) gehostet. Vercel kann Server-Logs speichern. Es gelten die Datenschutzbestimmungen von Vercel Inc.<br><br>
+        Patrick Schenkelberger, Am Steinknapp 20a, 44795 Bochum<br>
+        E-Mail: pflegelearn.nrw@gmail.com<br><br>
+
+        <strong style="color:#ddf0fb">2. Erhobene und übertragene Daten</strong><br>
+        <u>Registrierung & Feedback:</u> Name, E-Mail-Adresse und Ausbildungsbereich werden über EmailJS an externe Server übertragen, um den Zugangscode zuzusenden.<br>
+        <u>KI-Assistent:</u> Deine Chat-Eingaben werden über einen Vercel-Proxy an Google Gemini übertragen.<br>
+        <u>Zahlungen:</u> Bei Käufen wirst du zu Stripe weitergeleitet. Stripe erhebt Zahlungsdaten eigenständig.<br>
+        <u>Lokal gespeichert (kein Upload):</u> Lernfortschritt, Zugangscode, Theme, Einstellungen.<br><br>
+
+        <strong style="color:#ddf0fb">3. Drittanbieter</strong><br>
+        • EmailJS (E-Mail-Versand): emailjs.com/legal/privacy-policy<br>
+        • Google Gemini (KI): policies.google.com/privacy<br>
+        • Stripe (Zahlung): stripe.com/de/privacy<br>
+        • Vercel (Hosting): vercel.com/legal/privacy-policy<br><br>
+
+        <strong style="color:#ddf0fb">4. Aufbewahrung</strong><br>
+        Registrierungs-E-Mails werden im Gmail-Postfach des Betreibers gespeichert bis der Zugangscode vergeben wurde. Lokale Daten bleiben bis zur manuellen Löschung erhalten.<br><br>
+
+        <strong style="color:#ddf0fb">5. Datenlöschung</strong><br>
+        • In der App: Einstellungen → Alle Daten löschen<br>
+        • Browser: Website-Daten für pflegelearn-nrw.vercel.app löschen<br>
+        • Per E-Mail: pflegelearn.nrw@gmail.com<br>
+        Vollständige Datenschutzerklärung: <a href="https://pflegelearn-nrw.vercel.app/datenschutz.html" style="color:var(--accent)" target="_blank">pflegelearn-nrw.vercel.app/datenschutz.html</a><br><br>
+
         <strong style="color:#ddf0fb">6. Deine Rechte (DSGVO)</strong><br>
-        Du hast das Recht auf Auskunft, Berichtigung, Löschung und Widerspruch. Kontakt: pflegelearn.nrw@gmail.com<br><br>
-        <strong style="color:#ddf0fb">Stand:</strong> Mai 2026
+        Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch. Kontakt: pflegelearn.nrw@gmail.com<br><br>
+
+        <strong style="color:#ddf0fb">Stand:</strong> Juni 2026
       </div>
     </div>`;
   document.body.appendChild(overlay);
