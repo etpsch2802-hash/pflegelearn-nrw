@@ -375,6 +375,10 @@
       Codes sind personalisiert & nicht übertragbar.
     </div>
   </div>
+  <!-- Nutzer-Bewertungen (nur echte, von Patrick freigegeben) -->
+  <div style="margin-top:12px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);border-radius:10px;padding:12px;width:100%;max-width:320px;text-align:center">
+    <div id="login-reviews"></div>
+  </div>
   <!-- Rechtliche Links: Login-Screen -->
   <div style="display:flex;gap:16px;justify-content:center;margin-top:14px;margin-bottom:4px">
     <a href="#impressum" onclick="showImpressum()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Impressum</a>
@@ -924,6 +928,15 @@
     <div class="result-box">
       <div class="result-pct" id="result-pct">0%</div>
       <div class="result-msg" id="result-msg"></div>
+    </div>
+    <!-- Sterne-Bewertung (echte Nutzerbewertung -> per E-Mail an Patrick) -->
+    <div id="quiz-rating" style="display:none;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">Wie gefällt dir PflegeLearn?</div>
+      <div id="rating-stars" style="font-size:30px;letter-spacing:6px;cursor:pointer;color:#fbbf24;user-select:none">
+        <span onclick="setStars(1)">☆</span><span onclick="setStars(2)">☆</span><span onclick="setStars(3)">☆</span><span onclick="setStars(4)">☆</span><span onclick="setStars(5)">☆</span>
+      </div>
+      <textarea id="rating-text" placeholder="Optional: Was gefällt dir? Was fehlt?" style="width:100%;margin-top:10px;background:rgba(255,255,255,.04);border:1px solid rgba(100,180,220,.18);border-radius:9px;padding:9px;color:var(--text);font-family:inherit;font-size:12px;resize:vertical;min-height:48px;box-sizing:border-box"></textarea>
+      <button onclick="submitRating()" style="width:100%;margin-top:9px;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:9px;padding:11px;color:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Bewertung senden</button>
     </div>
     <!-- Lernnachweis Button -->
     <div id="lernnachweis-btn-wrap" style="display:none;margin-bottom:12px">
@@ -1786,6 +1799,56 @@ function nextQuestion() {
   renderQuestion();
 }
 
+// ===== NUTZER-BEWERTUNGEN (nur ECHTE, von Patrick freigegeben) =====
+// Neue Bewertungen kommen per E-Mail (EmailJS) rein. Echte hier eintragen:
+//   { name:"Vorname", stars:5, text:"Kurzer Satz" }
+const TESTIMONIALS = [];
+
+function renderLoginReviews() {
+  const el = document.getElementById('login-reviews');
+  if (!el) return;
+  if (!TESTIMONIALS.length) {
+    el.innerHTML = '<div style="font-size:11px;color:#4a7a9b;line-height:1.7">⭐ Frisch gestartet – sei eine:r der Ersten!<br>Nach dem Lernen kannst du die App selbst bewerten.</div>';
+    return;
+  }
+  const avg = TESTIMONIALS.reduce((s,t)=>s+t.stars,0) / TESTIMONIALS.length;
+  const full = Math.round(avg);
+  let html = '<div style="font-size:13px;color:#fbbf24;font-weight:700">' +
+    '★'.repeat(full) + '☆'.repeat(5-full) +
+    ' <span style="color:var(--text)">' + avg.toFixed(1) + '</span>' +
+    ' <span style="color:#4a7a9b;font-weight:400">· ' + TESTIMONIALS.length + ' Bewertung' + (TESTIMONIALS.length>1?'en':'') + '</span></div>';
+  TESTIMONIALS.slice(0,3).forEach(t => {
+    html += '<div style="margin-top:8px;text-align:left">' +
+      '<div style="font-size:11px;color:#fbbf24">' + '★'.repeat(t.stars) + '☆'.repeat(5-t.stars) + '</div>' +
+      (t.text ? '<div style="font-size:11px;color:var(--text2);line-height:1.5">„' + t.text + '"</div>' : '') +
+      '<div style="font-size:10px;color:#4a7a9b">— ' + t.name + '</div></div>';
+  });
+  el.innerHTML = html;
+}
+window.addEventListener('DOMContentLoaded', renderLoginReviews);
+
+let _ratingStars = 0;
+function setStars(n) {
+  _ratingStars = n;
+  document.querySelectorAll('#rating-stars span').forEach((s,i) => s.textContent = i < n ? '★' : '☆');
+}
+function submitRating() {
+  if (!_ratingStars) { alert('Bitte zuerst Sterne auswählen.'); return; }
+  const name = (currentUser && currentUser.name) || sessionStorage.getItem('pl_user') || 'Anonym';
+  const text = (document.getElementById('rating-text')?.value || '').trim();
+  if (typeof emailjs === 'undefined') { alert('Senden gerade nicht möglich. Bitte später erneut.'); return; }
+  emailjs.send('service_8hn8nqi', 'g7jbwbc', {
+    to_name: 'Patrick',
+    from_name: 'App-Bewertung: ' + _ratingStars + ' Sterne',
+    message: _ratingStars + '/5 Sterne von ' + name + '\n\n' + (text || '(kein Text)'),
+    reply_to: 'noreply@pflegelearn.de'
+  }).then(() => {
+    const box = document.getElementById('quiz-rating');
+    if (box) box.innerHTML = '<div style="font-size:13px;color:#34d399;font-weight:700;text-align:center;padding:6px">✅ Danke für deine Bewertung!</div>';
+    try { sessionStorage.setItem('pl_rated', '1'); } catch(e) {}
+  }).catch(() => alert('Senden fehlgeschlagen. Bitte später erneut.'));
+}
+
 function showResult() {
   const score = quizAnswers.filter(x => x.sel === x.q.k).length;
   const pct = Math.round((score / quizList.length) * 100);
@@ -1797,6 +1860,8 @@ function showResult() {
   document.getElementById("result-msg").textContent = score === quizList.length ? "Perfekt! 🌟" : pct >= 75 ? "Sehr gut! ✅" : pct >= 50 ? "Weiter üben!" : "Noch Lernbedarf 💪";
   const retryBtn = document.getElementById("retry-btn");
   retryBtn.style.background = `linear-gradient(135deg,${kat?.color||"#94a3b8"}65,${kat?.color||"#94a3b8"}38)`;
+  const rb = document.getElementById("quiz-rating");
+  if (rb) { rb.style.display = sessionStorage.getItem("pl_rated") ? "none" : "block"; _ratingStars = 0; document.querySelectorAll('#rating-stars span').forEach(s => s.textContent = '☆'); const rt = document.getElementById('rating-text'); if (rt) rt.value = ''; }
   showScreen("result");
 }
 
