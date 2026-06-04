@@ -4878,9 +4878,9 @@ function showProgressModal() {
     </div>`).join('');
 
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:flex-end;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;backdrop-filter:blur(8px)';
   overlay.innerHTML = `
-    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto">
+    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
         <div>
           <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--text)">📊 Mein Fortschritt</div>
