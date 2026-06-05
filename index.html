@@ -450,6 +450,7 @@
 
   <button onclick="toggleNavSec('medizin',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">MEDIZIN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-medizin" style="display:none">
+    <button onclick="navGo('notfallmanagement')" class="nav-drop-btn">🚨 Notfallmanagement</button>
     <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
     <button onclick="navGo('medikamente')" class="nav-drop-btn">💊 Medikamente</button>
     <button onclick="navGo('medizintechnik')" class="nav-drop-btn">⚙️ Medizintechnik</button>
@@ -747,6 +748,77 @@
 <!-- KRANKHEITSBILD DETAIL -->
 <div class="page" id="screen-kb-detail">
   <div id="kb-detail-content"></div>
+</div>
+
+<!-- NOTFALLMANAGEMENT -->
+<div class="page" id="screen-notfallmanagement">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:14px">
+      <div class="hero-icon">🚨</div>
+      <h1>Notfall<span>management</span></h1>
+      <p>Manchester Triage · ABCDE-Schema · Reanimation (ERC 2021)</p>
+    </div>
+
+    <!-- MANCHESTER TRIAGE -->
+    <div class="section-label">Manchester-Triage-System (MTS)</div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:14px;margin-bottom:14px">
+      <p style="font-size:13px;color:#cfe6f5;line-height:1.6;margin:0 0 10px">
+        Standardisiertes Ersteinschätzungssystem in der Notaufnahme. Über Präsentationsdiagramme wird anhand von Indikatoren (Diskriminatoren) die <strong style="color:#38bdf8">höchste zutreffende Dringlichkeitsstufe</strong> bestimmt. Sie legt die maximale Wartezeit bis zum Arztkontakt fest – nicht die Reihenfolge des Eintreffens.
+      </p>
+
+      <div style="border-left:5px solid #ef4444;background:rgba(239,68,68,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#fca5a5;font-size:14px">🔴 Rot · Sofort · 0 min</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Lebensbedrohlich: Kreislaufstillstand, Schock, nicht ansprechbar, verlegte Atemwege, schwerste Atemnot.</div>
+      </div>
+      <div style="border-left:5px solid #f97316;background:rgba(249,115,22,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#fdba74;font-size:14px">🟠 Orange · Sehr dringend · 10 min</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Starke Schmerzen, Bewusstseinstrübung, aktive große Blutung, kritische Vitalwerte.</div>
+      </div>
+      <div style="border-left:5px solid #eab308;background:rgba(234,179,8,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#fde047;font-size:14px">🟡 Gelb · Dringend · 30 min</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Mäßige Schmerzen, anhaltendes Erbrechen, Fieber mit Risikozeichen.</div>
+      </div>
+      <div style="border-left:5px solid #22c55e;background:rgba(34,197,94,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#86efac;font-size:14px">🟢 Grün · Normal · 90 min</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Leichte Schmerzen, kleinere Verletzungen, stabiler Zustand.</div>
+      </div>
+      <div style="border-left:5px solid #3b82f6;background:rgba(59,130,246,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#93c5fd;font-size:14px">🔵 Blau · Nicht dringend · 120 min</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Chronische oder leichte Beschwerden ohne akute Warnzeichen.</div>
+      </div>
+    </div>
+
+    <!-- ABCDE -->
+    <div class="section-label">ABCDE-Schema</div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:14px;margin-bottom:14px">
+      <p style="font-size:12px;color:#7fa6c4;margin:0 0 10px">Strukturierte Notfalleinschätzung – immer in dieser Reihenfolge, jedes Problem sofort behandeln, bevor es weitergeht.</p>
+      <div style="font-size:13px;color:#cfe6f5;line-height:1.7">
+        <div><strong style="color:#38bdf8">A – Airway:</strong> Atemwege frei? Verlegung beseitigen, ggf. HWS-Schutz.</div>
+        <div><strong style="color:#38bdf8">B – Breathing:</strong> Atemfrequenz, SpO₂, Auskultation, Sauerstoffgabe.</div>
+        <div><strong style="color:#38bdf8">C – Circulation:</strong> Puls, RR, Rekap-Zeit, Blutung stillen, Zugang &amp; Volumen.</div>
+        <div><strong style="color:#38bdf8">D – Disability:</strong> Bewusstsein (GCS/AVPU), Pupillen, Blutzucker.</div>
+        <div><strong style="color:#38bdf8">E – Exposure:</strong> Entkleiden, Temperatur, Wärmeerhalt, Gesamtüberblick.</div>
+      </div>
+    </div>
+
+    <!-- REANIMATION -->
+    <div class="section-label">Reanimation / BLS (ERC 2021)</div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;color:#cfe6f5;line-height:1.7">
+        <div>1. <strong style="color:#38bdf8">Prüfen:</strong> Ansprechbarkeit &amp; Atmung (max. 10 s).</div>
+        <div>2. <strong style="color:#38bdf8">Alarmieren:</strong> Notruf 112, AED holen lassen.</div>
+        <div>3. <strong style="color:#38bdf8">30 : 2</strong> – 30 Thoraxkompressionen, 2 Beatmungen.</div>
+        <div>4. <strong style="color:#38bdf8">Drucktiefe 5–6 cm</strong>, Frequenz <strong style="color:#38bdf8">100–120/min</strong>, vollständige Entlastung.</div>
+        <div>5. Druckpunkt: untere Sternumhälfte (Brustmitte).</div>
+        <div>6. <strong style="color:#38bdf8">AED</strong> so früh wie möglich, Anweisungen folgen.</div>
+        <div>7. Unterbrechungen minimieren, im Team alle 2 min wechseln.</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:#4a7a9b;padding:8px 0 24px">
+      Lerninhalt nach ERC 2021 / MTS – ersetzt keine gültige Leitlinie oder ärztliche Anweisung.
+    </div>
+  </div>
 </div>
 
 <!-- MEDIZINTECHNIK -->
@@ -1301,6 +1373,17 @@ const QUIZ_FRAGEN = [
 {kat:"pflegeplanung",frage:"Was regelt §23 IfSG für Krankenhäuser?",opt:["Nur Meldepflichten","Surveillance-Pflicht für nosokomiale Infektionen und Antibiotikaresistenzen","Nur Personalregelungen","Abrechnungsregeln"],k:1,erkl:"§23 IfSG: Krankenhäuser müssen nosokomiale Infektionen und Erreger mit speziellen Resistenzen (MRSA, VRE, ESBL) erfassen und bewerten. Pflicht: Hygienekommission, Krankenhaushygieniker oder -fachkraft, Surveillance-System (z.B. KISS). Ziel: Infektionsraten senken durch systematische Überwachung.",s:"schwer"},
 {kat:"pflegeplanung",frage:"Was ist der häufigste Fehler bei der hygienischen Händedesinfektion?",opt:["Zu viel Desinfektionsmittel","Fingerkuppen und Daumen werden","Zu langes Einreiben","Falsche Reihenfolge"],k:1,erkl:"Studien zeigen: Fingerkuppen (v.a. unter Fingernägeln) und Daumen werden bei 90% der Anwendungen unzureichend desinfiziert. Daher eigener Schritt für jede Zone. Langen Fingernägeln, Ringen, Uhren verhindern wirksame Desinfektion → verboten im Pflegedienst!",s:"leicht"},
 {kat:"pflegeplanung",frage:"Welche Wäsche kommt in den roten Sack?",opt:["Alle Patientenwäsche","Infektionswäsche – direkt","Nur OP-Wäsche","Normale Bettwäsche"],k:1,erkl:"Wäschesortierung: Roter Sack = Infektionswäsche (MRSA, C. diff., Norovirus, stark blutig/kontaminiert) → direkt verschließen, nicht im Zimmer sortieren, Handschuhe + Kittel. Weißer Sack = normale Wäsche. Wäsche NIE ausschütteln → Aerosolbildung → Keimverbreitung!",s:"leicht"}
+,
+{kat:"notfall",frage:"Wie viele Dringlichkeitsstufen hat das Manchester-Triage-System (MTS)?",opt:["3","4","5","6"],k:2,erkl:"MTS hat 5 Stufen: Rot (sofort), Orange (10 min), Gelb (30 min), Grün (90 min), Blau (120 min).",s:"leicht"},
+  {kat:"notfall",frage:"Welche maximale Wartezeit bis zum Arztkontakt gilt im MTS für die Stufe ROT?",opt:["sofort (0 min)","10 min","30 min","60 min"],k:0,erkl:"Rot = sofortige Behandlung, keine Wartezeit (z. B. Kreislaufstillstand, Schock).",s:"leicht"},
+  {kat:"notfall",frage:"Welcher Wartezeit entspricht die MTS-Stufe ORANGE (sehr dringend)?",opt:["sofort","10 Minuten","30 Minuten","90 Minuten"],k:1,erkl:"Orange = sehr dringend, maximal 10 Minuten.",s:"mittel"},
+  {kat:"notfall",frage:"Die MTS-Stufe GRÜN bedeutet …",opt:["sofort","10 min","normal, 90 min","nicht dringend, 120 min"],k:2,erkl:"Grün = normal/Standard, maximal 90 Minuten.",s:"mittel"},
+  {kat:"notfall",frage:"Nach welchem Prinzip wird im MTS die Dringlichkeit festgelegt?",opt:["niedrigste zutreffende Stufe","höchste zutreffende Stufe anhand von Indikatoren","Reihenfolge des Eintreffens","nach Alter des Patienten"],k:1,erkl:"Über Präsentationsdiagramme wird anhand von Indikatoren (Diskriminatoren) die höchste zutreffende Stufe gewählt.",s:"mittel"},
+  {kat:"notfall",frage:"Wofür steht das 'C' im ABCDE-Schema?",opt:["Consciousness","Circulation","Capillary","Control"],k:1,erkl:"C = Circulation: Puls, Blutdruck, Rekapillarisierungszeit, Blutung stillen, Zugang und Volumen.",s:"leicht"},
+  {kat:"notfall",frage:"Was wird im ABCDE-Schema ZUERST beurteilt?",opt:["Breathing","Airway","Disability","Exposure"],k:1,erkl:"A = Airway: zuerst die Atemwege sichern bzw. freimachen (ggf. mit HWS-Schutz).",s:"leicht"},
+  {kat:"notfall",frage:"Wie ist das Verhältnis von Thoraxkompressionen zu Beatmungen bei der Erwachsenen-Reanimation (ERC 2021)?",opt:["15:2","30:2","5:1","10:2"],k:1,erkl:"Erwachsene: 30 Kompressionen zu 2 Beatmungen.",s:"leicht"},
+  {kat:"notfall",frage:"Welche Kompressionsfrequenz empfiehlt der ERC 2021 bei der Reanimation?",opt:["60–80/min","80–100/min","100–120/min","140–160/min"],k:2,erkl:"100–120/min, Drucktiefe 5–6 cm, vollständige Entlastung zwischen den Kompressionen.",s:"mittel"},
+  {kat:"notfall",frage:"Wie tief wird beim Erwachsenen thoraxkomprimiert (ERC 2021)?",opt:["2–3 cm","3–4 cm","5–6 cm","7–8 cm"],k:2,erkl:"Drucktiefe 5–6 cm in der Brustmitte (untere Sternumhälfte).",s:"mittel"}
 ];
 
 const KATS = [
@@ -1319,6 +1402,7 @@ const KATS = [
   {id:"ata",label:"ATA",icon:"💉",color:"#fb7185"},
   {id:"intensiv",label:"Intensivmedizin",icon:"🏥",color:"#22d3ee"},
   {id:"ota",label:"OTA",icon:"🔬",color:"#facc15"},
+  {id:"notfall",label:"Notfallmanagement",icon:"🚨",color:"#ef4444"},
 ];
 
 const SYS = `Du bist PflegeLearn NRW – Lernassistent für alle 7 Pflegeausbildungswege in NRW und Medizintechnik:
@@ -4589,6 +4673,10 @@ function doSearch() {
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
   function hit(t){ return String(t==null?'':t).toLowerCase().includes(q); }
   const hits = [];
+  // Bereich: Notfallmanagement (Manchester Triage / ABCDE / Reanimation)
+  if (['notfall','notfallmanagement','manchester','triage','mts','abcde','reanimation','bls','wiederbelebung','dringlichkeit','ersteinschätzung','ersteinschaetzung'].some(function(t){ return t.includes(q) || q.includes(t); })) {
+    hits.push({type:'Bereich', icon:'🚨', color:'#ef4444', title:'Notfallmanagement', sub:'Manchester Triage · ABCDE · Reanimation', action:"navGo('notfallmanagement')"});
+  }
   // Quiz
   QUIZ_FRAGEN.forEach(function(f){
     if (hit(f.frage) || hit(f.erkl) || (f.opt && f.opt.some(hit))) {
