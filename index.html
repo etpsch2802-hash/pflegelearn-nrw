@@ -426,33 +426,45 @@
 
 <!-- NAV DROPDOWN MENU -->
 <div id="nav-dropdown" style="display:none;position:fixed;top:62px;right:10px;z-index:200;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:10px;min-width:210px;box-shadow:0 8px 32px rgba(0,0,0,.5)">
-  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),0.4);padding:4px 12px 2px">LERNEN</div>
-  <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
-  <button onclick="navGo('lernplan')" class="nav-drop-btn">📅 Lernplan</button>
-  <button onclick="startExam()" class="nav-drop-btn">📄 Prüfungssimulator</button>
-  <button onclick="navGo('quizSelect')" class="nav-drop-btn">📝 Quiz</button>
-  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
-  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),0.4);padding:4px 12px 2px">WISSEN</div>
-  <button onclick="navGo('atl')" class="nav-drop-btn">📋 ATL Pflegeplanung</button>
-  <button onclick="navGo('bobath')" class="nav-drop-btn">🧩 Bobath</button>
-  <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn">🏥 Krankheitsbilder</button>
-  <button onclick="navGo('kinaesthetik')" class="nav-drop-btn">🤸 Kinästhetik</button>
-  <button onclick="navGo('prophylaxen')" class="nav-drop-btn">🛡️ Prophylaxen</button>
-  <button onclick="navGo('wundversorgung')" class="nav-drop-btn">🩹 Wundversorgung</button>
-  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
-  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),0.4);padding:4px 12px 2px">MEDIZIN</div>
-  <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
-  <button onclick="navGo('medikamente')" class="nav-drop-btn">💊 Medikamente</button>
-  <button onclick="navGo('medizintechnik')" class="nav-drop-btn">⚙️ Medizintechnik</button>
-  <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
-  <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),0.4);padding:4px 12px 2px">SONSTIGES</div>
-  <button onclick="showThemePicker()" class="nav-drop-btn">🎨 Mein Theme</button>
-  <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
-  <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#94a3b8">🔄 App aktualisieren</button>
-  <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
-  <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
-  <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
-  <button onclick="navGo('taschenkarten')" class="nav-drop-btn">📇 Taschenkarten</button>
+  <!-- Aktualisierung: oben, Cyan, abgesetzt -->
+  <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#04121f;background:linear-gradient(135deg,#38bdf8,#0ea5e9);font-weight:700;justify-content:center;text-align:center">🔄 App aktualisieren</button>
+  <hr style="border-color:rgba(255,255,255,.12);margin:8px 0">
+
+  <button onclick="toggleNavSec('lernen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">LERNEN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <div class="nav-sec-body" id="navsec-lernen" style="display:none">
+    <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
+    <button onclick="navGo('lernplan')" class="nav-drop-btn">📅 Lernplan</button>
+    <button onclick="startExam()" class="nav-drop-btn">📄 Prüfungssimulator</button>
+    <button onclick="navGo('quizSelect')" class="nav-drop-btn">📝 Quiz</button>
+  </div>
+
+  <button onclick="toggleNavSec('wissen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">WISSEN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <div class="nav-sec-body" id="navsec-wissen" style="display:none">
+    <button onclick="navGo('atl')" class="nav-drop-btn">📋 ATL Pflegeplanung</button>
+    <button onclick="navGo('bobath')" class="nav-drop-btn">🧩 Bobath</button>
+    <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn">🏥 Krankheitsbilder</button>
+    <button onclick="navGo('kinaesthetik')" class="nav-drop-btn">🤸 Kinästhetik</button>
+    <button onclick="navGo('prophylaxen')" class="nav-drop-btn">🛡️ Prophylaxen</button>
+    <button onclick="navGo('wundversorgung')" class="nav-drop-btn">🩹 Wundversorgung</button>
+  </div>
+
+  <button onclick="toggleNavSec('medizin',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">MEDIZIN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <div class="nav-sec-body" id="navsec-medizin" style="display:none">
+    <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
+    <button onclick="navGo('medikamente')" class="nav-drop-btn">💊 Medikamente</button>
+    <button onclick="navGo('medizintechnik')" class="nav-drop-btn">⚙️ Medizintechnik</button>
+  </div>
+
+  <button onclick="toggleNavSec('sonstiges',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">SONSTIGES<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <div class="nav-sec-body" id="navsec-sonstiges" style="display:none">
+    <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
+    <button onclick="navGo('taschenkarten')" class="nav-drop-btn">📇 Taschenkarten</button>
+    <button onclick="showThemePicker()" class="nav-drop-btn">🎨 Mein Theme</button>
+    <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
+    <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
+    <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
+  </div>
+
   <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
   <button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📄 Impressum</button>
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🔒 Datenschutz</button>
@@ -4529,6 +4541,14 @@ function toggleNavMenu() {
   if (!d) return;
   const open = d.style.display === 'none' || d.style.display === '';
   d.style.display = open ? 'block' : 'none';
+}
+function toggleNavSec(id, btn){
+  const body=document.getElementById('navsec-'+id);
+  if(!body) return;
+  const open=body.style.display!=='none';
+  document.querySelectorAll('#nav-dropdown .nav-sec-body').forEach(function(b){ b.style.display='none'; });
+  document.querySelectorAll('#nav-dropdown .nav-caret').forEach(function(cr){ cr.style.transform='rotate(0deg)'; });
+  if(!open){ body.style.display='block'; const car=btn.querySelector('.nav-caret'); if(car) car.style.transform='rotate(90deg)'; }
 }
 function navGo(screen) {
   document.getElementById('nav-dropdown').style.display = 'none';
