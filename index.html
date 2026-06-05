@@ -5814,6 +5814,15 @@ const TASCHENKARTEN = [
     ]
   }
 
+,
+  { id:"mts", titel:"Manchester Triage (MTS)", icon:"🚨", farbe:"#ef4444",
+    vorderseite:[
+      { label:"5 Dringlichkeitsstufen", punkte:["Rot · sofort · 0 min","Orange · sehr dringend · 10 min","Gelb · dringend · 30 min","Grün · normal · 90 min","Blau · nicht dringend · 120 min"] },
+      { label:"Prinzip", punkte:["Präsentationsdiagramme + Indikatoren","Höchste zutreffende Stufe zählt","Legt Wartezeit fest, nicht Reihenfolge"] },
+      { label:"Rot – Beispiele", punkte:["Kreislaufstillstand · Schock","Verlegte Atemwege","Nicht ansprechbar / schwerste Atemnot"] },
+      { label:"Merke", punkte:["0–10–30–90–120 min (Rot→Blau)","Ersteinschätzung, keine Diagnose"] }
+    ]
+  }
 ];
 
 function renderTaschenkarten() {
@@ -7791,6 +7800,19 @@ function generateKarteikarten() {
         frage: `Merksatz / Eselsbrücke für: ${bild.name}?`, antwort: bild.merksatz });
     });
   });
+  const NOTFALL_KK = [
+    { typ:'Triage', frage:'Wie viele Stufen hat das Manchester-Triage-System und welche Farben?', antwort:'5 Stufen: Rot, Orange, Gelb, Grün, Blau.' },
+    { typ:'Triage', frage:'MTS – welche maximalen Wartezeiten gelten je Stufe?', antwort:'Rot 0 min · Orange 10 min · Gelb 30 min · Grün 90 min · Blau 120 min.' },
+    { typ:'Triage', frage:'MTS Rot – typische Beispiele?', antwort:'Kreislaufstillstand, Schock, verlegte Atemwege, nicht ansprechbar.' },
+    { typ:'Triage', frage:'Nach welchem Prinzip triagiert das MTS?', antwort:'Höchste zutreffende Dringlichkeitsstufe anhand von Indikatoren über Präsentationsdiagramme.' },
+    { typ:'Merksatz', frage:'Eselsbrücke für die MTS-Wartezeiten?', antwort:'0–10–30–90–120 Minuten (Rot → Blau). Rot = sofort, Blau = kann warten.' },
+    { typ:'ABCDE', frage:'Wofür stehen A-B-C-D-E im Notfallschema?', antwort:'Airway · Breathing · Circulation · Disability · Exposure.' },
+    { typ:'ABCDE', frage:'ABCDE – was gehört zu C (Circulation)?', antwort:'Puls, Blutdruck, Rekapillarisierungszeit, Blutung stillen, Zugang und Volumen.' },
+    { typ:'Reanimation', frage:'Kompressions-Beatmungs-Verhältnis beim Erwachsenen (ERC 2021)?', antwort:'30 Kompressionen : 2 Beatmungen.' },
+    { typ:'Reanimation', frage:'Drucktiefe und Frequenz der Thoraxkompression (ERC 2021)?', antwort:'5–6 cm tief, 100–120/min, vollständige Entlastung.' },
+    { typ:'Reanimation', frage:'Erste Schritte bei leblos aufgefundener Person?', antwort:'Ansprechen und Atmung prüfen (max. 10 s), Notruf 112 + AED, dann 30:2.' }
+  ];
+  NOTFALL_KK.forEach((kk, ix) => karten.push({ fach:'notfall', fachLabel:'Notfallmanagement', name:'Manchester Triage / Notfall', icd:'', id:'notfall_kk_'+ix, typ:kk.typ, frage:kk.frage, antwort:kk.antwort }));
   return karten;
 }
 
