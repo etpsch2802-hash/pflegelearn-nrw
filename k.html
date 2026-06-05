@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PflegeLearn NRW</title>
+<link rel="icon" href="favicon.png">
+
+<!-- ============================================================
+     ZIEL DER WEITERLEITUNG  —  hier ändern, dann pushen.
+     Gedruckte QR-Codes bleiben gültig, nur dieses Ziel ändert sich.
+     ============================================================ -->
+<script>
+  var ZIEL = "https://pflegelearn-nrw.vercel.app";
+  window.location.replace(ZIEL);
+</script>
+<meta http-equiv="refresh" content="0; url=https://pflegelearn-nrw.vercel.app">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#0b1a35;color:#ddf0fb;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;
+}
+.logo{width:80px;height:80px;border-radius:20px;border:1px solid rgba(56,189,248,.2);}
+.spin{
+  width:34px;height:34px;border:3px solid rgba(56,189,248,.2);
+  border-top-color:#38bdf8;border-radius:50%;animation:s 0.8s linear infinite;
+}
+@keyframes s{to{transform:rotate(360deg);}}
+a{color:#38bdf8;text-decoration:none;font-weight:700;}
+.muted{color:#6f97b4;font-size:14px;}
+</style>
+</head>
+<body>
+  <img src="icon-512.png" alt="PflegeLearn NRW" class="logo">
+  <div class="spin"></div>
+  <p class="muted">Weiterleitung zu PflegeLearn NRW…</p>
+  <p class="muted">Falls es nicht automatisch geht:<br>
+    <a href="https://pflegelearn-nrw.vercel.app">Hier zur App</a>
+  </p>
+</body>
+</html>
