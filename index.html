@@ -4566,24 +4566,56 @@ function doSearch() {
   const q = document.getElementById('search-input').value.trim().toLowerCase();
   const res = document.getElementById('search-results');
   if (q.length < 2) { res.innerHTML = '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Mind. 2 Zeichen eingeben…</div>'; return; }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  function hit(t){ return String(t==null?'':t).toLowerCase().includes(q); }
   const hits = [];
-  // Quiz-Fragen durchsuchen
-  QUIZ_FRAGEN.forEach(function(f) {
-    if (f.frage.toLowerCase().includes(q) || (f.erkl && f.erkl.toLowerCase().includes(q))) {
-      hits.push({ type:'Quiz', icon:'📝', title: f.frage, sub: f.opt[f.k], color:'#60a5fa', action: "startQuiz('" + f.kat + "')" });
+  // Quiz
+  QUIZ_FRAGEN.forEach(function(f){
+    if (hit(f.frage) || hit(f.erkl) || (f.opt && f.opt.some(hit))) {
+      hits.push({type:'Quiz', icon:'📝', color:'#60a5fa', title:f.frage, sub:f.opt[f.k], action:"startQuiz('"+f.kat+"')"});
     }
   });
+  // Krankheitsbilder (verschachtelt nach Fach)
+  Object.keys(KRANKHEITSBILDER).forEach(function(fid){
+    const fach = KRANKHEITSBILDER[fid];
+    (fach.bilder||[]).forEach(function(b, idx){
+      const blob = [b.name, b.icd, b.definition].concat(b.symptome||[]).join(' ');
+      if (hit(blob)) {
+        hits.push({type:'Krankheitsbild', icon:fach.icon||'🏥', color:fach.farbe||'#f43f5e', title:b.name, sub:fach.label+(b.icd && b.icd!=='–'?' · ICD '+b.icd:''), action:"openKrankheitsbild('"+fid+"',"+idx+")"});
+      }
+    });
+  });
+  // Taschenkarten
+  TASCHENKARTEN.forEach(function(k){
+    let blob = k.titel;
+    (k.vorderseite||[]).forEach(function(s){ blob += ' '+s.label+' '+(s.punkte||[]).join(' '); });
+    if (hit(blob)) hits.push({type:'Taschenkarte', icon:k.icon||'📇', color:k.farbe||'#38bdf8', title:k.titel, sub:'Lernkarte', action:"showTaschenkarte('"+k.id+"')"});
+  });
+  // Medizintechnik / Geräte
+  GERAETE.forEach(function(g){
+    if (hit(g.name) || hit(g.sub) || hit(g.beschreibung)) hits.push({type:'Medizintechnik', icon:g.icon||'⚙️', color:g.color||'#22d3ee', title:g.name, sub:g.sub||'', action:"openGeraet('"+g.id+"')"});
+  });
+  // Prophylaxen
+  PROPHYLAXEN.forEach(function(p){
+    const blob = [p.name, p.definition].concat(p.risikofaktoren||[]).join(' ');
+    if (hit(blob)) hits.push({type:'Prophylaxe', icon:p.icon||'🛡️', color:'#34d399', title:p.name, sub:'Prophylaxe', action:"navGo('prophylaxen')"});
+  });
+  // Assessment-Scores
+  SCORES.forEach(function(sc){
+    if (hit(sc.name) || hit(sc.kategorie) || hit(sc.zweck)) hits.push({type:'Score', icon:sc.icon||'📊', color:sc.farbe||'#60a5fa', title:sc.name, sub:sc.zweck||sc.kategorie||'', action:"navGo('scores')"});
+  });
+
   if (!hits.length) {
-    res.innerHTML = '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + q + '</strong></div>';
+    res.innerHTML = '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + esc(q) + '</strong></div>';
     return;
   }
-  const shown = hits.slice(0, 30);
-  res.innerHTML = '<div style="font-size:10px;color:#4a7a9b;margin-bottom:8px;letter-spacing:1px">' + shown.length + ' Ergebnis' + (shown.length !== 1 ? 'se' : '') + (hits.length > 30 ? ' (von ' + hits.length + ')' : '') + '</div>' +
+  const shown = hits.slice(0, 40);
+  res.innerHTML = '<div style="font-size:10px;color:#4a7a9b;margin-bottom:8px;letter-spacing:1px">' + shown.length + ' Ergebnis' + (shown.length !== 1 ? 'se' : '') + (hits.length > 40 ? ' (von ' + hits.length + ')' : '') + '</div>' +
     shown.map(function(h) {
-      return '<button onclick="closeSearchOverlay();' + h.action + '" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 13px;cursor:pointer;font-family:inherit;display:block">' +
+      return '<button onclick="closeSearchOverlay();' + h.action + '" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 13px;cursor:pointer;font-family:inherit;display:block;margin-bottom:8px">' +
         '<div style="font-size:9px;color:' + h.color + ';letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">' + h.icon + ' ' + h.type + '</div>' +
-        '<div style="font-size:13px;font-weight:600;color:#ddf0fb;margin-bottom:3px">' + h.title + '</div>' +
-        '<div style="font-size:11px;color:#4a7a9b">✅ ' + h.sub + '</div>' +
+        '<div style="font-size:13px;font-weight:600;color:#ddf0fb;margin-bottom:3px">' + esc(h.title) + '</div>' +
+        '<div style="font-size:11px;color:#4a7a9b">' + esc(h.sub) + '</div>' +
         '</button>';
     }).join('');
 }
