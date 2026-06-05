@@ -570,6 +570,16 @@
     <div style="margin-left:auto;font-size:20px;color:#38bdf8">›</div>
   </button>
 
+  <!-- ── NOTFALLMANAGEMENT (prominent) ── -->
+  <button onclick="navGo('notfallmanagement')" style="width:100%;background:linear-gradient(135deg,rgba(239,68,68,.16),rgba(249,115,22,.06));border:1px solid rgba(239,68,68,.4);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:32px">🚨</div>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700;color:#fca5a5">Notfallmanagement</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Manchester Triage · BLS · ACLS · ABCDE · Simulator</div>
+    </div>
+    <div style="margin-left:auto;font-size:20px;color:#fca5a5">›</div>
+  </button>
+
   <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
   <div class="acc-wrap" id="acc-ausb">
     <button class="acc-header" onclick="toggleAcc('acc-ausb')">
@@ -816,6 +826,25 @@
       </div>
     </div>
 
+    <!-- ACLS / ALS -->
+    <div class="section-label">ACLS / ALS-Algorithmus (ERC 2021)</div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:14px;margin-bottom:14px">
+      <p style="font-size:12px;color:#7fa6c4;margin:0 0 10px">Erweiterte Maßnahmen während der Reanimation – der Rhythmus entscheidet das Vorgehen.</p>
+      <div style="border-left:5px solid #f43f5e;background:rgba(244,63,94,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#fda4af;font-size:13px">⚡ Defibrillierbar: Kammerflimmern / pulslose VT</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Sofort defibrillieren → 2 min CPR. Adrenalin 1 mg nach dem 3. Schock, dann alle 3–5 min. Amiodaron 300 mg nach dem 3. Schock (150 mg nach dem 5.).</div>
+      </div>
+      <div style="border-left:5px solid #60a5fa;background:rgba(96,165,250,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
+        <div style="font-weight:700;color:#93c5fd;font-size:13px">🚫 Nicht defibrillierbar: Asystolie / PEA</div>
+        <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Keine Defibrillation. Adrenalin 1 mg so früh wie möglich, dann alle 3–5 min. 2-min-CPR-Zyklen.</div>
+      </div>
+      <div style="font-size:13px;color:#cfe6f5;line-height:1.7;margin-top:8px">
+        <div><strong style="color:#38bdf8">Reversible Ursachen – 4 H:</strong> Hypoxie · Hypovolämie · Hypo-/Hyperkaliämie (metabolisch) · Hypothermie.</div>
+        <div><strong style="color:#38bdf8">4 T / HITS:</strong> Herzbeuteltamponade · Intoxikation · Thrombose (Lunge/Koronar) · Spannungspneumothorax.</div>
+        <div><strong style="color:#38bdf8">Atemweg:</strong> nach Atemwegssicherung kontinuierliche Kompressionen, Beatmung ~10/min.</div>
+        <div><strong style="color:#38bdf8">Kapnografie:</strong> Tubuslage, CPR-Qualität und Hinweis auf ROSC.</div>
+      </div>
+    </div>
     <div style="text-align:center;font-size:11px;color:#4a7a9b;padding:8px 0 24px">
       Lerninhalt nach ERC 2021 / MTS – ersetzt keine gültige Leitlinie oder ärztliche Anweisung.
     </div>
@@ -4683,10 +4712,11 @@ const ABCDE_FALL = {
   ],
   fazit:"Verdacht: postoperative Nachblutung mit beginnendem hypovolämem Schock. Sofortmaßnahmen: Sauerstoff, Volumen, Arzt/Notfallteam, engmaschige Reevaluation (ABCDE wiederholen)."
 };
-let abcdeStep=0, abcdeStart=0, abcdeTimerId=null, abcdeDone=[];
+let abcdeStep=0, abcdeStart=0, abcdeTimerId=null, abcdeDone=[], abcdeRun=[];
 
 function startABCDE(){
   abcdeStep=0; abcdeDone=[]; abcdeStart=Date.now();
+  abcdeRun=ABCDE_FALL.schritte.map(function(s){ var op=s.optionen.slice(); for(var i=op.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=op[i];op[i]=op[j];op[j]=t; } return Object.assign({}, s, {optionen:op}); });
   if(abcdeTimerId){ clearInterval(abcdeTimerId); }
   abcdeTimerId=setInterval(updateABCDETimer, 1000);
   showScreen('abcde-sim');
@@ -4699,7 +4729,7 @@ function updateABCDETimer(){
 }
 function renderABCDE(){
   const el=document.getElementById('abcde-sim-content'); if(!el) return;
-  const done = abcdeDone.map(function(i){ const st=ABCDE_FALL.schritte[i]; return '<div style="border-left:4px solid #22c55e;background:rgba(34,197,94,.08);border-radius:8px;padding:9px 11px;margin:6px 0"><div style="font-size:12px;font-weight:700;color:#86efac">'+st.letter+' · '+st.label+'</div><div style="font-size:12px;color:#cfe6f5;margin-top:3px">'+st.befund+'</div></div>'; }).join('');
+  const done = abcdeDone.map(function(i){ const st=abcdeRun[i]; return '<div style="border-left:4px solid #22c55e;background:rgba(34,197,94,.08);border-radius:8px;padding:9px 11px;margin:6px 0"><div style="font-size:12px;font-weight:700;color:#86efac">'+st.letter+' · '+st.label+'</div><div style="font-size:12px;color:#cfe6f5;margin-top:3px">'+st.befund+'</div></div>'; }).join('');
   if(abcdeStep>=ABCDE_FALL.schritte.length){
     if(abcdeTimerId){ clearInterval(abcdeTimerId); abcdeTimerId=null; }
     el.innerHTML='<div style="max-width:680px;margin:0 auto">'
@@ -4711,7 +4741,7 @@ function renderABCDE(){
     window.scrollTo(0,0);
     return;
   }
-  const st=ABCDE_FALL.schritte[abcdeStep];
+  const st=abcdeRun[abcdeStep];
   el.innerHTML='<div style="max-width:680px;margin:0 auto">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:12px;color:#7fa6c4">Schritt '+(abcdeStep+1)+' / '+ABCDE_FALL.schritte.length+'</div><div style="font-size:13px;font-weight:700;color:#38bdf8">⏱ <span id="abcde-timer">00:00</span></div></div>'
     +(abcdeStep===0?'<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:12px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:#fca5a5;margin-bottom:4px">🚨 '+ABCDE_FALL.titel+'</div><div style="font-size:13px;color:#cfe6f5;line-height:1.6">'+ABCDE_FALL.intro+'</div></div>':'')
@@ -4726,7 +4756,7 @@ function renderABCDE(){
   window.scrollTo(0,0);
 }
 function answerABCDE(idx){
-  const st=ABCDE_FALL.schritte[abcdeStep];
+  const st=abcdeRun[abcdeStep];
   const o=st.optionen[idx];
   const fb=document.getElementById('abcde-fb');
   if(!fb) return;
