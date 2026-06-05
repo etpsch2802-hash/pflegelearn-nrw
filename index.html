@@ -758,6 +758,7 @@
       <h1>Notfall<span>management</span></h1>
       <p>Manchester Triage · ABCDE-Schema · Reanimation (ERC 2021)</p>
     </div>
+    <button onclick="startABCDE()" style="width:100%;background:linear-gradient(135deg,#ef4444,#f97316);border:none;border-radius:14px;padding:15px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:14px;box-shadow:0 6px 20px rgba(239,68,68,.3)">🎯 ABCDE-Notfall-Simulator starten</button>
 
     <!-- MANCHESTER TRIAGE -->
     <div class="section-label">Manchester-Triage-System (MTS)</div>
@@ -819,6 +820,11 @@
       Lerninhalt nach ERC 2021 / MTS – ersetzt keine gültige Leitlinie oder ärztliche Anweisung.
     </div>
   </div>
+</div>
+
+<!-- ABCDE-SIMULATOR -->
+<div class="page" id="screen-abcde-sim">
+  <div id="abcde-sim-content"></div>
 </div>
 
 <!-- MEDIZINTECHNIK -->
@@ -4634,6 +4640,106 @@ function toggleNavSec(id, btn){
   document.querySelectorAll('#nav-dropdown .nav-caret').forEach(function(cr){ cr.style.transform='rotate(0deg)'; });
   if(!open){ body.style.display='block'; const car=btn.querySelector('.nav-caret'); if(car) car.style.transform='rotate(90deg)'; }
 }
+// ─── ABCDE-NOTFALL-SIMULATOR ───────────────────────────────
+const ABCDE_FALL = {
+  titel: "Postoperativ – akute Verschlechterung",
+  intro: "Herr M., 68 J., 2 h nach Hüft-OP. Die Pflegekraft ruft dich: Patient zunehmend unruhig, blass, kaltschweißig. Gehe strukturiert nach ABCDE vor.",
+  schritte: [
+    { letter:"A", label:"Airway – Atemweg", prompt:"Was tust du zuerst?",
+      optionen:[
+        {text:"Ansprechen, Mund/Rachen inspizieren, auf freie Atemwege prüfen", richtig:true, fb:"Richtig. Ein Patient, der in Sätzen antwortet, hat einen freien Atemweg."},
+        {text:"Sofort intubieren", richtig:false, fb:"Zu invasiv – nicht indiziert, solange der Atemweg frei ist."},
+        {text:"Magensonde legen", richtig:false, fb:"Gehört nicht zur A-Beurteilung."}
+      ],
+      befund:"Atemweg frei, Patient antwortet in kurzen Sätzen." },
+    { letter:"B", label:"Breathing – Atmung", prompt:"Wie gehst du vor?",
+      optionen:[
+        {text:"Atemfrequenz zählen, SpO₂ messen, auskultieren, O₂ geben", richtig:true, fb:"Richtig. AF 26/min, SpO₂ 91 % → Sauerstoff geben."},
+        {text:"Nur kurz auf den Monitor schauen", richtig:false, fb:"Unvollständig – Atemfrequenz und Auskultation gehören dazu."},
+        {text:"Sofort mit dem Beutel beatmen", richtig:false, fb:"Der Patient atmet spontan; Beutelbeatmung ist nicht nötig."}
+      ],
+      befund:"AF 26/min, SpO₂ 91 % (Raumluft) → 2–4 L O₂ über Nasenbrille." },
+    { letter:"C", label:"Circulation – Kreislauf", prompt:"Wie gehst du vor?",
+      optionen:[
+        {text:"Puls, RR, Rekap-Zeit prüfen, i.v.-Zugang, Wunde/Drainage kontrollieren", richtig:true, fb:"Richtig. RR 90/55, Puls 118, kühle Peripherie → an Volumenmangel/Blutung denken."},
+        {text:"Nur den Blutdruck messen", richtig:false, fb:"Unvollständig – Puls, Rekap-Zeit und Zugang fehlen."},
+        {text:"Patienten aufsetzen", richtig:false, fb:"Bei Hypotonie eher flach lagern / Beine hoch, nicht aufsetzen."}
+      ],
+      befund:"RR 90/55 mmHg, Puls 118/min, Rekap >2 s, Drainage stark gefüllt → V.a. Nachblutung." },
+    { letter:"D", label:"Disability – Neurologie", prompt:"Was prüfst du?",
+      optionen:[
+        {text:"Bewusstsein (GCS/AVPU), Pupillen, Blutzucker", richtig:true, fb:"Richtig. GCS 14, Pupillen seitengleich, Blutzucker normal."},
+        {text:"Kompletten neurologischen Reflexstatus", richtig:false, fb:"Zu detailliert für die Akutsituation."},
+        {text:"Überspringen, der Patient ist ja wach", richtig:false, fb:"Auch beim wachen Patienten kurz GCS, Pupillen und Blutzucker prüfen."}
+      ],
+      befund:"GCS 14 (unruhig), Pupillen seitengleich, Blutzucker normal." },
+    { letter:"E", label:"Exposure – Überblick", prompt:"Wie schließt du ab?",
+      optionen:[
+        {text:"Entkleiden/inspizieren, Temperatur, Wärmeerhalt, Wunde kontrollieren, Arzt informieren", richtig:true, fb:"Richtig. Nachblutendes Wundgebiet → Arzt/Notfallteam alarmieren."},
+        {text:"Fenster öffnen, damit der Patient abkühlt", richtig:false, fb:"Wärmeerhalt ist wichtig – Auskühlung vermeiden."},
+        {text:"Nichts mehr, ABCDE ist fertig", richtig:false, fb:"E gehört dazu: Temperatur und Ganzkörperüberblick."}
+      ],
+      befund:"Temp 36,0 °C, nachblutendes Wundgebiet → Arztinfo, Reevaluation, OP-Bereitschaft." }
+  ],
+  fazit:"Verdacht: postoperative Nachblutung mit beginnendem hypovolämem Schock. Sofortmaßnahmen: Sauerstoff, Volumen, Arzt/Notfallteam, engmaschige Reevaluation (ABCDE wiederholen)."
+};
+let abcdeStep=0, abcdeStart=0, abcdeTimerId=null, abcdeDone=[];
+
+function startABCDE(){
+  abcdeStep=0; abcdeDone=[]; abcdeStart=Date.now();
+  if(abcdeTimerId){ clearInterval(abcdeTimerId); }
+  abcdeTimerId=setInterval(updateABCDETimer, 1000);
+  showScreen('abcde-sim');
+  renderABCDE();
+}
+function updateABCDETimer(){
+  const el=document.getElementById('abcde-timer'); if(!el) return;
+  const s=Math.floor((Date.now()-abcdeStart)/1000);
+  el.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+function renderABCDE(){
+  const el=document.getElementById('abcde-sim-content'); if(!el) return;
+  const done = abcdeDone.map(function(i){ const st=ABCDE_FALL.schritte[i]; return '<div style="border-left:4px solid #22c55e;background:rgba(34,197,94,.08);border-radius:8px;padding:9px 11px;margin:6px 0"><div style="font-size:12px;font-weight:700;color:#86efac">'+st.letter+' · '+st.label+'</div><div style="font-size:12px;color:#cfe6f5;margin-top:3px">'+st.befund+'</div></div>'; }).join('');
+  if(abcdeStep>=ABCDE_FALL.schritte.length){
+    if(abcdeTimerId){ clearInterval(abcdeTimerId); abcdeTimerId=null; }
+    el.innerHTML='<div style="max-width:680px;margin:0 auto">'
+      +'<div class="hero" style="margin-bottom:12px"><div class="hero-icon">✅</div><h1>ABCDE <span>abgeschlossen</span></h1></div>'
+      +done
+      +'<div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.3);border-radius:12px;padding:13px;margin:12px 0"><div style="font-size:12px;font-weight:700;color:#38bdf8;margin-bottom:5px">FAZIT</div><div style="font-size:13px;color:#cfe6f5;line-height:1.6">'+ABCDE_FALL.fazit+'</div></div>'
+      +'<div style="display:flex;gap:10px;margin-top:14px"><button onclick="startABCDE()" class="nav-drop-btn" style="background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700;justify-content:center">🔁 Nochmal</button><button onclick="navGo(\'notfallmanagement\')" class="nav-drop-btn" style="justify-content:center">← Notfallmanagement</button></div>'
+      +'</div>';
+    window.scrollTo(0,0);
+    return;
+  }
+  const st=ABCDE_FALL.schritte[abcdeStep];
+  el.innerHTML='<div style="max-width:680px;margin:0 auto">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:12px;color:#7fa6c4">Schritt '+(abcdeStep+1)+' / '+ABCDE_FALL.schritte.length+'</div><div style="font-size:13px;font-weight:700;color:#38bdf8">⏱ <span id="abcde-timer">00:00</span></div></div>'
+    +(abcdeStep===0?'<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:12px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:#fca5a5;margin-bottom:4px">🚨 '+ABCDE_FALL.titel+'</div><div style="font-size:13px;color:#cfe6f5;line-height:1.6">'+ABCDE_FALL.intro+'</div></div>':'')
+    +done
+    +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:14px;margin-top:8px">'
+      +'<div style="font-size:30px;font-weight:800;color:#38bdf8;line-height:1">'+st.letter+'</div>'
+      +'<div style="font-size:14px;font-weight:700;color:#e0f2fe;margin:2px 0 10px">'+st.label+'</div>'
+      +'<div style="font-size:13px;color:#cfe6f5;margin-bottom:10px">'+st.prompt+'</div>'
+      +'<div id="abcde-opts">'+st.optionen.map(function(o,idx){ return '<button onclick="answerABCDE('+idx+')" class="nav-drop-btn" style="text-align:left;white-space:normal;margin:5px 0;line-height:1.4">'+o.text+'</button>'; }).join('')+'</div>'
+      +'<div id="abcde-fb" style="margin-top:8px"></div>'
+    +'</div></div>';
+  window.scrollTo(0,0);
+}
+function answerABCDE(idx){
+  const st=ABCDE_FALL.schritte[abcdeStep];
+  const o=st.optionen[idx];
+  const fb=document.getElementById('abcde-fb');
+  if(!fb) return;
+  if(o.richtig){
+    if(abcdeDone.indexOf(abcdeStep)<0) abcdeDone.push(abcdeStep);
+    fb.innerHTML='<div style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:9px;padding:10px;font-size:12px;color:#bbf7d0">✅ '+o.fb+'</div>'
+      +'<button onclick="abcdeStep++;renderABCDE()" class="nav-drop-btn" style="background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700;justify-content:center;margin-top:8px">Weiter →</button>';
+    const opts=document.getElementById('abcde-opts'); if(opts) opts.querySelectorAll('button').forEach(function(b){ b.disabled=true; b.style.opacity=.5; });
+  } else {
+    fb.innerHTML='<div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);border-radius:9px;padding:10px;font-size:12px;color:#fecaca">❌ '+o.fb+' <span style="color:#7fa6c4">– versuch es nochmal.</span></div>';
+  }
+}
+
 function navGo(screen) {
   document.getElementById('nav-dropdown').style.display = 'none';
   if (screen === 'taschenkarten') {
