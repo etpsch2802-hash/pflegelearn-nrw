@@ -6010,6 +6010,208 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber riskant.", fazit:"Streng am altersgerechten Algorithmus orientieren und danach ärztlich abklären." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Komplette Atemwegsverlegung.", fazit:"Blindes Auswischen und falsches Manöver sind bei der Aspiration gefährlich." }
   } }
+,
+{ id:"anae_mh", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🔥", farbe:"#dc2626", titel:"Plötzlicher CO₂-Anstieg intraop.", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Intraoperativ unter Sevofluran: unerklärter etCO₂-Anstieg, Tachykardie, Masseterspasmus nach Succinylcholin, beginnender Temperaturanstieg, Azidose.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Erstes Vorgehen bei Verdacht auf maligne Hyperthermie?", optionen:[
+      {text:"Trigger sofort stoppen (volatile Anästhetika/Succinylcholin), Hilfe rufen, 100 % O₂ mit hohem Flow, Operateur informieren", ziel:"n2", typ:"gut", fb:"Richtig – Trigger weg, 100 % O₂, Team alarmieren."},
+      {text:"Erst die Temperatur abwarten, bevor etwas geändert wird", ziel:"bad_wait", typ:"fehler", fb:"Bei etCO₂-Anstieg + Masseterspasmus kein Abwarten – Trigger sofort stoppen."},
+      {text:"Narkose mit mehr Sevofluran vertiefen", ziel:"bad_trigger", typ:"fehler", fb:"Volatile Anästhetika sind der Trigger – das verschlimmert die Krise."} ]},
+    n2:{ titel:"SPEZIFISCHE THERAPIE", text:"Was ist die spezifische Therapie (AO)?", optionen:[
+      {text:"Dantrolen schnellstmöglich (gewichtsadaptiert), Team zur Aufbereitung, weiter 100 % O₂/Hyperventilation", ziel:"n3", typ:"gut", fb:"Korrekt – Dantrolen ist die kausale Therapie."},
+      {text:"Nur kühlen, Dantrolen ist nicht nötig", ziel:"bad_nodantrolen", typ:"warn", fb:"Kühlung ist Begleitmaßnahme – ohne Dantrolen bleibt die Krise unbehandelt."},
+      {text:"Betablocker gegen die Tachykardie", ziel:"bad_sympt", typ:"warn", fb:"Symptomatisch und riskant – die Ursache muss mit Dantrolen behandelt werden."} ]},
+    n3:{ titel:"BEGLEITMASSNAHMEN", text:"Während Dantrolen läuft – welche Begleitmaßnahmen?", optionen:[
+      {text:"Aktiv kühlen, BGA/Elektrolyte, Hyperkaliämie und Azidose behandeln, Diurese fördern, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – Hyperkaliämie, Azidose, Temperatur und Niere im Blick."},
+      {text:"Nur die Temperatur senken, Labor ist unwichtig", ziel:"bad_lab", typ:"warn", fb:"Hyperkaliämie/Azidose/CK sind kritisch – Labor und Behandlung gehören dazu."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du danach?", optionen:[
+      {text:"etCO₂, Temperatur, K⁺/BGA, CK/Myoglobin (Rhabdomyolyse), Urin, Kreislauf; Intensivverlegung", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Intensivüberwachung, Rhabdomyolyse/Niere beachten."},
+      {text:"Nach Stabilisierung sofort auf Normalstation", ziel:"end_mittel", typ:"warn", fb:"MH erfordert Intensivüberwachung (Rezidiv/Komplikationen)."} ]},
+    bad_wait:{ text:"Temperatur steigt rapide, etCO₂ massiv erhöht, zunehmende Azidose. Reaktion?", optionen:[
+      {text:"Jetzt sofort Trigger stoppen, 100 % O₂, Dantrolen, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät – bei MH zählt jede Minute."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Lebensbedrohliche MH-Krise."} ]},
+    bad_trigger:{ text:"Nach Narkosevertiefung mit Sevofluran dramatische Verschlechterung. Reaktion?", optionen:[
+      {text:"Volatiles Anästhetikum sofort beenden, auf triggerfreie Narkose (TIVA) umstellen, Dantrolen, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – der Trigger war die Ursache."},
+      {text:"Noch mehr Sevofluran", ziel:"end_schlecht", typ:"fehler", fb:"Tödliche Eskalation."} ]},
+    bad_nodantrolen:{ text:"Trotz Kühlung keine Besserung, etCO₂ weiter hoch, K⁺ steigt. Reaktion?", optionen:[
+      {text:"Dantrolen unverzüglich geben, Hyperkaliämie behandeln, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Dantrolen ist unverzichtbar."},
+      {text:"Weiter nur kühlen", ziel:"end_schlecht", typ:"fehler", fb:"Unbehandelte MH."} ]},
+    bad_sympt:{ text:"Nach Betablocker Kreislaufverschlechterung, MH-Bild persistiert. Reaktion?", optionen:[
+      {text:"Kausale Therapie: Dantrolen, Trigger gestoppt, Hyperkaliämie/Azidose behandeln, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter symptomatisch behandeln", ziel:"end_schlecht", typ:"fehler", fb:"Die Krise schreitet fort."} ]},
+    bad_lab:{ text:"Plötzlich Kammerflimmern (Hyperkaliämie). Reaktion?", optionen:[
+      {text:"Reanimation, Hyperkaliämie aggressiv behandeln, Dantrolen weiter, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Lebensrettend, aber das Labor wurde zu spät beachtet."},
+      {text:"Auf Spontankonversion warten", ziel:"end_schlecht", typ:"fehler", fb:"Hyperkaliämischer Kreislaufstillstand."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Trigger gestoppt, Dantrolen früh, Komplikationen behandelt, Intensiv.", fazit:"Maligne Hyperthermie: Trigger sofort stoppen (volatile/Succinylcholin), 100 % O₂/Hyperventilation, Dantrolen schnellstmöglich, Hyperkaliämie/Azidose/Temperatur behandeln, Rhabdomyolyse/Niere überwachen, Intensiv." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Überlebt, aber mit vermeidbarer Verzögerung/Komplikation.", fazit:"Bei MH zählt jede Minute: Trigger weg, Dantrolen früh, Labor/K⁺ im Blick." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Fulminante MH-Krise.", fazit:"Trigger weiterzugeben, Dantrolen wegzulassen oder abzuwarten ist lebensgefährlich." }
+  } },
+
+{ id:"anae_laryngospasmus", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🌬️", farbe:"#06b6d4", titel:"Stridor nach Extubation", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Direkt nach Extubation (flache Narkose): inspiratorischer Stridor, paradoxe Atembewegungen, rascher SpO₂-Abfall, keine effektive Beatmung möglich.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORT", text:"Erstes Vorgehen beim Laryngospasmus?", optionen:[
+      {text:"100 % O₂, Esmarch-Handgriff, kräftiger Masken-CPAP, Hilfe rufen, Reize (Sekret/Manipulation) beseitigen", ziel:"n2", typ:"gut", fb:"Richtig – Atemwegsmanöver + CPAP mit 100 % O₂, störende Reize entfernen."},
+      {text:"Sofort erneut intubieren ohne weitere Maßnahmen", ziel:"bad_intub", typ:"warn", fb:"Erst Atemwegsmanöver/CPAP; nicht in flacher Narkose blind intubieren."},
+      {text:"Patienten zum tiefen Durchatmen auffordern", ziel:"bad_command", typ:"fehler", fb:"Bei Laryngospasmus/flacher Narkose nicht zielführend – aktiv den Atemweg öffnen."} ]},
+    n2:{ titel:"PERSISTENZ", text:"Der Spasmus persistiert, SpO₂ fällt weiter. Was ist indiziert (AO)?", optionen:[
+      {text:"Narkose vertiefen (z. B. Propofol) und/oder kleine Dosis Succinylcholin nach AO, weiter 100 % O₂/CPAP", ziel:"n3", typ:"gut", fb:"Korrekt – Vertiefung bzw. Muskelrelaxans durchbricht den Spasmus."},
+      {text:"Weiter nur CPAP, abwarten", ziel:"bad_wait", typ:"warn", fb:"Bei anhaltender Hypoxie nicht nur abwarten."} ]},
+    n3:{ titel:"NACH DEM DURCHBRECHEN", text:"Der Spasmus löst sich, der Patient wird beatmet. Woran denkst du?", optionen:[
+      {text:"Oxygenierung sichern und an Negativdruck-Lungenödem denken (nach starkem Sog), Auskultation, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – nach Laryngospasmus kann ein Negativdruck-Lungenödem auftreten."},
+      {text:"Nichts weiter, ist ja vorbei", ziel:"bad_npe", typ:"warn", fb:"Komplikation (Negativdruck-Lungenödem) möglich – weiter überwachen."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du im Aufwachraum?", optionen:[
+      {text:"SpO₂, Atemarbeit, Auskultation (Lungenödem?), Wachheit, Sekret, Re-Spasmus-Gefahr", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur SpO₂", ziel:"end_mittel", typ:"warn", fb:"Auskultation/Atemarbeit/Re-Spasmus gehören dazu."} ]},
+    bad_intub:{ text:"Der Intubationsversuch in flacher Narkose verschlimmert den Spasmus, SpO₂ 70 %. Reaktion?", optionen:[
+      {text:"Aufhören, 100 % O₂/CPAP, Vertiefung/Relaxans nach AO, dann Atemweg sichern", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – erst den Spasmus durchbrechen."},
+      {text:"Weiter forcieren", ziel:"end_schlecht", typ:"fehler", fb:"Schwere Hypoxie."} ]},
+    bad_command:{ text:"Aufforderungen helfen nicht, SpO₂ fällt weiter. Reaktion?", optionen:[
+      {text:"Atemwegsmanöver + CPAP, Vertiefung/Relaxans nach AO, Hilfe", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter zureden", ziel:"end_schlecht", typ:"fehler", fb:"Hypoxie."} ]},
+    bad_wait:{ text:"SpO₂ 65 %, Bradykardie. Reaktion?", optionen:[
+      {text:"Sofort Relaxans/Vertiefung nach AO, 100 % O₂, ggf. Masken-/Reintubation, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Spät, aber lebensrettend."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hypoxischer Kreislaufstillstand."} ]},
+    bad_npe:{ text:"Wenig später Rasselgeräusche, SpO₂ sinkt, rosiges Sekret. Einordnung/Reaktion?", optionen:[
+      {text:"Negativdruck-Lungenödem: O₂/NIV nach AO, Oberkörper hoch, Monitoring, Intensiv erwägen", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
+      {text:"Ignorieren", ziel:"end_schlecht", typ:"fehler", fb:"Verkanntes Lungenödem."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Spasmus durchbrochen, Oxygenierung gesichert, sicher überwacht.", fazit:"Laryngospasmus: 100 % O₂, Esmarch + CPAP, Reize entfernen; bei Persistenz Vertiefung/Succinylcholin nach AO; danach an Negativdruck-Lungenödem denken; nicht in flacher Narkose blind intubieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber riskant.", fazit:"Früh Atemwegsmanöver + CPAP, bei Persistenz rasch vertiefen/relaxieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Schwere Hypoxie/Kreislaufstillstand.", fazit:"Blindes Intubieren in flacher Narkose und Abwarten sind gefährlich." }
+  } },
+
+{ id:"anae_aspiration", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🫁", farbe:"#ef4444", titel:"Regurgitation bei Einleitung", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Nicht-nüchterner Notfallpatient (Ileus): bei der Einleitung Regurgitation von Mageninhalt, Mageninhalt im Rachen, SpO₂ beginnt zu fallen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORT", text:"Erstes Vorgehen bei beobachteter Regurgitation/Aspiration?", optionen:[
+      {text:"Kopftief-/Seitenlage, sofort absaugen, 100 % O₂, Atemweg mit Cuff sichern, Operateur/Hilfe", ziel:"n2", typ:"gut", fb:"Richtig – Atemweg schützen: absaugen, intubieren/cuffen, O₂."},
+      {text:"Erst kräftig mit der Maske beatmen, um die Sättigung zu halten", ziel:"bad_mask", typ:"warn", fb:"Maskenbeatmung kann Mageninhalt verteilen/insufflieren – erst absaugen und Atemweg sichern."},
+      {text:"Sofort eine aufwändige Zusatzdiagnostik veranlassen", ziel:"bad_irrel", typ:"fehler", fb:"Nicht zielführend im Akutmoment – der Atemweg hat Priorität."} ]},
+    n2:{ titel:"NACH ATEMWEGSSICHERUNG", text:"Der Atemweg ist gesichert. Wie weiter (AO)?", optionen:[
+      {text:"Tracheobronchial absaugen, 100 % O₂, ggf. Bronchoskopie nach AO, Beatmung anpassen (PEEP), Monitoring", ziel:"n3", typ:"gut", fb:"Korrekt – absaugen, oxygenieren, ggf. Bronchoskopie."},
+      {text:"Routinemäßig sofort Antibiotikum + Kortison für alle", ziel:"bad_routine", typ:"warn", fb:"Nicht routinemäßig – Antibiotika nur bei Infektzeichen, Steroide werden nicht empfohlen."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"SpO₂ bleibt niedrig, steigende Beatmungsdrücke, Giemen. Reaktion?", optionen:[
+      {text:"O₂/PEEP optimieren, absaugen, Bronchospasmus nach AO behandeln, Intensiv", ziel:"n4", typ:"gut", fb:"Sehr gut – Aspirationspneumonitis/Bronchospasmus behandeln."},
+      {text:"Beatmungsdruck einfach maximal erhöhen", ziel:"bad_press", typ:"warn", fb:"Unkontrolliert hoher Druck riskiert ein Barotrauma."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"SpO₂, Beatmungsdrücke, Auskultation, Röntgen-Verlauf, Temperatur/Infektzeichen, Intensivüberwachung", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur SpO₂", ziel:"end_mittel", typ:"warn", fb:"Drücke/Auskultation/Verlauf gehören dazu."} ]},
+    bad_mask:{ text:"Nach kräftiger Maskenbeatmung Magenüberblähung, weitere Regurgitation, SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Absaugen, Atemweg mit Cuff sichern, Magensonde nach AO, O₂", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – erst den Atemweg schützen."},
+      {text:"Weiter mit der Maske beatmen", ziel:"end_schlecht", typ:"fehler", fb:"Mehr Aspiration/Hypoxie."} ]},
+    bad_irrel:{ text:"Während der Verzögerung fällt die SpO₂ weiter. Reaktion?", optionen:[
+      {text:"Jetzt absaugen und Atemweg sichern, O₂, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Spät – der Atemweg hat Priorität."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Schwere Aspiration/Hypoxie."} ]},
+    bad_routine:{ text:"Trotz der Standardgabe verschlechtert sich die Oxygenierung. Reaktion?", optionen:[
+      {text:"Gezielt behandeln (O₂/PEEP, Absaugen, Bronchospasmus nach AO), Antibiotika nur bei Infektzeichen", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – keine pauschale Routine."},
+      {text:"Mehr Kortison/Antibiotika ohne Indikation", ziel:"end_schlecht", typ:"fehler", fb:"Keine Ursachenbehandlung."} ]},
+    bad_press:{ text:"Plötzlicher Druckabfall, einseitiges Atemgeräusch, Kreislauf instabil. Einordnung?", optionen:[
+      {text:"V.a. Barotrauma/Pneumothorax → Arzt, Entlastung vorbereiten, Druck reduzieren, Monitoring", ziel:"end_mittel", typ:"warn", fb:"Spät erkannt, aber richtig."},
+      {text:"Weiter hohen Druck fahren", ziel:"end_schlecht", typ:"fehler", fb:"Spannungspneumothorax."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Atemweg geschützt, abgesaugt, Aspirationsfolgen behandelt, Intensiv.", fazit:"Aspiration bei Einleitung: Kopftief/Seitenlage + sofort absaugen, Atemweg mit Cuff sichern (vor Maskenbeatmung), tracheobronchial absaugen, O₂/PEEP, ggf. Bronchoskopie; keine pauschalen Antibiotika/Steroide. Prävention: RSI bei nicht-Nüchternen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber mit Risiko.", fazit:"Erst Atemweg schützen (nicht beatmen, bevor abgesaugt/gecufft ist), dann gezielt behandeln." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Schwere Aspiration / Barotrauma.", fazit:"Maskenbeatmung vor Atemwegssicherung und unkontrollierter Druck sind gefährlich." }
+  } },
+
+{ id:"anae_last", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"⚠️", farbe:"#a855f7", titel:"Symptome nach Regionalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Während/nach Regionalanästhesie mit hoher Lokalanästhetika-Dosis: periorale Taubheit, metallischer Geschmack, Ohrensausen, Unruhe, dann Muskelzuckungen, beginnende Herzrhythmusstörung.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Erstes Vorgehen bei Verdacht auf Lokalanästhetika-Intoxikation (LAST)?", optionen:[
+      {text:"Injektion sofort stoppen, Hilfe rufen, 100 % O₂, Monitoring, auf Krampf/Arrhythmie vorbereiten", ziel:"n2", typ:"gut", fb:"Richtig – Zufuhr stoppen, O₂, Team; LAST früh erkennen."},
+      {text:"Erst abwarten, ob sich die Symptome von selbst legen", ziel:"bad_wait", typ:"fehler", fb:"Bei Prodromi/Zuckungen kein Abwarten – LAST kann rasch in Krampf/Stillstand übergehen."},
+      {text:"Mehr Lokalanästhetikum, um die Wirkung zu sichern", ziel:"bad_more", typ:"fehler", fb:"Erhöht die Toxizität – absolut kontraindiziert."} ]},
+    n2:{ titel:"SPEZIFISCHE THERAPIE", text:"Was ist die spezifische Therapie (AO)?", optionen:[
+      {text:"Lipidemulsion (20 %) als Bolus + Infusion nach Schema, Atemweg/O₂ sichern, Krampf durchbrechen (Benzodiazepin)", ziel:"n3", typ:"gut", fb:"Korrekt – Lipidrescue ist die spezifische Therapie."},
+      {text:"Nur den Krampf behandeln, Lipid ist nicht nötig", ziel:"bad_nolipid", typ:"warn", fb:"Die Lipidemulsion ist bei LAST entscheidend."} ]},
+    n3:{ titel:"KREISLAUFSTILLSTAND", text:"Es kommt zum (LAST-bedingten) Kreislaufstillstand. Was ist zu beachten?", optionen:[
+      {text:"Reanimation nach ALS, aber prolongiert (gute Prognose!), Lipidemulsion weiter, kleine Adrenalindosen, Amiodaron bei Bedarf", ziel:"n4", typ:"gut", fb:"Sehr gut – bei LAST länger reanimieren, Adrenalin niedrig dosieren, Lipid weiter."},
+      {text:"Hochdosiertes Standard-Adrenalin wie üblich", ziel:"bad_epi", typ:"warn", fb:"Bei LAST eher reduzierte Adrenalindosen; Lipidrescue steht im Vordergrund."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Nach ROSC – worauf achtest du?", optionen:[
+      {text:"Längere Intensivüberwachung (Rezidivgefahr!), Rhythmus/Kreislauf, Neurostatus, Lipid nach Schema, Auslöser dokumentieren", ziel:"end_gut", typ:"gut", fb:"Sehr gut – LAST kann rezidivieren, lange überwachen."},
+      {text:"Nach Stabilisierung rasch entlassen", ziel:"end_mittel", typ:"warn", fb:"Rezidivgefahr – ausreichend lange überwachen."} ]},
+    bad_wait:{ text:"Generalisierter Krampf, dann breite QRS-Tachykardie. Reaktion?", optionen:[
+      {text:"Krampf durchbrechen, Atemweg/O₂, Lipidemulsion sofort, Reanimationsbereitschaft", ziel:"end_mittel", typ:"warn", fb:"Spät – LAST schreitet rasch fort."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Kardiotoxischer Kreislaufstillstand."} ]},
+    bad_more:{ text:"Nach weiterer Gabe Krampf und Kreislaufkollaps. Reaktion?", optionen:[
+      {text:"Zufuhr stoppen, Lipidemulsion, Reanimation/ALS (prolongiert), Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – die Mehrgabe war der Fehler."},
+      {text:"Noch mehr geben", ziel:"end_schlecht", typ:"fehler", fb:"Letale Intoxikation."} ]},
+    bad_nolipid:{ text:"Trotz Krampftherapie zunehmende Kardiotoxizität (Arrhythmie). Reaktion?", optionen:[
+      {text:"Lipidemulsion nach Schema, Kreislaufunterstützung, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Lipid ist die kausale Maßnahme."},
+      {text:"Weiter ohne Lipid", ziel:"end_schlecht", typ:"fehler", fb:"Refraktäre Kardiotoxizität."} ]},
+    bad_epi:{ text:"Unter hochdosiertem Adrenalin Tachyarrhythmie, schlechtere Reanimationslage. Reaktion?", optionen:[
+      {text:"Adrenalindosis reduzieren, Lipidemulsion fortführen, ALS prolongiert", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter hochdosiert", ziel:"end_schlecht", typ:"fehler", fb:"Verschlechterte Reanimation."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Zufuhr gestoppt, Lipidrescue, prolongierte Reanimation, Intensiv.", fazit:"LAST: Zufuhr sofort stoppen, O₂/Atemweg, Krampf durchbrechen, Lipidemulsion 20 % (Lipidrescue) als spezifische Therapie; bei Stillstand prolongierte Reanimation mit reduzierten Adrenalindosen; längere Intensivüberwachung (Rezidiv)." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Überlebt, aber mit Risiko.", fazit:"Lipid nicht weglassen, Adrenalin reduzieren, lange überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Refraktäre Kardiotoxizität.", fazit:"Abwarten, Mehrgabe oder Lipid-Verzicht sind bei LAST tödlich." }
+  } },
+
+{ id:"anae_aufwachraum", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"😴", farbe:"#38bdf8", titel:"Flache Atmung im Aufwachraum", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Im Aufwachraum nach Allgemeinanästhesie: Patient zunehmend somnolent, flache langsame Atmung (AF 6), SpO₂ 88 %, enge Pupillen; intraoperativ Opioide.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Erste Maßnahme bei postoperativer Atemdepression?", optionen:[
+      {text:"Stimulieren/ansprechen, Atemweg freimachen, 100 % O₂, zur Atmung auffordern, Monitoring, Hilfe", ziel:"n2", typ:"gut", fb:"Richtig – stimulieren, Atemweg/O₂, Vitalüberwachung."},
+      {text:"Sofort hochdosiert Naloxon als großer Bolus", ziel:"n2", typ:"warn", fb:"Naloxon vorsichtig titrieren (Schmerz/Entzug/Lungenödem!) – nicht reflexartig als großer Bolus."},
+      {text:"Patienten schlafen lassen, er ist nur müde", ziel:"bad_wait", typ:"fehler", fb:"Bei AF 6 + SpO₂ 88 % keine harmlose Müdigkeit – Atemdepression behandeln."} ]},
+    n2:{ titel:"URSACHE/THERAPIE", text:"Verdacht auf Opioidüberhang. Vorgehen (AO)?", optionen:[
+      {text:"Naloxon titriert (kleine Schritte) nach AO, dabei O₂/Beatmung sichern; an Relaxansüberhang/andere Ursachen denken", ziel:"n3", typ:"gut", fb:"Korrekt – Naloxon titrieren; differenzialdiagnostisch auch Relaxansüberhang."},
+      {text:"Nur O₂ geben, sonst nichts", ziel:"n3", typ:"warn", fb:"O₂ allein behebt die zentrale Atemdepression oft nicht – Ursache angehen."} ]},
+    n3:{ titel:"DIFFERENZIAL", text:"Nach Naloxon bessert sich die Atmung nur teilweise; der Patient ist schwach, kann den Kopf nicht halten. Verdacht?", optionen:[
+      {text:"Relaxansüberhang (Restkurarisierung) → TOF/Relaxometrie, ggf. Antagonisierung nach AO, weiter O₂/Beatmungsbereitschaft", ziel:"n4", typ:"gut", fb:"Sehr gut – an Restrelaxierung denken (TOF), ggf. antagonisieren."},
+      {text:"Sicher nur noch müde, abwarten", ziel:"bad_relax", typ:"warn", fb:"Muskelschwäche spricht für Relaxansüberhang – nicht ignorieren."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"AF/SpO₂/Vigilanz, Re-Sedierung beachten (Naloxon kürzer wirksam als Opioid!), Muskelkraft/TOF, Schmerz, Kreislauf", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Naloxon wirkt kürzer als das Opioid → Re-Sedierung möglich."},
+      {text:"Nach kurzer Besserung sofort auf Station verlegen", ziel:"end_mittel", typ:"warn", fb:"Re-Sedierung möglich – ausreichend lange überwachen."} ]},
+    bad_wait:{ text:"AF 4, SpO₂ 80 %, kaum erweckbar. Reaktion?", optionen:[
+      {text:"Sofort assistierte/Masken-Beatmung, 100 % O₂, Naloxon titriert nach AO, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Spät, aber lebensrettend."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hypoxie/Atemstillstand."} ]},
+    bad_relax:{ text:"Der Patient desaturiert erneut, paradoxe Atmung, kann nicht durchatmen. Reaktion?", optionen:[
+      {text:"Masken-/Beatmungsbereitschaft, TOF-Messung, Antagonisierung der Relaxierung nach AO, O₂", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – die Restrelaxierung war die Ursache."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Respiratorische Erschöpfung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Ursache geklärt, titriert antagonisiert, ausreichend überwacht.", fazit:"Postoperative Atemdepression: stimulieren, Atemweg/O₂; Opioidüberhang → Naloxon titriert (kein großer Bolus; Re-Sedierung beachten, da kürzere Wirkdauer); an Relaxansüberhang denken (TOF, Antagonisierung); lange überwachen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber mit Risiko.", fazit:"Naloxon titrieren, an Restrelaxierung denken, wegen Re-Sedierung lange überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Atemstillstand/respiratorische Erschöpfung.", fazit:"Abwarten bei klarer Atemdepression und das Übersehen der Restrelaxierung sind gefährlich." }
+  } },
+
+{ id:"anae_spinal", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"💉", farbe:"#22c55e", titel:"Kreislauf nach Spinalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Kurz nach Spinalanästhesie: RR fällt auf 80/45, Bradykardie 48/min, Übelkeit/Schwindel; die sensible Blockade steigt höher als erwartet.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Erste Maßnahmen bei Hypotonie/Bradykardie nach Spinalanästhesie?", optionen:[
+      {text:"Beine hoch / Linksseitenlage (bei Schwangeren!), O₂, Volumen nach AO, Vasopressor (z. B. Akrinor/Ephedrin/Noradrenalin) nach AO, Monitoring", ziel:"n2", typ:"gut", fb:"Richtig – Lagerung, Volumen, Vasopressor; bei Schwangeren aortocavale Kompression vermeiden."},
+      {text:"Patienten aufsetzen, damit ihm nicht schwindelig wird", ziel:"bad_sit", typ:"fehler", fb:"Aufsetzen lässt Blockade/Hypotonie verschlimmern – flach/Beine hoch."},
+      {text:"Erst abwarten, der Druck reguliert sich", ziel:"bad_wait", typ:"warn", fb:"Bei symptomatischer Hypotonie/Bradykardie nicht abwarten."} ]},
+    n2:{ titel:"BRADYKARDIE", text:"Die Bradykardie nimmt zu (40/min) mit Hypotonie. Vorgehen (AO)?", optionen:[
+      {text:"Atropin nach AO gegen die Bradykardie, Vasopressor/Volumen weiter, O₂, engmaschig Monitoring", ziel:"n3", typ:"gut", fb:"Korrekt – Atropin bei symptomatischer Bradykardie, Kreislauf stützen."},
+      {text:"Nur weiter Volumen, Bradykardie ignorieren", ziel:"bad_brady", typ:"warn", fb:"Symptomatische Bradykardie braucht Atropin – nicht nur Volumen."} ]},
+    n3:{ titel:"AUFSTEIGENDE BLOCKADE", text:"Der Patient klagt über Atemnot und Kribbeln in den Händen, die Blockade steigt weiter. Reaktion?", optionen:[
+      {text:"Atemweg/O₂ sichern, Beatmungsbereitschaft (Atemmuskulatur!), Kreislauf weiter stützen, Anästhesist/Notfallteam, ggf. Intubation", ziel:"n4", typ:"gut", fb:"Sehr gut – hohe/totale Spinale kann die Atemmuskulatur lähmen."},
+      {text:"Beruhigen und weiter beobachten", ziel:"bad_high", typ:"warn", fb:"Aufsteigende Blockade mit Atemnot ist bedrohlich – Atemweg/Beatmung vorbereiten."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"RR/HF, Atmung/SpO₂, Blockadehöhe/Sensomotorik, Bewusstsein, Übelkeit, Rückbildung der Blockade", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur den Blutdruck einmal messen", ziel:"end_mittel", typ:"warn", fb:"HF/Atmung/Blockadehöhe engmaschig."} ]},
+    bad_sit:{ text:"Nach dem Aufsetzen kollabiert der Patient, RR 60/30. Reaktion?", optionen:[
+      {text:"Sofort flach/Beine hoch, Volumen/Vasopressor nach AO, O₂, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – das Aufsetzen war der Fehler."},
+      {text:"Wieder aufsetzen", ziel:"end_schlecht", typ:"fehler", fb:"Kreislaufkollaps."} ]},
+    bad_wait:{ text:"RR 60/35, zunehmende Eintrübung. Reaktion?", optionen:[
+      {text:"Volumen/Vasopressor nach AO, Beine hoch, O₂, eskalieren", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Schwerer Schock."} ]},
+    bad_brady:{ text:"Bradykardie 35/min, dann Neigung zur Asystolie. Reaktion?", optionen:[
+      {text:"Atropin nach AO, ggf. Adrenalin/Reanimationsbereitschaft, Kreislauf stützen, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Spät, aber lebensrettend."},
+      {text:"Weiter nur Volumen", ziel:"end_schlecht", typ:"fehler", fb:"Bradykarder Kreislaufstillstand."} ]},
+    bad_high:{ text:"Die Atemnot nimmt zu, Sprechen fällt schwer, SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Atemweg sichern/assistierte Beatmung, O₂, Kreislauf stützen, Anästhesist/Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät erkannt – Atemmuskulatur betroffen."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Respiratorische Insuffizienz (totale Spinale)."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Kreislauf gestützt, Bradykardie behandelt, Atemweg gesichert, überwacht.", fazit:"Hypotonie/Bradykardie nach Spinalanästhesie: flach/Beine hoch (Schwangere: Linksseitenlage gegen aortocavale Kompression), Volumen + Vasopressor, Atropin bei symptomatischer Bradykardie; bei hoher/totaler Spinale Atemweg/Beatmung sichern." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber mit Risiko.", fazit:"Nicht aufsetzen, früh Volumen/Vasopressor/Atropin, aufsteigende Blockade ernst nehmen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Kreislaufstillstand bzw. respiratorische Insuffizienz.", fazit:"Aufsetzen, Abwarten und das Ignorieren der Bradykardie/hohen Blockade sind gefährlich." }
+  } }
 ];
 
 function navGo(screen) {
