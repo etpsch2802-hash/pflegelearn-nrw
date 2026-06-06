@@ -5406,6 +5406,191 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Adrenalin i.m. nicht verzögern und nach Besserung ausreichend lange überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Atemwegsverlegung bzw. Arrhythmie.", fazit:"Verzögertes Adrenalin und unkontrolliertes i.v.-Adrenalin sind gefährlich." }
   } }
+,
+{ id:"paed_fieberkrampf", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🌡️", farbe:"#f59e0b", titel:"Krampfanfall bei Fieber", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Leon, 18 Monate, hohes Fieber: zu Hause generalisierter Krampfanfall, jetzt seit 2 min tonisch-klonisch zuckend, die Eltern sind panisch.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"WÄHREND DES ANFALLS", text:"Was tust du?", optionen:[
+      {text:"Vor Verletzung schützen, Seitenlage wenn möglich, nichts in den Mund, Dauer messen, Atemweg/SpO₂ beobachten, Hilfe", ziel:"n2", typ:"gut", fb:"Richtig – schützen, nichts in den Mund, Dauer messen."},
+      {text:"Etwas zwischen die Zähne schieben (Zungenbiss)", ziel:"bad_mouth", typ:"fehler", fb:"Nichts in den Mund – Verletzungs-/Aspirationsgefahr."},
+      {text:"Das Kind festhalten und die Zuckungen unterdrücken", ziel:"bad_hold", typ:"warn", fb:"Nicht festhalten/fixieren – nur vor Verletzung schützen."} ]},
+    n2:{ titel:"ANFALLSDAUER", text:"Der Anfall dauert nun > 5 min an. Was ist indiziert (AO)?", optionen:[
+      {text:"Antikonvulsivum nach Notfallschema (z. B. Benzodiazepin, gewichtsadaptiert), Atemweg/SpO₂ überwachen", ziel:"n3", typ:"gut", fb:"Korrekt – ab ca. 5 min medikamentös durchbrechen (Status-Gefahr)."},
+      {text:"Weiter abwarten, hört von selbst auf", ziel:"bad_wait", typ:"warn", fb:"> 5 min = drohender Status epilepticus – behandeln."},
+      {text:"Sofort Fieber mit kaltem Wasser/Eis senken", ziel:"n3", typ:"warn", fb:"Fiebersenkung ist nachrangig; aggressive Kühlung ungünstig – erst Anfall + Atemweg."} ]},
+    n3:{ titel:"NACH DEM ANFALL", text:"Der Anfall sistiert, das Kind ist postiktal schläfrig. Vorgehen?", optionen:[
+      {text:"Stabile Seitenlage, Atemweg/SpO₂/Vitalzeichen, Temperatur, ärztliche Abklärung der Ursache, Eltern aufklären", ziel:"n4", typ:"gut", fb:"Sehr gut – Ursachensuche + Beobachtung."},
+      {text:"Kind sofort nach Hause, war ja nur Fieber", ziel:"bad_home", typ:"warn", fb:"Ein (erstmaliger) Fieberkrampf gehört ärztlich abgeklärt."} ]},
+    n4:{ titel:"RED FLAGS", text:"Worauf achtest du besonders?", optionen:[
+      {text:"Bewusstsein/Wiederholung, Nackensteife/Petechien (Meningitis ausschließen!), Atmung, Temperatur, Elternberatung", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Meningitis-Zeichen aktiv ausschließen."},
+      {text:"Nur die Temperatur dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Meningitis-Zeichen/Wiederholung/Atmung gehören dazu."} ]},
+    bad_mouth:{ text:"Durch den Gegenstand im Mund würgt das Kind und droht zu aspirieren. Reaktion?", optionen:[
+      {text:"Gegenstand entfernen, Seitenlage, Atemweg freihalten/absaugen, Arzt", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – nichts in den Mund war der Fehler."},
+      {text:"Gegenstand drin lassen", ziel:"end_schlecht", typ:"fehler", fb:"Aspiration/Verlegung."} ]},
+    bad_hold:{ text:"Durch das Festhalten droht eine Verletzung, der Anfall läuft weiter. Reaktion?", optionen:[
+      {text:"Loslassen, nur Umgebung sichern, Dauer messen, bei > 5 min Medikation nach AO", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Noch fester halten", ziel:"end_schlecht", typ:"fehler", fb:"Verletzungsgefahr."} ]},
+    bad_wait:{ text:"Der Anfall dauert nun > 10 min (Status). Reaktion?", optionen:[
+      {text:"Sofort Antikonvulsivum nach AO, Atemweg/SpO₂, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Spät – Status epilepticus."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Prolongierter Status."} ]},
+    bad_home:{ text:"Zu Hause Verschlechterung: Nackensteife, Petechien. Reaktion?", optionen:[
+      {text:"Sofort zurück/Notfall – V.a. Meningitis → Klinik, Monitoring", ziel:"end_mittel", typ:"warn", fb:"Red Flags übersehen – jetzt Notfall."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Verkannte Meningitis."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Anfall sicher begleitet, Ursache abgeklärt, Eltern aufgeklärt.", fazit:"Fieberkrampf: schützen (nichts in den Mund, nicht festhalten), Dauer messen, > 5 min medikamentös durchbrechen, danach Ursache/Red Flags (Meningitis!) abklären." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber mit vermeidbarem Risiko.", fazit:"Dauer messen, rechtzeitig durchbrechen und Meningitis-Zeichen aktiv ausschließen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aspiration, prolongierter Status oder verkannte Meningitis.", fazit:"Nichts in den Mund, nicht festhalten, nicht zu lange abwarten, Red Flags ernst nehmen." }
+  } },
+
+{ id:"paed_krupp", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🗣️", farbe:"#38bdf8", titel:"Bellender Husten nachts", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Mia, 2 Jahre, nachts: bellender Husten, heisere Stimme, inspiratorischer Stridor in Ruhe, leichte Einziehungen, subfebril, ängstlich.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Was ist sinnvoll?", optionen:[
+      {text:"Ruhe bewahren, Kind aufrecht auf dem Arm der Eltern lassen, nicht aufregen, kühle/feuchte Luft, SpO₂/Atmung beobachten, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Aufregung verschlimmert den Stridor."},
+      {text:"Kind flach hinlegen und Racheninspektion mit Spatel", ziel:"bad_spatel", typ:"fehler", fb:"Racheninspektion/Aufregung kann den Atemweg verschlechtern (cave Epiglottitis) – vermeiden."},
+      {text:"Sofort unter Zwang mit kaltem Vernebler inhalieren", ziel:"n2", typ:"warn", fb:"Inhalation kann helfen, aber kein Zwang – erst beruhigen."} ]},
+    n2:{ titel:"THERAPIE", text:"Stridor in Ruhe – was ist Standard (AO)?", optionen:[
+      {text:"Glukokortikoid (z. B. Dexamethason/Prednisolon) nach AO; bei schwerem Stridor vernebeltes Adrenalin", ziel:"n3", typ:"gut", fb:"Korrekt – Steroid ist Standard, vernebeltes Adrenalin bei schwerem Stridor."},
+      {text:"Antibiotikum, weil Infektion", ziel:"n3", typ:"warn", fb:"Pseudokrupp ist meist viral – Antibiotika nicht primär."},
+      {text:"Fiebersenker reicht aus", ziel:"n3", typ:"warn", fb:"Behandelt nicht die Atemwegsobstruktion."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Zunehmender Stridor in Ruhe, stärkere Einziehungen, Blässe, Unruhe. Reaktion?", optionen:[
+      {text:"Vernebeltes Adrenalin nach AO, O₂, Kind ruhig lassen, sofort Arzt/Klinik, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – schwerer Krupp: Adrenalininhalation + Eskalation."},
+      {text:"Beruhigend einreden und weiter abwarten", ziel:"bad_wait", typ:"warn", fb:"Bei zunehmendem Stridor/Einziehungen eskalieren."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Stridor/Atemarbeit, SpO₂, Bewusstsein/Erschöpfung, nach Adrenalin Nachbeobachtung (Rebound), Eltern einbeziehen", ziel:"end_gut", typ:"gut", fb:"Sehr gut – nach Adrenalin auf Rebound achten."},
+      {text:"Nur die Temperatur", ziel:"end_mittel", typ:"warn", fb:"Atemarbeit/SpO₂/Erschöpfung im Vordergrund."} ]},
+    bad_spatel:{ text:"Bei der Racheninspektion gerät das Kind in Panik, der Stridor verstärkt sich massiv und droht zu verlegen. Reaktion?", optionen:[
+      {text:"Sofort aufhören, Kind beruhigen/aufrecht, O₂, Anästhesie/Klinik (Atemwegssicherung bereithalten)", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – keine Racheninspektion bei Stridor."},
+      {text:"Weiter inspizieren", ziel:"end_schlecht", typ:"fehler", fb:"Drohende Atemwegsverlegung."} ]},
+    bad_wait:{ text:"Kind zunehmend erschöpft, Stridor wird leiser (!), somnolent. Einordnung/Reaktion?", optionen:[
+      {text:"Leiser Stridor + Erschöpfung = Alarm → sofort Notfall/Anästhesie, O₂, Adrenalin nach AO", ziel:"end_mittel", typ:"warn", fb:"Spät erkannt – leiser werdender Stridor kann eine Verschlechterung sein."},
+      {text:"Beruhigend, scheint besser zu werden", ziel:"end_schlecht", typ:"fehler", fb:"Trügerische Ruhe vor dem Atemversagen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Kind beruhigt, Steroid/Adrenalin gegeben, stabil und überwacht.", fazit:"Pseudokrupp: Ruhe/aufrecht bei den Eltern, keine Racheninspektion, Steroid als Standard, vernebeltes Adrenalin bei schwerem Stridor; nach Adrenalin Rebound beachten; leiser Stridor + Erschöpfung = Alarm." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber riskant.", fazit:"Kind nicht aufregen, früh Steroid, bei schwerem Stridor Adrenalin und eskalieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Drohende/eingetretene Atemwegsverlegung.", fazit:"Racheninspektion und Abwarten sind beim Stridor gefährlich." }
+  } },
+
+{ id:"paed_bronchiolitis", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"👶", farbe:"#06b6d4", titel:"Atemnot beim Säugling", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Säugling, 4 Monate: seit 2 Tagen Schnupfen, jetzt Trinkschwäche, Tachypnoe, Nasenflügeln, Einziehungen, exspiratorisches Giemen, SpO₂ 90 %.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Was ist sinnvoll?", optionen:[
+      {text:"Oberkörper leicht erhöht, Nase freihalten (absaugen), O₂ titrieren, Trinkmenge/Atmung beobachten, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Atemwege freihalten, O₂ titrieren, Ernährung/Atmung im Blick."},
+      {text:"Sofort Antibiotikum, weil Infekt", ziel:"n2", typ:"warn", fb:"Bronchiolitis ist meist viral (RSV) – Antibiotika nicht primär."},
+      {text:"Kind flach lagern und ein Beruhigungsmittel geben", ziel:"bad_sed", typ:"fehler", fb:"Sedativa bei Atemnot kontraindiziert (Atemdepression); flach lagern ungünstig."} ]},
+    n2:{ titel:"FLÜSSIGKEIT", text:"Trinkschwäche bei Tachypnoe. Was ist sinnvoll (AO)?", optionen:[
+      {text:"Kleine häufige Mahlzeiten / ggf. Sonden- oder i.v.-Flüssigkeit nach AO; Aspirationsrisiko beachten", ziel:"n3", typ:"gut", fb:"Korrekt – Flüssigkeit sichern, Aspiration vermeiden."},
+      {text:"Zwingen, große Mengen auf einmal zu trinken", ziel:"bad_feed", typ:"warn", fb:"Bei Tachypnoe Aspirationsgefahr – kleine Mengen/Sonde."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Zunehmende Atemnot, SpO₂ 86 %, Apnoe-Phasen. Reaktion?", optionen:[
+      {text:"O₂ erhöhen/Monitoring, sofort Arzt/Klinik, Apnoe-Überwachung, ggf. Atemunterstützung (High-Flow/CPAP)", ziel:"n4", typ:"gut", fb:"Sehr gut – Apnoen beim jungen Säugling sind Warnzeichen."},
+      {text:"Inhalieren und abwarten", ziel:"bad_wait", typ:"warn", fb:"Bei Apnoen/SpO₂-Abfall eskalieren – nicht nur abwarten."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"SpO₂, Atemarbeit, Apnoe, Trinkmenge/Ausscheidung, Bewusstsein, Temperatur", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur SpO₂ bis 100 % anstreben", ziel:"end_mittel", typ:"warn", fb:"Zielgerechte Sättigung; Apnoe/Trinkmenge gehören dazu."} ]},
+    bad_sed:{ text:"Nach dem Beruhigungsmittel sinkt die Atemfrequenz, SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Sedativum war falsch: stimulieren, O₂, Atemweg, Notfallteam/Klinik", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – keine Sedativa bei Atemnot."},
+      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Atemdepression."} ]},
+    bad_feed:{ text:"Beim erzwungenen Trinken verschluckt sich das Kind, SpO₂ fällt, es hustet. Reaktion?", optionen:[
+      {text:"Stoppen, absaugen, aufrecht/Seitenlage, O₂, kleine Mengen/Sonde nach AO", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Aspiration vermieden."},
+      {text:"Weiter zwingen", ziel:"end_schlecht", typ:"fehler", fb:"Aspiration."} ]},
+    bad_wait:{ text:"Die Apnoen häufen sich, das Kind wird schlaff. Reaktion?", optionen:[
+      {text:"Sofort Atemunterstützung/Reanimationsbereitschaft, O₂, Klinik/Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Respiratorische Erschöpfung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Atemwege freigehalten, O₂/Flüssigkeit gesteuert, rechtzeitig eskaliert.", fazit:"Bronchiolitis (RSV): Atemwege freihalten/absaugen, O₂ titrieren, Flüssigkeit sichern (Aspiration vermeiden), keine Sedativa; Apnoen beim jungen Säugling = Warnzeichen; Antibiotika nicht primär." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber riskant.", fazit:"Bei Apnoen/SpO₂-Abfall früh eskalieren und Aspiration vermeiden." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Respiratorische Erschöpfung.", fazit:"Sedativa, Trinkzwang und Abwarten sind beim atemnötigen Säugling gefährlich." }
+  } },
+
+{ id:"paed_exsikkose", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"💧", farbe:"#0ea5e9", titel:"Erbrechen & Durchfall", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Emil, 14 Monate: seit 2 Tagen Erbrechen + wässrige Durchfälle. Trinkt wenig, eingesunkene Augen, trockene Schleimhäute, verlängerte Rekap-Zeit, wenige nasse Windeln, müde.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"EINSCHÄTZUNG", text:"Erste Maßnahme?", optionen:[
+      {text:"Hydratationszustand/Vitalzeichen erfassen, orale Rehydratationslösung (ORS) in kleinen Schlucken, Arzt, Bilanz (Windeln/Gewicht)", ziel:"n2", typ:"gut", fb:"Richtig – bei leichter/mittlerer Exsikkose ist ORS erste Wahl."},
+      {text:"Reines Wasser oder Saft/Cola in großen Mengen geben", ziel:"n2", typ:"warn", fb:"Cola/Saft (zuckerreich, elektrolytarm) ist ungeeignet – spezielle ORS, kleine Mengen."},
+      {text:"Durchfall sofort mit Loperamid stoppen", ziel:"bad_lop", typ:"fehler", fb:"Motilitätshemmer sind bei Kleinkindern/infektiösem Durchfall nicht indiziert."} ]},
+    n2:{ titel:"ORS-VORGEHEN", text:"Das Kind erbricht die erste größere Menge. Wie weiter (AO)?", optionen:[
+      {text:"ORS löffel-/schluckweise sehr häufig (kleine Mengen), Geduld; bei Versagen/Verschlechterung i.v.-Rehydratation", ziel:"n3", typ:"gut", fb:"Korrekt – kleine Mengen häufig, bei Versagen i.v."},
+      {text:"Aufgeben und nur abwarten", ziel:"bad_wait", typ:"warn", fb:"Bei fortgesetzten Verlusten droht Verschlechterung – dranbleiben/eskalieren."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Zunehmend lethargisch, Rekap > 3 s, Tachykardie, kaum Urin (schwere Dehydratation/Schock). Reaktion?", optionen:[
+      {text:"i.v.-Zugang, Volumenbolus (Kristalloid) nach AO, Monitoring, Klinik/Intensiv, Elektrolyte/BZ", ziel:"n4", typ:"gut", fb:"Sehr gut – schwere Dehydratation/Schock = i.v.-Rehydratation."},
+      {text:"Weiter nur ORS löffelweise", ziel:"bad_wait", typ:"warn", fb:"Bei Schock reicht oral nicht – i.v."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Vitalzeichen, Bewusstsein, Rekap-Zeit, Ausscheidung/Bilanz/Gewicht, Elektrolyte/BZ, Hautturgor", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur, ob es noch erbricht", ziel:"end_mittel", typ:"warn", fb:"Vitalzeichen/Bilanz/Elektrolyte gehören dazu."} ]},
+    bad_lop:{ text:"Nach Loperamid Bauchauftreibung, Zustand nicht besser. Reaktion?", optionen:[
+      {text:"Motilitätshemmer absetzen, ORS/i.v. nach AO, ärztliche Beurteilung", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Loperamid war ungeeignet."},
+      {text:"Mehr Loperamid", ziel:"end_schlecht", typ:"fehler", fb:"Nebenwirkungen, keine Ursachenbehandlung."} ]},
+    bad_wait:{ text:"Das Kind wird zunehmend apathisch, kühl, kaum ansprechbar. Reaktion?", optionen:[
+      {text:"Sofort i.v.-Volumen nach AO, Monitoring, Klinik/Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hypovolämer Schock."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Rehydratation gesteuert, rechtzeitig auf i.v. eskaliert.", fazit:"Exsikkose bei Gastroenteritis: Grad einschätzen, ORS (kleine Mengen häufig) bei leicht/mittel, i.v. bei schwerer Dehydratation/Schock; keine Motilitätshemmer, kein Cola/Saft; Bilanz/Gewicht/Elektrolyte." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber mit Risiko.", fazit:"Dranbleiben und bei Schockzeichen früh i.v. rehydrieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hypovolämer Schock.", fazit:"Motilitätshemmer und Abwarten sind bei der kindlichen Exsikkose gefährlich." }
+  } },
+
+{ id:"paed_meningokokken", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🔴", farbe:"#dc2626", titel:"Fieber mit Hautflecken", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Hanna, 5 Jahre: hohes Fieber, zunehmend schläfrig, Kopfschmerz, Nackensteife; jetzt rasch auftretende, nicht wegdrückbare petechiale Hautflecken, RR niedrig-normal, Rekap verlängert.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Was ist hier entscheidend?", optionen:[
+      {text:"Notfall erkennen (V.a. Meningokokken-Sepsis/Meningitis), sofort Arzt/Notfallteam, Monitoring, i.v.-Zugang, isolieren", ziel:"n2", typ:"gut", fb:"Richtig – nicht wegdrückbare Petechien + Fieber + Vigilanzminderung = Notfall."},
+      {text:"Erst beobachten, ob sich die Flecken ausbreiten", ziel:"n2", typ:"warn", fb:"Kein Abwarten – rasch progrediente Petechien sind ein Alarmzeichen."},
+      {text:"Fiebersenker geben und in 1 h neu beurteilen", ziel:"bad_wait", typ:"fehler", fb:"Bei septischen Petechien kein Abwarten – sofort handeln."} ]},
+    n2:{ titel:"ZEITKRITISCH", text:"Was ist zeitkritisch (AO)?", optionen:[
+      {text:"Sofortige i.v.-Antibiose (so früh wie möglich) nach AO, Volumen, O₂, Klinik/Intensiv; Umgebungsprophylaxe bedenken", ziel:"n3", typ:"gut", fb:"Korrekt – frühe Antibiose ist lebensentscheidend."},
+      {text:"Erst Lumbalpunktion abwarten, vorher keine Antibiose", ziel:"bad_lp", typ:"warn", fb:"Die LP darf die Antibiose nicht verzögern – bei Sepsiszeichen Antibiose zuerst."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"RR fällt weiter, Marmorierung, zunehmende Eintrübung (septischer Schock). Reaktion?", optionen:[
+      {text:"Volumenboli nach AO, Vasopressor/Intensiv nach AO, Monitoring, Reanimationsbereitschaft", ziel:"n4", typ:"gut", fb:"Sehr gut – septischer Schock, aggressive Stabilisierung."},
+      {text:"Nur Antibiose, kein Volumen", ziel:"bad_vol", typ:"warn", fb:"Im Schock auch Kreislaufstabilisierung nötig."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Kreislauf/MAP, Bewusstsein, Ausbreitung der Petechien, Diurese, Temperatur, neurologische Zeichen, Isolation/Schutz", ziel:"end_gut", typ:"gut", fb:"Sehr gut – auch an Personalschutz/Umgebungsprophylaxe denken."},
+      {text:"Nur die Temperatur", ziel:"end_mittel", typ:"warn", fb:"Kreislauf/Neuro/Diurese im Vordergrund."} ]},
+    bad_wait:{ text:"Innerhalb kurzer Zeit dramatische Ausbreitung der Petechien, das Kind kollabiert. Reaktion?", optionen:[
+      {text:"Sofort i.v.-Antibiose, Volumen, Reanimationsbereitschaft, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät – fulminanter Verlauf, jede Minute zählt."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Fulminante Meningokokkensepsis (Waterhouse-Friderichsen)."} ]},
+    bad_lp:{ text:"Durch das Warten auf die LP verzögert sich die Antibiose, der Zustand verschlechtert sich. Reaktion?", optionen:[
+      {text:"Antibiose jetzt sofort, LP nachholen, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Antibiose hat Vorrang."},
+      {text:"Weiter auf die LP warten", ziel:"end_schlecht", typ:"fehler", fb:"Gefährliche Verzögerung."} ]},
+    bad_vol:{ text:"RR bleibt trotz Antibiose niedrig. Reaktion?", optionen:[
+      {text:"Volumen + Vasopressor nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Kreislauf stabilisieren."},
+      {text:"Weiter nur beobachten", ziel:"end_schlecht", typ:"fehler", fb:"Septischer Schock."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Früh erkannt, sofort Antibiose und Kreislaufstabilisierung, Intensiv.", fazit:"Meningokokken-Sepsis: nicht wegdrückbare Petechien + Fieber = Notfall; frühe i.v.-Antibiose (nicht durch LP verzögern), Kreislauf stabilisieren, Intensiv; Isolation/Personalschutz + Umgebungsprophylaxe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber knapp.", fazit:"Antibiose hat Vorrang, parallel Kreislauf stabilisieren – jede Minute zählt." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Fulminanter septischer Schock.", fazit:"Abwarten und Verzögern der Antibiose sind lebensgefährlich." }
+  } },
+
+{ id:"paed_aspiration", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🥜", farbe:"#eab308", titel:"Verschlucktes Kleinteil", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Paul, 1 Jahr, beim Spielen mit Kleinteilen: plötzlich heftiger Husten, dann Würgen, jetzt Atemnot mit Stridor; er hustet noch kräftig, ist aber sichtlich in Not.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"EINSCHÄTZUNG", text:"Das Kind hustet noch kräftig (effektiver Husten). Was tust du?", optionen:[
+      {text:"Zum Weiterhusten ermutigen, NICHT auf den Rücken schlagen, beobachten, Hilfe rufen, bereit sein einzugreifen", ziel:"n2", typ:"gut", fb:"Richtig – bei effektivem Husten nicht eingreifen, nur ermutigen und beobachten."},
+      {text:"Sofort blind mit den Fingern im Mund nach dem Objekt suchen", ziel:"bad_blind", typ:"fehler", fb:"Blindes Auswischen kann den Fremdkörper tiefer schieben – verboten."},
+      {text:"Sofort kräftig auf den Rücken schlagen", ziel:"bad_back", typ:"warn", fb:"Solange der Husten effektiv ist, nicht schlagen – zuerst husten lassen."} ]},
+    n2:{ titel:"INEFFEKTIVER HUSTEN", text:"Der Husten wird leise, das Kind bekommt kaum noch Luft (ineffektiver Husten), ist aber bei Bewusstsein. Vorgehen (Säugling/Kleinkind)?", optionen:[
+      {text:"5 Rückenschläge, dann 5 Thoraxkompressionen (Säugling) im Wechsel; bei größerem Kind ggf. Bauchstöße; Notruf", ziel:"n3", typ:"gut", fb:"Korrekt – bei ineffektivem Husten Rückenschläge + Thoraxkompressionen, Notruf."},
+      {text:"Kräftige Bauchstöße (Heimlich) beim Säugling", ziel:"bad_heimlich", typ:"warn", fb:"Beim Säugling keine Bauchstöße – Rückenschläge + Thoraxkompressionen."} ]},
+    n3:{ titel:"BEWUSSTLOSIGKEIT", text:"Das Kind wird bewusstlos. Reaktion?", optionen:[
+      {text:"Reanimation beginnen (Thoraxkompressionen); bei Beatmung Mund auf sichtbaren Fremdkörper prüfen; Notruf/Notfallteam", ziel:"n4", typ:"gut", fb:"Sehr gut – CPR; nur sichtbaren Fremdkörper entfernen."},
+      {text:"Weiter nur auf den Rücken klopfen", ziel:"bad_back", typ:"warn", fb:"Bei Bewusstlosigkeit CPR beginnen."} ]},
+    n4:{ titel:"NACH ERFOLG", text:"Der Fremdkörper löst sich / die Atmung kehrt zurück. Worauf achtest du?", optionen:[
+      {text:"Atmung/SpO₂, Bewusstsein, ärztliche Kontrolle (Restmaterial/Schleimhautschaden, ggf. Bronchoskopie), Eltern", ziel:"end_gut", typ:"gut", fb:"Sehr gut – immer ärztlich abklären."},
+      {text:"Kind nach Hause schicken, geht ja wieder", ziel:"end_mittel", typ:"warn", fb:"Nach Aspiration ärztliche Kontrolle nötig (Restmaterial/Komplikationen)."} ]},
+    bad_blind:{ text:"Durch das blinde Auswischen rutscht der Fremdkörper tiefer, komplette Verlegung. Reaktion?", optionen:[
+      {text:"Notfallalgorithmus: Rückenschläge/Thoraxkompressionen, bei Bewusstlosigkeit CPR, Notruf", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – nie blind auswischen."},
+      {text:"Weiter mit den Fingern suchen", ziel:"end_schlecht", typ:"fehler", fb:"Komplette Verlegung."} ]},
+    bad_back:{ text:"Das Vorgehen passt nicht zur Situation, der Zustand verschlechtert sich. Reaktion?", optionen:[
+      {text:"Am Algorithmus orientieren (effektiver Husten → husten lassen; ineffektiv → Schläge + Kompressionen; bewusstlos → CPR)", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Unverändert weitermachen", ziel:"end_schlecht", typ:"fehler", fb:"Verlegung/Hypoxie."} ]},
+    bad_heimlich:{ text:"Nach Bauchstößen beim Säugling Zeichen einer Bauchverletzung, die Verlegung bleibt. Reaktion?", optionen:[
+      {text:"Auf Rückenschläge + Thoraxkompressionen wechseln, Notruf, bei Bewusstlosigkeit CPR", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – beim Säugling keine Bauchstöße."},
+      {text:"Weiter Bauchstöße", ziel:"end_schlecht", typ:"fehler", fb:"Verletzung/anhaltende Verlegung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Fremdkörper entfernt, Atmung zurück, ärztlich kontrolliert.", fazit:"Fremdkörperaspiration: effektiver Husten → ermutigen, nicht eingreifen, nie blind auswischen; ineffektiver Husten beim Säugling → 5 Rückenschläge + 5 Thoraxkompressionen (keine Bauchstöße!); Bewusstlosigkeit → CPR; danach immer ärztliche Kontrolle." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber riskant.", fazit:"Streng am altersgerechten Algorithmus orientieren und danach ärztlich abklären." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Komplette Atemwegsverlegung.", fazit:"Blindes Auswischen und falsches Manöver sind bei der Aspiration gefährlich." }
+  } }
 ];
 
 function navGo(screen) {
