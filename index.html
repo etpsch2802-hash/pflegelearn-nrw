@@ -2884,6 +2884,115 @@ const KRANKHEITSBILDER = {
       }
     ]
   }
+
+,
+  paediatrie: {
+    label: "Pädiatrie",
+    icon: "👶",
+    farbe: "#f472b6",
+    bilder: [
+      {
+        name: "Pseudokrupp (Laryngitis subglottica)",
+        icd: "J05.0",
+        definition: "Virale Entzündung im subglottischen Larynxbereich mit Schleimhautschwellung. Typisch nachts bei Kleinkindern (6 Mon.–3 J.), meist selbstlimitierend.",
+        symptome: ["Bellender Husten", "Heiserkeit", "Inspiratorischer Stridor", "Einziehungen/Atemnot bei Schwere", "Meist nur subfebril", "Verschlechterung nachts und bei Aufregung"],
+        diagnostik: ["Klinische Diagnose (Anamnese, Auskultation)", "Schweregrad: Stridor in Ruhe? Einziehungen?", "SpO₂", "Keine routinemäßige Racheninspektion (cave Epiglottitis)"],
+        therapie: ["Ruhe, Kind aufrecht bei der Bezugsperson", "Kühle, feuchte Luft", "Glukokortikoid (z. B. Dexamethason/Prednisolon)", "Bei schwerem Stridor: vernebeltes Adrenalin", "O₂ bei Hypoxie", "Stationär bei Stridor in Ruhe/Erschöpfung"],
+        pflege: ["Kind beruhigen, nicht aufregen", "Aufrechte Lagerung auf dem Arm der Eltern", "Atemarbeit/SpO₂ engmaschig", "Nach Adrenalininhalation auf Rebound achten", "Eltern anleiten (kühle Luft, Ruhe)"],
+        merksatz: "Bellender Husten + Stridor nachts = Pseudokrupp: Ruhe, Steroid, bei schwerem Stridor vernebeltes Adrenalin.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Atmung r/t subglottischer Schleimhautschwellung m/d/s inspiratorischem Stridor, Einziehungen, Unruhe",
+            ressourcen: ["Eltern anwesend und beruhigend", "Kind auf dem Arm der Eltern ruhig", "Kooperative Familie"],
+            ziel: "Kind atmet innerhalb von 2 h ruhiger, kein Stridor in Ruhe, SpO₂ ≥ 94 %",
+            massnahmen: ["Kind aufrecht bei der Bezugsperson belassen, nicht aufregen", "Kühle, feuchte Luft anbieten", "Steroid und ggf. vernebeltes Adrenalin nach AO", "SpO₂/Atemarbeit engmaschig, nach Adrenalin Rebound beobachten", "Keine Racheninspektion ohne ärztliche Indikation"],
+            evaluation: "Stridor und Einziehungen rückläufig, SpO₂ stabil, Kind ruhig."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Bronchiolitis (RSV)",
+        icd: "J21.0",
+        definition: "Meist durch RSV ausgelöste Entzündung der kleinen Atemwege bei Säuglingen (< 1–2 J.) mit obstruktiver Atemnot. Häufigste untere Atemwegsinfektion im 1. Lebensjahr.",
+        symptome: ["Vorausgehender Schnupfen", "Tachypnoe, Nasenflügeln", "Einziehungen", "Exspiratorisches Giemen/feinblasige RGs", "Trinkschwäche", "Apnoen bei jungen Säuglingen"],
+        diagnostik: ["Klinische Diagnose", "SpO₂ und Atemfrequenz", "RSV-Schnelltest (optional)", "Beobachtung von Trinkverhalten/Hydratation", "Röntgen nur bei Komplikationsverdacht"],
+        therapie: ["Atemwege freihalten (Nase absaugen)", "O₂ titriert (Zielsättigung)", "Flüssigkeitszufuhr sichern (kleine Mengen/Sonde/i.v.)", "Ggf. High-Flow/CPAP", "Monitoring (Apnoe!)", "Antibiotika nur bei bakterieller Superinfektion"],
+        pflege: ["Nase absaugen/freihalten", "Oberkörper leicht erhöht lagern", "Kleine häufige Mahlzeiten, Aspiration vermeiden", "SpO₂- und Apnoe-Monitoring", "Ein-/Ausfuhr und Gewicht dokumentieren"],
+        merksatz: "Säugling + Schnupfen + Giemen + Trinkschwäche = Bronchiolitis: absaugen, O₂ titrieren, Apnoen beachten.",
+        pflegeplanung: [
+          {
+            problem: "Ineffektive Atemwegsclearance r/t Sekretobstruktion der kleinen Atemwege m/d/s Giemen, Einziehungen, SpO₂-Abfall",
+            ressourcen: ["Eltern unterstützen die Pflege", "Kind trinkt in kleinen Mengen", "Zu Beginn stabiler Allgemeinzustand"],
+            ziel: "Säugling zeigt innerhalb von 24 h freie Atemwege, SpO₂ im Zielbereich, keine Apnoen",
+            massnahmen: ["Nase regelmäßig absaugen/freihalten", "Oberkörper leicht erhöht lagern", "O₂ nach AO titrieren, SpO₂ kontinuierlich", "Apnoe-Monitoring beim jungen Säugling", "Trinkmenge sichern (kleine Mengen/Sonde nach AO), Aspiration vermeiden"],
+            evaluation: "Atemarbeit reduziert, SpO₂ stabil, keine Apnoen, ausreichende Trinkmenge."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Asthma bronchiale (im Kindesalter)",
+        icd: "J45",
+        definition: "Chronisch-entzündliche Atemwegserkrankung mit variabler, reversibler Obstruktion und bronchialer Hyperreagibilität; anfallsartige Atemnot.",
+        symptome: ["Anfallsartige Atemnot", "Exspiratorisches Giemen, verlängertes Exspirium", "Trockener Husten (oft nachts)", "Engegefühl in der Brust", "Bei schwerem Anfall: Sprechdyspnoe, Einziehungen, Tachykardie"],
+        diagnostik: ["Anamnese (Trigger, Atopie)", "Auskultation (Giemen)", "Peak-Flow/Spirometrie (ältere Kinder)", "SpO₂", "Reversibilität nach Bronchodilatator"],
+        therapie: ["Anfall: inhalative kurzwirksame Beta-2-Mimetika (SABA)", "Systemische Steroide bei mittlerem/schwerem Anfall", "O₂ bei Hypoxie", "Dauertherapie: inhalative Steroide (ICS)", "Trigger meiden, Schulung"],
+        pflege: ["Beruhigen, atemerleichternde Lagerung (Kutschersitz)", "Inhalation mit Spacer anleiten", "SpO₂/Atemarbeit überwachen", "Peak-Flow-Protokoll", "Triggervermeidung, Schulung von Kind und Eltern"],
+        merksatz: "Asthmaanfall: SABA inhalativ + ggf. Steroide, aufrechte Lagerung, Ruhe; leiser werdendes Atemgeräusch ist ein Warnzeichen.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Atmung r/t bronchialer Obstruktion m/d/s Giemen, verlängertem Exspirium, Dyspnoe",
+            ressourcen: ["Kind kennt seine Inhalation", "Eltern unterstützend", "Bekannte Trigger"],
+            ziel: "Kind atmet innerhalb von 1 h ruhiger, Giemen rückläufig, SpO₂ ≥ 94 %",
+            massnahmen: ["Atemerleichternde Lagerung (Kutschersitz), Ruhe", "Inhalative Bronchodilatatoren nach AO mit Spacer", "SpO₂/Atemfrequenz/Atemarbeit engmaschig", "Steroide nach AO bei mittlerem/schwerem Anfall", "Kind und Eltern anleiten, Trigger meiden"],
+            evaluation: "Dyspnoe und Giemen rückläufig, SpO₂ stabil, Kind ruhig."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Akute Gastroenteritis mit Exsikkose",
+        icd: "A09",
+        definition: "Meist virale (z. B. Rota-/Norovirus) Entzündung des Magen-Darm-Trakts mit Erbrechen/Durchfall. Bei Kleinkindern besteht rasche Dehydratationsgefahr.",
+        symptome: ["Erbrechen, wässrige Durchfälle", "Bauchschmerzen", "Eingesunkene Augen, trockene Schleimhäute", "Verlängerte Rekap-Zeit, reduzierter Hautturgor", "Verminderte Urinausscheidung", "Lethargie bei Schwere"],
+        diagnostik: ["Klinische Einschätzung des Dehydratationsgrades", "Gewichtsverlauf", "Vitalzeichen, Rekap-Zeit", "Bei Schwere: Elektrolyte, BZ", "Stuhldiagnostik nur bei Indikation"],
+        therapie: ["Orale Rehydratationslösung (ORS) in kleinen Mengen", "Bei schwerer Dehydratation/Schock: i.v.-Rehydratation", "Frühe Wiederernährung", "Keine Motilitätshemmer bei Kleinkindern", "Hygiene/Isolation (Übertragung)"],
+        pflege: ["ORS löffelweise/häufig anbieten", "Ein-/Ausfuhr, Windeln, Gewicht dokumentieren", "Vitalzeichen/Rekap-Zeit überwachen", "Hautpflege im Windelbereich", "Hände- und Flächenhygiene, Isolation nach Hausstandard"],
+        merksatz: "Kind + Erbrechen/Durchfall = Exsikkosegefahr: ORS in kleinen Mengen, i.v. bei Schock, keine Motilitätshemmer.",
+        pflegeplanung: [
+          {
+            problem: "Flüssigkeitsdefizit r/t Erbrechen und Durchfall m/d/s trockenen Schleimhäuten, verlängerter Rekap-Zeit, verminderter Urinausscheidung",
+            ressourcen: ["Kind nimmt kleine Mengen ORS an", "Eltern beteiligen sich an der Pflege", "Frühzeitige Vorstellung"],
+            ziel: "Kind ist innerhalb von 24 h ausreichend hydriert (feuchte Schleimhäute, Rekap < 2 s, ausreichende Urinmenge)",
+            massnahmen: ["ORS in kleinen Mengen sehr häufig anbieten", "Ein-/Ausfuhr und Gewicht dokumentieren", "Vitalzeichen/Rekap-Zeit/Bewusstsein überwachen", "Bei Versagen/Schockzeichen i.v.-Rehydratation nach AO", "Hygiene/Isolation, Hautschutz im Windelbereich"],
+            evaluation: "Hydratationszeichen verbessert, Trink- und Urinmenge ausreichend, Gewicht stabilisiert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Fieberkrampf",
+        icd: "R56.0",
+        definition: "Mit Fieber assoziierter zerebraler Krampfanfall bei Kindern (meist 6 Mon.–5 J.) ohne ZNS-Infektion. Einfacher (kurz, generalisiert) vs. komplizierter Fieberkrampf.",
+        symptome: ["Generalisierter tonisch-klonischer Anfall im Fieber", "Bewusstseinsverlust", "Postiktale Schläfrigkeit", "Meist < 5 min (einfacher Fieberkrampf)", "Komplizierter: > 15 min, fokal oder wiederholt"],
+        diagnostik: ["Klinische Diagnose + Anamnese", "Meningitis/Enzephalitis ausschließen (Nackensteife, Petechien, Vigilanz!)", "Temperatur und Fokussuche", "Bei kompliziertem Krampf weiterführende Abklärung", "BZ bei Bewusstseinsstörung"],
+        therapie: ["Schützen, nichts in den Mund, Dauer messen", "Bei > 5 min: Benzodiazepin nach Notfallschema", "Fokus des Fiebers behandeln", "Aufklärung der Eltern (gute Prognose beim einfachen Fieberkrampf)"],
+        pflege: ["Während des Anfalls vor Verletzung schützen, Seitenlage", "Atemweg/SpO₂ beobachten, Dauer messen", "Postiktal Seitenlage und Vitalzeichen", "Meningitis-Zeichen aktiv beobachten", "Eltern beruhigen und anleiten"],
+        merksatz: "Fieberkrampf: schützen (nichts in den Mund), Dauer messen, > 5 min durchbrechen, Meningitis ausschließen.",
+        pflegeplanung: [
+          {
+            problem: "Verletzungsgefahr r/t generalisiertem Krampfanfall m/d/s unkontrollierten Bewegungen und Bewusstseinsverlust",
+            ressourcen: ["Eltern anwesend", "Rasche Reaktion des Teams", "Kind zwischen den Anfällen stabil"],
+            ziel: "Kind erleidet während und nach dem Anfall keine Verletzung; der Atemweg bleibt frei",
+            massnahmen: ["Umgebung sichern, vor Verletzung schützen, nichts in den Mund", "Seitenlage, Atemweg/SpO₂ beobachten, Anfallsdauer messen", "Bei > 5 min Medikation nach Notfallschema/AO", "Postiktal Seitenlage und Vitalzeichen, Meningitis-Zeichen beobachten", "Eltern beruhigen und über den Fieberkrampf aufklären"],
+            evaluation: "Keine Verletzung, Atemweg frei, Anfall sistiert, Eltern informiert."
+          }
+        ],
+        fragen: []
+      }
+    ]
+  }
 };
 
 // ─── ERWEITERTE KRANKHEITSBILDER ──────────────────────────────
@@ -6785,6 +6894,16 @@ const TASCHENKARTEN = [
       { label:"Prinzip", punkte:["Präsentationsdiagramme + Indikatoren","Höchste zutreffende Stufe zählt","Legt Wartezeit fest, nicht Reihenfolge"] },
       { label:"Rot – Beispiele", punkte:["Kreislaufstillstand · Schock","Verlegte Atemwege","Nicht ansprechbar / schwerste Atemnot"] },
       { label:"Merke", punkte:["0–10–30–90–120 min (Rot→Blau)","Ersteinschätzung, keine Diagnose"] }
+    ]
+  }
+,
+  { id:"paed-notfall", titel:"Pädiatrie Notfälle", icon:"👶", farbe:"#f472b6",
+    vorderseite:[
+      { label:"Atemnot beim Kind", punkte:["Pseudokrupp: Ruhe, Steroid, schwerer Stridor → Adrenalin-Inhalation","Bronchiolitis (RSV): absaugen, O₂ titrieren, Apnoen beachten","Asthma: SABA inhalativ + ggf. Steroid"] },
+      { label:"Fieberkrampf", punkte:["Schützen, nichts in den Mund","Dauer messen, > 5 min durchbrechen","Meningitis ausschließen (Petechien/Nackensteife)"] },
+      { label:"Exsikkose (Gastroenteritis)", punkte:["ORS in kleinen Mengen häufig","i.v. bei Schock","keine Motilitätshemmer"] },
+      { label:"Fremdkörperaspiration", punkte:["Effektiver Husten → ermutigen","Säugling: 5 Rückenschläge + 5 Thoraxkompressionen","Nie blind auswischen; bewusstlos → CPR"] },
+      { label:"Warnzeichen", punkte:["Leiser werdender Stridor + Erschöpfung","Apnoen beim Säugling","Nicht wegdrückbare Petechien = Notfall"] }
     ]
   }
 ];
