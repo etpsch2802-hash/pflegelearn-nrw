@@ -432,6 +432,7 @@
 
   <button onclick="toggleNavSec('lernen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">LERNEN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-lernen" style="display:none">
+    <button onclick="navGo('faelle')" class="nav-drop-btn">🩺 Fallbeispiele</button>
     <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
     <button onclick="navGo('lernplan')" class="nav-drop-btn">📅 Lernplan</button>
     <button onclick="startExam()" class="nav-drop-btn">📄 Prüfungssimulator</button>
@@ -578,6 +579,13 @@
       <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Manchester Triage · BLS · ACLS · ABCDE · Simulator</div>
     </div>
     <div style="margin-left:auto;font-size:20px;color:#fca5a5">›</div>
+  </button>
+
+  <!-- ── FALLBEISPIELE (prominent) ── -->
+  <button onclick="navGo('faelle')" style="width:100%;background:linear-gradient(135deg,rgba(56,189,248,.16),rgba(14,165,233,.06));border:1px solid rgba(56,189,248,.4);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:32px">🩺</div>
+    <div style="flex:1"><div style="font-size:15px;font-weight:700;color:#7dd3fc">Fallbeispiele</div><div style="font-size:11px;color:#4a7a9b;margin-top:3px">Interaktive Entscheidungs-Fälle · verzweigt</div></div>
+    <div style="margin-left:auto;font-size:20px;color:#7dd3fc">›</div>
   </button>
 
   <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
@@ -855,6 +863,17 @@
 <div class="page" id="screen-abcde-sim">
   <div id="abcde-sim-content"></div>
 </div>
+
+<!-- FALLBEISPIELE -->
+<div class="page" id="screen-faelle">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:10px"><div class="hero-icon">🩺</div><h1>Fall<span>beispiele</span></h1><p>Interaktive Fälle – deine Entscheidungen bestimmen den Verlauf</p></div>
+    <div id="faelle-faecher" style="text-align:center;margin-bottom:8px"></div>
+    <div id="faelle-liste"></div>
+  </div>
+</div>
+<!-- FALL-PLAYER -->
+<div class="page" id="screen-fall"><div id="fall-content"></div></div>
 
 <!-- MEDIZINTECHNIK -->
 <div class="page" id="screen-medizintechnik">
@@ -4770,6 +4789,250 @@ function answerABCDE(idx){
   }
 }
 
+// ─── FALLBEISPIELE: VERZWEIGTE ENGINE ───────────────────────
+let faelleFilter='alle', fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
+
+function fachListe(){
+  const seen={}, out=[];
+  FAELLE.forEach(function(f){ if(!seen[f.fach]){ seen[f.fach]=1; out.push({fach:f.fach,label:f.fachLabel,icon:f.icon,farbe:f.farbe}); } });
+  return out;
+}
+function renderFaelle(){
+  const fc=document.getElementById('faelle-faecher');
+  const li=document.getElementById('faelle-liste');
+  if(!fc||!li) return;
+  const faecher=fachListe();
+  let chips='<button onclick="faelleFilter=\'alle\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(faelleFilter==='alle'?'background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700':'')+'">Alle</button>';
+  faecher.forEach(function(f){
+    const on=faelleFilter===f.fach;
+    chips+='<button onclick="faelleFilter=\''+f.fach+'\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(on?'background:'+f.farbe+';color:#04121f;font-weight:700':'color:'+f.farbe)+'">'+f.icon+' '+f.label+'</button>';
+  });
+  fc.innerHTML=chips;
+  const list=FAELLE.filter(function(f){ return faelleFilter==='alle'||f.fach===faelleFilter; });
+  li.innerHTML=list.map(function(f){
+    return '<button onclick="startFall(\''+f.id+'\')" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid '+f.farbe+'33;border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
+      +'<span style="font-size:26px">'+f.icon+'</span>'
+      +'<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:#e0f2fe">'+f.titel+'</span>'
+      +'<span style="display:block;font-size:11px;color:'+f.farbe+';margin-top:2px">'+f.fachLabel+' · '+(f.schwere||'')+'</span></span>'
+      +'<span style="font-size:18px;color:'+f.farbe+'">›</span></button>';
+  }).join('') || '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Noch keine Fälle in dieser Fachrichtung.</div>';
+}
+
+function startFall(id){
+  fallAktuell=FAELLE.find(function(f){ return f.id===id; });
+  if(!fallAktuell) return;
+  fallNode=fallAktuell.start; fallPfad=[]; fallLastFB=null;
+  showScreen('fall'); renderFall();
+}
+
+function chooseFall(idx){
+  const node=fallAktuell.nodes[fallNode];
+  const opt=node.optionen[idx];
+  fallPfad.push(opt.text);
+  fallLastFB={fb:opt.fb, typ:opt.typ};
+  fallNode=opt.ziel;
+  renderFall();
+}
+
+function renderFall(){
+  const el=document.getElementById('fall-content'); if(!el||!fallAktuell) return;
+  const node=fallAktuell.nodes[fallNode];
+  const f=fallAktuell;
+
+  // Verlauf der Entscheidungen
+  const pfad = fallPfad.length ? '<div style="margin:10px 0"><div style="font-size:10px;color:#4a7a9b;letter-spacing:1px;margin-bottom:5px">DEIN WEG</div>'+fallPfad.map(function(p,i){ return '<div style="font-size:11px;color:#7fa6c4;padding:2px 0">'+(i+1)+'. '+p+'</div>'; }).join('')+'</div>' : '';
+
+  // Vignette
+  const vig='<div style="background:'+f.farbe+'14;border:1px solid '+f.farbe+'44;border-radius:12px;padding:12px;margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:'+f.farbe+';margin-bottom:4px">'+f.icon+' '+f.titel+'</div><div style="font-size:13px;color:#cfe6f5;line-height:1.6">'+f.vignette+'</div></div>';
+
+  // Feedback der letzten Wahl
+  let fbHtml='';
+  if(fallLastFB){
+    const col=fallLastFB.typ==='gut'?['rgba(34,197,94,.12)','rgba(34,197,94,.4)','#bbf7d0','✅']:fallLastFB.typ==='fehler'?['rgba(239,68,68,.12)','rgba(239,68,68,.4)','#fecaca','❌']:['rgba(234,179,8,.12)','rgba(234,179,8,.4)','#fde68a','⚠️'];
+    fbHtml='<div style="background:'+col[0]+';border:1px solid '+col[1]+';border-radius:9px;padding:10px;font-size:12px;color:'+col[2]+';margin-bottom:10px">'+col[3]+' '+fallLastFB.fb+'</div>';
+  }
+
+  if(node.ende){
+    if(fallAktuell._timer){ clearInterval(fallAktuell._timer); }
+    const erg=node.ergebnis;
+    const map={gut:['#22c55e','✅','Gut gelöst'],mittel:['#eab308','⚠️','Mit Abstrichen'],schlecht:['#ef4444','❌','Kritischer Verlauf']};
+    const m=map[erg]||map.mittel;
+    el.innerHTML='<div style="max-width:680px;margin:0 auto">'+vig+pfad+fbHtml
+      +'<div style="background:'+m[0]+'18;border:1px solid '+m[0]+'66;border-radius:14px;padding:16px;margin:10px 0;text-align:center">'
+        +'<div style="font-size:34px">'+m[1]+'</div>'
+        +'<div style="font-size:17px;font-weight:800;color:'+m[0]+';margin:4px 0">'+m[2]+'</div>'
+        +'<div style="font-size:13px;color:#cfe6f5;line-height:1.6;margin-top:6px">'+node.text+'</div>'
+      +'</div>'
+      +(node.fazit?'<div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.3);border-radius:12px;padding:13px;margin:10px 0"><div style="font-size:11px;font-weight:700;color:#38bdf8;letter-spacing:1px;margin-bottom:5px">LERNPUNKT</div><div style="font-size:13px;color:#cfe6f5;line-height:1.6">'+node.fazit+'</div></div>':'')
+      +'<div style="display:flex;gap:10px;margin-top:14px"><button onclick="startFall(\''+f.id+'\')" class="nav-drop-btn" style="background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700;justify-content:center">🔁 Nochmal</button><button onclick="navGo(\'faelle\')" class="nav-drop-btn" style="justify-content:center">← Fallliste</button></div>'
+      +'</div>';
+    window.scrollTo(0,0); return;
+  }
+
+  el.innerHTML='<div style="max-width:680px;margin:0 auto">'+vig+pfad+fbHtml
+    +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:14px;margin-top:4px">'
+      +(node.titel?'<div style="font-size:12px;font-weight:700;color:#38bdf8;letter-spacing:1px;margin-bottom:6px">'+node.titel+'</div>':'')
+      +'<div style="font-size:13px;color:#cfe6f5;line-height:1.6;margin-bottom:12px">'+node.text+'</div>'
+      +node.optionen.map(function(o,idx){ return '<button onclick="chooseFall('+idx+')" class="nav-drop-btn" style="text-align:left;white-space:normal;margin:5px 0;line-height:1.4">'+o.text+'</button>'; }).join('')
+    +'</div></div>';
+  window.scrollTo(0,0);
+}
+
+const FAELLE = [
+{ id:"inn_mi", fach:"innere", fachLabel:"Innere Medizin", icon:"❤️", farbe:"#f43f5e", titel:"Akuter Brustschmerz", schwere:"akut · hoch",
+  vignette:"Frau K., 64 J.: seit 40 min drückender Brustschmerz mit Ausstrahlung in den linken Arm, kaltschweißig, übel.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Was tust du zuerst?", optionen:[
+      {text:"12-Kanal-EKG, Monitoring, O₂ bei Bedarf, Arzt informieren", ziel:"n2", typ:"gut", fb:"Richtig. Bei V.a. ACS zählt das frühe EKG."},
+      {text:"Patientin zum Gehen auffordern, um die Beschwerden einzuordnen", ziel:"bad1", typ:"fehler", fb:"Belastung verschlimmert die Ischämie."},
+      {text:"Erst ein Frühstück geben, um den Kreislauf zu stabilisieren", ziel:"bad1", typ:"fehler", fb:"Keine orale Aufnahme bei möglichem akutem Eingriff."} ]},
+    n2:{ titel:"EKG-BEFUND", text:"Das EKG zeigt ST-Hebungen in II, III, aVF. Konsequenz?", optionen:[
+      {text:"STEMI (Hinterwand) – sofort Herzkatheter/PCI anstreben, Kardiologie", ziel:"n3", typ:"gut", fb:"Korrekt – STEMI = Reperfusion so schnell wie möglich."},
+      {text:"Unspezifisch – abwarten und in 1 h erneut messen", ziel:"bad2", typ:"fehler", fb:"ST-Hebungen sind ein Notfall, kein Abwarten."} ]},
+    n3:{ titel:"BIS ZUM TRANSPORT", text:"Was gehört zur Überwachung?", optionen:[
+      {text:"Engmaschiges Rhythmus-Monitoring, i.v.-Zugang, Defi-Bereitschaft, Medikamente nach AO", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Patientin allein lassen, da stabil", ziel:"end_mittel", typ:"warn", fb:"Reinfarkt/Rhythmusstörungen möglich – nie unbeobachtet."} ]},
+    bad1:{ text:"Die Patientin wird blass, der Schmerz nimmt zu. Was nun?", optionen:[
+      {text:"Sofort EKG + Monitoring + Arzt", ziel:"n2", typ:"gut", fb:"Richtig – jetzt strukturiert vorgehen."},
+      {text:"Weiter beobachten ohne Maßnahmen", ziel:"end_schlecht", typ:"fehler", fb:"Zeitverlust bei STEMI kostet Myokard."} ]},
+    bad2:{ text:"Nach 30 min tritt Kammerflimmern auf. Reaktion?", optionen:[
+      {text:"Reanimation 30:2, Defibrillation, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Lebensrettend, aber Zeit ging verloren."},
+      {text:"Auf den Arzt warten", ziel:"end_schlecht", typ:"fehler", fb:"Bei Kammerflimmern sofort defibrillieren/CPR."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Reperfusion rechtzeitig eingeleitet, Patientin stabil.", fazit:"Time is muscle: bei ST-Hebung schnellstmögliche PCI; wegen Arrhythmiegefahr lückenloses Rhythmusmonitoring." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Patientin überlebt, aber mit vermeidbarer Verzögerung/Komplikation.", fazit:"Beim ACS zählt jede Minute und eine lückenlose Überwachung." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Vermeidbarer Myokardschaden bzw. Kreislaufstillstand durch Verzögerung.", fazit:"ST-Hebung + Brustschmerz = Notfall: sofort EKG, Monitoring, Reperfusion." }
+  } },
+
+{ id:"inn_oedem", fach:"innere", fachLabel:"Innere Medizin", icon:"🫧", farbe:"#38bdf8", titel:"Nächtliche Atemnot", schwere:"akut",
+  vignette:"Herr B., 78 J.: nachts hochgradige Atemnot, kann nicht flach liegen, brodelnde Atmung, SpO₂ 86 %, RR 180/100.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTMASSNAHME", text:"Was tust du zuerst?", optionen:[
+      {text:"Oberkörper hoch / Beine tief, O₂ geben, Monitoring, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Vorlast senken, Oxygenierung verbessern."},
+      {text:"Flach hinlegen zur Schonung", ziel:"bad1", typ:"fehler", fb:"Flachlagerung verschlechtert das Lungenödem."},
+      {text:"Reichlich trinken lassen", ziel:"bad1", typ:"fehler", fb:"Volumenzufuhr verschärft die Stauung."} ]},
+    n2:{ titel:"THERAPIERICHTUNG", text:"Welche Maßnahmen erwartest du auf AO?", optionen:[
+      {text:"Schleifendiuretikum, ggf. Nitrate, O₂/NIV, Flüssigkeitsbilanz", ziel:"n3", typ:"gut", fb:"Korrekt – Vor-/Nachlast senken und entwässern."},
+      {text:"Infusion großzügig laufen lassen", ziel:"bad2", typ:"fehler", fb:"Falsch – verstärkt die Stauung."} ]},
+    n3:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"SpO₂, Atmung, RR, Bilanz, Gewicht, Vigilanz", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur SpO₂, der Rest ist unwichtig", ziel:"end_mittel", typ:"warn", fb:"Bilanz, RR und Vigilanz gehören dazu."} ]},
+    bad1:{ text:"SpO₂ fällt auf 80 %, zunehmende Erschöpfung. Was nun?", optionen:[
+      {text:"Aufsetzen, O₂/NIV, Intensivteam sofort", ziel:"n2", typ:"gut", fb:"Richtig."},
+      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Drohende respiratorische Erschöpfung."} ]},
+    bad2:{ text:"Der Patient wird zunehmend dyspnoeisch. Reaktion?", optionen:[
+      {text:"Infusion stoppen, Diuretikum/NIV nach AO, eskalieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert, aber mit Verzögerung."},
+      {text:"Infusion weiterlaufen lassen", ziel:"end_schlecht", typ:"fehler", fb:"Verschlechtert das Ödem."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Atmung stabilisiert, Patient erholt sich.", fazit:"Akutes Lungenödem: sitzende Lagerung, O₂/NIV, Diuretika/Nitrate – keine Volumenzufuhr." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Frühzeitige Vorlastsenkung und engmaschige Bilanz sind entscheidend." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Respiratorische Erschöpfung, Intensivpflicht.", fazit:"Bei Lungenödem nie flach lagern, kein Volumen – früh O₂/NIV und entwässern." }
+  } },
+
+{ id:"inn_copd", fach:"innere", fachLabel:"Innere Medizin", icon:"💨", farbe:"#22d3ee", titel:"COPD-Exazerbation", schwere:"akut",
+  vignette:"Frau S., 70 J., bekannte COPD: seit 2 Tagen zunehmende Atemnot, produktiver Husten, SpO₂ 84 %, beginnend schläfrig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SAUERSTOFFGABE", text:"Wie gibst du Sauerstoff?", optionen:[
+      {text:"Kontrolliert, Ziel-SpO₂ 88–92 %, engmaschig überwachen", ziel:"n2", typ:"gut", fb:"Richtig – bei COPD kontrollierte O₂-Gabe."},
+      {text:"Maximal 15 L über Maske – je mehr, desto besser", ziel:"bad1", typ:"fehler", fb:"Risiko einer CO₂-Narkose bei COPD."},
+      {text:"Gar kein O₂ wegen CO₂-Gefahr", ziel:"bad1", typ:"fehler", fb:"Hypoxie ist gefährlicher – kontrolliert geben, nicht weglassen."} ]},
+    n2:{ titel:"WEITERE MASSNAHMEN", text:"Was erwartest du therapeutisch (AO)?", optionen:[
+      {text:"Inhalative Bronchodilatatoren, ggf. Steroide, Sekretmanagement, Oberkörper hoch", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Sofort sedieren wegen der Unruhe", ziel:"bad2", typ:"fehler", fb:"Sedierung dämpft den Atemantrieb – gefährlich."} ]},
+    n3:{ titel:"MONITORING", text:"Worauf achtest du besonders?", optionen:[
+      {text:"Vigilanz, Atemfrequenz, SpO₂, ggf. BGA (CO₂)", ziel:"end_gut", typ:"gut", fb:"Sehr gut – CO₂ und Vigilanz im Blick."},
+      {text:"SpO₂ bis 100 % hochfahren", ziel:"end_mittel", typ:"warn", fb:"100 % anzustreben ist bei COPD riskant."} ]},
+    bad1:{ text:"Die Patientin wird zunehmend schläfrig, die Atmung flacher. Reaktion?", optionen:[
+      {text:"Verdacht CO₂-Anstieg: O₂ auf Zielbereich titrieren, BGA, Intensiv", ziel:"n2", typ:"gut", fb:"Richtig erkannt."},
+      {text:"Mehr O₂ geben", ziel:"end_schlecht", typ:"fehler", fb:"Verstärkt die CO₂-Narkose."} ]},
+    bad2:{ text:"Nach der Sedierung sinkt die Atemfrequenz stark. Reaktion?", optionen:[
+      {text:"Stimulieren, O₂ titrieren, Beatmungsbereitschaft, Antidot erwägen, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Abgewendet, aber gefährlich."},
+      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Atemdepression."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Atmung gebessert, Patientin wacher.", fazit:"COPD-Exazerbation: kontrollierte O₂-Gabe (88–92 %), keine Sedierung, CO₂ und Vigilanz überwachen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber riskanter Verlauf.", fazit:"Bei COPD kein Ziel von 100 % SpO₂ – CO₂-Anstieg droht." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"CO₂-Narkose, Intensivpflicht.", fazit:"Unkontrollierte O₂-Gabe und Sedierung sind bei COPD gefährlich." }
+  } },
+
+{ id:"inn_le", fach:"innere", fachLabel:"Innere Medizin", icon:"🫁", farbe:"#ef4444", titel:"Plötzliche Atemnot postop.", schwere:"akut · hoch",
+  vignette:"Herr M., 58 J., 3 Tage nach Knie-OP: plötzliche Atemnot, atemabhängiger Thoraxschmerz, Puls 120, SpO₂ 88 %, einseitig geschwollenes Bein.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"VERDACHT & SOFORTMASSNAHME", text:"Was denkst und tust du?", optionen:[
+      {text:"V.a. Lungenembolie: Monitoring, O₂, Arzt sofort, Patient ruhigstellen", ziel:"n2", typ:"gut", fb:"Richtig – postop + Beinschwellung + Dyspnoe."},
+      {text:"Patient mobilisieren, damit die Luft besser wird", ziel:"bad1", typ:"fehler", fb:"Mobilisation kann einen Embolus verschleppen."},
+      {text:"Nur ein Schmerzmittel geben und beobachten", ziel:"bad1", typ:"fehler", fb:"Verkennt den Notfall."} ]},
+    n2:{ titel:"DIAGNOSTIK/THERAPIE (AO)", text:"Was erwartest du?", optionen:[
+      {text:"CT-Angiografie/D-Dimer, Antikoagulation nach AO, ggf. Intensiv", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Erst abwarten, ob es von allein besser wird", ziel:"bad2", typ:"fehler", fb:"Eine LE kann rasch dekompensieren."} ]},
+    n3:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"RR/Puls, SpO₂, Atmung, Zeichen der Rechtsherzbelastung/Schock", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur die Sättigung", ziel:"end_mittel", typ:"warn", fb:"Ein Kreislaufkollaps ist möglich – mehr überwachen."} ]},
+    bad1:{ text:"Der Patient kollabiert, der Blutdruck fällt. Reaktion?", optionen:[
+      {text:"Flach-/Schocklagerung, O₂, Notfallteam, Reanimationsbereitschaft", ziel:"n2", typ:"gut", fb:"Richtig – jetzt Notfall."},
+      {text:"Aufsetzen und abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Bei Schock falsch."} ]},
+    bad2:{ text:"Plötzlicher Blutdruckabfall, Zyanose. Reaktion?", optionen:[
+      {text:"Sofort eskalieren, Kreislaufunterstützung nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Gerettet, aber spät."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Massive Lungenembolie – Lebensgefahr."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Antikoagulation eingeleitet, Kreislauf stabil.", fazit:"Postoperativ ist die LE eine wichtige Differenzialdiagnose: keine Mobilisation, schnelle Diagnostik/Antikoagulation, Kreislauf überwachen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Bei LE-Verdacht zügig eskalieren – Dekompensation kommt plötzlich." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Kreislaufstillstand bei massiver LE.", fazit:"Atemnot + einseitige Beinschwellung postop = LE bis zum Beweis des Gegenteils." }
+  } },
+
+{ id:"inn_gib", fach:"innere", fachLabel:"Innere Medizin", icon:"🩸", farbe:"#f97316", titel:"Bluterbrechen", schwere:"akut · hoch",
+  vignette:"Frau L., 67 J.: erbricht kaffeesatzartiges Blut, schwarzer Stuhl, blass, Puls 110, RR 95/60, regelmäßige NSAR-Einnahme.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORITÄT", text:"Was zuerst?", optionen:[
+      {text:"Kreislauf sichern: Monitoring, 2 großlumige Zugänge, Volumen nach AO, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Blutung + Hypotonie = Kreislaufpriorität."},
+      {text:"Patientin aufsetzen und Tee geben", ziel:"bad1", typ:"fehler", fb:"Orale Zufuhr bei aktiver Blutung/Endoskopie ungünstig – Kreislauf zuerst."},
+      {text:"Abführmaßnahme, um das Blut zu entfernen", ziel:"bad1", typ:"fehler", fb:"Verkennt den Schock, kontraproduktiv."} ]},
+    n2:{ titel:"WEITERES (AO)", text:"Was erwartest du?", optionen:[
+      {text:"Nüchtern lassen, Labor/Kreuzblut, PPI, frühe Endoskopie planen", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Sofort essen lassen zur Stärkung", ziel:"bad2", typ:"fehler", fb:"Nüchtern wegen Endoskopie und Aspirationsgefahr."} ]},
+    n3:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"RR/Puls engmaschig, Bewusstsein, Ausscheidung, Zeichen erneuter Blutung, Hb-Verlauf", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Einmalig RR messen reicht", ziel:"end_mittel", typ:"warn", fb:"Rezidivblutung/Schock erfordern engmaschige Kontrolle."} ]},
+    bad1:{ text:"Die Patientin wird benommen, RR 80/50. Reaktion?", optionen:[
+      {text:"Flachlagerung/Beine hoch, Volumen, Notfallteam, Transfusionsbereitschaft", ziel:"n2", typ:"gut", fb:"Richtig – Schockmanagement."},
+      {text:"Aufsetzen, abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hämorrhagischer Schock."} ]},
+    bad2:{ text:"Erneutes Bluterbrechen, die Sättigung fällt. Reaktion?", optionen:[
+      {text:"Atemweg schützen (Aspiration!), absaugen, eskalieren, Endoskopie", ziel:"end_mittel", typ:"warn", fb:"Abgewendet."},
+      {text:"Hinlegen und warten", ziel:"end_schlecht", typ:"fehler", fb:"Aspirations- und Schockgefahr."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Kreislauf stabilisiert, Endoskopie eingeleitet.", fazit:"Obere GI-Blutung: Kreislauf zuerst, nüchtern lassen, 2 großlumige Zugänge, frühe Endoskopie, Aspiration vermeiden." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Engmaschige Kreislaufkontrolle wegen Rezidivblutung ist entscheidend." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hämorrhagischer Schock / Aspiration.", fazit:"Bei aktiver GI-Blutung Kreislauf priorisieren und nüchtern lassen." }
+  } },
+
+{ id:"inn_hypo", fach:"innere", fachLabel:"Innere Medizin", icon:"🍬", farbe:"#a78bfa", titel:"Plötzliche Verwirrtheit", schwere:"akut",
+  vignette:"Herr T., 72 J., insulinpflichtiger Diabetes: plötzlich verwirrt, zittrig, kaltschweißig. BZ 2,4 mmol/l (43 mg/dl). Wach, kann schlucken.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTMASSNAHME", text:"Patient wach und schluckfähig – was tust du?", optionen:[
+      {text:"Schnell wirksame orale Kohlenhydrate (z. B. Traubenzucker/Saft)", ziel:"n2", typ:"gut", fb:"Richtig – wach + schluckfähig = orale Gabe."},
+      {text:"Sofort i.v. Glukose, obwohl er schlucken kann", ziel:"n2alt", typ:"warn", fb:"Bei schluckfähigem Patienten zuerst oral; i.v. wenn das nicht möglich ist."},
+      {text:"Insulin geben, um den Stoffwechsel zu stabilisieren", ziel:"bad1", typ:"fehler", fb:"Insulin senkt den BZ weiter – gefährlich."} ]},
+    n2:{ titel:"NACH DER GABE", text:"Wie geht es weiter?", optionen:[
+      {text:"BZ nach ~15 min erneut messen, bei Bedarf wiederholen, dann komplexe KH", ziel:"n3", typ:"gut", fb:"Korrekt – 15er-Regel."},
+      {text:"Keine Kontrolle nötig", ziel:"bad2", typ:"warn", fb:"Rezidiv möglich – immer nachmessen."} ]},
+    n2alt:{ titel:"KORREKTUR", text:"Er kann schlucken – was ist sinnvoller?", optionen:[
+      {text:"Orale Gabe bevorzugen, i.v. nur wenn nötig; danach BZ-Kontrolle", ziel:"n3", typ:"gut", fb:"Richtig priorisiert."},
+      {text:"Trotzdem nur i.v. und keine Kontrolle", ziel:"bad2", typ:"warn", fb:"Die Nachkontrolle fehlt."} ]},
+    n3:{ titel:"ÜBERWACHUNG / URSACHE", text:"Worauf achtest du?", optionen:[
+      {text:"Bewusstsein, BZ-Verlauf, Auslöser klären (Insulin/Mahlzeit), Doku, Arzt", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nichts weiter, ist ja vorbei", ziel:"end_mittel", typ:"warn", fb:"Ursache und Verlauf sind wichtig (Rezidivgefahr)."} ]},
+    bad1:{ text:"Nach der Insulingabe wird der Patient bewusstlos. Reaktion?", optionen:[
+      {text:"Keine orale Gabe mehr! i.v. Glukose / Glukagon, Notfallteam, Atemweg sichern", ziel:"end_mittel", typ:"warn", fb:"Gerettet – aber das Insulin war der Fehler."},
+      {text:"Traubenzucker in den Mund schieben", ziel:"end_schlecht", typ:"fehler", fb:"Aspirationsgefahr bei Bewusstlosen – verboten."} ]},
+    bad2:{ text:"30 min später erneut Verwirrtheit. Ursache?", optionen:[
+      {text:"Rezidiv-Hypoglykämie: erneut messen und behandeln, Ursache klären", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
+      {text:"Ignorieren", ziel:"end_schlecht", typ:"fehler", fb:"Schwere Hypoglykämie droht."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"BZ normalisiert, Patient wieder orientiert.", fazit:"Hypoglykämie: wach → orale KH; bewusstlos → niemals oral (Aspiration), dann i.v. Glukose/Glukagon. 15er-Regel, Ursache klären." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Immer nachmessen (Rezidiv) und den Auslöser klären." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aspiration bzw. schwere Hypoglykämie.", fazit:"Bei Bewusstlosen nie orale Gabe; nie Insulin bei Hypoglykämie." }
+  } }
+];
+
 function navGo(screen) {
   document.getElementById('nav-dropdown').style.display = 'none';
   if (screen === 'taschenkarten') {
@@ -4778,6 +5041,8 @@ function navGo(screen) {
     showScreen('wundversorgung');
   } else if (screen === 'krankheitsbilder') {
     showScreen('krankheitsbilder'); renderKBFaecher();
+  } else if (screen === 'faelle') {
+    showScreen('faelle'); renderFaelle();
   } else {
     showScreen(screen);
   }
@@ -4849,6 +5114,9 @@ function doSearch() {
     if (hit(sc.name) || hit(sc.kategorie) || hit(sc.zweck)) hits.push({type:'Score', icon:sc.icon||'📊', color:sc.farbe||'#60a5fa', title:sc.name, sub:sc.zweck||sc.kategorie||'', action:"navGo('scores')"});
   });
 
+  FAELLE.forEach(function(fa){
+    if (hit(fa.titel) || hit(fa.fachLabel) || hit(fa.vignette)) hits.push({type:'Fallbeispiel', icon:fa.icon||'🩺', color:fa.farbe||'#38bdf8', title:fa.titel, sub:fa.fachLabel, action:"startFall('"+fa.id+"')"});
+  });
   if (!hits.length) {
     res.innerHTML = '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + esc(q) + '</strong></div>';
     return;
