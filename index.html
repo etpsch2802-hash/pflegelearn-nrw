@@ -4813,7 +4813,7 @@ function renderFaelle(){
     return '<button onclick="startFall(\''+f.id+'\')" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid '+f.farbe+'33;border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
       +'<span style="font-size:26px">'+f.icon+'</span>'
       +'<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:#e0f2fe">'+f.titel+'</span>'
-      +'<span style="display:block;font-size:11px;color:'+f.farbe+';margin-top:2px">'+f.fachLabel+' · '+(f.schwere||'')+'</span></span>'
+      +'<span style="display:block;font-size:11px;color:'+f.farbe+';margin-top:2px">'+f.fachLabel+' · '+(f.schwere||'')+(f.grad?' · '+f.grad:'')+'</span></span>'
       +'<span style="font-size:18px;color:'+f.farbe+'">›</span></button>';
   }).join('') || '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Noch keine Fälle in dieser Fachrichtung.</div>';
 }
@@ -4879,157 +4879,184 @@ function renderFall(){
 }
 
 const FAELLE = [
-{ id:"inn_mi", fach:"innere", fachLabel:"Innere Medizin", icon:"❤️", farbe:"#f43f5e", titel:"Akuter Brustschmerz", schwere:"akut · hoch",
-  vignette:"Frau K., 64 J.: seit 40 min drückender Brustschmerz mit Ausstrahlung in den linken Arm, kaltschweißig, übel.",
+{ id:"inn_mi", fach:"innere", fachLabel:"Innere Medizin", icon:"❤️", farbe:"#f43f5e", titel:"Akuter Brustschmerz", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Frau K., 64 J., Diabetikerin: seit 45 min drückender retrosternaler Schmerz, vegetativ (Kaltschweiß, Übelkeit). RR 145/85, Puls 92, SpO₂ 96 %.",
   start:"n1",
   nodes:{
-    n1:{ titel:"ERSTES VORGEHEN", text:"Was tust du zuerst?", optionen:[
-      {text:"12-Kanal-EKG, Monitoring, O₂ bei Bedarf, Arzt informieren", ziel:"n2", typ:"gut", fb:"Richtig. Bei V.a. ACS zählt das frühe EKG."},
-      {text:"Patientin zum Gehen auffordern, um die Beschwerden einzuordnen", ziel:"bad1", typ:"fehler", fb:"Belastung verschlimmert die Ischämie."},
-      {text:"Erst ein Frühstück geben, um den Kreislauf zu stabilisieren", ziel:"bad1", typ:"fehler", fb:"Keine orale Aufnahme bei möglichem akutem Eingriff."} ]},
-    n2:{ titel:"EKG-BEFUND", text:"Das EKG zeigt ST-Hebungen in II, III, aVF. Konsequenz?", optionen:[
-      {text:"STEMI (Hinterwand) – sofort Herzkatheter/PCI anstreben, Kardiologie", ziel:"n3", typ:"gut", fb:"Korrekt – STEMI = Reperfusion so schnell wie möglich."},
-      {text:"Unspezifisch – abwarten und in 1 h erneut messen", ziel:"bad2", typ:"fehler", fb:"ST-Hebungen sind ein Notfall, kein Abwarten."} ]},
-    n3:{ titel:"BIS ZUM TRANSPORT", text:"Was gehört zur Überwachung?", optionen:[
-      {text:"Engmaschiges Rhythmus-Monitoring, i.v.-Zugang, Defi-Bereitschaft, Medikamente nach AO", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
-      {text:"Patientin allein lassen, da stabil", ziel:"end_mittel", typ:"warn", fb:"Reinfarkt/Rhythmusstörungen möglich – nie unbeobachtet."} ]},
-    bad1:{ text:"Die Patientin wird blass, der Schmerz nimmt zu. Was nun?", optionen:[
-      {text:"Sofort EKG + Monitoring + Arzt", ziel:"n2", typ:"gut", fb:"Richtig – jetzt strukturiert vorgehen."},
-      {text:"Weiter beobachten ohne Maßnahmen", ziel:"end_schlecht", typ:"fehler", fb:"Zeitverlust bei STEMI kostet Myokard."} ]},
-    bad2:{ text:"Nach 30 min tritt Kammerflimmern auf. Reaktion?", optionen:[
-      {text:"Reanimation 30:2, Defibrillation, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Lebensrettend, aber Zeit ging verloren."},
-      {text:"Auf den Arzt warten", ziel:"end_schlecht", typ:"fehler", fb:"Bei Kammerflimmern sofort defibrillieren/CPR."} ]},
-    end_gut:{ ende:true, ergebnis:"gut", text:"Reperfusion rechtzeitig eingeleitet, Patientin stabil.", fazit:"Time is muscle: bei ST-Hebung schnellstmögliche PCI; wegen Arrhythmiegefahr lückenloses Rhythmusmonitoring." },
-    end_mittel:{ ende:true, ergebnis:"mittel", text:"Patientin überlebt, aber mit vermeidbarer Verzögerung/Komplikation.", fazit:"Beim ACS zählt jede Minute und eine lückenlose Überwachung." },
-    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Vermeidbarer Myokardschaden bzw. Kreislaufstillstand durch Verzögerung.", fazit:"ST-Hebung + Brustschmerz = Notfall: sofort EKG, Monitoring, Reperfusion." }
+    n1:{ titel:"PRIORISIERUNG", text:"Mehrere Maßnahmen sind sinnvoll – womit beginnst du?", optionen:[
+      {text:"12-Kanal-EKG (Ziel < 10 min) + Monitor", ziel:"n2", typ:"gut", fb:"Richtig – das frühe 12-Kanal-EKG steuert alle weiteren Entscheidungen."},
+      {text:"Erst i.v.-Zugang legen und Troponin abnehmen", ziel:"n2", typ:"warn", fb:"Vertretbar, aber nachrangig: Troponin ist früh oft negativ und darf die Reperfusion nicht verzögern. EKG zuerst."},
+      {text:"Sofort O₂ über Maske 10 L geben", ziel:"n2", typ:"warn", fb:"O₂ nur bei SpO₂ < 90 % – hier 96 %. Unnötige Hyperoxie kann schaden; EKG hat Vorrang."} ]},
+    n2:{ titel:"EKG-BEFUND", text:"EKG: ST-Hebung in II/III/aVF mit reziproker Senkung in I/aVL. Konsequenz?", optionen:[
+      {text:"Inferiorer STEMI → sofort Reperfusion/Herzkatheter aktivieren", ziel:"n3", typ:"gut", fb:"Korrekt – eindeutige ST-Hebung = sofortige Reperfusion."},
+      {text:"Zusätzlich rechtspräkordiale Ableitungen (V4r) ableiten", ziel:"n3", typ:"gut", fb:"Sehr gut mitgedacht – inferiorer Infarkt kann den rechten Ventrikel betreffen."},
+      {text:"Troponin abwarten, um den Infarkt zu bestätigen", ziel:"bad_delay", typ:"fehler", fb:"Bei eindeutiger ST-Hebung kein Warten auf Laborwerte."} ]},
+    n3:{ titel:"MEDIKATION PRÜFEN", text:"Welcher Punkt ist beim inferioren Infarkt besonders kritisch?", optionen:[
+      {text:"Nitrate nur vorsichtig/ggf. meiden (mögliche RV-Beteiligung → Vorlastabfall)", ziel:"n4", typ:"gut", fb:"Sehr gut – bei rechtsventrikulärer Beteiligung kann Nitrat den RR einbrechen lassen."},
+      {text:"Nitrat großzügig geben, senkt ja die Vorlast", ziel:"bad_nitro", typ:"warn", fb:"Riskant beim inferioren/RV-Infarkt – Gefahr schwerer Hypotonie."},
+      {text:"Volumengabe grundsätzlich vermeiden", ziel:"n4", typ:"warn", fb:"Nicht pauschal: bei RV-Infarkt mit Hypotonie ist vorsichtige Volumengabe sogar hilfreich."} ]},
+    n4:{ titel:"AKUTE KOMPLIKATION", text:"Bei der Vorbereitung wird die Patientin bewusstlos, am Monitor Kammerflimmern. Reaktion?", optionen:[
+      {text:"Sofort Defibrillation + CPR, Notfallteam", ziel:"end_gut", typ:"gut", fb:"Korrekt – bei VF sofort defibrillieren."},
+      {text:"Erst Puls 10 s tasten und Arzt rufen", ziel:"bad_vf", typ:"warn", fb:"Bei sichtbarem VF + Bewusstlosigkeit nicht zögern."},
+      {text:"Amiodaron i.v. zuerst, dann Schock", ziel:"bad_vf", typ:"warn", fb:"Defibrillation hat Vorrang; Amiodaron erst nach dem 3. erfolglosen Schock."} ]},
+    bad_delay:{ text:"Durch das Warten vergehen 25 min, der Schmerz persistiert, ST-Hebung nimmt zu. Jetzt?", optionen:[
+      {text:"Sofort Reperfusion aktivieren, Monitoring, Defi-Bereitschaft", ziel:"end_mittel", typ:"warn", fb:"Richtig – aber wertvolle Myokardzeit ist verloren."},
+      {text:"Weiter zuwarten", ziel:"end_schlecht", typ:"fehler", fb:"Ausgedehnter Infarkt durch Verzögerung."} ]},
+    bad_nitro:{ text:"Nach Nitrat fällt RR auf 80/50, die Patientin wird schwindelig. Reaktion?", optionen:[
+      {text:"Nitrat stoppen, flach/Beine hoch, vorsichtig Volumen, eskalieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – zeigt die Gefahr von Nitrat bei RV-Infarkt."},
+      {text:"Mehr Nitrat, der Druck fängt sich schon", ziel:"end_schlecht", typ:"fehler", fb:"Verstärkt die Hypotonie."} ]},
+    bad_vf:{ text:"Wertvolle Sekunden vergehen, dann defibrillierst du. Wie geht es weiter?", optionen:[
+      {text:"Sofort 2 min CPR, dann Rhythmuscheck", ziel:"end_mittel", typ:"warn", fb:"Lebensrettend, aber verzögert."},
+      {text:"Puls suchen, längere Pause", ziel:"end_schlecht", typ:"fehler", fb:"Unterbrechungen verschlechtern die Prognose."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Defibrillation erfolgreich, Reperfusion rechtzeitig eingeleitet.", fazit:"STEMI: EKG < 10 min steuert alles. Beim inferioren Infarkt an RV-Beteiligung denken (Nitrat-Vorsicht, Volumen kann helfen). Bei VF sofort defibrillieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Patientin überlebt, aber mit vermeidbarer Verzögerung/Komplikation.", fazit:"Beim ACS zählt jede Minute, eine korrekte Priorisierung und das Erkennen von Fallstricken (RV-Infarkt, VF)." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Vermeidbarer Myokardschaden bzw. Kreislaufstillstand.", fazit:"ST-Hebung ist ein Notfall: nicht auf Labor warten, Nitrat-Fallstrick beachten, bei VF sofort handeln." }
   } },
 
-{ id:"inn_oedem", fach:"innere", fachLabel:"Innere Medizin", icon:"🫧", farbe:"#38bdf8", titel:"Nächtliche Atemnot", schwere:"akut",
-  vignette:"Herr B., 78 J.: nachts hochgradige Atemnot, kann nicht flach liegen, brodelnde Atmung, SpO₂ 86 %, RR 180/100.",
+{ id:"inn_oedem", fach:"innere", fachLabel:"Innere Medizin", icon:"🫧", farbe:"#38bdf8", titel:"Nächtliche Atemnot", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Herr B., 78 J., KHK: nachts schwere Atemnot, Orthopnoe, feuchte RGs beidseits, SpO₂ 85 %, RR 195/110, Puls 110.",
   start:"n1",
   nodes:{
-    n1:{ titel:"SOFORTMASSNAHME", text:"Was tust du zuerst?", optionen:[
-      {text:"Oberkörper hoch / Beine tief, O₂ geben, Monitoring, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Vorlast senken, Oxygenierung verbessern."},
-      {text:"Flach hinlegen zur Schonung", ziel:"bad1", typ:"fehler", fb:"Flachlagerung verschlechtert das Lungenödem."},
-      {text:"Reichlich trinken lassen", ziel:"bad1", typ:"fehler", fb:"Volumenzufuhr verschärft die Stauung."} ]},
-    n2:{ titel:"THERAPIERICHTUNG", text:"Welche Maßnahmen erwartest du auf AO?", optionen:[
-      {text:"Schleifendiuretikum, ggf. Nitrate, O₂/NIV, Flüssigkeitsbilanz", ziel:"n3", typ:"gut", fb:"Korrekt – Vor-/Nachlast senken und entwässern."},
-      {text:"Infusion großzügig laufen lassen", ziel:"bad2", typ:"fehler", fb:"Falsch – verstärkt die Stauung."} ]},
-    n3:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
-      {text:"SpO₂, Atmung, RR, Bilanz, Gewicht, Vigilanz", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
-      {text:"Nur SpO₂, der Rest ist unwichtig", ziel:"end_mittel", typ:"warn", fb:"Bilanz, RR und Vigilanz gehören dazu."} ]},
-    bad1:{ text:"SpO₂ fällt auf 80 %, zunehmende Erschöpfung. Was nun?", optionen:[
-      {text:"Aufsetzen, O₂/NIV, Intensivteam sofort", ziel:"n2", typ:"gut", fb:"Richtig."},
-      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Drohende respiratorische Erschöpfung."} ]},
-    bad2:{ text:"Der Patient wird zunehmend dyspnoeisch. Reaktion?", optionen:[
-      {text:"Infusion stoppen, Diuretikum/NIV nach AO, eskalieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert, aber mit Verzögerung."},
-      {text:"Infusion weiterlaufen lassen", ziel:"end_schlecht", typ:"fehler", fb:"Verschlechtert das Ödem."} ]},
-    end_gut:{ ende:true, ergebnis:"gut", text:"Atmung stabilisiert, Patient erholt sich.", fazit:"Akutes Lungenödem: sitzende Lagerung, O₂/NIV, Diuretika/Nitrate – keine Volumenzufuhr." },
-    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Frühzeitige Vorlastsenkung und engmaschige Bilanz sind entscheidend." },
-    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Respiratorische Erschöpfung, Intensivpflicht.", fazit:"Bei Lungenödem nie flach lagern, kein Volumen – früh O₂/NIV und entwässern." }
+    n1:{ titel:"PRIORISIERUNG", text:"Was hat Sofortpriorität?", optionen:[
+      {text:"Oberkörper hoch / Beine tief, O₂ titrieren, Monitor", ziel:"n2", typ:"gut", fb:"Richtig – Lagerung und O₂ wirken sofort, parallel Monitoring."},
+      {text:"Sofort hochdosiert i.v.-Furosemid, dann der Rest", ziel:"n2", typ:"warn", fb:"Diuretikum gehört dazu, aber beim hypertensiven Ödem wirken Lagerung/O₂/Nitrate früher."},
+      {text:"Zuerst 12-Kanal-EKG, alles andere danach", ziel:"n2", typ:"warn", fb:"EKG ist wichtig (Ischämie/Rhythmus), aber Lagerung und O₂ haben Sofortpriorität."} ]},
+    n2:{ titel:"THERAPIERICHTUNG", text:"RR 195/110 – hypertensives Lungenödem. Was ist führend?", optionen:[
+      {text:"Nitrate (Vor-/Nachlast senken) + Diuretikum, O₂/NIV", ziel:"n3", typ:"gut", fb:"Korrekt – beim hypertensiven Ödem sind Nitrate zentral."},
+      {text:"Nur hochdosiert Furosemid, keine Nitrate", ziel:"n3", typ:"warn", fb:"Furosemid hilft, aber ohne Nachlastsenkung bleibt der hohe Druck bestehen."},
+      {text:"Betablocker i.v. zur Frequenzsenkung", ziel:"bad_bb", typ:"fehler", fb:"Im akut dekompensierten Ödem kontraindiziert – verschlechtert die Pumpfunktion."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Trotz Therapie SpO₂ 84 %, zunehmende Erschöpfung, noch ansprechbar. Reaktion?", optionen:[
+      {text:"NIV (CPAP) einleiten, Intensiv informieren", ziel:"n4", typ:"gut", fb:"Sehr gut – CPAP verbessert Oxygenierung und senkt die Vorlast."},
+      {text:"Weiter nur O₂-Maske, abwarten", ziel:"bad_resp", typ:"warn", fb:"Bei Erschöpfung reicht das oft nicht – NIV erwägen."},
+      {text:"Sofort sedieren und intubieren", ziel:"bad_resp", typ:"warn", fb:"Intubation erst, wenn NIV scheitert; Sedierung hier gefährlich."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Unter NIV bessert es sich. Worauf achtest du besonders?", optionen:[
+      {text:"RR, SpO₂, Atemarbeit, Bilanz/Ausscheidung, Vigilanz, NIV-Toleranz", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur SpO₂ bis 100 % anstreben", ziel:"end_mittel", typ:"warn", fb:"Ziel ist ausreichende, nicht maximale Sättigung; RR/Bilanz fehlen."} ]},
+    bad_bb:{ text:"Nach Betablocker sinkt das Herzzeitvolumen, RR 100/70, zunehmende Dyspnoe. Reaktion?", optionen:[
+      {text:"Keine weiteren negativ-inotropen Gaben, NIV, Nitrate/Diuretikum nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – zeigt, warum Betablocker akut tabu sind."},
+      {text:"Noch einen Betablocker geben", ziel:"end_schlecht", typ:"fehler", fb:"Kardiogene Verschlechterung."} ]},
+    bad_resp:{ text:"Patient zunehmend erschöpft, CO₂ steigt, wird somnolent. Reaktion?", optionen:[
+      {text:"Jetzt Intensiv/Intubation nach AO", ziel:"end_mittel", typ:"warn", fb:"Eskalation nötig – früher NIV hätte es evtl. abgewendet."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Respiratorische Erschöpfung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Atmung stabilisiert, Patient erholt sich.", fazit:"Hypertensives Lungenödem: Lagerung + O₂/NIV (CPAP) + Nitrate/Diuretikum. Betablocker akut kontraindiziert, keine Volumenzufuhr." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Frühe Nachlastsenkung und rechtzeitige NIV sind entscheidend." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Respiratorische/kardiale Dekompensation, Intensivpflicht.", fazit:"Negativ-inotrope Substanzen und Verzögerung sind beim akuten Ödem gefährlich." }
   } },
 
-{ id:"inn_copd", fach:"innere", fachLabel:"Innere Medizin", icon:"💨", farbe:"#22d3ee", titel:"COPD-Exazerbation", schwere:"akut",
-  vignette:"Frau S., 70 J., bekannte COPD: seit 2 Tagen zunehmende Atemnot, produktiver Husten, SpO₂ 84 %, beginnend schläfrig.",
+{ id:"inn_copd", fach:"innere", fachLabel:"Innere Medizin", icon:"💨", farbe:"#22d3ee", titel:"COPD-Exazerbation", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Frau S., 70 J., schwere COPD: 3 Tage zunehmende Dyspnoe, purulentes Sputum, SpO₂ 84 %, leicht somnolent, AF 28.",
   start:"n1",
   nodes:{
     n1:{ titel:"SAUERSTOFFGABE", text:"Wie gibst du Sauerstoff?", optionen:[
-      {text:"Kontrolliert, Ziel-SpO₂ 88–92 %, engmaschig überwachen", ziel:"n2", typ:"gut", fb:"Richtig – bei COPD kontrollierte O₂-Gabe."},
-      {text:"Maximal 15 L über Maske – je mehr, desto besser", ziel:"bad1", typ:"fehler", fb:"Risiko einer CO₂-Narkose bei COPD."},
-      {text:"Gar kein O₂ wegen CO₂-Gefahr", ziel:"bad1", typ:"fehler", fb:"Hypoxie ist gefährlicher – kontrolliert geben, nicht weglassen."} ]},
-    n2:{ titel:"WEITERE MASSNAHMEN", text:"Was erwartest du therapeutisch (AO)?", optionen:[
-      {text:"Inhalative Bronchodilatatoren, ggf. Steroide, Sekretmanagement, Oberkörper hoch", ziel:"n3", typ:"gut", fb:"Korrekt."},
-      {text:"Sofort sedieren wegen der Unruhe", ziel:"bad2", typ:"fehler", fb:"Sedierung dämpft den Atemantrieb – gefährlich."} ]},
-    n3:{ titel:"MONITORING", text:"Worauf achtest du besonders?", optionen:[
-      {text:"Vigilanz, Atemfrequenz, SpO₂, ggf. BGA (CO₂)", ziel:"end_gut", typ:"gut", fb:"Sehr gut – CO₂ und Vigilanz im Blick."},
-      {text:"SpO₂ bis 100 % hochfahren", ziel:"end_mittel", typ:"warn", fb:"100 % anzustreben ist bei COPD riskant."} ]},
-    bad1:{ text:"Die Patientin wird zunehmend schläfrig, die Atmung flacher. Reaktion?", optionen:[
-      {text:"Verdacht CO₂-Anstieg: O₂ auf Zielbereich titrieren, BGA, Intensiv", ziel:"n2", typ:"gut", fb:"Richtig erkannt."},
-      {text:"Mehr O₂ geben", ziel:"end_schlecht", typ:"fehler", fb:"Verstärkt die CO₂-Narkose."} ]},
-    bad2:{ text:"Nach der Sedierung sinkt die Atemfrequenz stark. Reaktion?", optionen:[
-      {text:"Stimulieren, O₂ titrieren, Beatmungsbereitschaft, Antidot erwägen, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Abgewendet, aber gefährlich."},
+      {text:"Kontrolliert titrieren, Ziel SpO₂ 88–92 %, engmaschig", ziel:"n2", typ:"gut", fb:"Richtig – bei COPD kontrollierte O₂-Gabe."},
+      {text:"Reservoirmaske 12–15 L, später runtertitrieren", ziel:"n2", typ:"warn", fb:"Initial kontrolliert beginnen – hohe Flüsse riskieren CO₂-Anstieg/Somnolenz."},
+      {text:"Erst BGA abwarten, bis dahin kein O₂", ziel:"bad_hyp", typ:"fehler", fb:"Hypoxie nicht unbehandelt lassen – kontrolliert sofort geben."} ]},
+    n2:{ titel:"THERAPIE", text:"Was steht therapeutisch im Vordergrund (AO)?", optionen:[
+      {text:"Kurzwirksame Bronchodilatatoren, systemische Steroide, ggf. Antibiotikum (purulent)", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Sofort NIV für jeden, unabhängig von der BGA", ziel:"n3", typ:"warn", fb:"NIV ist stark bei respiratorischer Azidose – nicht reflexhaft vor Bronchodilatation/BGA."},
+      {text:"Sedierung wegen der Unruhe", ziel:"bad_sed", typ:"fehler", fb:"Dämpft den Atemantrieb – gefährlich."} ]},
+    n3:{ titel:"BGA-BEFUND", text:"BGA: pH 7,28, pCO₂ 68 mmHg. Was ist indiziert?", optionen:[
+      {text:"NIV (respiratorische Azidose), Intensiv informieren", ziel:"n4", typ:"gut", fb:"Sehr gut – hier ist NIV evidenzbasiert."},
+      {text:"O₂ deutlich erhöhen, um die Sättigung zu pushen", ziel:"bad_hyp", typ:"warn", fb:"Verstärkt den CO₂-Anstieg."},
+      {text:"Weiter nur Inhalation, abwarten", ziel:"bad_acid", typ:"warn", fb:"Bei pH 7,28 reicht das oft nicht."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Unter NIV bessert sich die BGA. Worauf achtest du?", optionen:[
+      {text:"Vigilanz, AF, SpO₂ (88–92 %), BGA-Verlauf, NIV-Toleranz", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"SpO₂ auf 100 % anheben", ziel:"end_mittel", typ:"warn", fb:"Bei COPD riskant – Zielbereich einhalten."} ]},
+    bad_hyp:{ text:"Unter hohem O₂ wird die Patientin somnolenter, die AF sinkt. Reaktion?", optionen:[
+      {text:"CO₂-Narkose: O₂ in den Zielbereich titrieren, BGA, NIV/Intensiv", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
+      {text:"Noch mehr O₂ geben", ziel:"end_schlecht", typ:"fehler", fb:"Verstärkt die CO₂-Narkose."} ]},
+    bad_sed:{ text:"Nach Sedierung AF 8, kaum erweckbar. Reaktion?", optionen:[
+      {text:"Stimulieren, O₂ titrieren, Beatmung/Antidot nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Abgewendet – Sedierung war der Fehler."},
       {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Atemdepression."} ]},
-    end_gut:{ ende:true, ergebnis:"gut", text:"Atmung gebessert, Patientin wacher.", fazit:"COPD-Exazerbation: kontrollierte O₂-Gabe (88–92 %), keine Sedierung, CO₂ und Vigilanz überwachen." },
-    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber riskanter Verlauf.", fazit:"Bei COPD kein Ziel von 100 % SpO₂ – CO₂-Anstieg droht." },
+    bad_acid:{ text:"pH fällt auf 7,22, die Patientin ist zunehmend erschöpft. Reaktion?", optionen:[
+      {text:"NIV jetzt einleiten, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Dekompensation."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Atmung gebessert, Patientin wacher.", fazit:"COPD-Exazerbation: kontrollierte O₂ (88–92 %), Bronchodilatatoren + Steroide (+ AB bei purulent), NIV bei respiratorischer Azidose; keine Sedierung." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber riskanter Verlauf.", fazit:"O₂-Zielbereich einhalten und bei pH-Abfall rechtzeitig NIV." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"CO₂-Narkose, Intensivpflicht.", fazit:"Unkontrollierte O₂-Gabe und Sedierung sind bei COPD gefährlich." }
   } },
 
-{ id:"inn_le", fach:"innere", fachLabel:"Innere Medizin", icon:"🫁", farbe:"#ef4444", titel:"Plötzliche Atemnot postop.", schwere:"akut · hoch",
-  vignette:"Herr M., 58 J., 3 Tage nach Knie-OP: plötzliche Atemnot, atemabhängiger Thoraxschmerz, Puls 120, SpO₂ 88 %, einseitig geschwollenes Bein.",
+{ id:"inn_le", fach:"innere", fachLabel:"Innere Medizin", icon:"🫁", farbe:"#ef4444", titel:"Plötzliche Atemnot postop.", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Herr M., 58 J., 3 Tage nach Knie-TEP: plötzliche Dyspnoe + atemabhängiger Thoraxschmerz, Puls 120, SpO₂ 88 %, RR 110/70, einseitig geschwollenes Bein.",
   start:"n1",
   nodes:{
-    n1:{ titel:"VERDACHT & SOFORTMASSNAHME", text:"Was denkst und tust du?", optionen:[
-      {text:"V.a. Lungenembolie: Monitoring, O₂, Arzt sofort, Patient ruhigstellen", ziel:"n2", typ:"gut", fb:"Richtig – postop + Beinschwellung + Dyspnoe."},
-      {text:"Patient mobilisieren, damit die Luft besser wird", ziel:"bad1", typ:"fehler", fb:"Mobilisation kann einen Embolus verschleppen."},
-      {text:"Nur ein Schmerzmittel geben und beobachten", ziel:"bad1", typ:"fehler", fb:"Verkennt den Notfall."} ]},
-    n2:{ titel:"DIAGNOSTIK/THERAPIE (AO)", text:"Was erwartest du?", optionen:[
-      {text:"CT-Angiografie/D-Dimer, Antikoagulation nach AO, ggf. Intensiv", ziel:"n3", typ:"gut", fb:"Korrekt."},
-      {text:"Erst abwarten, ob es von allein besser wird", ziel:"bad2", typ:"fehler", fb:"Eine LE kann rasch dekompensieren."} ]},
-    n3:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
-      {text:"RR/Puls, SpO₂, Atmung, Zeichen der Rechtsherzbelastung/Schock", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
-      {text:"Nur die Sättigung", ziel:"end_mittel", typ:"warn", fb:"Ein Kreislaufkollaps ist möglich – mehr überwachen."} ]},
-    bad1:{ text:"Der Patient kollabiert, der Blutdruck fällt. Reaktion?", optionen:[
-      {text:"Flach-/Schocklagerung, O₂, Notfallteam, Reanimationsbereitschaft", ziel:"n2", typ:"gut", fb:"Richtig – jetzt Notfall."},
-      {text:"Aufsetzen und abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Bei Schock falsch."} ]},
-    bad2:{ text:"Plötzlicher Blutdruckabfall, Zyanose. Reaktion?", optionen:[
-      {text:"Sofort eskalieren, Kreislaufunterstützung nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Gerettet, aber spät."},
-      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Massive Lungenembolie – Lebensgefahr."} ]},
-    end_gut:{ ende:true, ergebnis:"gut", text:"Antikoagulation eingeleitet, Kreislauf stabil.", fazit:"Postoperativ ist die LE eine wichtige Differenzialdiagnose: keine Mobilisation, schnelle Diagnostik/Antikoagulation, Kreislauf überwachen." },
-    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Bei LE-Verdacht zügig eskalieren – Dekompensation kommt plötzlich." },
-    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Kreislaufstillstand bei massiver LE.", fazit:"Atemnot + einseitige Beinschwellung postop = LE bis zum Beweis des Gegenteils." }
+    n1:{ titel:"PRIORISIERUNG", text:"Was hat Vorrang?", optionen:[
+      {text:"Monitoring + O₂ titrieren, Patient ruhigstellen, Arzt – V.a. LE", ziel:"n2", typ:"gut", fb:"Richtig."},
+      {text:"Eigenständig Vollheparinisierung starten", ziel:"n2", typ:"warn", fb:"Antikoagulation ist zentral, aber nach ärztlicher Anordnung/Risikoabwägung – nicht eigenmächtig."},
+      {text:"Erst 12-Kanal-EKG, dann entscheiden", ziel:"n2", typ:"warn", fb:"EKG ist sinnvoll (Rechtsherzbelastung/DD), aber Monitoring/O₂ und Arztinfo laufen parallel."} ]},
+    n2:{ titel:"DIAGNOSTIK", text:"Aktuell hämodynamisch stabil (RR 110/70). Vorgehen (AO)?", optionen:[
+      {text:"CT-Pulmonalisangiografie anstreben; Antikoagulation nach AO", ziel:"n3", typ:"gut", fb:"Korrekt beim stabilen Patienten."},
+      {text:"Erst D-Dimer abwarten, bevor etwas passiert", ziel:"n3", typ:"warn", fb:"Bei hoher klinischer Wahrscheinlichkeit ist D-Dimer wenig hilfreich – Bildgebung."} ]},
+    n3:{ titel:"AKUTE VERSCHLECHTERUNG", text:"Plötzlich RR 80/50, gestaute Halsvenen, kaltschweißig. Einordnung/Reaktion?", optionen:[
+      {text:"Hämodynamisch instabile (Hochrisiko-)LE → Notfallteam, Kreislaufstütze nach AO, Lyse erwägen", ziel:"n4", typ:"gut", fb:"Sehr gut erkannt."},
+      {text:"Großzügig Volumen geben, bis der RR steigt", ziel:"bad_vol", typ:"warn", fb:"Aggressive Volumengabe kann den überlasteten rechten Ventrikel verschlechtern."},
+      {text:"Patienten aufsetzen zur Atemerleichterung", ziel:"bad_shock", typ:"fehler", fb:"Bei Schock flach/Schocklagerung, nicht aufsetzen."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Reanimationsbereitschaft. Vorgehen?", optionen:[
+      {text:"Engmaschig RR/Puls/SpO₂, CPR-Bereitschaft, Lyse/Intensiv nach AO", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur die Sättigung überwachen", ziel:"end_mittel", typ:"warn", fb:"Der Kreislauf steht im Vordergrund."} ]},
+    bad_vol:{ text:"Nach reichlich Volumen verschlechtert sich die Oxygenierung, RR weiter niedrig. Reaktion?", optionen:[
+      {text:"Volumen stoppen, Katecholamine nach AO, Intensiv/Lyse", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – RV-Überlastung beachtet."},
+      {text:"Noch mehr Volumen", ziel:"end_schlecht", typ:"fehler", fb:"Rechtsherzversagen."} ]},
+    bad_shock:{ text:"Nach dem Aufsetzen kollabiert der Patient. Reaktion?", optionen:[
+      {text:"Flach-/Schocklagerung, Notfallteam, CPR-Bereitschaft", ziel:"end_mittel", typ:"warn", fb:"Gerettet, aber Fehllagerung kostete Zeit."},
+      {text:"Wieder aufsetzen", ziel:"end_schlecht", typ:"fehler", fb:"Kreislaufstillstand."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Kreislauf gestützt, Reperfusion/Antikoagulation eingeleitet.", fazit:"Postop LE: keine Mobilisation, O₂/Monitoring. Stabil → CT-Angio + Antikoagulation; instabil → Hochrisiko-LE (Lyse/Intensiv). Volumen nur vorsichtig (RV!)." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert/riskant.", fazit:"Bei Instabilität zügig als Hochrisiko-LE behandeln; Volumen titrieren statt fluten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Rechtsherzversagen / Kreislaufstillstand.", fazit:"Atemnot + einseitige Beinschwellung postop = LE bis zum Beweis des Gegenteils." }
   } },
 
-{ id:"inn_gib", fach:"innere", fachLabel:"Innere Medizin", icon:"🩸", farbe:"#f97316", titel:"Bluterbrechen", schwere:"akut · hoch",
-  vignette:"Frau L., 67 J.: erbricht kaffeesatzartiges Blut, schwarzer Stuhl, blass, Puls 110, RR 95/60, regelmäßige NSAR-Einnahme.",
+{ id:"inn_gib", fach:"innere", fachLabel:"Innere Medizin", icon:"🩸", farbe:"#f97316", titel:"Bluterbrechen", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Frau L., 67 J., NSAR + ASS: Hämatemesis (kaffeesatzartig) + Meläna, blass, Puls 112, RR 96/60, unruhig.",
   start:"n1",
   nodes:{
-    n1:{ titel:"PRIORITÄT", text:"Was zuerst?", optionen:[
-      {text:"Kreislauf sichern: Monitoring, 2 großlumige Zugänge, Volumen nach AO, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Blutung + Hypotonie = Kreislaufpriorität."},
-      {text:"Patientin aufsetzen und Tee geben", ziel:"bad1", typ:"fehler", fb:"Orale Zufuhr bei aktiver Blutung/Endoskopie ungünstig – Kreislauf zuerst."},
-      {text:"Abführmaßnahme, um das Blut zu entfernen", ziel:"bad1", typ:"fehler", fb:"Verkennt den Schock, kontraproduktiv."} ]},
-    n2:{ titel:"WEITERES (AO)", text:"Was erwartest du?", optionen:[
-      {text:"Nüchtern lassen, Labor/Kreuzblut, PPI, frühe Endoskopie planen", ziel:"n3", typ:"gut", fb:"Korrekt."},
-      {text:"Sofort essen lassen zur Stärkung", ziel:"bad2", typ:"fehler", fb:"Nüchtern wegen Endoskopie und Aspirationsgefahr."} ]},
-    n3:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
-      {text:"RR/Puls engmaschig, Bewusstsein, Ausscheidung, Zeichen erneuter Blutung, Hb-Verlauf", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
-      {text:"Einmalig RR messen reicht", ziel:"end_mittel", typ:"warn", fb:"Rezidivblutung/Schock erfordern engmaschige Kontrolle."} ]},
-    bad1:{ text:"Die Patientin wird benommen, RR 80/50. Reaktion?", optionen:[
-      {text:"Flachlagerung/Beine hoch, Volumen, Notfallteam, Transfusionsbereitschaft", ziel:"n2", typ:"gut", fb:"Richtig – Schockmanagement."},
-      {text:"Aufsetzen, abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hämorrhagischer Schock."} ]},
-    bad2:{ text:"Erneutes Bluterbrechen, die Sättigung fällt. Reaktion?", optionen:[
-      {text:"Atemweg schützen (Aspiration!), absaugen, eskalieren, Endoskopie", ziel:"end_mittel", typ:"warn", fb:"Abgewendet."},
-      {text:"Hinlegen und warten", ziel:"end_schlecht", typ:"fehler", fb:"Aspirations- und Schockgefahr."} ]},
-    end_gut:{ ende:true, ergebnis:"gut", text:"Kreislauf stabilisiert, Endoskopie eingeleitet.", fazit:"Obere GI-Blutung: Kreislauf zuerst, nüchtern lassen, 2 großlumige Zugänge, frühe Endoskopie, Aspiration vermeiden." },
-    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert.", fazit:"Engmaschige Kreislaufkontrolle wegen Rezidivblutung ist entscheidend." },
-    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hämorrhagischer Schock / Aspiration.", fazit:"Bei aktiver GI-Blutung Kreislauf priorisieren und nüchtern lassen." }
+    n1:{ titel:"PRIORISIERUNG", text:"Was hat Vorrang?", optionen:[
+      {text:"Kreislauf: 2 großlumige Zugänge, Volumen nach AO, Monitor, Kreuzblut, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Hämodynamik zuerst."},
+      {text:"Sofort PPI i.v. als Bolus, dann der Rest", ziel:"n2", typ:"warn", fb:"PPI ist sinnvoll, aber Kreislaufsicherung und Zugänge haben Vorrang."},
+      {text:"Magensonde zum Ausspülen legen", ziel:"n2", typ:"warn", fb:"Nicht primär entscheidend und bei aktiver Hämatemesis ohne Atemwegsschutz riskant."} ]},
+    n2:{ titel:"ZENTRALE MASSNAHME", text:"Stabilisierung läuft. Was ist therapeutisch zentral?", optionen:[
+      {text:"Frühe Endoskopie (diagnostisch + therapeutisch), nüchtern, PPI nach AO", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Erst beobachten, Endoskopie elektiv am Folgetag", ziel:"bad_wait", typ:"warn", fb:"Bei aktiver Blutung/Instabilität ist die frühe Endoskopie indiziert."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Hb-Abfall, RR 85/55 trotz Volumen, erneute Hämatemesis. Reaktion?", optionen:[
+      {text:"Atemweg schützen (Aspiration!), absaugen, Transfusion nach AO, dringliche Endoskopie/Intensiv", ziel:"n4", typ:"gut", fb:"Sehr gut – Aspiration und Schock im Blick."},
+      {text:"Kopftief lagern, um den Kreislauf zu stützen", ziel:"bad_asp", typ:"warn", fb:"Kopftieflage erhöht die Aspirationsgefahr bei Hämatemesis."},
+      {text:"Nur weiter Volumen, abwarten", ziel:"bad_asp", typ:"warn", fb:"Allein Volumen reicht bei aktiver Blutung nicht."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"RR/Puls engmaschig, Bewusstsein, Ausscheidung, Hb-/Gerinnungsverlauf, Rezidivzeichen", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Einmal RR messen genügt", ziel:"end_mittel", typ:"warn", fb:"Engmaschig wegen Rezidivblutung."} ]},
+    bad_wait:{ text:"Stunden später massive Hämatemesis, RR 70/40. Reaktion?", optionen:[
+      {text:"Notfallendoskopie/Intensiv, Transfusion, Atemwegsschutz", ziel:"end_mittel", typ:"warn", fb:"Spät, aber lebensrettend."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hämorrhagischer Schock."} ]},
+    bad_asp:{ text:"Die Patientin aspiriert Blut, SpO₂ fällt, gurgelnde Atmung. Reaktion?", optionen:[
+      {text:"Absaugen, Oberkörper hoch/Seitenlage, Atemwegsschutz, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Abgewendet."},
+      {text:"Weiter wie bisher", ziel:"end_schlecht", typ:"fehler", fb:"Aspiration + Schock."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Kreislauf stabilisiert, Endoskopie eingeleitet.", fazit:"Obere GI-Blutung: Kreislauf zuerst (2 Zugänge, Volumen/Transfusion), nüchtern, frühe Endoskopie, Aspirationsschutz; PPI begleitend, nicht statt Kreislauf." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisierung gelungen, aber verzögert/riskant.", fazit:"Engmaschige Kreislaufkontrolle und Aspirationsschutz sind entscheidend." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hämorrhagischer Schock / Aspiration.", fazit:"Bei aktiver GI-Blutung Kreislauf priorisieren, nüchtern lassen, Atemweg schützen." }
   } },
 
-{ id:"inn_hypo", fach:"innere", fachLabel:"Innere Medizin", icon:"🍬", farbe:"#a78bfa", titel:"Plötzliche Verwirrtheit", schwere:"akut",
-  vignette:"Herr T., 72 J., insulinpflichtiger Diabetes: plötzlich verwirrt, zittrig, kaltschweißig. BZ 2,4 mmol/l (43 mg/dl). Wach, kann schlucken.",
+{ id:"inn_hypo", fach:"innere", fachLabel:"Innere Medizin", icon:"🍬", farbe:"#a78bfa", titel:"Plötzliche Verwirrtheit", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Herr T., 72 J., Insulin + Sulfonylharnstoff: akut verwirrt, zittrig, kaltschweißig. BZ 2,3 mmol/l (41 mg/dl). Noch wach, schluckt sicher.",
   start:"n1",
   nodes:{
-    n1:{ titel:"SOFORTMASSNAHME", text:"Patient wach und schluckfähig – was tust du?", optionen:[
-      {text:"Schnell wirksame orale Kohlenhydrate (z. B. Traubenzucker/Saft)", ziel:"n2", typ:"gut", fb:"Richtig – wach + schluckfähig = orale Gabe."},
-      {text:"Sofort i.v. Glukose, obwohl er schlucken kann", ziel:"n2alt", typ:"warn", fb:"Bei schluckfähigem Patienten zuerst oral; i.v. wenn das nicht möglich ist."},
-      {text:"Insulin geben, um den Stoffwechsel zu stabilisieren", ziel:"bad1", typ:"fehler", fb:"Insulin senkt den BZ weiter – gefährlich."} ]},
+    n1:{ titel:"SOFORTMASSNAHME", text:"Wach und schluckfähig – was ist erste Wahl?", optionen:[
+      {text:"Orale schnelle KH, 15–20 g (z. B. Traubenzucker/Saft)", ziel:"n2", typ:"gut", fb:"Richtig – orale Gabe nach der 15er-Regel."},
+      {text:"i.v. Glukose 40 %, obwohl er schlucken kann", ziel:"n2", typ:"warn", fb:"Vertretbar bei liegendem Zugang, aber bei sicher schluckfähigem Patienten ist oral erste Wahl."},
+      {text:"i.m. Glukagon", ziel:"n2", typ:"warn", fb:"Eher wenn keine orale Gabe/kein Zugang möglich; bei Sulfonylharnstoff zudem weniger zuverlässig."} ]},
     n2:{ titel:"NACH DER GABE", text:"Wie geht es weiter?", optionen:[
-      {text:"BZ nach ~15 min erneut messen, bei Bedarf wiederholen, dann komplexe KH", ziel:"n3", typ:"gut", fb:"Korrekt – 15er-Regel."},
-      {text:"Keine Kontrolle nötig", ziel:"bad2", typ:"warn", fb:"Rezidiv möglich – immer nachmessen."} ]},
-    n2alt:{ titel:"KORREKTUR", text:"Er kann schlucken – was ist sinnvoller?", optionen:[
-      {text:"Orale Gabe bevorzugen, i.v. nur wenn nötig; danach BZ-Kontrolle", ziel:"n3", typ:"gut", fb:"Richtig priorisiert."},
-      {text:"Trotzdem nur i.v. und keine Kontrolle", ziel:"bad2", typ:"warn", fb:"Die Nachkontrolle fehlt."} ]},
-    n3:{ titel:"ÜBERWACHUNG / URSACHE", text:"Worauf achtest du?", optionen:[
-      {text:"Bewusstsein, BZ-Verlauf, Auslöser klären (Insulin/Mahlzeit), Doku, Arzt", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
-      {text:"Nichts weiter, ist ja vorbei", ziel:"end_mittel", typ:"warn", fb:"Ursache und Verlauf sind wichtig (Rezidivgefahr)."} ]},
-    bad1:{ text:"Nach der Insulingabe wird der Patient bewusstlos. Reaktion?", optionen:[
-      {text:"Keine orale Gabe mehr! i.v. Glukose / Glukagon, Notfallteam, Atemweg sichern", ziel:"end_mittel", typ:"warn", fb:"Gerettet – aber das Insulin war der Fehler."},
-      {text:"Traubenzucker in den Mund schieben", ziel:"end_schlecht", typ:"fehler", fb:"Aspirationsgefahr bei Bewusstlosen – verboten."} ]},
-    bad2:{ text:"30 min später erneut Verwirrtheit. Ursache?", optionen:[
-      {text:"Rezidiv-Hypoglykämie: erneut messen und behandeln, Ursache klären", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
-      {text:"Ignorieren", ziel:"end_schlecht", typ:"fehler", fb:"Schwere Hypoglykämie droht."} ]},
-    end_gut:{ ende:true, ergebnis:"gut", text:"BZ normalisiert, Patient wieder orientiert.", fazit:"Hypoglykämie: wach → orale KH; bewusstlos → niemals oral (Aspiration), dann i.v. Glukose/Glukagon. 15er-Regel, Ursache klären." },
-    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Immer nachmessen (Rezidiv) und den Auslöser klären." },
-    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aspiration bzw. schwere Hypoglykämie.", fazit:"Bei Bewusstlosen nie orale Gabe; nie Insulin bei Hypoglykämie." }
+      {text:"BZ nach 15 min kontrollieren, ggf. wiederholen, dann komplexe KH", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Keine Kontrolle, der Patient kann gehen", ziel:"bad_recur", typ:"warn", fb:"Gerade bei Sulfonylharnstoff drohen protrahierte/erneute Hypoglykämien."} ]},
+    n3:{ titel:"MEDIKATION BEDENKEN", text:"Welcher Aspekt ist wegen des Sulfonylharnstoffs wichtig?", optionen:[
+      {text:"Längere Überwachung (Gefahr protrahierter/rezidivierender Hypoglykämie), Arzt/ggf. stationär", ziel:"n4", typ:"gut", fb:"Sehr gut – Sulfonylharnstoffe wirken lang."},
+      {text:"Nach Normalisierung sofort entlassen", ziel:"bad_recur", typ:"warn", fb:"Zu früh – Rückfallgefahr über Stunden."} ]},
+    n4:{ titel:"ÜBERWACHUNG / URSACHE", text:"Worauf achtest du?", optionen:[
+      {text:"BZ-Verlauf, Bewusstsein, Auslöser (Dosis/Mahlzeit/Niereninsuffizienz), Doku, Arzt", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur einmal nachmessen", ziel:"end_mittel", typ:"warn", fb:"Verlauf und Ursache sind wichtig."} ]},
+    bad_recur:{ text:"2 h später erneut Verwirrtheit, BZ 2,6 mmol/l. Reaktion?", optionen:[
+      {text:"Erneut behandeln, längere Überwachung/Dauerinfusion nach AO, Ursache (Sulfonylharnstoff) bedenken", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
+      {text:"Ignorieren", ziel:"end_schlecht", typ:"fehler", fb:"Schwere protrahierte Hypoglykämie."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"BZ normalisiert, Patient orientiert, sicher überwacht.", fazit:"Hypoglykämie: wach → orale KH (15er-Regel). Sulfonylharnstoff/lang wirkendes Insulin → längere Überwachung (Rezidiv!). Bewusstlos → nie oral, i.v. Glukose/Glukagon." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Immer nachmessen und bei lang wirkenden Substanzen ausreichend lange überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Erneute schwere Hypoglykämie.", fazit:"Bei Sulfonylharnstoff drohen protrahierte Hypoglykämien – ausreichend lange überwachen." }
   } }
 ];
 
