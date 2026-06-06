@@ -5058,6 +5058,176 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Immer nachmessen und bei lang wirkenden Substanzen ausreichend lange überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Erneute schwere Hypoglykämie.", fazit:"Bei Sulfonylharnstoff drohen protrahierte Hypoglykämien – ausreichend lange überwachen." }
   } }
+,
+{ id:"chi_abdomen", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🔥", farbe:"#f97316", titel:"Akutes Abdomen", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Herr R., 24 J.: seit 12 h Bauchschmerz, zunächst periumbilikal, jetzt rechter Unterbauch; Übelkeit, Fieber 38,6 °C, Abwehrspannung, Loslassschmerz.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORISIERUNG", text:"Wie gehst du vor?", optionen:[
+      {text:"Vitalzeichen, nüchtern lassen, Schmerz/Temperatur erfassen, Arzt informieren", ziel:"n2", typ:"gut", fb:"Richtig – Basismonitoring und nüchtern (mögliche OP)."},
+      {text:"Wärmflasche auf den Bauch zur Schmerzlinderung", ziel:"n2", typ:"warn", fb:"Wärme ist bei akutem Abdomen ungünstig (kann eine Perforation begünstigen) – eher nüchtern/kühlen."},
+      {text:"Abführmittel geben, um den Darm zu entlasten", ziel:"bad_lax", typ:"fehler", fb:"Laxanzien/Klysmen sind beim akuten Abdomen kontraindiziert – Perforationsgefahr."} ]},
+    n2:{ titel:"ANALGESIE & DIAGNOSTIK", text:"Starke Schmerzen, der Arzt ordnet Diagnostik an. Was ist korrekt?", optionen:[
+      {text:"Analgesie nach AO ist erlaubt und verschleiert die Diagnostik nicht – Labor/Sono/ggf. CT", ziel:"n3", typ:"gut", fb:"Korrekt – moderne Analgesie verschleiert die Diagnose nicht."},
+      {text:"Keine Schmerzmittel, sonst wird die Diagnose verschleiert", ziel:"n3", typ:"warn", fb:"Veraltet – Analgesie darf gegeben werden; nur den Befund vorher dokumentieren."},
+      {text:"Essen anbieten, damit er zu Kräften kommt", ziel:"bad_food", typ:"fehler", fb:"Nüchtern lassen wegen möglicher OP/Aspiration."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Plötzlich brettharter Bauch, RR fällt, Puls steigt, hohes Fieber. Reaktion?", optionen:[
+      {text:"V.a. Perforation/Peritonitis → sofort Chirurg/OP-Vorbereitung, Volumen, Antibiotika nach AO, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – septisch-chirurgischer Notfall."},
+      {text:"Erst das CT abwarten, bevor jemand gestört wird", ziel:"bad_delay", typ:"warn", fb:"Bei bretthartem Abdomen + Kreislaufreaktion sofort eskalieren."},
+      {text:"Schmerzmittel erhöhen und beobachten", ziel:"bad_delay", typ:"warn", fb:"Analgesie ja, aber die OP-Indikation darf nicht verzögert werden."} ]},
+    n4:{ titel:"ÜBERWACHUNG / OP-VORBEREITUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Kreislauf, Bilanz, Temperatur, OP-Vorbereitung (nüchtern, Zugang, Einwilligung), Sepsiszeichen", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur die Temperatur kontrollieren", ziel:"end_mittel", typ:"warn", fb:"Kreislauf und Sepsis stehen im Vordergrund."} ]},
+    bad_lax:{ text:"Nach dem Abführmittel akute Schmerzverstärkung, brettharter Bauch. Reaktion?", optionen:[
+      {text:"Sofort Chirurg/OP, Volumen, Antibiotika nach AO", ziel:"end_mittel", typ:"warn", fb:"Perforation – das Laxans war der Fehler."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Peritonitis/Sepsis."} ]},
+    bad_food:{ text:"Nach der Mahlzeit Erbrechen, jetzt Not-OP nötig, Aspirationsrisiko erhöht. Reaktion?", optionen:[
+      {text:"Ab jetzt nüchtern, Aspirationsschutz, OP-Vorbereitung", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Nüchternheit war wichtig."},
+      {text:"Trotzdem weiter essen lassen", ziel:"end_schlecht", typ:"fehler", fb:"Aspirationsgefahr bei Not-OP."} ]},
+    bad_delay:{ text:"Durch das Zögern fällt der RR weiter, septisches Bild. Reaktion?", optionen:[
+      {text:"Jetzt sofort eskalieren: Chirurg/OP, Volumen, Antibiotika, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Septischer Schock."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Rechtzeitige OP, Patient stabil.", fazit:"Akutes Abdomen: nüchtern, keine Wärme/Laxanzien, Analgesie nach AO erlaubt; bei Perforation/Peritonitis sofortige OP plus Sepsisbündel." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber mit vermeidbarem Risiko.", fazit:"Frühzeitig nüchtern lassen und bei Peritonismus sofort eskalieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Peritonitis/septischer Schock.", fazit:"Laxanzien, Essen und Verzögerung sind beim akuten Abdomen gefährlich." }
+  } },
+
+{ id:"chi_ileus", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🌀", farbe:"#fb923c", titel:"Darmverschluss", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Frau D., 71 J., Z.n. Bauch-OPs: zunehmende kolikartige Bauchschmerzen, geblähtes Abdomen, fäkulentes Erbrechen, kein Stuhl/Wind seit 2 Tagen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORISIERUNG", text:"Wie gehst du vor?", optionen:[
+      {text:"Nüchtern, Magensonde zur Entlastung nach AO, i.v.-Zugang/Volumen, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Entlastung plus Flüssigkeits-/Elektrolytausgleich."},
+      {text:"Reichlich trinken lassen, um den Darm in Gang zu bringen", ziel:"n2", typ:"warn", fb:"Bei Ileus nüchtern – orale Zufuhr verschlimmert Erbrechen/Aspiration."},
+      {text:"Abführmittel/Einlauf geben", ziel:"bad_lax", typ:"fehler", fb:"Beim mechanischen Ileus kontraindiziert (Perforationsgefahr)."} ]},
+    n2:{ titel:"ZENTRALE MASSNAHME", text:"Bildgebung bestätigt mechanischen (Briden-)Ileus. Was ist zentral?", optionen:[
+      {text:"Magensonden-Entlastung, Bilanz, Elektrolyte ausgleichen, chirurgische Mitbeurteilung", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Nur Schmerzmittel, abwarten ob es sich löst", ziel:"n3", typ:"warn", fb:"Analgesie ja, aber Entlastung/Bilanz und chirurgische Beurteilung sind nötig."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Plötzlich Dauerschmerz statt Kolik, lokale Abwehr, Fieber, RR fällt. Einordnung?", optionen:[
+      {text:"V.a. Strangulation/Ischämie → chirurgischer Notfall, OP-Vorbereitung, Volumen, Antibiotika nach AO", ziel:"n4", typ:"gut", fb:"Sehr gut – Kolik → Dauerschmerz ist ein Alarmzeichen."},
+      {text:"Weiter konservativ abwarten", ziel:"bad_delay", typ:"warn", fb:"Dauerschmerz + Fieber + Kreislauf = Strangulation, sofort eskalieren."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Kreislauf, Bilanz (Sonde/Urin), Elektrolyte, Temperatur, Sepsiszeichen, OP-Vorbereitung", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur den Schmerzscore", ziel:"end_mittel", typ:"warn", fb:"Kreislauf/Bilanz/Sepsis im Vordergrund."} ]},
+    bad_lax:{ text:"Nach dem Einlauf akute Verschlechterung, Peritonismus. Reaktion?", optionen:[
+      {text:"Sofort Chirurg/OP, Volumen, Antibiotika", ziel:"end_mittel", typ:"warn", fb:"Perforation – der Einlauf war der Fehler."},
+      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Peritonitis."} ]},
+    bad_delay:{ text:"Septisches Bild, RR 80/50. Reaktion?", optionen:[
+      {text:"Notfall-OP-Vorbereitung, Volumen, Antibiotika, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Darmischämie/Sepsis."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Entlastet und rechtzeitig operiert.", fazit:"Mechanischer Ileus: nüchtern, Magensonden-Entlastung, Volumen/Elektrolyte, keine Laxanzien/Einläufe; Dauerschmerz + Fieber = Strangulation → OP." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber verzögert.", fazit:"Den Übergang von Kolik zu Dauerschmerz früh als Alarmzeichen werten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Darmischämie/Perforation, Sepsis.", fazit:"Einläufe/Laxanzien und Abwarten sind beim mechanischen Ileus gefährlich." }
+  } },
+
+{ id:"chi_ischaemie", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🦵", farbe:"#ef4444", titel:"Plötzlich kaltes Bein", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Herr P., 68 J., Vorhofflimmern: plötzlich starker Schmerz im rechten Bein; Bein blass, kalt, kein Fußpuls tastbar, beginnende Gefühlsstörung.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORISIERUNG", text:"Wie lagerst und handelst du?", optionen:[
+      {text:"Bein tief lagern, warm halten (nicht aktiv wärmen), Pulsstatus dokumentieren, sofort Gefäßchirurgie/Arzt", ziel:"n2", typ:"gut", fb:"Richtig – tief lagern, polstern, Zeit ist Gewebe (6 P)."},
+      {text:"Bein hochlagern zur Entlastung", ziel:"n2", typ:"warn", fb:"Bei arterieller Ischämie eher tief lagern – Hochlagern verschlechtert die Perfusion."},
+      {text:"Aktiv mit Wärmflasche erwärmen", ziel:"bad_heat", typ:"fehler", fb:"Aktive Wärme steigert den O₂-Bedarf im ischämischen Gewebe – schädlich."} ]},
+    n2:{ titel:"ZEITKRITISCH", text:"Akuter arterieller Verschluss (embolisch bei VHF). Was ist zeitkritisch (AO)?", optionen:[
+      {text:"Rasche Revaskularisation (Embolektomie/Lyse); Antikoagulation nach AO; nüchtern (OP)", ziel:"n3", typ:"gut", fb:"Korrekt – Revaskularisation im Zeitfenster."},
+      {text:"Erst abwarten, ob sich die Durchblutung erholt", ziel:"bad_delay", typ:"warn", fb:"Die Ischämietoleranz ist begrenzt – kein Abwarten."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Nach Stunden: Schwellung, harte Muskelloge, stärkster Schmerz, Sensomotorik schlechter. Einordnung?", optionen:[
+      {text:"V.a. Kompartmentsyndrom/fortgeschrittene Ischämie → sofort Chirurg (ggf. Fasziotomie), Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut erkannt."},
+      {text:"Schmerzmittel erhöhen, abwarten", ziel:"bad_delay", typ:"warn", fb:"Harte Loge + Schmerz = Kompartment – sofort eskalieren."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Nach Revaskularisation – worauf achtest du?", optionen:[
+      {text:"Durchblutung/Puls, Sensomotorik, Logenspannung, Nierenwerte/Urin (Reperfusionsschaden), Schmerz", ziel:"end_gut", typ:"gut", fb:"Sehr gut – an das Reperfusionssyndrom denken."},
+      {text:"Nur den Schmerz dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Reperfusion/Kompartment/Niere im Blick behalten."} ]},
+    bad_heat:{ text:"Nach aktiver Erwärmung verschlechtert sich die Ischämie. Reaktion?", optionen:[
+      {text:"Wärme entfernen, tief lagern/polstern, sofort Revaskularisation/Gefäßchirurgie", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – aktive Wärme war der Fehler."},
+      {text:"Weiter wärmen", ziel:"end_schlecht", typ:"fehler", fb:"Gewebeuntergang."} ]},
+    bad_delay:{ text:"Bein marmoriert, Sensomotorik erloschen. Reaktion?", optionen:[
+      {text:"Notfall-Revaskularisation/Chirurgie, Intensiv; an Amputationsrisiko denken", ziel:"end_mittel", typ:"warn", fb:"Spät – Funktion evtl. nicht erhaltbar."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Irreversible Ischämie/Amputation."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Rechtzeitig revaskularisiert, Bein erhalten.", fazit:"Akute Extremitätenischämie (6 P): tief lagern, polstern, NICHT aktiv wärmen, schnelle Revaskularisation; nach Reperfusion auf Kompartment und Niere achten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber mit Funktionsrisiko.", fazit:"Je länger die Ischämie, desto schlechter – kein Abwarten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Irreversible Ischämie / Amputation.", fazit:"Aktive Wärme und Verzögerung kosten die Extremität." }
+  } },
+
+{ id:"chi_kompartment", fach:"chirurgie", fachLabel:"Chirurgie", icon:"💪", farbe:"#f43f5e", titel:"Schmerz im Gips", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Patient, 22 J., nach Unterschenkelfraktur im Gips: zunehmender, unverhältnismäßig starker Schmerz, Schmerz bei passiver Zehenstreckung, pralle Wade, Kribbeln.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Was tust du zuerst?", optionen:[
+      {text:"Gips/zirkuläre Verbände sofort spalten, Bein auf Herzhöhe, sofort Arzt", ziel:"n2", typ:"gut", fb:"Richtig – einengende Verbände öffnen, nicht hochlagern (Perfusion!)."},
+      {text:"Bein hochlagern und kühlen", ziel:"n2", typ:"warn", fb:"Hochlagern senkt den Perfusionsdruck zusätzlich – auf Herzhöhe belassen."},
+      {text:"Stärkeres Schmerzmittel geben und abwarten", ziel:"bad_delay", typ:"fehler", fb:"Der Schmerz ist das Leitsymptom – Analgesie darf das Kompartment nicht verschleiern."} ]},
+    n2:{ titel:"ENTSCHEIDEND", text:"Der Befund spricht für ein drohendes Kompartmentsyndrom. Was ist entscheidend?", optionen:[
+      {text:"Sofortige chirurgische Beurteilung (Logendruck/Fasziotomie), Durchblutung/Sensomotorik engmaschig", ziel:"n3", typ:"gut", fb:"Korrekt – die Fasziotomie ist zeitkritisch."},
+      {text:"Erst ein Röntgen abwarten", ziel:"bad_delay", typ:"warn", fb:"Das Kompartmentsyndrom ist eine klinische Diagnose – nicht auf Bildgebung warten."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Trotzdem zunehmender Druck, Sensibilität nimmt ab, Fußpuls jetzt schwächer. Reaktion?", optionen:[
+      {text:"Notfall-Fasziotomie veranlassen (Chirurg), Monitoring, Bein auf Herzhöhe", ziel:"n4", typ:"gut", fb:"Sehr gut – jetzt Notfall."},
+      {text:"Weiter beobachten, der Puls ist ja noch da", ziel:"bad_delay", typ:"warn", fb:"Pulsverlust ist ein Spätzeichen – nicht darauf warten."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Nach der Fasziotomie – worauf achtest du?", optionen:[
+      {text:"Sensomotorik, Durchblutung, Logenspannung, Nieren-/Urinkontrolle (Rhabdomyolyse), Wunde", ziel:"end_gut", typ:"gut", fb:"Sehr gut – an Rhabdomyolyse/Niere denken."},
+      {text:"Nur den Verband kontrollieren", ziel:"end_mittel", typ:"warn", fb:"Durchblutung und Niere stehen im Vordergrund."} ]},
+    bad_delay:{ text:"Sensomotorik erloschen, harte Loge. Reaktion?", optionen:[
+      {text:"Sofortige Fasziotomie/Chirurgie, Intensiv; Rhabdomyolyse/Niere beachten", ziel:"end_mittel", typ:"warn", fb:"Spät – Funktionsverlust möglich."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Irreversibler Muskel-/Nervenschaden."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Rechtzeitige Fasziotomie, Funktion erhalten.", fazit:"Kompartmentsyndrom: klinische Diagnose, einengende Verbände sofort öffnen, Bein auf Herzhöhe (nicht hoch); Pulsverlust ist Spätzeichen; Fasziotomie zeitkritisch; Rhabdomyolyse beachten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber spät.", fazit:"Nicht auf Pulsverlust oder Bildgebung warten – früh handeln." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Irreversibler Muskel-/Nervenschaden.", fazit:"Verzögerung führt zu bleibenden Schäden (Volkmann-Kontraktur)." }
+  } },
+
+{ id:"chi_nachblutung", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🩸", farbe:"#dc2626", titel:"Postoperative Nachblutung", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Frau H., 60 J., 4 h nach großer Bauch-OP: tachykard (118), RR 95/55, blass, kaltschweißig, Wunddrainage füllt sich rasch mit Blut, unruhig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORISIERUNG", text:"Wie gehst du vor?", optionen:[
+      {text:"Kreislauf: Monitor, 2 großlumige Zugänge, Volumen nach AO, Drainagemenge dokumentieren, sofort Chirurg/Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Schockzeichen + Drainageblut = Nachblutung, Kreislauf zuerst."},
+      {text:"Erst die Schmerzen behandeln, dann weiter", ziel:"n2", typ:"warn", fb:"Analgesie ist wichtig, aber Schock/Blutung haben Vorrang."},
+      {text:"Drainage abklemmen, damit kein Blut mehr verloren geht", ziel:"bad_clamp", typ:"fehler", fb:"Abklemmen verschleiert die Blutung und kann zu Verhalt/Tamponade führen – nicht eigenmächtig."} ]},
+    n2:{ titel:"DIAGNOSTIK/THERAPIE", text:"Was ist sinnvoll (AO)?", optionen:[
+      {text:"Labor/Hb, Kreuzblut/Transfusion vorbereiten, Gerinnung prüfen, ggf. operative Revision", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Nur weiter Volumen und beobachten", ziel:"n3", typ:"warn", fb:"Volumen ja, aber Transfusionsbereitschaft und ggf. Revision sind nötig."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Trotz Volumen RR 80/45, Hb fällt, Drainage weiter blutig. Reaktion?", optionen:[
+      {text:"Operative Revision anstreben, Transfusion nach AO, Massivtransfusionsbereitschaft, Intensiv", ziel:"n4", typ:"gut", fb:"Sehr gut – eine chirurgische Blutung muss meist operativ gestillt werden."},
+      {text:"Weiter nur Kristalloide, abwarten", ziel:"bad_delay", typ:"warn", fb:"Bei anhaltender chirurgischer Blutung reicht Volumen nicht."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"RR/Puls engmaschig, Hb-/Gerinnungsverlauf, Drainagemenge, Bewusstsein, Urin, Wärmeerhalt", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Stündlich RR genügt", ziel:"end_mittel", typ:"warn", fb:"Engmaschiger wegen der akuten Blutung."} ]},
+    bad_clamp:{ text:"Nach dem Abklemmen bildet sich eine schmerzhafte Schwellung, der Kreislauf bleibt instabil. Reaktion?", optionen:[
+      {text:"Drainage wieder öffnen, Chirurg/Revision, Volumen/Transfusion, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Abklemmen war der Fehler."},
+      {text:"Weiter abgeklemmt lassen", ziel:"end_schlecht", typ:"fehler", fb:"Verhalt/Schock."} ]},
+    bad_delay:{ text:"RR 70/40, somnolent. Reaktion?", optionen:[
+      {text:"Sofort OP-Revision, Massivtransfusion, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber lebensrettend."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hämorrhagischer Schock."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Revision rechtzeitig, Kreislauf stabil.", fazit:"Postop Nachblutung: Schock erkennen, Kreislauf zuerst (2 Zugänge, Volumen/Transfusion), Drainage beobachten (nicht eigenmächtig abklemmen), chirurgische Blutung meist operativ stillen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber mit vermeidbarem Risiko.", fazit:"Engmaschige Kreislaufkontrolle und frühe Revisionsbereitschaft sind entscheidend." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hämorrhagischer Schock.", fazit:"Abklemmen und Abwarten sind bei aktiver chirurgischer Blutung gefährlich." }
+  } },
+
+{ id:"chi_hernie", fach:"chirurgie", fachLabel:"Chirurgie", icon:"⛓️", farbe:"#f59e0b", titel:"Eingeklemmte Leiste", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Herr K., 55 J.: seit 4 h schmerzhafte, nicht reponible Vorwölbung in der Leiste, Übelkeit, Erbrechen; die Schwellung ist prall, gerötet, sehr druckschmerzhaft.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORISIERUNG", text:"Wie gehst du vor?", optionen:[
+      {text:"Nüchtern lassen, Vitalzeichen, nicht selbst reponieren, sofort Chirurg/Arzt", ziel:"n2", typ:"gut", fb:"Richtig – bei schmerzhafter, irreponibler Hernie keine forcierte Reposition; OP-Bereitschaft."},
+      {text:"Mehrfach kräftig versuchen, die Hernie zurückzudrücken", ziel:"bad_repo", typ:"fehler", fb:"Forcierte Reposition kann ischämischen Darm zurückverlagern (Perforationsgefahr)."},
+      {text:"Wärmflasche zur Entspannung auflegen", ziel:"n2", typ:"warn", fb:"Wärme ist bei möglicher Inkarzeration/Ischämie ungünstig; nüchtern + chirurgische Beurteilung."} ]},
+    n2:{ titel:"ZENTRALE MASSNAHME", text:"V.a. Inkarzeration mit drohender Strangulation. Was ist zentral?", optionen:[
+      {text:"Dringliche operative Versorgung anstreben, nüchtern, Zugang/Volumen, Analgesie nach AO", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Abwarten, ob es sich von selbst löst", ziel:"bad_delay", typ:"warn", fb:"Bei Inkarzeration mit Ischämiezeichen kein Abwarten."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Zunehmender Schmerz, Fieber, RR fällt, Abwehrspannung. Einordnung?", optionen:[
+      {text:"V.a. Strangulation/Ileus/Peritonitis → Notfall-OP-Vorbereitung, Volumen, Antibiotika nach AO, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut."},
+      {text:"Noch ein Repositionsversuch", ziel:"bad_repo", typ:"warn", fb:"Jetzt erst recht keine Reposition – Not-OP."} ]},
+    n4:{ titel:"ÜBERWACHUNG / OP-VORBEREITUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Kreislauf, Bilanz, Temperatur, Sepsiszeichen, nüchtern, Zugang, Einwilligung", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur den Schmerz dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Kreislauf und Sepsis stehen im Vordergrund."} ]},
+    bad_repo:{ text:"Nach (forcierter) Reposition zunächst Erleichterung, dann zunehmende Bauchschmerzen, Peritonismus, Fieber. Reaktion?", optionen:[
+      {text:"V.a. zurückverlagerten ischämischen Darm/Perforation → sofort Chirurg/OP, Volumen, Antibiotika", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – zeigt die Gefahr der forcierten Reposition."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Peritonitis/Sepsis."} ]},
+    bad_delay:{ text:"Septisches Bild, RR 80/50. Reaktion?", optionen:[
+      {text:"Notfall-OP, Volumen, Antibiotika, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Darmischämie/Sepsis."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Dringliche OP, Darm erhalten.", fazit:"Inkarzerierte Hernie: nicht forciert reponieren, nüchtern, dringliche OP; Strangulation ist ein Notfall mit Ischämie-/Peritonitis-Gefahr." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber mit Risiko.", fazit:"Forcierte Reposition vermeiden und bei Ischämiezeichen sofort operieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Darmischämie/Peritonitis, Sepsis.", fazit:"Forcierte Reposition und Abwarten sind bei Inkarzeration gefährlich." }
+  } }
 ];
 
 function navGo(screen) {
