@@ -5228,6 +5228,178 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgt, aber mit Risiko.", fazit:"Forcierte Reposition vermeiden und bei Ischämiezeichen sofort operieren." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Darmischämie/Peritonitis, Sepsis.", fazit:"Forcierte Reposition und Abwarten sind bei Inkarzeration gefährlich." }
   } }
+,
+{ id:"int_sepsis", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🦠", farbe:"#84cc16", titel:"Septischer Schock", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Frau N., 76 J., Dauerkatheter: Fieber 39,4 °C, Schüttelfrost, RR 85/50, Puls 124, verwirrt, Laktat erhöht, warme Peripherie.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTE STUNDE", text:"Was tust du im Sepsis-Bündel zuerst?", optionen:[
+      {text:"Blutkulturen abnehmen, dann zügig Breitband-Antibiotikum nach AO, Volumenbolus, Laktat, Monitoring", ziel:"n2", typ:"gut", fb:"Richtig – Kulturen vor AB, frühe Antibiose + Volumen (1-h-Bündel)."},
+      {text:"Erst fiebersenken (Paracetamol) und beobachten", ziel:"n2", typ:"warn", fb:"Fiebersenkung ist nebensächlich – Kulturen, Antibiose, Volumen haben Priorität."},
+      {text:"Antibiotikum sofort, Blutkulturen später nachholen", ziel:"n2", typ:"warn", fb:"Wenn ohne Verzug möglich: Kulturen VOR der ersten Gabe – die Antibiose aber nie lange aufschieben."} ]},
+    n2:{ titel:"VOLUMEN", text:"RR bleibt 85/50 nach erstem Bolus. Vorgehen?", optionen:[
+      {text:"Weitere balancierte Kristalloid-Boli nach AO, Reevaluation (RR/Laktat/Urin)", ziel:"n3", typ:"gut", fb:"Korrekt – Volumenresuscitation, dann neu bewerten."},
+      {text:"Sofort Diuretikum, weil wenig Urin kommt", ziel:"bad_diur", typ:"fehler", fb:"Bei Hypovolämie/Schock kontraindiziert – verschlechtert die Perfusion."},
+      {text:"Nur Antibiose, kein weiteres Volumen", ziel:"n3", typ:"warn", fb:"Antibiose allein behebt den Volumenmangel nicht."} ]},
+    n3:{ titel:"ESKALATION", text:"Trotz adäquatem Volumen RR 80/45, Laktat steigt. Was ist indiziert?", optionen:[
+      {text:"Vasopressor (Noradrenalin) nach AO, Intensiv/ZVK, engmaschiges Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – volumenrefraktär = Vasopressor (septischer Schock)."},
+      {text:"Weiter literweise Volumen ohne Limit", ziel:"bad_vol", typ:"warn", fb:"Unbegrenztes Volumen → Ödeme; jetzt Vasopressor."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"MAP-Ziel, Laktat-Verlauf, Urinausscheidung, Bewusstsein, Temperatur, Fokuskontrolle (Katheter!)", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Fokussanierung (DK-Wechsel) nicht vergessen."},
+      {text:"Nur die Temperatur", ziel:"end_mittel", typ:"warn", fb:"MAP/Laktat/Urin/Fokus stehen im Vordergrund."} ]},
+    bad_diur:{ text:"Nach dem Diuretikum fällt der RR weiter, Urin bleibt aus. Reaktion?", optionen:[
+      {text:"Diuretikum stoppen, Volumen/Vasopressor nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Diuretikum war im Schock falsch."},
+      {text:"Noch ein Diuretikum", ziel:"end_schlecht", typ:"fehler", fb:"Verschärft den Schock."} ]},
+    bad_vol:{ text:"Zunehmende Ödeme, Oxygenierung schlechter, RR weiter niedrig. Reaktion?", optionen:[
+      {text:"Volumen begrenzen, Vasopressor nach AO, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter fluten", ziel:"end_schlecht", typ:"fehler", fb:"Lungenödem + persistierender Schock."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frühe Antibiose, Volumen, Vasopressor und Fokussanierung – stabilisiert.", fazit:"Sepsis-1-h-Bündel: Kulturen → frühe Antibiose, Volumen, Laktat. Volumenrefraktär → Vasopressor. Fokussanierung (z. B. DK-Wechsel) nicht vergessen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Im Schock kein Diuretikum, Volumen begrenzen und rechtzeitig auf Vasopressor wechseln." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Refraktärer septischer Schock.", fazit:"Diuretika und ungebremste Volumengabe sind im septischen Schock gefährlich." }
+  } },
+
+{ id:"int_dopes", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🌬️", farbe:"#06b6d4", titel:"Beatmungsnotfall", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Beatmeter Intensivpatient: plötzlicher SpO₂-Abfall auf 80 %, Beatmungsdruck-Alarm, zunehmende Zyanose, unruhig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"STRUKTURIERT ZUERST", text:"Was tust du?", optionen:[
+      {text:"100 % O₂, manuell beatmen (vom Gerät trennen, Beutel), nach DOPES prüfen, Hilfe rufen", ziel:"n2", typ:"gut", fb:"Richtig – DOPES (Dislokation, Obstruktion, Pneu, Equipment, Stomach); manuelle Beatmung deckt Geräteursachen auf."},
+      {text:"Sofort den Tubus ziehen", ziel:"bad_extub", typ:"fehler", fb:"Nicht blind extubieren – erst Ursache abklären."},
+      {text:"Sedierung erhöhen wegen der Unruhe", ziel:"bad_sed", typ:"fehler", fb:"Unruhe ist ein Hypoxiezeichen – nicht sedieren, sondern Ursache beheben."} ]},
+    n2:{ titel:"EINGRENZEN", text:"Manuelles Beatmen schwergängig, einseitig abgeschwächtes Atemgeräusch. Verdacht?", optionen:[
+      {text:"Obstruktion vs. Fehllage/einseitige Intubation vs. Pneumothorax → absaugen, Tubuslage prüfen, Arzt", ziel:"n3", typ:"gut", fb:"Korrekt – systematisch abklären."},
+      {text:"Einfach mehr Druck geben", ziel:"bad_press", typ:"warn", fb:"Hoher Druck bei Pneu ist gefährlich – erst Ursache klären."} ]},
+    n3:{ titel:"VERSCHLECHTERUNG", text:"Gestaute Halsvenen, einseitig fehlendes Atemgeräusch, RR fällt, Trachea verschoben. Einordnung?", optionen:[
+      {text:"V.a. Spannungspneumothorax → sofort Arzt, Entlastungspunktion/Drainage vorbereiten, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – lebensbedrohlich, sofortige Entlastung."},
+      {text:"Weiter beatmen und beobachten", ziel:"bad_press", typ:"warn", fb:"Ein Spannungspneu muss sofort entlastet werden."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Nach der Entlastung Besserung. Worauf achtest du?", optionen:[
+      {text:"SpO₂, Beatmungsdrücke, seitengleiches Atemgeräusch, Tubuslage, Drainage/Sog, Kreislauf", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur SpO₂", ziel:"end_mittel", typ:"warn", fb:"Drücke/Drainage/Kreislauf gehören dazu."} ]},
+    bad_extub:{ text:"Nach Extubation rapide Verschlechterung, keine suffiziente Spontanatmung. Reaktion?", optionen:[
+      {text:"Sofort Maskenbeatmung/Reintubation nach AO, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Gerettet – die blinde Extubation war gefährlich."},
+      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Hypoxie."} ]},
+    bad_sed:{ text:"Nach mehr Sedierung SpO₂ 70 %, Bradykardie. Reaktion?", optionen:[
+      {text:"Sedierung stoppen, 100 % O₂, manuell beatmen, Ursache (DOPES), Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Sedierung war falsch."},
+      {text:"Weiter sedieren", ziel:"end_schlecht", typ:"fehler", fb:"Hypoxischer Kreislaufstillstand."} ]},
+    bad_press:{ text:"Unter hohem Druck bricht der Kreislauf ein. Reaktion?", optionen:[
+      {text:"An Spannungspneu denken, Entlastung vorbereiten, Notfallteam", ziel:"end_mittel", typ:"warn", fb:"Spät erkannt, aber lebensrettend."},
+      {text:"Weiter Druck erhöhen", ziel:"end_schlecht", typ:"fehler", fb:"Spannungspneu → Kreislaufstillstand."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Ursache erkannt und behoben, Patient stabil.", fazit:"Beatmungsnotfall: DOPES strukturiert abarbeiten, 100 % O₂ + manuelle Beatmung, nicht blind extubieren/sedieren, Spannungspneu sofort entlasten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber riskant.", fazit:"Bei Sättigungsabfall am Beatmeten zuerst manuell beatmen und DOPES prüfen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hypoxischer Kreislaufstillstand.", fazit:"Blindes Extubieren/Sedieren und Druck-Erhöhen bei Pneu sind gefährlich." }
+  } },
+
+{ id:"int_hyperk", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"⚡", farbe:"#eab308", titel:"Gefährliches Kalium", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Herr W., 64 J., oligurisches akutes Nierenversagen: Schwäche, Parästhesien; Kalium 6,9 mmol/l; EKG mit hohen spitzen T-Wellen und verbreitertem QRS.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"PRIORITÄT", text:"Was hat bei EKG-Veränderungen Vorrang?", optionen:[
+      {text:"Monitor/EKG, sofort Arzt; Membranstabilisierung mit Kalziumglukonat nach AO", ziel:"n2", typ:"gut", fb:"Richtig – bei EKG-Veränderungen zuerst Kalzium zum Herzschutz."},
+      {text:"Erst in Ruhe ein neues Kalium abwarten", ziel:"n2", typ:"warn", fb:"Bei lebensbedrohlichem EKG kein Abwarten – Kalzium gibt Zeit."},
+      {text:"Kaliumsenker (Insulin/Glukose) reicht allein, kein Kalzium", ziel:"n2", typ:"warn", fb:"Insulin/Glukose senkt K⁺, schützt das Herz aber nicht sofort – bei EKG-Veränderungen Kalzium voran."} ]},
+    n2:{ titel:"K⁺ SENKEN", text:"Nach Membranstabilisierung – wie wird Kalium gesenkt (AO)?", optionen:[
+      {text:"Insulin + Glukose i.v. (K⁺ nach intrazellulär), ggf. Beta-2-Mimetikum; Verlauf (K⁺, BZ)", ziel:"n3", typ:"gut", fb:"Korrekt – verschiebt K⁺ rasch; BZ kontrollieren."},
+      {text:"Nur Kationenaustauscher oral, das genügt", ziel:"n3", typ:"warn", fb:"Wirkt zu langsam für eine akut bedrohliche Hyperkaliämie."} ]},
+    n3:{ titel:"DEFINITIV", text:"Anurisch, K⁺ bleibt trotz Maßnahmen hoch. Was ist definitiv?", optionen:[
+      {text:"Dialyse anstreben (definitive Elimination), Intensiv, Monitoring", ziel:"n4", typ:"gut", fb:"Sehr gut – bei anurischem ANV ist Dialyse die definitive Therapie."},
+      {text:"Weiter nur Insulin/Glukose wiederholen", ziel:"bad_shift", typ:"warn", fb:"Die Verschiebung ist nur temporär – bei Anurie ist Dialyse nötig."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Kontinuierliches EKG, K⁺-/BZ-Verlauf, Diurese/Bilanz, Reanimationsbereitschaft", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur einmal K⁺ nachbestimmen", ziel:"end_mittel", typ:"warn", fb:"Engmaschig EKG/K⁺ – Arrhythmiegefahr."} ]},
+    bad_shift:{ text:"K⁺ erneut 7,1, der QRS verbreitert sich. Reaktion?", optionen:[
+      {text:"Erneut Kalzium, Dialyse dringlich, Intensiv, Reanimationsbereitschaft", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Maligne Arrhythmie/Asystolie."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herz geschützt, K⁺ gesenkt, Dialyse eingeleitet.", fazit:"Schwere Hyperkaliämie mit EKG-Veränderungen: 1) Kalzium (Herzschutz), 2) Insulin/Glukose (±Beta-2) zum Verschieben, 3) Dialyse zur Elimination (v. a. anurisch). EKG-Monitoring." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber riskant.", fazit:"Verschieben ist nur temporär – bei Anurie früh die Dialyse organisieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Maligne Arrhythmie/Asystolie.", fazit:"Abwarten bei bedrohlicher Hyperkaliämie ist lebensgefährlich." }
+  } },
+
+{ id:"int_dka", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧪", farbe:"#f472b6", titel:"Entgleister Zucker", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Frau J., 28 J., Typ-1-Diabetes: Übelkeit/Erbrechen, Bauchschmerz, tiefe Atmung (Kussmaul), exsikkiert; BZ 28 mmol/l, pH 7,12, Ketone positiv, K⁺ 3,2 mmol/l.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"VORRANG", text:"Was hat in der DKA-Therapie Vorrang?", optionen:[
+      {text:"Großzügige Volumengabe (NaCl) nach AO, Monitoring, Elektrolyte/K⁺, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – der Volumenmangel ist führend, Flüssigkeit zuerst."},
+      {text:"Sofort hochdosiert Insulin als Bolus, Volumen später", ziel:"n2", typ:"warn", fb:"Insulin gehört dazu, aber Volumen und K⁺-Beachtung zuerst – Insulin nicht vor dem K⁺-Check hochfahren."},
+      {text:"Natriumbikarbonat zur pH-Korrektur geben", ziel:"bad_bic", typ:"warn", fb:"Bikarbonat nur in Ausnahmefällen – nicht routinemäßig in der DKA."} ]},
+    n2:{ titel:"KALIUM BEACHTEN", text:"K⁺ ist 3,2 mmol/l. Was ist vor/mit Insulin wichtig?", optionen:[
+      {text:"Kalium nach AO substituieren; Insulin erst bei adäquatem K⁺ starten/begleiten", ziel:"n3", typ:"gut", fb:"Korrekt – Insulin treibt K⁺ in die Zelle; bei niedrigem K⁺ erst ausgleichen."},
+      {text:"Insulin trotzdem sofort hoch, K⁺ ignorieren", ziel:"bad_k", typ:"fehler", fb:"Gefährliche Hypokaliämie/Arrhythmie."} ]},
+    n3:{ titel:"BZ FÄLLT", text:"Unter Therapie sinkt der BZ rasch auf 12 mmol/l, die Azidose ist noch nicht behoben. Vorgehen?", optionen:[
+      {text:"Glukose zur Infusion ergänzen, niedrig dosiertes Insulin weiter bis Azidose/Ketose behoben", ziel:"n4", typ:"gut", fb:"Sehr gut – Insulin nicht stoppen, sondern Glukose zugeben."},
+      {text:"Insulin sofort stoppen, weil der BZ fast normal ist", ziel:"bad_stop", typ:"warn", fb:"Ein Insulinstopp lässt die Ketoazidose persistieren."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"BZ stündlich, K⁺/Elektrolyte, BGA/Ketone, Bilanz, Bewusstsein, Herzrhythmus", ziel:"end_gut", typ:"gut", fb:"Sehr gut."},
+      {text:"Nur BZ alle paar Stunden", ziel:"end_mittel", typ:"warn", fb:"K⁺/BGA/Bilanz engmaschig – Komplikationsgefahr."} ]},
+    bad_bic:{ text:"Nach Bikarbonat fällt K⁺ weiter, keine Besserung. Reaktion?", optionen:[
+      {text:"Bikarbonat beenden, Standardtherapie (Volumen, K⁺, Insulin) nach AO", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Bikarbonat war unnötig."},
+      {text:"Mehr Bikarbonat", ziel:"end_schlecht", typ:"fehler", fb:"Verschärfte Hypokaliämie."} ]},
+    bad_k:{ text:"Nach Insulin ohne K⁺-Ausgleich K⁺ 2,6, Herzrhythmusstörung. Reaktion?", optionen:[
+      {text:"Insulin pausieren, Kalium nach AO, EKG-Monitoring, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Gerettet – K⁺ vor Insulin beachten."},
+      {text:"Weiter Insulin", ziel:"end_schlecht", typ:"fehler", fb:"Maligne Arrhythmie."} ]},
+    bad_stop:{ text:"Nach dem Insulinstopp bleibt die Azidose, Ketone hoch. Reaktion?", optionen:[
+      {text:"Insulin (mit Glukose) wieder aufnehmen, bis Ketose/Azidose behoben", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
+      {text:"Weiter ohne Insulin", ziel:"end_schlecht", typ:"fehler", fb:"Persistierende Ketoazidose."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Volumen, Kalium und Insulin richtig gesteuert – Azidose behoben.", fazit:"DKA: 1) Volumen, 2) Kalium beachten (Insulin senkt K⁺), 3) niedrig dosiertes Insulin weiter (bei BZ-Abfall Glukose zugeben, nicht stoppen). Bikarbonat nur ausnahmsweise." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Reihenfolge Volumen → Kalium → Insulin beachten und engmaschig kontrollieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Arrhythmie bzw. persistierende Ketoazidose.", fazit:"Insulin ohne K⁺-Beachtung oder ein vorzeitiger Insulinstopp sind gefährlich." }
+  } },
+
+{ id:"int_delir", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧠", farbe:"#818cf8", titel:"Nächtliche Unruhe (Intensiv)", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Herr S., 79 J., 2. Tag nach großer OP auf Intensiv: nachts plötzlich agitiert, desorientiert, zieht an Zugängen, fluktuierende Aufmerksamkeit.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Was tust du zuerst?", optionen:[
+      {text:"Reversible somatische Ursachen ausschließen (Hypoxie, BZ, Schmerz, Harnverhalt, Medikamente), Monitoring, Arzt", ziel:"n2", typ:"gut", fb:"Richtig – Delir ist ein Symptom; zuerst reversible Ursachen suchen."},
+      {text:"Sofort fixieren und sedieren", ziel:"bad_fix", typ:"warn", fb:"Erst Ursache + nicht-medikamentöse Maßnahmen; Fixierung/Sedierung sind nachrangig und riskant."},
+      {text:"Ein Benzodiazepin als Schlafmittel geben", ziel:"bad_benzo", typ:"fehler", fb:"Benzodiazepine können das Delir verschlimmern (außer Entzugsdelir)."} ]},
+    n2:{ titel:"BASIS DER THERAPIE", text:"Keine akute somatische Ursache gefunden. Was ist die Basis?", optionen:[
+      {text:"Nicht-medikamentös: Reorientierung, Tag-Nacht-Rhythmus, Brille/Hörgerät, Mobilisation, Zugänge sichern, Angehörige", ziel:"n3", typ:"gut", fb:"Korrekt – nicht-medikamentöse Maßnahmen zuerst."},
+      {text:"Direkt ein Antipsychotikum als Standard für alle", ziel:"n3", typ:"warn", fb:"Medikamente nur bei starker Agitation/Eigengefährdung, nicht als Erstmaßnahme für jeden."} ]},
+    n3:{ titel:"EIGENGEFÄHRDUNG", text:"Trotzdem starke Agitation, er reißt am arteriellen Zugang. Vorgehen?", optionen:[
+      {text:"Niedrig dosiertes Antipsychotikum nach AO, engmaschige Überwachung, weiter nicht-medikamentös", ziel:"n4", typ:"gut", fb:"Sehr gut – gezielt und überwacht."},
+      {text:"Hohe Dosis Benzodiazepin zur schnellen Ruhe", ziel:"bad_benzo", typ:"warn", fb:"Benzodiazepine verschlechtern das Delir meist – vermeiden."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du?", optionen:[
+      {text:"Delir-Score (CAM-ICU), Vitalzeichen/QT (bei Antipsychotika), Selbst-/Sturzgefahr, Schlaf, Ursachen reevaluieren", ziel:"end_gut", typ:"gut", fb:"Sehr gut – QT-Kontrolle bei Antipsychotika."},
+      {text:"Nur, ob er ruhig ist", ziel:"end_mittel", typ:"warn", fb:"Score/QT/Ursachen gehören dazu."} ]},
+    bad_fix:{ text:"Nach der Fixierung wird er panischer, vegetativ entgleist, verletzt sich. Reaktion?", optionen:[
+      {text:"Fixierung minimieren/lösen wo möglich, Ursache + nicht-medikamentös, Arzt, ggf. gezielte Medikation", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Fixierung verstärkt oft das Delir."},
+      {text:"Stärker fixieren", ziel:"end_schlecht", typ:"fehler", fb:"Eskalation/Verletzung."} ]},
+    bad_benzo:{ text:"Nach dem Benzodiazepin wird er noch verwirrter und atemdepressiv. Reaktion?", optionen:[
+      {text:"Benzodiazepin meiden/stoppen, nicht-medikamentös, ggf. Antipsychotikum nach AO, Atmung überwachen", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Benzo war ungünstig."},
+      {text:"Noch ein Benzodiazepin", ziel:"end_schlecht", typ:"fehler", fb:"Delir-/Atemverschlechterung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Ursachen geklärt, nicht-medikamentös geführt, gezielt überwacht.", fazit:"ICU-Delir: reversible Ursachen ausschließen, nicht-medikamentöse Maßnahmen zuerst, Benzodiazepine meiden (außer Entzug), Antipsychotika nur gezielt (QT beachten), CAM-ICU." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit Risiko.", fazit:"Fixierung und Benzodiazepine möglichst vermeiden – sie verstärken das Delir." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation / Atemdepression.", fazit:"Pauschale Fixierung/Benzodiazepine sind beim Delir kontraproduktiv." }
+  } },
+
+{ id:"int_anaphylaxie", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"💉", farbe:"#f43f5e", titel:"Reaktion auf Medikament", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Patient erhält ein i.v.-Antibiotikum; innerhalb von Minuten Urtikaria, Atemnot mit Stridor, RR 80/40, Tachykardie, Angst.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORT", text:"Was tust du sofort?", optionen:[
+      {text:"Auslöser stoppen (Infusion!), Hilfe rufen, Adrenalin i.m. (Oberschenkel) nach AO, O₂, flach mit erhöhten Beinen", ziel:"n2", typ:"gut", fb:"Richtig – Adrenalin i.m. ist die wichtigste Sofortmaßnahme."},
+      {text:"Zuerst Antihistaminikum + Kortison i.v.", ziel:"n2", typ:"warn", fb:"Wichtig, aber Second-Line – Adrenalin i.m. zuerst (lebensrettend)."},
+      {text:"Erst i.v.-Zugang/Labor sichern, dann Medikamente", ziel:"n2", typ:"warn", fb:"Zugang parallel, aber Adrenalin i.m. darf nicht warten."} ]},
+    n2:{ titel:"WEITER", text:"Nach Adrenalin i.m. – wie weiter?", optionen:[
+      {text:"Volumenbolus (Kristalloid) nach AO, O₂, Monitoring; Adrenalin ggf. wiederholen (alle 5–10 min)", ziel:"n3", typ:"gut", fb:"Korrekt."},
+      {text:"Adrenalin sofort unkontrolliert als i.v.-Bolus nachschieben", ziel:"bad_iv", typ:"warn", fb:"i.v.-Adrenalin nur verdünnt/titriert unter Monitoring (Arrhythmiegefahr) – sonst i.m."} ]},
+    n3:{ titel:"ATEMWEG", text:"Zunehmender Stridor / drohende Atemwegsschwellung. Vorgehen?", optionen:[
+      {text:"Atemweg sichern (frühe Intubationsbereitschaft/Anästhesie), Adrenalin wiederholen, Intensiv", ziel:"n4", typ:"gut", fb:"Sehr gut – der Atemweg hat höchste Priorität."},
+      {text:"Abwarten, ob das Antihistaminikum wirkt", ziel:"bad_delay", typ:"warn", fb:"Bei Atemwegsschwellung kein Abwarten."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Stabilisierung. Worauf achtest du?", optionen:[
+      {text:"RR/SpO₂/Atemweg, Reevaluation, längere Überwachung (biphasische Reaktion!), Auslöser dokumentieren", ziel:"end_gut", typ:"gut", fb:"Sehr gut – an die biphasische Reaktion denken."},
+      {text:"Nach Besserung sofort entlassen", ziel:"end_mittel", typ:"warn", fb:"Biphasische Reaktion möglich – ausreichend lange überwachen."} ]},
+    bad_iv:{ text:"Nach unkontrolliertem i.v.-Adrenalin Tachyarrhythmie/Blutdruckspitze. Reaktion?", optionen:[
+      {text:"Bolus stoppen, Monitoring, ggf. titriert nach AO, Rhythmus überwachen", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – i.v. nur titriert."},
+      {text:"Noch einen i.v.-Bolus", ziel:"end_schlecht", typ:"fehler", fb:"Bedrohliche Arrhythmie."} ]},
+    bad_delay:{ text:"Der Atemweg schwillt weiter zu, SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Sofort Atemweg sichern (Anästhesie/Notfallteam), Adrenalin, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät, aber lebensrettend."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Atemwegsverlegung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Adrenalin i.m., Volumen, Atemweg gesichert – stabil und überwacht.", fazit:"Anaphylaxie: Auslöser stoppen, Adrenalin i.m. zuerst (i.v. nur titriert), Volumen + O₂, früh Atemweg sichern; Antihistaminikum/Kortison Second-Line; biphasische Reaktion → längere Überwachung." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabilisiert, aber mit vermeidbarem Risiko.", fazit:"Adrenalin i.m. nicht verzögern und nach Besserung ausreichend lange überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Atemwegsverlegung bzw. Arrhythmie.", fazit:"Verzögertes Adrenalin und unkontrolliertes i.v.-Adrenalin sind gefährlich." }
+  } }
 ];
 
 function navGo(screen) {
