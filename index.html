@@ -2460,7 +2460,108 @@ const KRANKHEITSBILDER = {
           {f:"Was ist eine hypertensive Krise und wie reagiert die Pflege?", opt:["RR > 140/90","RR > 180/120 mmHg + Symptome (Kopfschmerz, Sehstörung, Brustschmerz) → Notfall! Arzt sofort, Patient beruhigen, RR-Monitoring","Normaler hoher RR","Postoperativer RR-Anstieg"], k:1, e:"Hypertensive Krise: RR > 180/120 + Endorganschäden (Herz, Hirn, Niere) → Hypertensiver Notfall! Maßnahmen: Arzt sofort, Patient beruhigen (Stress erhöht RR), flache Lagerung, RR-Monitoring alle 5 Min., i.v.-Antihypertensiva nach Anordnung."},
         ]
       }
-    ]
+    
+      ,{
+        name: "Pneumonie",
+        icd: "J18",
+        definition: "Akute Entzündung des Lungenparenchyms, meist bakteriell (häufig Pneumokokken) oder viral. Ambulant oder nosokomial erworben.",
+        symptome: ["Fieber, Schüttelfrost", "Husten mit Auswurf", "Dyspnoe, Tachypnoe", "Atemabhängige thorakale Schmerzen", "Abgeschlagenheit", "Bei älteren Menschen oft Verwirrtheit"],
+        diagnostik: ["Auskultation (Rasselgeräusche), Klinik", "Röntgen Thorax (Infiltrat)", "Labor (CRP, Leukozyten)", "SpO₂/BGA", "Erregerdiagnostik (Sputum/Blutkultur)", "CRB-65-Score"],
+        therapie: ["Antibiotika nach AO (kalkuliert/gezielt)", "O₂ bei Hypoxie", "Ausreichend Flüssigkeit, Antipyrese", "Sekretmanagement, Atemtherapie/Mobilisation", "Stationär/Intensiv je nach Schwere"],
+        pflege: ["SpO₂/Atemfrequenz/Temperatur überwachen", "Oberkörperhochlagerung, Atemtherapie (z. B. Atemtrainer)", "Sekretolyse, Mobilisation, abhusten lassen", "Flüssigkeit/Ernährung, Mundpflege", "Pneumonieprophylaxe bei gefährdeten Patienten"],
+        merksatz: "Fieber + produktiver Husten + Infiltrat = Pneumonie: Antibiotikum nach AO, O₂, Atemtherapie, Mobilisation.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigter Gasaustausch r/t Lungeninfiltration m/d/s Dyspnoe, Tachypnoe, SpO₂-Abfall",
+            ressourcen: ["Patient kooperativ bei Atemübungen", "Motiviert zu mobilisieren"],
+            ziel: "Patient zeigt innerhalb von 48 h SpO₂ ≥ 94 % und reduzierte Atemarbeit",
+            massnahmen: ["O₂ nach AO, SpO₂/Atemfrequenz überwachen", "Oberkörperhochlagerung, Atemtherapie anleiten", "Sekretmobilisation, abhusten lassen, ausreichend Flüssigkeit", "Antibiotika/Antipyrese nach AO", "Frühmobilisation und Pneumonieprophylaxe"],
+            evaluation: "SpO₂ stabil, Atemarbeit reduziert, Fieber rückläufig."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Chronische Niereninsuffizienz",
+        icd: "N18",
+        definition: "Dauerhafte Abnahme der Nierenfunktion über Monate/Jahre mit Anstieg der Retentionswerte. Stadieneinteilung nach GFR; Endstadium dialysepflichtig.",
+        symptome: ["Lange asymptomatisch", "Müdigkeit, Leistungsminderung", "Ödeme, Bluthochdruck", "Verminderte Urinausscheidung (spät)", "Juckreiz, blass-graue Haut", "Übelkeit/Appetitlosigkeit (Urämie)"],
+        diagnostik: ["Labor (Kreatinin, GFR, Harnstoff, Elektrolyte)", "Urinstatus (Proteinurie)", "Sonografie der Nieren", "Blutdruck", "Verlaufskontrollen"],
+        therapie: ["Grunderkrankung behandeln (Diabetes/Hypertonie)", "Blutdruck-/Stoffwechseleinstellung", "Flüssigkeits-/Elektrolyt-/Diätmanagement nach AO", "Renale Medikamentenanpassung", "Nierenersatztherapie (Dialyse) im Endstadium"],
+        pflege: ["Ein-/Ausfuhr und Gewicht bilanzieren", "Blutdruck/Ödeme überwachen", "Diät-/Trinkmengenvorgaben nach AO unterstützen", "Haut-/Mundpflege bei Juckreiz/Urämie", "Nephrotoxische Einflüsse meiden, Patientenedukation"],
+        merksatz: "GFR sinkt + Ödeme + Hypertonie = chronische Niereninsuffizienz: bilanzieren, Blutdruck/Diät steuern, renal dosieren.",
+        pflegeplanung: [
+          {
+            problem: "Flüssigkeitsüberschuss r/t eingeschränkter Nierenfunktion m/d/s Ödemen, Gewichtszunahme, Hypertonie",
+            ressourcen: ["Patient hält Vorgaben ein", "Angehörige unterstützen"],
+            ziel: "Ödeme und Gewicht sind innerhalb der Vorgaben stabil, RR im Zielbereich",
+            massnahmen: ["Ein-/Ausfuhr und tägliches Gewicht dokumentieren", "Trinkmengen-/Diätvorgaben nach AO unterstützen", "Blutdruck/Ödeme überwachen", "Medikamente (inkl. renaler Dosis) nach AO", "Hautpflege, Edukation zu Flüssigkeit/Ernährung"],
+            evaluation: "Gewicht/Ödeme stabil, RR im Zielbereich, Vorgaben eingehalten."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Leberzirrhose",
+        icd: "K74",
+        definition: "Irreversibler bindegewebiger Umbau der Leber mit Funktionsverlust, häufig durch Alkohol oder Hepatitis. Folgen: portale Hypertension, Aszites, Ösophagusvarizen, hepatische Enzephalopathie.",
+        symptome: ["Müdigkeit, Leistungsminderung", "Ikterus", "Aszites, Ödeme", "Spider naevi, Palmarerythem, Caput medusae", "Blutungsneigung", "Bewusstseinsveränderungen (Enzephalopathie)"],
+        diagnostik: ["Labor (Leberwerte, Gerinnung, Albumin, Ammoniak)", "Sonografie/ggf. Elastografie", "Gastroskopie (Varizen)", "Aszitespunktion", "Child-Pugh/MELD-Einschätzung"],
+        therapie: ["Auslöser meiden (Alkoholkarenz), Grunderkrankung behandeln", "Aszites: Diuretika/Punktion, Kochsalzrestriktion nach AO", "Varizenprophylaxe/-behandlung", "Enzephalopathie behandeln (z. B. Laktulose nach AO)", "Ernährung, Infekt-/Blutungsprophylaxe"],
+        pflege: ["Bauchumfang/Gewicht/Bilanz bei Aszites", "Auf Blutungszeichen (Varizen) und Bewusstsein (Enzephalopathie) achten", "Hautpflege bei Ikterus/Juckreiz, Dekubitus-/Sturzprophylaxe", "Ernährung/Flüssigkeit nach AO, Alkoholkarenz unterstützen", "Medikamente nach AO, Patientenedukation"],
+        merksatz: "Aszites + Ikterus + Verwirrtheit = dekompensierte Leberzirrhose: bilanzieren, Varizenblutung/Enzephalopathie beachten.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von Blutung und Bewusstseinsstörung r/t Leberzirrhose (Varizen, Enzephalopathie) m/d/s Gerinnungsstörung, Aszites",
+            ressourcen: ["Patient kooperativ", "Angehörige unterstützen", "Alkoholkarenz angestrebt"],
+            ziel: "Blutungs- und Enzephalopathiezeichen werden früh erkannt; der Patient bleibt kreislaufstabil und orientiert",
+            massnahmen: ["Auf Blutungszeichen (Teerstuhl, Bluterbrechen) achten, Vitalzeichen", "Bewusstsein/Orientierung beobachten (Enzephalopathie)", "Bauchumfang/Gewicht/Bilanz bei Aszites", "Medikamente (z. B. Laktulose, Diuretika) nach AO", "Ernährung/Alkoholkarenz unterstützen, Edukation"],
+            evaluation: "Keine unerkannte Blutung, orientiert, kreislaufstabil, Aszites kontrolliert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Vorhofflimmern",
+        icd: "I48",
+        definition: "Häufigste anhaltende Herzrhythmusstörung mit unkoordinierter Vorhofaktivität und unregelmäßigem Puls. Hauptgefahr: Thrombenbildung mit Schlaganfallrisiko.",
+        symptome: ["Unregelmäßiger Puls", "Herzstolpern/Palpitationen", "Leistungsminderung, Dyspnoe", "Schwindel", "Oft auch asymptomatisch", "Ggf. Schlaganfallsymptome als Komplikation"],
+        diagnostik: ["EKG/Langzeit-EKG", "Puls-/Herzfrequenzkontrolle", "Echo (Vorhof, Thromben)", "Labor (Schilddrüse, Elektrolyte)", "Schlaganfall-/Blutungsrisiko (CHA₂DS₂-VASc)"],
+        therapie: ["Frequenz- oder Rhythmuskontrolle nach AO", "Antikoagulation zur Schlaganfallprophylaxe nach AO", "Ggf. Kardioversion/Ablation", "Auslöser behandeln (Elektrolyte/Schilddrüse)", "Patientenedukation"],
+        pflege: ["Puls/Herzfrequenz und Rhythmus überwachen", "Auf Schlaganfallzeichen achten (FAST)", "Medikamente (Antikoagulation/Frequenzkontrolle) nach AO, Blutungszeichen beobachten", "Belastung anpassen, Vitalzeichen", "Edukation zu Antikoagulation/Adhärenz"],
+        merksatz: "Unregelmäßiger Puls = Vorhofflimmern: Frequenz/Rhythmus kontrollieren, Antikoagulation gegen Schlaganfall, auf Blutung achten.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr einer Thromboembolie (Schlaganfall) r/t Vorhofflimmern m/d/s unregelmäßigem Herzrhythmus",
+            ressourcen: ["Patient nimmt Medikamente zuverlässig", "Versteht die Edukation"],
+            ziel: "Der Patient zeigt keine thromboembolischen Komplikationen; die Antikoagulation wird korrekt umgesetzt",
+            massnahmen: ["Herzrhythmus/Frequenz und Vitalzeichen überwachen", "Antikoagulation nach AO, auf Blutungszeichen achten", "Auf Schlaganfallzeichen (FAST) achten", "Auslöser/Elektrolyte beachten", "Edukation zu Adhärenz und Blutungsrisiken"],
+            evaluation: "Keine Thromboembolie/Blutungskomplikation, Antikoagulation korrekt, Frequenz im Zielbereich."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Schilddrüsenüberfunktion (Hyperthyreose)",
+        icd: "E05",
+        definition: "Überproduktion von Schilddrüsenhormonen mit gesteigertem Stoffwechsel, häufig Morbus Basedow oder Schilddrüsenautonomie. Gefährliche Maximalform: thyreotoxische Krise.",
+        symptome: ["Tachykardie, Herzklopfen", "Gewichtsverlust trotz Appetit", "Innere Unruhe, Nervosität, Tremor", "Wärmeintoleranz, Schwitzen", "Schlafstörungen", "Ggf. Exophthalmus (Basedow)"],
+        diagnostik: ["Labor (TSH erniedrigt, fT3/fT4 erhöht)", "Sonografie/Szintigrafie der Schilddrüse", "Antikörper (Basedow)", "Puls/Blutdruck", "EKG"],
+        therapie: ["Thyreostatika nach AO", "Symptomatisch Betablocker nach AO", "Definitiv: Radiojodtherapie oder Operation", "Bei thyreotoxischer Krise intensivmedizinische Behandlung", "Patientenedukation"],
+        pflege: ["Puls/Blutdruck/Temperatur überwachen", "Reizarme, kühle Umgebung, Ruhe fördern", "Ausreichende Kalorien-/Flüssigkeitszufuhr, Gewicht", "Auf Zeichen der thyreotoxischen Krise achten (hohes Fieber, Tachyarrhythmie, Unruhe)", "Medikamente nach AO, Edukation"],
+        merksatz: "Tachykardie + Gewichtsverlust + Unruhe + TSH niedrig = Hyperthyreose: Thyreostatika nach AO, auf thyreotoxische Krise achten.",
+        pflegeplanung: [
+          {
+            problem: "Aktivitätsintoleranz und Unruhe r/t gesteigertem Stoffwechsel m/d/s Tachykardie, Nervosität, Gewichtsverlust",
+            ressourcen: ["Patient kooperativ", "Angehörige unterstützen"],
+            ziel: "Der Patient ist ruhiger, Puls im Zielbereich, Gewicht stabilisiert sich",
+            massnahmen: ["Puls/Blutdruck/Temperatur überwachen", "Reizarme, kühle Umgebung, Ruhe und Schlaf fördern", "Ausreichende Kalorien-/Flüssigkeitszufuhr, Gewicht dokumentieren", "Medikamente (Thyreostatika/Betablocker) nach AO", "Auf thyreotoxische Krise achten, Edukation"],
+            evaluation: "Puls im Zielbereich, ruhiger, Gewicht stabil, keine Krisenzeichen."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
   chirurgie: {
     label: "Chirurgie",
@@ -2540,7 +2641,148 @@ const KRANKHEITSBILDER = {
           {f:"Was sind typische postoperative Komplikationen nach Appendektomie?", opt:["Keine Komplikationen","Wundinfektion, Nachblutung, Darmparalyse (Ileus), Abszess bei Perforation","Nur Schmerzen","Nur Übelkeit"], k:1, e:"Postoperative Komplikationen: Wundinfektion (3-5%), intraabdomineller Abszess (bei perforierter Appendizitis), Darmparalyse/Ileus (Blähbauch, kein Darmgeräusch), Nachblutung, Narbenhernie (selten). Frühmobilisation und Kostaufbau reduzieren Ileus-Risiko."},
         ]
       }
-    ]
+    
+      ,{
+        name: "Cholezystitis / Gallensteine (Cholelithiasis)",
+        icd: "K80",
+        definition: "Gallensteine mit möglicher Entzündung der Gallenblase. Häufige Ursache akuter rechtsseitiger Oberbauchschmerzen; Therapie oft operativ (Cholezystektomie).",
+        symptome: ["Kolikartige Schmerzen im rechten Oberbauch", "Ausstrahlung in Rücken/rechte Schulter", "Übelkeit/Erbrechen", "Fieber bei Entzündung", "Druckschmerz, positives Murphy-Zeichen", "Ggf. Ikterus bei Steinabgang"],
+        diagnostik: ["Sonografie Oberbauch (Steine, Wandverdickung)", "Labor (Entzündungs-/Cholestasewerte)", "Klinik (Murphy-Zeichen)", "Ggf. weitere Bildgebung", "Vitalzeichen"],
+        therapie: ["Nüchtern, Analgesie/Spasmolyse nach AO", "Antibiotika bei Entzündung nach AO", "Cholezystektomie (meist laparoskopisch)", "Perioperative Pflege", "Bei Gallengangsteinen endoskopische Entfernung"],
+        pflege: ["Schmerz-/Vitalzeichenüberwachung, Nüchternheit beachten", "Perioperative Vorbereitung/Nachsorge (Wunde, Mobilisation)", "Übelkeit/Erbrechen managen, Bilanz", "Auf Ikterus/Komplikationszeichen achten", "Kostaufbau und fettarme Ernährungsberatung"],
+        merksatz: "Kolik im rechten Oberbauch + Murphy-Zeichen = Cholezystitis/Gallensteine: nüchtern, Analgesie, oft Cholezystektomie.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Gallenkolik/Gallenblasenentzündung m/d/s rechtsseitigem Oberbauchschmerz, Abwehrspannung",
+            ressourcen: ["Patient kooperativ", "Frühzeitige Vorstellung"],
+            ziel: "Der Patient ist innerhalb weniger Stunden schmerzarm (NRS ≤ 3) und kreislaufstabil",
+            massnahmen: ["Analgesie/Spasmolyse nach AO, Wirkung kontrollieren", "Nüchtern lassen, Vitalzeichen überwachen", "Übelkeit/Erbrechen behandeln, Bilanz", "Perioperative Vorbereitung bei OP-Indikation", "Auf Ikterus/Komplikationen achten"],
+            evaluation: "Schmerz reduziert, kreislaufstabil, keine Komplikationszeichen."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Ileus (Darmverschluss)",
+        icd: "K56",
+        definition: "Störung der Darmpassage – mechanisch (z. B. Verwachsungen, Tumor) oder paralytisch (z. B. postoperativ, Peritonitis). Notfall mit Gefahr von Darmischämie/Sepsis.",
+        symptome: ["Zunehmende Bauchschmerzen, geblähtes Abdomen", "Erbrechen (ggf. Miserere bei tiefem Ileus)", "Stuhl-/Windverhalt", "Hochgestellte/klingende oder fehlende Darmgeräusche", "Übelkeit", "Zeichen der Exsikkose/Schock"],
+        diagnostik: ["Auskultation/Palpation des Abdomens", "Röntgen-Abdomen/CT (Spiegel, Dilatation)", "Labor (Entzündung, Laktat, Elektrolyte)", "Vitalzeichen, Bilanz", "Ursachensuche (OP-Anamnese, Tumor)"],
+        therapie: ["Nüchtern, Magensonde zur Entlastung nach AO", "Volumen-/Elektrolytausgleich i.v.", "Mechanischer Ileus: meist operativ", "Paralytischer Ileus: Ursache behandeln, Motilität fördern", "Engmaschiges Monitoring"],
+        pflege: ["Nüchtern, Magensonde pflegen/Ablauf dokumentieren", "Vitalzeichen, Bilanz, Bauchumfang, Darmgeräusche", "Schmerzmanagement nach AO, Lagerung", "Auf Verschlechterung (Peritonitis/Schock) achten", "Perioperative Vorbereitung/Nachsorge"],
+        merksatz: "Bauchschmerz + Stuhl-/Windverhalt + Spiegel = Ileus: nüchtern, Magensonde, Volumen, mechanisch meist OP.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von Volumenmangel und Komplikationen r/t gestörter Darmpassage m/d/s Erbrechen, geblähtem Abdomen, Stuhlverhalt",
+            ressourcen: ["Stationäre Versorgung", "Patient kooperativ"],
+            ziel: "Der Patient bleibt kreislaufstabil und ausreichend hydriert; Komplikationen werden früh erkannt",
+            massnahmen: ["Nüchtern lassen, Magensonde nach AO pflegen, Ablauf dokumentieren", "i.v.-Volumen/Elektrolyte nach AO, Bilanz", "Vitalzeichen, Bauchbefund und Darmgeräusche engmaschig", "Schmerzmanagement nach AO", "Auf Peritonitis-/Schockzeichen achten, OP-Vorbereitung"],
+            evaluation: "Kreislaufstabil, ausreichend hydriert, keine Komplikationszeichen, Passage wiederhergestellt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Leistenhernie",
+        icd: "K40",
+        definition: "Vorwölbung von Bauchinhalt durch eine Schwachstelle in der Leistenregion. Gefahr der Einklemmung (Inkarzeration) mit Durchblutungsstörung; Therapie operativ.",
+        symptome: ["Vorwölbung/Schwellung in der Leiste", "Ziehen/Schmerz, v. a. bei Belastung", "Reponierbar (unkompliziert)", "Bei Inkarzeration: starke Schmerzen, nicht reponierbar, Übelkeit", "Ggf. Ileuszeichen bei Einklemmung"],
+        diagnostik: ["Klinische Untersuchung (Reponierbarkeit)", "Sonografie bei Unklarheit", "Bei Verdacht auf Inkarzeration rasche Abklärung", "Vitalzeichen"],
+        therapie: ["Elektive Operation (Netzverfahren)", "Bei Inkarzeration: Notfall-OP", "Perioperative Pflege", "Postoperativ Schonung, schweres Heben vermeiden", "Analgesie nach AO"],
+        pflege: ["Perioperative Vorbereitung/Nachsorge (Wunde, Mobilisation)", "Schmerzmanagement nach AO", "Auf Inkarzerationszeichen achten (starker Schmerz, nicht reponibel)", "Beratung: schweres Heben/Pressen meiden, Obstipationsprophylaxe", "Vitalzeichen"],
+        merksatz: "Leistenvorwölbung, die bei Belastung kommt = Hernie; nicht reponibel + Schmerz = Inkarzeration (Notfall-OP).",
+        pflegeplanung: [
+          {
+            problem: "Gefahr einer Inkarzeration r/t Leistenhernie m/d/s nicht reponibler, schmerzhafter Vorwölbung",
+            ressourcen: ["Patient kooperativ", "Versteht Warnzeichen"],
+            ziel: "Eine Einklemmung wird früh erkannt; postoperativ ist der Patient schmerzarm und komplikationsfrei",
+            massnahmen: ["Auf Inkarzerationszeichen achten (starker Schmerz, nicht reponibel, Übelkeit)", "Perioperative Vorbereitung/Nachsorge, Wundkontrolle", "Schmerzmanagement nach AO", "Beratung zu Heben/Pressen und Obstipationsprophylaxe", "Vitalzeichen überwachen"],
+            evaluation: "Keine unerkannte Inkarzeration, postoperativ schmerzarm, Wunde reizlos."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Stomaversorgung (Kolo-/Ileostomie)",
+        icd: "Z93",
+        definition: "Operativ angelegte künstliche Darmöffnung (Stoma) zur Stuhlableitung. Pflegerischer Schwerpunkt: Versorgung, Hautschutz und Anleitung zur Selbstständigkeit.",
+        symptome: ["Stoma (rosig, feucht, leicht erhaben)", "Stuhlausscheidung über das Stoma", "Mögliche peristomale Hautreizung", "Komplikationen: Retraktion, Prolaps, Stenose, Parastomalhernie", "Psychische Belastung/Akzeptanzprobleme"],
+        diagnostik: ["Inspektion von Stoma und peristomaler Haut", "Beurteilung von Durchblutung/Vitalität des Stomas", "Ausscheidungskontrolle (Menge/Konsistenz)", "Bei Komplikationen ärztliche/Stomatherapeuten-Vorstellung"],
+        therapie: ["Sachgerechte Versorgung (passende Basisplatte/Beutel)", "Peristomaler Hautschutz", "Bei Komplikationen Anpassung/ärztliche Behandlung", "Ernährungsberatung", "Einbindung der Stomatherapie"],
+        pflege: ["Stoma und Haut beurteilen, Versorgungssystem sachgerecht wechseln", "Peristomalen Hautschutz sicherstellen, Leckagen vermeiden", "Ausscheidung dokumentieren, auf Komplikationen achten", "Patienten Schritt für Schritt zur Selbstversorgung anleiten", "Psychische Unterstützung, Stomatherapie/Beratung einbeziehen"],
+        merksatz: "Rosiges, feuchtes Stoma ist gesund; peristomale Haut schützen, Leckagen vermeiden, Selbstständigkeit fördern.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr einer Hautschädigung r/t Stuhlkontakt bei Stoma m/d/s peristomaler Hautrötung/Reizung",
+            ressourcen: ["Patient lernbereit", "Stomatherapie verfügbar", "Angehörige unterstützen"],
+            ziel: "Die peristomale Haut bleibt intakt; der Patient versorgt sein Stoma zunehmend selbstständig",
+            massnahmen: ["Versorgungssystem sachgerecht und dicht anpassen, Leckagen vermeiden", "Peristomalen Hautschutz anwenden, Haut regelmäßig beurteilen", "Ausscheidung dokumentieren, Komplikationen früh erkennen", "Patienten Schritt für Schritt zur Selbstversorgung anleiten", "Psychische Unterstützung, Stomatherapie/Ernährungsberatung einbeziehen"],
+            evaluation: "Peristomale Haut intakt, dichte Versorgung, zunehmende Selbstständigkeit."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Thoraxdrainage-Pflege",
+        icd: "Z48.0",
+        definition: "Drainage des Pleuraraums zur Ableitung von Luft (Pneumothorax) oder Flüssigkeit (Erguss/Blut). Pflegerischer Schwerpunkt: sichere Handhabung des Drainagesystems und Überwachung.",
+        symptome: ["Liegende Thoraxdrainage mit Drainagesystem", "Atemabhängige Schwankung/Sog (je nach System)", "Mögliche Luftleckage (Blubbern)", "Atemnot/Schmerz bei Komplikationen", "Sekret-/Luftförderung"],
+        diagnostik: ["Atmung/SpO₂ und Vitalzeichen überwachen", "Drainagesystem prüfen (Sog, Wasserschloss, Fördermenge)", "Röntgen Thorax zur Lagekontrolle", "Auf Komplikationen (Dislokation, Verstopfung, Hautemphysem) achten"],
+        therapie: ["Korrekte Position des Drainagesystems (unter Thoraxniveau, kein Abknicken)", "Sog nach AO einstellen", "Fördermenge/Luftleck dokumentieren", "Schmerzmanagement, Atemtherapie/Mobilisation", "Entfernung nach AO bei Besserung"],
+        pflege: ["Drainagesystem sicher führen (nicht hochheben/abknicken), Verbindungen prüfen", "Sog/Wasserschloss/Fördermenge und Luftleck kontrollieren und dokumentieren", "Atmung/SpO₂/Vitalzeichen, Eintrittsstelle/Verband beobachten (Hautemphysem?)", "Schmerzmanagement, Atemtherapie und Mobilisation fördern", "Bei Diskonnektion/Dislokation Notfallmaßnahmen nach Standard, Arzt informieren"],
+        merksatz: "Thoraxdrainage: System unter Thoraxniveau, nie abknicken/hochheben, Sog/Fördermenge/Luftleck kontrollieren, Atmung überwachen.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr einer respiratorischen Komplikation r/t liegender Thoraxdrainage m/d/s Pneumothorax/Erguss, Dislokationsrisiko",
+            ressourcen: ["Patient kooperativ", "Funktionierendes Drainagesystem"],
+            ziel: "Die Drainage funktioniert sicher; der Patient bleibt respiratorisch stabil (SpO₂ ≥ 94 %)",
+            massnahmen: ["Drainagesystem korrekt führen und regelmäßig kontrollieren (Sog/Wasserschloss/Förderung/Leck)", "Atmung/SpO₂/Vitalzeichen überwachen, Eintrittsstelle beobachten", "Schmerzmanagement, Atemtherapie und Mobilisation", "Lage-/Verbandkontrolle, Komplikationen früh erkennen", "Bei Diskonnektion/Dislokation nach Standard handeln und Arzt informieren"],
+            evaluation: "Drainage funktioniert sicher, SpO₂ stabil, keine Komplikation."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Postoperative Wundinfektion (SSI)",
+        icd: "T81.4",
+        definition: "Infektion im Operationsgebiet nach einem Eingriff (Surgical Site Infection), oberflächlich oder tief. Wichtig: Früherkennung, Hygiene und Wundmanagement.",
+        symptome: ["Rötung, Schwellung, Überwärmung der Wunde", "Schmerzzunahme", "Eitrige Sekretion/Wunddehiszenz", "Fieber", "Verzögerte Wundheilung"],
+        diagnostik: ["Wundinspektion (Lokalzeichen)", "Temperatur/Entzündungswerte", "Wundabstrich nach AO", "Beurteilung von Sekret/Wundheilung", "Ggf. Bildgebung bei tiefer Infektion"],
+        therapie: ["Wundmanagement nach AO (Reinigung, ggf. Eröffnung/Drainage)", "Antibiotika bei Indikation nach AO", "Aseptischer Verbandwechsel", "Schmerzmanagement", "Ernährung/Allgemeinzustand optimieren"],
+        pflege: ["Wunde regelmäßig beurteilen und dokumentieren (Lokalzeichen, Sekret)", "Aseptischer Verbandwechsel, konsequente Händehygiene", "Temperatur/Entzündungszeichen überwachen", "Schmerzmanagement, Ernährung/Mobilisation fördern", "Patientenedukation, Hygiene-/Isolationsmaßnahmen nach Standard"],
+        merksatz: "Rötung + Schwellung + Eiter + Fieber an der OP-Wunde = Wundinfektion: aseptischer Verbandwechsel, Wundmanagement, Antibiotikum nach Indikation.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Hautintegrität/Infektion r/t postoperativer Wundinfektion m/d/s Rötung, Sekretion, verzögerter Heilung",
+            ressourcen: ["Patient kooperativ", "Gute Wundheilungsvoraussetzungen"],
+            ziel: "Die Wundinfektion ist rückläufig (abnehmende Lokalzeichen), keine Ausbreitung",
+            massnahmen: ["Wunde regelmäßig beurteilen und dokumentieren", "Aseptischer Verbandwechsel, konsequente Händehygiene", "Temperatur/Entzündungszeichen überwachen", "Wundmanagement und Antibiotika nach AO", "Ernährung/Mobilisation fördern, Edukation, Hygienemaßnahmen"],
+            evaluation: "Lokalzeichen rückläufig, kein Fieber, fortschreitende Wundheilung."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Divertikulitis",
+        icd: "K57",
+        definition: "Entzündung von Ausstülpungen der Darmwand (Divertikel), meist im Sigma. Verlauf von leicht bis kompliziert (Abszess, Perforation).",
+        symptome: ["Schmerzen im linken Unterbauch", "Fieber", "Stuhlunregelmäßigkeiten (Obstipation/Diarrhö)", "Übelkeit", "Druckschmerz/Abwehrspannung links", "Bei Komplikation: Peritonitiszeichen"],
+        diagnostik: ["Klinik (Druckschmerz links)", "Labor (Entzündungswerte)", "CT-Abdomen (Schweregrad/Komplikationen)", "Vitalzeichen", "Koloskopie erst nach Abklingen der Akutphase"],
+        therapie: ["Leichte Form: Ernährung/Schonung, ggf. ambulant", "Antibiotika nach AO bei Indikation", "Bei Komplikation (Abszess/Perforation): stationär/operativ", "Analgesie nach AO", "Ernährungsberatung (ballaststoffreich nach Akutphase)"],
+        pflege: ["Schmerz-/Temperatur-/Vitalzeichenüberwachung", "Ernährung nach AO (Akutphase ggf. Nahrungskarenz/leichte Kost), Bilanz", "Auf Komplikationszeichen (Peritonitis) achten", "Perioperative Vorbereitung bei OP-Indikation", "Ernährungsberatung (Ballaststoffe, ausreichend Flüssigkeit)"],
+        merksatz: "Schmerz im linken Unterbauch + Fieber = Divertikulitis ('Links-Appendizitis'): Antibiotikum nach AO, auf Perforation achten.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Divertikelentzündung m/d/s linksseitigem Unterbauchschmerz, Druckschmerz, Fieber",
+            ressourcen: ["Patient kooperativ", "Frühzeitige Vorstellung"],
+            ziel: "Der Patient ist schmerzarm (NRS ≤ 3) und fieberfrei; Komplikationen werden früh erkannt",
+            massnahmen: ["Schmerz-/Temperatur-/Vitalzeichenüberwachung", "Ernährung nach AO anpassen, Bilanz", "Antibiotika/Analgesie nach AO", "Auf Peritonitis-/Komplikationszeichen achten", "Ernährungsberatung (ballaststoffreich nach Akutphase)"],
+            evaluation: "Schmerz reduziert, fieberfrei, keine Komplikationszeichen."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
   psychologie: {
     label: "Psychologie für Pflege",
