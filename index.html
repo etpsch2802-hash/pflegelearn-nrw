@@ -6212,6 +6212,210 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Gut ausgegangen, aber mit Risiko.", fazit:"Nicht aufsetzen, früh Volumen/Vasopressor/Atropin, aufsteigende Blockade ernst nehmen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Kreislaufstillstand bzw. respiratorische Insuffizienz.", fazit:"Aufsetzen, Abwarten und das Ignorieren der Bradykardie/hohen Blockade sind gefährlich." }
   } }
+,
+{ id:"psy_suizid", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🆘", farbe:"#ef4444", titel:"Hoffnungslosigkeit und Rückzug", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Ein Patient auf Station wirkt zunehmend zurückgezogen, äußert Hoffnungslosigkeit ('Es hat alles keinen Sinn mehr') und zieht sich von Mitpatienten zurück. Du bist im Gespräch mit ihm.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"HALTUNG", text:"Wie reagierst du auf die Hoffnungslosigkeit?", optionen:[
+      {text:"Ruhig, zugewandt, ernst nehmen, Zeit nehmen, offen und ohne Wertung nachfragen, wie es ihm geht", ziel:"n2", typ:"gut", fb:"Richtig – ernst nehmen, präsent sein, wertfrei ins Gespräch gehen."},
+      {text:"Aufmuntern ('So schlimm ist es doch nicht') und das Thema wechseln", ziel:"bad_minimize", typ:"fehler", fb:"Bagatellisieren/Ablenken signalisiert, dass das Thema unerwünscht ist – ernst nehmen und zuhören."},
+      {text:"Ihn allein lassen, damit er zur Ruhe kommt", ziel:"bad_alone", typ:"fehler", fb:"Bei möglicher Suizidalität nicht allein lassen – Beziehung halten."} ]},
+    n2:{ titel:"OFFEN ANSPRECHEN", text:"Wie gehst du mit dem Verdacht auf Suizidalität um?", optionen:[
+      {text:"Suizidgedanken offen, einfühlsam und direkt ansprechen", ziel:"n3", typ:"gut", fb:"Korrekt – offenes Ansprechen erhöht das Risiko nicht, sondern entlastet und schafft Klarheit."},
+      {text:"Das Thema meiden, um ihn nicht 'auf Ideen zu bringen'", ziel:"bad_avoid", typ:"warn", fb:"Ein Mythos – offenes Ansprechen bringt niemanden auf Ideen, sondern öffnet das Gespräch."} ]},
+    n3:{ titel:"SICHERHEIT", text:"Er bejaht Suizidgedanken. Was ist jetzt wichtig?", optionen:[
+      {text:"Bei ihm bleiben/Betreuung sicherstellen, Arzt/zuständiges Team umgehend informieren, für eine sichere Umgebung sorgen", ziel:"n4", typ:"gut", fb:"Sehr gut – Sicherheit, nicht allein lassen, Arzt/Team einbeziehen."},
+      {text:"Ihm versprechen, dass es ein Geheimnis bleibt", ziel:"bad_secret", typ:"fehler", fb:"Keine Geheimhaltung bei Suizidalität – Schutz geht vor, das Team muss informiert werden."} ]},
+    n4:{ titel:"WEITERES VORGEHEN", text:"Wie geht es im Verlauf weiter?", optionen:[
+      {text:"Engmaschige Betreuung nach Anordnung, sichere Umgebung, im Gespräch bleiben, Dokumentation, ärztliche Einschätzung/Therapieplanung umsetzen", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Schutz, Beziehung, ärztliche Einschätzung und Dokumentation."},
+      {text:"Nach dem ersten Gespräch wie gewohnt weiterarbeiten", ziel:"end_mittel", typ:"warn", fb:"Suizidalität erfordert ein abgestimmtes, engmaschiges Vorgehen – nicht zur Tagesordnung übergehen."} ]},
+    bad_minimize:{ text:"Nach dem Aufmuntern verstummt er und zieht sich weiter zurück. Reaktion?", optionen:[
+      {text:"Wieder zugewandt und wertfrei ins Gespräch gehen, ernst nehmen, offen nachfragen, bei ihm bleiben", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Bagatellisieren war der Fehler."},
+      {text:"Ihn jetzt erst recht in Ruhe lassen", ziel:"end_schlecht", typ:"fehler", fb:"Rückzug + Alleinsein bei Suizidalität ist gefährlich."} ]},
+    bad_alone:{ text:"Allein gelassen verschlechtert sich sein Zustand sichtbar. Reaktion?", optionen:[
+      {text:"Wieder Kontakt aufnehmen, bei ihm bleiben, Arzt/Team informieren, Sicherheit herstellen", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – nicht allein lassen."},
+      {text:"Weiter Abstand geben", ziel:"end_schlecht", typ:"fehler", fb:"Gefährliches Alleinsein."} ]},
+    bad_avoid:{ text:"Durch das Ausweichen bleibt unklar, wie akut die Lage ist, er wirkt angespannter. Reaktion?", optionen:[
+      {text:"Suizidalität jetzt offen und einfühlsam ansprechen, Sicherheit herstellen, Arzt/Team informieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – offenes Ansprechen ist richtig."},
+      {text:"Weiter ausweichen", ziel:"end_schlecht", typ:"fehler", fb:"Das Risiko bleibt unerkannt."} ]},
+    bad_secret:{ text:"Er besteht auf Geheimhaltung; später eskaliert die Situation. Reaktion?", optionen:[
+      {text:"Transparent machen, dass Schutz vorgeht, Team/Arzt informieren, Sicherheit herstellen, bei ihm bleiben", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Schutz vor Geheimhaltung."},
+      {text:"Das Versprechen halten und nichts sagen", ziel:"end_schlecht", typ:"fehler", fb:"Geheimhaltung gefährdet den Patienten."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Ernst genommen, nicht allein gelassen, Sicherheit hergestellt, Team einbezogen.", fazit:"Akute Suizidalität: ernst nehmen, präsent bleiben/nicht allein lassen, Suizidgedanken offen und wertfrei ansprechen (erhöht das Risiko nicht), keine Geheimhaltung, sichere Umgebung, Arzt/zuständiges Team umgehend einbeziehen, engmaschige Betreuung und Dokumentation." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Letztlich richtig, aber mit Umweg.", fazit:"Ernst nehmen, offen ansprechen, nicht allein lassen, Schutz vor Geheimhaltung." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hochgefährliche Situation.", fazit:"Bagatellisieren, Alleinlassen, Ausweichen und Geheimhaltung gefährden suizidale Patienten." }
+  } },
+
+{ id:"psy_erregung", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🛡️", farbe:"#f59e0b", titel:"Angespannter, gereizter Patient", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Ein akut psychotischer Patient ist zunehmend angespannt, läuft auf und ab, spricht laut, fühlt sich bedroht und reagiert gereizt auf Ansprache. Andere Patienten werden unruhig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTE REAKTION", text:"Wie gehst du auf den erregten Patienten zu?", optionen:[
+      {text:"Ruhig und respektvoll, Distanz wahren, reizarme Umgebung schaffen, ruhige Stimme, Bedürfnisse erfragen (Deeskalation)", ziel:"n2", typ:"gut", fb:"Richtig – Ruhe, Distanz, reizarm, Deeskalation durch Beziehung."},
+      {text:"Bestimmt und laut Grenzen setzen, ihn zur Ruhe ermahnen", ziel:"bad_confront", typ:"warn", fb:"Lautes, konfrontatives Auftreten eskaliert oft – deeskalierend bleiben."},
+      {text:"Ihn festhalten, damit er sich beruhigt", ziel:"bad_hold", typ:"fehler", fb:"Körperlicher Zwang ist kein Erstmittel – zuerst deeskalieren, Zwang nur als letztes Mittel mit klaren Voraussetzungen."} ]},
+    n2:{ titel:"DEESKALATION", text:"Womit deeskalierst du weiter?", optionen:[
+      {text:"Zuhören, ernst nehmen, einfache klare Sätze, Wahlmöglichkeiten anbieten, Sicherheit signalisieren, Fluchtweg/Eigenschutz beachten", ziel:"n3", typ:"gut", fb:"Korrekt – Beziehung, klare einfache Kommunikation, Eigenschutz."},
+      {text:"Über seine Wahninhalte diskutieren und sie widerlegen", ziel:"bad_debate", typ:"warn", fb:"Wahn lässt sich nicht 'wegdiskutieren' – nicht bestätigen, aber auch nicht streiten; bei den Gefühlen bleiben."} ]},
+    n3:{ titel:"SICHERHEIT/TEAM", text:"Die Erregung bleibt hoch, eine Gefährdung ist möglich. Vorgehen?", optionen:[
+      {text:"Team hinzuziehen, Eigen- und Fremdschutz sichern, Arzt informieren, Medikation nach AO anbieten, weiter deeskalieren", ziel:"n4", typ:"gut", fb:"Sehr gut – Team, Schutz, Arzt/Medikation nach AO, weiter deeskalieren."},
+      {text:"Allein mit ihm im Raum bleiben und weiter reden", ziel:"bad_solo", typ:"warn", fb:"Bei Gefährdung kein Alleingang – Team und Eigenschutz."} ]},
+    n4:{ titel:"LETZTES MITTEL / RECHT", text:"Wenn freiwillige Maßnahmen nicht ausreichen und akute Gefahr besteht – was gilt?", optionen:[
+      {text:"Freiheitsentziehende Maßnahmen nur als letztes Mittel bei akuter Gefahr, ärztliche Anordnung, rechtliche Voraussetzungen (Unterbringungsrecht/PsychKG), engmaschige Überwachung und Dokumentation", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Zwang nur als Ultima Ratio mit rechtlicher Grundlage, ärztlicher Anordnung, Überwachung und Doku."},
+      {text:"Eigenständig fixieren, ohne weitere Formalitäten", ziel:"end_mittel", typ:"warn", fb:"Zwangsmaßnahmen brauchen ärztliche Anordnung, rechtliche Grundlage, Überwachung und Dokumentation – nie im Alleingang."} ]},
+    bad_confront:{ text:"Nach dem lauten Auftreten wird er aggressiver. Reaktion?", optionen:[
+      {text:"Zurücknehmen, Ruhe/Distanz, leise Stimme, deeskalieren, Team/Eigenschutz", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Konfrontation war der Fehler."},
+      {text:"Noch bestimmter auftreten", ziel:"end_schlecht", typ:"fehler", fb:"Eskalation/Gefährdung."} ]},
+    bad_hold:{ text:"Beim Festhalten wehrt er sich heftig, die Lage eskaliert. Reaktion?", optionen:[
+      {text:"Loslassen (sofern sicher möglich), deeskalieren, Team, Eigenschutz, Arzt; Zwang nur als Ultima Ratio mit AO/Recht", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – kein vorschneller körperlicher Zwang."},
+      {text:"Weiter festhalten", ziel:"end_schlecht", typ:"fehler", fb:"Verletzungsgefahr für alle, ohne Voraussetzungen rechtswidrig."} ]},
+    bad_debate:{ text:"Die Diskussion über den Wahn steigert seine Anspannung. Reaktion?", optionen:[
+      {text:"Diskussion beenden, bei den Gefühlen bleiben, beruhigen, deeskalieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter diskutieren", ziel:"end_schlecht", typ:"fehler", fb:"Eskalation."} ]},
+    bad_solo:{ text:"Allein eskaliert die Situation zur Gefährdung. Reaktion?", optionen:[
+      {text:"Hilfe/Team holen, Eigenschutz, Arzt, deeskalieren, Maßnahmen nach AO/Recht", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – kein Alleingang."},
+      {text:"Weiter allein bleiben", ziel:"end_schlecht", typ:"fehler", fb:"Gefährdung."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Deeskaliert, Team/Schutz, Medikation nach AO, rechtssicher gehandelt.", fazit:"Psychotische Erregung: ruhig, reizarm, Distanz/Eigenschutz, deeskalierende Kommunikation (zuhören, einfache Sätze, Wahn nicht bestätigen, aber nicht streiten), Team und Arzt einbeziehen, Medikation nach AO anbieten; freiheitsentziehende Maßnahmen nur als Ultima Ratio bei akuter Gefahr mit ärztlicher Anordnung, rechtlicher Grundlage (PsychKG), Überwachung und Dokumentation." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Im Kern richtig, aber mit Fehlern im Vorgehen.", fazit:"Deeskalation zuerst, kein Alleingang, Zwang nur rechtssicher als letztes Mittel." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation und Gefährdung.", fazit:"Konfrontation, vorschneller Zwang und Alleingänge sind gefährlich und rechtlich unzulässig." }
+  } },
+
+{ id:"psy_manie", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"⚡", farbe:"#eab308", titel:"Getriebene, rastlose Patientin", schwere:"subakut", grad:"Fortgeschritten",
+  vignette:"Eine Patientin in manischer Episode ist getrieben, redet ununterbrochen, schläft kaum, hat überschießende Pläne, kaum Krankheitseinsicht, gibt viel Geld aus, überschätzt sich und reagiert gereizt auf Grenzen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"HALTUNG", text:"Wie begegnest du ihr?", optionen:[
+      {text:"Ruhig, wertschätzend, klare einfache Struktur, reizarme Umgebung, Beziehung halten, nicht provozieren", ziel:"n2", typ:"gut", fb:"Richtig – Ruhe, Struktur, reizarm, Beziehung statt Machtkampf."},
+      {text:"Auf alle Pläne enthusiastisch eingehen und sie bestärken", ziel:"bad_fuel", typ:"warn", fb:"Das befeuert die Manie – freundlich, aber nicht in die Getriebenheit einsteigen."},
+      {text:"Mit strengen Verboten und Konfrontation Grenzen setzen", ziel:"bad_confront", typ:"warn", fb:"Strenge Konfrontation führt zu Reibung/Eskalation – ruhig und strukturierend."} ]},
+    n2:{ titel:"SCHUTZ/STRUKTUR", text:"Worauf achtest du im Alltag?", optionen:[
+      {text:"Reizarme Umgebung, Tagesstruktur, Schlaf fördern, vor riskanten Folgen schützen (z. B. finanzielle/soziale Selbstgefährdung), Essen/Trinken anbieten", ziel:"n3", typ:"gut", fb:"Korrekt – Reizreduktion, Schlaf, Schutz vor selbstschädigenden Folgen, Grundbedürfnisse."},
+      {text:"Ihr volle Freiheit lassen, sie weiß schon, was sie tut", ziel:"bad_free", typ:"warn", fb:"Bei fehlender Einsicht und Selbstgefährdung braucht es schützende Struktur."} ]},
+    n3:{ titel:"KÖRPERLICHES", text:"Sie isst/trinkt kaum und ist ständig in Bewegung. Risiko?", optionen:[
+      {text:"Auf Erschöpfung, Dehydratation und Mangelernährung achten, Vitalzeichen/Allgemeinzustand beobachten, Grundbedürfnisse anbieten, Arzt informieren", ziel:"n4", typ:"gut", fb:"Sehr gut – körperliche Erschöpfung/Exsikkose im Blick behalten."},
+      {text:"Nur das Verhalten beobachten, Körperliches ist hier nebensächlich", ziel:"bad_body", typ:"warn", fb:"Manie erschöpft auch körperlich – Flüssigkeit/Ernährung/Erschöpfung beachten."} ]},
+    n4:{ titel:"THERAPIE/RECHT", text:"Sie lehnt Medikamente und Klinik ab, gefährdet sich aber. Vorgehen?", optionen:[
+      {text:"Beziehung/Motivation, Medikation nach AO anbieten; bei akuter Selbst-/Fremdgefährdung ärztliche Einschätzung, ggf. Unterbringungsrecht (PsychKG) als letztes Mittel, Schutz und Dokumentation", ziel:"end_gut", typ:"gut", fb:"Sehr gut – erst Motivation/Beziehung, Schutzmaßnahmen nur bei Gefährdung mit ärztlicher/rechtlicher Grundlage."},
+      {text:"Medikamente heimlich untermischen", ziel:"end_mittel", typ:"warn", fb:"Heimliche Gabe ist unzulässig – transparent vorgehen, bei Gefährdung rechtlich abgesicherte Maßnahmen."} ]},
+    bad_fuel:{ text:"Nach dem Bestärken steigert sie sich weiter hinein. Reaktion?", optionen:[
+      {text:"Zurücknehmen, ruhig strukturieren, Reize reduzieren, Schlaf/Grundbedürfnisse fördern", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – nicht befeuern."},
+      {text:"Weiter mitfiebern", ziel:"end_schlecht", typ:"fehler", fb:"Zunehmende Entgleisung."} ]},
+    bad_confront:{ text:"Die strengen Verbote führen zu Streit und Gereiztheit. Reaktion?", optionen:[
+      {text:"Deeskalieren, ruhig strukturieren, Beziehung halten", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Noch strenger werden", ziel:"end_schlecht", typ:"fehler", fb:"Eskalation."} ]},
+    bad_free:{ text:"Mit voller Freiheit kommt es zu selbstschädigendem Verhalten. Reaktion?", optionen:[
+      {text:"Schützende Struktur einführen, Arzt informieren, vor Folgen schützen", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter alles zulassen", ziel:"end_schlecht", typ:"fehler", fb:"Selbstgefährdung."} ]},
+    bad_body:{ text:"Sie kollabiert erschöpft und dehydriert. Reaktion?", optionen:[
+      {text:"Vitalzeichen, Flüssigkeit/Ernährung nach AO, Erschöpfung behandeln, Arzt", ziel:"end_mittel", typ:"warn", fb:"Spät – Körperliches gehört dazu."},
+      {text:"Weiter nur das Verhalten beobachten", ziel:"end_schlecht", typ:"fehler", fb:"Körperliche Entgleisung übersehen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Struktur und Schutz, Körperliches beachtet, transparent und rechtssicher.", fazit:"Akute Manie: ruhig, wertschätzend, klare Struktur, reizarme Umgebung, Schlaf fördern, Beziehung statt Machtkampf; vor selbstschädigenden Folgen (finanziell/sozial) und körperlicher Erschöpfung/Exsikkose schützen; Medikation nach AO anbieten; keine heimliche Gabe; Schutzmaßnahmen nur bei akuter Gefährdung mit ärztlicher Einschätzung/rechtlicher Grundlage (PsychKG)." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Im Kern richtig, aber mit Fehlgriffen.", fazit:"Nicht befeuern, nicht konfrontieren, schützen, Körperliches beachten, transparent bleiben." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Entgleisung/Selbstgefährdung.", fazit:"Befeuern, alles zulassen oder Körperliches ignorieren ist gefährlich." }
+  } },
+
+{ id:"psy_alkoholentzug", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🍶", farbe:"#14b8a6", titel:"Tremor und Unruhe ohne Alkohol", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Ein Patient (bekannte Alkoholabhängigkeit), seit etwa 1 Tag ohne Alkohol: Tremor, Schwitzen, Unruhe, Tachykardie, leicht erhöhter Blutdruck, Übelkeit; er ist ängstlich-gereizt.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du die Symptome ein und reagierst zuerst?", optionen:[
+      {text:"Alkoholentzugssyndrom erkennen, ruhig zuwenden, Vitalzeichen, Schweregrad einschätzen (z. B. Skala), Arzt informieren", ziel:"n2", typ:"gut", fb:"Richtig – Entzug erkennen, Vitalzeichen, Schweregrad erfassen, Arzt einbeziehen."},
+      {text:"Symptome als reine Nervosität abtun", ziel:"bad_minimize", typ:"fehler", fb:"Alkoholentzug kann lebensbedrohlich werden (Delir/Krampf) – nicht bagatellisieren."},
+      {text:"Ihm Alkohol geben, damit es ihm besser geht", ziel:"bad_alcohol", typ:"fehler", fb:"Alkohol ist keine pflegerische Maßnahme – strukturierte Entzugsbehandlung nach AO."} ]},
+    n2:{ titel:"THERAPIE/PROPHYLAXE", text:"Was ist Teil der Behandlung (AO)?", optionen:[
+      {text:"Medikamentöse Entzugsbehandlung nach Schema (z. B. Benzodiazepine), Thiamin (Vitamin B1) zur Wernicke-Prophylaxe, Flüssigkeit/Elektrolyte, engmaschige Überwachung", ziel:"n3", typ:"gut", fb:"Korrekt – symptomorientierte Medikation nach Schema, Thiamin, Flüssigkeit, Monitoring."},
+      {text:"Nur abwarten, das geht von allein vorbei", ziel:"bad_wait", typ:"warn", fb:"Unbehandelt drohen Delir/Krampf – strukturierte Behandlung und Überwachung."} ]},
+    n3:{ titel:"KOMPLIKATIONEN", text:"Worauf achtest du, um Komplikationen früh zu erkennen?", optionen:[
+      {text:"Auf Delirzeichen (Desorientierung, Halluzinationen, starke vegetative Entgleisung) und Krampfanfälle achten, Vitalzeichen/Bewusstsein engmaschig, reizarme sichere Umgebung, Sturz-/Eigenschutz", ziel:"n4", typ:"gut", fb:"Sehr gut – Delir und Entzugskrampf rechtzeitig erkennen, Sicherheit herstellen."},
+      {text:"Nur den Tremor beobachten", ziel:"bad_complic", typ:"warn", fb:"Delir und Krampfanfall sind die gefährlichen Komplikationen – breiter beobachten."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Wie gestaltest du die Betreuung?", optionen:[
+      {text:"Engmaschige Überwachung (Skala/Vitalzeichen), ruhige reizarme Umgebung, Orientierung geben, Flüssigkeit/Ernährung, Medikation nach Schema, Dokumentation; bei Verschlechterung Arzt/Intensiv", ziel:"end_gut", typ:"gut", fb:"Sehr gut – strukturierte, sichere, engmaschige Begleitung."},
+      {text:"Nach Symptomlinderung die Überwachung beenden", ziel:"end_mittel", typ:"warn", fb:"Entzug verläuft über Tage – weiter engmaschig überwachen."} ]},
+    bad_minimize:{ text:"Stunden später Desorientierung und Halluzinationen (Delir). Reaktion?", optionen:[
+      {text:"Sofort Arzt, engmaschige Überwachung, Medikation nach AO, sichere Umgebung, ggf. Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät – Bagatellisieren war der Fehler."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Delir tremens (lebensbedrohlich)."} ]},
+    bad_alcohol:{ text:"Nach Alkoholgabe bessert sich nichts grundlegend, das Problem bleibt. Reaktion?", optionen:[
+      {text:"Strukturierte Entzugsbehandlung nach AO, Thiamin, Überwachung", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Alkohol ist keine Behandlung."},
+      {text:"Mehr Alkohol geben", ziel:"end_schlecht", typ:"fehler", fb:"Keine Lösung, verschleiert die Gefahr."} ]},
+    bad_wait:{ text:"Es kommt zu einem Krampfanfall. Reaktion?", optionen:[
+      {text:"Schützen, Atemweg/Vitalzeichen, Arzt, Medikation nach AO, engmaschige Überwachung", ziel:"end_mittel", typ:"warn", fb:"Spät, aber richtig."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Entzugskrampf/Status."} ]},
+    bad_complic:{ text:"Plötzlich starke vegetative Entgleisung und Verwirrtheit. Reaktion?", optionen:[
+      {text:"Delir erkennen, Arzt, Medikation/Überwachung nach AO, Sicherheit, ggf. Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – breiter beobachten."},
+      {text:"Weiter nur Tremor beobachten", ziel:"end_schlecht", typ:"fehler", fb:"Verkanntes Delir."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Entzug erkannt, behandelt, Komplikationen überwacht, sicher begleitet.", fazit:"Alkoholentzugssyndrom: erkennen, Vitalzeichen + Schweregrad (Skala), Arzt einbeziehen; symptomorientierte Medikation nach Schema (z. B. Benzodiazepine), Thiamin (Wernicke-Prophylaxe), Flüssigkeit/Elektrolyte; auf Delir und Entzugskrampf achten; reizarme sichere Umgebung, engmaschige Überwachung über Tage; kein Alkohol als 'Therapie', kein Abwarten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Letztlich beherrscht, aber mit Verzögerung.", fazit:"Früh erkennen und behandeln, Thiamin nicht vergessen, auf Delir/Krampf achten, lange überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Delir tremens / Entzugskrampf.", fazit:"Bagatellisieren, Alkoholgabe oder Abwarten sind beim Alkoholentzug gefährlich." }
+  } },
+
+{ id:"psy_panik", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"😰", farbe:"#38bdf8", titel:"Plötzliche Atemnot und Todesangst", schwere:"akut", grad:"Fortgeschritten",
+  vignette:"Eine Patientin bekommt plötzlich Herzrasen, Atemnot, Engegefühl in der Brust, Kribbeln in den Händen, Schwindel und Todesangst ('Ich bekomme keine Luft, ich glaube, ich sterbe'); sie hyperventiliert.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTE REAKTION", text:"Wie reagierst du?", optionen:[
+      {text:"Ruhig und präsent bleiben, beruhigend ansprechen, bei ihr bleiben, Sicherheit vermitteln, langsames Atmen anleiten", ziel:"n2", typ:"gut", fb:"Richtig – Ruhe ausstrahlen, präsent sein, beruhigend führen."},
+      {text:"Ihr sagen, sie solle sich zusammenreißen, es sei nichts", ziel:"bad_dismiss", typ:"fehler", fb:"Abwertung verstärkt die Angst – ernst nehmen und beruhigend begleiten."},
+      {text:"Hektisch viele Geräte anschließen und Aufregung zeigen", ziel:"bad_panic", typ:"warn", fb:"Eigene Hektik überträgt sich – ruhig und strukturiert bleiben."} ]},
+    n2:{ titel:"SOMATIK BEDENKEN", text:"Woran denkst du trotz wahrscheinlicher Panikattacke?", optionen:[
+      {text:"Bedrohliche körperliche Ursachen im Blick behalten (z. B. Herz/Atmung), Vitalzeichen/SpO₂ prüfen, im Zweifel ärztlich abklären lassen", ziel:"n3", typ:"gut", fb:"Korrekt – Panikattacke ist eine Ausschlussdiagnose; Somatik nicht übersehen."},
+      {text:"Sicher nur psychisch, eine körperliche Abklärung ist überflüssig", ziel:"bad_soma", typ:"warn", fb:"Symptome können auch körperlich bedingt sein – im Zweifel abklären."} ]},
+    n3:{ titel:"ATEMFÜHRUNG", text:"Sie hyperventiliert weiter. Wie hilfst du?", optionen:[
+      {text:"Ruhig langsames Atmen vormachen/anleiten, Aufmerksamkeit lenken, beruhigen, bei ihr bleiben (kein Druck)", ziel:"n4", typ:"gut", fb:"Sehr gut – ruhige Atemführung und Präsenz, keine Beschämung."},
+      {text:"Sie auffordern, kräftig und schnell weiterzuatmen", ziel:"bad_breath", typ:"warn", fb:"Schnelles Atmen verstärkt die Hyperventilation – zu langsamem Atmen anleiten."} ]},
+    n4:{ titel:"NACHSORGE", text:"Die Attacke klingt ab. Was ist sinnvoll?", optionen:[
+      {text:"Da bleiben, Erlebtes besprechen/normalisieren, über Panikattacken aufklären, Auslöser/Hilfe thematisieren, Behandlungsteam einbeziehen, dokumentieren", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Nachgespräch, Psychoedukation, Anbindung."},
+      {text:"Sofort allein lassen, ist ja vorbei", ziel:"end_mittel", typ:"warn", fb:"Ein kurzes Nachgespräch und Sicherheit sind hilfreich."} ]},
+    bad_dismiss:{ text:"Nach der Abwertung gerät sie noch mehr in Panik. Reaktion?", optionen:[
+      {text:"Wieder zugewandt, beruhigen, Atmung anleiten, ernst nehmen, bei ihr bleiben", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Abwertung war der Fehler."},
+      {text:"Weiter abtun", ziel:"end_schlecht", typ:"fehler", fb:"Eskalierende Panik / Vertrauensverlust."} ]},
+    bad_panic:{ text:"Deine Hektik verstärkt ihre Angst. Reaktion?", optionen:[
+      {text:"Selbst ruhig werden, ruhige Stimme, Atmung anleiten, Sicherheit vermitteln", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter hektisch agieren", ziel:"end_schlecht", typ:"fehler", fb:"Verstärkte Panik."} ]},
+    bad_soma:{ text:"Die Beschwerden passen nicht ganz – sie wird blass, der Kreislauf verschlechtert sich. Reaktion?", optionen:[
+      {text:"Jetzt ärztlich abklären, Vitalzeichen/SpO₂, Monitoring, Arzt", ziel:"end_mittel", typ:"warn", fb:"Richtig – Somatik nicht übersehen."},
+      {text:"Weiter nur als Panik behandeln", ziel:"end_schlecht", typ:"fehler", fb:"Übersehene körperliche Ursache."} ]},
+    bad_breath:{ text:"Durch das schnelle Atmen verschlimmert sich die Symptomatik. Reaktion?", optionen:[
+      {text:"Zu langsamem, ruhigem Atmen anleiten, beruhigen, Aufmerksamkeit lenken", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter schnell atmen lassen", ziel:"end_schlecht", typ:"fehler", fb:"Verstärkte Hyperventilation."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Beruhigt, Atmung geführt, Somatik bedacht, Nachgespräch geführt.", fazit:"Panikattacke: ruhig und präsent bleiben, ernst nehmen, beruhigen, zu langsamem Atmen anleiten; trotzdem bedrohliche körperliche Ursachen prüfen (Ausschlussdiagnose, Vitalzeichen/SpO₂, im Zweifel ärztlich abklären); nach der Attacke kurzes Nachgespräch, Psychoedukation und Anbindung; keine Abwertung, keine eigene Hektik." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Bewältigt, aber mit Fehlern.", fazit:"Ruhig führen, langsames Atmen, Somatik bedenken, kurzes Nachgespräch." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation bzw. übersehene Ursache.", fazit:"Abwerten, eigene Hektik, schnelles Atmen oder das Ignorieren körperlicher Ursachen schaden." }
+  } },
+
+{ id:"psy_mns", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🌡️", farbe:"#a855f7", titel:"Fieber und Rigor unter Neuroleptika", schwere:"akut · hoch", grad:"Fortgeschritten",
+  vignette:"Ein Patient unter Neuroleptika (kürzlich Dosissteigerung) entwickelt hohes Fieber, ausgeprägte Muskelsteifigkeit (Rigor), Bewusstseinstrübung, Schwitzen, Tachykardie und schwankenden Blutdruck.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf malignes neuroleptisches Syndrom (MNS), Notfall: Vitalzeichen, Arzt/Hilfe sofort, Monitoring, an Absetzen des Neuroleptikums denken", ziel:"n2", typ:"gut", fb:"Richtig – MNS ist ein lebensbedrohlicher Notfall: Arzt sofort, Vitalzeichen, Neuroleptikum-Stopp veranlassen."},
+      {text:"Fieber als Infekt behandeln und abwarten", ziel:"bad_infekt", typ:"warn", fb:"Rigor + Fieber + Bewusstseinstrübung unter Neuroleptika spricht für MNS – nicht nur als Infekt abtun."},
+      {text:"Die Neuroleptika-Dosis weiter erhöhen", ziel:"bad_more", typ:"fehler", fb:"Neuroleptika sind der Auslöser – eine Erhöhung verschlimmert das MNS."} ]},
+    n2:{ titel:"SOFORTMASSNAHMEN", text:"Was ist jetzt wichtig (AO)?", optionen:[
+      {text:"Auslösendes Neuroleptikum absetzen (nach AO), Vitalfunktionen sichern, kühlen, Flüssigkeit/Elektrolyte, engmaschiges Monitoring, Intensiv vorbereiten", ziel:"n3", typ:"gut", fb:"Korrekt – Trigger absetzen, supportiv stabilisieren, Intensiv."},
+      {text:"Nur fiebersenkende Tabletten geben", ziel:"bad_sympt", typ:"warn", fb:"Symptomatische Fiebersenkung allein reicht nicht – Trigger absetzen, supportiv/Intensiv."} ]},
+    n3:{ titel:"KOMPLIKATIONEN", text:"Worauf achtest du wegen drohender Komplikationen?", optionen:[
+      {text:"Auf Rhabdomyolyse/Nierenversagen (CK, dunkler Urin), Elektrolytentgleisung, Kreislauf-/Atemkomplikationen achten, Bilanz, Labor nach AO", ziel:"n4", typ:"gut", fb:"Sehr gut – Rhabdomyolyse/Niere, Elektrolyte und Kreislauf im Blick."},
+      {text:"Komplikationen sind unwahrscheinlich, nur Temperatur messen", ziel:"bad_complic", typ:"warn", fb:"MNS kann zu Rhabdomyolyse/Nierenversagen führen – breiter überwachen."} ]},
+    n4:{ titel:"ÜBERWACHUNG", text:"Wie geht es weiter?", optionen:[
+      {text:"Intensivüberwachung, Vitalzeichen/Bewusstsein, Temperatur, CK/Niere/Elektrolyte, Flüssigkeit, weitere Therapie nach AO, Dokumentation", ziel:"end_gut", typ:"gut", fb:"Sehr gut – Intensivüberwachung und supportive Therapie."},
+      {text:"Nach erster Fiebersenkung zurück auf Normalstation", ziel:"end_mittel", typ:"warn", fb:"MNS erfordert intensive Überwachung – nicht zu früh zurückverlegen."} ]},
+    bad_infekt:{ text:"Unter reiner Infektbehandlung verschlechtert er sich (Fieber/Rigor/Bewusstsein). Reaktion?", optionen:[
+      {text:"MNS erkennen, Neuroleptikum absetzen nach AO, supportiv stabilisieren, Intensiv", ziel:"end_mittel", typ:"warn", fb:"Spät – als reinen Infekt verkannt."},
+      {text:"Weiter nur den Infekt behandeln", ziel:"end_schlecht", typ:"fehler", fb:"Unbehandeltes MNS."} ]},
+    bad_more:{ text:"Nach der Dosiserhöhung dramatische Verschlechterung. Reaktion?", optionen:[
+      {text:"Neuroleptikum sofort absetzen nach AO, supportiv/Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – die Erhöhung war der Fehler."},
+      {text:"Noch mehr Neuroleptikum", ziel:"end_schlecht", typ:"fehler", fb:"Lebensbedrohliche Eskalation."} ]},
+    bad_sympt:{ text:"Trotz Fiebersenkung bleiben Rigor und Entgleisung. Reaktion?", optionen:[
+      {text:"Trigger absetzen nach AO, supportiv (Kühlung/Flüssigkeit), Intensiv", ziel:"end_mittel", typ:"warn", fb:"Korrigiert."},
+      {text:"Weiter nur Fieber senken", ziel:"end_schlecht", typ:"fehler", fb:"Progredientes MNS."} ]},
+    bad_complic:{ text:"Dunkler Urin und Kreislaufverschlechterung treten auf. Reaktion?", optionen:[
+      {text:"Rhabdomyolyse/Niere behandeln (Flüssigkeit, Labor nach AO), Intensiv, Kreislauf stützen", ziel:"end_mittel", typ:"warn", fb:"Richtig erkannt."},
+      {text:"Ignorieren", ziel:"end_schlecht", typ:"fehler", fb:"Nierenversagen übersehen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"MNS erkannt, Trigger abgesetzt, supportiv stabilisiert, Intensiv.", fazit:"Malignes neuroleptisches Syndrom: lebensbedrohlicher Notfall (Fieber, Rigor, Bewusstseinstrübung, autonome Entgleisung unter Neuroleptika) – Arzt sofort, auslösendes Neuroleptikum absetzen (nach AO), supportiv stabilisieren (kühlen, Flüssigkeit/Elektrolyte, Vitalfunktionen), auf Rhabdomyolyse/Nierenversagen achten, Intensivüberwachung; die Dosis nie erhöhen, nicht als reinen Infekt verkennen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Letztlich richtig, aber mit Verzögerung.", fazit:"Trigger absetzen, supportiv stabilisieren, Niere/CK beachten, intensiv überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Progredientes MNS / Nierenversagen.", fazit:"Dosiserhöhung, reine Infekt-/Fieberbehandlung oder Ignorieren der Komplikationen sind lebensgefährlich." }
+  } }
 ];
 
 function navGo(screen) {
