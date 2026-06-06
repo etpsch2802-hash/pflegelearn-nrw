@@ -2463,7 +2463,7 @@ const KRANKHEITSBILDER = {
     ]
   },
   chirurgie: {
-    label: "Chirurgie & Orthopädie",
+    label: "Chirurgie",
     icon: "🦴",
     farbe: "#f97316",
     bilder: [
@@ -2987,6 +2987,316 @@ const KRANKHEITSBILDER = {
             ziel: "Kind erleidet während und nach dem Anfall keine Verletzung; der Atemweg bleibt frei",
             massnahmen: ["Umgebung sichern, vor Verletzung schützen, nichts in den Mund", "Seitenlage, Atemweg/SpO₂ beobachten, Anfallsdauer messen", "Bei > 5 min Medikation nach Notfallschema/AO", "Postiktal Seitenlage und Vitalzeichen, Meningitis-Zeichen beobachten", "Eltern beruhigen und über den Fieberkrampf aufklären"],
             evaluation: "Keine Verletzung, Atemweg frei, Anfall sistiert, Eltern informiert."
+          }
+        ],
+        fragen: []
+      }
+    
+      ,{
+        name: "Otitis media acuta",
+        icd: "H66.0",
+        definition: "Akute Mittelohrentzündung (viral/bakteriell), häufig bei Kleinkindern nach Atemwegsinfekt. Meist selbstlimitierend.",
+        symptome: ["Ohrenschmerzen (Säuglinge: Greifen ans Ohr, Schreien)", "Fieber", "Hörminderung", "Unruhe/Schlafstörung", "Ggf. Ohrenfluss bei Trommelfellperforation"],
+        diagnostik: ["Otoskopie (gerötetes/vorgewölbtes Trommelfell)", "Anamnese", "Temperatur", "Hörprüfung bei Rezidiven"],
+        therapie: ["Analgesie/Antipyrese (Ibuprofen/Paracetamol)", "Abschwellende Maßnahmen", "Antibiotikum nach Indikation (Alter/Schwere)", "Abwartendes Offenhalten möglich", "HNO-Vorstellung bei Rezidiven"],
+        pflege: ["Schmerz-/Fiebermanagement nach AO", "Kopf leicht erhöht lagern, Wärme anbieten", "Ohr auf Sekretaustritt beobachten", "Eltern zu Medikamentengabe und Warnzeichen anleiten", "Ausreichend Flüssigkeit anbieten"],
+        merksatz: "Kleinkind greift ans Ohr + Fieber = Otitis media: Analgesie/Antipyrese, Antibiotikum nur nach Indikation.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Mittelohrentzündung m/d/s Greifen ans Ohr, Schreien, Unruhe",
+            ressourcen: ["Eltern unterstützend", "Kind nimmt Medikamente an"],
+            ziel: "Kind ist innerhalb von 24 h schmerzarm (altersgerechte Einschätzung) und schläft ruhiger",
+            massnahmen: ["Analgesie/Antipyrese nach AO geben und Wirkung kontrollieren", "Kopf leicht erhöht lagern, Wärme anbieten", "Ohr auf Sekretaustritt beobachten", "Eltern zur Medikamentengabe und zu Warnzeichen anleiten", "Ausreichend Flüssigkeit anbieten"],
+            evaluation: "Schmerz reduziert, Kind ruhiger, kein Hinweis auf Komplikation."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Pertussis (Keuchhusten)",
+        icd: "A37",
+        definition: "Hochansteckende bakterielle Atemwegsinfektion (Bordetella pertussis) mit stakkatoartigen Hustenanfällen. Für junge Säuglinge gefährlich (Apnoen).",
+        symptome: ["Stakkatoartige Hustenanfälle mit inspiratorischem Ziehen", "Hustenattacken bis zum Erbrechen", "Zyanose/Apnoen (Säuglinge!)", "Wochenlang anhaltender Husten", "Anfangs erkältungsähnlich"],
+        diagnostik: ["Klinik + Anamnese (Impfstatus, Kontakt)", "Erregernachweis (PCR/Abstrich)", "Beobachtung der Hustenanfälle/Apnoen", "SpO₂"],
+        therapie: ["Antibiotikum (Makrolid), v. a. früh/zum Schutz", "Stationär bei jungen Säuglingen (Apnoe-Monitoring)", "O₂/Atemunterstützung bei Bedarf", "Isolation (hochansteckend)", "Impfung/Umgebungsprophylaxe"],
+        pflege: ["Apnoe-/SpO₂-Monitoring (Säugling)", "Hustenanfälle ruhig begleiten", "Kleine Mahlzeiten (Erbrechen nach Husten)", "Isolation/Hygiene", "Eltern anleiten, Impfberatung"],
+        merksatz: "Stakkatohusten + Apnoen beim Säugling = Pertussis: Isolation, Makrolid, Apnoe-Monitoring.",
+        pflegeplanung: [
+          {
+            problem: "Ineffektive Atmung r/t paroxysmalen Hustenanfällen m/d/s Apnoen, Zyanose, Erschöpfung",
+            ressourcen: ["Eltern anwesend", "Stationäre Überwachung möglich"],
+            ziel: "Säugling zeigt während der Überwachung keine unbehandelten Apnoen, SpO₂ im Zielbereich",
+            massnahmen: ["Kontinuierliches Apnoe-/SpO₂-Monitoring", "Hustenanfälle begleiten, beruhigen, O₂ nach AO", "Kleine, häufige Mahlzeiten wegen Erbrechen", "Isolation und konsequente Hygiene", "Antibiotikum nach AO, Eltern zu Impfung/Prophylaxe beraten"],
+            evaluation: "Apnoen erkannt und behandelt, SpO₂ stabil, ausreichende Nahrungsaufnahme."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Pneumonie im Kindesalter",
+        icd: "J18",
+        definition: "Akute Entzündung des Lungenparenchyms (viral/bakteriell) mit Husten, Fieber und Atemnot; bei Kindern häufige stationäre Ursache.",
+        symptome: ["Fieber, Husten", "Tachypnoe, Nasenflügeln, Einziehungen", "Knisterrasseln/abgeschwächtes Atemgeräusch", "Trinkschwäche, Abgeschlagenheit", "Ggf. Bauch-/Flankenschmerz"],
+        diagnostik: ["Klinik + Auskultation", "SpO₂, Atemfrequenz", "Röntgen Thorax bei Indikation", "Entzündungswerte bei Bedarf", "Erregerdiagnostik nach Indikation"],
+        therapie: ["O₂ bei Hypoxie", "Antibiotikum bei bakterieller Genese nach AO", "Antipyrese, ausreichende Flüssigkeit", "Sekretmanagement/Lagerung", "Stationär bei Atemnot/Trinkschwäche"],
+        pflege: ["SpO₂/Atemarbeit überwachen", "Oberkörper erhöht, Sekretmanagement", "Fieber-/Flüssigkeitsmanagement", "Kleine Mahlzeiten", "Eltern einbeziehen"],
+        merksatz: "Kind + Fieber + Tachypnoe + Einziehungen = Pneumonie: O₂ bei Hypoxie, Antibiotikum bei bakterieller Genese.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigter Gasaustausch r/t Lungenparenchymentzündung m/d/s Tachypnoe, Einziehungen, SpO₂-Abfall",
+            ressourcen: ["Eltern unterstützend", "Kind kooperiert bei Inhalation"],
+            ziel: "Kind zeigt innerhalb von 48 h SpO₂ ≥ 94 % und eine reduzierte Atemarbeit",
+            massnahmen: ["O₂ nach AO, SpO₂ kontinuierlich", "Oberkörper erhöht, Sekretmanagement", "Antipyrese und ausreichende Flüssigkeit nach AO", "Atemfrequenz/Atemarbeit dokumentieren", "Antibiotikum nach AO, Eltern einbeziehen"],
+            evaluation: "SpO₂ stabil, Atemarbeit reduziert, Fieber rückläufig."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Harnwegsinfekt / Pyelonephritis (Kind)",
+        icd: "N10",
+        definition: "Bakterielle Harnwegsinfektion; bei Kindern auch fieberhaft als Pyelonephritis. Bei Säuglingen oft unspezifisch (Fieber, Trinkschwäche).",
+        symptome: ["Fieber (oft einziges Zeichen beim Säugling)", "Dysurie/Pollakisurie (ältere Kinder)", "Bauch-/Flankenschmerz", "Übelriechender Urin", "Trinkschwäche/Gedeihstörung", "Reizbarkeit"],
+        diagnostik: ["Urinstatus/-kultur (sachgerechte Gewinnung!)", "Entzündungswerte", "Sonografie der Harnwege", "Temperatur", "Bei Rezidiven weiterführende Abklärung"],
+        therapie: ["Antibiotikum nach AO/Antibiogramm", "Ausreichende Flüssigkeit", "Antipyrese/Analgesie", "Bei fieberhafter Pyelonephritis ggf. stationär", "Abklärung anatomischer Ursachen (Reflux)"],
+        pflege: ["Sachgerechte Uringewinnung, Bilanz", "Temperatur-/Schmerzmanagement", "Trinkmenge fördern", "Intimhygiene anleiten", "Eltern zur Rezidivprophylaxe beraten"],
+        merksatz: "Säugling mit Fieber ohne Fokus = an Harnwegsinfekt denken: Urinkultur vor Antibiose, Sonografie.",
+        pflegeplanung: [
+          {
+            problem: "Erhöhte Körpertemperatur r/t Harnwegsinfektion m/d/s Fieber, Reizbarkeit, Trinkschwäche",
+            ressourcen: ["Eltern unterstützend", "Kind trinkt mit Anleitung"],
+            ziel: "Kind ist innerhalb von 48 h fieberfrei und trinkt ausreichend",
+            massnahmen: ["Temperatur überwachen, Antipyrese nach AO", "Sachgerechte Uringewinnung, Ein-/Ausfuhr", "Trinkmenge fördern und dokumentieren", "Antibiotikum nach AO, Wirkung beobachten", "Intimhygiene anleiten, Eltern zur Prophylaxe beraten"],
+            evaluation: "Fieber rückläufig, ausreichende Trink-/Urinmenge, Wohlbefinden gebessert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Invagination (Darmeinstülpung)",
+        icd: "K56.1",
+        definition: "Einstülpung eines Darmabschnitts in den folgenden, v. a. bei Säuglingen/Kleinkindern. Akuter Notfall mit Ileus-/Ischämiegefahr.",
+        symptome: ["Plötzliche kolikartige Bauchschmerzen (anfallsweise Schreien, Anziehen der Beine)", "Schmerzfreie Intervalle", "Erbrechen", "Himbeergeleeartiger (blutig-schleimiger) Stuhl", "Tastbare walzenförmige Resistenz", "Zunehmende Apathie"],
+        diagnostik: ["Klinik + Anamnese", "Abdomen-Sonografie (Kokarde/Target-Zeichen)", "Vitalzeichen", "Ausschluss Ileus/Peritonitis"],
+        therapie: ["Nüchtern, i.v.-Zugang/Volumen", "Sonografisch gesteuerte hydrostatische/pneumatische Reposition", "Bei Versagen/Peritonitis operative Versorgung", "Monitoring, Analgesie nach AO"],
+        pflege: ["Nüchtern lassen, Vitalzeichen/Schmerz überwachen", "Bilanz, Zeichen der Verschlechterung beobachten", "Stuhl/Erbrechen dokumentieren", "OP-Vorbereitung bei Indikation", "Eltern begleiten und aufklären"],
+        merksatz: "Säugling: kolikartige Schmerzen + himbeergeleeartiger Stuhl + Walze = Invagination → Sono, Reposition.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Komplikationsgefahr r/t Darmeinstülpung m/d/s anfallsartigem Schreien, Erbrechen, blutigem Stuhl",
+            ressourcen: ["Eltern anwesend", "Frühzeitige Vorstellung", "Stationäre Versorgung"],
+            ziel: "Kind ist nüchtern und kreislaufstabil; eine drohende Verschlechterung wird früh erkannt",
+            massnahmen: ["Nüchtern lassen, i.v.-Zugang/Volumen nach AO", "Vitalzeichen, Schmerz und Bauchbefund engmaschig", "Stuhl und Erbrechen beobachten/dokumentieren", "Repositions-/OP-Vorbereitung nach AO", "Eltern begleiten und aufklären"],
+            evaluation: "Kreislaufstabil, Schmerz kontrolliert, Reposition/OP erfolgreich, keine Peritonitiszeichen."
+          }
+        ],
+        fragen: []
+      }
+    ]
+  }
+
+,
+  orthopaedie: {
+    label: "Orthopädie",
+    icon: "🦴",
+    farbe: "#f59e0b",
+    bilder: [
+      {
+        name: "Schenkelhalsfraktur (proximale Femurfraktur)",
+        icd: "S72.0",
+        definition: "Bruch des proximalen Oberschenkels, häufig bei älteren Menschen nach Sturz (Osteoporose). Hohe Bedeutung wegen Immobilität und Komplikationen.",
+        symptome: ["Schmerzhafte Bewegungseinschränkung der Hüfte", "Bein verkürzt und außenrotiert", "Belastungsunfähigkeit", "Schwellung/Hämatom", "Sturzanamnese"],
+        diagnostik: ["Röntgen Hüfte/Becken", "Klinische Untersuchung", "Labor/EKG (OP-Vorbereitung)", "Begleitverletzungen ausschließen"],
+        therapie: ["Meist operativ (Osteosynthese oder Endoprothese)", "Frühmobilisation", "Analgesie", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "Osteoporose-Abklärung"],
+        pflege: ["Schmerzmanagement, schonende Lagerung", "Frühmobilisation nach AO", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "Durchblutung/Sensomotorik/Wunde kontrollieren", "Sturzprophylaxe, Eigenständigkeit fördern"],
+        merksatz: "Verkürztes, außenrotiertes Bein nach Sturz beim alten Menschen = Schenkelhalsfraktur: OP + Frühmobilisation + Prophylaxen.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Mobilität r/t proximaler Femurfraktur und postoperativem Zustand m/d/s Schmerz, Belastungseinschränkung",
+            ressourcen: ["Motiviert mitzuarbeiten", "Angehörige unterstützen", "Vor Sturz selbstständig mobil"],
+            ziel: "Patient mobilisiert in den ersten postoperativen Tagen nach AO schmerzarm (NRS ≤ 3) mit Hilfsmittel",
+            massnahmen: ["Schmerzmanagement nach AO, vor Mobilisation analgetisch abdecken", "Frühmobilisation nach ärztlicher Freigabe, Physiotherapie einbeziehen", "Thrombose-, Pneumonie- und Dekubitusprophylaxe konsequent", "Durchblutung/Sensomotorik/Wundkontrolle dokumentieren", "Sturzprophylaxe, Hilfsmittel bereitstellen"],
+            evaluation: "Schmerzarme Mobilisation gelingt, keine prophylaxeassoziierten Komplikationen."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Distale Radiusfraktur",
+        icd: "S52.5",
+        definition: "Häufigste Fraktur des Erwachsenen, meist Sturz auf die ausgestreckte Hand. Versorgung konservativ (Gips) oder operativ (Platte).",
+        symptome: ["Schmerz/Schwellung am Handgelenk", "Fehlstellung (z. B. Gabel-/Bajonettstellung)", "Bewegungs-/Belastungseinschränkung", "Hämatom", "Ggf. Sensibilitätsstörung (N. medianus)"],
+        diagnostik: ["Röntgen Handgelenk in 2 Ebenen", "Durchblutung/Motorik/Sensibilität (DMS) prüfen", "Klinische Untersuchung"],
+        therapie: ["Reposition + Gips (konservativ) oder Osteosynthese", "Analgesie", "Hochlagerung, Schwellungskontrolle", "Frühfunktionelle Übungsbehandlung", "Gips-/Verbandkontrolle"],
+        pflege: ["Hand hochlagern, Schwellung beobachten", "DMS regelmäßig prüfen", "Gips/Verband auf Einengung kontrollieren", "Schmerzmanagement", "Zu Fingerbewegungen und Selbstpflege anleiten"],
+        merksatz: "Sturz auf die Hand + Gabelstellung = distale Radiusfraktur: DMS prüfen, hochlagern, Gips auf Einengung kontrollieren.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr peripherer neurovaskulärer Beeinträchtigung r/t Fraktur und Gipsverband m/d/s Schwellung, möglicher Einengung",
+            ressourcen: ["Patient kooperativ", "Versteht die Anleitung"],
+            ziel: "Durchblutung, Motorik und Sensibilität der Hand bleiben während des Aufenthalts intakt",
+            massnahmen: ["Hand konsequent hochlagern, Schwellung beobachten", "DMS-Kontrolle regelmäßig dokumentieren", "Gips/Verband auf Einengung prüfen, bei Zeichen sofort Arzt", "Schmerzmanagement nach AO", "Zu Fingerbewegungen und Selbstpflege anleiten"],
+            evaluation: "DMS intakt, keine Einengungszeichen, Schwellung rückläufig."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Koxarthrose (Hüftarthrose)",
+        icd: "M16",
+        definition: "Degenerativer Verschleiß des Hüftgelenks mit Knorpelabbau, Schmerz und Bewegungseinschränkung. Endstadium: Hüft-Endoprothese (TEP).",
+        symptome: ["Belastungs-/Anlaufschmerz in Hüfte/Leiste", "Bewegungseinschränkung (v. a. Innenrotation)", "Hinken", "Schmerzausstrahlung bis ins Knie", "Zunehmende Verkürzung der Gehstrecke"],
+        diagnostik: ["Röntgen Hüfte (Gelenkspaltverschmälerung, Osteophyten)", "Klinische Funktionsprüfung", "Anamnese, Schmerzverlauf"],
+        therapie: ["Konservativ: Bewegung, Physiotherapie, Gewichtsreduktion, Analgesie", "Gelenkerhaltende Maßnahmen", "Hüft-Endoprothese (TEP) im Endstadium", "Postoperativ Mobilisation + Prophylaxen"],
+        pflege: ["Schmerz-/Bewegungsmanagement", "Nach TEP: Luxationsprophylaxe, Frühmobilisation", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "Hilfsmittel-/Gehschulung", "Eigenständigkeit fördern"],
+        merksatz: "Anlaufschmerz + eingeschränkte Innenrotation = Koxarthrose; nach Hüft-TEP an Luxationsprophylaxe denken.",
+        pflegeplanung: [
+          {
+            problem: "Chronischer Schmerz und beeinträchtigte Mobilität r/t Hüftarthrose (bzw. postoperativ nach TEP) m/d/s Belastungsschmerz, Bewegungseinschränkung",
+            ressourcen: ["Motiviert", "Angehörige unterstützen", "Versteht Bewegungsregeln"],
+            ziel: "Patient bewegt sich schmerzarm (NRS ≤ 3) und hält nach TEP die Luxationsprophylaxe ein",
+            massnahmen: ["Schmerzmanagement nach AO, vor Mobilisation abdecken", "Nach TEP Luxationsprophylaxe anleiten und überwachen", "Frühmobilisation/Physiotherapie, Hilfsmittel schulen", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "Selbstständigkeit im Alltag fördern"],
+            evaluation: "Schmerzarme Mobilisation, Bewegungsregeln eingehalten, keine Komplikationen."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Gonarthrose (Kniearthrose)",
+        icd: "M17",
+        definition: "Degenerativer Verschleiß des Kniegelenks mit Schmerz, Schwellung und Funktionsverlust. Endstadium: Knie-Endoprothese.",
+        symptome: ["Belastungs-/Anlaufschmerz im Knie", "Schwellung, Krepitation", "Bewegungseinschränkung", "Achsfehlstellung (O-/X-Bein)", "Verkürzung der Gehstrecke"],
+        diagnostik: ["Röntgen Knie (Gelenkspalt, Osteophyten)", "Klinische Funktionsprüfung", "Ggf. MRT bei Begleitschäden"],
+        therapie: ["Konservativ: Physiotherapie, Gewichtsreduktion, Analgesie", "Knie-Endoprothese im Endstadium", "Postoperativ: Mobilisation, Beweglichkeit (CPM-Schiene nach AO)", "Prophylaxen"],
+        pflege: ["Schmerz-/Schwellungsmanagement (Kühlung nach AO)", "Frühmobilisation, Beweglichkeit fördern", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "DMS- und Wundkontrolle", "Gehschulung/Hilfsmittel"],
+        merksatz: "Anlaufschmerz + Schwellung + Krepitation = Gonarthrose; nach Knie-TEP frühe Mobilisation + Prophylaxen.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Mobilität r/t Kniearthrose (bzw. postoperativ nach Knie-TEP) m/d/s Schmerz, Schwellung, Bewegungseinschränkung",
+            ressourcen: ["Motiviert mitzuarbeiten", "Physiotherapie verfügbar"],
+            ziel: "Patient erreicht nach AO eine schmerzarme Mobilisation und zunehmende Kniebeweglichkeit",
+            massnahmen: ["Schmerz-/Schwellungsmanagement (Kühlung nach AO)", "Frühmobilisation und Beweglichkeitsübungen nach AO", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "DMS- und Wundkontrolle dokumentieren", "Gehschulung, Hilfsmittel bereitstellen"],
+            evaluation: "Zunehmende Beweglichkeit, schmerzarme Mobilisation, keine Komplikationen."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Lumbaler Bandscheibenvorfall",
+        icd: "M51.1",
+        definition: "Verlagerung von Bandscheibengewebe mit möglicher Nervenwurzelkompression, meist lumbal (L4/5, L5/S1). Schmerz mit Ausstrahlung ins Bein.",
+        symptome: ["Rückenschmerz mit Ausstrahlung ins Bein (Ischialgie)", "Sensibilitätsstörungen/Kribbeln im Dermatom", "Kraftminderung", "Schmerzverstärkung bei Husten/Pressen", "Red Flags: Blasen-/Mastdarmstörung, Reithosenanästhesie"],
+        diagnostik: ["Neurologische Untersuchung (Kraft, Reflexe, Sensibilität)", "MRT der LWS", "Anamnese (Red Flags!)"],
+        therapie: ["Meist konservativ: Analgesie, Bewegung, Physiotherapie", "Entlastende Lagerung (z. B. Stufenbett)", "Operative Versorgung bei Lähmung/Kaudasyndrom (Notfall!)", "Rückenschule"],
+        pflege: ["Schmerzmanagement, rückenschonende Lagerung", "Neurologische Zeichen beobachten (Kraft, Sensibilität, Blase/Mastdarm!)", "Mobilisation nach AO, rückengerechtes Verhalten anleiten", "Sturz-/Dekubitusprophylaxe bei Immobilität", "Bei Red Flags sofort Arzt"],
+        merksatz: "Beinausstrahlender Rückenschmerz = Bandscheibenvorfall; Reithosenanästhesie/Blasenstörung = Notfall (Kaudasyndrom).",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Gefahr neurologischer Ausfälle r/t Nervenwurzelkompression m/d/s ausstrahlendem Schmerz, Sensibilitätsstörung",
+            ressourcen: ["Patient kooperativ", "Versteht rückenschonendes Verhalten"],
+            ziel: "Patient ist schmerzarm (NRS ≤ 3); neue neurologische Ausfälle werden früh erkannt",
+            massnahmen: ["Schmerzmanagement nach AO, entlastende Lagerung (z. B. Stufenbett)", "Neurologische Kontrolle (Kraft/Sensibilität, Blase/Mastdarm) dokumentieren", "Mobilisation nach AO, rückengerechtes Verhalten anleiten", "Bei Red Flags (Reithosenanästhesie/Blasenstörung) sofort Arzt", "Sturz-/Dekubitusprophylaxe bei Immobilität"],
+            evaluation: "Schmerz reduziert, keine neuen Ausfälle, Mobilisation gelingt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Osteoporose",
+        icd: "M81",
+        definition: "Systemische Skeletterkrankung mit verminderter Knochendichte und erhöhter Frakturgefahr (typisch: Wirbelkörper, Hüfte, Radius). Häufig postmenopausal/altersbedingt.",
+        symptome: ["Oft lange asymptomatisch", "Frakturen bei geringem Trauma", "Rückenschmerzen, Größenabnahme", "Rundrücken (Hyperkyphose)", "Bewegungsangst/Immobilität"],
+        diagnostik: ["Knochendichtemessung (DXA, T-Wert)", "Röntgen (Wirbelkörperfrakturen)", "Labor (Kalzium, Vitamin D)", "Sturz-/Frakturrisiko erfassen"],
+        therapie: ["Kalzium + Vitamin D", "Antiresorptiva/Osteoanabolika nach AO", "Bewegung/Krafttraining", "Sturzprophylaxe", "Ernährungsberatung, Nikotin-/Alkoholkarenz"],
+        pflege: ["Sturz-/Frakturprophylaxe (Umgebung, Hilfsmittel)", "Schmerzmanagement bei Frakturen", "Schonende Mobilisation/Bewegungsförderung", "Medikamenten-/Ernährungsberatung", "Eigenständigkeit erhalten"],
+        merksatz: "Fraktur bei Bagatelltrauma + Größenabnahme = Osteoporose: Kalzium/Vitamin D, Bewegung, konsequente Sturzprophylaxe.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von Stürzen und Frakturen r/t verminderter Knochendichte m/d/s Frakturanamnese, Bewegungsunsicherheit",
+            ressourcen: ["Motiviert", "Angehörige unterstützen", "Selbstständig mobil"],
+            ziel: "Patient erleidet während des Aufenthalts keinen Sturz/keine Fraktur und kennt Prophylaxemaßnahmen",
+            massnahmen: ["Sturzrisiko erfassen, Umgebung sichern, Hilfsmittel bereitstellen", "Bewegung/Krafttraining nach AO fördern", "Medikamente (Kalzium/Vitamin D, Antiresorptiva) nach AO und Beratung", "Schmerzmanagement bei Frakturen", "Ernährungs-/Lebensstilberatung"],
+            evaluation: "Kein Sturz/keine Fraktur, Patient kennt und nutzt Prophylaxemaßnahmen."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Schulterluxation",
+        icd: "S43.0",
+        definition: "Auskugelung des Schultergelenks (meist vordere Luxation), oft traumatisch. Gefahr von Gefäß-/Nervenschäden (N. axillaris).",
+        symptome: ["Starke Schmerzen, federnde Fixation", "Sichtbare Konturveränderung (leere Pfanne)", "Bewegungsunfähigkeit", "Ggf. Sensibilitätsstörung über dem Deltoid (N. axillaris)", "Schonhaltung"],
+        diagnostik: ["Röntgen vor und nach Reposition", "DMS prüfen (v. a. N. axillaris)", "Klinische Untersuchung"],
+        therapie: ["Rasche Reposition (ärztlich) + Analgesie/Sedierung", "Ruhigstellung (z. B. Gilchrist) nach AO", "Frühfunktionelle Nachbehandlung", "Bei Rezidiven operative Stabilisierung"],
+        pflege: ["DMS vor/nach Reposition prüfen (N. axillaris)", "Schmerzmanagement, korrekte Ruhigstellung", "Umgang mit Schlinge/Selbstpflege anleiten", "Bewegungsübungen nach AO", "Hautpflege unter dem Verband"],
+        merksatz: "Leere Gelenkpfanne + federnde Fixation = Schulterluxation: DMS (N. axillaris!) prüfen, reponieren, ruhigstellen.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Gefahr neurovaskulärer Schädigung r/t Schulterluxation m/d/s federnder Fixation, möglicher Sensibilitätsstörung",
+            ressourcen: ["Patient kooperativ", "Versteht die Anleitung"],
+            ziel: "Patient ist schmerzarm; DMS bleibt intakt; die Ruhigstellung wird korrekt eingehalten",
+            massnahmen: ["DMS (insbesondere N. axillaris) vor/nach Reposition prüfen", "Schmerzmanagement nach AO", "Korrekte Ruhigstellung (z. B. Gilchrist) anleiten/kontrollieren", "Bewegungsübungen nach AO", "Hautpflege unter dem Verband"],
+            evaluation: "Schmerz reduziert, DMS intakt, Ruhigstellung korrekt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Sprunggelenksfraktur (OSG)",
+        icd: "S82.6",
+        definition: "Bruch im Bereich des oberen Sprunggelenks (Außen-/Innenknöchel), oft durch Umknicktrauma. Versorgung konservativ oder operativ.",
+        symptome: ["Schmerz/Schwellung am Knöchel", "Belastungsunfähigkeit", "Fehlstellung/Hämatom", "Bewegungsschmerz", "Druckschmerz über den Malleolen"],
+        diagnostik: ["Röntgen OSG in 2 Ebenen", "DMS prüfen", "Weichteil-/Hautbeurteilung (Spannungsblasen)"],
+        therapie: ["Konservativ (Gips/Orthese) oder Osteosynthese", "Hochlagerung, Schwellungs-/Weichteilmanagement", "Thromboseprophylaxe bei Immobilisation", "Teilbelastung nach AO", "Physiotherapie"],
+        pflege: ["Bein hochlagern, Schwellung/Weichteile beobachten (Spannungsblasen)", "DMS-Kontrolle, Gips/Orthese auf Einengung prüfen", "Thromboseprophylaxe nach AO", "Mobilisation/Teilbelastung schulen", "Schmerzmanagement"],
+        merksatz: "Umknicktrauma + Knöchelschwellung + Belastungsunfähigkeit = OSG-Fraktur: hochlagern, DMS prüfen, Thromboseprophylaxe.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr peripherer neurovaskulärer Beeinträchtigung und Thrombose r/t Fraktur, Schwellung und Immobilisation m/d/s Schwellung, eingeschränkter Belastung",
+            ressourcen: ["Patient kooperativ", "Versteht die Teilbelastung"],
+            ziel: "DMS bleibt intakt, keine Thrombosezeichen, die Teilbelastung wird korrekt eingehalten",
+            massnahmen: ["Bein hochlagern, Schwellung/Weichteile (Spannungsblasen) beobachten", "DMS-Kontrolle und Gips/Orthese auf Einengung prüfen", "Thromboseprophylaxe nach AO", "Mobilisation und Teilbelastung anleiten", "Schmerzmanagement nach AO"],
+            evaluation: "DMS intakt, keine Thrombosezeichen, korrekte Teilbelastung."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Achillessehnenruptur",
+        icd: "S86.0",
+        definition: "Riss der Achillessehne, oft bei sportlicher Belastung. Typisch: plötzlicher peitschenartiger Schmerz, eingeschränkte Plantarflexion.",
+        symptome: ["Plötzlicher peitschenartiger Schmerz an der Ferse", "Hörbares Schnalzen", "Kraftverlust beim Abstoßen, Zehenstand nicht möglich", "Tastbare Delle über der Sehne", "Positiver Thompson-Test (keine Plantarflexion bei Wadenkompression)"],
+        diagnostik: ["Klinik + Thompson-Test", "Sonografie/MRT", "Tastbefund (Delle)"],
+        therapie: ["Konservativ (Spezialschuh/Orthese in Spitzfußstellung) oder operativ", "Ruhigstellung, schrittweise Belastung nach AO", "Thromboseprophylaxe", "Physiotherapie", "Belastungsaufbau"],
+        pflege: ["Korrekte Ruhigstellung (Spitzfußstellung) sicherstellen", "Thromboseprophylaxe nach AO", "DMS-/Schwellungskontrolle", "Mobilisation/Belastung nach AO schulen", "Schmerzmanagement"],
+        merksatz: "Peitschenschlag an der Ferse + positiver Thompson-Test = Achillessehnenruptur: Ruhigstellung, Thromboseprophylaxe.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Mobilität und Thrombosegefahr r/t Achillessehnenruptur und Ruhigstellung m/d/s Belastungsunfähigkeit, Immobilisation",
+            ressourcen: ["Patient motiviert", "Versteht die Belastungsregeln"],
+            ziel: "Patient hält Ruhigstellung und Belastungsstufen ein; keine Thrombosezeichen",
+            massnahmen: ["Korrekte Ruhigstellung (Spitzfußstellung) kontrollieren", "Thromboseprophylaxe nach AO", "DMS-/Schwellungskontrolle dokumentieren", "Mobilisation und Belastungsaufbau nach AO anleiten", "Schmerzmanagement nach AO"],
+            evaluation: "Ruhigstellung/Belastung korrekt, keine Thrombosezeichen, zunehmende Mobilität."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Vordere Kreuzbandruptur",
+        icd: "S83.5",
+        definition: "Riss des vorderen Kreuzbandes (VKB), meist Sportverletzung mit Distorsionstrauma. Führt zu Instabilität des Kniegelenks.",
+        symptome: ["Akutes Knietrauma mit Schmerz", "Hörbares Knacken", "Schwellung/Gelenkerguss (Hämarthros)", "Instabilitätsgefühl (Giving-way)", "Bewegungseinschränkung"],
+        diagnostik: ["Klinische Tests (Lachman-/Schubladentest)", "MRT des Knies", "Gelenkpunktion bei Erguss (Hämarthros)"],
+        therapie: ["Akut: PECH-Schema (Pause, Eis, Compression, Hochlagern)", "Konservativ (Muskelaufbau) oder operativ (Kreuzbandplastik)", "Postoperativ: Mobilisation, Beweglichkeit, Belastung nach AO", "Thromboseprophylaxe", "Physiotherapie"],
+        pflege: ["Akut PECH-Schema, Schwellung/Erguss beobachten", "Schmerzmanagement", "Postoperativ: Mobilisation/Beweglichkeit, Orthese nach AO", "Thromboseprophylaxe, DMS-Kontrolle", "Belastungsaufbau schulen"],
+        merksatz: "Knietrauma + Knacken + Instabilität + Erguss = Kreuzbandruptur: akut PECH, später Stabilisierung + Reha.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz/Schwellung und beeinträchtigte Mobilität r/t Kreuzbandruptur (bzw. postoperativ) m/d/s Gelenkerguss, Instabilität",
+            ressourcen: ["Patient motiviert", "Physiotherapie verfügbar"],
+            ziel: "Schwellung und Schmerz sind rückläufig; Patient hält Belastungs-/Bewegungsvorgaben ein",
+            massnahmen: ["Akut PECH-Schema, Schwellung/Erguss beobachten", "Schmerzmanagement nach AO", "Postoperativ Mobilisation/Beweglichkeit, Orthese nach AO", "Thromboseprophylaxe, DMS-Kontrolle", "Belastungsaufbau/Physiotherapie anleiten"],
+            evaluation: "Schwellung/Schmerz rückläufig, Vorgaben eingehalten, zunehmende Stabilität."
           }
         ],
         fragen: []
