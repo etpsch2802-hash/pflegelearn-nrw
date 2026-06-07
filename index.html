@@ -8207,6 +8207,405 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Schmerz wird gelindert – konsequentere Reevaluation/Beobachtung wäre besser gewesen.", fazit:"Merke: Bedarfsmedikation nach AO, reevaluieren und nach AO nachsteuern, Opioid-Nebenwirkungen beobachten." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Der Patient leidet unnötig weiter oder gerät durch Übermedikation in eine Atemdepression.", fazit:"Merke: nicht auf die Basisgabe warten, nicht nur nicht-medikamentös, keine eigenmächtige Dosissteigerung – nach AO behandeln und überwachen." } }
 }
+
+,
+{ id:"uro_hodentorsion", fach:"urologie", fachLabel:"Urologie", icon:"🚨", farbe:"#ef4444", titel:"Akuter Hodenschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein 16-jähriger Patient kommt mit plötzlich einsetzendem, heftigem einseitigem Hodenschmerz, Übelkeit und geschwollenem, hochstehendem Hoden. Beginn vor gut einer Stunde.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie reagierst du zuerst?", optionen:[
+      {text:"Verdacht auf Hodentorsion (plötzlicher heftiger Hodenschmerz, Schwellung, Übelkeit) – urologischer Notfall mit engem Zeitfenster, sofort Arzt/Urologie, nüchtern lassen (OP!), Vitalzeichen", ziel:"n2", fb:"Bei Torsionsverdacht zählt die Zeit (Hodenrettung) – sofort Urologie, nüchtern lassen.", typ:"gut"},
+      {text:"Als harmlose Reizung abtun, kühlen und nach Hause schicken", ziel:"bad_wait", fb:"Ein plötzlicher heftiger Hodenschmerz ist ein Notfall – nicht abwarten.", typ:"fehler"},
+      {text:"Erst etwas zu essen/trinken zur Beruhigung geben", ziel:"bad_oral", fb:"Bei drohender OP nüchtern lassen – orale Aufnahme verzögert den Eingriff.", typ:"warn"} ] },
+    n2:{ titel:"DIAGNOSTIK", text:"Wie weiter (AO)?", optionen:[
+      {text:"Dringende urologische Abklärung (Doppler-Sonografie), nüchtern lassen, OP-Vorbereitung, Schmerz nach AO, Zeit dokumentieren", ziel:"n3", fb:"Doppler-Sono, OP-Vorbereitung, nüchtern – das Zeitfenster ist eng.", typ:"gut"},
+      {text:"Nur Schmerzmittel geben und den Verlauf abwarten", ziel:"bad_analg", fb:"Alleinige Schmerztherapie verschleppt die Diagnose – dringende Abklärung.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Nüchtern halten, OP-Vorbereitung, Schmerzmanagement nach AO, Patienten/Eltern informieren und beruhigen, Vitalzeichen, Dringlichkeit beachten (Hodenrettung zeitabhängig)", ziel:"n4", fb:"Nüchtern, OP-Vorbereitung, Schmerz nach AO, Dringlichkeit.", typ:"gut"},
+      {text:"Selbst versuchen, den Hoden 'zurückzudrehen'", ziel:"bad_manip", fb:"Eine Reposition ist ärztlich – nicht eigenmächtig manipulieren.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Vitalzeichen/Schmerz, nüchtern, OP-Vorbereitung zügig, Zeitprotokoll, Patienten begleiten, bei Verschlechterung sofort Arzt", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Die Dringlichkeit unterschätzen und Zeit lassen", ziel:"end_mittel", fb:"Die Hodenrettung ist zeitabhängig – zügig handeln.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Schmerz bleibt heftig, Stunden vergehen. Reaktion?", optionen:[
+      {text:"Jetzt sofort Urologie, nüchtern, dringende Abklärung, Zeit dokumentieren", ziel:"end_mittel", fb:"Spät – das Zeitfenster schwindet.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Der Hoden ist nicht mehr zu retten.", typ:"fehler"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Der Patient hat gegessen, die OP verzögert sich dadurch. Reaktion?", optionen:[
+      {text:"Ab jetzt nüchtern lassen, Anästhesie/Urologie informieren, Dringlichkeit betonen", ziel:"end_mittel", fb:"Nüchtern lassen – OP-Verzögerung vermeiden.", typ:"warn"},
+      {text:"Weiter essen lassen", ziel:"end_schlecht", fb:"Die OP verzögert sich weiter, der Hoden ist gefährdet.", typ:"fehler"} ] },
+    bad_analg:{ titel:"REAKTION", text:"Unter alleiniger Schmerztherapie wird die Diagnose verschleppt. Reaktion?", optionen:[
+      {text:"Dringende urologische Abklärung veranlassen, nüchtern, OP-Vorbereitung", ziel:"end_mittel", fb:"Abklärung nicht weiter aufschieben.", typ:"warn"},
+      {text:"Weiter nur Schmerzmittel", ziel:"end_schlecht", fb:"Verschleppte Torsion mit Hodenverlust.", typ:"fehler"} ] },
+    bad_manip:{ titel:"REAKTION", text:"Die eigenmächtige Manipulation verstärkt Schmerz und Schwellung. Reaktion?", optionen:[
+      {text:"Aufhören, Urologie/Arzt, nüchtern, OP-Vorbereitung", ziel:"end_mittel", fb:"Reposition ist ärztlich.", typ:"warn"},
+      {text:"Weiter manipulieren", ziel:"end_schlecht", fb:"Zusätzlicher Schaden, Zeitverlust.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die mögliche Torsion wird sofort abgeklärt und versorgt, der Hoden kann gerettet werden.", fazit:"Hodentorsion: urologischer Notfall mit engem Zeitfenster – sofort Urologie, nüchtern lassen (OP), dringende Doppler-Sono, Schmerz nach AO, OP-Vorbereitung; nicht abwarten, nicht durch alleinige Schmerzmittelgabe verschleppen, Reposition ist ärztlich." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende wird gehandelt – schneller wäre für die Hodenrettung besser gewesen.", fazit:"Merke: bei Torsionsverdacht sofort Urologie, nüchtern, dringende Abklärung – die Zeit entscheidet." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Verzögerung ist der Hoden nicht mehr zu retten.", fazit:"Merke: akuter Hodenschmerz ist ein Notfall – nie abwarten oder nur Schmerzmittel geben, sofort Urologie und nüchtern lassen." } }
+},
+{ id:"uro_harnverhalt", fach:"urologie", fachLabel:"Urologie", icon:"💧", farbe:"#0ea5e9", titel:"Kein Wasserlassen möglich", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein älterer Patient kann seit vielen Stunden kein Wasser lassen, hat starke Unterbauchschmerzen und einen prall tastbaren, kugeligen Unterbauch; er ist unruhig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Akuten Harnverhalt erkennen (kein Wasserlassen, praller Unterbauch/Blase, Schmerz), Vitalzeichen, Arzt informieren, Entlastung nach AO vorbereiten", ziel:"n2", fb:"Praller Unterbauch + kein Wasserlassen = Harnverhalt, Entlastung nach AO.", typ:"gut"},
+      {text:"Abwarten, das kommt sicher von allein wieder", ziel:"bad_wait", fb:"Die überdehnte Blase muss entlastet werden – nicht abwarten.", typ:"fehler"},
+      {text:"Kräftig auf den Unterbauch drücken, damit es 'läuft'", ziel:"bad_press", fb:"Druck auf die volle Blase ist schmerzhaft und schädlich – nicht pressen.", typ:"warn"} ] },
+    n2:{ titel:"ENTLASTUNG", text:"Wie wird entlastet (AO)?", optionen:[
+      {text:"Blasenkatheter nach AO legen (aseptisch), kontrolliert entlasten, Urinmenge erfassen, dokumentieren", ziel:"n3", fb:"Katheter nach AO, aseptisch, Menge erfassen.", typ:"gut"},
+      {text:"Die volle Blase auf einmal komplett und sehr schnell entleeren", ziel:"bad_fast", fb:"Schlagartige komplette Entleerung kann Kreislaufprobleme/Entlastungsblutung auslösen – kontrolliert ablassen.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Ein-/Ausfuhr/Bilanz, Vitalzeichen, auf Entlastungsblutung/Kreislauf achten, Ursache abklären lassen, Patienten beruhigen", ziel:"n4", fb:"Bilanz, Kreislauf/Entlastungsblutung, Ursache.", typ:"gut"},
+      {text:"Die abgelassene Urinmenge nicht erfassen", ziel:"bad_doku", fb:"Die Menge/Bilanz ist wichtig – dokumentieren.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Urinfluss/Bilanz, Vitalzeichen, auf erneuten Harnverhalt achten, Ursache (z. B. Prostata) abklären lassen, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach Entlastung nicht weiter beobachten", ziel:"end_mittel", fb:"Verlauf und mögliche Entlastungsblutung im Blick behalten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Schmerzen und Unruhe nehmen zu, die Blase ist noch praller. Reaktion?", optionen:[
+      {text:"Jetzt Entlastung per Katheter nach AO, Vitalzeichen, Bilanz", ziel:"end_mittel", fb:"Spät – die Blase muss entlastet werden.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Blasenüberdehnung und -schädigung.", typ:"fehler"} ] },
+    bad_press:{ titel:"REAKTION", text:"Durch das Drücken nehmen Schmerz und Unruhe zu. Reaktion?", optionen:[
+      {text:"Aufhören, Entlastung per Katheter nach AO vorbereiten, beruhigen", ziel:"end_mittel", fb:"Nicht pressen.", typ:"warn"},
+      {text:"Weiter drücken", ziel:"end_schlecht", fb:"Schmerz und mögliche Blasenschädigung.", typ:"fehler"} ] },
+    bad_fast:{ titel:"REAKTION", text:"Nach rascher kompletter Entleerung wird dem Patienten schwindelig, der Urin ist blutig. Reaktion?", optionen:[
+      {text:"Kontrolliert/portionsweise vorgehen, Kreislauf beobachten, Arzt, dokumentieren", ziel:"end_mittel", fb:"Kontrolliert ablassen, Kreislauf beobachten.", typ:"warn"},
+      {text:"Einfach weiter zügig komplett entleeren", ziel:"end_schlecht", fb:"Kreislaufentgleisung/Entlastungsblutung.", typ:"fehler"} ] },
+    bad_doku:{ titel:"REAKTION", text:"Ohne Mengenangabe fehlt der Überblick über die Bilanz. Reaktion?", optionen:[
+      {text:"Menge nachträglich erfassen, Bilanz führen, dokumentieren", ziel:"end_mittel", fb:"Bilanz nachführen.", typ:"warn"},
+      {text:"Weiterhin nichts dokumentieren", ziel:"end_schlecht", fb:"Fehlender Überblick, Risiko übersehen.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Blase wird kontrolliert entlastet, der Patient ist schmerzfrei und wird weiter überwacht.", fazit:"Akuter Harnverhalt: Blase per Katheter nach AO entlasten (aseptisch), kontrolliert/nicht schlagartig vollständig ablassen, Ein-/Ausfuhr erfassen, Kreislauf/Entlastungsblutung beobachten, Ursache abklären; nicht abwarten, nicht auf den Unterbauch pressen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Entlastung gelingt – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: zeitnah nach AO entlasten, kontrolliert ablassen, Bilanz und Kreislauf beobachten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die überdehnte Blase wird geschädigt oder es kommt zu Kreislaufproblemen.", fazit:"Merke: Harnverhalt nicht abwarten, nicht pressen, nicht schlagartig komplett entleeren – nach AO kontrolliert entlasten." } }
+},
+{ id:"uro_nierenkolik", fach:"urologie", fachLabel:"Urologie", icon:"🪨", farbe:"#f59e0b", titel:"Heftiger Flankenschmerz", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient krümmt sich mit plötzlichen, wellenartigen, sehr starken Flankenschmerzen, die in die Leiste ausstrahlen, dazu Übelkeit und ausgeprägte Bewegungsunruhe.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"An eine Nierenkolik (Harnstein) denken, Schmerz erfassen, Vitalzeichen/Temperatur, Arzt informieren, auf Fieber (Urosepsis-Zeichen) achten", ziel:"n2", fb:"Wellenartiger Flankenschmerz spricht für eine Kolik – Temperatur/Vitalzeichen mit beachten.", typ:"gut"},
+      {text:"Als Rückenverspannung abtun und abwarten", ziel:"bad_wait", fb:"Die typische Kolik gehört abgeklärt und behandelt – nicht abtun.", typ:"fehler"},
+      {text:"Eine begleitende Temperaturerhöhung gar nicht beachten", ziel:"bad_temp", fb:"Fieber bei Harnstau kann auf eine gefährliche Urosepsis hinweisen – immer mit prüfen.", typ:"warn"} ] },
+    n2:{ titel:"THERAPIE", text:"Wie weiter (AO)?", optionen:[
+      {text:"Analgesie/Spasmolyse nach AO (Wärme kann lindern), Urin auf Steinabgang sieben nach AO, Flüssigkeit nach AO, Temperatur überwachen", ziel:"n3", fb:"Schmerz-/Spasmolyse nach AO, Urin sieben, Temperatur im Blick.", typ:"gut"},
+      {text:"Ohne Schmerztherapie einfach abwarten", ziel:"bad_only", fb:"Die Kolik ist sehr schmerzhaft – Analgesie nach AO gehört dazu.", typ:"warn"} ] },
+    n3:{ titel:"WARNZEICHEN", text:"Worauf achtest du besonders?", optionen:[
+      {text:"Schmerzverlauf, auf Fieber/Schüttelfrost (Urosepsis!) und Harnverhalt achten, Urin beobachten/sieben, Bilanz, bei Fieber sofort melden", ziel:"n4", fb:"Fieber/Schüttelfrost = Alarm (Urosepsis), sofort melden.", typ:"gut"},
+      {text:"Auftretendes Fieber als 'normal' abtun", ziel:"bad_ignore", fb:"Fieber bei Harnstein/Harnstau ist ein Warnzeichen – nicht ignorieren.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Schmerz/Temperatur/Urin überwachen, auf Urosepsis-/Harnverhaltzeichen achten, Flüssigkeit/Therapie nach AO, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmalig den Schmerz erfragen", ziel:"end_mittel", fb:"Verlauf und Warnzeichen weiter beobachten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Schmerz bleibt extrem, die Übelkeit nimmt zu. Reaktion?", optionen:[
+      {text:"Jetzt abklären lassen, Analgesie nach AO, Temperatur/Urin beobachten", ziel:"end_mittel", fb:"Nicht weiter abwarten.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Verschleppte Kolik, Komplikation möglich.", typ:"fehler"} ] },
+    bad_temp:{ titel:"REAKTION", text:"Der Patient bekommt hohes Fieber und Schüttelfrost. Reaktion?", optionen:[
+      {text:"Sofort melden (Urosepsis-Verdacht!), Vitalzeichen, Therapie nach AO, engmaschig überwachen", ziel:"end_mittel", fb:"Fieber bei Harnstau ernst nehmen.", typ:"warn"},
+      {text:"Das Fieber weiter ignorieren", ziel:"end_schlecht", fb:"Übersehene Urosepsis.", typ:"fehler"} ] },
+    bad_only:{ titel:"REAKTION", text:"Ohne Schmerztherapie leidet der Patient massiv. Reaktion?", optionen:[
+      {text:"Analgesie/Spasmolyse nach AO geben, beobachten", ziel:"end_mittel", fb:"Analgesie nach AO ist nötig.", typ:"warn"},
+      {text:"Weiter ohne Schmerzmittel abwarten", ziel:"end_schlecht", fb:"Unnötiges Leiden.", typ:"fehler"} ] },
+    bad_ignore:{ titel:"REAKTION", text:"Das ignorierte Fieber steigt, der Patient wird zunehmend krank. Reaktion?", optionen:[
+      {text:"Sofort melden, Vitalzeichen, Therapie nach AO (Urosepsis-Verdacht)", ziel:"end_mittel", fb:"Fieber war ein Warnzeichen.", typ:"warn"},
+      {text:"Weiter nichts tun", ziel:"end_schlecht", fb:"Fortschreitende Urosepsis.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Kolik wird wirksam behandelt, Warnzeichen werden früh erkannt.", fazit:"Nierenkolik (Harnstein): Schmerz-/Spasmolyse nach AO (Wärme lindert), Urin beobachten/sieben, Flüssigkeit nach AO; engmaschig auf Fieber/Schüttelfrost (Urosepsis-Gefahr!) und Harnverhalt achten und bei Fieber sofort melden." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Kolik klingt ab – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: Analgesie nach AO, Urin beobachten, Temperatur im Blick (Urosepsis), Verlauf überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Komplikation (z. B. Urosepsis) wird übersehen.", fazit:"Merke: Kolik nie abtun, Schmerz behandeln, Fieber bei Harnstau ist ein Alarmzeichen – sofort melden." } }
+},
+{ id:"uro_katheter", fach:"urologie", fachLabel:"Urologie", icon:"🔧", farbe:"#14b8a6", titel:"Katheter läuft nicht", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Bei einer Patientin mit Dauerkatheter kommt seit Stunden kaum noch Urin; sie klagt über Unterbauchdruck und Unruhe, der Unterbauch ist prall.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Katheterobstruktion vermuten (kein Urinfluss, praller Unterbauch, Druck), System prüfen (Abknickung, Lage, Beutel), Vitalzeichen, Arzt/AO beachten", ziel:"n2", fb:"Erst das System prüfen – häufige Ursachen sind Abknickung/Lage.", typ:"gut"},
+      {text:"Abwarten, es läuft sicher gleich wieder", ziel:"bad_wait", fb:"Bei prallem Unterbauch droht eine Blasenüberdehnung – nicht abwarten.", typ:"fehler"},
+      {text:"Kräftig am Katheter ziehen", ziel:"bad_zug", fb:"Ziehen kann verletzen (Ballon!) – nicht am Katheter zerren.", typ:"warn"} ] },
+    n2:{ titel:"PROBLEMLÖSUNG", text:"Wie gehst du vor (AO/Standard)?", optionen:[
+      {text:"Einfache Ursachen beheben (Abknickung lösen, Beutel tiefer, Lage prüfen); bei fortbestehender Obstruktion Anspülen/Wechsel nach AO/Standard, aseptisch", ziel:"n3", fb:"Erst einfache Ursachen, dann Anspülen/Wechsel nach Standard.", typ:"gut"},
+      {text:"Sofort mit hohem Druck blind spülen, ohne Standard/AO", ziel:"bad_blind", fb:"Unkontrolliertes Spülen mit Druck schadet – nach Standard/AO vorgehen.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Urinfluss/Menge, Unterbauch/Blase, Vitalzeichen, auf erneute Obstruktion achten, Bilanz, aseptisch arbeiten, dokumentieren", ziel:"n4", fb:"Fluss/Bilanz, Blase, Asepsis, Verlauf.", typ:"gut"},
+      {text:"Menge und Verlauf nicht dokumentieren", ziel:"bad_doku", fb:"Bilanz/Verlauf sind wichtig – dokumentieren.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Urinfluss/Bilanz, Blase, Vitalzeichen, auf erneute Obstruktion/Harnverhalt achten, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzem Fluss nicht weiter beobachten", ziel:"end_mittel", fb:"Eine erneute Verstopfung im Blick behalten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Unterbauch wird praller, die Unruhe nimmt zu. Reaktion?", optionen:[
+      {text:"Jetzt System prüfen und nach AO/Standard freimachen/wechseln, Vitalzeichen", ziel:"end_mittel", fb:"Spät – Blasenüberdehnung droht.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Blasenüberdehnung und Schädigung.", typ:"fehler"} ] },
+    bad_zug:{ titel:"REAKTION", text:"Durch das Ziehen blutet es leicht und die Patientin hat Schmerzen. Reaktion?", optionen:[
+      {text:"Aufhören, System schonend prüfen, nach AO/Standard vorgehen, Arzt informieren", ziel:"end_mittel", fb:"Nicht zerren.", typ:"warn"},
+      {text:"Weiter ziehen", ziel:"end_schlecht", fb:"Verletzung der Harnröhre/Blase.", typ:"fehler"} ] },
+    bad_blind:{ titel:"REAKTION", text:"Nach dem Spülen mit Druck nehmen Schmerz/Reizung zu. Reaktion?", optionen:[
+      {text:"Nach Standard/AO vorgehen (kontrolliert anspülen/wechseln, aseptisch), Arzt informieren", ziel:"end_mittel", fb:"Nach Standard, nicht mit Druck.", typ:"warn"},
+      {text:"Weiter mit Druck spülen", ziel:"end_schlecht", fb:"Schädigung/Infektionsgefahr.", typ:"fehler"} ] },
+    bad_doku:{ titel:"REAKTION", text:"Ohne Dokumentation fehlt der Überblick über die Ausscheidung. Reaktion?", optionen:[
+      {text:"Menge/Verlauf erfassen, Bilanz führen", ziel:"end_mittel", fb:"Bilanz nachführen.", typ:"warn"},
+      {text:"Weiterhin nichts dokumentieren", ziel:"end_schlecht", fb:"Risiko bleibt unbemerkt.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Katheter läuft wieder, die Blase ist entlastet und der Verlauf wird überwacht.", fazit:"Verstopfter Dauerkatheter: erst einfache Ursachen prüfen (Abknickung, Lage, Beutelhöhe), bei fortbestehender Obstruktion Anspülen/Wechsel nach AO/Standard (aseptisch), nicht am Katheter zerren, Urinfluss/Bilanz und Blase überwachen, auf Harnverhalt achten, dokumentieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Das Problem wird behoben – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: System prüfen, nach Standard freimachen/wechseln, nicht zerren/blind spülen, Bilanz führen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zu Blasenüberdehnung oder einer Verletzung.", fazit:"Merke: nicht abwarten, nicht ziehen, nicht mit Druck blind spülen – nach Standard/AO vorgehen." } }
+},
+{ id:"uro_blasentamponade", fach:"urologie", fachLabel:"Urologie", icon:"🩸", farbe:"#dc2626", titel:"Blutiger Urin, plötzlich kein Abfluss", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient hat stark blutigen Urin mit Koageln; plötzlich kommt kein Urin mehr, der Unterbauch ist prall und schmerzhaft, der Patient ist unruhig und blass.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Starke Makrohämaturie mit Blasentamponade vermuten (Koagel verlegen die Blase → Harnverhalt, praller Unterbauch), Vitalzeichen (Blutung/Kreislauf!), sofort Arzt/Urologie", ziel:"n2", fb:"Koagel-Tamponade + Blässe = Kreislauf im Blick, sofort Urologie.", typ:"gut"},
+      {text:"Abwarten, der blutige Urin hört sicher von allein auf", ziel:"bad_wait", fb:"Tamponade und Blutverlust sind gefährlich – nicht abwarten.", typ:"fehler"},
+      {text:"Den Kreislauf/die Vitalzeichen nicht beachten", ziel:"bad_kreis", fb:"Bei Blutung droht ein Schock – Kreislauf engmaschig beachten.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Spülkatheter/Dauerspülung nach AO, Koagel ausspülen nach AO/Standard, Kreislauf überwachen, Volumen/Transfusion nach AO, Bilanz", ziel:"n3", fb:"Dauerspülung/Koagelausspülung nach AO, Kreislauf stützen.", typ:"gut"},
+      {text:"Nur Schmerzmittel geben, der Kreislauf ist nebensächlich", ziel:"bad_volumen", fb:"Der Blutverlust ist das Hauptproblem – Kreislauf/Volumen nach AO.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Vitalzeichen/Kreislauf engmaschig (Blutverlust!), Spülung/Abfluss überwachen, Urinfarbe/Koagel beobachten, Bilanz, auf erneute Tamponade achten, beruhigen", ziel:"n4", fb:"Kreislauf, Spülung/Abfluss, Bilanz, erneute Tamponade.", typ:"gut"},
+      {text:"Die Spülung stoppen, obwohl noch Koagel/Blutung da sind", ziel:"bad_spuel", fb:"Vorzeitiger Spülstopp begünstigt eine erneute Tamponade – nach AO weiterführen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Kreislauf/Vitalzeichen, Spülabfluss/Urinfarbe, Bilanz, Hb-Verlauf nach AO, auf Schock/erneute Tamponade achten, Intensiv bei Verschlechterung", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal den Blutdruck messen", ziel:"end_mittel", fb:"Bei Blutung engmaschig überwachen.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Unterbauch wird praller, der Patient blasser und schwindelig. Reaktion?", optionen:[
+      {text:"Sofort Urologie, Dauerspülung nach AO, Kreislauf stützen, Vitalzeichen", ziel:"end_mittel", fb:"Spät – Tamponade und Blutverlust.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Schock und Blasenüberdehnung.", typ:"fehler"} ] },
+    bad_kreis:{ titel:"REAKTION", text:"Der Blutdruck fällt unbemerkt, der Patient wird kaltschweißig. Reaktion?", optionen:[
+      {text:"Vitalzeichen erfassen, Volumen nach AO, Arzt/Notfall, Kreislauf stützen, Spülung nach AO", ziel:"end_mittel", fb:"Schockzeichen erkennen.", typ:"warn"},
+      {text:"Den Kreislauf weiter ignorieren", ziel:"end_schlecht", fb:"Hämorrhagischer Schock.", typ:"fehler"} ] },
+    bad_volumen:{ titel:"REAKTION", text:"Trotz Schmerzmittel verschlechtert sich der Kreislauf weiter. Reaktion?", optionen:[
+      {text:"Kreislauf stützen (Volumen/Transfusion nach AO), Spülung nach AO, Vitalzeichen", ziel:"end_mittel", fb:"Kreislauf/Volumen im Vordergrund.", typ:"warn"},
+      {text:"Weiter nur Schmerzmittel", ziel:"end_schlecht", fb:"Unbehandelter Blutverlust.", typ:"fehler"} ] },
+    bad_spuel:{ titel:"REAKTION", text:"Nach dem Spülstopp bildet sich erneut eine Tamponade. Reaktion?", optionen:[
+      {text:"Spülung nach AO wieder aufnehmen, Koagel ausspülen, Kreislauf/Bilanz überwachen", ziel:"end_mittel", fb:"Spülung nach AO fortführen.", typ:"warn"},
+      {text:"Die Spülung weiter ausgestellt lassen", ziel:"end_schlecht", fb:"Erneute Tamponade/Harnverhalt.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Blase wird freigespült, der Kreislauf gesichert und der Verlauf engmaschig überwacht.", fazit:"Makrohämaturie mit Blasentamponade: Harnverhalt durch Koagel – sofort Urologie, Dauerspülung/Koagelausspülung nach AO (aseptisch), engmaschig Kreislauf/Vitalzeichen wegen Blutverlust, Volumen/Transfusion nach AO, Bilanz, Spülung/Abfluss überwachen; nicht abwarten, den Kreislauf nie aus dem Blick verlieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage stabilisiert sich – engmaschigeres Vorgehen wäre sicherer gewesen.", fazit:"Merke: Dauerspülung nach AO, Kreislauf engmaschig, Spülung nicht vorzeitig stoppen, Bilanz führen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zum Schock oder zur erneuten Tamponade.", fazit:"Merke: bei Blasentamponade Kreislauf sichern und nach AO spülen – nicht abwarten, Kreislauf nicht ignorieren, Spülung nicht zu früh beenden." } }
+},
+{ id:"uro_tursyndrom", fach:"urologie", fachLabel:"Urologie", icon:"⚗️", farbe:"#8b5cf6", titel:"Verwirrt nach Prostata-OP", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Nach einer transurethralen Prostataresektion (TUR-P) mit Spülung wird der Patient zunehmend verwirrt, klagt über Übelkeit und Kopfschmerz; Blutdruck und Puls verändern sich, er wirkt unruhig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"An ein TUR-Syndrom denken (Aufnahme von Spülflüssigkeit → Verdünnungshyponatriämie: Verwirrtheit, Übelkeit, Kopfschmerz, Kreislaufveränderung) – Arzt sofort, Vitalzeichen/Bewusstsein, OP-/Spülsituation bedenken", ziel:"n2", fb:"Verwirrtheit nach TUR-P mit Spülung = an Hyponatriämie/TUR-Syndrom denken.", typ:"gut"},
+      {text:"Die Verwirrtheit als bloßes 'Aufwachen aus der Narkose' abtun, abwarten", ziel:"bad_wait", fb:"Diese Zeichen können ein TUR-Syndrom sein – nicht einfach abwarten.", typ:"fehler"},
+      {text:"Nur gegen den Kopfschmerz behandeln", ziel:"bad_nurschmerz", fb:"Das Grundproblem ist die Elektrolytentgleisung – nicht nur das Symptom behandeln.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Arzt/Anästhesie, Vitalzeichen/Neurostatus engmaschig, Elektrolyte (Natrium!) nach AO, Bilanz/Einfuhr beachten, Monitoring, Therapie nach AO", ziel:"n3", fb:"Natrium/Elektrolyte und Bilanz nach AO, engmaschig überwachen.", typ:"gut"},
+      {text:"Großzügig zusätzlich freie Flüssigkeit i.v. geben", ziel:"bad_fluid", fb:"Zusätzliche freie Flüssigkeit verstärkt die Verdünnungshyponatriämie – nicht eigenmächtig.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Bewusstsein/Vitalzeichen/Atmung, Ein-/Ausfuhr genau, auf Verschlechterung (Krampf/Ödeme) achten, Elektrolytkontrollen nach AO, Intensivüberwachung", ziel:"n4", fb:"Neuro/Vitalzeichen, genaue Bilanz, Elektrolyte nach AO.", typ:"gut"},
+      {text:"Nur einmal den Blutdruck messen", ziel:"bad_mon", fb:"Engmaschiges Monitoring ist nötig.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Bewusstsein/Vitalzeichen/Natrium/Bilanz engmaschig, auf Verschlechterung achten, Therapie nach AO, Intensiv, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer Besserung die Kontrollen einstellen", ziel:"end_mittel", fb:"Den Verlauf engmaschig kontrollieren.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Patient wird zunehmend verwirrt und übel, der Kreislauf instabiler. Reaktion?", optionen:[
+      {text:"Sofort Arzt/Anästhesie, Elektrolyte/Bilanz nach AO, Monitoring, Intensiv", ziel:"end_mittel", fb:"Spät – TUR-Syndrom verkannt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Zunehmende Hyponatriämie (Krampf-/Ödemgefahr).", typ:"fehler"} ] },
+    bad_nurschmerz:{ titel:"REAKTION", text:"Der Kopfschmerz bleibt, Verwirrtheit und Kreislaufzeichen nehmen zu. Reaktion?", optionen:[
+      {text:"Ursache angehen: Arzt, Elektrolyte/Bilanz nach AO, Monitoring", ziel:"end_mittel", fb:"Ursache statt nur Symptom behandeln.", typ:"warn"},
+      {text:"Weiter nur gegen Kopfschmerz", ziel:"end_schlecht", fb:"Die Entgleisung schreitet fort.", typ:"fehler"} ] },
+    bad_fluid:{ titel:"REAKTION", text:"Nach der zusätzlichen freien Flüssigkeit verschlechtert sich der Zustand. Reaktion?", optionen:[
+      {text:"Keine eigenmächtige freie Flüssigkeit mehr, Arzt, Elektrolyte/Bilanz nach AO, Monitoring", ziel:"end_mittel", fb:"Freie Flüssigkeit verstärkt die Hyponatriämie.", typ:"warn"},
+      {text:"Weiter freie Flüssigkeit geben", ziel:"end_schlecht", fb:"Schwere Hyponatriämie mit Krampf-/Ödemgefahr.", typ:"fehler"} ] },
+    bad_mon:{ titel:"REAKTION", text:"Eine Verschlechterung bleibt zunächst unbemerkt. Reaktion?", optionen:[
+      {text:"Engmaschig Bewusstsein/Vitalzeichen/Bilanz überwachen, Arzt, Therapie nach AO", ziel:"end_mittel", fb:"Engmaschiges Monitoring nachholen.", typ:"warn"},
+      {text:"Weiter nur selten kontrollieren", ziel:"end_schlecht", fb:"Verschlechterung wird zu spät erkannt.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Das TUR-Syndrom wird früh erkannt und intensivmedizinisch behandelt.", fazit:"TUR-Syndrom (Verdünnungshyponatriämie durch Spülflüssigkeitsaufnahme bei TUR-P): Verwirrtheit/Übelkeit/Kopfschmerz/Kreislaufveränderung ernst nehmen – sofort Arzt/Anästhesie, Vitalzeichen/Neurostatus engmaschig, Natrium/Elektrolyte und Bilanz nach AO, keine eigenmächtige zusätzliche freie Flüssigkeit, Intensivüberwachung; nicht als bloßes 'Narkose-Nachwirken' abtun." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – konsequenteres Monitoring wäre sicherer gewesen.", fazit:"Merke: an TUR-Syndrom denken, Natrium/Bilanz nach AO, keine freie Flüssigkeit eigenmächtig, engmaschig überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Hyponatriämie schreitet bis zu Krämpfen/Ödemen fort.", fazit:"Merke: Verwirrtheit nach TUR-P nicht abtun, nicht nur das Symptom behandeln, keine freie Flüssigkeit – sofort Arzt und Elektrolyte nach AO." } }
+}
+,
+{ id:"gyn_pph", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🩸", farbe:"#dc2626", titel:"Starke Blutung nach der Geburt", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Kurz nach einer vaginalen Geburt blutet die Wöchnerin stark und anhaltend aus der Scheide; die Gebärmutter tastet sich weich und schlecht kontrahiert, sie wird zunehmend blass und unruhig.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Postpartale Blutung erkennen (starke anhaltende Blutung, weicher Uterus = Atonie), sofort Hilfe/Arzt/Hebamme, Vitalzeichen (Schock!), Blutung/Vorlagen einschätzen", ziel:"n2", fb:"Weicher Uterus + starke Blutung = Atonie, sofort Hilfe holen.", typ:"gut"},
+      {text:"Die Blutung als normalen Wochenfluss abtun und abwarten", ziel:"bad_wait", fb:"Starke anhaltende Blutung ist kein normaler Wochenfluss – sofort handeln.", typ:"fehler"},
+      {text:"Den Kreislauf/die Vitalzeichen nicht beachten", ziel:"bad_kreis", fb:"Bei starker Blutung droht ein Schock – Kreislauf engmaschig beachten.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Fundus massieren/reiben (Uterus zur Kontraktion anregen), Blase entleeren lassen, uteruskontrahierende Medikamente nach AO, Zugang/Volumen, Kreislauf überwachen", ziel:"n3", fb:"Fundusmassage + Blasenentleerung + Uterotonika nach AO.", typ:"gut"},
+      {text:"Die Fundusmassage unterlassen und nur zuschauen", ziel:"bad_nomass", fb:"Bei Atonie hilft die Fundusmassage, den Uterus zu kontrahieren – nicht unterlassen.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Vitalzeichen/Kreislauf engmaschig (Blutverlust!), Blutungsstärke/Uterustonus beobachten, Volumen/Transfusion nach AO, Bilanz, beruhigen, Wärme", ziel:"n4", fb:"Kreislauf, Blutung/Uterustonus, Volumen nach AO.", typ:"gut"},
+      {text:"Den Blutverlust nicht abschätzen/dokumentieren", ziel:"bad_doku", fb:"Den Blutverlust einschätzen und dokumentieren ist wichtig.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Kreislauf/Vitalzeichen, Blutung/Uterustonus, Bilanz, Hb-Verlauf nach AO, auf Schock achten, Intensiv bei Verschlechterung, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal den Blutdruck messen", ziel:"end_mittel", fb:"Bei Blutung engmaschig überwachen.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Die Blutung hält an, die Wöchnerin wird blasser und schwindelig. Reaktion?", optionen:[
+      {text:"Sofort Hilfe/Arzt, Fundusmassage, Uterotonika nach AO, Kreislauf stützen, Vitalzeichen", ziel:"end_mittel", fb:"Spät – starke Blutung erkannt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Hämorrhagischer Schock.", typ:"fehler"} ] },
+    bad_kreis:{ titel:"REAKTION", text:"Der Blutdruck fällt unbemerkt, die Wöchnerin wird kaltschweißig. Reaktion?", optionen:[
+      {text:"Vitalzeichen erfassen, Volumen nach AO, Arzt/Notfall, Fundusmassage, Kreislauf stützen", ziel:"end_mittel", fb:"Schockzeichen erkennen.", typ:"warn"},
+      {text:"Den Kreislauf weiter ignorieren", ziel:"end_schlecht", fb:"Hämorrhagischer Schock.", typ:"fehler"} ] },
+    bad_nomass:{ titel:"REAKTION", text:"Ohne Fundusmassage bleibt der Uterus weich, die Blutung hält an. Reaktion?", optionen:[
+      {text:"Fundus massieren, Blase entleeren, Uterotonika nach AO, Kreislauf überwachen", ziel:"end_mittel", fb:"Fundusmassage nachholen.", typ:"warn"},
+      {text:"Weiter nur zuschauen", ziel:"end_schlecht", fb:"Anhaltende Atonie-Blutung.", typ:"fehler"} ] },
+    bad_doku:{ titel:"REAKTION", text:"Ohne Abschätzung bleibt das Ausmaß des Blutverlusts unklar. Reaktion?", optionen:[
+      {text:"Blutverlust einschätzen (Vorlagen/Tücher wiegen), dokumentieren, Kreislauf überwachen", ziel:"end_mittel", fb:"Blutverlust quantifizieren.", typ:"warn"},
+      {text:"Weiterhin nichts erfassen", ziel:"end_schlecht", fb:"Unterschätzter Blutverlust, verzögerte Reaktion.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Blutung wird gestillt, der Kreislauf gesichert und die Wöchnerin engmaschig überwacht.", fazit:"Postpartale Blutung (häufig Uterusatonie): sofort Hilfe – Fundusmassage, Blase entleeren, uteruskontrahierende Medikamente nach AO, Zugang/Volumen/Transfusion nach AO, engmaschig Kreislauf/Vitalzeichen und Blutungsstärke, Blutverlust einschätzen/dokumentieren; nicht als normalen Wochenfluss verkennen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage stabilisiert sich – konsequenteres Vorgehen wäre sicherer gewesen.", fazit:"Merke: Fundusmassage + Uterotonika nach AO, Kreislauf engmaschig, Blutverlust einschätzen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Der unbehandelte Blutverlust führt zum Schock.", fazit:"Merke: starke Blutung nie als Wochenfluss abtun, Fundusmassage nicht unterlassen, Kreislauf nicht ignorieren." } }
+},
+{ id:"gyn_eklampsie", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"⚠️", farbe:"#f97316", titel:"Hoher Blutdruck mit Warnzeichen", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Eine Hochschwangere hat stark erhöhten Blutdruck, klagt über starke Kopfschmerzen, Augenflimmern und Oberbauchschmerzen; sie wirkt zunehmend reizbar und überempfindlich gegen Licht und Lärm.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Warnzeichen einer (drohenden) Eklampsie erkennen (Hypertonie + Kopfschmerz/Sehstörung/Oberbauchschmerz = Präeklampsie mit Krampfgefahr), sofort Arzt, reizarme Umgebung, Vitalzeichen", ziel:"n2", fb:"Diese Trias bei Hypertonie spricht für Präeklampsie mit Krampfgefahr.", typ:"gut"},
+      {text:"Kopfschmerz und Flimmern als banal abtun und abwarten", ziel:"bad_wait", fb:"Diese Zeichen kündigen einen Krampfanfall an – nicht abwarten.", typ:"fehler"},
+      {text:"Für helles Licht und Aktivierung sorgen", ziel:"bad_reiz", fb:"Reize können einen Krampf begünstigen – reizarm und ruhig.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Reizarme, ruhige Umgebung, Vitalzeichen/RR engmaschig, Krampfprophylaxe/Medikation (z. B. Magnesium) nach AO, Krampf-/Notfallbereitschaft, CTG/Überwachung nach AO", ziel:"n3", fb:"Reizarm, RR engmaschig, Magnesium nach AO, Krampfbereitschaft.", typ:"gut"},
+      {text:"Die Patientin allein und unüberwacht lassen", ziel:"bad_allein", fb:"Bei Krampfgefahr nicht allein lassen – Überwachung und Bereitschaft.", typ:"warn"} ] },
+    n3:{ titel:"KRAMPF", text:"Es kommt zum Krampfanfall. Wie gehst du vor?", optionen:[
+      {text:"Schützen (nichts in den Mund), Atemweg/O₂, reizarm, Magnesium/Therapie nach AO, Mutter und Kind überwachen, Sturz-/Verletzungsschutz", ziel:"n4", fb:"Schützen, nichts in den Mund, Atemweg/O₂, Therapie nach AO.", typ:"gut"},
+      {text:"Etwas in den Mund schieben und die Patientin festhalten", ziel:"bad_mouth", fb:"Nichts in den Mund, nicht festhalten – nur die Umgebung sichern.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"RR/Vitalzeichen/Bewusstsein, Krampfbereitschaft, Magnesium/Therapie nach AO, Mutter und Kind (CTG) überwachen, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach dem Anfall die Überwachung beenden", ziel:"end_mittel", fb:"Weiter engmaschig überwachen (erneuter Krampf möglich).", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Aus den Warnzeichen entwickelt sich ein Krampfanfall. Reaktion?", optionen:[
+      {text:"Schützen, Atemweg/O₂, sofort Arzt/Notfall, Magnesium/Therapie nach AO, Mutter/Kind überwachen", ziel:"end_mittel", fb:"Spät – die Warnzeichen wurden verkannt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Eklampsie-Anfall mit Gefahr für Mutter und Kind.", typ:"fehler"} ] },
+    bad_reiz:{ titel:"REAKTION", text:"Unter Licht/Aktivierung nimmt die Symptomatik zu. Reaktion?", optionen:[
+      {text:"Reizarme, ruhige Umgebung schaffen, RR/Vitalzeichen, Krampfbereitschaft, Arzt", ziel:"end_mittel", fb:"Reizarm und ruhig.", typ:"warn"},
+      {text:"Weiter für Reize sorgen", ziel:"end_schlecht", fb:"Begünstigt einen Krampfanfall.", typ:"fehler"} ] },
+    bad_allein:{ titel:"REAKTION", text:"Allein gelassen krampft die Patientin unbeobachtet. Reaktion?", optionen:[
+      {text:"Sofort hin, schützen, Atemweg/O₂, Arzt/Notfall, Therapie nach AO", ziel:"end_mittel", fb:"Nicht allein lassen.", typ:"warn"},
+      {text:"Weiter unbeobachtet lassen", ziel:"end_schlecht", fb:"Verletzung/Gefahr im unbeobachteten Krampf.", typ:"fehler"} ] },
+    bad_mouth:{ titel:"REAKTION", text:"Durch das Hineinschieben kommt es zu einer Verletzung, der Krampf hält an. Reaktion?", optionen:[
+      {text:"Aufhören, nur Umgebung sichern, Atemweg/O₂, Therapie nach AO", ziel:"end_mittel", fb:"Nichts in den Mund.", typ:"warn"},
+      {text:"Weiter festhalten/etwas in den Mund", ziel:"end_schlecht", fb:"Verletzung und anhaltender Krampf.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die drohende Eklampsie wird erkannt, der Anfall sicher beherrscht, Mutter und Kind überwacht.", fazit:"Präeklampsie/Eklampsie (Hypertonie + Kopfschmerz/Sehstörung/Oberbauchschmerz, Krampfgefahr): sofort Arzt, reizarme ruhige Umgebung, RR/Vitalzeichen engmaschig, Krampfprophylaxe (Magnesium) nach AO, Krampfbereitschaft; bei Krampf schützen (nichts in den Mund), Atemweg/O₂, Mutter und Kind überwachen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Situation wird beherrscht – konsequenteres Vorgehen wäre sicherer gewesen.", fazit:"Merke: reizarm, RR engmaschig, Magnesium nach AO, bei Krampf nur sichern (nichts in den Mund)." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zum unkontrollierten Krampf mit Gefahr für Mutter und Kind.", fazit:"Merke: Warnzeichen nie abtun, keine Reize, nicht allein lassen, nichts in den Mund – Arzt und Therapie nach AO." } }
+},
+{ id:"gyn_eug", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🚨", farbe:"#ef4444", titel:"Akuter Unterbauchschmerz in der Frühschwangerschaft", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Eine Frau in der Frühschwangerschaft bekommt plötzlich heftige einseitige Unterbauchschmerzen, ist blass, schwindelig, hat einen schnellen Puls und niedrigen Blutdruck; dazu etwas vaginale Blutung.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"An eine (rupturierte) Eileiterschwangerschaft denken (Frühschwangerschaft + akuter einseitiger Unterbauchschmerz + Schockzeichen) – lebensbedrohlich, sofort Arzt/Notfall, Vitalzeichen, Zugang", ziel:"n2", fb:"Frühschwangerschaft + akuter Schmerz + Schock = an rupturierte EUG denken.", typ:"gut"},
+      {text:"Als gewöhnliche 'Regelschmerzen' abtun und abwarten", ziel:"bad_wait", fb:"Mit Schockzeichen ist das ein Notfall – nicht als Regelschmerz abtun.", typ:"fehler"},
+      {text:"Die Kreislaufzeichen nicht beachten", ziel:"bad_kreis", fb:"Blässe/Tachykardie/Hypotonie sind Schockzeichen – ernst nehmen.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Kreislauf stabilisieren (Zugang, Volumen nach AO), nüchtern lassen (OP!), rasche Diagnostik/OP-Vorbereitung, Vitalzeichen engmaschig, Transfusionsbereitschaft nach AO", ziel:"n3", fb:"Kreislauf stützen, nüchtern, OP-Vorbereitung.", typ:"gut"},
+      {text:"Erst etwas zu essen/trinken anbieten", ziel:"bad_oral", fb:"Bei drohender OP nüchtern lassen – orale Aufnahme verzögert den Eingriff.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Vitalzeichen/Schockzeichen engmaschig, Blutung beobachten, OP-Vorbereitung, beruhigen, Bilanz, nüchtern halten", ziel:"n4", fb:"Schockzeichen, Blutung, OP-Vorbereitung, nüchtern.", typ:"gut"},
+      {text:"Nur Schmerzmittel geben und sonst abwarten", ziel:"bad_schmerzonly", fb:"Die Schmerztherapie ersetzt nicht die dringende Abklärung/OP.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Kreislauf/Vitalzeichen engmaschig, Blutung, OP-Vorbereitung zügig, Transfusionsbereitschaft nach AO, Intensiv bei Verschlechterung, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal den Blutdruck messen", ziel:"end_mittel", fb:"Bei Schockgefahr engmaschig überwachen.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Schmerz bleibt heftig, die Frau wird zunehmend kreislaufinstabil. Reaktion?", optionen:[
+      {text:"Sofort Arzt/Notfall, Zugang/Volumen nach AO, nüchtern, OP-Vorbereitung", ziel:"end_mittel", fb:"Spät – Schockgefahr.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Hämorrhagischer Schock bei rupturierter EUG.", typ:"fehler"} ] },
+    bad_kreis:{ titel:"REAKTION", text:"Der Blutdruck fällt weiter, die Frau wird kaltschweißig. Reaktion?", optionen:[
+      {text:"Vitalzeichen erfassen, Volumen nach AO, Arzt/Notfall, OP-Vorbereitung", ziel:"end_mittel", fb:"Schockzeichen erkennen.", typ:"warn"},
+      {text:"Den Kreislauf weiter ignorieren", ziel:"end_schlecht", fb:"Unbehandelter Schock.", typ:"fehler"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Die Frau hat getrunken, eine eventuelle OP verzögert sich. Reaktion?", optionen:[
+      {text:"Ab jetzt nüchtern lassen, Anästhesie/Arzt informieren, Dringlichkeit betonen", ziel:"end_mittel", fb:"Nüchtern lassen.", typ:"warn"},
+      {text:"Weiter essen/trinken lassen", ziel:"end_schlecht", fb:"OP-Verzögerung bei lebensbedrohlicher Lage.", typ:"fehler"} ] },
+    bad_schmerzonly:{ titel:"REAKTION", text:"Unter alleiniger Schmerztherapie verschlechtert sich der Kreislauf. Reaktion?", optionen:[
+      {text:"Dringende Abklärung/OP-Vorbereitung, Kreislauf nach AO stützen, Vitalzeichen", ziel:"end_mittel", fb:"Abklärung/OP nicht aufschieben.", typ:"warn"},
+      {text:"Weiter nur Schmerzmittel", ziel:"end_schlecht", fb:"Verschleppter Schock.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die mögliche EUG wird rasch erkannt, der Kreislauf gesichert und die OP vorbereitet.", fazit:"Rupturierte Extrauteringravidität (Frühschwangerschaft + akuter einseitiger Unterbauchschmerz + Schock): lebensbedrohlich – sofort Arzt/Notfall, Zugang/Volumen nach AO, nüchtern lassen (OP), OP-Vorbereitung, Transfusionsbereitschaft, engmaschig Kreislauf/Schockzeichen; nicht als Regelschmerz verkennen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage wird stabilisiert – schnelleres Handeln wäre sicherer gewesen.", fazit:"Merke: an EUG denken, Kreislauf stützen, nüchtern, OP-Vorbereitung, engmaschig überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zum hämorrhagischen Schock.", fazit:"Merke: akuter Unterbauchschmerz in der Frühschwangerschaft mit Schockzeichen ist ein Notfall – nicht abwarten, Kreislauf nicht ignorieren, nüchtern lassen." } }
+},
+{ id:"gyn_mastitis", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🌡️", farbe:"#ec4899", titel:"Brustentzündung in der Stillzeit", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine stillende Mutter hat eine schmerzhafte, gerötete, überwärmte Stelle an der Brust, fühlt sich grippig und hat Fieber.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Mastitis (Brustentzündung) in der Stillzeit erkennen (lokale Rötung/Schmerz/Überwärmung + Fieber), Vitalzeichen, Arzt informieren, weiteres Entleeren/Anlegen unterstützen", ziel:"n2", fb:"Lokale Entzündung + Fieber in der Stillzeit = Mastitis; weiter entleeren.", typ:"gut"},
+      {text:"Stillen/Entleeren komplett stoppen und die Brust ruhigstellen", ziel:"bad_stop", fb:"Ein Stillstopp begünstigt den Milchstau und verschlimmert die Mastitis – weiter entleeren.", typ:"fehler"},
+      {text:"Fieber und Schmerz abwarten", ziel:"bad_wait", fb:"Mastitis sollte früh behandelt werden – nicht abwarten.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Regelmäßiges Entleeren/Stillen fördern (Milchstau lösen), schonende Maßnahmen (z. B. Wärme vor, Kühlung nach dem Stillen nach Vorgabe), Schmerz-/Fiebermanagement nach AO, Antibiotika nur nach AO", ziel:"n3", fb:"Entleeren, schonende Maßnahmen, Therapie nur nach AO.", typ:"gut"},
+      {text:"Eigenmächtig Antibiotika/Medikamente geben", ziel:"bad_self", fb:"Medikamente (auch Antibiotika) nur nach AO – nicht eigenmächtig.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Brust/Verlauf beobachten (auf Abszess achten), Stillberatung/Unterstützung, Schmerz-/Fiebermanagement nach AO, Flüssigkeit/Ruhe, dokumentieren", ziel:"n4", fb:"Verlauf (Abszess?), Stillunterstützung, Symptommanagement.", typ:"gut"},
+      {text:"Zunehmende Schwellung/Eiterhinweise ignorieren", ziel:"bad_abszess", fb:"Eine Abszessbildung muss erkannt werden – nicht ignorieren.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Temperatur/Schmerz/Brustbefund, auf Besserung oder Abszess achten, Stillunterstützung, Therapie nach AO, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach erster Linderung nicht weiter beobachten", ziel:"end_mittel", fb:"Den Verlauf (Abszess?) im Blick behalten.", typ:"warn"} ] },
+    bad_stop:{ titel:"REAKTION", text:"Durch den Stillstopp staut sich die Milch, die Beschwerden nehmen zu. Reaktion?", optionen:[
+      {text:"Wieder regelmäßig entleeren/stillen, schonende Maßnahmen, Therapie nach AO", ziel:"end_mittel", fb:"Entleeren statt stoppen.", typ:"warn"},
+      {text:"Weiter komplett stoppen", ziel:"end_schlecht", fb:"Verschlimmerung bis zum Abszess.", typ:"fehler"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Fieber und Schmerz nehmen zu. Reaktion?", optionen:[
+      {text:"Entleeren fördern, Schmerz-/Fiebermanagement und ggf. Antibiotika nach AO, Verlauf beobachten", ziel:"end_mittel", fb:"Nicht weiter abwarten.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Fortschreitende Entzündung/Abszess.", typ:"fehler"} ] },
+    bad_self:{ titel:"REAKTION", text:"Die Fachkraft bemerkt die eigenmächtige Medikamentengabe. Reaktion?", optionen:[
+      {text:"Offen berichten, melden/dokumentieren, künftig nur nach AO", ziel:"end_mittel", fb:"Keine eigenmächtige Gabe.", typ:"warn"},
+      {text:"Es verschweigen", ziel:"end_schlecht", fb:"Gefährdet Mutter (und ggf. Kind), schwerer Fehler.", typ:"fehler"} ] },
+    bad_abszess:{ titel:"REAKTION", text:"Die Schwellung nimmt zu, es bildet sich ein Abszess. Reaktion?", optionen:[
+      {text:"Sofort melden, Befund dokumentieren, Therapie nach AO (ggf. Entlastung)", ziel:"end_mittel", fb:"Abszess früh erkennen.", typ:"warn"},
+      {text:"Weiter ignorieren", ziel:"end_schlecht", fb:"Fortgeschrittener Abszess.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Mastitis bessert sich, das Stillen wird unterstützt und der Verlauf überwacht.", fazit:"Mastitis puerperalis (Rötung/Schmerz/Überwärmung + Fieber in der Stillzeit): weiter regelmäßig entleeren/stillen (Milchstau lösen!), schonende Maßnahmen nach Vorgabe, Schmerz-/Fiebermanagement und Antibiotika nur nach AO, Verlauf beobachten (Abszess?), Stillunterstützung; Stillen nicht abrupt stoppen, keine eigenmächtige Medikamentengabe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Entzündung klingt ab – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: weiter entleeren, Therapie nach AO, Verlauf (Abszess?) beobachten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aus der Mastitis entwickelt sich ein Abszess.", fazit:"Merke: Stillen nicht stoppen, nicht abwarten, Abszesszeichen nicht ignorieren – Therapie nach AO." } }
+},
+{ id:"gyn_hyperemesis", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🤢", farbe:"#14b8a6", titel:"Starkes Erbrechen in der Schwangerschaft", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine Schwangere im ersten Trimenon erbricht seit Tagen sehr häufig, kann kaum etwas bei sich behalten, hat abgenommen, trockene Schleimhäute und wirkt schwach.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Ausgeprägtes Schwangerschaftserbrechen (Hyperemesis) mit Exsikkose-Zeichen erkennen, Vitalzeichen, Arzt informieren, Flüssigkeits-/Ernährungszustand einschätzen, Bilanz", ziel:"n2", fb:"Häufiges Erbrechen + Exsikkose-Zeichen = Hyperemesis, einschätzen und melden.", typ:"gut"},
+      {text:"Als 'normale' Schwangerschaftsübelkeit abtun und abwarten", ziel:"bad_wait", fb:"Mit Gewichtsverlust/Exsikkose ist das mehr als normale Übelkeit – nicht abwarten.", typ:"fehler"},
+      {text:"Die Schwangere zwingen, große Mahlzeiten zu essen", ziel:"bad_push", fb:"Große Mahlzeiten verstärken das Erbrechen – kleine Mengen anbieten.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Flüssigkeit/Elektrolyte nach AO (oft i.v.), Antiemetika nach AO, kleine leichte Mahlzeiten/Schlucke anbieten, Bilanz, Ruhe", ziel:"n3", fb:"Flüssigkeit/Antiemese nach AO, kleine Mengen, Bilanz.", typ:"gut"},
+      {text:"Eigenmächtig Antiemetika geben", ziel:"bad_self", fb:"Medikamente nur nach AO – gerade in der Schwangerschaft nicht eigenmächtig.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Ein-/Ausfuhr/Gewicht, Exsikkose-/Verschlechterungszeichen, Mundpflege, Reize/Gerüche meiden, kleine Mengen, dokumentieren", ziel:"n4", fb:"Bilanz/Gewicht, Exsikkose-Zeichen, Reize meiden.", typ:"gut"},
+      {text:"Bilanz und Gewicht nicht erfassen", ziel:"bad_doku", fb:"Bilanz/Gewicht sind wichtig – erfassen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Ein-/Ausfuhr/Gewicht, Vitalzeichen, auf zunehmende Exsikkose/Elektrolytentgleisung achten, Therapie nach AO, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer Besserung nicht weiter beobachten", ziel:"end_mittel", fb:"Den Flüssigkeits-/Ernährungszustand weiter im Blick behalten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Die Schwangere trocknet weiter aus und wird schwächer. Reaktion?", optionen:[
+      {text:"Flüssigkeit/Elektrolyte nach AO, Antiemese nach AO, Bilanz, melden", ziel:"end_mittel", fb:"Nicht weiter abwarten.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Ausgeprägte Dehydratation/Elektrolytentgleisung.", typ:"fehler"} ] },
+    bad_push:{ titel:"REAKTION", text:"Nach den großen Mahlzeiten erbricht sie noch mehr. Reaktion?", optionen:[
+      {text:"Auf kleine, leichte Mengen/Schlucke umstellen, Reize meiden, Therapie nach AO", ziel:"end_mittel", fb:"Kleine Mengen statt Zwang.", typ:"warn"},
+      {text:"Weiter zu großen Mahlzeiten drängen", ziel:"end_schlecht", fb:"Mehr Erbrechen, mehr Flüssigkeitsverlust.", typ:"fehler"} ] },
+    bad_self:{ titel:"REAKTION", text:"Die Fachkraft bemerkt die eigenmächtige Gabe. Reaktion?", optionen:[
+      {text:"Offen berichten, melden/dokumentieren, künftig nur nach AO", ziel:"end_mittel", fb:"Keine eigenmächtige Gabe.", typ:"warn"},
+      {text:"Es verschweigen", ziel:"end_schlecht", fb:"Gefährdet Mutter und Kind, schwerer Fehler.", typ:"fehler"} ] },
+    bad_doku:{ titel:"REAKTION", text:"Ohne Bilanz/Gewicht fehlt der Überblick über den Zustand. Reaktion?", optionen:[
+      {text:"Ein-/Ausfuhr und Gewicht erfassen, dokumentieren, Verlauf beobachten", ziel:"end_mittel", fb:"Bilanz/Gewicht nachführen.", typ:"warn"},
+      {text:"Weiterhin nichts erfassen", ziel:"end_schlecht", fb:"Verschlechterung bleibt unbemerkt.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Schwangere wird rehydriert, das Erbrechen gebessert und der Verlauf überwacht.", fazit:"Hyperemesis gravidarum (häufiges Erbrechen mit Exsikkose): Flüssigkeit/Elektrolyte und Antiemese nach AO (oft i.v.), kleine leichte Mahlzeiten/Schlucke, Reize/Gerüche meiden, Ein-/Ausfuhr und Gewicht erfassen, auf Verschlechterung achten; nicht zum Essen zwingen, keine eigenmächtige Medikamentengabe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Zustand bessert sich – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: Flüssigkeit/Antiemese nach AO, kleine Mengen, Bilanz/Gewicht, auf Exsikkose achten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zu ausgeprägter Dehydratation und Elektrolytentgleisung.", fazit:"Merke: nicht als normale Übelkeit abtun, nicht zum Essen zwingen, keine eigenmächtige Gabe – Flüssigkeit/Therapie nach AO, Bilanz führen." } }
+},
+{ id:"gyn_vcava", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🔄", farbe:"#6366f1", titel:"Schwindel in Rückenlage (Schwangerschaft)", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine Hochschwangere wird beim flachen Liegen auf dem Rücken plötzlich blass, schwindelig und übel, der Blutdruck fällt, der Puls steigt.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"V.-cava-Kompressionssyndrom erkennen (in Rückenlage drückt die Gebärmutter auf die untere Hohlvene → Blutdruckabfall), sofort die Lagerung ändern: in Linksseitenlage bringen", ziel:"n2", fb:"In Rückenlage drückt der Uterus auf die V. cava – sofort Linksseitenlage.", typ:"gut"},
+      {text:"Die Schwangere weiter flach auf dem Rücken liegen lassen", ziel:"bad_flat", fb:"Die Rückenlage ist die Ursache – Lagerung sofort ändern.", typ:"fehler"},
+      {text:"Sie schnell und ruckartig aufsetzen/aufstehen lassen", ziel:"bad_aufrecht", fb:"Ruckartiges Aufrichten kann den Kreislauf weiter belasten – kontrolliert in Linksseitenlage.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Linksseitenlage (oder linke Hüfte unterpolstern), Vitalzeichen kontrollieren, beruhigen, O₂ nach AO bei Bedarf, Arzt informieren – meist rasche Besserung", ziel:"n3", fb:"Linksseitenlage, Vitalzeichen, meist rasche Besserung.", typ:"gut"},
+      {text:"Nichts tun, das wird schon von allein", ziel:"bad_nichts", fb:"Bei Blutdruckabfall die Lagerung ändern und überwachen – nicht abwarten.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE & PROPHYLAXE", text:"Worauf achtest du?", optionen:[
+      {text:"Künftig Rückenlage meiden (Seiten-/leichte Kippung), Vitalzeichen/Befinden beobachten, Mutter und Kind im Blick, Schwangere anleiten, dokumentieren", ziel:"n4", fb:"Rückenlage meiden, anleiten, Mutter/Kind beobachten.", typ:"gut"},
+      {text:"Keine Aufklärung zur Lagerung geben", ziel:"bad_edu", fb:"Die Schwangere sollte die Rückenlage meiden – dazu anleiten.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Befinden/Vitalzeichen, Mutter und Kind, Lagerung beibehalten/anleiten, bei erneuten Beschwerden Arzt, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach Besserung nicht weiter beachten", ziel:"end_mittel", fb:"Lagerung und Befinden weiter im Blick behalten.", typ:"warn"} ] },
+    bad_flat:{ titel:"REAKTION", text:"Flach liegend bleibt der Blutdruck niedrig, der Schwindel hält an. Reaktion?", optionen:[
+      {text:"Sofort in Linksseitenlage bringen, Vitalzeichen, Arzt", ziel:"end_mittel", fb:"Lagerung ändern.", typ:"warn"},
+      {text:"Weiter flach liegen lassen", ziel:"end_schlecht", fb:"Anhaltender Blutdruckabfall, Gefahr für Mutter und Kind.", typ:"fehler"} ] },
+    bad_aufrecht:{ titel:"REAKTION", text:"Beim ruckartigen Aufstehen wird ihr noch schwindeliger. Reaktion?", optionen:[
+      {text:"Kontrolliert in Linksseitenlage bringen, Vitalzeichen, beruhigen", ziel:"end_mittel", fb:"Kontrolliert lagern, nicht ruckartig.", typ:"warn"},
+      {text:"Weiter ruckartig aufrichten", ziel:"end_schlecht", fb:"Kollaps-/Sturzgefahr.", typ:"fehler"} ] },
+    bad_nichts:{ titel:"REAKTION", text:"Ohne Maßnahme bleibt der Blutdruck niedrig. Reaktion?", optionen:[
+      {text:"In Linksseitenlage bringen, Vitalzeichen kontrollieren, Arzt", ziel:"end_mittel", fb:"Lagerung ändern und überwachen.", typ:"warn"},
+      {text:"Weiter nichts tun", ziel:"end_schlecht", fb:"Anhaltende Minderperfusion.", typ:"fehler"} ] },
+    bad_edu:{ titel:"REAKTION", text:"Ohne Aufklärung legt sich die Schwangere erneut flach auf den Rücken. Reaktion?", optionen:[
+      {text:"Zur Lagerung anleiten (Rückenlage meiden), Befinden beobachten", ziel:"end_mittel", fb:"Anleitung nachholen.", typ:"warn"},
+      {text:"Weiterhin nicht aufklären", ziel:"end_schlecht", fb:"Wiederholte Beschwerden.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Mit der Linksseitenlage bessert sich der Kreislauf rasch, die Schwangere ist angeleitet.", fazit:"V.-cava-Kompressionssyndrom (Blutdruckabfall der Hochschwangeren in Rückenlage): sofort in Linksseitenlage bringen (oder linke Hüfte unterpolstern), Vitalzeichen kontrollieren, meist rasche Besserung, Arzt informieren; künftig Rückenlage meiden und die Schwangere dazu anleiten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es bessert sich – konsequente Lagerung/Anleitung wäre besser gewesen.", fazit:"Merke: bei Blutdruckabfall in Rückenlage sofort Linksseitenlage, Vitalzeichen kontrollieren, anleiten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Der anhaltende Blutdruckabfall gefährdet Mutter und Kind.", fazit:"Merke: Rückenlage ist die Ursache – sofort Linksseitenlage, nicht flach liegen lassen, nicht ruckartig aufrichten." } }
+}
 ];
 
 function navGo(screen) {
