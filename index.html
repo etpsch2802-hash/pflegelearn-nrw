@@ -6405,32 +6405,48 @@ function answerABCDE(idx){
 }
 
 // ─── FALLBEISPIELE: VERZWEIGTE ENGINE ───────────────────────
-let faelleFilter='alle', fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
+let faelleFilter='alle', faelleJahr='alle', fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
 
 function fachListe(){
   const seen={}, out=[];
   FAELLE.forEach(function(f){ if(!seen[f.fach]){ seen[f.fach]=1; out.push({fach:f.fach,label:f.fachLabel,icon:f.icon,farbe:f.farbe}); } });
   return out;
 }
+function fallKarte(f){
+  return '<button onclick="startFall(\''+f.id+'\')" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid '+f.farbe+'33;border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
+    +'<span style="font-size:26px">'+f.icon+'</span>'
+    +'<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:#e0f2fe">'+f.titel+'</span>'
+    +'<span style="display:block;font-size:11px;color:'+f.farbe+';margin-top:2px">'+f.fachLabel+(f.jahr?' · '+f.jahr+'. Lernjahr':'')+(f.schwere?' · '+f.schwere:'')+'</span></span>'
+    +'<span style="font-size:18px;color:'+f.farbe+'">›</span></button>';
+}
 function renderFaelle(){
   const fc=document.getElementById('faelle-faecher');
   const li=document.getElementById('faelle-liste');
   if(!fc||!li) return;
+  const jahre=[['alle','Alle'],['1','1. LJ'],['2','2. LJ'],['3','3. LJ']];
+  let jchips=jahre.map(function(j){ return '<button onclick="faelleJahr=\''+j[0]+'\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(faelleJahr===j[0]?'background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700':'')+'">'+j[1]+'</button>'; }).join('');
   const faecher=fachListe();
-  let chips='<button onclick="faelleFilter=\'alle\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(faelleFilter==='alle'?'background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700':'')+'">Alle</button>';
+  let chips='<button onclick="faelleFilter=\'alle\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(faelleFilter==='alle'?'background:rgba(var(--accent-rgb),.18);color:#e0f2fe;font-weight:700':'')+'">Alle Fächer</button>';
   faecher.forEach(function(f){
     const on=faelleFilter===f.fach;
     chips+='<button onclick="faelleFilter=\''+f.fach+'\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(on?'background:'+f.farbe+';color:#04121f;font-weight:700':'color:'+f.farbe)+'">'+f.icon+' '+f.label+'</button>';
   });
-  fc.innerHTML=chips;
-  const list=FAELLE.filter(function(f){ return faelleFilter==='alle'||f.fach===faelleFilter; });
-  li.innerHTML=list.map(function(f){
-    return '<button onclick="startFall(\''+f.id+'\')" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid '+f.farbe+'33;border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
-      +'<span style="font-size:26px">'+f.icon+'</span>'
-      +'<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:#e0f2fe">'+f.titel+'</span>'
-      +'<span style="display:block;font-size:11px;color:'+f.farbe+';margin-top:2px">'+f.fachLabel+' · '+(f.schwere||'')+(f.grad?' · '+f.grad:'')+'</span></span>'
-      +'<span style="font-size:18px;color:'+f.farbe+'">›</span></button>';
-  }).join('') || '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Noch keine Fälle in dieser Fachrichtung.</div>';
+  fc.innerHTML='<div style="margin-bottom:4px">'+jchips+'</div><div>'+chips+'</div>';
+  const matchFach=function(f){ return faelleFilter==='alle'||f.fach===faelleFilter; };
+  const empty='<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Noch keine Fälle hier.</div>';
+  if(faelleJahr==='alle'){
+    let html='';
+    [1,2,3].forEach(function(j){
+      const grp=FAELLE.filter(function(f){ return matchFach(f)&&Number(f.jahr)===j; });
+      if(!grp.length) return;
+      html+='<div style="font-size:11px;color:#7fa6c4;letter-spacing:1px;text-transform:uppercase;margin:16px 2px 8px;font-weight:700">'+j+'. Lernjahr <span style="color:#4a7a9b;font-weight:400">· '+grp.length+'</span></div>';
+      html+=grp.map(fallKarte).join('');
+    });
+    li.innerHTML=html||empty;
+  } else {
+    const list=FAELLE.filter(function(f){ return matchFach(f)&&String(f.jahr)===faelleJahr; });
+    li.innerHTML=list.map(fallKarte).join('')||empty;
+  }
 }
 
 function startFall(id){
@@ -6494,7 +6510,7 @@ function renderFall(){
 }
 
 const FAELLE = [
-{ id:"inn_mi", fach:"innere", fachLabel:"Innere Medizin", icon:"❤️", farbe:"#f43f5e", titel:"Akuter Brustschmerz", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"inn_mi", fach:"innere", fachLabel:"Innere Medizin", icon:"❤️", farbe:"#f43f5e", titel:"Akuter Brustschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau K., 64 J., Diabetikerin: seit 45 min drückender retrosternaler Schmerz, vegetativ (Kaltschweiß, Übelkeit). RR 145/85, Puls 92, SpO₂ 96 %.",
   start:"n1",
   nodes:{
@@ -6528,7 +6544,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Vermeidbarer Myokardschaden bzw. Kreislaufstillstand.", fazit:"ST-Hebung ist ein Notfall: nicht auf Labor warten, Nitrat-Fallstrick beachten, bei VF sofort handeln." }
   } },
 
-{ id:"inn_oedem", fach:"innere", fachLabel:"Innere Medizin", icon:"🫧", farbe:"#38bdf8", titel:"Nächtliche Atemnot", schwere:"akut", grad:"Fortgeschritten",
+{ id:"inn_oedem", fach:"innere", fachLabel:"Innere Medizin", icon:"🫧", farbe:"#38bdf8", titel:"Nächtliche Atemnot", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Herr B., 78 J., KHK: nachts schwere Atemnot, Orthopnoe, feuchte RGs beidseits, SpO₂ 85 %, RR 195/110, Puls 110.",
   start:"n1",
   nodes:{
@@ -6558,7 +6574,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Respiratorische/kardiale Dekompensation, Intensivpflicht.", fazit:"Negativ-inotrope Substanzen und Verzögerung sind beim akuten Ödem gefährlich." }
   } },
 
-{ id:"inn_copd", fach:"innere", fachLabel:"Innere Medizin", icon:"💨", farbe:"#22d3ee", titel:"COPD-Exazerbation", schwere:"akut", grad:"Fortgeschritten",
+{ id:"inn_copd", fach:"innere", fachLabel:"Innere Medizin", icon:"💨", farbe:"#22d3ee", titel:"COPD-Exazerbation", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Frau S., 70 J., schwere COPD: 3 Tage zunehmende Dyspnoe, purulentes Sputum, SpO₂ 84 %, leicht somnolent, AF 28.",
   start:"n1",
   nodes:{
@@ -6591,7 +6607,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"CO₂-Narkose, Intensivpflicht.", fazit:"Unkontrollierte O₂-Gabe und Sedierung sind bei COPD gefährlich." }
   } },
 
-{ id:"inn_le", fach:"innere", fachLabel:"Innere Medizin", icon:"🫁", farbe:"#ef4444", titel:"Plötzliche Atemnot postop.", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"inn_le", fach:"innere", fachLabel:"Innere Medizin", icon:"🫁", farbe:"#ef4444", titel:"Plötzliche Atemnot postop.", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr M., 58 J., 3 Tage nach Knie-TEP: plötzliche Dyspnoe + atemabhängiger Thoraxschmerz, Puls 120, SpO₂ 88 %, RR 110/70, einseitig geschwollenes Bein.",
   start:"n1",
   nodes:{
@@ -6620,7 +6636,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Rechtsherzversagen / Kreislaufstillstand.", fazit:"Atemnot + einseitige Beinschwellung postop = LE bis zum Beweis des Gegenteils." }
   } },
 
-{ id:"inn_gib", fach:"innere", fachLabel:"Innere Medizin", icon:"🩸", farbe:"#f97316", titel:"Bluterbrechen", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"inn_gib", fach:"innere", fachLabel:"Innere Medizin", icon:"🩸", farbe:"#f97316", titel:"Bluterbrechen", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau L., 67 J., NSAR + ASS: Hämatemesis (kaffeesatzartig) + Meläna, blass, Puls 112, RR 96/60, unruhig.",
   start:"n1",
   nodes:{
@@ -6649,7 +6665,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hämorrhagischer Schock / Aspiration.", fazit:"Bei aktiver GI-Blutung Kreislauf priorisieren, nüchtern lassen, Atemweg schützen." }
   } },
 
-{ id:"inn_hypo", fach:"innere", fachLabel:"Innere Medizin", icon:"🍬", farbe:"#a78bfa", titel:"Plötzliche Verwirrtheit", schwere:"akut", grad:"Fortgeschritten",
+{ id:"inn_hypo", fach:"innere", fachLabel:"Innere Medizin", icon:"🍬", farbe:"#a78bfa", titel:"Plötzliche Verwirrtheit", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Herr T., 72 J., Insulin + Sulfonylharnstoff: akut verwirrt, zittrig, kaltschweißig. BZ 2,3 mmol/l (41 mg/dl). Noch wach, schluckt sicher.",
   start:"n1",
   nodes:{
@@ -6674,7 +6690,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Erneute schwere Hypoglykämie.", fazit:"Bei Sulfonylharnstoff drohen protrahierte Hypoglykämien – ausreichend lange überwachen." }
   } }
 ,
-{ id:"chi_abdomen", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🔥", farbe:"#f97316", titel:"Akutes Abdomen", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"chi_abdomen", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🔥", farbe:"#f97316", titel:"Akutes Abdomen", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr R., 24 J.: seit 12 h Bauchschmerz, zunächst periumbilikal, jetzt rechter Unterbauch; Übelkeit, Fieber 38,6 °C, Abwehrspannung, Loslassschmerz.",
   start:"n1",
   nodes:{
@@ -6707,7 +6723,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Peritonitis/septischer Schock.", fazit:"Laxanzien, Essen und Verzögerung sind beim akuten Abdomen gefährlich." }
   } },
 
-{ id:"chi_ileus", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🌀", farbe:"#fb923c", titel:"Darmverschluss", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"chi_ileus", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🌀", farbe:"#fb923c", titel:"Darmverschluss", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau D., 71 J., Z.n. Bauch-OPs: zunehmende kolikartige Bauchschmerzen, geblähtes Abdomen, fäkulentes Erbrechen, kein Stuhl/Wind seit 2 Tagen.",
   start:"n1",
   nodes:{
@@ -6735,7 +6751,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Darmischämie/Perforation, Sepsis.", fazit:"Einläufe/Laxanzien und Abwarten sind beim mechanischen Ileus gefährlich." }
   } },
 
-{ id:"chi_ischaemie", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🦵", farbe:"#ef4444", titel:"Plötzlich kaltes Bein", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"chi_ischaemie", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🦵", farbe:"#ef4444", titel:"Plötzlich kaltes Bein", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr P., 68 J., Vorhofflimmern: plötzlich starker Schmerz im rechten Bein; Bein blass, kalt, kein Fußpuls tastbar, beginnende Gefühlsstörung.",
   start:"n1",
   nodes:{
@@ -6763,7 +6779,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Irreversible Ischämie / Amputation.", fazit:"Aktive Wärme und Verzögerung kosten die Extremität." }
   } },
 
-{ id:"chi_kompartment", fach:"chirurgie", fachLabel:"Chirurgie", icon:"💪", farbe:"#f43f5e", titel:"Schmerz im Gips", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"chi_kompartment", fach:"chirurgie", fachLabel:"Chirurgie", icon:"💪", farbe:"#f43f5e", titel:"Schmerz im Gips", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Patient, 22 J., nach Unterschenkelfraktur im Gips: zunehmender, unverhältnismäßig starker Schmerz, Schmerz bei passiver Zehenstreckung, pralle Wade, Kribbeln.",
   start:"n1",
   nodes:{
@@ -6788,7 +6804,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Irreversibler Muskel-/Nervenschaden.", fazit:"Verzögerung führt zu bleibenden Schäden (Volkmann-Kontraktur)." }
   } },
 
-{ id:"chi_nachblutung", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🩸", farbe:"#dc2626", titel:"Postoperative Nachblutung", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"chi_nachblutung", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🩸", farbe:"#dc2626", titel:"Postoperative Nachblutung", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau H., 60 J., 4 h nach großer Bauch-OP: tachykard (118), RR 95/55, blass, kaltschweißig, Wunddrainage füllt sich rasch mit Blut, unruhig.",
   start:"n1",
   nodes:{
@@ -6816,7 +6832,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hämorrhagischer Schock.", fazit:"Abklemmen und Abwarten sind bei aktiver chirurgischer Blutung gefährlich." }
   } },
 
-{ id:"chi_hernie", fach:"chirurgie", fachLabel:"Chirurgie", icon:"⛓️", farbe:"#f59e0b", titel:"Eingeklemmte Leiste", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"chi_hernie", fach:"chirurgie", fachLabel:"Chirurgie", icon:"⛓️", farbe:"#f59e0b", titel:"Eingeklemmte Leiste", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr K., 55 J.: seit 4 h schmerzhafte, nicht reponible Vorwölbung in der Leiste, Übelkeit, Erbrechen; die Schwellung ist prall, gerötet, sehr druckschmerzhaft.",
   start:"n1",
   nodes:{
@@ -6844,7 +6860,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Darmischämie/Peritonitis, Sepsis.", fazit:"Forcierte Reposition und Abwarten sind bei Inkarzeration gefährlich." }
   } }
 ,
-{ id:"int_sepsis", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🦠", farbe:"#84cc16", titel:"Septischer Schock", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"int_sepsis", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🦠", farbe:"#84cc16", titel:"Septischer Schock", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau N., 76 J., Dauerkatheter: Fieber 39,4 °C, Schüttelfrost, RR 85/50, Puls 124, verwirrt, Laktat erhöht, warme Peripherie.",
   start:"n1",
   nodes:{
@@ -6873,7 +6889,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Refraktärer septischer Schock.", fazit:"Diuretika und ungebremste Volumengabe sind im septischen Schock gefährlich." }
   } },
 
-{ id:"int_dopes", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🌬️", farbe:"#06b6d4", titel:"Beatmungsnotfall", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"int_dopes", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🌬️", farbe:"#06b6d4", titel:"Beatmungsnotfall", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Beatmeter Intensivpatient: plötzlicher SpO₂-Abfall auf 80 %, Beatmungsdruck-Alarm, zunehmende Zyanose, unruhig.",
   start:"n1",
   nodes:{
@@ -6904,7 +6920,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hypoxischer Kreislaufstillstand.", fazit:"Blindes Extubieren/Sedieren und Druck-Erhöhen bei Pneu sind gefährlich." }
   } },
 
-{ id:"int_hyperk", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"⚡", farbe:"#eab308", titel:"Gefährliches Kalium", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"int_hyperk", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"⚡", farbe:"#eab308", titel:"Gefährliches Kalium", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr W., 64 J., oligurisches akutes Nierenversagen: Schwäche, Parästhesien; Kalium 6,9 mmol/l; EKG mit hohen spitzen T-Wellen und verbreitertem QRS.",
   start:"n1",
   nodes:{
@@ -6929,7 +6945,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Maligne Arrhythmie/Asystolie.", fazit:"Abwarten bei bedrohlicher Hyperkaliämie ist lebensgefährlich." }
   } },
 
-{ id:"int_dka", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧪", farbe:"#f472b6", titel:"Entgleister Zucker", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"int_dka", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧪", farbe:"#f472b6", titel:"Entgleister Zucker", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau J., 28 J., Typ-1-Diabetes: Übelkeit/Erbrechen, Bauchschmerz, tiefe Atmung (Kussmaul), exsikkiert; BZ 28 mmol/l, pH 7,12, Ketone positiv, K⁺ 3,2 mmol/l.",
   start:"n1",
   nodes:{
@@ -6960,7 +6976,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Arrhythmie bzw. persistierende Ketoazidose.", fazit:"Insulin ohne K⁺-Beachtung oder ein vorzeitiger Insulinstopp sind gefährlich." }
   } },
 
-{ id:"int_delir", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧠", farbe:"#818cf8", titel:"Nächtliche Unruhe (Intensiv)", schwere:"akut", grad:"Fortgeschritten",
+{ id:"int_delir", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧠", farbe:"#818cf8", titel:"Nächtliche Unruhe (Intensiv)", schwere:"akut", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr S., 79 J., 2. Tag nach großer OP auf Intensiv: nachts plötzlich agitiert, desorientiert, zieht an Zugängen, fluktuierende Aufmerksamkeit.",
   start:"n1",
   nodes:{
@@ -6988,7 +7004,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation / Atemdepression.", fazit:"Pauschale Fixierung/Benzodiazepine sind beim Delir kontraproduktiv." }
   } },
 
-{ id:"int_anaphylaxie", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"💉", farbe:"#f43f5e", titel:"Reaktion auf Medikament", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"int_anaphylaxie", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"💉", farbe:"#f43f5e", titel:"Reaktion auf Medikament", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Patient erhält ein i.v.-Antibiotikum; innerhalb von Minuten Urtikaria, Atemnot mit Stridor, RR 80/40, Tachykardie, Angst.",
   start:"n1",
   nodes:{
@@ -7016,7 +7032,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Atemwegsverlegung bzw. Arrhythmie.", fazit:"Verzögertes Adrenalin und unkontrolliertes i.v.-Adrenalin sind gefährlich." }
   } }
 ,
-{ id:"paed_fieberkrampf", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🌡️", farbe:"#f59e0b", titel:"Krampfanfall bei Fieber", schwere:"akut", grad:"Fortgeschritten",
+{ id:"paed_fieberkrampf", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🌡️", farbe:"#f59e0b", titel:"Krampfanfall bei Fieber", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Leon, 18 Monate, hohes Fieber: zu Hause generalisierter Krampfanfall, jetzt seit 2 min tonisch-klonisch zuckend, die Eltern sind panisch.",
   start:"n1",
   nodes:{
@@ -7051,7 +7067,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aspiration, prolongierter Status oder verkannte Meningitis.", fazit:"Nichts in den Mund, nicht festhalten, nicht zu lange abwarten, Red Flags ernst nehmen." }
   } },
 
-{ id:"paed_krupp", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🗣️", farbe:"#38bdf8", titel:"Bellender Husten nachts", schwere:"akut", grad:"Fortgeschritten",
+{ id:"paed_krupp", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🗣️", farbe:"#38bdf8", titel:"Bellender Husten nachts", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Mia, 2 Jahre, nachts: bellender Husten, heisere Stimme, inspiratorischer Stridor in Ruhe, leichte Einziehungen, subfebril, ängstlich.",
   start:"n1",
   nodes:{
@@ -7080,7 +7096,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Drohende/eingetretene Atemwegsverlegung.", fazit:"Racheninspektion und Abwarten sind beim Stridor gefährlich." }
   } },
 
-{ id:"paed_bronchiolitis", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"👶", farbe:"#06b6d4", titel:"Atemnot beim Säugling", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"paed_bronchiolitis", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"👶", farbe:"#06b6d4", titel:"Atemnot beim Säugling", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Säugling, 4 Monate: seit 2 Tagen Schnupfen, jetzt Trinkschwäche, Tachypnoe, Nasenflügeln, Einziehungen, exspiratorisches Giemen, SpO₂ 90 %.",
   start:"n1",
   nodes:{
@@ -7111,7 +7127,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Respiratorische Erschöpfung.", fazit:"Sedativa, Trinkzwang und Abwarten sind beim atemnötigen Säugling gefährlich." }
   } },
 
-{ id:"paed_exsikkose", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"💧", farbe:"#0ea5e9", titel:"Erbrechen & Durchfall", schwere:"akut", grad:"Fortgeschritten",
+{ id:"paed_exsikkose", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"💧", farbe:"#0ea5e9", titel:"Erbrechen & Durchfall", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Emil, 14 Monate: seit 2 Tagen Erbrechen + wässrige Durchfälle. Trinkt wenig, eingesunkene Augen, trockene Schleimhäute, verlängerte Rekap-Zeit, wenige nasse Windeln, müde.",
   start:"n1",
   nodes:{
@@ -7139,7 +7155,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hypovolämer Schock.", fazit:"Motilitätshemmer und Abwarten sind bei der kindlichen Exsikkose gefährlich." }
   } },
 
-{ id:"paed_meningokokken", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🔴", farbe:"#dc2626", titel:"Fieber mit Hautflecken", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"paed_meningokokken", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🔴", farbe:"#dc2626", titel:"Fieber mit Hautflecken", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Hanna, 5 Jahre: hohes Fieber, zunehmend schläfrig, Kopfschmerz, Nackensteife; jetzt rasch auftretende, nicht wegdrückbare petechiale Hautflecken, RR niedrig-normal, Rekap verlängert.",
   start:"n1",
   nodes:{
@@ -7170,7 +7186,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Fulminanter septischer Schock.", fazit:"Abwarten und Verzögern der Antibiose sind lebensgefährlich." }
   } },
 
-{ id:"paed_aspiration", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🥜", farbe:"#eab308", titel:"Verschlucktes Kleinteil", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"paed_aspiration", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🥜", farbe:"#eab308", titel:"Verschlucktes Kleinteil", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Paul, 1 Jahr, beim Spielen mit Kleinteilen: plötzlich heftiger Husten, dann Würgen, jetzt Atemnot mit Stridor; er hustet noch kräftig, ist aber sichtlich in Not.",
   start:"n1",
   nodes:{
@@ -7201,7 +7217,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Komplette Atemwegsverlegung.", fazit:"Blindes Auswischen und falsches Manöver sind bei der Aspiration gefährlich." }
   } }
 ,
-{ id:"anae_mh", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🔥", farbe:"#dc2626", titel:"Plötzlicher CO₂-Anstieg intraop.", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"anae_mh", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🔥", farbe:"#dc2626", titel:"Plötzlicher CO₂-Anstieg intraop.", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Intraoperativ unter Sevofluran: unerklärter etCO₂-Anstieg, Tachykardie, Masseterspasmus nach Succinylcholin, beginnender Temperaturanstieg, Azidose.",
   start:"n1",
   nodes:{
@@ -7239,7 +7255,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Fulminante MH-Krise.", fazit:"Trigger weiterzugeben, Dantrolen wegzulassen oder abzuwarten ist lebensgefährlich." }
   } },
 
-{ id:"anae_laryngospasmus", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🌬️", farbe:"#06b6d4", titel:"Stridor nach Extubation", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"anae_laryngospasmus", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🌬️", farbe:"#06b6d4", titel:"Stridor nach Extubation", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Direkt nach Extubation (flache Narkose): inspiratorischer Stridor, paradoxe Atembewegungen, rascher SpO₂-Abfall, keine effektive Beatmung möglich.",
   start:"n1",
   nodes:{
@@ -7273,7 +7289,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Schwere Hypoxie/Kreislaufstillstand.", fazit:"Blindes Intubieren in flacher Narkose und Abwarten sind gefährlich." }
   } },
 
-{ id:"anae_aspiration", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🫁", farbe:"#ef4444", titel:"Regurgitation bei Einleitung", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"anae_aspiration", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🫁", farbe:"#ef4444", titel:"Regurgitation bei Einleitung", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Nicht-nüchterner Notfallpatient (Ileus): bei der Einleitung Regurgitation von Mageninhalt, Mageninhalt im Rachen, SpO₂ beginnt zu fallen.",
   start:"n1",
   nodes:{
@@ -7307,7 +7323,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Schwere Aspiration / Barotrauma.", fazit:"Maskenbeatmung vor Atemwegssicherung und unkontrollierter Druck sind gefährlich." }
   } },
 
-{ id:"anae_last", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"⚠️", farbe:"#a855f7", titel:"Symptome nach Regionalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"anae_last", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"⚠️", farbe:"#a855f7", titel:"Symptome nach Regionalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Während/nach Regionalanästhesie mit hoher Lokalanästhetika-Dosis: periorale Taubheit, metallischer Geschmack, Ohrensausen, Unruhe, dann Muskelzuckungen, beginnende Herzrhythmusstörung.",
   start:"n1",
   nodes:{
@@ -7341,7 +7357,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Refraktäre Kardiotoxizität.", fazit:"Abwarten, Mehrgabe oder Lipid-Verzicht sind bei LAST tödlich." }
   } },
 
-{ id:"anae_aufwachraum", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"😴", farbe:"#38bdf8", titel:"Flache Atmung im Aufwachraum", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"anae_aufwachraum", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"😴", farbe:"#38bdf8", titel:"Flache Atmung im Aufwachraum", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Im Aufwachraum nach Allgemeinanästhesie: Patient zunehmend somnolent, flache langsame Atmung (AF 6), SpO₂ 88 %, enge Pupillen; intraoperativ Opioide.",
   start:"n1",
   nodes:{
@@ -7369,7 +7385,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Atemstillstand/respiratorische Erschöpfung.", fazit:"Abwarten bei klarer Atemdepression und das Übersehen der Restrelaxierung sind gefährlich." }
   } },
 
-{ id:"anae_spinal", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"💉", farbe:"#22c55e", titel:"Kreislauf nach Spinalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"anae_spinal", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"💉", farbe:"#22c55e", titel:"Kreislauf nach Spinalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Kurz nach Spinalanästhesie: RR fällt auf 80/45, Bradykardie 48/min, Übelkeit/Schwindel; die sensible Blockade steigt höher als erwartet.",
   start:"n1",
   nodes:{
@@ -7403,7 +7419,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Kreislaufstillstand bzw. respiratorische Insuffizienz.", fazit:"Aufsetzen, Abwarten und das Ignorieren der Bradykardie/hohen Blockade sind gefährlich." }
   } }
 ,
-{ id:"psy_suizid", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🆘", farbe:"#ef4444", titel:"Hoffnungslosigkeit und Rückzug", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"psy_suizid", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🆘", farbe:"#ef4444", titel:"Hoffnungslosigkeit und Rückzug", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient auf Station wirkt zunehmend zurückgezogen, äußert Hoffnungslosigkeit ('Es hat alles keinen Sinn mehr') und zieht sich von Mitpatienten zurück. Du bist im Gespräch mit ihm.",
   start:"n1",
   nodes:{
@@ -7437,7 +7453,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hochgefährliche Situation.", fazit:"Bagatellisieren, Alleinlassen, Ausweichen und Geheimhaltung gefährden suizidale Patienten." }
   } },
 
-{ id:"psy_erregung", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🛡️", farbe:"#f59e0b", titel:"Angespannter, gereizter Patient", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"psy_erregung", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🛡️", farbe:"#f59e0b", titel:"Angespannter, gereizter Patient", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein akut psychotischer Patient ist zunehmend angespannt, läuft auf und ab, spricht laut, fühlt sich bedroht und reagiert gereizt auf Ansprache. Andere Patienten werden unruhig.",
   start:"n1",
   nodes:{
@@ -7471,7 +7487,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation und Gefährdung.", fazit:"Konfrontation, vorschneller Zwang und Alleingänge sind gefährlich und rechtlich unzulässig." }
   } },
 
-{ id:"psy_manie", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"⚡", farbe:"#eab308", titel:"Getriebene, rastlose Patientin", schwere:"subakut", grad:"Fortgeschritten",
+{ id:"psy_manie", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"⚡", farbe:"#eab308", titel:"Getriebene, rastlose Patientin", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
   vignette:"Eine Patientin in manischer Episode ist getrieben, redet ununterbrochen, schläft kaum, hat überschießende Pläne, kaum Krankheitseinsicht, gibt viel Geld aus, überschätzt sich und reagiert gereizt auf Grenzen.",
   start:"n1",
   nodes:{
@@ -7505,7 +7521,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Entgleisung/Selbstgefährdung.", fazit:"Befeuern, alles zulassen oder Körperliches ignorieren ist gefährlich." }
   } },
 
-{ id:"psy_alkoholentzug", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🍶", farbe:"#14b8a6", titel:"Tremor und Unruhe ohne Alkohol", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"psy_alkoholentzug", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🍶", farbe:"#14b8a6", titel:"Tremor und Unruhe ohne Alkohol", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient (bekannte Alkoholabhängigkeit), seit etwa 1 Tag ohne Alkohol: Tremor, Schwitzen, Unruhe, Tachykardie, leicht erhöhter Blutdruck, Übelkeit; er ist ängstlich-gereizt.",
   start:"n1",
   nodes:{
@@ -7539,7 +7555,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Delir tremens / Entzugskrampf.", fazit:"Bagatellisieren, Alkoholgabe oder Abwarten sind beim Alkoholentzug gefährlich." }
   } },
 
-{ id:"psy_panik", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"😰", farbe:"#38bdf8", titel:"Plötzliche Atemnot und Todesangst", schwere:"akut", grad:"Fortgeschritten",
+{ id:"psy_panik", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"😰", farbe:"#38bdf8", titel:"Plötzliche Atemnot und Todesangst", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Eine Patientin bekommt plötzlich Herzrasen, Atemnot, Engegefühl in der Brust, Kribbeln in den Händen, Schwindel und Todesangst ('Ich bekomme keine Luft, ich glaube, ich sterbe'); sie hyperventiliert.",
   start:"n1",
   nodes:{
@@ -7573,7 +7589,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation bzw. übersehene Ursache.", fazit:"Abwerten, eigene Hektik, schnelles Atmen oder das Ignorieren körperlicher Ursachen schaden." }
   } },
 
-{ id:"psy_mns", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🌡️", farbe:"#a855f7", titel:"Fieber und Rigor unter Neuroleptika", schwere:"akut · hoch", grad:"Fortgeschritten",
+{ id:"psy_mns", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🌡️", farbe:"#a855f7", titel:"Fieber und Rigor unter Neuroleptika", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient unter Neuroleptika (kürzlich Dosissteigerung) entwickelt hohes Fieber, ausgeprägte Muskelsteifigkeit (Rigor), Bewusstseinstrübung, Schwitzen, Tachykardie und schwankenden Blutdruck.",
   start:"n1",
   nodes:{
@@ -7606,6 +7622,224 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Letztlich richtig, aber mit Verzögerung.", fazit:"Trigger absetzen, supportiv stabilisieren, Niere/CK beachten, intensiv überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Progredientes MNS / Nierenversagen.", fazit:"Dosiserhöhung, reine Infekt-/Fieberbehandlung oder Ignorieren der Komplikationen sind lebensgefährlich." }
   } }
+
+,
+{ id:"grd_dekubitus", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🛏️", farbe:"#34d399", titel:"Wundliegen vorbeugen", schwere:"Grundlagen", jahr:1,
+  vignette:"Frau Klein (84) ist nach einem Sturz bettlägerig, kann sich kaum selbst bewegen und liegt viel auf dem Rücken. Die Haut am Gesäß ist an einer Stelle gerötet.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"BEOBACHTEN", text:"Du entdeckst die Rötung am Steiß. Wie prüfst du, ob ein Dekubitus droht?", optionen:[
+      {text:"Fingertest: kurz auf die Rötung drücken – wird sie weiß (wegdrückbar) oder bleibt sie rot? Hautstelle dokumentieren und melden", ziel:"n2", fb:"Der Fingertest unterscheidet eine harmlose Rötung von einer beginnenden Druckschädigung (nicht wegdrückbar = Alarm).", typ:"gut"},
+      {text:"Die Stelle kräftig massieren, um die Durchblutung anzuregen", ziel:"bad_massage", fb:"Gefährdete, gerötete Haut wird nicht massiert – das schädigt das Gewebe zusätzlich.", typ:"fehler"},
+      {text:"Erstmal abwarten, Rötungen verschwinden meist von allein", ziel:"bad_wait", fb:"Bei bettlägerigen Menschen ist eine Rötung ein Warnzeichen – beobachten und handeln statt abwarten.", typ:"warn"} ] },
+    n2:{ titel:"VORBEUGEN", text:"Was ist die wichtigste vorbeugende Maßnahme?", optionen:[
+      {text:"Regelmäßige Druckentlastung: Position nach Plan wechseln, Druckstellen frei lagern, Haut pflegen und trocken halten", ziel:"n3", fb:"Druckentlastung durch Lagewechsel/Bewegung ist die zentrale Dekubitusprophylaxe.", typ:"gut"},
+      {text:"Ein dickes Kissen genau punktuell unter die gerötete Stelle legen", ziel:"bad_donut", fb:"Punktuelles Unterpolstern (z. B. 'Ring') kann den Druck sogar erhöhen – flächig entlasten und umlagern.", typ:"warn"} ] },
+    n3:{ titel:"RESSOURCEN FÖRDERN", text:"Frau Klein kann sich ein wenig mitbewegen. Wie gehst du vor?", optionen:[
+      {text:"Eigenbewegung fördern, zu kleinen Lagewechseln anleiten, Bewegung in den Alltag einbauen, Maßnahmen dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Ihr alles abnehmen, sie soll sich gar nicht anstrengen", ziel:"end_mittel", fb:"Auch kleine Eigenbewegung ist wertvoll – Ressourcen fördern statt komplett abnehmen.", typ:"warn"} ] },
+    bad_massage:{ titel:"REAKTION", text:"Nach dem Massieren wird die Stelle noch röter und empfindlicher. Wie reagierst du?", optionen:[
+      {text:"Massage sofort beenden, Stelle druckentlasten, beobachten/dokumentieren und melden", ziel:"end_mittel", fb:"Nicht massieren, sondern entlasten.", typ:"warn"},
+      {text:"Weiter massieren, das muss sich erst 'durchbluten'", ziel:"end_schlecht", fb:"Fortgesetzte Reibung und Druck schädigen die Haut weiter.", typ:"fehler"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Zwei Tage später ist aus der Rötung eine offene Hautstelle geworden. Reaktion?", optionen:[
+      {text:"Sofort melden/dokumentieren, konsequent druckentlasten, Wundversorgung nach AO", ziel:"end_mittel", fb:"Frühe Prophylaxe hätte das verhindert.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Aus der unbehandelten Druckstelle wird ein Dekubitus.", typ:"fehler"} ] },
+    bad_donut:{ titel:"REAKTION", text:"Unter dem punktuellen Kissen entsteht ein neuer Druckpunkt. Reaktion?", optionen:[
+      {text:"Auf flächige Entlastung und regelmäßigen Lagewechsel umstellen, Haut beobachten", ziel:"end_mittel", fb:"Flächig entlasten statt punktuell.", typ:"warn"},
+      {text:"Das Kissen noch fester unterstopfen", ziel:"end_schlecht", fb:"Der punktuelle Druck verschlimmert die Gefährdung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Rötung bildet sich zurück, die Haut bleibt intakt.", fazit:"Dekubitusprophylaxe: gefährdete Haut mit dem Fingertest prüfen (nicht wegdrückbar = Alarm), nicht massieren, konsequent Druck entlasten (Lagewechsel/Bewegung), Haut pflegen und trocken halten, Eigenbewegung fördern und alles dokumentieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Hautstelle bleibt gefährdet – mit konsequenter Entlastung lässt sich Schlimmeres vermeiden.", fazit:"Merke: gefährdete Haut nie massieren, früh und konsequent durch Lagewechsel/Bewegung entlasten, beobachten und dokumentieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es ist ein Dekubitus entstanden, der nun aufwendig behandelt werden muss.", fazit:"Merke: Rötungen bei Bettlägerigkeit sind ein Alarmzeichen – Fingertest, keine Massage, sofort Druck entlasten und melden." } }
+},
+{ id:"grd_sturz", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🚶", farbe:"#34d399", titel:"Sicher auf den Beinen", schwere:"Grundlagen", jahr:1,
+  vignette:"Herr Berg (78) ist nach einem Infekt geschwächt, etwas unsicher beim Gehen und möchte nachts allein zur Toilette. Der Boden ist teils mit Kabeln und einem Teppich belegt.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"EINSCHÄTZEN", text:"Wie schätzt du das Sturzrisiko ein und reagierst?", optionen:[
+      {text:"Risiko erkennen (Schwäche, Unsicherheit, nächtlicher Toilettengang), Umfeld sichern, Maßnahmen mit ihm besprechen, im Team melden/dokumentieren", ziel:"n2", fb:"Risikofaktoren erkennen und gezielt vorbeugen ist der richtige Einstieg.", typ:"gut"},
+      {text:"Ein Bettgitter hochziehen und ihn nachts 'im Bett halten'", ziel:"bad_fixierung", fb:"Freiheitsentziehende Maßnahmen sind kein Standard-Sturzschutz (rechtlich/ethisch heikel, Verletzungsgefahr) – erst Umfeld und Begleitung.", typ:"fehler"},
+      {text:"Nichts tun, er ist erwachsen und entscheidet selbst", ziel:"bad_nichts", fb:"Selbstbestimmung ja – aber Risiken aktiv ansprechen und das Umfeld sichern gehört zur Fürsorge.", typ:"warn"} ] },
+    n2:{ titel:"UMFELD SICHERN", text:"Was ist eine sinnvolle Maßnahme?", optionen:[
+      {text:"Stolperfallen beseitigen (Kabel/Teppich), Nachtlicht, Rufanlage in Reichweite, Gehhilfe bereitstellen, Weg frei halten", ziel:"n3", fb:"Ein sicheres, gut beleuchtetes Umfeld senkt das Sturzrisiko deutlich.", typ:"gut"},
+      {text:"Den Toilettengang verbieten und einen Dauerkatheter vorschlagen", ziel:"bad_kath", fb:"Das ist unverhältnismäßig – Wege sichern und begleiten statt einschränken.", typ:"warn"} ] },
+    n3:{ titel:"BEGLEITEN", text:"Nachts klingelt er, um zur Toilette zu gehen. Wie gehst du vor?", optionen:[
+      {text:"Zeitnah kommen, beim Aufstehen/Gehen begleiten, Tempo anpassen, festes Schuhwerk/Gehhilfe nutzen, Selbstständigkeit fördern", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Sagen, er soll schnell allein gehen, du hast keine Zeit", ziel:"end_schlecht", fb:"Allein und gehetzt ist die Sturzgefahr am höchsten.", typ:"fehler"} ] },
+    bad_fixierung:{ titel:"REAKTION", text:"Er versucht, über das Bettgitter zu steigen. Reaktion?", optionen:[
+      {text:"Gitter herunter, Umfeld sichern, Begleitung/Rufanlage anbieten, mit Team/Arzt besprechen", ziel:"end_mittel", fb:"Das Gitter erhöhte hier die Gefahr.", typ:"warn"},
+      {text:"Gitter oben lassen", ziel:"end_schlecht", fb:"Sturz aus größerer Höhe beim Übersteigen.", typ:"fehler"} ] },
+    bad_nichts:{ titel:"REAKTION", text:"In der Nacht stürzt Herr Berg auf dem Weg zur Toilette. Reaktion?", optionen:[
+      {text:"Versorgen/einschätzen, melden und dokumentieren, jetzt Umfeld sichern und Begleitung anbieten", ziel:"end_mittel", fb:"Vorbeugung hätte den Sturz vermeiden können.", typ:"warn"},
+      {text:"Weiterhin nichts ändern", ziel:"end_schlecht", fb:"Wiederholte Stürze drohen.", typ:"fehler"} ] },
+    bad_kath:{ titel:"REAKTION", text:"Herr Berg lehnt den Katheter ab und ist verärgert. Reaktion?", optionen:[
+      {text:"Entschuldigen, Wege sichern und begleiten statt einschränken, Selbstbestimmung achten", ziel:"end_mittel", fb:"Begleitung statt Einschränkung.", typ:"warn"},
+      {text:"Auf dem Katheter bestehen", ziel:"end_schlecht", fb:"Unnötige, belastende Maßnahme und Vertrauensverlust.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr Berg kommt sicher zur Toilette, fühlt sich ernst genommen und stürzt nicht.", fazit:"Sturzprophylaxe: Risikofaktoren erkennen (Schwäche, Unsicherheit, nächtliche Wege), Umfeld sichern (Stolperfallen weg, Licht, Rufanlage, Hilfsmittel), zeitnah begleiten und Tempo anpassen, Selbstbestimmung achten – freiheitsentziehende Maßnahmen sind kein Standard-Sturzschutz." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es ist noch einmal gut gegangen – mit Vorbeugung lässt sich der nächste Sturz vermeiden.", fazit:"Merke: Umfeld sichern und begleiten statt einschränken; Bettgitter/Fixierung sind kein Standard-Sturzschutz." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Herr Berg ist gestürzt und hat sich verletzt.", fazit:"Merke: Sturzrisiko aktiv erkennen, Stolperfallen beseitigen, zeitnah begleiten – allein und gehetzt ist die Gefahr am größten." } }
+},
+{ id:"grd_vitalzeichen", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🌡️", farbe:"#34d399", titel:"Werte deuten und melden", schwere:"Grundlagen", jahr:1,
+  vignette:"Bei der Routinekontrolle von Frau Sander (70, 2. Tag nach OP) misst du: Temperatur 38,9 °C, Puls 104/min. Sie wirkt matt und klagt über Unwohlsein.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"BEOBACHTEN", text:"Wie gehst du mit dem auffälligen Wert um?", optionen:[
+      {text:"Werte vollständig erfassen (Temp, Puls, RR, Atmung, ggf. SpO₂), Allgemeinzustand beobachten, dokumentieren und zeitnah an Pflegefachkraft/Arzt melden", ziel:"n2", fb:"Auffällige Werte vollständig erfassen, dokumentieren und melden – richtig.", typ:"gut"},
+      {text:"Den Wert ignorieren, eine einzelne Messung sagt nichts aus", ziel:"bad_ignore", fb:"Fieber plus erhöhter Puls am OP-Tag ist ein Warnzeichen – nicht ignorieren.", typ:"fehler"},
+      {text:"Eigenmächtig ein fiebersenkendes Medikament aus dem Schrank geben", ziel:"bad_med", fb:"Medikamente gibt man nicht eigenmächtig – erst melden, Gabe nur nach AO.", typ:"fehler"} ] },
+    n2:{ titel:"MELDEN", text:"Was gehört zu einer guten Weitergabe?", optionen:[
+      {text:"Strukturiert melden: wer/was/seit wann, gemessene Werte, Allgemeinzustand, Auffälligkeiten – sachlich und vollständig", ziel:"n3", fb:"Eine klare, strukturierte Übergabe hilft, schnell richtig zu reagieren.", typ:"gut"},
+      {text:"Nur kurz 'der geht's nicht gut' sagen, ohne Werte", ziel:"bad_vage", fb:"Ohne konkrete Werte kann niemand richtig einschätzen.", typ:"warn"} ] },
+    n3:{ titel:"ÜBERWACHEN", text:"Bis zur ärztlichen Anordnung – wie verhältst du dich?", optionen:[
+      {text:"Patientin im Blick behalten, Werte nach Vorgabe erneut kontrollieren, auf Verschlechterung achten, für Wohlbefinden sorgen, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Dich anderem zuwenden und nicht mehr nachschauen", ziel:"end_mittel", fb:"Bei auffälligen Werten ist Nachkontrolle wichtig.", typ:"warn"} ] },
+    bad_ignore:{ titel:"REAKTION", text:"Eine Stunde später ist Frau Sander deutlich schlechter. Reaktion?", optionen:[
+      {text:"Sofort Werte erfassen, Allgemeinzustand beobachten, umgehend melden und dokumentieren", ziel:"end_mittel", fb:"Frühes Melden ist wichtig.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Die Verschlechterung wird zu spät bemerkt.", typ:"fehler"} ] },
+    bad_med:{ titel:"REAKTION", text:"Die Fachkraft fragt, was du gegeben hast. Reaktion?", optionen:[
+      {text:"Offen berichten, sofort melden/dokumentieren, künftig nur nach AO geben", ziel:"end_mittel", fb:"Transparenz und Anordnung beachten.", typ:"warn"},
+      {text:"Die Gabe verschweigen", ziel:"end_schlecht", fb:"Verschweigen gefährdet die Patientin und ist ein schwerer Fehler.", typ:"fehler"} ] },
+    bad_vage:{ titel:"REAKTION", text:"Die Fachkraft fragt nach den genauen Werten. Reaktion?", optionen:[
+      {text:"Werte vollständig nachreichen, strukturiert melden", ziel:"end_mittel", fb:"Konkrete Angaben machen.", typ:"warn"},
+      {text:"Achselzucken, 'weiß nicht genau'", ziel:"end_schlecht", fb:"Ohne Daten ist keine gute Entscheidung möglich.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Werte werden rechtzeitig eingeordnet und behandelt – Frau Sander ist gut versorgt.", fazit:"Vitalzeichen: auffällige Werte vollständig erfassen (Temp, Puls, RR, Atmung, ggf. SpO₂), keine eigenmächtige Medikamentengabe, strukturiert und mit konkreten Werten melden, dokumentieren und nachkontrollieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende wurde reagiert – schneller und genauer wäre besser gewesen.", fazit:"Merke: auffällige Werte zeitnah, konkret und strukturiert melden und nachkontrollieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Verschlechterung wurde zu spät erkannt.", fazit:"Merke: Vitalzeichen-Auffälligkeiten nie ignorieren oder verschweigen, keine eigenmächtige Medikamentengabe, sofort melden." } }
+},
+{ id:"grd_aufnahme", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"💬", farbe:"#34d399", titel:"Ankommen und Vertrauen schaffen", schwere:"Grundlagen", jahr:1,
+  vignette:"Frau Yilmaz (68) wird zur geplanten OP aufgenommen. Sie wirkt angespannt, spricht leise, hat viele Fragen und schämt sich, dass sie Hilfe braucht.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"BEGEGNUNG", text:"Wie gestaltest du das Aufnahmegespräch?", optionen:[
+      {text:"Sich vorstellen, freundlich zugewandt sein, Zeit nehmen, aktiv zuhören, in verständlicher Sprache erklären, Fragen ernst nehmen", ziel:"n2", fb:"Eine wertschätzende, verständliche Kommunikation schafft Vertrauen.", typ:"gut"},
+      {text:"Über ihren Kopf hinweg mit den Angehörigen reden statt mit ihr", ziel:"bad_ueber", fb:"Sprich mit der Patientin selbst (Respekt/Autonomie) – Angehörige einbeziehen, aber nicht ersetzen.", typ:"fehler"},
+      {text:"Schnell die Checkliste abarbeiten und Fragen abwürgen, du hast viel zu tun", ziel:"bad_rush", fb:"Auch unter Zeitdruck kurz, aber zugewandt – das nimmt Angst und beugt Missverständnissen vor.", typ:"warn"} ] },
+    n2:{ titel:"VERSTÄNDNIS SICHERN", text:"Sie versteht einen Fachbegriff nicht. Wie reagierst du?", optionen:[
+      {text:"In einfacher Sprache erklären, nachfragen ob es verständlich war, bei Sprachbarriere Hilfen anbieten (z. B. Dolmetscher nach Möglichkeit)", ziel:"n3", fb:"Verständnis sichern statt Fachjargon.", typ:"gut"},
+      {text:"Den Begriff genauso wiederholen, nur lauter", ziel:"bad_laut", fb:"Lauter ist nicht verständlicher – einfache Worte wählen.", typ:"warn"} ] },
+    n3:{ titel:"WÜRDE", text:"Sie schämt sich, dass sie beim Umziehen Hilfe braucht. Wie gehst du vor?", optionen:[
+      {text:"Verständnis zeigen, Intimsphäre wahren (Sichtschutz, ruhig erklären), Selbstständigkeit fördern, nur so viel helfen wie nötig", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Es als 'nicht so schlimm' abtun und einfach loslegen", ziel:"end_mittel", fb:"Gefühle ernst nehmen und Würde aktiv schützen.", typ:"warn"} ] },
+    bad_ueber:{ titel:"REAKTION", text:"Frau Yilmaz fühlt sich übergangen und zieht sich zurück. Reaktion?", optionen:[
+      {text:"Dich ihr direkt zuwenden, sie einbeziehen, dich entschuldigen", ziel:"end_mittel", fb:"Mit der Patientin selbst sprechen.", typ:"warn"},
+      {text:"Weiter nur mit den Angehörigen reden", ziel:"end_schlecht", fb:"Das verletzt Autonomie und Vertrauen.", typ:"fehler"} ] },
+    bad_rush:{ titel:"REAKTION", text:"Frau Yilmaz wird noch verschlossener und ängstlicher. Reaktion?", optionen:[
+      {text:"Kurz innehalten, zugewandt nachfragen, wichtige Fragen klären, beruhigen", ziel:"end_mittel", fb:"Zuwendung nimmt Angst.", typ:"warn"},
+      {text:"Weiter durchhetzen", ziel:"end_schlecht", fb:"Angst und Misstrauen wachsen, wichtige Infos gehen verloren.", typ:"fehler"} ] },
+    bad_laut:{ titel:"REAKTION", text:"Sie versteht es weiterhin nicht und wirkt verunsichert. Reaktion?", optionen:[
+      {text:"Mit einfachen Worten und Beispielen erklären, Verständnis prüfen, Hilfen anbieten", ziel:"end_mittel", fb:"Sprache anpassen.", typ:"warn"},
+      {text:"Genervt aufgeben", ziel:"end_schlecht", fb:"Die Patientin bleibt uninformiert und ängstlich.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau Yilmaz fühlt sich ernst genommen, ist informiert und deutlich ruhiger.", fazit:"Kommunikation/Aufnahme: sich vorstellen, Zeit nehmen, aktiv zuhören, in einfacher Sprache erklären und Verständnis sichern, mit der Patientin selbst sprechen (Autonomie), Gefühle ernst nehmen, Intimsphäre und Würde schützen, Selbstständigkeit fördern." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Das Gespräch gelingt am Ende – mit mehr Zuwendung wäre es leichter gewesen.", fazit:"Merke: zugewandt und verständlich kommunizieren, mit der Patientin selbst, Gefühle ernst nehmen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Frau Yilmaz bleibt ängstlich, schlecht informiert und verunsichert.", fazit:"Merke: nicht über den Kopf hinweg reden, nicht durchhetzen – zuhören, einfach erklären, Verständnis sichern." } }
+},
+{ id:"grd_koerperpflege", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🧼", farbe:"#34d399", titel:"Körperpflege mit Würde", schwere:"Grundlagen", jahr:1,
+  vignette:"Du unterstützt Herrn Os (80) bei der morgendlichen Körperpflege. Gesicht und Arme kann er selbst waschen, am Rücken und an den Beinen braucht er Hilfe.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"HALTUNG", text:"Wie gehst du die Körperpflege an?", optionen:[
+      {text:"Ressourcen nutzen: ihn selbst waschen lassen, was er kann; nur unterstützen, wo nötig; vorher erklären und Einverständnis einholen", ziel:"n2", fb:"Aktivierende Pflege fördert Selbstständigkeit und Würde.", typ:"gut"},
+      {text:"Bei offener Tür und ohne Vorankündigung loslegen", ziel:"bad_tuer", fb:"Intimsphäre wahren: Tür/Sichtschutz, vorher erklären und um Erlaubnis fragen.", typ:"fehler"},
+      {text:"Alles komplett übernehmen, das geht schneller", ziel:"bad_uebernahme", fb:"Komplettübernahme baut Selbstständigkeit ab – nur so viel helfen wie nötig.", typ:"warn"} ] },
+    n2:{ titel:"INTIMSPHÄRE", text:"Worauf achtest du während der Pflege?", optionen:[
+      {text:"Sichtschutz, nur den Bereich freilegen, der gewaschen wird, angenehme Wassertemperatur, Privatsphäre schützen, Hautzustand beobachten", ziel:"n3", fb:"Intimsphäre und Beobachtung gehören zusammen.", typ:"gut"},
+      {text:"Ihn länger unbedeckt liegen lassen und nebenbei mit Kollegen plaudern", ziel:"bad_bloss", fb:"Das verletzt Würde und Schamgefühl – Privatsphäre konsequent schützen.", typ:"warn"} ] },
+    n3:{ titel:"BEOBACHTEN", text:"Beim Waschen fällt dir eine gerötete Hautstelle am Rücken auf. Wie reagierst du?", optionen:[
+      {text:"Hautstelle beobachten/dokumentieren, melden, auf Druckentlastung achten, Pflege schonend fortsetzen", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nichts sagen, das ist sicher nichts", ziel:"end_mittel", fb:"Hautveränderungen gehören beobachtet, dokumentiert und gemeldet.", typ:"warn"} ] },
+    bad_tuer:{ titel:"REAKTION", text:"Herr Os ist sichtlich beschämt und unwohl. Reaktion?", optionen:[
+      {text:"Sofort Sichtschutz/Tür, entschuldigen, erklären und Erlaubnis einholen", ziel:"end_mittel", fb:"Intimsphäre schützen.", typ:"warn"},
+      {text:"Einfach weitermachen", ziel:"end_schlecht", fb:"Das verletzt Würde und Vertrauen.", typ:"fehler"} ] },
+    bad_uebernahme:{ titel:"REAKTION", text:"Nach Wochen kann Herr Os immer weniger selbst. Reaktion?", optionen:[
+      {text:"Wieder aktivieren: ihn tun lassen, was möglich ist, gezielt fördern", ziel:"end_mittel", fb:"Ressourcen fördern statt abbauen.", typ:"warn"},
+      {text:"Weiter alles abnehmen", ziel:"end_schlecht", fb:"Erlernte Hilflosigkeit und Verlust an Selbstständigkeit.", typ:"fehler"} ] },
+    bad_bloss:{ titel:"REAKTION", text:"Herr Os friert und fühlt sich bloßgestellt. Reaktion?", optionen:[
+      {text:"Sofort zudecken, nur Nötiges freilegen, das Gespräch auf ihn richten", ziel:"end_mittel", fb:"Privatsphäre und Wärme.", typ:"warn"},
+      {text:"Weiter so", ziel:"end_schlecht", fb:"Auskühlung und Scham.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr Os fühlt sich würdevoll versorgt, bleibt aktiv, und die Hautstelle wird im Blick behalten.", fazit:"Körperpflege: ressourcenorientiert arbeiten (selbst machen lassen, was geht, nur nötige Hilfe), vorher erklären und Einverständnis einholen, Intimsphäre und Würde schützen (Sichtschutz, nur Nötiges freilegen, angenehme Temperatur), Hautzustand beobachten, dokumentieren und melden." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Pflege gelingt – Würde und Ressourcen verdienen mehr Aufmerksamkeit.", fazit:"Merke: Intimsphäre schützen, Selbstständigkeit fördern, Hautveränderungen melden." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Herr Os fühlt sich entwürdigt und wird zunehmend abhängig.", fazit:"Merke: nie ohne Ankündigung/Sichtschutz, nicht alles abnehmen – Würde und Ressourcen schützen." } }
+},
+{ id:"grd_pneumonie", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🫁", farbe:"#34d399", titel:"Atmen nach der OP", schwere:"Grundlagen", jahr:1,
+  vignette:"Frau Lang (72) liegt nach einer Bauch-OP im Bett. Wegen Schmerzen atmet sie flach, hustet kaum und möchte nur liegen bleiben.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"RISIKO ERKENNEN", text:"Warum ist das ein Problem und was tust du?", optionen:[
+      {text:"Pneumoniegefahr erkennen (flache Atmung, wenig Husten, Immobilität) – Atmung fördern: aufrechte Position, zu tiefem Atmen anregen, Schmerz ansprechen/melden", ziel:"n2", fb:"Flache Atmung plus Immobilität begünstigen eine Lungenentzündung – gezielt vorbeugen.", typ:"gut"},
+      {text:"Ihr eigenmächtig ein Hustenmittel geben, damit Ruhe ist", ziel:"bad_med", fb:"Husten ist hier schützend; Medikamente nur nach AO – nicht eigenmächtig.", typ:"fehler"},
+      {text:"Sie liegen und flach atmen lassen, Schonung ist am besten", ziel:"bad_schon", fb:"Reine Schonung erhöht das Pneumonierisiko – aktivierende Atem- und Bewegungsförderung ist richtig.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Welche Maßnahme fördert die Belüftung der Lunge?", optionen:[
+      {text:"Oberkörper hoch/aufsetzen, tiefe Atemzüge und Abhusten anleiten, Atemübung/Hilfsmittel nach Vorgabe, regelmäßig mobilisieren", ziel:"n3", fb:"Aufrechte Position, tiefe Atmung und Mobilisation belüften die Lunge.", typ:"gut"},
+      {text:"Sie flach hinlegen und die Decke fest bis zum Hals ziehen", ziel:"bad_flach", fb:"Flachlage erschwert die Atmung – Oberkörper hoch.", typ:"warn"} ] },
+    n3:{ titel:"SCHMERZ & MOBILISATION", text:"Sie traut sich wegen Schmerzen nicht zu husten oder zu bewegen. Wie hilfst du?", optionen:[
+      {text:"Schmerz ernst nehmen und melden (Therapie nach AO), Wunde beim Abhusten stützen lassen, schrittweise mobilisieren, motivieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Ihr sagen, sie soll sich zusammenreißen", ziel:"end_mittel", fb:"Schmerz ernst nehmen – sonst bleibt die Atmung flach.", typ:"warn"} ] },
+    bad_med:{ titel:"REAKTION", text:"Die Fachkraft bemerkt das eigenmächtig gegebene Mittel. Reaktion?", optionen:[
+      {text:"Offen berichten, melden/dokumentieren, künftig nur nach AO", ziel:"end_mittel", fb:"Keine eigenmächtige Gabe.", typ:"warn"},
+      {text:"Es verschweigen", ziel:"end_schlecht", fb:"Das gefährdet die Patientin, schwerer Fehler.", typ:"fehler"} ] },
+    bad_schon:{ titel:"REAKTION", text:"Nach Tagen bekommt Frau Lang Fieber und Husten mit Auswurf. Reaktion?", optionen:[
+      {text:"Werte/Atmung erfassen, melden/dokumentieren, jetzt Atmung fördern und mobilisieren (Therapie nach AO)", ziel:"end_mittel", fb:"Vorbeugung hätte geholfen.", typ:"warn"},
+      {text:"Weiter nur liegen lassen", ziel:"end_schlecht", fb:"Eine Pneumonie entwickelt sich.", typ:"fehler"} ] },
+    bad_flach:{ titel:"REAKTION", text:"Frau Lang bekommt flach liegend schlechter Luft. Reaktion?", optionen:[
+      {text:"Oberkörper hoch, beruhigen, Atmung beobachten, melden", ziel:"end_mittel", fb:"Aufrechte Position.", typ:"warn"},
+      {text:"Weiter flach lassen", ziel:"end_schlecht", fb:"Die Atmung verschlechtert sich.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau Lang atmet tiefer, hustet ab und wird mobil – kein Atemwegsinfekt.", fazit:"Pneumonieprophylaxe: Risiko erkennen (flache Atmung, wenig Husten, Immobilität), Oberkörper hoch, tiefe Atmung und Abhusten anleiten (Wunde stützen), regelmäßig mobilisieren, Schmerz ernst nehmen und melden (Therapie nach AO) – keine eigenmächtige Medikamentengabe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es geht gut aus – konsequente Atem- und Bewegungsförderung wäre besser gewesen.", fazit:"Merke: Oberkörper hoch, tief atmen/abhusten, mobilisieren, Schmerz ernst nehmen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Frau Lang entwickelt eine Lungenentzündung.", fazit:"Merke: nach OP nicht nur schonen – aufrechte Position, Atmung fördern, mobilisieren, Schmerz behandeln lassen." } }
+},
+{ id:"grd_exsikkose", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"💧", farbe:"#34d399", titel:"Genug trinken im Alter", schwere:"Grundlagen", jahr:1,
+  vignette:"Frau Vogt (86) im Pflegeheim wirkt müder als sonst, ihre Lippen sind trocken, die Haut steht in einer Falte kurz 'stehen', und sie hat heute kaum etwas getrunken.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"BEOBACHTEN", text:"Welche Zeichen deuten auf Flüssigkeitsmangel und wie reagierst du?", optionen:[
+      {text:"Exsikkose-Zeichen erkennen (trockene Schleimhäute, stehende Hautfalte, Müdigkeit, wenig Trinken), Trinken anbieten, Ein-/Ausfuhr im Blick, melden/dokumentieren", ziel:"n2", fb:"Diese Zeichen sprechen für Flüssigkeitsmangel – gegensteuern und melden.", typ:"gut"},
+      {text:"Davon ausgehen, dass alte Menschen eben wenig brauchen", ziel:"bad_mythos", fb:"Auch ältere Menschen brauchen ausreichend Flüssigkeit – das Durstgefühl ist im Alter oft vermindert.", typ:"fehler"},
+      {text:"Abwarten, vielleicht trinkt sie später von allein", ziel:"bad_wait", fb:"Bei Zeichen von Austrocknung nicht abwarten – aktiv anbieten und beobachten.", typ:"warn"} ] },
+    n2:{ titel:"TRINKEN FÖRDERN", text:"Wie förderst du, dass sie mehr trinkt?", optionen:[
+      {text:"Lieblingsgetränke in Reichweite, regelmäßig kleine Mengen anbieten und erinnern, beim Trinken helfen, Trinkmenge erfassen", ziel:"n3", fb:"Niederschwellige, regelmäßige Trinkangebote helfen am meisten.", typ:"gut"},
+      {text:"Sie zwingen, schnell einen Liter auf einmal zu trinken", ziel:"bad_zwang", fb:"Zwang und große Mengen auf einmal sind ungünstig – lieber regelmäßig kleine Mengen.", typ:"warn"} ] },
+    n3:{ titel:"MELDEN", text:"Trotz Angebot trinkt sie weiterhin sehr wenig und wird zunehmend matt. Wie gehst du vor?", optionen:[
+      {text:"An Pflegefachkraft/Arzt melden, Beobachtungen dokumentieren, weiter Trinken anbieten, auf Verschlechterung achten", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Es bei dir behalten und nichts melden", ziel:"end_mittel", fb:"Anhaltend wenig Trinken plus Verschlechterung gehört gemeldet.", typ:"warn"} ] },
+    bad_mythos:{ titel:"REAKTION", text:"Frau Vogt wird verwirrter und schwächer (zunehmende Austrocknung). Reaktion?", optionen:[
+      {text:"Sofort Trinken anbieten, Zeichen erfassen, melden und dokumentieren", ziel:"end_mittel", fb:"Frühes Gegensteuern ist wichtig.", typ:"warn"},
+      {text:"Weiter nichts unternehmen", ziel:"end_schlecht", fb:"Die Austrocknung verschlechtert ihren Zustand erheblich.", typ:"fehler"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Stunden später ist sie deutlich schwächer und verwirrt. Reaktion?", optionen:[
+      {text:"Trinken anbieten und unterstützen, Zeichen erfassen, umgehend melden", ziel:"end_mittel", fb:"Nicht abwarten.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Der Zustand verschlechtert sich.", typ:"fehler"} ] },
+    bad_zwang:{ titel:"REAKTION", text:"Frau Vogt verschluckt sich und wehrt sich. Reaktion?", optionen:[
+      {text:"Aufhören zu drängen, kleine Mengen ruhig anbieten, aufrecht und sicher trinken lassen, beobachten", ziel:"end_mittel", fb:"Kein Zwang – Aspirationsgefahr.", typ:"warn"},
+      {text:"Weiter zum schnellen Trinken drängen", ziel:"end_schlecht", fb:"Verschlucken/Aspiration und Abwehr.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau Vogt trinkt wieder mehr, der Zustand stabilisiert sich, alles ist dokumentiert und gemeldet.", fazit:"Flüssigkeitsmangel im Alter: Zeichen erkennen (trockene Schleimhäute, stehende Hautfalte, Müdigkeit/Verwirrtheit, wenig Trinken), regelmäßig kleine Mengen anbieten und erinnern, beim Trinken helfen, Trinkmenge/Ein- und Ausfuhr erfassen, bei anhaltend wenig Trinken oder Verschlechterung melden und dokumentieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende wird gegengesteuert – früher und konsequenter wäre besser gewesen.", fazit:"Merke: Trinken aktiv und regelmäßig anbieten, Menge erfassen, bei Verschlechterung melden." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Frau Vogt trocknet weiter aus und verschlechtert sich deutlich.", fazit:"Merke: Austrocknungszeichen ernst nehmen, aktiv Trinken anbieten (kein Zwang), beobachten und melden." } }
+},
+{ id:"grd_ernaehrung", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🍽️", farbe:"#34d399", titel:"Wenn der Appetit fehlt", schwere:"Grundlagen", jahr:1,
+  vignette:"Herr Frey (79) lässt seit Tagen viel auf dem Teller liegen, hat an Gewicht verloren und sagt, das Essen schmecke ihm nicht und das Kauen falle schwer.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"BEOBACHTEN", text:"Wie gehst du mit den Hinweisen auf Mangelernährung um?", optionen:[
+      {text:"Warnzeichen erkennen (wenig Essen, Gewichtsverlust, Kauprobleme), Essmenge/Gewicht beobachten und dokumentieren, Ursachen ansprechen, melden", ziel:"n2", fb:"Mangelernährung früh erkennen und gegensteuern.", typ:"gut"},
+      {text:"Den vollen Teller einfach kommentarlos abräumen", ziel:"bad_abraeumen", fb:"Nicht übergehen – wenig Essen und Gewichtsverlust sind ernst zu nehmen und zu melden.", typ:"fehler"},
+      {text:"Ihn drängen, den Teller schnell leer zu essen", ziel:"bad_drang", fb:"Druck verstärkt die Ablehnung – Ursachen klären und das Essen anpassen.", typ:"warn"} ] },
+    n2:{ titel:"ANPASSEN", text:"Was hilft konkret bei fehlendem Appetit und Kauproblemen?", optionen:[
+      {text:"Wünsche/Vorlieben berücksichtigen, Konsistenz anpassen (z. B. weiche Kost), kleine appetitliche Portionen, in Ruhe und aufrecht essen, ggf. Hilfsmittel", ziel:"n3", fb:"Kost an Bedürfnisse anpassen und eine angenehme Esssituation schaffen.", typ:"gut"},
+      {text:"Immer dasselbe in großer Menge servieren", ziel:"bad_menge", fb:"Große, immer gleiche Portionen schrecken eher ab – lieber klein, abwechslungsreich, passend.", typ:"warn"} ] },
+    n3:{ titel:"MELDEN & BEGLEITEN", text:"Trotzdem isst er weiter wenig und nimmt ab. Wie gehst du vor?", optionen:[
+      {text:"An Pflegefachkraft/Arzt melden, Essprotokoll/Gewicht dokumentieren, weitere Maßnahmen nach Vorgabe, weiter unterstützen", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Es als 'Alter' hinnehmen und nichts weiter tun", ziel:"end_mittel", fb:"Anhaltender Gewichtsverlust gehört gemeldet und abgeklärt.", typ:"warn"} ] },
+    bad_abraeumen:{ titel:"REAKTION", text:"Nach weiteren Tagen hat Herr Frey deutlich abgenommen und ist schwächer. Reaktion?", optionen:[
+      {text:"Essmenge/Gewicht erfassen, Ursachen ansprechen, melden/dokumentieren, Kost anpassen", ziel:"end_mittel", fb:"Frühes Erkennen ist wichtig.", typ:"warn"},
+      {text:"Weiter nichts dokumentieren oder melden", ziel:"end_schlecht", fb:"Mangelernährung schreitet unbemerkt fort.", typ:"fehler"} ] },
+    bad_drang:{ titel:"REAKTION", text:"Herr Frey ist verärgert und isst aus Trotz noch weniger. Reaktion?", optionen:[
+      {text:"Druck rausnehmen, Wünsche erfragen, Kost anpassen, angenehme Esssituation schaffen", ziel:"end_mittel", fb:"Kein Drängen.", typ:"warn"},
+      {text:"Weiter Druck machen", ziel:"end_schlecht", fb:"Ablehnung und weiterer Gewichtsverlust.", typ:"fehler"} ] },
+    bad_menge:{ titel:"REAKTION", text:"Die großen Portionen bleiben fast unberührt. Reaktion?", optionen:[
+      {text:"Auf kleine, appetitliche, abwechslungsreiche Portionen umstellen, Vorlieben beachten", ziel:"end_mittel", fb:"Portionen und Auswahl anpassen.", typ:"warn"},
+      {text:"Weiter große Mengen servieren", ziel:"end_schlecht", fb:"Frustration und weiterhin wenig Nahrung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr Frey isst wieder besser, das Gewicht stabilisiert sich, alles ist dokumentiert und gemeldet.", fazit:"Mangelernährung: Warnzeichen erkennen (wenig Essen, Gewichtsverlust, Kauprobleme), Essmenge und Gewicht beobachten/dokumentieren, Ursachen ansprechen, Kost an Bedürfnisse anpassen (Vorlieben, Konsistenz, kleine appetitliche Portionen, angenehme Esssituation), bei anhaltendem Gewichtsverlust melden und abklären lassen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es bessert sich – früher reagieren und anpassen wäre besser gewesen.", fazit:"Merke: Essmenge/Gewicht beobachten, Kost anpassen, kein Drängen, bei Gewichtsverlust melden." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Herr Frey nimmt weiter ab und wird zunehmend geschwächt.", fazit:"Merke: wenig Essen und Gewichtsverlust nie übergehen oder mit Druck begegnen – beobachten, anpassen, melden." } }
+}
 ];
 
 function navGo(screen) {
