@@ -7840,6 +7840,373 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Es bessert sich – früher reagieren und anpassen wäre besser gewesen.", fazit:"Merke: Essmenge/Gewicht beobachten, Kost anpassen, kein Drängen, bei Gewichtsverlust melden." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Herr Frey nimmt weiter ab und wird zunehmend geschwächt.", fazit:"Merke: wenig Essen und Gewichtsverlust nie übergehen oder mit Druck begegnen – beobachten, anpassen, melden." } }
 }
+
+,
+{ id:"neu_apoplex", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#6366f1", titel:"Plötzliche Halbseitensymptomatik", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient zeigt plötzlich eine hängende Mundpartie, einseitige Armschwäche und verwaschene Sprache. Symptombeginn vor ca. 40 Minuten.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie reagierst du zuerst?", optionen:[
+      {text:"FAST erkennen (Face/Arm/Speech/Time), sofort Stroke-Unit/Notfall alarmieren, genauen Symptombeginn (Zeitfenster!) feststellen, Vitalzeichen, nüchtern lassen", ziel:"n2", fb:"Schlaganfall ist 'time is brain': FAST, Zeitfenster, Team, Patient nüchtern.", typ:"gut"},
+      {text:"Erst abwarten, ob sich die Symptome von selbst bessern", ziel:"bad_wait", fb:"Bei akutem Defizit kein Abwarten – jede Minute zählt (Lyse-Fenster).", typ:"fehler"},
+      {text:"Dem Patienten zur Beruhigung etwas zu trinken geben", ziel:"bad_oral", fb:"Bei Schluckstörung/Schlaganfall droht Aspiration – nüchtern lassen.", typ:"fehler"} ] },
+    n2:{ titel:"DIAGNOSTIK", text:"Was ist jetzt wichtig (AO)?", optionen:[
+      {text:"Rasch CT/Bildgebung (Blutung vs. Ischämie), BZ messen, Vitalzeichen/SpO₂, i.v.-Zugang, auf Lyse/Thrombektomie vorbereiten", ziel:"n3", fb:"BZ messen (Hypoglykämie ahmt Schlaganfall nach!), CT vor Lyse, Vitalwerte.", typ:"gut"},
+      {text:"Sofort den Blutdruck stark senken", ziel:"bad_rr", fb:"Beim akuten ischämischen Schlaganfall wird der Blutdruck nicht vorschnell stark gesenkt – nach Schema/AO.", typ:"warn"} ] },
+    n3:{ titel:"SCHLUCKEN & LAGERUNG", text:"Worauf achtest du in der Pflege?", optionen:[
+      {text:"Nüchtern bis zum Schluck-Screening, Oberkörper ~30°, SpO₂/O₂ nach AO, engmaschiger Neurostatus, Aspirations- und Sturzschutz", ziel:"n4", fb:"Schluck-Screening vor erster oraler Gabe, Oberkörper hoch, Neuromonitoring.", typ:"gut"},
+      {text:"Flach lagern und normal Essen anbieten", ziel:"bad_lag", fb:"Erst Schluck-Screening; flaches Liegen und orale Gabe sind ungünstig bzw. riskant.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du im Verlauf?", optionen:[
+      {text:"Neurostatus, Vitalzeichen/BZ, SpO₂, Schluckfunktion, auf Verschlechterung (Einblutung/Hirndruck) achten, Zeitprotokoll führen", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal den Blutdruck messen", ziel:"end_mittel", fb:"Engmaschiges Neuromonitoring ist nötig.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Nach 30 min Abwarten ist das Defizit unverändert, wertvolle Zeit verstrichen. Reaktion?", optionen:[
+      {text:"Jetzt sofort Stroke-Unit/Notfall, Bildgebung, Zeitfenster dokumentieren", ziel:"end_mittel", fb:"Spät – Zeitfenster teils verstrichen.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Verlorenes Lyse-Fenster.", typ:"fehler"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Der Patient verschluckt sich, hustet, die SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Nahrung/Flüssigkeit stoppen, absaugen, O₂, Oberkörper hoch, nüchtern lassen, Arzt", ziel:"end_mittel", fb:"Aspirationsgefahr – korrigiert.", typ:"warn"},
+      {text:"Weiter trinken lassen", ziel:"end_schlecht", fb:"Aspiration.", typ:"fehler"} ] },
+    bad_rr:{ titel:"REAKTION", text:"Nach forcierter Blutdrucksenkung verschlechtert sich der Neurostatus. Reaktion?", optionen:[
+      {text:"Blutdruckmanagement nach Schema/AO korrigieren, Neurostatus, Arzt", ziel:"end_mittel", fb:"Kein vorschnelles Senken.", typ:"warn"},
+      {text:"Weiter aggressiv senken", ziel:"end_schlecht", fb:"Verschlechterung der Hirndurchblutung.", typ:"fehler"} ] },
+    bad_lag:{ titel:"REAKTION", text:"Nach oraler Gabe in Flachlage verschluckt sich der Patient. Reaktion?", optionen:[
+      {text:"Stoppen, absaugen, Oberkörper hoch, nüchtern, Schluck-Screening abwarten", ziel:"end_mittel", fb:"Korrigiert.", typ:"warn"},
+      {text:"Weiter wie bisher", ziel:"end_schlecht", fb:"Aspirationspneumonie-Gefahr.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Patient kommt rasch zur Bildgebung und Therapie, Komplikationen werden früh erkannt.", fazit:"Akuter Schlaganfall: FAST, Symptombeginn/Zeitfenster, sofort Stroke-Unit; BZ messen (Hypoglykämie als Mimic), CT vor Lyse, Blutdruck nach Schema (nicht vorschnell senken), nüchtern bis Schluck-Screening, Oberkörper 30°, engmaschiges Neuromonitoring." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es wurde reagiert – schneller und konsequenter wäre besser gewesen.", fazit:"Merke: Zeit ist Hirn – sofort alarmieren, nüchtern lassen, Blutdruck nicht vorschnell senken, engmaschig überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Verzögerung/Fehler hat sich der Zustand verschlechtert.", fazit:"Merke: kein Abwarten, keine orale Gabe vor Schluck-Screening, Blutdruck nach AO – beim Schlaganfall zählt jede Minute." } }
+},
+{ id:"neu_status", fach:"neurologie", fachLabel:"Neurologie", icon:"⚡", farbe:"#8b5cf6", titel:"Anhaltender Krampfanfall", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient krampft generalisiert tonisch-klonisch; der Anfall dauert bereits über 5 Minuten an und sistiert nicht.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTMASSNAHMEN", text:"Erstes Vorgehen beim anhaltenden Krampfanfall?", optionen:[
+      {text:"Patient vor Verletzung schützen, nichts in den Mund, soweit möglich Seitenlage, Atemweg/O₂, Dauer messen, Hilfe rufen", ziel:"n2", fb:"Schützen, nichts in den Mund, Atemweg/O₂, Dauer messen, Team.", typ:"gut"},
+      {text:"Den Patienten festhalten und die Zunge mit einem Spatel sichern", ziel:"bad_hold", fb:"Nicht festhalten, nichts in den Mund (Verletzungsgefahr) – nur die Umgebung sichern.", typ:"fehler"},
+      {text:"Erst abwarten, Anfälle hören meist von allein auf", ziel:"bad_wait", fb:"Ab >5 min = Status epilepticus, der durchbrochen werden muss – nicht abwarten.", typ:"fehler"} ] },
+    n2:{ titel:"THERAPIE", text:"Vorgehen (AO)?", optionen:[
+      {text:"Benzodiazepin nach Notfallschema/AO, BZ messen, i.v.-Zugang, O₂, Monitoring, Reanimationsbereitschaft", ziel:"n3", fb:"Benzodiazepin als erste Stufe, BZ (Hypoglykämie!) prüfen.", typ:"gut"},
+      {text:"Sofort hochdosiert mehrere Medikamente gleichzeitig geben", ziel:"bad_over", fb:"Stufenweise nach Schema; unkontrollierte Mehrfachgabe riskiert Atemdepression.", typ:"warn"} ] },
+    n3:{ titel:"NACH DEM ANFALL", text:"Der Anfall sistiert. Worauf achtest du?", optionen:[
+      {text:"Atemweg/Atmung/SpO₂ (postiktale/medikamentöse Atemdepression), Seitenlage, BZ/Vitalzeichen, Ursache abklären, auf erneuten Anfall vorbereitet sein", ziel:"n4", fb:"Nach Benzodiazepin ist Atemdepression möglich – Atemweg sichern.", typ:"gut"},
+      {text:"Sofort mobilisieren und Essen anbieten", ziel:"bad_mob", fb:"Postiktal nicht sofort oral/mobilisieren – Vigilanz und Schlucken beachten.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Vigilanz/Atmung/SpO₂/BZ überwachen, auf erneuten Anfall achten, Auslöser/Antikonvulsiva nach AO, Dokumentation, Sturzschutz", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Die Überwachung sofort beenden", ziel:"end_mittel", fb:"Re-Anfall und Atemdepression sind möglich – weiter überwachen.", typ:"warn"} ] },
+    bad_hold:{ titel:"REAKTION", text:"Beim Festhalten kommt es zu einer Verletzung, der Anfall hält an. Reaktion?", optionen:[
+      {text:"Loslassen, nur die Umgebung sichern, Atemweg/O₂, Benzodiazepin nach AO", ziel:"end_mittel", fb:"Nicht festhalten.", typ:"warn"},
+      {text:"Weiter festhalten", ziel:"end_schlecht", fb:"Verletzung und anhaltender Status.", typ:"fehler"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Nach weiteren Minuten krampft der Patient weiter und wird zyanotisch. Reaktion?", optionen:[
+      {text:"Atemweg/O₂, Benzodiazepin nach AO sofort, Notfallteam, Reanimationsbereitschaft", ziel:"end_mittel", fb:"Spät – der Status muss durchbrochen werden.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Prolongierter Status (lebensbedrohlich).", typ:"fehler"} ] },
+    bad_over:{ titel:"REAKTION", text:"Nach der Mehrfachgabe ist die Atmung flach, die SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Atemweg/Maskenbeatmung, O₂, Monitoring, Antagonist/Intensiv nach AO", ziel:"end_mittel", fb:"Atemdepression durch Übermedikation – korrigiert.", typ:"warn"},
+      {text:"Weiter Medikamente geben", ziel:"end_schlecht", fb:"Atemstillstand.", typ:"fehler"} ] },
+    bad_mob:{ titel:"REAKTION", text:"Beim Aufsetzen/Essen verschluckt sich der noch benommene Patient. Reaktion?", optionen:[
+      {text:"Stoppen, Seitenlage, absaugen, O₂, Vigilanz abwarten", ziel:"end_mittel", fb:"Postiktal vorsichtig.", typ:"warn"},
+      {text:"Weiter essen lassen", ziel:"end_schlecht", fb:"Aspiration.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Anfall wird durchbrochen, die Atmung bleibt gesichert, der Patient wird engmaschig überwacht.", fazit:"Status epilepticus (>5 min): schützen, nichts in den Mund, Atemweg/O₂, Dauer messen; Benzodiazepin nach Schema, BZ prüfen; nach Sistieren Atemweg/Atemdepression beachten, Vigilanz/SpO₂/BZ überwachen, auf erneuten Anfall vorbereitet sein." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende stabil – konsequenter wäre sicherer gewesen.", fazit:"Merke: nicht festhalten, nicht abwarten, Benzodiazepin nach Schema, danach Atmung/Vigilanz überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Abwarten oder Übermedikation ist eine bedrohliche Situation entstanden.", fazit:"Merke: Umgebung sichern (nicht festhalten), Status durchbrechen nach Schema, Atemdepression beachten." } }
+},
+{ id:"neu_sab", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#ef4444", titel:"Vernichtungskopfschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient klagt über einen plötzlichen, noch nie erlebten 'Vernichtungskopfschmerz' (Donnerschlag), dazu Übelkeit, Nackensteife und Lichtscheu.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Erstes Vorgehen?", optionen:[
+      {text:"An Subarachnoidalblutung denken (Donnerschlagkopfschmerz!), sofort Arzt/Notfall, Vitalzeichen/Bewusstsein, Ruhe und Reizabschirmung", ziel:"n2", fb:"Ein Donnerschlagkopfschmerz ist bis zum Beweis des Gegenteils eine SAB.", typ:"gut"},
+      {text:"Als gewöhnliche Migräne einordnen, Schmerzmittel geben und abwarten", ziel:"bad_migraene", fb:"Plötzlicher Vernichtungskopfschmerz ist keine banale Migräne – sofort abklären.", typ:"fehler"} ] },
+    n2:{ titel:"DIAGNOSTIK", text:"Wie weiter (AO)?", optionen:[
+      {text:"Rasche Bildgebung (CT), Vitalzeichen/Neurostatus, Blutdruckmanagement nach AO, reizarme Umgebung, Monitoring", ziel:"n3", fb:"CT, Neuromonitoring, Blutdruck nach AO (Nachblutungsrisiko).", typ:"gut"},
+      {text:"Den Patienten mobilisieren und Pressen/Anstrengung erlauben", ziel:"bad_press", fb:"Pressen/Anstrengung erhöht das Nachblutungsrisiko – Ruhe.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Strenge Ruhe, Reizabschirmung (Licht/Lärm), Oberkörper leicht hoch, Blutdruck-/Neuromonitoring, Stuhlregulierung (Pressen vermeiden), auf Vigilanzabfall achten", ziel:"n4", fb:"Reizabschirmung, auf Nachblutungs-/Hirndruckzeichen achten.", typ:"gut"},
+      {text:"Helles Licht und Aktivierung zur Orientierung", ziel:"bad_reiz", fb:"Reize und Anstrengung sind ungünstig – reizarm und ruhig.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Engmaschig Bewusstsein/Pupillen/Vitalzeichen, auf Nachblutung/Hirndruck/Vasospasmus achten, Bilanz, Intensivüberwachung", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur den Schmerz dokumentieren", ziel:"end_mittel", fb:"Neuromonitoring und Komplikationen im Blick behalten.", typ:"warn"} ] },
+    bad_migraene:{ titel:"REAKTION", text:"Unter Abwarten trübt der Patient zunehmend ein. Reaktion?", optionen:[
+      {text:"Sofort Notfall/CT, Neurostatus/Vitalzeichen, Reizabschirmung, Intensiv", ziel:"end_mittel", fb:"Spät – als Migräne verkannt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Verkannte SAB mit Verschlechterung.", typ:"fehler"} ] },
+    bad_press:{ titel:"REAKTION", text:"Nach Anstrengung/Pressen verschlechtert sich der Patient (Nachblutung?). Reaktion?", optionen:[
+      {text:"Sofort Arzt, strenge Ruhe, Neurostatus/Vitalzeichen, Intensiv", ziel:"end_mittel", fb:"Ruhe und Nachblutungsschutz.", typ:"warn"},
+      {text:"Weiter mobilisieren", ziel:"end_schlecht", fb:"Nachblutung.", typ:"fehler"} ] },
+    bad_reiz:{ titel:"REAKTION", text:"Unter Aktivierung und Helligkeit nimmt die Symptomatik zu. Reaktion?", optionen:[
+      {text:"Reizarme, ruhige Umgebung schaffen, Ruhe, Neuromonitoring", ziel:"end_mittel", fb:"Korrigiert.", typ:"warn"},
+      {text:"Weiter aktivieren", ziel:"end_schlecht", fb:"Verschlechterung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die SAB wird rasch erkannt, der Patient ruhig und überwacht zur weiteren Versorgung gebracht.", fazit:"SAB (Donnerschlagkopfschmerz): sofort abklären (CT), nicht als Migräne abtun; strenge Ruhe, Reizabschirmung, Blutdruck nach AO, Pressen vermeiden, engmaschig Bewusstsein/Pupillen, auf Nachblutung/Hirndruck/Vasospasmus achten, Intensiv." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es wurde reagiert – konsequente Ruhe und Überwachung wären besser gewesen.", fazit:"Merke: Donnerschlagkopfschmerz ernst nehmen, reizarm/ruhig, Blutdruck nach AO, engmaschig überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Blutung wurde verkannt oder verschlimmert.", fazit:"Merke: nie als Migräne abtun, keine Anstrengung/Reize, sofort CT und Ruhe." } }
+},
+{ id:"neu_hirndruck", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#f97316", titel:"Eintrübung mit weiter Pupille", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient mit bekannter intrakranieller Raumforderung wird zunehmend somnolent, klagt über Kopfschmerz und Erbrechen; eine Pupille wird weiter, der Blutdruck steigt, der Puls wird langsam.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Zeichen erhöhten Hirndrucks/drohender Einklemmung (Vigilanzabfall, weite Pupille, Cushing-Reflex: RR hoch/Puls langsam) – Notfall, sofort Arzt, Vitalzeichen/Pupillen, Oberkörper ~30° (Kopf gerade)", ziel:"n2", fb:"Hirndruckzeichen + Cushing-Reflex = Notfall: Oberkörper hoch, Kopf neutral, Arzt sofort.", typ:"gut"},
+      {text:"Als Müdigkeit deuten und schlafen lassen", ziel:"bad_wait", fb:"Vigilanzabfall plus weite Pupille sind Alarmzeichen – nicht abwarten.", typ:"fehler"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Was ist wichtig (AO)?", optionen:[
+      {text:"Oberkörper ~30° hoch, Kopf in Mittelstellung (venösen Abfluss sichern), O₂/Atemweg, hirndrucksteigernde Faktoren meiden, Bildgebung/Intensiv, Medikamente nach AO", ziel:"n3", fb:"Lagerung für venösen Abfluss, Hirndruck senken nach AO, Intensiv.", typ:"gut"},
+      {text:"Kopf tief und flach lagern", ziel:"bad_lag", fb:"Kopftief-/Flachlage erhöht den Hirndruck – Oberkörper hoch, Kopf gerade.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Engmaschig Bewusstsein (GCS)/Pupillen/Vitalzeichen, hirndrucksteigernde Faktoren minimieren (Pressen, Husten, Schmerz, Abknicken des Halses), reizarm, O₂/Normoventilation nach AO", ziel:"n4", fb:"GCS/Pupillen, hirndrucksteigernde Faktoren vermeiden.", typ:"gut"},
+      {text:"Den Patienten kräftig stimulieren und ohne Schutz absaugen", ziel:"bad_stim", fb:"Starke Reize und unsachgemäßes Absaugen steigern den Hirndruck – schonend, nach AO.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Kontinuierlich GCS/Pupillen/Vitalzeichen, auf weitere Verschlechterung/Einklemmung achten, Intensiv, Dokumentation, Arzt sofort bei Veränderung", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur stündlich den Blutdruck messen", ziel:"end_mittel", fb:"Kontinuierliches Neuromonitoring ist nötig.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Patient wird komatös, beide Pupillen verändern sich. Reaktion?", optionen:[
+      {text:"Sofort Notfallteam, Atemweg/O₂, Oberkörper hoch/Kopf gerade, hirndrucksenkende Therapie nach AO, Intensiv", ziel:"end_mittel", fb:"Spät – drohende Einklemmung.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Einklemmung.", typ:"fehler"} ] },
+    bad_lag:{ titel:"REAKTION", text:"In Kopftieflage verschlechtert sich der Zustand. Reaktion?", optionen:[
+      {text:"Sofort Oberkörper ~30° hoch, Kopf neutral, Arzt, Neuromonitoring", ziel:"end_mittel", fb:"Lagerung war falsch – korrigiert.", typ:"warn"},
+      {text:"Weiter flach/Kopf tief", ziel:"end_schlecht", fb:"Hirndruckanstieg.", typ:"fehler"} ] },
+    bad_stim:{ titel:"REAKTION", text:"Nach kräftiger Stimulation/Absaugen verschlechtert sich der Zustand. Reaktion?", optionen:[
+      {text:"Schonend vorgehen, hirndrucksteigernde Reize minimieren, nach AO, Neuromonitoring", ziel:"end_mittel", fb:"Korrigiert.", typ:"warn"},
+      {text:"Weiter forcieren", ziel:"end_schlecht", fb:"Hirndruckkrise.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Hirndruckzeichen werden früh erkannt, der Patient korrekt gelagert und intensivmedizinisch versorgt.", fazit:"Erhöhter Hirndruck/drohende Einklemmung (Vigilanzabfall, weite Pupille, Cushing-Reflex): Notfall – Oberkörper ~30°, Kopf in Mittelstellung (venöser Abfluss), O₂/Atemweg, hirndrucksteigernde Faktoren (Pressen/Husten/Schmerz/Halsknick) vermeiden, kontinuierlich GCS/Pupillen/Vitalzeichen, Therapie nach AO, Intensiv." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Es wurde reagiert – konsequenteres Monitoring/Lagerung wären besser gewesen.", fazit:"Merke: Oberkörper hoch/Kopf gerade, hirndrucksteigernde Reize meiden, kontinuierlich GCS/Pupillen überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Der Hirndruck steigt weiter bis zur drohenden Einklemmung.", fazit:"Merke: Alarmzeichen nicht abwarten, nicht flach/Kopf tief lagern, keine starken Reize – sofort Arzt/Intensiv." } }
+},
+{ id:"neu_myasthen", fach:"neurologie", fachLabel:"Neurologie", icon:"🫁", farbe:"#14b8a6", titel:"Zunehmende Muskelschwäche", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Eine Patientin mit Myasthenia gravis ist zunehmend geschwächt, hat Schluckbeschwerden, eine schwache, näselnde Sprache, Doppelbilder und zunehmende Atemnot.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf myasthene Krise (zunehmende Muskel-/Atemschwäche): Atmung/SpO₂/Schlucken beobachten, Arzt sofort, Aspiration vermeiden (nüchtern bei Schluckstörung), Beatmungsbereitschaft", ziel:"n2", fb:"Die Atemmuskulatur ist gefährdet: Atmung/Schlucken im Fokus, Arzt sofort.", typ:"gut"},
+      {text:"Zur Stärkung erst eine größere Mahlzeit anbieten", ziel:"bad_oral", fb:"Bei Schluckstörung droht Aspiration – nüchtern lassen, Atemweg sichern.", typ:"fehler"} ] },
+    n2:{ titel:"ATMUNG ÜBERWACHEN", text:"Worauf liegt der Fokus (AO)?", optionen:[
+      {text:"Atemfunktion engmaschig (Atemfrequenz, SpO₂, Vitalkapazität), Zeichen der respiratorischen Erschöpfung erkennen, O₂/Beatmungsbereitschaft, Intensiv, Medikation nach AO", ziel:"n3", fb:"Vitalkapazität/Atemarbeit überwachen, rechtzeitig eskalieren.", typ:"gut"},
+      {text:"Nur einmal die SpO₂ messen und die Patientin allein lassen", ziel:"bad_mon", fb:"Bei drohender Ateminsuffizienz engmaschig überwachen, nicht allein lassen.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du noch?", optionen:[
+      {text:"Aspirationsschutz (Schluckstörung!), Oberkörper hoch, Kräfte schonen (Belastung dosieren), Kommunikation sichern, Medikamente exakt nach AO, auf Verschlechterung achten", ziel:"n4", fb:"Aspirationsschutz, Kräfteschonung, Medikamente nach AO.", typ:"gut"},
+      {text:"Zur Mobilisation maximal fordern", ziel:"bad_load", fb:"Überlastung verstärkt die Schwäche – dosiert, Kräfte schonen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Atmung/SpO₂/Vitalkapazität/Schlucken engmaschig, Beatmungsbereitschaft, Medikation nach AO, Intensiv, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Überwachung reduzieren, sobald es etwas besser wirkt", ziel:"end_mittel", fb:"Die Krise kann rasch eskalieren – engmaschig bleiben.", typ:"warn"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Nach der Mahlzeit verschluckt sich die Patientin, die SpO₂ fällt. Reaktion?", optionen:[
+      {text:"Nahrung stoppen, absaugen, O₂, Oberkörper hoch, nüchtern, Arzt, Beatmungsbereitschaft", ziel:"end_mittel", fb:"Aspirationsgefahr – korrigiert.", typ:"warn"},
+      {text:"Weiter essen lassen", ziel:"end_schlecht", fb:"Aspiration bei Atemschwäche.", typ:"fehler"} ] },
+    bad_mon:{ titel:"REAKTION", text:"Unbeobachtet verschlechtert sich die Atmung deutlich. Reaktion?", optionen:[
+      {text:"Sofort Atemweg/O₂, Beatmungsbereitschaft, Notfallteam, Intensiv", ziel:"end_mittel", fb:"Spät – engmaschige Überwachung nötig.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Respiratorische Insuffizienz.", typ:"fehler"} ] },
+    bad_load:{ titel:"REAKTION", text:"Nach Überforderung bricht die Kraft ein, die Atmung verschlechtert sich. Reaktion?", optionen:[
+      {text:"Belastung stoppen, Ruhe, Atmung überwachen, O₂/Beatmungsbereitschaft, Arzt", ziel:"end_mittel", fb:"Kräfte schonen.", typ:"warn"},
+      {text:"Weiter fordern", ziel:"end_schlecht", fb:"Erschöpfung der Atemmuskulatur.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die drohende Ateminsuffizienz wird rechtzeitig erkannt und intensivmedizinisch aufgefangen.", fazit:"Myasthene Krise: Atem- und Schluckmuskulatur gefährdet – Atmung/SpO₂/Vitalkapazität engmaschig, respiratorische Erschöpfung früh erkennen, O₂/Beatmungsbereitschaft, Aspirationsschutz (nüchtern bei Schluckstörung), Kräfte schonen, Medikamente exakt nach AO, Intensiv." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende stabil – engmaschigere Überwachung wäre sicherer gewesen.", fazit:"Merke: Atmung/Vitalkapazität engmaschig, Aspirationsschutz, Kräfte schonen, früh eskalieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Atemmuskulatur erschöpft sich, es kommt zur respiratorischen Insuffizienz.", fazit:"Merke: nicht überfordern, nicht allein lassen, bei Schluckstörung nüchtern – Atmung steht im Mittelpunkt." } }
+},
+{ id:"neu_cauda", fach:"neurologie", fachLabel:"Neurologie", icon:"⚠️", farbe:"#a855f7", titel:"Rückenschmerz mit Taubheit", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient mit starken Rückenschmerzen berichtet neu über Taubheit im Reithosenbereich (Damm/Innenseite Oberschenkel), Schwäche in den Beinen und kann seit Stunden kein Wasser mehr lassen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Red Flags für ein Cauda-equina-Syndrom (Reithosenanästhesie, Blasenentleerungsstörung, Beinschwäche) – neurochirurgischer Notfall, sofort Arzt, Neurostatus, nicht abwarten", ziel:"n2", fb:"Reithosenanästhesie plus Blasenstörung = Cauda-Notfall, sofort melden.", typ:"gut"},
+      {text:"Als gewöhnliche Rückenschmerzen mit Schonung und Schmerzmittel abtun", ziel:"bad_wait", fb:"Mit diesen Red Flags ist das kein banaler Rückenschmerz – sofortige Abklärung.", typ:"fehler"} ] },
+    n2:{ titel:"DIAGNOSTIK", text:"Wie weiter (AO)?", optionen:[
+      {text:"Dringende Bildgebung (MRT), neurologische Befunde dokumentieren (Sensibilität/Kraft/Blase-Mastdarm), Blasenfunktion prüfen (Restharn), rasche neurochirurgische Vorstellung", ziel:"n3", fb:"MRT dringlich, Blasenfunktion/Neurostatus dokumentieren; Zeit zählt für die Prognose.", typ:"gut"},
+      {text:"Erst einige Tage konservativ abwarten", ziel:"bad_konserv", fb:"Bei Cauda-Syndrom drohen bleibende Schäden – rasche OP-Abklärung, kein Abwarten.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Neurostatus engmaschig (Zunahme der Ausfälle?), Blasenfunktion/Restharn beobachten (ggf. Katheter nach AO), Schmerzmanagement, OP-Vorbereitung, Haut-/Dekubitus- und Sturzschutz", ziel:"n4", fb:"Neurostatus, Blasenmanagement, OP-Vorbereitung.", typ:"gut"},
+      {text:"Nur Schmerzmittel geben, die neurologischen Zeichen sind nebensächlich", ziel:"bad_neuro", fb:"Die neurologischen Ausfälle sind hier das Entscheidende – engmaschig beobachten.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Engmaschig Sensibilität/Kraft/Blase-Mastdarm, auf Zunahme achten, OP-Vorbereitung/Dringlichkeit, Dokumentation, Arzt bei Verschlechterung", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Abwarten bis zur Routinevisite", ziel:"end_mittel", fb:"Dringlichkeit – nicht auf die Routine warten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Unter Abwarten nehmen Taubheit und Beinschwäche zu, weiter kein Wasserlassen. Reaktion?", optionen:[
+      {text:"Sofort Arzt/Neurochirurgie, MRT, Blasenmanagement, OP-Vorbereitung", ziel:"end_mittel", fb:"Spät – die Prognose verschlechtert sich mit der Zeit.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Bleibende neurologische Schäden.", typ:"fehler"} ] },
+    bad_konserv:{ titel:"REAKTION", text:"Nach Tagen konservativem Abwarten bleiben die Ausfälle bestehen oder nehmen zu. Reaktion?", optionen:[
+      {text:"Umgehend Bildgebung/Neurochirurgie, OP-Abklärung", ziel:"end_mittel", fb:"Abwarten war der Fehler.", typ:"warn"},
+      {text:"Weiter konservativ", ziel:"end_schlecht", fb:"Verpasste Dekompression.", typ:"fehler"} ] },
+    bad_neuro:{ titel:"REAKTION", text:"Während nur der Schmerz behandelt wird, nehmen die Ausfälle zu. Reaktion?", optionen:[
+      {text:"Neurostatus erheben, sofort Arzt/Neurochirurgie, Blasenmanagement, OP-Vorbereitung", ziel:"end_mittel", fb:"Der Neurostatus ist entscheidend.", typ:"warn"},
+      {text:"Weiter nur Schmerztherapie", ziel:"end_schlecht", fb:"Verkannte Verschlechterung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Red Flags werden erkannt, der Patient kommt zügig zur Bildgebung und neurochirurgischen Abklärung.", fazit:"Cauda-equina-Syndrom (Reithosenanästhesie, Blasenentleerungsstörung, Beinschwäche): neurochirurgischer Notfall – sofort melden, dringend MRT, Neurostatus und Blasenfunktion dokumentieren/managen, rasche OP-Abklärung (Zeit beeinflusst die Prognose); nicht konservativ abwarten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende wird gehandelt – früher wäre für die Prognose besser gewesen.", fazit:"Merke: Reithosenanästhesie + Blasenstörung = Notfall, dringend MRT, Neurostatus engmaschig, rasch melden." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Abwarten sind bleibende neurologische Schäden entstanden.", fazit:"Merke: diese Red Flags nie als banalen Rückenschmerz abtun – sofort abklären und melden." } }
+}
+,
+{ id:"onk_neutropenie", fach:"onkologie", fachLabel:"Onkologie", icon:"🌡️", farbe:"#ef4444", titel:"Fieber unter Chemotherapie", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient unter Chemotherapie (bekannte Neutropenie) bekommt Fieber 38,8 °C und Schüttelfrost; lokale Entzündungszeichen fehlen weitgehend.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Fieber bei Neutropenie = onkologischer Notfall: sofort Arzt, Vitalzeichen, Blutkulturen vor Antibiose nach AO, auf Sepsis achten", ziel:"n2", fb:"Febrile Neutropenie ist ein Notfall – keine Zeit verlieren.", typ:"gut"},
+      {text:"Erst Fieber senken und bis zur nächsten Visite abwarten", ziel:"bad_wait", fb:"Bei Neutropenie kann sich rasch eine Sepsis entwickeln – nicht abwarten.", typ:"fehler"} ] },
+    n2:{ titel:"THERAPIE", text:"Was ist entscheidend (AO)?", optionen:[
+      {text:"Rasche kalkulierte Antibiotikagabe nach AO (zeitnah!), Blutkulturen/Fokussuche vorher nach AO, Volumen/Kreislauf, engmaschiges Monitoring", ziel:"n3", fb:"Blutkulturen, dann zügig Antibiose; Verzögerung verschlechtert die Prognose.", typ:"gut"},
+      {text:"Auf das Ergebnis der Blutkultur warten, bevor Antibiotika gegeben werden", ziel:"bad_culture", fb:"Antibiose nicht bis zum Kulturergebnis verzögern – kalkuliert nach AO starten.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Strenge Hygiene/Schutzisolation, Vitalzeichen engmaschig (Sepsiszeichen!), Infektionsquellen meiden, Bilanz, Temperatur, Patienten beobachten", ziel:"n4", fb:"Schutzisolation und Sepsismonitoring.", typ:"gut"},
+      {text:"Besuch und gemeinsame Sanitärnutzung wie üblich erlauben", ziel:"bad_hyg", fb:"Bei Neutropenie strenge Hygiene/Schutzmaßnahmen – Infektionsrisiko minimieren.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Vitalzeichen/Temperatur engmaschig, auf Sepsis/Schock achten, Antibiose/Diagnostik nach AO, Bilanz, Intensiv bei Verschlechterung, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach erster Fiebersenkung die Überwachung beenden", ziel:"end_mittel", fb:"Sepsisgefahr – engmaschig bleiben.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Unter Abwarten wird der Patient hypoton und tachykard (Sepsis). Reaktion?", optionen:[
+      {text:"Sofort Arzt/Notfall, Blutkulturen, zügige Antibiose nach AO, Volumen, Monitoring, Intensiv", ziel:"end_mittel", fb:"Spät – Sepsis bei verzögerter Therapie.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Septischer Schock.", typ:"fehler"} ] },
+    bad_culture:{ titel:"REAKTION", text:"Während auf das Kulturergebnis gewartet wird, verschlechtert sich der Zustand. Reaktion?", optionen:[
+      {text:"Kalkulierte Antibiose nach AO sofort starten (Kulturen sind schon abgenommen), Kreislauf stützen", ziel:"end_mittel", fb:"Nicht auf das Ergebnis warten.", typ:"warn"},
+      {text:"Weiter auf das Ergebnis warten", ziel:"end_schlecht", fb:"Verschleppte Sepsis.", typ:"fehler"} ] },
+    bad_hyg:{ titel:"REAKTION", text:"Es kommt zu einer zusätzlichen Infektion. Reaktion?", optionen:[
+      {text:"Strenge Hygiene/Schutzisolation umsetzen, Infektionsquellen meiden, Arzt, Therapie nach AO", ziel:"end_mittel", fb:"Schutzmaßnahmen nötig.", typ:"warn"},
+      {text:"Weiter ohne besondere Maßnahmen", ziel:"end_schlecht", fb:"Zusätzliche Infektion bei Immunsuppression.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die febrile Neutropenie wird sofort als Notfall behandelt, Komplikationen werden früh erkannt.", fazit:"Febrile Neutropenie: onkologischer Notfall – sofort Arzt, Blutkulturen/Fokussuche vor Antibiose, dann zügige kalkulierte Antibiose nach AO (nicht auf das Kulturergebnis warten), Kreislauf-/Sepsismonitoring, strenge Schutzisolation/Hygiene, Intensiv bei Verschlechterung." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – schneller und konsequenter wäre besser gewesen.", fazit:"Merke: Fieber bei Neutropenie ist ein Notfall – Blutkulturen, dann zügig Antibiose nach AO, Sepsis im Blick, Schutzisolation." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aus der verschleppten Infektion entwickelt sich ein septischer Schock.", fazit:"Merke: nie abwarten oder die Antibiose bis zum Kulturergebnis verzögern – kalkuliert nach AO, strenge Hygiene." } }
+},
+{ id:"onk_tls", fach:"onkologie", fachLabel:"Onkologie", icon:"⚗️", farbe:"#f59e0b", titel:"Entgleisung nach Chemo-Start", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Kurz nach Beginn einer Chemotherapie (großer, rasch wachsender Tumor) wird der Patient zunehmend unwohl; im Labor stark erhöhtes Kalium, Phosphat und Harnsäure, erniedrigtes Kalzium, die Urinausscheidung sinkt.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf Tumorlyse-Syndrom (Zellzerfall: Hyperkaliämie/-phosphatämie/-urikämie, Hypokalzämie, Nierengefahr) – Arzt sofort, Monitoring (EKG!), Bilanz, Vitalzeichen", ziel:"n2", fb:"Das Tumorlyse-Syndrom ist ein onkologischer Notfall mit Hyperkaliämie- und Nierenrisiko.", typ:"gut"},
+      {text:"Als harmlose Begleiterscheinung der Chemo werten und abwarten", ziel:"bad_wait", fb:"Die Elektrolytentgleisung (v. a. Hyperkaliämie) ist gefährlich – nicht abwarten.", typ:"fehler"} ] },
+    n2:{ titel:"THERAPIE", text:"Was ist wichtig (AO)?", optionen:[
+      {text:"Ausreichende Hydrierung nach AO, Elektrolyte engmaschig, Hyperkaliämie behandeln nach AO, EKG-Monitoring, harnsäuresenkende Therapie nach AO, Bilanz/Nierenfunktion", ziel:"n3", fb:"Volumen, Elektrolyt-/Hyperkaliämiemanagement, Harnsäure, Niere im Blick.", typ:"gut"},
+      {text:"Die Trinkmenge/Infusion reduzieren, um die Niere zu 'schonen'", ziel:"bad_fluid", fb:"Gerade ausreichende Hydrierung schützt die Niere – nicht restriktiv (außer bei Anurie/Überwässerung nach AO).", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du besonders?", optionen:[
+      {text:"EKG/Herzrhythmus (Hyperkaliämie!), Vitalzeichen, Ein-/Ausfuhr und Nierenfunktion, Elektrolytkontrollen nach AO, auf Herzrhythmusstörungen/Tetanie achten", ziel:"n4", fb:"Hyperkaliämie = EKG-Monitoring; Niere/Bilanz im Blick.", typ:"gut"},
+      {text:"Nur die Temperatur kontrollieren", ziel:"bad_mon", fb:"Beim TLS sind EKG/Elektrolyte/Niere entscheidend, nicht die Temperatur.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Engmaschig Elektrolyte/EKG/Nierenwerte/Bilanz, auf Verschlechterung achten, Therapie nach AO, ggf. Intensiv/Dialyse-Bereitschaft, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach erster Besserung die Kontrollen einstellen", ziel:"end_mittel", fb:"Den TLS-Verlauf engmaschig kontrollieren.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Unter Abwarten kommt es zu Herzrhythmusstörungen (Hyperkaliämie). Reaktion?", optionen:[
+      {text:"Sofort Arzt/Monitoring, Hyperkaliämie konsequent behandeln nach AO, EKG, Intensiv", ziel:"end_mittel", fb:"Spät – die Hyperkaliämie wurde nicht behandelt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Hyperkaliämische Herzrhythmusstörung/Stillstand.", typ:"fehler"} ] },
+    bad_fluid:{ titel:"REAKTION", text:"Unter reduzierter Flüssigkeit verschlechtert sich die Nierenfunktion, die Ausscheidung sinkt weiter. Reaktion?", optionen:[
+      {text:"Hydrierung nach AO anpassen/sicherstellen, Elektrolyte/Niere überwachen, Arzt", ziel:"end_mittel", fb:"Hydrierung schützt die Niere.", typ:"warn"},
+      {text:"Flüssigkeit weiter reduzieren", ziel:"end_schlecht", fb:"Akutes Nierenversagen.", typ:"fehler"} ] },
+    bad_mon:{ titel:"REAKTION", text:"Eine Herzrhythmusstörung bleibt unbemerkt, bis der Patient kollabiert. Reaktion?", optionen:[
+      {text:"Notfall/Reanimationsbereitschaft, Hyperkaliämie behandeln nach AO, EKG-Monitoring, Intensiv", ziel:"end_mittel", fb:"Spät – EKG-Monitoring fehlte.", typ:"warn"},
+      {text:"Weiter nur die Temperatur messen", ziel:"end_schlecht", fb:"Unerkannte hyperkaliämische Rhythmusstörung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Das Tumorlyse-Syndrom wird früh erkannt und konsequent behandelt; Herz und Niere werden überwacht.", fazit:"Tumorlyse-Syndrom: Notfall durch Zellzerfall (Hyperkaliämie/-phosphatämie/-urikämie, Hypokalzämie, Nierengefahr) – ausreichende Hydrierung nach AO, EKG-/Elektrolyt-/Nierenmonitoring, Hyperkaliämie und Harnsäure behandeln nach AO, Bilanz, ggf. Intensiv/Dialyse." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – konsequenteres Monitoring wäre sicherer gewesen.", fazit:"Merke: ausreichend hydrieren (nicht restriktiv), EKG/Elektrolyte/Niere engmaschig, Hyperkaliämie behandeln." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die unbehandelte Hyperkaliämie/Niereninsuffizienz führt zu einer lebensbedrohlichen Situation.", fazit:"Merke: TLS nicht abwarten, Flüssigkeit nicht reduzieren, EKG-Monitoring zwingend – Hyperkaliämie ist lebensgefährlich." } }
+},
+{ id:"onk_vcss", fach:"onkologie", fachLabel:"Onkologie", icon:"🫁", farbe:"#6366f1", titel:"Gestaute Halsvenen, Atemnot", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient mit bekanntem Thoraxtumor entwickelt eine zunehmende Schwellung von Gesicht und Hals, gestaute Halsvenen, Atemnot und ein Druckgefühl im Kopf, verstärkt im Liegen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf obere Einflussstauung (Tumor komprimiert die V. cava superior) – Arzt informieren, Oberkörper hochlagern, O₂ nach AO, Atmung/Vitalzeichen, beruhigen", ziel:"n2", fb:"Oberkörper hoch (venöser Rückfluss/Atmung), O₂, Arzt.", typ:"gut"},
+      {text:"Den Patienten flach hinlegen, damit der Kreislauf stabil bleibt", ziel:"bad_flat", fb:"Flachlage verstärkt die Stauung und Atemnot – Oberkörper hochlagern.", typ:"fehler"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Oberkörper hoch, O₂ nach AO, Atmung/SpO₂ überwachen, rasche Bildgebung/onkologische Therapieplanung nach AO, ruhige Umgebung, Medikamente nach AO", ziel:"n3", fb:"Symptomatisch (Lagerung/O₂) plus rasche ursächliche Therapieplanung.", typ:"gut"},
+      {text:"Zugang/Blutdruckmessung am betroffenen, gestauten Arm anlegen", ziel:"bad_arm", fb:"Zugänge/Messungen besser nicht am gestauten Bereich – die Stauung nicht verstärken.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Atmung/SpO₂ engmaschig, Oberkörper hoch, auf zunehmende Atemnot/Schwellung achten, Angst reduzieren, Zugänge eher untere Extremität/nach AO, Verlauf dokumentieren", ziel:"n4", fb:"Atemwegssicherheit, Lagerung, Angst, Verlauf.", typ:"gut"},
+      {text:"Zur Mobilisation flach lagern und Anstrengung fördern", ziel:"bad_lag", fb:"Flachlage/Anstrengung verstärken die Symptomatik – Oberkörper hoch, Ruhe.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Atmung/SpO₂/Schwellung/Bewusstsein überwachen, auf Atemwegsverlegung/Hirndruckzeichen achten, Therapie nach AO, Intensiv bei Verschlechterung, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal die SpO₂ messen", ziel:"end_mittel", fb:"Engmaschige Atemüberwachung ist nötig.", typ:"warn"} ] },
+    bad_flat:{ titel:"REAKTION", text:"In Flachlage nehmen Atemnot und Schwellung zu. Reaktion?", optionen:[
+      {text:"Sofort Oberkörper hoch, O₂ nach AO, Arzt, Atemüberwachung", ziel:"end_mittel", fb:"Die Lagerung war falsch.", typ:"warn"},
+      {text:"Weiter flach lagern", ziel:"end_schlecht", fb:"Zunehmende Atemnot/Stauung.", typ:"fehler"} ] },
+    bad_arm:{ titel:"REAKTION", text:"Über den gestauten Arm gelegte Zugänge/Messungen verschlimmern die Schwellung. Reaktion?", optionen:[
+      {text:"Zugänge/Messungen verlagern (nach AO), Stauung minimieren, beobachten", ziel:"end_mittel", fb:"Korrigiert.", typ:"warn"},
+      {text:"Weiter am gestauten Arm", ziel:"end_schlecht", fb:"Verstärkte Stauung.", typ:"fehler"} ] },
+    bad_lag:{ titel:"REAKTION", text:"Unter Flachlagerung/Anstrengung verschlechtert sich die Atmung. Reaktion?", optionen:[
+      {text:"Oberkörper hoch, Ruhe, O₂ nach AO, Atemüberwachung", ziel:"end_mittel", fb:"Korrigiert.", typ:"warn"},
+      {text:"Weiter aktivieren/flach lagern", ziel:"end_schlecht", fb:"Atemnotverstärkung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Patient ist atemerleichtert gelagert, überwacht und der ursächlichen Therapie zugeführt.", fazit:"Obere Einflussstauung (VCSS): Oberkörper hochlagern (venöser Rückfluss/Atmung), O₂ nach AO, Atmung/SpO₂ engmaschig, Zugänge/Messungen nicht am gestauten Bereich, Angst reduzieren, rasche ursächliche Therapieplanung nach AO; auf Atemwegsverlegung/Hirndruckzeichen achten, Intensiv bei Verschlechterung." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende stabil – konsequente Lagerung/Überwachung wären besser gewesen.", fazit:"Merke: Oberkörper hoch, O₂, nicht am gestauten Arm punktieren, Atmung engmaschig überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Stauung und Atemnot verschlechtern sich deutlich.", fazit:"Merke: nie flach lagern, nicht am gestauten Arm arbeiten – Oberkörper hoch, O₂, ursächliche Therapie nach AO." } }
+},
+{ id:"onk_hyperkalz", fach:"onkologie", fachLabel:"Onkologie", icon:"⚗️", farbe:"#14b8a6", titel:"Verwirrt und exsikkiert", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine Patientin mit fortgeschrittenem Tumor wird zunehmend müde, verwirrt, klagt über Übelkeit, Verstopfung und starken Durst; sie hat viel Urin ausgeschieden und wirkt exsikkiert. Das Kalzium ist deutlich erhöht.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf maligne Hyperkalzämie (Müdigkeit/Verwirrtheit, Übelkeit, Obstipation, Polyurie/Exsikkose) – Arzt, Vitalzeichen/Bewusstsein, Bilanz, Sturz-/Schutzmaßnahmen", ziel:"n2", fb:"Die Symptomtrias passt zur Hyperkalzämie – Arzt, Bilanz, Schutz.", typ:"gut"},
+      {text:"Die Verwirrtheit allein dem Tumorleiden zuschreiben und abwarten", ziel:"bad_wait", fb:"Die Hyperkalzämie ist behandelbar und gefährlich – nicht einfach abwarten.", typ:"fehler"} ] },
+    n2:{ titel:"THERAPIE", text:"Was ist zentral (AO)?", optionen:[
+      {text:"Ausreichende Hydrierung/Volumengabe nach AO (Exsikkose!), Elektrolyte/EKG, kalziumsenkende Therapie nach AO, Bilanz/Nierenfunktion, Bewusstsein", ziel:"n3", fb:"Rehydrierung steht im Vordergrund, dann kalziumsenkende Therapie nach AO.", typ:"gut"},
+      {text:"Die Trinkmenge wegen der Polyurie einschränken", ziel:"bad_fluid", fb:"Die Patientin ist exsikkiert – Hydrierung ist die Basistherapie, nicht Flüssigkeitsrestriktion.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Bewusstsein/Vitalzeichen/EKG, Ein-/Ausfuhr und Hydratation, Sturz-/Verwirrtheitsschutz, Obstipationsmanagement, Übelkeit behandeln nach AO, Mobilisation dosiert", ziel:"n4", fb:"Neuro/EKG, Bilanz, Sturzschutz, Symptommanagement.", typ:"gut"},
+      {text:"Die verwirrte Patientin unbeaufsichtigt mobilisieren lassen", ziel:"bad_safe", fb:"Bei Verwirrtheit/Schwäche besteht Sturzgefahr – Schutz und Begleitung.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Bewusstsein/Vitalzeichen/EKG/Kalzium/Bilanz engmaschig, auf Verschlechterung achten, Therapie nach AO, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach leichter Besserung die Kontrollen einstellen", ziel:"end_mittel", fb:"Den Verlauf weiter kontrollieren.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Unter Abwarten wird die Patientin zunehmend somnolent. Reaktion?", optionen:[
+      {text:"Sofort Arzt, Rehydrierung/kalziumsenkende Therapie nach AO, Neuro-/EKG-Monitoring", ziel:"end_mittel", fb:"Spät – die Hyperkalzämie wurde nicht behandelt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Zunehmende Bewusstseinsstörung bis zum Koma.", typ:"fehler"} ] },
+    bad_fluid:{ titel:"REAKTION", text:"Unter Flüssigkeitsrestriktion verschlechtern sich Exsikkose und Verwirrtheit. Reaktion?", optionen:[
+      {text:"Hydrierung nach AO sicherstellen, Bilanz/Elektrolyte, Arzt", ziel:"end_mittel", fb:"Hydrierung ist zentral.", typ:"warn"},
+      {text:"Weiter wenig Flüssigkeit geben", ziel:"end_schlecht", fb:"Verschlechterung und Nierenschädigung.", typ:"fehler"} ] },
+    bad_safe:{ titel:"REAKTION", text:"Die verwirrte Patientin stürzt beim unbeaufsichtigten Aufstehen. Reaktion?", optionen:[
+      {text:"Sturzfolgen prüfen, Arzt, Sturzprophylaxe/Begleitung, Umgebung sichern", ziel:"end_mittel", fb:"Sturzschutz nötig.", typ:"warn"},
+      {text:"Sie weiter unbeaufsichtigt lassen", ziel:"end_schlecht", fb:"Sturzverletzung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Hyperkalzämie wird erkannt, die Patientin rehydriert, geschützt und überwacht.", fazit:"Maligne Hyperkalzämie (Müdigkeit/Verwirrtheit, Übelkeit, Obstipation, Polyurie/Exsikkose): Arzt, ausreichende Rehydrierung nach AO als Basis, dann kalziumsenkende Therapie nach AO, EKG/Elektrolyte/Bilanz, Bewusstseins- und Sturzschutz, Symptommanagement; keine Flüssigkeitsrestriktion." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – früheres und konsequenteres Handeln wäre besser gewesen.", fazit:"Merke: Rehydrierung als Basis, EKG/Bilanz, Sturzschutz bei Verwirrtheit, dann kalziumsenkend nach AO." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die unbehandelte Hyperkalzämie führt zu Bewusstseinsstörung oder Sturzverletzung.", fazit:"Merke: Verwirrtheit nicht einfach 'dem Tumor' zuschreiben, nicht restriktiv – rehydrieren, schützen, melden." } }
+},
+{ id:"onk_paravasat", fach:"onkologie", fachLabel:"Onkologie", icon:"💉", farbe:"#f97316", titel:"Brennen an der Infusionsstelle", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Während einer laufenden Chemotherapie über einen peripheren Zugang klagt der Patient über Brennen und Schmerz an der Einstichstelle; dort zeigen sich Schwellung und Rötung, der Rücklauf ist fraglich.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTMASSNAHMEN", text:"Erstes Vorgehen bei Verdacht auf ein Paravasat?", optionen:[
+      {text:"Infusion sofort stoppen (Zugang zunächst belassen), Arzt informieren, Reste/Substanz nach Standard aspirieren, betroffene Stelle markieren, Extremität hochlagern", ziel:"n2", fb:"Sofort stoppen, Zugang belassen, aspirieren nach Standard, Arzt, hochlagern.", typ:"gut"},
+      {text:"Die Infusion einfach weiterlaufen lassen, das ist sicher harmlos", ziel:"bad_continue", fb:"Zytostatika-Paravasate können schwere Gewebeschäden verursachen – sofort stoppen.", typ:"fehler"},
+      {text:"Sofort die Kanüle ziehen und kräftig über die Stelle massieren", ziel:"bad_massage", fb:"Erst nach Standard aspirieren; Massieren verteilt die Substanz und schadet.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO/Standard)?", optionen:[
+      {text:"Substanzspezifische Maßnahmen nach Standard/AO (z. B. trockene Kälte oder Wärme je nach Substanz, ggf. Antidot), Foto-/Dokumentation, weitere Überwachung", ziel:"n3", fb:"Substanzabhängige Maßnahmen nach Standard, Antidot nach AO, dokumentieren.", typ:"gut"},
+      {text:"Pauschal immer warm auflegen, egal welche Substanz", ziel:"bad_heat", fb:"Kälte/Wärme sind substanzabhängig – nach Standard, nicht pauschal.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Betroffene Stelle/Extremität beobachten und hochlagern, Schmerz behandeln nach AO, Verlauf/Hautbefund dokumentieren, auf Nekrose-/Komplikationszeichen achten, Patienten informieren", ziel:"n4", fb:"Beobachtung/Lagerung, Schmerz, Dokumentation, Aufklärung.", typ:"gut"},
+      {text:"Die Stelle fest verbinden und nicht mehr ansehen", ziel:"bad_cover", fb:"Engmaschige Beobachtung ist nötig – Komplikationen früh erkennen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Hautbefund/Schmerz/Funktion im Verlauf kontrollieren, ggf. Fachstelle (z. B. plastische Chirurgie) nach AO, Dokumentation, Patientenedukation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Keine weitere Kontrolle nötig", ziel:"end_mittel", fb:"Spätschäden sind möglich – Verlauf beobachten.", typ:"warn"} ] },
+    bad_continue:{ titel:"REAKTION", text:"Unter weiterlaufender Infusion nehmen Schwellung und Schmerz deutlich zu. Reaktion?", optionen:[
+      {text:"Sofort stoppen, aspirieren nach Standard, Arzt, substanzspezifische Maßnahmen, hochlagern, dokumentieren", ziel:"end_mittel", fb:"Spät – das Weiterlaufen hat geschadet.", typ:"warn"},
+      {text:"Weiter laufen lassen", ziel:"end_schlecht", fb:"Ausgedehnter Gewebeschaden/Nekrose.", typ:"fehler"} ] },
+    bad_massage:{ titel:"REAKTION", text:"Nach dem Massieren breitet sich die Schwellung weiter aus. Reaktion?", optionen:[
+      {text:"Das Massieren beenden, nach Standard vorgehen (aspirieren, substanzspezifisch), Arzt, dokumentieren", ziel:"end_mittel", fb:"Nicht massieren.", typ:"warn"},
+      {text:"Weiter massieren", ziel:"end_schlecht", fb:"Größere Gewebeschädigung.", typ:"fehler"} ] },
+    bad_heat:{ titel:"REAKTION", text:"Die pauschal warme Auflage verschlechtert den Befund (substanzbedingt falsch). Reaktion?", optionen:[
+      {text:"Substanzspezifische Maßnahme nach Standard wählen (Kälte/Wärme korrekt), Arzt, beobachten", ziel:"end_mittel", fb:"Substanzabhängig vorgehen.", typ:"warn"},
+      {text:"Weiter pauschal wärmen", ziel:"end_schlecht", fb:"Verschlechterung des Befunds.", typ:"fehler"} ] },
+    bad_cover:{ titel:"REAKTION", text:"Unter dem festen Verband wird eine Komplikation spät bemerkt. Reaktion?", optionen:[
+      {text:"Befund freilegen/beurteilen, engmaschig beobachten, Arzt, ggf. Fachstelle", ziel:"end_mittel", fb:"Beobachtung nötig.", typ:"warn"},
+      {text:"Den Verband drauflassen und nicht kontrollieren", ziel:"end_schlecht", fb:"Verkannte Nekrose.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Das Paravasat wird sofort versorgt, der Schaden begrenzt und der Verlauf überwacht.", fazit:"Zytostatika-Paravasat: Infusion sofort stoppen (Zugang zunächst belassen, Reste aspirieren nach Standard), Arzt, Extremität hochlagern, substanzspezifische Maßnahmen nach Standard (Kälte/Wärme/Antidot – nicht pauschal), nicht massieren, engmaschige Beobachtung und Dokumentation, bei Bedarf Fachstelle." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Schaden wird begrenzt – schnelleres, korrektes Vorgehen wäre besser gewesen.", fazit:"Merke: sofort stoppen (Zugang belassen, aspirieren), nicht massieren, substanzspezifisch nach Standard, beobachten/dokumentieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch falsches Vorgehen entsteht ein ausgedehnter Gewebeschaden.", fazit:"Merke: nie weiterlaufen lassen, nicht massieren, nicht pauschal wärmen – nach Standard vorgehen und beobachten." } }
+},
+{ id:"onk_schmerzkrise", fach:"onkologie", fachLabel:"Onkologie", icon:"🩹", farbe:"#a855f7", titel:"Plötzliche Schmerzkrise", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Tumorpatient mit fester Schmerz-Basismedikation hat plötzlich stark zunehmende Schmerzen (NRS 9), ist angespannt und kann kaum sprechen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERSTES VORGEHEN", text:"Wie reagierst du auf den Durchbruchschmerz?", optionen:[
+      {text:"Schmerz strukturiert erfassen (Stärke/Lokalisation/Auslöser), bei ihm bleiben, schnell wirksame Bedarfsmedikation nach AO geben, beruhigen, Lagerung", ziel:"n2", fb:"Erfassen, schnell wirksame Bedarfsmedikation nach AO, Präsenz.", typ:"gut"},
+      {text:"Auf die nächste planmäßige Gabe der Basismedikation warten", ziel:"bad_wait", fb:"Durchbruchschmerz wird mit Bedarfsmedikation behandelt – nicht auf die nächste Basisgabe warten.", typ:"fehler"},
+      {text:"Nur mit Atemübungen/Ablenkung arbeiten, keine Medikamente", ziel:"bad_nonpharm", fb:"Nicht-medikamentöse Maßnahmen ergänzen, ersetzen aber bei NRS 9 nicht die Bedarfsmedikation nach AO.", typ:"warn"} ] },
+    n2:{ titel:"NACH DER GABE", text:"Nach der Bedarfsmedikation – wie weiter (AO)?", optionen:[
+      {text:"Wirkung nach angemessener Zeit reevaluieren (NRS), bei unzureichender Wirkung nach AO nachsteuern, auf Nebenwirkungen (Sedierung/Atemdepression) achten", ziel:"n3", fb:"Wirkung reevaluieren und nach AO anpassen, Nebenwirkungen beobachten.", typ:"gut"},
+      {text:"Sofort eigenständig die Dosis stark erhöhen und wiederholen", ziel:"bad_dose", fb:"Keine eigenmächtige Dosissteigerung – nach AO nachsteuern, Atemdepression vermeiden.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du noch?", optionen:[
+      {text:"Vigilanz/Atmung (Opioid-Nebenwirkungen), Obstipations-/Übelkeitsprophylaxe nach AO, Ursache der Schmerzverstärkung bedenken, Dokumentation, Angst ernst nehmen", ziel:"n4", fb:"Opioid-Nebenwirkungen, Ursache bedenken, Doku, Zuwendung.", typ:"gut"},
+      {text:"Nach Linderung sind keine weiteren Beobachtungen nötig", ziel:"bad_obs", fb:"Auf Atmung/Sedierung und erneuten Schmerz weiter achten.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Schmerz/Atmung/Vigilanz reevaluieren, bei häufigem Durchbruchschmerz die Basismedikation mit dem Arzt überprüfen, Nebenwirkungen managen, Dokumentation", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal nach dem Schmerz fragen", ziel:"end_mittel", fb:"Wiederholte Reevaluation ist nötig.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Während des Wartens auf die Basisgabe leidet der Patient massiv weiter. Reaktion?", optionen:[
+      {text:"Jetzt schnell wirksame Bedarfsmedikation nach AO geben, erfassen, beruhigen, reevaluieren", ziel:"end_mittel", fb:"Bedarfsmedikation ist hier richtig.", typ:"warn"},
+      {text:"Weiter warten", ziel:"end_schlecht", fb:"Unnötig anhaltendes Leiden.", typ:"fehler"} ] },
+    bad_nonpharm:{ titel:"REAKTION", text:"Trotz Atemübungen bleibt der Schmerz bei NRS 9. Reaktion?", optionen:[
+      {text:"Bedarfsmedikation nach AO geben (ergänzend nicht-medikamentös), reevaluieren", ziel:"end_mittel", fb:"Medikation nach AO ist nötig.", typ:"warn"},
+      {text:"Weiter nur Atemübungen", ziel:"end_schlecht", fb:"Unbehandelte Schmerzkrise.", typ:"fehler"} ] },
+    bad_dose:{ titel:"REAKTION", text:"Nach der eigenmächtigen Mehrfachgabe wird der Patient sehr müde, die Atemfrequenz sinkt. Reaktion?", optionen:[
+      {text:"Atmung/Vigilanz überwachen, O₂/Stimulation, Arzt, Antagonist nach AO bei Atemdepression", ziel:"end_mittel", fb:"Übermedikation – Atemdepression beachten.", typ:"warn"},
+      {text:"Weiter nachdosieren", ziel:"end_schlecht", fb:"Opioidbedingte Atemdepression.", typ:"fehler"} ] },
+    bad_obs:{ titel:"REAKTION", text:"Unbeobachtet wird der Patient zunehmend sediert. Reaktion?", optionen:[
+      {text:"Vigilanz/Atmung kontrollieren, stimulieren, O₂, Arzt nach AO", ziel:"end_mittel", fb:"Nachbeobachtung nötig.", typ:"warn"},
+      {text:"Weiter nicht beobachten", ziel:"end_schlecht", fb:"Unerkannte Sedierung/Atemdepression.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Durchbruchschmerz wird rasch gelindert, Nebenwirkungen werden beobachtet und die Basistherapie überprüft.", fazit:"Durchbruchschmerz/Schmerzkrise: strukturiert erfassen, schnell wirksame Bedarfsmedikation nach AO (nicht auf die nächste Basisgabe warten), Wirkung reevaluieren und nach AO nachsteuern (keine eigenmächtige Dosissteigerung), Opioid-Nebenwirkungen (Sedierung/Atemdepression, Obstipation/Übelkeit) beachten, nicht-medikamentöse Maßnahmen ergänzend, häufigen Durchbruchschmerz → Basistherapie ärztlich überprüfen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Schmerz wird gelindert – konsequentere Reevaluation/Beobachtung wäre besser gewesen.", fazit:"Merke: Bedarfsmedikation nach AO, reevaluieren und nach AO nachsteuern, Opioid-Nebenwirkungen beobachten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Der Patient leidet unnötig weiter oder gerät durch Übermedikation in eine Atemdepression.", fazit:"Merke: nicht auf die Basisgabe warten, nicht nur nicht-medikamentös, keine eigenmächtige Dosissteigerung – nach AO behandeln und überwachen." } }
+}
 ];
 
 function navGo(screen) {
