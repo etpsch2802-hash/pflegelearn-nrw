@@ -2847,7 +2847,148 @@ const KRANKHEITSBILDER = {
           {f:"Was ist das Transtheoretische Modell (TTM) der Verhaltensänderung?", opt:["Ein Kommunikationsmodell","5 Stadien der Verhaltensänderung: Absichtslosigkeit → Absichtsbildung → Vorbereitung → Handlung → Aufrechterhaltung","Ein Stressmodell","Ein Lernmodell"], k:1, e:"TTM (Prochaska & DiClemente): 1. Absichtslosigkeit (kein Problembewusstsein), 2. Absichtsbildung (denkt darüber nach), 3. Vorbereitung (plant Änderung), 4. Handlung (ändert Verhalten), 5. Aufrechterhaltung (stabil > 6 Mo.). Pflege: Interventionen stadiengerecht anpassen!"},
         ]
       }
-    ]
+    
+      ,{
+        name: "Professionelle Nähe und Distanz",
+        icd: "–",
+        definition: "Balance zwischen empathischer Zuwendung und professioneller Abgrenzung in der Pflegebeziehung. Zu viel Distanz wirkt kalt, zu viel Nähe überfordert und verwischt die Rollen.",
+        symptome: ["Übermäßige emotionale Verstrickung oder Gleichgültigkeit", "Schwierigkeiten, Grenzen zu setzen", "Gefühl der Überforderung/Ausbrennen", "Bevorzugung/Abneigung einzelner Patienten", "Rollenunklarheit"],
+        diagnostik: ["Selbstreflexion eigener Gefühle/Reaktionen", "Kollegiale Beratung/Supervision", "Beobachtung von Beziehungsdynamiken", "Feedback im Team"],
+        therapie: ["Bewusste Rollenklärung und Grenzen", "Empathie mit professioneller Abgrenzung verbinden", "Supervision/Intervision nutzen", "Selbstfürsorge", "Klare, wertschätzende Kommunikation"],
+        pflege: ["Empathisch zuwenden, ohne sich zu verlieren", "Grenzen freundlich, aber klar kommunizieren", "Eigene Belastung wahrnehmen und Unterstützung suchen", "Gleichbehandlung anstreben", "Reflexion in Team/Supervision"],
+        merksatz: "Nähe ohne sich zu verlieren, Distanz ohne kalt zu werden – professionelle Beziehung lebt von der Balance.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr emotionaler Überlastung r/t mangelnder Nähe-Distanz-Balance m/d/s Überforderungsgefühl, unklaren Grenzen",
+            ressourcen: ["Team/Supervision verfügbar", "Bereitschaft zur Selbstreflexion"],
+            ziel: "Die Pflegekraft gestaltet die Beziehung empathisch und zugleich professionell abgegrenzt",
+            massnahmen: ["Rollen und Grenzen bewusst klären und kommunizieren", "Eigene Gefühle reflektieren, Supervision/Intervision nutzen", "Empathie mit Abgrenzung verbinden", "Selbstfürsorge praktizieren", "Beziehungsdynamiken im Team besprechen"],
+            evaluation: "Beziehung tragfähig, Grenzen gewahrt, keine Überlastung."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Umgang mit Sterben, Tod und Trauer",
+        icd: "–",
+        definition: "Begleitung sterbender Menschen und ihrer Angehörigen sowie der Umgang mit Trauer. Erfordert Haltung, kommunikative Kompetenz und Selbstfürsorge.",
+        symptome: ["Sterbephasen (nach Kübler-Ross: Nicht-wahrhaben, Zorn, Verhandeln, Depression, Akzeptanz)", "Angst, Schmerz, Rückzug", "Belastung der Angehörigen", "Trauerreaktionen", "Eigene Betroffenheit der Pflegenden"],
+        diagnostik: ["Bedürfnisse und Wünsche des Sterbenden erfassen", "Belastung der Angehörigen einschätzen", "Symptome/Leiden beobachten", "Patientenverfügung/Wünsche beachten"],
+        therapie: ["Palliative Begleitung, Symptomlinderung nach AO", "Würde, Ruhe und Präsenz ermöglichen", "Angehörige einbeziehen und begleiten", "Spirituelle/seelsorgerische Unterstützung anbieten", "Abschied ermöglichen"],
+        pflege: ["Präsent und zugewandt sein, zuhören, aushalten", "Schmerz-/Symptomkontrolle nach AO sicherstellen", "Würdevolle Pflege, Wünsche respektieren", "Angehörige begleiten, Abschied ermöglichen", "Eigene Trauer wahrnehmen, Selbstfürsorge/Team nutzen"],
+        merksatz: "Sterbebegleitung heißt da sein, Leiden lindern, Würde wahren – und auf die eigene Belastung achten.",
+        pflegeplanung: [
+          {
+            problem: "Bedürfnis nach würdevoller Begleitung r/t Sterbeprozess m/d/s Angst, Schmerz, Belastung von Patient und Angehörigen",
+            ressourcen: ["Angehörige anwesend", "Palliativteam/Seelsorge verfügbar", "Wünsche/Verfügung bekannt"],
+            ziel: "Der sterbende Mensch wird würdevoll und möglichst beschwerdearm begleitet; Angehörige fühlen sich unterstützt",
+            massnahmen: ["Präsenz, Zuwendung, Zuhören", "Schmerz-/Symptomkontrolle nach AO", "Würde und Wünsche respektieren, Ruhe ermöglichen", "Angehörige einbeziehen und begleiten, Abschied ermöglichen", "Seelsorge/Palliativteam einbinden, Selbstfürsorge"],
+            evaluation: "Beschwerden gelindert, Würde gewahrt, Angehörige begleitet."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Umgang mit Angst beim Patienten",
+        icd: "–",
+        definition: "Angst ist eine häufige Reaktion auf Krankheit, Eingriffe und Klinikaufenthalt. Pflegerischer Umgang zielt auf Sicherheit, Information und emotionale Entlastung.",
+        symptome: ["Unruhe, Anspannung, Nervosität", "Vegetative Zeichen (Herzrasen, Schwitzen, Zittern)", "Vermeidung, Rückzug oder Klammern", "Fragen/Rückversicherung, Schlafstörungen", "Konzentrations-/Kooperationsprobleme"],
+        diagnostik: ["Angst und Auslöser erfragen/beobachten", "Vegetative Zeichen wahrnehmen", "Informationsbedarf einschätzen", "Vorerfahrungen/Bewältigungsmuster erfragen"],
+        therapie: ["Sichere, ruhige Atmosphäre, Präsenz", "Verständliche Information und Aufklärung", "Beteiligung und Kontrolle ermöglichen", "Beruhigungs-/Entspannungstechniken", "Bei Bedarf ärztliche/psychologische Unterstützung"],
+        pflege: ["Ruhig, zugewandt, ernst nehmen, zuhören", "Verständlich informieren, Unsicherheit reduzieren", "Mitbestimmung/Kontrolle ermöglichen", "Entspannung/Ablenkung anbieten", "Bei starker Angst Arzt/Psychologen einbeziehen"],
+        merksatz: "Angst nehmen heißt: Sicherheit geben, verständlich informieren, präsent sein und Kontrolle ermöglichen.",
+        pflegeplanung: [
+          {
+            problem: "Angst r/t Krankheit/Eingriff/Klinikaufenthalt m/d/s Unruhe, vegetativen Zeichen, Rückversicherungsbedarf",
+            ressourcen: ["Patient äußert sich", "Angehörige unterstützen", "Bewältigungserfahrungen vorhanden"],
+            ziel: "Der Patient fühlt sich sicherer und ist merklich entlastet (ruhiger, kooperativer)",
+            massnahmen: ["Ruhige, sichere Atmosphäre und Präsenz", "Verständlich informieren und aufklären", "Mitbestimmung/Kontrolle ermöglichen", "Entspannungs-/Ablenkungsangebote", "Bei starker Angst ärztliche/psychologische Unterstützung"],
+            evaluation: "Angst reduziert, ruhiger, kooperativer."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Validierender Umgang bei Demenz",
+        icd: "–",
+        definition: "Kommunikationshaltung, die die Gefühle und die subjektive Wirklichkeit demenziell erkrankter Menschen wertschätzt, statt sie zu korrigieren (Validation).",
+        symptome: ["Desorientierung, Zeit-/Ortsverwirrung", "Wiederholtes Fragen, Hinlauftendenz", "Unruhe, Angst, Aggression bei Korrektur", "Rückzug", "Herausforderndes Verhalten"],
+        diagnostik: ["Bedürfnisse hinter dem Verhalten erkennen", "Auslöser von Unruhe/Aggression beobachten", "Biografie und Gewohnheiten einbeziehen", "Kommunikationsfähigkeiten einschätzen"],
+        therapie: ["Validation: Gefühle bestätigen, nicht die Realität korrigieren", "Einfache, ruhige Kommunikation, Blickkontakt", "Biografiearbeit, vertraute Routinen", "Reizarme, sichere Umgebung", "Herausforderndes Verhalten verstehen statt sanktionieren"],
+        pflege: ["Gefühle ernst nehmen und benennen, nicht widersprechen", "Einfache Sätze, ruhige Stimme, Zeit lassen", "Biografie/Gewohnheiten nutzen, Orientierungshilfen", "Auslöser für Unruhe vermeiden, sichere Umgebung", "Wertschätzung und Geduld"],
+        merksatz: "Bei Demenz: Gefühle validieren statt Realität korrigieren – Beziehung und Sicherheit gehen vor Faktenkorrektur.",
+        pflegeplanung: [
+          {
+            problem: "Herausforderndes Verhalten/Unruhe r/t Demenz und Desorientierung m/d/s Angst, Aggression bei Korrektur",
+            ressourcen: ["Biografie bekannt", "Angehörige unterstützen", "Vertraute Routinen"],
+            ziel: "Der Mensch mit Demenz fühlt sich verstanden und sicher; Unruhe/Aggression nehmen ab",
+            massnahmen: ["Validierend kommunizieren (Gefühle bestätigen, nicht korrigieren)", "Einfache, ruhige Sprache, Blickkontakt, Zeit", "Biografie/Routinen einbeziehen, Orientierungshilfen", "Auslöser meiden, reizarme sichere Umgebung", "Geduld und Wertschätzung, Angehörige einbeziehen"],
+            evaluation: "Weniger Unruhe/Aggression, fühlt sich sicherer und verstanden."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Deeskalation und Umgang mit Aggression",
+        icd: "–",
+        definition: "Strategien zur Verhinderung und Entschärfung aggressiver oder gewaltträchtiger Situationen durch Kommunikation, Haltung und Eigenschutz.",
+        symptome: ["Zunehmende Anspannung, lautere Stimme", "Drohgebärden, motorische Unruhe", "Gereiztheit, Provokation", "Eingeengtes Denken", "Vorboten von Gewalt"],
+        diagnostik: ["Frühwarnzeichen wahrnehmen", "Auslöser/Bedürfnisse erkennen", "Eigene Sicherheit/Fluchtweg einschätzen", "Situationsdynamik beobachten"],
+        therapie: ["Ruhig bleiben, Distanz wahren, reizarm", "Aktiv zuhören, ernst nehmen, Optionen anbieten", "Klare, einfache Kommunikation, nicht provozieren", "Eigenschutz/Team, Hilfe holen", "Nachbesprechung/Reflexion"],
+        pflege: ["Frühwarnzeichen erkennen, früh deeskalieren", "Ruhe ausstrahlen, Distanz und Eigenschutz wahren", "Zuhören, Bedürfnisse erfragen, Wahlmöglichkeiten geben", "Bei Gefährdung Team/Hilfe holen, kein Alleingang", "Vorfall nachbesprechen, aus Auslösern lernen"],
+        merksatz: "Deeskalation: ruhig bleiben, zuhören, Distanz und Eigenschutz wahren, früh reagieren, im Team handeln.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von Gewalt/Eskalation r/t Aggression m/d/s zunehmender Anspannung, Drohgebärden",
+            ressourcen: ["Team verfügbar", "Deeskalationskompetenz", "Erkennbare Auslöser"],
+            ziel: "Die Situation wird deeskaliert; Patient und Mitarbeitende bleiben unversehrt",
+            massnahmen: ["Frühwarnzeichen erkennen und früh deeskalieren", "Ruhe, Distanz, Eigenschutz, reizarme Umgebung", "Aktiv zuhören, ernst nehmen, Optionen anbieten", "Bei Gefährdung Team/Hilfe holen", "Nachbesprechung und Reflexion der Auslöser"],
+            evaluation: "Situation entschärft, niemand verletzt, Auslöser reflektiert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Kultursensible Kommunikation",
+        icd: "–",
+        definition: "Pflege, die kulturelle, religiöse und sprachliche Hintergründe achtet und Missverständnisse vermeidet (transkulturelle Kompetenz).",
+        symptome: ["Sprachbarrieren, Missverständnisse", "Unterschiedliche Krankheits-/Schmerzkonzepte", "Religiöse/kulturelle Bedürfnisse (Ernährung, Rituale, Geschlecht)", "Unsicherheit/Rückzug", "Konflikte durch unterschiedliche Erwartungen"],
+        diagnostik: ["Sprach-/Verständigungsbedarf erfassen", "Kulturelle/religiöse Bedürfnisse erfragen", "Eigene Vorurteile reflektieren", "Ressourcen (Dolmetscher, Angehörige) klären"],
+        therapie: ["Respektvolle, offene Haltung, nachfragen statt annehmen", "Dolmetscher/Übersetzungshilfen nutzen", "Bedürfnisse (Ernährung, Rituale, Schamgefühl) berücksichtigen", "Einfache Sprache, nonverbale Kommunikation", "Individuell statt stereotyp"],
+        pflege: ["Verständigung sichern (Dolmetscher, einfache Sprache, Bilder)", "Kulturelle/religiöse Bedürfnisse erfragen und respektieren", "Schamgefühl/Geschlechtspräferenzen beachten", "Offen nachfragen, nicht stereotypisieren", "Angehörige einbeziehen, individuell anpassen"],
+        merksatz: "Kultursensibel pflegen: nachfragen statt annehmen, Verständigung sichern, Bedürfnisse achten, individuell statt stereotyp.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Kommunikation r/t Sprach-/Kulturunterschieden m/d/s Missverständnissen, Unsicherheit",
+            ressourcen: ["Dolmetscher/Angehörige verfügbar", "Patient kooperativ", "Offenheit im Team"],
+            ziel: "Die Verständigung gelingt; kulturelle/religiöse Bedürfnisse werden berücksichtigt",
+            massnahmen: ["Verständigung sichern (Dolmetscher, einfache Sprache, Hilfsmittel)", "Kulturelle/religiöse Bedürfnisse erfragen und respektieren", "Schamgefühl/Präferenzen beachten", "Offen, individuell und ohne Stereotype handeln", "Angehörige einbeziehen"],
+            evaluation: "Verständigung gelungen, Bedürfnisse berücksichtigt, weniger Konflikte."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Umgang mit depressiven Patienten",
+        icd: "–",
+        definition: "Pflegerischer Umgang mit Menschen mit depressiver Symptomatik: Beziehung, Struktur, behutsame Aktivierung und Beobachtung – ohne Überforderung oder Bagatellisierung.",
+        symptome: ["Niedergeschlagenheit, Antriebslosigkeit", "Interessenverlust, Rückzug", "Schlaf-/Appetitstörungen", "Negatives Denken, Hoffnungslosigkeit", "Verlangsamung, ggf. Suizidgedanken"],
+        diagnostik: ["Stimmung, Antrieb, Rückzug beobachten", "Auf Hoffnungslosigkeit/Suizidalität achten (offen ansprechen)", "Schlaf/Appetit/Tagesstruktur erfassen", "Ressourcen und Belastungen erfragen"],
+        therapie: ["Tragfähige, wertschätzende Beziehung", "Realistische Tagesstruktur, kleine erreichbare Ziele", "Behutsame Aktivierung ohne Überforderung", "Medikamentöse/psychotherapeutische Behandlung nach AO", "Bei Suizidalität Schutz und ärztliche Einbindung"],
+        pflege: ["Geduldig, wertschätzend, ernst nehmen (nicht 'aufmuntern')", "Tagesstruktur und kleine Ziele unterstützen", "Behutsam aktivieren, Erfolge anerkennen", "Schlaf/Ernährung/Körperpflege fördern", "Auf Suizidalität achten, offen ansprechen, Arzt einbeziehen"],
+        merksatz: "Depression: Beziehung, Struktur und behutsame Aktivierung – nicht bagatellisieren, auf Suizidalität achten.",
+        pflegeplanung: [
+          {
+            problem: "Antriebslosigkeit und sozialer Rückzug r/t depressiver Symptomatik m/d/s Interessenverlust, Hoffnungslosigkeit",
+            ressourcen: ["Patient lässt Kontakt zu", "Angehörige unterstützen", "Behandlung läuft"],
+            ziel: "Der Patient nimmt zunehmend an Struktur/Aktivitäten teil; Suizidalität wird sicher erfasst",
+            massnahmen: ["Wertschätzende, geduldige Beziehung, ernst nehmen", "Tagesstruktur und kleine erreichbare Ziele unterstützen", "Behutsam aktivieren, Erfolge würdigen", "Schlaf/Ernährung/Körperpflege fördern", "Auf Suizidalität achten, offen ansprechen, Arzt/Team einbeziehen"],
+            evaluation: "Mehr Teilnahme/Antrieb, Suizidalität erfasst und adressiert."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
 
   gynaekologie: {
@@ -3015,7 +3156,168 @@ const KRANKHEITSBILDER = {
           {f:"Was bedeutet 'postiktale Phase'?", opt:["Die Aura vor dem Anfall","Erschöpfungs-/Verwirrtheitszustand nach dem Anfall – kann Minuten bis Stunden dauern","Der Anfall selbst","Ein EEG-Befund"], k:1, e:"Postiktale Phase: nach epileptischem Anfall. Patient: verwirrt, desorientiert, erschöpft, ggf. Aphasie (Todd-Parese). Kann Minuten bis Stunden dauern. Wichtig: Patient nicht alleine lassen, orientieren, sichern. Nicht mit Schlaganfall verwechseln! (Differenzierung: Vorgeschichte, Anfallsverlauf, EEG, CCT)"}
         ]
       }
-    ]
+    
+      ,{
+        name: "Morbus Parkinson",
+        icd: "G20",
+        definition: "Chronisch-neurodegenerative Erkrankung mit Dopaminmangel. Leitsymptome: Rigor, Tremor, Brady-/Akinese, posturale Instabilität.",
+        symptome: ["Ruhetremor", "Rigor (Muskelsteifigkeit)", "Bradykinese/Akinese (verlangsamte Bewegung)", "Posturale Instabilität, kleinschrittiger Gang", "Maskengesicht, leise Sprache, Mikrografie"],
+        diagnostik: ["Klinische Diagnose (Kardinalsymptome)", "Anamnese, neurologische Untersuchung", "L-Dopa-Test", "Bildgebung zum Ausschluss", "Verlaufsbeurteilung"],
+        therapie: ["Medikamentös (L-Dopa, Dopaminagonisten) nach AO – pünktliche Gabe!", "Physio-/Ergo-/Logopädie", "Sturzprophylaxe, Hilfsmittel", "Ggf. tiefe Hirnstimulation", "Ernährung, Obstipationsprophylaxe"],
+        pflege: ["Medikamente exakt pünktlich nach AO (On-/Off-Phasen!)", "Sturzprophylaxe, sichere Mobilisation, Hilfsmittel", "Zeit lassen, Selbstständigkeit fördern", "Aspirationsgefahr beachten (Schluckstörung), Ernährung", "Obstipations-/Dekubitusprophylaxe, Kommunikation unterstützen"],
+        merksatz: "Parkinson (Tremor, Rigor, Akinese): Medikamente pünktlich geben (On-/Off!), Sturz- und Aspirationsgefahr beachten.",
+        pflegeplanung: [
+          {
+            problem: "Sturzgefahr und beeinträchtigte Mobilität r/t Parkinson m/d/s Rigor, Bradykinese, posturaler Instabilität",
+            ressourcen: ["Motiviert", "Angehörige unterstützen", "Physiotherapie verfügbar"],
+            ziel: "Der Patient bleibt sturzfrei und so mobil/selbstständig wie möglich",
+            massnahmen: ["Medikamente exakt pünktlich nach AO, On-/Off-Phasen beobachten", "Sturzprophylaxe, sichere Mobilisation, Hilfsmittel", "Zeit lassen, Selbstständigkeit fördern", "Schluckstörung/Aspiration beachten, Ernährung anpassen", "Obstipations-/Dekubitusprophylaxe, Physiotherapie einbinden"],
+            evaluation: "Sturzfrei, Mobilität/Selbstständigkeit erhalten, Medikamentenwirkung stabil."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Multiple Sklerose",
+        icd: "G35",
+        definition: "Chronisch-entzündliche, demyelinisierende Erkrankung des ZNS mit schubförmigem oder progredientem Verlauf und vielfältigen neurologischen Ausfällen.",
+        symptome: ["Sehstörungen (z. B. Optikusneuritis)", "Sensibilitätsstörungen, Missempfindungen", "Paresen, Spastik", "Gangunsicherheit, Koordinationsstörungen", "Fatigue, Blasenstörungen"],
+        diagnostik: ["MRT (Entzündungsherde)", "Liquordiagnostik", "Evozierte Potenziale", "Neurologische Untersuchung", "Verlauf (Schübe)"],
+        therapie: ["Schubtherapie (Kortison) nach AO", "Verlaufsmodifizierende Immuntherapie nach AO", "Symptomatische Therapie (Spastik, Blase, Fatigue)", "Physio-/Ergotherapie", "Rehabilitation"],
+        pflege: ["Bei Schub Kortisontherapie nach AO begleiten", "Fatigue-Management, Energie einteilen", "Mobilität/Spastik: Lagerung, Hilfsmittel, Sturzprophylaxe", "Blasen-/Darmmanagement, Hautschutz", "Ressourcen fördern, psychische Unterstützung"],
+        merksatz: "MS: vielfältige ZNS-Ausfälle in Schüben; Fatigue-Management, Mobilität/Spastik, Blasenfunktion und Selbstständigkeit unterstützen.",
+        pflegeplanung: [
+          {
+            problem: "Fatigue und beeinträchtigte Mobilität r/t Multipler Sklerose m/d/s Erschöpfung, Paresen/Spastik",
+            ressourcen: ["Patient kennt seine Erkrankung", "Therapie läuft", "Angehörige unterstützen"],
+            ziel: "Der Patient teilt seine Energie ein und bleibt im Rahmen seiner Möglichkeiten mobil/selbstständig",
+            massnahmen: ["Fatigue-Management, Aktivitäten und Pausen planen", "Mobilität/Spastik unterstützen (Lagerung, Hilfsmittel, Sturzprophylaxe)", "Blasen-/Darmmanagement, Hautschutz", "Schubtherapie nach AO begleiten", "Ressourcen fördern, psychische Unterstützung"],
+            evaluation: "Energie besser eingeteilt, Mobilität erhalten, Komplikationen vermieden."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Migräne",
+        icd: "G43",
+        definition: "Anfallsartige, oft einseitige Kopfschmerzen, häufig mit Übelkeit und Licht-/Lärmempfindlichkeit, teils mit Aura. Chronisch-rezidivierend.",
+        symptome: ["Pulsierender, oft einseitiger Kopfschmerz", "Übelkeit/Erbrechen", "Licht-/Lärm-/Geruchsempfindlichkeit", "Verstärkung bei Bewegung", "Ggf. Aura (z. B. Sehstörungen) vor dem Schmerz"],
+        diagnostik: ["Klinische Diagnose, Anamnese (Trigger, Verlauf)", "Kopfschmerztagebuch", "Ausschluss anderer Ursachen (Red Flags)", "Neurologische Untersuchung"],
+        therapie: ["Akut: Analgetika/Triptane nach AO, früh einnehmen", "Reizabschirmung, Ruhe", "Antiemetika nach AO", "Prophylaxe bei häufigen Attacken nach AO", "Triggervermeidung, Lebensstil"],
+        pflege: ["Reizarme, abgedunkelte, ruhige Umgebung", "Medikamente früh nach AO, Wirkung beobachten", "Übelkeit/Erbrechen managen, Flüssigkeit", "Kopfschmerztagebuch/Trigger unterstützen", "Edukation zu Auslösern und früher Einnahme"],
+        merksatz: "Migräne: früh behandeln, Reize abschirmen (Ruhe, Dunkelheit), Trigger meiden, bei Warnzeichen abklären.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Migräneattacke m/d/s pulsierendem Kopfschmerz, Übelkeit, Reizempfindlichkeit",
+            ressourcen: ["Patient kennt Auslöser", "Medikamente verfügbar"],
+            ziel: "Der Patient ist während der Attacke deutlich schmerzgelindert (NRS ≤ 3)",
+            massnahmen: ["Reizarme, abgedunkelte, ruhige Umgebung schaffen", "Medikamente früh nach AO geben, Wirkung kontrollieren", "Übelkeit/Erbrechen behandeln, Flüssigkeit anbieten", "Kopfschmerztagebuch/Triggervermeidung unterstützen", "Edukation zu früher Einnahme und Auslösern"],
+            evaluation: "Schmerz gelindert, Übelkeit kontrolliert, Trigger reflektiert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Demenz (Alzheimer-Typ)",
+        icd: "G30",
+        definition: "Fortschreitender Verlust kognitiver Fähigkeiten (v. a. Gedächtnis), häufigste Form ist Alzheimer. Beeinträchtigt Alltag und Selbstständigkeit zunehmend.",
+        symptome: ["Gedächtnisstörungen (v. a. Kurzzeitgedächtnis)", "Orientierungsstörungen (Zeit/Ort)", "Wortfindungs-/Sprachstörungen", "Beeinträchtigte Alltagskompetenz", "Verhaltensänderungen, Unruhe, Tag-Nacht-Umkehr"],
+        diagnostik: ["Kognitive Tests (z. B. MMST/Uhrentest)", "Anamnese (Eigen-/Fremdanamnese)", "Bildgebung, Labor (Ausschluss)", "Verlaufsbeurteilung"],
+        therapie: ["Antidementiva nach AO", "Nicht-medikamentöse Förderung (Aktivierung, Biografiearbeit)", "Strukturierter, sicherer Alltag", "Behandlung von Begleitsymptomen", "Angehörigenberatung/-entlastung"],
+        pflege: ["Klare Tagesstruktur, Orientierungshilfen, vertraute Routinen", "Validierender, ruhiger Umgang (Gefühle ernst nehmen)", "Sicherheit (Sturz-/Hinlaufgefahr), reizarme Umgebung", "Selbstständigkeit/Ressourcen fördern, Biografiearbeit", "Ernährung/Flüssigkeit sichern, Angehörige einbeziehen"],
+        merksatz: "Demenz: Struktur, Orientierung und validierender Umgang; Sicherheit gewährleisten, Ressourcen und Würde erhalten.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Orientierung und Selbstständigkeit r/t Demenz m/d/s Gedächtnis-/Orientierungsstörungen, Unruhe",
+            ressourcen: ["Biografie bekannt", "Angehörige unterstützen", "Erhaltene Ressourcen"],
+            ziel: "Der Mensch mit Demenz ist sicher, orientiert sich im Rahmen seiner Möglichkeiten und behält Selbstständigkeit/Würde",
+            massnahmen: ["Klare Tagesstruktur, Orientierungshilfen, vertraute Routinen", "Validierender, ruhiger Umgang, einfache Kommunikation", "Sicherheit gewährleisten (Sturz-/Hinlaufprophylaxe), reizarm", "Ressourcen/Selbstständigkeit fördern, Biografiearbeit", "Ernährung/Flüssigkeit sichern, Angehörige beraten/entlasten"],
+            evaluation: "Sicher, im Rahmen orientiert, Selbstständigkeit/Würde gewahrt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Bakterielle Meningitis",
+        icd: "G00",
+        definition: "Bakterielle Entzündung der Hirnhäute, ein lebensbedrohlicher Notfall. Schnelle Diagnose und Antibiotikatherapie sind entscheidend.",
+        symptome: ["Hohes Fieber", "Starke Kopfschmerzen", "Meningismus (Nackensteife)", "Licht-/Geräuschempfindlichkeit, Übelkeit", "Bewusstseinstrübung, ggf. Petechien (Meningokokken)"],
+        diagnostik: ["Klinik (Meningismus, Brudzinski/Kernig)", "Liquorpunktion nach AO", "Labor/Blutkultur", "Bildgebung bei Indikation", "Vitalzeichen/Bewusstsein"],
+        therapie: ["Sofortige Antibiotikatherapie nach AO (nicht verzögern!)", "Ggf. Kortison nach AO", "Intensivüberwachung, Kreislauf-/Atemstabilisierung", "Isolation (je nach Erreger)", "Symptomatische Therapie"],
+        pflege: ["Vitalzeichen/Bewusstsein engmaschig (Verschlechterung!)", "Reizarme, abgedunkelte, ruhige Umgebung", "Antibiotika/Medikamente zeitgerecht nach AO", "Isolation nach Standard (z. B. Meningokokken), Hygiene", "Fieber-/Schmerz-/Flüssigkeitsmanagement, auf Petechien achten"],
+        merksatz: "Fieber + Kopfschmerz + Nackensteife = Meningitis-Verdacht: sofort Antibiotikum nach AO, Isolation, Intensivüberwachung.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr der Verschlechterung r/t bakterieller Meningitis m/d/s Fieber, Meningismus, Bewusstseinstrübung",
+            ressourcen: ["Stationäre/intensive Versorgung", "Frühzeitige Therapie"],
+            ziel: "Eine Verschlechterung wird früh erkannt; der Patient bleibt kreislauf- und neurologisch stabil",
+            massnahmen: ["Vitalzeichen/Bewusstsein engmaschig überwachen", "Antibiotika/Medikamente zeitgerecht nach AO", "Reizarme, abgedunkelte Umgebung, Schmerz-/Fiebermanagement", "Isolation nach Standard, konsequente Hygiene", "Auf Petechien/Komplikationen achten, Intensiv"],
+            evaluation: "Früh erkannt, stabil, Therapie zeitgerecht, keine Übertragung."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Guillain-Barré-Syndrom",
+        icd: "G61",
+        definition: "Akute, meist postinfektiöse Entzündung peripherer Nerven mit aufsteigenden, symmetrischen Lähmungen. Gefahr der Atemlähmung.",
+        symptome: ["Aufsteigende, symmetrische Muskelschwäche (von den Beinen)", "Reflexverlust", "Sensibilitätsstörungen/Missempfindungen", "Gangunsicherheit", "Bei Progredienz: Atem-/Schluckstörung, autonome Störungen"],
+        diagnostik: ["Klinik (aufsteigende Paresen, Areflexie)", "Liquor (Eiweißerhöhung)", "Elektroneurografie", "Atemfunktion überwachen", "Verlaufsbeobachtung"],
+        therapie: ["Immuntherapie (z. B. Immunglobuline/Plasmapherese) nach AO", "Engmaschige Überwachung der Atmung (Intensiv!)", "Thrombose-/Pneumonie-/Dekubitusprophylaxe", "Physiotherapie", "Schmerz-/Symptomtherapie"],
+        pflege: ["Atmung/Vitalkapazität engmaschig überwachen (Atemlähmung!)", "Schluckstörung/Aspiration beachten", "Thrombose-/Pneumonie-/Dekubitus-/Kontrakturprophylaxe", "Lagerung, Mobilisation/Physiotherapie, Hautschutz", "Psychische Unterstützung, Kommunikation sichern"],
+        merksatz: "GBS: aufsteigende Lähmung – Atmung engmaschig überwachen (Atemlähmung droht!), Prophylaxen und Immuntherapie nach AO.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr der respiratorischen Insuffizienz r/t aufsteigender Lähmung bei GBS m/d/s zunehmender Muskelschwäche",
+            ressourcen: ["Intensive Überwachung möglich", "Therapie läuft"],
+            ziel: "Eine respiratorische Verschlechterung wird früh erkannt; der Patient bleibt ausreichend ventiliert",
+            massnahmen: ["Atmung/Vitalkapazität engmaschig überwachen, Beatmungsbereitschaft", "Schluckstörung/Aspiration beachten", "Thrombose-/Pneumonie-/Dekubitus-/Kontrakturprophylaxe", "Immuntherapie nach AO begleiten, Physiotherapie", "Psychische Unterstützung, Kommunikation sichern"],
+            evaluation: "Atmung früh überwacht, ausreichend ventiliert, keine Prophylaxe-Komplikation."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Polyneuropathie",
+        icd: "G62",
+        definition: "Erkrankung mehrerer peripherer Nerven, häufig durch Diabetes oder Alkohol. Typisch: distal-symmetrische Sensibilitätsstörungen und Missempfindungen.",
+        symptome: ["Kribbeln, Brennen, Taubheit (v. a. Füße, 'Socken'-Muster)", "Sensibilitätsstörungen, vermindertes Schmerzempfinden", "Muskelschwäche (fortgeschritten)", "Gang-/Standunsicherheit", "Erhöhte Verletzungs-/Wundgefahr (z. B. Fußulkus)"],
+        diagnostik: ["Anamnese (Diabetes, Alkohol), Neurologie", "Sensibilitäts-/Reflexprüfung", "Elektroneurografie", "Labor (Ursachensuche)", "Fußinspektion"],
+        therapie: ["Grunderkrankung behandeln (BZ-Einstellung, Alkoholkarenz)", "Schmerztherapie nach AO", "Fußpflege/Verletzungsschutz", "Physiotherapie", "Vitaminsubstitution nach AO bei Mangel"],
+        pflege: ["Füße/Haut täglich inspizieren, Verletzungen/Druck vermeiden", "Sturzprophylaxe (verminderte Sensibilität)", "Schmerz-/Missempfindungen managen nach AO", "Geeignetes Schuhwerk/Fußpflege, Vorsicht mit Wärmequellen", "Grunderkrankung (BZ/Alkohol) und Edukation unterstützen"],
+        merksatz: "Polyneuropathie (oft Diabetes/Alkohol): Füße schützen und inspizieren, Sturz-/Verletzungsgefahr, Grunderkrankung behandeln.",
+        pflegeplanung: [
+          {
+            problem: "Verletzungs-/Sturzgefahr r/t verminderter Sensibilität bei Polyneuropathie m/d/s Taubheit, Gangunsicherheit",
+            ressourcen: ["Patient lernbereit", "Grunderkrankung behandelbar"],
+            ziel: "Der Patient bleibt sturz- und verletzungsfrei; die Füße bleiben intakt",
+            massnahmen: ["Füße/Haut täglich inspizieren, Druck/Verletzungen vermeiden", "Sturzprophylaxe, sichere Mobilisation", "Schmerz-/Missempfindungen nach AO managen", "Geeignetes Schuhwerk/Fußpflege, Vorsicht mit Wärmequellen", "Grunderkrankung (BZ/Alkohol) unterstützen, Edukation"],
+            evaluation: "Sturz-/verletzungsfrei, Füße intakt, Beschwerden gelindert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Fazialisparese",
+        icd: "G51",
+        definition: "Lähmung des Gesichtsnervs (N. facialis), meist einseitig und idiopathisch (Bell-Parese). Halbseitige Gesichtslähmung; wichtig ist der Schutz des Auges.",
+        symptome: ["Einseitig hängender Mundwinkel", "Unvollständiger Lidschluss (betroffenes Auge)", "Fehlende Stirnrunzelung (periphere Parese)", "Verwaschene Sprache, Speichelfluss", "Geschmacks-/Hörveränderungen möglich"],
+        diagnostik: ["Klinik (einseitige mimische Schwäche, Stirn betroffen?)", "Abgrenzung zentral/peripher", "Neurologische Untersuchung", "Ggf. weitere Abklärung (Ursachen)"],
+        therapie: ["Ggf. Kortison nach AO (früh)", "Augenschutz (Tränenersatz, Uhrglasverband) zwingend", "Mimische Übungen/Physiotherapie/Logopädie", "Ursachenbehandlung", "Verlaufskontrolle"],
+        pflege: ["Augenschutz sicherstellen (Tränenersatzmittel, Uhrglasverband) – Hornhautschutz!", "Bei Mahlzeiten Aspiration/Speichelfluss beachten, Mundpflege", "Mimische Übungen unterstützen", "Medikamente nach AO, Augenkontrolle", "Psychische Unterstützung (Entstellungsgefühl)"],
+        merksatz: "Fazialisparese: vor allem das Auge schützen (unvollständiger Lidschluss!) – Tränenersatz/Uhrglasverband, frühe Therapie nach AO.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr einer Hornhautschädigung r/t unvollständigem Lidschluss bei Fazialisparese m/d/s fehlendem Lidschluss, trockenem Auge",
+            ressourcen: ["Patient kooperativ", "Therapie früh begonnen"],
+            ziel: "Das betroffene Auge bleibt geschützt und reizfrei (keine Hornhautschädigung)",
+            massnahmen: ["Augenschutz konsequent (Tränenersatz, ggf. Uhrglasverband), Augenkontrolle", "Bei Mahlzeiten Aspiration/Speichelfluss beachten, Mundpflege", "Mimische Übungen/Physio-/Logopädie unterstützen", "Medikamente (z. B. Kortison) nach AO", "Psychische Unterstützung, Edukation"],
+            evaluation: "Auge geschützt und reizfrei, keine Hornhautschädigung, Therapie umgesetzt."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
   hno: {
     label: "HNO",
