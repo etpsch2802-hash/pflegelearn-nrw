@@ -3690,7 +3690,168 @@ const KRANKHEITSBILDER = {
           {f:"Was ist ein Paukenröhrchen?", opt:["Ein Hörgerät","Kleines Titanröhrchen im Trommelfell: belüftet Mittelohr, lässt Sekret abfließen – bei rezidivierender Otitis","Ein Antibiotikum","Ein Diagnoseinstrument"], k:1, e:"Paukenröhrchen (Tympanostomieröhrchen): chirurgisch ins Trommelfell eingesetzt (in Kurznarkose beim Kind). Belüftet das Mittelohr dauerhaft, lässt Sekret abfließen. Indikation: ≥3 Otitis-Episoden in 6 Monaten ODER Hörverlust durch Paukenerguss > 3 Monate. Fällt nach 6-18 Monaten meist selbst heraus."}
         ]
       }
-    ]
+    
+      ,{
+        name: "Tonsillitis (Angina tonsillaris)",
+        icd: "J03",
+        definition: "Akute Entzündung der Gaumenmandeln, meist bakteriell (Streptokokken) oder viral. Häufig mit Halsschmerzen und Fieber.",
+        symptome: ["Halsschmerzen, Schluckbeschwerden", "Gerötete, geschwollene Mandeln (ggf. Beläge)", "Fieber", "Geschwollene Halslymphknoten", "Kopf-/Gliederschmerzen", "Mundgeruch"],
+        diagnostik: ["Racheninspektion", "Anamnese, Temperatur", "Ggf. Streptokokken-Schnelltest", "Auf Komplikationen achten (Abszess)", "Labor bei Bedarf"],
+        therapie: ["Analgesie/Antipyrese nach AO", "Antibiotika bei bakterieller Genese nach AO", "Ausreichend Flüssigkeit, Schonung", "Bei rezidivierender Tonsillitis ggf. Tonsillektomie", "Lokale Maßnahmen"],
+        pflege: ["Schmerz-/Fiebermanagement nach AO", "Weiche Kost, ausreichend Flüssigkeit, kühle Getränke", "Auf Schluck-/Atembeschwerden und Abszesszeichen achten", "Mundpflege", "Edukation (Therapietreue, Ansteckung)"],
+        merksatz: "Halsschmerz + Fieber + belegte Mandeln = Tonsillitis: Analgesie/Antipyrese, Antibiotikum bei bakterieller Genese, auf Abszess achten.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Tonsillitis m/d/s Halsschmerz, Schluckbeschwerden, Fieber",
+            ressourcen: ["Patient kooperativ", "Behandlung verfügbar"],
+            ziel: "Der Patient ist schmerzgelindert (NRS ≤ 3), fieberfrei und nimmt ausreichend Flüssigkeit",
+            massnahmen: ["Schmerz-/Fiebermanagement nach AO", "Weiche Kost, ausreichend (kühle) Flüssigkeit", "Auf Schluck-/Atembeschwerden und Abszesszeichen achten", "Mundpflege", "Edukation (Therapietreue, Ansteckung)"],
+            evaluation: "Schmerz gelindert, fieberfrei, ausreichende Flüssigkeitsaufnahme."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Sinusitis (Rhinosinusitis)",
+        icd: "J32",
+        definition: "Entzündung der Nasennebenhöhlen, oft nach Erkältung. Akut oder chronisch; meist viral, teils bakteriell.",
+        symptome: ["Druck-/Kopfschmerz (verstärkt beim Bücken)", "Behinderte Nasenatmung", "Eitriges Nasensekret", "Riechminderung", "Druckschmerz über den Nebenhöhlen", "Ggf. Fieber"],
+        diagnostik: ["Klinik (Druckschmerz, Sekret)", "Anamnese", "Ggf. Endoskopie/Bildgebung", "Auf Komplikationen achten", "Temperatur"],
+        therapie: ["Abschwellende Maßnahmen (Nasenspray/Spülung) nach AO", "Analgesie nach AO", "Antibiotika nur bei bakterieller/komplizierter Genese nach AO", "Ausreichend Flüssigkeit, Inhalation", "Bei chronischem Verlauf HNO"],
+        pflege: ["Abschwellende Maßnahmen/Nasenpflege nach AO unterstützen", "Inhalation/Befeuchtung, ausreichend Flüssigkeit", "Schmerz-/Fiebermanagement", "Oberkörper hoch, Ruhe", "Edukation (Anwendung, Warnzeichen)"],
+        merksatz: "Gesichts-/Kopfdruck + eitriges Sekret + verstopfte Nase = Sinusitis: abschwellen, Analgesie, Antibiotikum nur bei bakterieller Genese.",
+        pflegeplanung: [
+          {
+            problem: "Schmerz und behinderte Nasenatmung r/t Sinusitis m/d/s Gesichtsdruck, Sekretstau",
+            ressourcen: ["Patient kooperativ", "Behandlung verfügbar"],
+            ziel: "Der Patient ist schmerzgelindert und atmet freier durch die Nase",
+            massnahmen: ["Abschwellende Maßnahmen/Nasenpflege nach AO", "Inhalation/Befeuchtung, ausreichend Flüssigkeit", "Schmerz-/Fiebermanagement nach AO", "Oberkörper hoch, Ruhe", "Edukation zu Anwendung/Warnzeichen"],
+            evaluation: "Schmerz gelindert, Nasenatmung verbessert, kein Komplikationshinweis."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Epistaxis (Nasenbluten)",
+        icd: "R04.0",
+        definition: "Blutung aus der Nase, meist aus dem vorderen Nasenseptum (Locus Kiesselbachi). Meist harmlos, selten bedrohlich (z. B. bei Antikoagulation/Hypertonie).",
+        symptome: ["Blutung aus der Nase (ein-/beidseitig)", "Blutfluss in den Rachen möglich", "Bei starker Blutung: Kreislaufzeichen", "Angst/Unruhe", "Ggf. Hinweise auf Ursache (Hypertonie, Antikoagulation)"],
+        diagnostik: ["Blutungsquelle/-stärke beurteilen", "Vitalzeichen (RR, Puls)", "Anamnese (Antikoagulation, Hypertonie, Trauma)", "Auf Kreislaufrelevanz achten"],
+        therapie: ["Oberkörper aufrecht, Kopf nach vorne, Nasenflügel komprimieren", "Kühlung (Nacken), ggf. abschwellende/blutstillende Maßnahmen nach AO", "Bei starker Blutung Tamponade/HNO nach AO", "Ursache behandeln (RR, Gerinnung)", "Beruhigung"],
+        pflege: ["Sofortmaßnahmen: aufrecht, Kopf nach vorne, Nasenflügel 10–15 min komprimieren, Nacken kühlen", "Beruhigen, durch den Mund atmen lassen, Blut ausspucken (nicht schlucken)", "Vitalzeichen/Blutungsstärke überwachen", "Bei Tamponade Pflege/Beobachtung", "Ursachen (RR, Antikoagulation) beachten, Edukation"],
+        merksatz: "Nasenbluten: aufrecht + Kopf nach vorne + Nasenflügel komprimieren + Nacken kühlen; bei starker/anhaltender Blutung HNO/Tamponade.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von Blutverlust und Angst r/t Epistaxis m/d/s Nasenblutung, Unruhe",
+            ressourcen: ["Patient kooperativ", "Sofortmaßnahmen möglich"],
+            ziel: "Die Blutung steht; der Patient ist kreislaufstabil und beruhigt",
+            massnahmen: ["Sofortmaßnahmen (aufrecht, Kopf nach vorne, Nasenflügel komprimieren, Nacken kühlen)", "Beruhigen, Blut ausspucken lassen", "Vitalzeichen/Blutungsstärke überwachen", "Bei Tamponade Pflege/Beobachtung", "Ursachen (RR/Gerinnung) beachten, Edukation"],
+            evaluation: "Blutung gestillt, kreislaufstabil, beruhigt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Hörsturz",
+        icd: "H91.2",
+        definition: "Plötzliche, meist einseitige Innenohr-Schwerhörigkeit ohne erkennbare äußere Ursache. Wird als HNO-Eilfall behandelt.",
+        symptome: ["Plötzliche einseitige Hörminderung", "Ohrdruck/'Wattegefühl'", "Häufig Tinnitus", "Ggf. leichter Schwindel", "Keine Schmerzen"],
+        diagnostik: ["HNO-Untersuchung, Hörtests (Audiometrie)", "Otoskopie (Ausschluss anderer Ursachen)", "Anamnese", "Verlaufskontrolle"],
+        therapie: ["Glukokortikoide nach AO (oft hochdosiert/lokal)", "Ggf. durchblutungsfördernde Maßnahmen nach AO", "Ruhe, Stressreduktion", "HNO-Verlaufskontrolle", "Aufklärung"],
+        pflege: ["Medikamente (z. B. Kortison) nach AO, Wirkung/Nebenwirkung beobachten", "Ruhe und Stressreduktion fördern", "Bei Schwindel Sturzprophylaxe", "Psychische Unterstützung (Angst um Gehör)", "Edukation zu Therapie/Verlauf"],
+        merksatz: "Plötzliche einseitige Hörminderung (oft mit Tinnitus) = Hörsturz: HNO-Eilfall, Kortison nach AO, Ruhe.",
+        pflegeplanung: [
+          {
+            problem: "Belastung durch akute Hörminderung r/t Hörsturz m/d/s einseitiger Hörminderung, Tinnitus, Sorge",
+            ressourcen: ["Patient kooperativ", "Frühzeitige Behandlung"],
+            ziel: "Der Patient erhält zeitgerecht die Therapie und ist im Umgang mit der Situation unterstützt",
+            massnahmen: ["Medikamente nach AO geben, Wirkung/Nebenwirkung beobachten", "Ruhe/Stressreduktion fördern", "Bei Schwindel Sturzprophylaxe", "Psychische Unterstützung", "Edukation zu Therapie/Verlauf"],
+            evaluation: "Therapie zeitgerecht, Patient unterstützt, Verlauf beobachtet."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Morbus Menière (Drehschwindel)",
+        icd: "H81.0",
+        definition: "Innenohrerkrankung mit anfallsartigem Drehschwindel, Hörminderung und Tinnitus, bedingt durch Endolymphschwankungen.",
+        symptome: ["Anfallsartiger heftiger Drehschwindel (Minuten bis Stunden)", "Übelkeit/Erbrechen", "Einseitige Hörminderung", "Tinnitus", "Druckgefühl im Ohr, Fallneigung"],
+        diagnostik: ["HNO-Untersuchung, Hörtests", "Gleichgewichtsdiagnostik", "Anamnese (Anfallsmuster)", "Ausschluss anderer Ursachen"],
+        therapie: ["Im Anfall: Ruhe, Antiemetika/Antivertiginosa nach AO", "Sturzschutz", "Langfristig: medikamentös/diätetisch nach AO", "HNO-Betreuung", "Aufklärung/Schulung"],
+        pflege: ["Im Anfall: Sturzprophylaxe, reizarme Umgebung, ruhige Lagerung, beruhigen", "Antiemetika/Antivertiginosa nach AO, Erbrechen managen", "Hilfestellung beim Gehen, Begleitung", "Flüssigkeit/Ernährung anpassen", "Edukation zu Auslösern/Verhalten im Anfall"],
+        merksatz: "Anfallsschwindel + Hörminderung + Tinnitus = Morbus Menière: im Anfall Sturzschutz und Ruhe, Antivertiginosa nach AO.",
+        pflegeplanung: [
+          {
+            problem: "Sturzgefahr r/t anfallsartigem Drehschwindel bei Morbus Menière m/d/s Schwindel, Übelkeit, Fallneigung",
+            ressourcen: ["Patient kooperativ", "Begleitung verfügbar"],
+            ziel: "Der Patient bleibt im Anfall sturzfrei und ist symptomgelindert",
+            massnahmen: ["Sturzprophylaxe, reizarme Umgebung, ruhige Lagerung, beruhigen", "Antiemetika/Antivertiginosa nach AO, Erbrechen managen", "Begleitung beim Gehen", "Flüssigkeit/Ernährung anpassen", "Edukation zu Verhalten im Anfall"],
+            evaluation: "Sturzfrei, Schwindel/Übelkeit gelindert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Larynxkarzinom (Kehlkopfkarzinom)",
+        icd: "C32",
+        definition: "Bösartiger Tumor des Kehlkopfs, Hauptrisikofaktoren Rauchen und Alkohol. Häufig anhaltende Heiserkeit als Frühzeichen.",
+        symptome: ["Anhaltende Heiserkeit", "Fremdkörpergefühl/Räusperzwang", "Schluckbeschwerden", "Husten, ggf. blutiger Auswurf", "Bei Fortschreiten: Atemnot, Halslymphknoten"],
+        diagnostik: ["HNO-Untersuchung, Laryngoskopie", "Biopsie (Sicherung)", "Bildgebung/Staging", "Anamnese (Rauchen/Alkohol)"],
+        therapie: ["Operative Therapie (Teil-/Laryngektomie)", "Strahlen-/Chemotherapie nach AO", "Bei Laryngektomie: Tracheostoma, Stimmrehabilitation", "Nachsorge", "Rauch-/Alkoholkarenz"],
+        pflege: ["Perioperative/onkologische Pflege; bei Tracheostoma sichere Versorgung/Absaugen", "Auf Atmung achten, Sekretmanagement", "Kommunikation sichern (Stimmverlust: Hilfsmittel/Schreibtafel)", "Therapienebenwirkungen managen nach AO, Ernährung/Schlucken", "Psychische Unterstützung, Logopädie, Rauch-/Alkoholkarenz"],
+        merksatz: "Anhaltende Heiserkeit (Raucher/Alkohol) = Kehlkopfkrebs abklären; nach Laryngektomie Tracheostoma-Versorgung und Stimmrehabilitation.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Kommunikation und Atemwegssicherheit r/t Larynxkarzinom/Laryngektomie m/d/s Stimmverlust, Tracheostoma",
+            ressourcen: ["Patient lernbereit", "Logopädie/Stomatherapie verfügbar", "Angehörige unterstützen"],
+            ziel: "Der Atemweg ist sicher; der Patient kann sich verständigen und versorgt sein Tracheostoma zunehmend selbstständig",
+            massnahmen: ["Tracheostoma sicher versorgen/absaugen, Atmung/Sekret beobachten", "Kommunikationshilfen bereitstellen (Schreibtafel, später Stimmrehabilitation)", "Therapienebenwirkungen nach AO managen, Ernährung/Schlucken", "Perioperative/onkologische Pflege", "Psychische Unterstützung, Logopädie, Rauch-/Alkoholkarenz"],
+            evaluation: "Atemweg sicher, Verständigung möglich, zunehmende Selbstversorgung."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Peritonsillarabszess",
+        icd: "J36",
+        definition: "Eiteransammlung neben der Gaumenmandel, meist als Komplikation einer Tonsillitis. Kann die Atmung gefährden – ein HNO-Notfall.",
+        symptome: ["Zunehmende, oft einseitige Halsschmerzen", "Hohes Fieber", "Kloßige Sprache", "Kieferklemme (Mundöffnung erschwert)", "Schluckunfähigkeit/Speichelfluss, einseitige Schwellung"],
+        diagnostik: ["Racheninspektion (einseitige Vorwölbung, Uvula-Verdrängung)", "Klinik, Temperatur", "HNO-Vorstellung", "Auf Atemwegsgefährdung achten"],
+        therapie: ["Abszessentlastung (Punktion/Inzision) nach AO", "Antibiotika nach AO", "Analgesie/Antipyrese nach AO", "Flüssigkeit (oft i.v.)", "Auf Atemweg achten, ggf. stationär"],
+        pflege: ["Auf Atmung/Schlucken achten (Atemwegsgefährdung!)", "Schmerz-/Fiebermanagement nach AO", "Flüssigkeit sichern (oft i.v.), Bilanz", "Nach Entlastung Beobachtung, Mundpflege", "Beruhigung, Edukation"],
+        merksatz: "Einseitiger Halsschmerz + kloßige Sprache + Kieferklemme + Fieber = Peritonsillarabszess: Entlastung + Antibiotikum, Atemweg im Blick.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Atemwegsgefährdung r/t Peritonsillarabszess m/d/s einseitiger Schwellung, Schluckunfähigkeit",
+            ressourcen: ["Stationäre Versorgung", "Frühzeitige Behandlung"],
+            ziel: "Der Atemweg bleibt frei; der Patient ist schmerzgelindert und kann schlucken",
+            massnahmen: ["Atmung/Schlucken engmaschig beobachten (Atemwegsgefährdung)", "Schmerz-/Fiebermanagement nach AO", "Flüssigkeit (oft i.v.) sichern, Bilanz", "Nach Abszessentlastung beobachten, Mundpflege", "Beruhigen, Edukation"],
+            evaluation: "Atemweg frei, Schmerz gelindert, Schlucken möglich."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Otitis externa",
+        icd: "H60",
+        definition: "Entzündung des äußeren Gehörgangs ('Bade-Otitis'), oft bakteriell oder durch Feuchtigkeit. Schmerzhaft, mit Juckreiz und Schwellung.",
+        symptome: ["Ohrenschmerzen (verstärkt bei Zug an der Ohrmuschel)", "Juckreiz im Gehörgang", "Schwellung/Rötung, Sekretion", "Hörminderung bei Schwellung", "Druckgefühl"],
+        diagnostik: ["Otoskopie (geröteter, geschwollener Gehörgang)", "Klinik (Tragus-/Zugschmerz)", "Ggf. Abstrich", "Anamnese (Wasser, Manipulation)"],
+        therapie: ["Reinigung des Gehörgangs (HNO) nach AO", "Lokale (antibiotisch/antiseptische) Ohrentropfen nach AO", "Analgesie nach AO", "Gehörgang trocken halten", "Manipulation/Wattestäbchen meiden"],
+        pflege: ["Lokaltherapie/Ohrentropfen nach AO korrekt anwenden/anleiten", "Schmerzmanagement nach AO", "Gehörgang trocken halten, vor Wasser schützen", "Manipulation (Wattestäbchen) vermeiden, Edukation", "Auf Besserung/Komplikation achten"],
+        merksatz: "Zug-/Tragusschmerz + juckender, geschwollener Gehörgang = Otitis externa: Ohrentropfen nach AO, trocken halten, nicht manipulieren.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Entzündung des äußeren Gehörgangs m/d/s Ohrenschmerz, Schwellung, Juckreiz",
+            ressourcen: ["Patient kooperativ", "Behandlung verfügbar"],
+            ziel: "Der Patient ist schmerzgelindert; die Entzündung klingt ab",
+            massnahmen: ["Ohrentropfen/Lokaltherapie nach AO korrekt anwenden/anleiten", "Schmerzmanagement nach AO", "Gehörgang trocken halten, vor Wasser schützen", "Manipulation vermeiden, Edukation", "Auf Besserung/Komplikation achten"],
+            evaluation: "Schmerz gelindert, Entzündung rückläufig."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
   onkologie: {
     label: "Onkologie",
@@ -3748,7 +3909,168 @@ const KRANKHEITSBILDER = {
           {f:"Was ist Rasselatmung in der Sterbephase?", opt:["Atemnot des Patienten","Geräuschvolle Atmung durch Sekretan sammlung im Rachen – Patient leidet meist nicht, aber Angehörige sehr!","Ein Notfall","Aspirationspneumonie"], k:1, e:"Rasselatmung (death rattle): Sekret sammelt sich im Rachen/Rachen bei abgeschwächtem oder fehlendem Schluckreflex in der Sterbephase. Geräuschvoll, aber: Patient nimmt es meist nicht wahr (Bewusstsein stark reduziert). Maßnahmen: Seitenlage, Absaugen NUR wenn Patient leidet, Mundpflege, vor allem: Angehörige aufklären und begleiten – für sie ist es belastend."}
         ]
       }
-    ]
+    
+      ,{
+        name: "Bronchialkarzinom (Lungenkarzinom)",
+        icd: "C34",
+        definition: "Bösartiger Lungentumor, Hauptrisikofaktor Rauchen. Oft spät symptomatisch; eingeteilt in klein- und nicht-kleinzellige Form.",
+        symptome: ["Anhaltender Husten/Hustenveränderung", "Bluthaltiger Auswurf (Hämoptyse)", "Dyspnoe, thorakale Schmerzen", "Gewichtsverlust, Abgeschlagenheit", "Rezidivierende Atemwegsinfekte"],
+        diagnostik: ["Röntgen/CT-Thorax", "Bronchoskopie + Biopsie", "Labor, Staging", "Anamnese (Rauchen)", "Lungenfunktion"],
+        therapie: ["Operation (je nach Stadium)", "Strahlen-/Chemo-/zielgerichtete/Immuntherapie nach AO", "Symptom-/Schmerzkontrolle, O₂ bei Bedarf", "Supportive/palliative Therapie", "Rauchstopp, psychoonkologische Begleitung"],
+        pflege: ["Atmung/SpO₂ überwachen, O₂ nach AO, atemerleichternde Lagerung", "Therapienebenwirkungen managen nach AO", "Schmerz-/Symptomkontrolle, Ernährung", "Psychoonkologische Unterstützung, Angehörige einbeziehen", "Edukation (Rauchstopp), Mobilisation/Atemtherapie"],
+        merksatz: "Anhaltender Husten/Hämoptyse + Rauchen = an Lungenkarzinom denken: Atmung/O₂, Symptomkontrolle, ganzheitliche Begleitung.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Atmung und Belastung r/t Bronchialkarzinom/Therapie m/d/s Dyspnoe, Husten, Sorge",
+            ressourcen: ["Angehörige unterstützen", "Psychoonkologie verfügbar"],
+            ziel: "Der Patient ist atem- und symptomkontrolliert und in der Krankheitsbewältigung unterstützt",
+            massnahmen: ["Atmung/SpO₂ überwachen, O₂ nach AO, atemerleichternde Lagerung", "Therapienebenwirkungen nach AO managen", "Schmerz-/Symptomkontrolle, Ernährung", "Psychoonkologische Begleitung, Angehörige einbeziehen", "Atemtherapie/Mobilisation, Edukation (Rauchstopp)"],
+            evaluation: "Atmung/Symptome kontrolliert, Patient unterstützt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Kolorektales Karzinom (Darmkrebs)",
+        icd: "C18",
+        definition: "Bösartiger Tumor von Dick- oder Enddarm, häufig. Früherkennung (Vorsorge-Koloskopie) verbessert die Prognose deutlich.",
+        symptome: ["Veränderte Stuhlgewohnheiten", "Blut im Stuhl", "Leistungsminderung, Gewichtsverlust", "Anämie (okkulte Blutung)", "Bauchschmerzen, ggf. Ileuszeichen"],
+        diagnostik: ["Koloskopie + Biopsie", "Stuhltest (okkultes Blut)", "Bildgebung/Staging", "Labor (Anämie, Tumormarker nach AO)"],
+        therapie: ["Operative Tumorentfernung (ggf. Stoma)", "Chemo-/Strahlentherapie nach AO", "Symptom-/Schmerzkontrolle", "Nachsorge", "Psychoonkologische Begleitung"],
+        pflege: ["Perioperative/onkologische Pflege; bei Stoma Versorgung/Anleitung", "Ausscheidung/Blutung beobachten, Ernährung, Bilanz", "Therapienebenwirkungen managen nach AO", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung, Edukation (Vorsorge)"],
+        merksatz: "Stuhlveränderung + Blut im Stuhl = Darmkrebs abklären (Koloskopie); Therapie operativ ± Chemo, ggf. Stoma.",
+        pflegeplanung: [
+          {
+            problem: "Belastung und Ausscheidungsveränderung r/t kolorektalem Karzinom/Therapie m/d/s Stuhlveränderung, ggf. Stoma, Sorge",
+            ressourcen: ["Patient kooperativ", "Stomatherapie/Angehörige"],
+            ziel: "Der Patient ist symptomkontrolliert und versorgt seine Ausscheidung/ein Stoma zunehmend selbstständig",
+            massnahmen: ["Perioperative/onkologische Pflege; bei Stoma Versorgung/Anleitung, Hautschutz", "Ausscheidung/Blutung beobachten, Ernährung, Bilanz", "Therapienebenwirkungen nach AO managen", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung, Edukation (Vorsorge)"],
+            evaluation: "Symptome kontrolliert, Versorgung sicher, zunehmende Selbstständigkeit."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Leukämie",
+        icd: "C95",
+        definition: "Bösartige Erkrankung des blutbildenden Systems mit unkontrollierter Vermehrung unreifer weißer Blutzellen. Akut oder chronisch.",
+        symptome: ["Müdigkeit, Blässe (Anämie)", "Infektneigung (Mangel funktionsfähiger Leukozyten)", "Blutungsneigung (Thrombozytopenie)", "Fieber, Nachtschweiß", "Lymphknoten-/Milzschwellung, Knochenschmerzen"],
+        diagnostik: ["Blutbild (Zytopenien/Blasten)", "Knochenmarkpunktion", "Weiterführende Diagnostik/Typisierung", "Verlaufskontrollen"],
+        therapie: ["Chemotherapie nach AO", "Ggf. Stammzelltransplantation", "Supportiv: Transfusionen, Infektprophylaxe/-therapie nach AO", "Symptomkontrolle", "Psychoonkologische Begleitung"],
+        pflege: ["Strenge Infektionsprophylaxe (Immunsuppression!), Hygiene/ggf. Umkehrisolation", "Auf Blutungs-/Anämiezeichen achten, Transfusionen begleiten nach AO", "Chemotherapie-Nebenwirkungen managen, Mund-/Hautpflege", "Fieber als Notfall behandeln (febrile Neutropenie)", "Psychische Unterstützung, Edukation"],
+        merksatz: "Leukämie: Infektgefahr (Immunsuppression!), Blutungs-/Anämiezeichen – strenge Hygiene, Fieber = Notfall, supportive Therapie.",
+        pflegeplanung: [
+          {
+            problem: "Infektionsgefahr r/t therapiebedingter Immunsuppression bei Leukämie m/d/s Neutropenie, Fieberneigung",
+            ressourcen: ["Patient kooperativ", "Angehörige unterstützen"],
+            ziel: "Der Patient entwickelt keine unbehandelte Infektion; Komplikationen werden früh erkannt",
+            massnahmen: ["Strenge Infektionsprophylaxe, Hygiene/ggf. Umkehrisolation", "Temperatur überwachen, Fieber als Notfall behandeln (febrile Neutropenie)", "Auf Blutungs-/Anämiezeichen achten, Transfusionen nach AO begleiten", "Chemotherapie-Nebenwirkungen managen, Mund-/Hautpflege", "Psychische Unterstützung, Edukation"],
+            evaluation: "Keine unbehandelte Infektion, Komplikationen früh erkannt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Malignes Lymphom (Hodgkin/Non-Hodgkin)",
+        icd: "C85",
+        definition: "Bösartige Erkrankung des lymphatischen Systems mit Lymphknotenvergrößerung. Unterschieden werden Hodgkin- und Non-Hodgkin-Lymphome.",
+        symptome: ["Schmerzlose Lymphknotenschwellung", "B-Symptomatik: Fieber, Nachtschweiß, Gewichtsverlust", "Müdigkeit, Leistungsminderung", "Juckreiz", "Infektneigung möglich"],
+        diagnostik: ["Lymphknotenbiopsie", "Bildgebung/Staging", "Labor, Knochenmarkdiagnostik", "Verlaufskontrolle"],
+        therapie: ["Chemotherapie nach AO", "Strahlentherapie nach AO", "Ggf. Immun-/zielgerichtete Therapie", "Supportive Therapie", "Psychoonkologische Begleitung"],
+        pflege: ["Therapienebenwirkungen managen nach AO (Übelkeit, Schleimhäute, Fatigue)", "Infektionsprophylaxe bei Immunsuppression, auf Fieber achten", "B-Symptomatik beobachten, Ernährung/Flüssigkeit", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung, Edukation"],
+        merksatz: "Schmerzlose Lymphknotenschwellung + B-Symptomatik = Lymphom: Chemo-/Strahlentherapie, Infektprophylaxe, Symptomkontrolle.",
+        pflegeplanung: [
+          {
+            problem: "Belastung durch Erkrankung und Therapie r/t malignem Lymphom m/d/s B-Symptomatik, Therapienebenwirkungen",
+            ressourcen: ["Patient kooperativ", "Angehörige/Psychoonkologie"],
+            ziel: "Der Patient ist symptom- und nebenwirkungskontrolliert und in der Bewältigung unterstützt",
+            massnahmen: ["Therapienebenwirkungen nach AO managen (Übelkeit, Schleimhäute, Fatigue)", "Infektionsprophylaxe, Temperatur überwachen", "B-Symptomatik beobachten, Ernährung/Flüssigkeit", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung, Edukation"],
+            evaluation: "Symptome/Nebenwirkungen kontrolliert, Patient unterstützt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Chemotherapie – Nebenwirkungsmanagement",
+        icd: "Z51.1",
+        definition: "Pflegerische Begleitung der zytostatischen Therapie mit Fokus auf Erkennung und Management typischer Nebenwirkungen sowie sicheren Umgang.",
+        symptome: ["Übelkeit/Erbrechen", "Knochenmarkdepression (Anämie, Infekt-, Blutungsneigung)", "Mukositis (Mundschleimhautentzündung)", "Haarausfall, Fatigue", "Haut-/Schleimhaut- und Magen-Darm-Probleme"],
+        diagnostik: ["Blutbild/Laborkontrollen nach AO", "Auf Fieber/Infektzeichen achten (febrile Neutropenie!)", "Mundschleimhaut/Haut beurteilen", "Übelkeit/Ernährung/Gewicht erfassen"],
+        therapie: ["Antiemese nach AO", "Infektprophylaxe/-therapie, Transfusionen nach AO", "Mundpflege/Mukositis-Prophylaxe", "Hautschutz, Ernährungsunterstützung", "Sicherer Umgang mit Zytostatika (Schutz, Extravasation vermeiden)"],
+        pflege: ["Antiemese nach AO, Übelkeit/Ernährung managen", "Blutbild beachten; Infektionsprophylaxe, Fieber als Notfall behandeln", "Konsequente Mundpflege (Mukositisprophylaxe), Hautschutz", "Fatigue-Management, Aktivitäten/Pausen planen", "Sicherer Umgang/Applikation nach Standard, Extravasation beobachten, Edukation"],
+        merksatz: "Chemo-Nebenwirkungen: Übelkeit, Knochenmarkdepression, Mukositis – Antiemese, Infekt-/Mundpflege, Fieber = Notfall, sicherer Umgang.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von Komplikationen r/t Chemotherapie-Nebenwirkungen m/d/s Übelkeit, Knochenmarkdepression, Mukositis",
+            ressourcen: ["Patient kooperativ", "Behandlung strukturiert"],
+            ziel: "Nebenwirkungen sind gelindert; Komplikationen (Infekt/Blutung) werden früh erkannt",
+            massnahmen: ["Antiemese nach AO, Übelkeit/Ernährung managen", "Blutbild beachten, Infektionsprophylaxe, Fieber als Notfall behandeln", "Mundpflege (Mukositisprophylaxe), Hautschutz", "Fatigue-Management", "Sicherer Umgang/Applikation, Extravasation beobachten, Edukation"],
+            evaluation: "Nebenwirkungen gelindert, Komplikationen früh erkannt, Therapie sicher."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Tumorschmerz (WHO-Stufenschema)",
+        icd: "R52",
+        definition: "Schmerz bei Tumorerkrankungen, häufig chronisch. Behandlung nach WHO-Stufenschema; Ziel ist eine möglichst weitgehende Schmerzfreiheit.",
+        symptome: ["Anhaltender/wiederkehrender Schmerz", "Durchbruchschmerzen", "Beeinträchtigung von Schlaf/Alltag/Stimmung", "Bewegungs-/belastungsabhängiger Schmerz", "Begleitend Angst/Erschöpfung"],
+        diagnostik: ["Systematische Schmerzerfassung (Skala, Lokalisation, Charakter)", "Schmerzverlauf/-tagebuch", "Wirkung/Nebenwirkung der Therapie beurteilen", "Auf Durchbruchschmerz achten"],
+        therapie: ["WHO-Stufenschema (Nicht-Opioide → schwache → starke Opioide) nach AO", "Feste Basismedikation + Bedarfsmedikation (Durchbruchschmerz)", "Begleitmedikation (Koanalgetika) nach AO", "Nicht-medikamentös (Lagerung, Wärme/Kälte, Entspannung)", "Nebenwirkungsmanagement (z. B. Obstipationsprophylaxe bei Opioiden)"],
+        pflege: ["Schmerz regelmäßig erfassen (Skala) und dokumentieren", "Basis-/Bedarfsmedikation nach AO geben, Wirkung kontrollieren", "Opioid-Nebenwirkungen managen (v. a. Obstipationsprophylaxe!, Übelkeit)", "Nicht-medikamentöse Maßnahmen (Lagerung, Wärme/Kälte, Entspannung)", "Edukation (feste Einnahme, Durchbruchschmerz), Ängste ernst nehmen"],
+        merksatz: "Tumorschmerz nach WHO-Stufenschema: feste Basis + Bedarf bei Durchbruchschmerz, regelmäßig erfassen, Obstipationsprophylaxe bei Opioiden.",
+        pflegeplanung: [
+          {
+            problem: "Chronischer Schmerz r/t Tumorerkrankung m/d/s anhaltendem Schmerz, Durchbruchschmerzen",
+            ressourcen: ["Patient kooperativ", "Schmerztherapie etabliert"],
+            ziel: "Der Patient ist weitgehend schmerzgelindert (NRS ≤ 3) und kann am Alltag teilnehmen",
+            massnahmen: ["Schmerz regelmäßig erfassen (Skala) und dokumentieren", "Basis-/Bedarfsmedikation nach AO, Wirkung kontrollieren", "Opioid-Nebenwirkungen managen (Obstipationsprophylaxe, Übelkeit)", "Nicht-medikamentöse Maßnahmen anbieten", "Edukation und psychische Unterstützung"],
+            evaluation: "Schmerz weitgehend gelindert, Teilhabe verbessert, Nebenwirkungen beherrscht."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Febrile Neutropenie",
+        icd: "D70",
+        definition: "Fieber bei stark verminderten neutrophilen Granulozyten (meist nach Chemotherapie) – ein onkologischer Notfall mit hoher Infektions-/Sepsisgefahr.",
+        symptome: ["Fieber bei bekannter/erwarteter Neutropenie", "Schüttelfrost, Krankheitsgefühl", "Oft wenig lokale Entzündungszeichen (durch Zellmangel)", "Mögliche rasche Verschlechterung (Sepsis)", "Kreislaufzeichen bei Sepsis"],
+        diagnostik: ["Temperatur + Blutbild (Neutropenie)", "Blutkulturen/Fokussuche nach AO", "Vitalzeichen, Sepsiszeichen", "Rasche ärztliche Einschätzung"],
+        therapie: ["Sofortige (kalkulierte) Antibiotikatherapie nach AO – nicht verzögern!", "Blutkulturen vor Antibiose nach AO", "Kreislaufüberwachung/-stabilisierung", "Strenge Infektionsprophylaxe/Isolation", "Intensiv bei Sepsis"],
+        pflege: ["Fieber bei Neutropenie als Notfall behandeln – sofort Arzt, zeitgerechte Antibiose nach AO", "Vitalzeichen engmaschig, auf Sepsiszeichen achten", "Strenge Hygiene/Schutzisolation, Infektionsquellen meiden", "Blutkulturen/Diagnostik nach AO unterstützen", "Patienten/Angehörige edukieren (Fieber sofort melden)"],
+        merksatz: "Fieber + Neutropenie = Notfall: sofort Blutkulturen und kalkulierte Antibiose nach AO (nicht verzögern!), Sepsis im Blick, Schutzisolation.",
+        pflegeplanung: [
+          {
+            problem: "Hohe Infektions-/Sepsisgefahr r/t febriler Neutropenie m/d/s Fieber bei Neutropenie",
+            ressourcen: ["Stationäre/rasche Versorgung", "Frühzeitige Behandlung"],
+            ziel: "Die Infektion wird zeitgerecht behandelt; der Patient bleibt kreislaufstabil (keine unerkannte Sepsis)",
+            massnahmen: ["Fieber als Notfall behandeln, sofort Arzt, Antibiose zeitgerecht nach AO", "Blutkulturen/Diagnostik nach AO unterstützen", "Vitalzeichen engmaschig, auf Sepsiszeichen achten", "Strenge Hygiene/Schutzisolation", "Edukation (Fieber sofort melden)"],
+            evaluation: "Antibiose zeitgerecht, kreislaufstabil, keine unerkannte Sepsis."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Portkatheter (Port) – Pflege",
+        icd: "Z45.2",
+        definition: "Dauerhaft implantierter venöser Zugang (Portkammer unter der Haut) für Chemotherapie, Infusionen und Blutentnahmen. Pflegerischer Fokus: aseptische Handhabung und Komplikationsprävention.",
+        symptome: ["Implantierte Portkammer (meist subklavikulär tastbar)", "Nutzung nur mit Spezialnadel (Huber-Nadel)", "Risiken: Infektion, Thrombose, Diskonnektion, Paravasat", "Mögliche lokale Rötung/Schwellung bei Komplikation", "Funktionsstörung (kein Rückfluss)"],
+        diagnostik: ["Punktionsstelle auf Infektion/Entzündung beurteilen", "Durchgängigkeit/Rückfluss prüfen", "Auf Paravasat/Schwellung achten", "Hygiene-/Lagekontrolle"],
+        therapie: ["Aseptische Punktion mit Huber-Nadel, sterile Technik", "Spülung/Blockung nach Standard/AO", "Bei Infektion/Komplikation Behandlung nach AO", "Korrekte Fixierung/Verband", "Nur geschultes Personal"],
+        pflege: ["Streng aseptisches Arbeiten, nur Huber-Spezialnadel verwenden", "Punktionsstelle auf Infektzeichen beobachten, steriler Verband", "Durchgängigkeit prüfen, Spülung/Blockung nach Standard/AO", "Auf Paravasat/Thrombose achten, Komplikationen früh erkennen", "Patientenedukation (Pflege, Warnzeichen), Dokumentation"],
+        merksatz: "Port: streng aseptisch, nur mit Huber-Nadel anstechen, auf Infektion/Paravasat achten, nach Standard spülen/blocken.",
+        pflegeplanung: [
+          {
+            problem: "Infektions-/Komplikationsgefahr r/t implantiertem Portkatheter m/d/s zentralvenösem Zugang, Punktionen",
+            ressourcen: ["Geschultes Personal", "Patient kooperativ"],
+            ziel: "Der Port bleibt infektfrei und funktionsfähig; Komplikationen werden früh erkannt",
+            massnahmen: ["Streng aseptisch arbeiten, nur Huber-Nadel verwenden", "Punktionsstelle auf Infektzeichen beobachten, steriler Verband", "Durchgängigkeit prüfen, Spülung/Blockung nach Standard/AO", "Auf Paravasat/Thrombose achten", "Patientenedukation, Dokumentation"],
+            evaluation: "Port infektfrei und funktionsfähig, keine Komplikation."
+          }
+        ],
+        fragen: []
+      }
+      ]
   }
 
 ,
