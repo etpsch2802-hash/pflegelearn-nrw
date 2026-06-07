@@ -8606,6 +8606,405 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Es bessert sich – konsequente Lagerung/Anleitung wäre besser gewesen.", fazit:"Merke: bei Blutdruckabfall in Rückenlage sofort Linksseitenlage, Vitalzeichen kontrollieren, anleiten." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Der anhaltende Blutdruckabfall gefährdet Mutter und Kind.", fazit:"Merke: Rückenlage ist die Ursache – sofort Linksseitenlage, nicht flach liegen lassen, nicht ruckartig aufrichten." } }
 }
+
+,
+{ id:"hno_epistaxis", fach:"hno", fachLabel:"HNO", icon:"🩸", farbe:"#dc2626", titel:"Starkes Nasenbluten", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient hat plötzlich starkes Nasenbluten, das nicht von allein aufhört; er ist unruhig, Blut läuft auch in den Rachen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTMASSNAHMEN", text:"Wie reagierst du zuerst?", optionen:[
+      {text:"Aufrecht hinsetzen, Kopf nach vorne neigen, Nasenflügel 10–15 min fest zusammendrücken, Nacken kühlen, beruhigen, Blut ausspucken lassen (nicht schlucken)", ziel:"n2", fb:"Aufrecht, Kopf nach vorne, Nasenflügel komprimieren, kühlen – richtig.", typ:"gut"},
+      {text:"Den Kopf in den Nacken legen", ziel:"bad_head", fb:"Kopf in den Nacken lässt Blut in den Rachen/Magen laufen (Verschlucken/Übelkeit) – Kopf nach vorne.", typ:"fehler"},
+      {text:"Vitalzeichen/Kreislauf gar nicht beachten", ziel:"bad_kreis", fb:"Bei starker Blutung Kreislauf im Blick behalten.", typ:"warn"} ] },
+    n2:{ titel:"VERLAUF", text:"Die Blutung sistiert nicht. Wie weiter (AO)?", optionen:[
+      {text:"Arzt/HNO informieren, abschwellende/blutstillende Maßnahmen bzw. Tamponade nach AO, Vitalzeichen, Blutungsstärke, Ursache (Antikoagulation/Hypertonie) bedenken", ziel:"n3", fb:"HNO/Tamponade nach AO, Ursache bedenken.", typ:"gut"},
+      {text:"Zwischendurch immer wieder loslassen, um nachzuschauen", ziel:"bad_release", fb:"Ständiges Loslassen verhindert die Gerinnung – durchgehend komprimieren.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Vitalzeichen/Kreislauf beobachten (Blutverlust!), bei Tamponade Pflege/Beobachtung, beruhigen, Blut ausspucken lassen, Ursache abklären lassen", ziel:"n4", fb:"Kreislauf, Tamponade-Pflege, Ursache.", typ:"gut"},
+      {text:"Die Blutungsmenge nicht beachten", ziel:"bad_doku", fb:"Blutungsstärke/-menge im Blick behalten.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Vitalzeichen/Kreislauf, Blutung, bei Tamponade Beobachtung, Ursache (RR/Gerinnung) abklären lassen, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzem Stillstand nicht weiter beobachten", ziel:"end_mittel", fb:"Auf erneute Blutung/Kreislauf achten.", typ:"warn"} ] },
+    bad_head:{ titel:"REAKTION", text:"Mit dem Kopf im Nacken schluckt der Patient Blut, ihm wird übel. Reaktion?", optionen:[
+      {text:"Kopf nach vorne, Blut ausspucken lassen, Nasenflügel komprimieren, kühlen", ziel:"end_mittel", fb:"Kopf nach vorne, nicht in den Nacken.", typ:"warn"},
+      {text:"Weiter Kopf in den Nacken", ziel:"end_schlecht", fb:"Verschlucken/Aspiration, Blutmenge unklar.", typ:"fehler"} ] },
+    bad_kreis:{ titel:"REAKTION", text:"Der Patient wird blass und schwindelig. Reaktion?", optionen:[
+      {text:"Vitalzeichen erfassen, hinsetzen/-legen, Arzt, Blutung weiter komprimieren, Volumen nach AO", ziel:"end_mittel", fb:"Kreislaufzeichen erkennen.", typ:"warn"},
+      {text:"Den Kreislauf weiter ignorieren", ziel:"end_schlecht", fb:"Schock durch Blutverlust übersehen.", typ:"fehler"} ] },
+    bad_release:{ titel:"REAKTION", text:"Durch das ständige Loslassen blutet es immer wieder. Reaktion?", optionen:[
+      {text:"Durchgehend 10–15 min komprimieren, kühlen, dann beurteilen", ziel:"end_mittel", fb:"Durchgehend komprimieren.", typ:"warn"},
+      {text:"Weiter immer wieder loslassen", ziel:"end_schlecht", fb:"Anhaltende Blutung.", typ:"fehler"} ] },
+    bad_doku:{ titel:"REAKTION", text:"Ohne Beachtung der Menge bleibt der Blutverlust unklar. Reaktion?", optionen:[
+      {text:"Blutungsstärke einschätzen/dokumentieren, Vitalzeichen, Arzt informieren", ziel:"end_mittel", fb:"Blutverlust einschätzen.", typ:"warn"},
+      {text:"Weiterhin nicht beachten", ziel:"end_schlecht", fb:"Unterschätzter Blutverlust.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Blutung wird gestillt, der Patient kreislaufstabil und beruhigt.", fazit:"Starkes Nasenbluten: aufrecht hinsetzen, Kopf nach vorne, Nasenflügel 10–15 min durchgehend komprimieren, Nacken kühlen, Blut ausspucken lassen (nicht schlucken, Kopf nicht in den Nacken); bei anhaltender Blutung HNO/Tamponade nach AO, Vitalzeichen/Kreislauf beobachten, Ursache (Antikoagulation/Hypertonie) bedenken." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Blutung steht – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: aufrecht, Kopf nach vorne, durchgehend komprimieren, Kreislauf beobachten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch falsches Vorgehen kommt es zu Verschlucken oder anhaltendem Blutverlust.", fazit:"Merke: Kopf nie in den Nacken, nicht ständig loslassen, Kreislauf nicht ignorieren." } }
+},
+{ id:"hno_trachealkanuele", fach:"hno", fachLabel:"HNO", icon:"🫁", farbe:"#ef4444", titel:"Atemnot bei Tracheostoma", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient mit Tracheostoma und Trachealkanüle bekommt zunehmend Atemnot, ist unruhig, die Atmung ist rasselnd und erschwert, die SpO₂ fällt; Verdacht auf eine Sekret-/Borkenverlegung der Kanüle.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie reagierst du zuerst?", optionen:[
+      {text:"Atemnot durch verlegte Kanüle erkennen, Hilfe rufen, O₂ anbieten, Oberkörper hoch, absaugen nach Standard, Innenkanüle prüfen/entfernen und reinigen (falls vorhanden) nach Standard", ziel:"n2", fb:"Am Stoma handeln: absaugen, Innenkanüle prüfen – richtig.", typ:"gut"},
+      {text:"Abwarten, das beruhigt sich sicher wieder", ziel:"bad_wait", fb:"Bei Atemnot mit fallender SpO₂ nicht abwarten.", typ:"fehler"},
+      {text:"Nur über Mund/Nase O₂ geben und das Stoma ignorieren", ziel:"bad_mund", fb:"Bei Tracheostoma muss am Stoma gehandelt werden – Mund-/Nasen-O₂ allein geht am Atemweg vorbei.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO/Standard)?", optionen:[
+      {text:"Absaugen nach Standard, Innenkanüle wechseln/reinigen nach Standard, bei fortbestehender Verlegung Arzt/Notfall (ggf. Kanülenwechsel), O₂, SpO₂/Atmung überwachen, Notfallset (Ersatzkanülen) bereit", ziel:"n3", fb:"Absaugen/Innenkanüle, sonst Kanülenwechsel/Arzt, Notfallset bereit.", typ:"gut"},
+      {text:"Tief und unkontrolliert blind absaugen, ohne Standard", ziel:"bad_blind", fb:"Unkontrolliertes tiefes Absaugen schädigt die Schleimhaut und verschlimmert die Hypoxie – nach Standard.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Atmung/SpO₂ engmaschig, Sekret/Borken, Befeuchtung/Inhalation nach AO, Ersatzkanülen/Notfallset griffbereit, beruhigen, dokumentieren", ziel:"n4", fb:"Atmung/SpO₂, Befeuchtung, Notfallset bereit.", typ:"gut"},
+      {text:"Notfallset/Ersatzkanüle nicht bereithalten", ziel:"bad_keinset", fb:"Bei Tracheostoma müssen Ersatzkanülen/Notfallset immer griffbereit sein.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Atmung/SpO₂ engmaschig, Sekretmanagement/Befeuchtung nach AO, auf erneute Verlegung achten, Ersatzkanülen bereit, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer Besserung nicht weiter überwachen", ziel:"end_mittel", fb:"Erneute Verlegung im Blick behalten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Die Atemnot nimmt zu, die SpO₂ fällt weiter. Reaktion?", optionen:[
+      {text:"Sofort Hilfe/Arzt, O₂, absaugen/Innenkanüle nach Standard, ggf. Kanülenwechsel, Notfallteam", ziel:"end_mittel", fb:"Spät – nicht abwarten.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Komplette Atemwegsverlegung/Hypoxie.", typ:"fehler"} ] },
+    bad_mund:{ titel:"REAKTION", text:"Trotz Mund-/Nasen-O₂ bessert sich nichts, da die Kanüle verlegt ist. Reaktion?", optionen:[
+      {text:"Am Stoma handeln: absaugen/Innenkanüle nach Standard, ggf. Kanülenwechsel, Arzt", ziel:"end_mittel", fb:"Am Stoma handeln.", typ:"warn"},
+      {text:"Weiter nur über Mund/Nase", ziel:"end_schlecht", fb:"Der verlegte Atemweg bleibt verlegt – Hypoxie.", typ:"fehler"} ] },
+    bad_blind:{ titel:"REAKTION", text:"Nach dem unkontrollierten Absaugen blutet/reizt die Schleimhaut, SpO₂ niedrig. Reaktion?", optionen:[
+      {text:"Nach Standard vorgehen (kontrolliert absaugen, Innenkanüle), O₂, Arzt", ziel:"end_mittel", fb:"Nach Standard absaugen.", typ:"warn"},
+      {text:"Weiter blind tief absaugen", ziel:"end_schlecht", fb:"Schleimhautschaden/Hypoxie.", typ:"fehler"} ] },
+    bad_keinset:{ titel:"REAKTION", text:"Beim nötigen Kanülenwechsel fehlt die Ersatzkanüle. Reaktion?", optionen:[
+      {text:"Notfallset/Ersatzkanülen sofort organisieren und künftig griffbereit halten, Arzt", ziel:"end_mittel", fb:"Notfallset bereithalten.", typ:"warn"},
+      {text:"Ohne Ersatzkanüle weitermachen", ziel:"end_schlecht", fb:"Im Notfall keine Ersatzkanüle – gefährlich.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Kanüle wird freigemacht/gewechselt, die Atmung stabilisiert sich.", fazit:"Verlegte Trachealkanüle / Atemnot bei Tracheostoma: Notfall – Hilfe rufen, O₂, Oberkörper hoch, am Stoma handeln (absaugen nach Standard, Innenkanüle reinigen/wechseln, ggf. Kanülenwechsel/Arzt), Atmung/SpO₂ engmaschig, Befeuchtung nach AO, Ersatzkanülen/Notfallset immer griffbereit; nicht abwarten, nicht nur über Mund/Nase am Stoma vorbei arbeiten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Atmung stabilisiert sich – konsequenteres Vorgehen wäre sicherer gewesen.", fazit:"Merke: am Stoma absaugen/Innenkanüle nach Standard, Notfallset bereit, engmaschig überwachen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zur Atemwegsverlegung mit Sauerstoffmangel.", fazit:"Merke: nicht abwarten, nicht am Stoma vorbei arbeiten, nicht blind absaugen, immer Ersatzkanüle bereit." } }
+},
+{ id:"hno_tonsillennachblutung", fach:"hno", fachLabel:"HNO", icon:"🩸", farbe:"#b91c1c", titel:"Nachblutung nach Mandel-OP", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Einige Stunden nach einer Mandeloperation (Tonsillektomie) beginnt der Patient (z. B. ein Kind) vermehrt zu schlucken, spuckt frisches Blut, wirkt unruhig und blass.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Nachblutung nach Tonsillektomie erkennen (häufiges Schlucken, frisches Blut, Blässe) – Notfall, sofort Arzt/HNO, Vitalzeichen, Oberkörper hoch/Kopf zur Seite (Blut ausspucken/abfließen lassen, Aspiration vermeiden), nüchtern lassen (mögliche OP)", ziel:"n2", fb:"Häufiges Schlucken + frisches Blut = Nachblutung, sofort Arzt, nüchtern.", typ:"gut"},
+      {text:"Als 'normal nach der OP' abtun und abwarten", ziel:"bad_wait", fb:"Frisches Blut/häufiges Schlucken ist eine Nachblutung – nicht abwarten.", typ:"fehler"},
+      {text:"Den Kreislauf nicht beachten", ziel:"bad_kreis", fb:"Bei Blutung droht ein Schock – Kreislauf beachten.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Sofort Arzt/HNO, nüchtern lassen, Vitalzeichen/Kreislauf engmaschig, kühlen (Eiskrawatte) nach AO, OP-Vorbereitung, Zugang/Volumen nach AO, Blut ausspucken lassen", ziel:"n3", fb:"Arzt/HNO, nüchtern, kühlen nach AO, OP-Vorbereitung.", typ:"gut"},
+      {text:"Zur Beruhigung etwas zu trinken/essen geben", ziel:"bad_oral", fb:"Bei drohender OP und Blutung nüchtern lassen – orale Aufnahme erhöht Aspirations-/OP-Risiko.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Vitalzeichen/Kreislauf (Blutverlust – Kinder verschlucken Blut, Menge wird unterschätzt!), Aspirationsschutz (Seitenlage/aufrecht, Blut ausspucken), beruhigen (Kind/Eltern), nüchtern, OP-Vorbereitung", ziel:"n4", fb:"Kreislauf, Aspirationsschutz, nüchtern, OP-Vorbereitung.", typ:"gut"},
+      {text:"Verschlucktes/erbrochenes Blut nicht beachten", ziel:"bad_doku", fb:"Verschlucktes Blut unterschätzt den Blutverlust – beachten.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Kreislauf/Vitalzeichen engmaschig, Blutung/Schlucken, Aspirationsschutz, nüchtern, OP-Vorbereitung, Intensiv bei Verschlechterung, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal den Blutdruck messen", ziel:"end_mittel", fb:"Bei Blutung engmaschig überwachen.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Der Patient schluckt weiter, spuckt mehr Blut und wird blasser. Reaktion?", optionen:[
+      {text:"Sofort Arzt/HNO, nüchtern, Vitalzeichen, Aspirationsschutz, OP-Vorbereitung", ziel:"end_mittel", fb:"Spät – Nachblutung erkannt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Blutverlust/Aspiration, gefährlich.", typ:"fehler"} ] },
+    bad_kreis:{ titel:"REAKTION", text:"Der Patient wird tachykard und blass (Schockzeichen). Reaktion?", optionen:[
+      {text:"Vitalzeichen, Volumen nach AO, Arzt/Notfall, nüchtern, OP-Vorbereitung", ziel:"end_mittel", fb:"Schockzeichen erkennen.", typ:"warn"},
+      {text:"Den Kreislauf weiter ignorieren", ziel:"end_schlecht", fb:"Hämorrhagischer Schock.", typ:"fehler"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Nach dem Trinken verschluckt sich der blutende Patient. Reaktion?", optionen:[
+      {text:"Sofort stoppen, Kopf zur Seite/absaugen, nüchtern, Arzt, Aspirationsschutz", ziel:"end_mittel", fb:"Nüchtern lassen.", typ:"warn"},
+      {text:"Weiter trinken lassen", ziel:"end_schlecht", fb:"Aspiration und OP-Verzögerung.", typ:"fehler"} ] },
+    bad_doku:{ titel:"REAKTION", text:"Der tatsächliche Blutverlust wird unterschätzt, der Patient verschlechtert sich. Reaktion?", optionen:[
+      {text:"Verschlucktes/erbrochenes Blut mit einschätzen, Vitalzeichen, Arzt, OP-Vorbereitung", ziel:"end_mittel", fb:"Blutverlust realistisch einschätzen.", typ:"warn"},
+      {text:"Weiterhin nicht beachten", ziel:"end_schlecht", fb:"Verschleppter Schock.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Nachblutung wird sofort erkannt, der Patient kreislaufüberwacht und für die Versorgung vorbereitet.", fazit:"Nachblutung nach Tonsillektomie: Notfall – sofort Arzt/HNO, nüchtern lassen (mögliche OP), Oberkörper hoch/Kopf zur Seite und Blut ausspucken lassen (Aspirationsschutz), Vitalzeichen/Kreislauf engmaschig (Kinder verschlucken Blut → Blutverlust wird unterschätzt!), kühlen/OP-Vorbereitung nach AO, beruhigen; nicht als normal abtun, nichts oral geben." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage wird stabilisiert – schnelleres Handeln wäre sicherer gewesen.", fazit:"Merke: sofort Arzt, nüchtern, Aspirationsschutz, Kreislauf engmaschig, Blutverlust realistisch einschätzen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zu Aspiration oder hämorrhagischem Schock.", fazit:"Merke: Nachblutung nie als normal abtun, nichts oral geben, Kreislauf nicht ignorieren – sofort Arzt und OP-Vorbereitung." } }
+},
+{ id:"hno_epiglottitis", fach:"hno", fachLabel:"HNO", icon:"⚠️", farbe:"#f97316", titel:"Atemnot mit Speichelfluss", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient bekommt rasch hohes Fieber, starke Halsschmerzen, eine kloßige Sprache und Speichelfluss (kann kaum schlucken) und sitzt vornübergebeugt, um besser Luft zu bekommen; die Atemnot nimmt zu.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf Epiglottitis (akute Kehldeckelentzündung: hohes Fieber, kloßige Sprache, Speichelfluss, Atemnot, sitzende vornübergebeugte Haltung) – akuter Atemwegsnotfall, sofort Arzt/Notfall, Ruhe, sitzen lassen, O₂ nach AO, nicht reizen", ziel:"n2", fb:"Diese Konstellation ist ein Atemwegsnotfall – sitzen lassen, Ruhe, Notfall.", typ:"gut"},
+      {text:"Mit einem Spatel in den Rachen schauen / eine Racheninspektion erzwingen", ziel:"bad_throat", fb:"Eine Racheninspektion kann bei Epiglottitis die Atemwege komplett verlegen – unterlassen!", typ:"fehler"},
+      {text:"Den Patienten flach hinlegen", ziel:"bad_flat", fb:"Flachlage verschlimmert die Atemnot – sitzen lassen.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Sitzende Position belassen, Ruhe / nicht aufregen (v. a. Kinder), O₂ nach AO, Notfall-/Intubationsbereitschaft (Anästhesie/HNO), nichts in den Mund, Vitalzeichen/SpO₂, nüchtern", ziel:"n3", fb:"Sitzen, Ruhe, O₂, Intubationsbereitschaft, nichts in den Mund.", typ:"gut"},
+      {text:"Zur Beruhigung etwas zu trinken geben", ziel:"bad_oral", fb:"Bei drohender Atemwegsverlegung nichts zu trinken (Aspiration/Reiz) – nüchtern.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Atmung/SpO₂ engmaschig, sitzende Position, ruhige reizarme Umgebung, Notfallteam/Intubationsbereitschaft, nichts in den Mund, beruhigen, dokumentieren", ziel:"n4", fb:"Atmung/SpO₂, sitzen, Ruhe, Bereitschaft.", typ:"gut"},
+      {text:"Den Patienten allein lassen", ziel:"bad_allein", fb:"Bei drohender Atemwegsverlegung nicht allein lassen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Atmung/SpO₂ engmaschig, sitzende Position, Intubations-/Notfallbereitschaft, ruhig, nüchtern, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer scheinbarer Besserung die Überwachung lockern", ziel:"end_mittel", fb:"Die Atemwege können rasch komplett verlegen – engmaschig bleiben.", typ:"warn"} ] },
+    bad_throat:{ titel:"REAKTION", text:"Bei der Racheninspektion verschlechtert sich die Atmung schlagartig. Reaktion?", optionen:[
+      {text:"Sofort aufhören, sitzen lassen, O₂, Notfallteam/Anästhesie (Intubationsbereitschaft)", ziel:"end_mittel", fb:"Keine Racheninspektion.", typ:"warn"},
+      {text:"Weiter im Rachen hantieren", ziel:"end_schlecht", fb:"Komplette Atemwegsverlegung provoziert.", typ:"fehler"} ] },
+    bad_flat:{ titel:"REAKTION", text:"Flach liegend bekommt der Patient noch schlechter Luft. Reaktion?", optionen:[
+      {text:"Sofort sitzen lassen, O₂, Ruhe, Notfallteam", ziel:"end_mittel", fb:"Sitzen lassen.", typ:"warn"},
+      {text:"Weiter flach lagern", ziel:"end_schlecht", fb:"Atemnot verschlimmert sich.", typ:"fehler"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Beim Trinken verschluckt sich der Patient und hustet stark. Reaktion?", optionen:[
+      {text:"Stoppen, sitzen lassen, O₂, nüchtern, Notfallteam", ziel:"end_mittel", fb:"Nüchtern lassen.", typ:"warn"},
+      {text:"Weiter trinken lassen", ziel:"end_schlecht", fb:"Aspiration/Reiz, Verschlechterung.", typ:"fehler"} ] },
+    bad_allein:{ titel:"REAKTION", text:"Allein gelassen verschlechtert sich die Atmung unbemerkt. Reaktion?", optionen:[
+      {text:"Sofort hin, sitzen lassen, O₂, Notfallteam/Intubationsbereitschaft", ziel:"end_mittel", fb:"Nicht allein lassen.", typ:"warn"},
+      {text:"Weiter allein lassen", ziel:"end_schlecht", fb:"Atemwegsverlegung unbemerkt.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Atemwegsnotfall wird erkannt, der Patient ruhig sitzend versorgt und mit Intubationsbereitschaft überwacht.", fazit:"Epiglottitis (akuter Atemwegsnotfall: hohes Fieber, kloßige Sprache, Speichelfluss, sitzende vornübergebeugte Haltung, Atemnot): sitzen lassen, Ruhe/nicht reizen, O₂ nach AO, sofort Notfall/Anästhesie/HNO mit Intubationsbereitschaft, nichts in den Mund und KEINE Racheninspektion (kann die Atemwege komplett verlegen!), engmaschig Atmung/SpO₂, nicht allein lassen; nicht flach hinlegen, nichts zu trinken geben." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Situation wird beherrscht – konsequenteres Vorgehen wäre sicherer gewesen.", fazit:"Merke: sitzen lassen, Ruhe, O₂, Intubationsbereitschaft, keine Racheninspektion, nichts in den Mund." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Atemwege verlegen sich komplett.", fazit:"Merke: keine Racheninspektion, nicht flach lagern, nichts zu trinken, nicht allein lassen – sofort Notfall/Anästhesie." } }
+},
+{ id:"hno_schwindel", fach:"hno", fachLabel:"HNO", icon:"💫", farbe:"#0ea5e9", titel:"Heftiger Drehschwindel-Anfall", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine Patientin mit bekanntem Morbus Menière bekommt einen heftigen Drehschwindelanfall mit Übelkeit und Fallneigung; sie kann kaum sicher stehen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTMASSNAHMEN", text:"Wie reagierst du zuerst?", optionen:[
+      {text:"Sturzgefahr erkennen, für Sicherheit sorgen (hinsetzen/-legen, nicht allein gehen lassen), reizarme ruhige Umgebung, beruhigen, Vitalzeichen, Arzt/AO", ziel:"n2", fb:"Sturzprophylaxe steht im Vordergrund – sicher hinsetzen/-legen.", typ:"gut"},
+      {text:"Sie zum Toilettengang allein losschicken", ziel:"bad_gehen", fb:"Bei Drehschwindel und Fallneigung droht ein Sturz – nicht allein gehen lassen.", typ:"fehler"},
+      {text:"Für helle, unruhige Umgebung sorgen", ziel:"bad_reiz", fb:"Reize verstärken Schwindel/Übelkeit – reizarm und ruhig.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Antiemetika/Antivertiginosa nach AO, Erbrechen managen, ruhige Lagerung, Begleitung, Flüssigkeit nach Verträglichkeit, Vitalzeichen", ziel:"n3", fb:"Antivertiginosa/Antiemese nach AO, ruhige Lagerung.", typ:"gut"},
+      {text:"Eigenmächtig Medikamente geben", ziel:"bad_self", fb:"Medikamente nur nach AO – nicht eigenmächtig.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Sturzprophylaxe, Begleitung beim Gehen, reizarm, Erbrechen/Übelkeit beobachten, beruhigen, Edukation zu Verhalten im Anfall, dokumentieren", ziel:"n4", fb:"Sturzprophylaxe, Begleitung, reizarm.", typ:"gut"},
+      {text:"Die Patientin im Anfall unbeaufsichtigt aufstehen lassen", ziel:"bad_alone", fb:"Im Anfall nicht unbeaufsichtigt aufstehen lassen – Sturzgefahr.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Befinden/Vitalzeichen, Sturzprophylaxe/Begleitung, Übelkeit, Therapie nach AO, Edukation, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach leichter Besserung nicht weiter beachten", ziel:"end_mittel", fb:"Sturzrisiko bleibt – weiter begleiten.", typ:"warn"} ] },
+    bad_gehen:{ titel:"REAKTION", text:"Allein unterwegs droht die Patientin zu stürzen. Reaktion?", optionen:[
+      {text:"Sofort sichern/begleiten, hinsetzen, reizarm, Therapie nach AO", ziel:"end_mittel", fb:"Nicht allein gehen lassen.", typ:"warn"},
+      {text:"Sie weiter allein gehen lassen", ziel:"end_schlecht", fb:"Sturz im Anfall.", typ:"fehler"} ] },
+    bad_reiz:{ titel:"REAKTION", text:"Durch Licht/Unruhe nehmen Schwindel und Übelkeit zu. Reaktion?", optionen:[
+      {text:"Reizarme, ruhige Umgebung schaffen, ruhige Lagerung, Therapie nach AO", ziel:"end_mittel", fb:"Reizarm und ruhig.", typ:"warn"},
+      {text:"Weiter für Reize sorgen", ziel:"end_schlecht", fb:"Verschlechterung.", typ:"fehler"} ] },
+    bad_self:{ titel:"REAKTION", text:"Die Fachkraft bemerkt die eigenmächtige Gabe. Reaktion?", optionen:[
+      {text:"Offen berichten, melden/dokumentieren, künftig nur nach AO", ziel:"end_mittel", fb:"Keine eigenmächtige Gabe.", typ:"warn"},
+      {text:"Es verschweigen", ziel:"end_schlecht", fb:"Verschweigen gefährdet die Patientin.", typ:"fehler"} ] },
+    bad_alone:{ titel:"REAKTION", text:"Beim unbeaufsichtigten Aufstehen stürzt die Patientin. Reaktion?", optionen:[
+      {text:"Sturzfolgen prüfen, Arzt, Sturzprophylaxe/Begleitung, sichern", ziel:"end_mittel", fb:"Begleitung nötig.", typ:"warn"},
+      {text:"Sie weiter unbeaufsichtigt lassen", ziel:"end_schlecht", fb:"Sturzverletzung.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Patientin bleibt sicher (sturzfrei) und ist symptomgelindert.", fazit:"Akuter Drehschwindel (z. B. Menière-Anfall): Sturzprophylaxe steht im Vordergrund – sicher hinsetzen/-legen, nicht allein gehen lassen/begleiten, reizarme ruhige Umgebung, Antiemetika/Antivertiginosa nach AO, Erbrechen managen, beruhigen und zu Verhalten im Anfall anleiten; keine eigenmächtige Medikamentengabe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Anfall klingt ab – konsequente Sturzprophylaxe wäre besser gewesen.", fazit:"Merke: sicher lagern, begleiten, reizarm, Therapie nach AO." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Patientin stürzt im Schwindelanfall.", fazit:"Merke: im Drehschwindel nie allein gehen/aufstehen lassen, reizarm, Therapie nach AO." } }
+},
+{ id:"hno_hoersturz", fach:"hno", fachLabel:"HNO", icon:"👂", farbe:"#14b8a6", titel:"Plötzliche einseitige Hörminderung", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient berichtet über eine plötzliche einseitige Hörminderung mit 'Wattegefühl' und Ohrgeräusch (Tinnitus), ohne Schmerzen; er ist erschrocken und sorgt sich um sein Gehör.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"An einen Hörsturz denken (plötzliche einseitige Hörminderung, oft Tinnitus, schmerzlos) – als HNO-Eilfall behandeln, zeitnah Arzt/HNO, Ruhe/Stressreduktion, beruhigen", ziel:"n2", fb:"Plötzliche einseitige Hörminderung = HNO-Eilfall, zeitnah abklären.", typ:"gut"},
+      {text:"'Das wird schon wieder' – tagelang abwarten", ziel:"bad_wait", fb:"Ein Hörsturz wird zeitnah behandelt – nicht tagelang abwarten.", typ:"fehler"},
+      {text:"Eigenmächtig Ohrentropfen/Medikamente geben", ziel:"bad_self", fb:"Medikamente nur nach AO – nicht eigenmächtig.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Zeitnahe HNO-Abklärung, Medikamente (z. B. Kortison) nur nach AO, Wirkung/Nebenwirkung beobachten, Ruhe/Stressreduktion fördern", ziel:"n3", fb:"HNO-Abklärung, Kortison nur nach AO, Ruhe.", typ:"gut"},
+      {text:"Am Ohr manipulieren/spülen", ziel:"bad_manip", fb:"Manipulation/Spülung ist hier nicht angezeigt – HNO-Abklärung.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Ruhe/Stressreduktion, bei begleitendem Schwindel Sturzprophylaxe, psychische Unterstützung (Angst ums Gehör), Edukation zu Therapie/Verlauf, dokumentieren", ziel:"n4", fb:"Ruhe, Sturzprophylaxe bei Schwindel, psychische Unterstützung.", typ:"gut"},
+      {text:"Die Sorge ums Gehör abtun/nicht ernst nehmen", ziel:"bad_psych", fb:"Die Angst ernst nehmen – psychische Unterstützung gehört dazu.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Therapie/Wirkung nach AO beobachten, Ruhe, bei Schwindel Sturzprophylaxe, psychische Unterstützung, Edukation, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach erster Besserung nicht weiter begleiten", ziel:"end_mittel", fb:"Verlauf und Befinden weiter im Blick behalten.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Nach Tagen Abwarten ist die Hörminderung unverändert. Reaktion?", optionen:[
+      {text:"Jetzt zeitnah HNO, Therapie nach AO, Ruhe, psychische Unterstützung", ziel:"end_mittel", fb:"Spät – das Therapiefenster ist enger.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Schlechtere Erholungschance.", typ:"fehler"} ] },
+    bad_self:{ titel:"REAKTION", text:"Die Fachkraft bemerkt die eigenmächtige Gabe. Reaktion?", optionen:[
+      {text:"Offen berichten, melden/dokumentieren, künftig nur nach AO", ziel:"end_mittel", fb:"Keine eigenmächtige Gabe.", typ:"warn"},
+      {text:"Es verschweigen", ziel:"end_schlecht", fb:"Verschweigen gefährdet den Patienten.", typ:"fehler"} ] },
+    bad_manip:{ titel:"REAKTION", text:"Durch das Manipulieren wird das Ohr gereizt, ohne Nutzen. Reaktion?", optionen:[
+      {text:"Manipulation beenden, HNO-Abklärung, Therapie nach AO, Ruhe", ziel:"end_mittel", fb:"Keine Manipulation – HNO.", typ:"warn"},
+      {text:"Weiter manipulieren/spülen", ziel:"end_schlecht", fb:"Reizung ohne Nutzen, Zeitverlust.", typ:"fehler"} ] },
+    bad_psych:{ titel:"REAKTION", text:"Der Patient ist zunehmend verängstigt und verunsichert. Reaktion?", optionen:[
+      {text:"Angst ernst nehmen, zugewandt informieren/beruhigen, Verlauf/Therapie erklären", ziel:"end_mittel", fb:"Psychische Unterstützung.", typ:"warn"},
+      {text:"Die Sorge weiter abtun", ziel:"end_schlecht", fb:"Vertrauensverlust, mehr Stress.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Der Hörsturz wird zeitnah behandelt, der Patient ist informiert und unterstützt.", fazit:"Hörsturz (plötzliche einseitige, schmerzlose Hörminderung, oft mit Tinnitus): als HNO-Eilfall zeitnah abklären lassen, Medikamente (z. B. Kortison) nur nach AO mit Wirkungs-/Nebenwirkungskontrolle, Ruhe/Stressreduktion, bei Schwindel Sturzprophylaxe, psychische Unterstützung und Edukation; nicht tagelang abwarten, keine eigenmächtige Gabe/Manipulation am Ohr." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Patient wird versorgt – zeitnaheres, einfühlsameres Vorgehen wäre besser gewesen.", fazit:"Merke: zeitnah HNO, Therapie nur nach AO, Ruhe, Angst ernst nehmen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Abwarten/Fehlhandeln verschlechtert sich die Erholungschance.", fazit:"Merke: Hörsturz nicht abwarten, nicht eigenmächtig behandeln/manipulieren, Angst ernst nehmen – zeitnah HNO." } }
+}
+,
+{ id:"ort_schenkelhals", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"🦴", farbe:"#f59e0b", titel:"Sturz mit Hüftschmerz im Alter", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine ältere Patientin ist gestürzt und klagt über starke Hüftschmerzen; das betroffene Bein ist verkürzt und nach außen gedreht, sie kann nicht auftreten.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf hüftgelenknahe Fraktur (Sturz, Schmerz, verkürztes/außenrotiertes Bein) erkennen, Bein ruhigstellen/nicht belasten, Schmerz erfassen, Vitalzeichen, Arzt informieren, DMS (Durchblutung/Motorik/Sensibilität) prüfen", ziel:"n2", fb:"Verkürztes/außenrotiertes Bein nach Sturz spricht für eine hüftnahe Fraktur – ruhigstellen, DMS prüfen.", typ:"gut"},
+      {text:"Die Patientin zum Aufstehen/Gehen auffordern", ziel:"bad_mobil", fb:"Bei Frakturverdacht nicht belasten/mobilisieren – Dislokations- und Schadensgefahr.", typ:"fehler"},
+      {text:"Den Schmerz nicht weiter beachten", ziel:"bad_schmerz", fb:"Schmerz erfassen und behandeln (nach AO) gehört dazu.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Bein schonend lagern/ruhigstellen, Schmerztherapie nach AO, nüchtern lassen (mögliche OP), Diagnostik/OP-Vorbereitung, DMS kontrollieren, Druckstellen beachten", ziel:"n3", fb:"Ruhigstellen, Schmerz nach AO, nüchtern, OP-Vorbereitung.", typ:"gut"},
+      {text:"Zur Stärkung etwas zu essen/trinken geben", ziel:"bad_oral", fb:"Bei möglicher OP nüchtern lassen.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Schmerz-/Lagerungsmanagement, Prophylaxen (Dekubitus, Thrombose, Pneumonie), auf Verwirrtheit/Delir achten (alter Mensch!), Vitalzeichen, OP-Vorbereitung, beruhigen", ziel:"n4", fb:"Prophylaxen, Delir im Blick, Schmerz/Lagerung.", typ:"gut"},
+      {text:"Die Prophylaxen (Dekubitus/Thrombose/Pneumonie) vernachlässigen", ziel:"bad_proph", fb:"Gerade bei Immobilität sind Prophylaxen wichtig.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Schmerz/DMS/Vitalzeichen, Prophylaxen, auf Delir/Verschlechterung achten, OP-Vorbereitung, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nur einmal den Schmerz erfragen", ziel:"end_mittel", fb:"Verlauf/DMS/Delir weiter beobachten.", typ:"warn"} ] },
+    bad_mobil:{ titel:"REAKTION", text:"Beim Aufstehversuch hat die Patientin stärkste Schmerzen, das Bein gibt nach. Reaktion?", optionen:[
+      {text:"Sofort nicht mehr belasten, ruhigstellen, Schmerz nach AO, Arzt, DMS prüfen", ziel:"end_mittel", fb:"Nicht belasten/mobilisieren.", typ:"warn"},
+      {text:"Weiter zum Gehen auffordern", ziel:"end_schlecht", fb:"Frakturdislokation/zusätzlicher Schaden.", typ:"fehler"} ] },
+    bad_schmerz:{ titel:"REAKTION", text:"Der unbehandelte Schmerz bleibt stark, die Patientin ist sehr unruhig. Reaktion?", optionen:[
+      {text:"Schmerz erfassen und nach AO behandeln, ruhig lagern, beruhigen", ziel:"end_mittel", fb:"Schmerz nach AO behandeln.", typ:"warn"},
+      {text:"Den Schmerz weiter ignorieren", ziel:"end_schlecht", fb:"Leiden und Komplikationen (z. B. Delir).", typ:"fehler"} ] },
+    bad_oral:{ titel:"REAKTION", text:"Die Patientin hat gegessen, eine OP verzögert sich dadurch. Reaktion?", optionen:[
+      {text:"Ab jetzt nüchtern lassen, Team/Anästhesie informieren", ziel:"end_mittel", fb:"Nüchtern lassen.", typ:"warn"},
+      {text:"Weiter essen/trinken lassen", ziel:"end_schlecht", fb:"OP-Verzögerung.", typ:"fehler"} ] },
+    bad_proph:{ titel:"REAKTION", text:"Ohne Prophylaxen drohen Dekubitus/Thrombose/Pneumonie. Reaktion?", optionen:[
+      {text:"Prophylaxen konsequent umsetzen (Lagerung/Bewegung, Thrombose-, Pneumonieprophylaxe nach AO)", ziel:"end_mittel", fb:"Prophylaxen nachholen.", typ:"warn"},
+      {text:"Weiterhin keine Prophylaxen", ziel:"end_schlecht", fb:"Immobilitätskomplikationen.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Fraktur wird ruhiggestellt, der Schmerz behandelt, Prophylaxen und OP-Vorbereitung laufen.", fazit:"Hüftgelenknahe Fraktur (Schenkelhals) nach Sturz (verkürztes/außenrotiertes Bein): Bein ruhigstellen/nicht belasten, Schmerztherapie nach AO, nüchtern lassen (OP), DMS kontrollieren, OP-Vorbereitung; konsequente Prophylaxen (Dekubitus/Thrombose/Pneumonie) und auf Delir beim alten Menschen achten; nicht zum Aufstehen auffordern, nichts oral geben." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Versorgung gelingt – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: ruhigstellen, Schmerz nach AO, nüchtern, Prophylaxen, Delir im Blick." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zu zusätzlichem Schaden oder Immobilitätskomplikationen.", fazit:"Merke: bei Frakturverdacht nicht belasten, Schmerz nicht ignorieren, nüchtern lassen, Prophylaxen nicht vergessen." } }
+},
+{ id:"ort_fettembolie", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"🫁", farbe:"#ef4444", titel:"Atemnot Tage nach Knochenbruch", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient mit Oberschenkelbruch wird 1–2 Tage nach dem Trauma zunehmend kurzatmig und verwirrt; es zeigen sich kleine punktförmige Hauteinblutungen (Petechien), die SpO₂ fällt.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"An ein Fettembolie-Syndrom denken (1–3 Tage nach Röhrenknochenbruch: Atemnot + Verwirrtheit + Petechien) – Notfall, sofort Arzt, O₂ nach AO, Vitalzeichen/SpO₂, Atmung/Bewusstsein", ziel:"n2", fb:"Diese Trias nach Röhrenknochenbruch passt zum Fettembolie-Syndrom.", typ:"gut"},
+      {text:"Atemnot und Verwirrtheit als 'Erschöpfung' abtun und abwarten", ziel:"bad_wait", fb:"Diese Zeichen sind ein Notfall – nicht abwarten.", typ:"fehler"},
+      {text:"Nur den Frakturschmerz behandeln", ziel:"bad_nurschmerz", fb:"Das Hauptproblem ist die respiratorische/zerebrale Beteiligung – nicht nur den Schmerz.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"O₂ nach AO, Vitalzeichen/SpO₂/Bewusstsein engmaschig, Arzt/Intensiv, Bettruhe/schonende Lagerung, Monitoring, Therapie nach AO", ziel:"n3", fb:"O₂, engmaschiges Monitoring, Intensiv.", typ:"gut"},
+      {text:"Den Patienten trotz Atemnot kräftig mobilisieren", ziel:"bad_mobil", fb:"Bei Atemnot/instabiler Lage nicht forcieren – schonen und überwachen.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Atmung/SpO₂/Bewusstsein engmaschig, O₂ nach AO, auf Verschlechterung achten, Intensivüberwachung, Frakturruhigstellung, dokumentieren", ziel:"n4", fb:"Atmung/SpO₂/Bewusstsein, Intensiv.", typ:"gut"},
+      {text:"Nur einmal die SpO₂ messen", ziel:"bad_mon", fb:"Engmaschiges Monitoring ist nötig.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Atmung/SpO₂/Bewusstsein/Vitalzeichen engmaschig, O₂/Therapie nach AO, Intensiv, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer Besserung die Überwachung beenden", ziel:"end_mittel", fb:"Verlauf engmaschig kontrollieren.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Atemnot und Verwirrtheit nehmen zu, die SpO₂ fällt weiter. Reaktion?", optionen:[
+      {text:"Sofort Arzt/Intensiv, O₂ nach AO, Monitoring, engmaschig überwachen", ziel:"end_mittel", fb:"Spät – Fettembolie verkannt.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Respiratorische Verschlechterung.", typ:"fehler"} ] },
+    bad_nurschmerz:{ titel:"REAKTION", text:"Trotz Schmerztherapie verschlechtern sich Atmung und Bewusstsein. Reaktion?", optionen:[
+      {text:"Ursache angehen: Arzt/Intensiv, O₂, Monitoring nach AO", ziel:"end_mittel", fb:"Ursache statt nur Schmerz.", typ:"warn"},
+      {text:"Weiter nur Schmerz behandeln", ziel:"end_schlecht", fb:"Die Embolie schreitet fort.", typ:"fehler"} ] },
+    bad_mobil:{ titel:"REAKTION", text:"Unter forcierter Mobilisation verschlechtert sich die Atmung. Reaktion?", optionen:[
+      {text:"Belastung stoppen, schonen, O₂, Monitoring, Arzt", ziel:"end_mittel", fb:"Nicht forcieren.", typ:"warn"},
+      {text:"Weiter forcieren", ziel:"end_schlecht", fb:"Respiratorische Dekompensation.", typ:"fehler"} ] },
+    bad_mon:{ titel:"REAKTION", text:"Eine Verschlechterung bleibt zunächst unbemerkt. Reaktion?", optionen:[
+      {text:"Engmaschig Atmung/SpO₂/Bewusstsein überwachen, Arzt, Therapie nach AO", ziel:"end_mittel", fb:"Engmaschiges Monitoring nachholen.", typ:"warn"},
+      {text:"Weiter nur selten kontrollieren", ziel:"end_schlecht", fb:"Verschlechterung zu spät erkannt.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Das Fettembolie-Syndrom wird früh erkannt und intensivmedizinisch behandelt.", fazit:"Fettembolie-Syndrom (1–3 Tage nach Röhrenknochenbruch: Atemnot + Verwirrtheit + Petechien): Notfall – sofort Arzt, O₂ nach AO, engmaschig Atmung/SpO₂/Bewusstsein, Intensivüberwachung, Therapie nach AO; nicht als Erschöpfung abtun, nicht nur den Schmerz behandeln." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – konsequenteres Monitoring wäre sicherer gewesen.", fazit:"Merke: an Fettembolie denken, O₂, engmaschig Atmung/SpO₂/Bewusstsein, Intensiv." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die respiratorische Lage dekompensiert.", fazit:"Merke: Atemnot/Verwirrtheit/Petechien nach Knochenbruch nie abtun – sofort Arzt, O₂, Monitoring." } }
+},
+{ id:"ort_gips", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"🩹", farbe:"#8b5cf6", titel:"Schmerzen und Taubheit unter dem Gips", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient mit frischem Unterschenkelgips klagt über zunehmende, starke Schmerzen, Kribbeln und Taubheit der Zehen; die Zehen wirken blass und kühl, die Schwellung nimmt zu.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Drohende Durchblutungs-/Nervenstörung unter dem Gips erkennen (zunehmender Schmerz, Kribbeln/Taubheit, blasse/kühle Zehen) – DMS prüfen (Durchblutung/Motorik/Sensibilität), Bein hochlagern, sofort Arzt, Gips nach AO spalten/lockern", ziel:"n2", fb:"Diese Zeichen sind Alarm – DMS prüfen, hochlagern, Arzt, Gips nach AO spalten.", typ:"gut"},
+      {text:"Den Schmerz mit Schmerzmittel überdecken und abwarten", ziel:"bad_wait", fb:"Der zunehmende Schmerz ist ein Warnzeichen – nicht nur überdecken/abwarten.", typ:"fehler"},
+      {text:"Das Bein tief lagern", ziel:"bad_tief", fb:"Tieflagerung verstärkt die Schwellung – hochlagern.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Bein hochlagern, Gips nach AO spalten/aufschneiden/lockern, DMS engmaschig kontrollieren, Arzt, nicht abwarten (drohende Durchblutungsstörung/Kompartment)", ziel:"n3", fb:"Hochlagern, Gips nach AO spalten, DMS engmaschig.", typ:"gut"},
+      {text:"Den Gips/Verband noch enger wickeln", ziel:"bad_eng", fb:"Engeres Wickeln verstärkt den Druck – nach AO lockern/spalten.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"DMS engmaschig (Zehen: Farbe/Wärme/Bewegung/Gefühl), Schwellung/Schmerz beobachten, Hochlagern, bei Verschlechterung sofort Arzt, dokumentieren", ziel:"n4", fb:"DMS engmaschig, Schwellung/Schmerz, hochlagern.", typ:"gut"},
+      {text:"Nur Schmerzmittel geben", ziel:"bad_only", fb:"Schmerzmittel überdecken den Warnschmerz – DMS/Ursache angehen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"DMS/Schwellung/Schmerz engmaschig, hochlagern, bei Verschlechterung sofort Arzt, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer Besserung nicht weiter kontrollieren", ziel:"end_mittel", fb:"DMS weiter engmaschig prüfen.", typ:"warn"} ] },
+    bad_wait:{ titel:"REAKTION", text:"Trotz Schmerzmittel nehmen Taubheit und Blässe der Zehen zu. Reaktion?", optionen:[
+      {text:"Sofort DMS prüfen, hochlagern, Arzt, Gips nach AO spalten", ziel:"end_mittel", fb:"Warnzeichen ernst nehmen.", typ:"warn"},
+      {text:"Weiter abwarten", ziel:"end_schlecht", fb:"Irreversibler Schaden/Kompartmentsyndrom.", typ:"fehler"} ] },
+    bad_tief:{ titel:"REAKTION", text:"In Tieflage nehmen Schwellung und Beschwerden zu. Reaktion?", optionen:[
+      {text:"Bein hochlagern, DMS prüfen, Arzt, Gips nach AO spalten", ziel:"end_mittel", fb:"Hochlagern.", typ:"warn"},
+      {text:"Weiter tief lagern", ziel:"end_schlecht", fb:"Verstärkte Schwellung/Durchblutungsstörung.", typ:"fehler"} ] },
+    bad_eng:{ titel:"REAKTION", text:"Nach dem engeren Wickeln werden die Zehen kälter und tauber. Reaktion?", optionen:[
+      {text:"Sofort lockern/nach AO spalten, hochlagern, DMS, Arzt", ziel:"end_mittel", fb:"Nicht enger – lockern.", typ:"warn"},
+      {text:"Noch enger wickeln", ziel:"end_schlecht", fb:"Drohender Gewebeschaden/Kompartment.", typ:"fehler"} ] },
+    bad_only:{ titel:"REAKTION", text:"Unter alleiniger Schmerzgabe schreitet die Durchblutungsstörung fort. Reaktion?", optionen:[
+      {text:"DMS prüfen, hochlagern, Gips nach AO spalten, Arzt", ziel:"end_mittel", fb:"Ursache angehen, nicht nur Schmerz.", typ:"warn"},
+      {text:"Weiter nur Schmerzmittel", ziel:"end_schlecht", fb:"Maskierter Warnschmerz, Schaden schreitet fort.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die drohende Durchblutungsstörung wird früh erkannt, der Gips entlastet und DMS überwacht.", fazit:"Zu enger Gips / drohende Durchblutungs-/Nervenstörung (zunehmender Schmerz, Kribbeln/Taubheit, blasse kühle Zehen): DMS (Durchblutung/Motorik/Sensibilität) engmaschig prüfen, Bein hochlagern, sofort Arzt und Gips nach AO spalten/lockern; nicht abwarten, nicht enger wickeln, nicht tief lagern, den Warnschmerz nicht nur mit Schmerzmitteln überdecken." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Durchblutung wird gesichert – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: DMS engmaschig, hochlagern, Gips nach AO spalten, Warnschmerz ernst nehmen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es entsteht ein bleibender Gewebe-/Nervenschaden (Kompartmentsyndrom).", fazit:"Merke: Warnschmerz/Taubheit unter Gips nie überdecken/abwarten, nicht enger wickeln/tief lagern – DMS, hochlagern, Gips nach AO spalten." } }
+},
+{ id:"ort_tvt", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"🦵", farbe:"#6366f1", titel:"Geschwollene, schmerzhafte Wade", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Ein Patient nach längerer Immobilisation/OP klagt über eine einseitig geschwollene, überwärmte, schmerzhafte Wade; die Haut ist gespannt und gerötet.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"Verdacht auf tiefe Venenthrombose erkennen (einseitige Schwellung/Überwärmung/Schmerz, Spannung), Bein ruhigstellen, NICHT massieren/kneten, Arzt informieren, Vitalzeichen, auf Lungenembolie-Zeichen achten", ziel:"n2", fb:"Einseitige geschwollene, warme Wade = TVT-Verdacht: nicht massieren, Arzt.", typ:"gut"},
+      {text:"Die Wade massieren/ausstreichen, um den Schmerz zu lindern", ziel:"bad_massage", fb:"Massieren kann ein Gerinnsel lösen (Emboliegefahr!) – niemals massieren.", typ:"fehler"},
+      {text:"Kräftig mobilisieren – 'laufen ist gut'", ziel:"bad_mobil", fb:"Bei TVT-Verdacht nicht eigenmächtig forcieren – erst abklären/AO.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (AO)?", optionen:[
+      {text:"Arzt/Diagnostik, Antikoagulation nach AO, Bein nach AO lagern, nicht massieren, auf plötzliche Atemnot/Brustschmerz (Lungenembolie!) achten, Vitalzeichen", ziel:"n3", fb:"Arzt/Diagnostik, Antikoagulation nach AO, auf LE-Zeichen achten.", typ:"gut"},
+      {text:"Eigenmächtig Medikamente geben", ziel:"bad_self", fb:"Medikamente nur nach AO.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Bein beobachten (Umfang/Schmerz), nicht massieren, Therapie nach AO, auf Lungenembolie-Zeichen (Atemnot/Brustschmerz/Tachykardie) achten und sofort melden, Edukation, dokumentieren", ziel:"n4", fb:"Nicht massieren, Therapie nach AO, LE-Zeichen melden.", typ:"gut"},
+      {text:"Plötzliche Atemnot nicht ernst nehmen", ziel:"bad_le", fb:"Plötzliche Atemnot/Brustschmerz kann eine Lungenembolie sein – sofort melden!", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Bein/Umfang/Schmerz, Therapie nach AO, engmaschig auf Lungenembolie-Zeichen achten, Vitalzeichen, Edukation, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach Therapiestart nicht weiter beobachten", ziel:"end_mittel", fb:"Weiter auf LE-Zeichen achten.", typ:"warn"} ] },
+    bad_massage:{ titel:"REAKTION", text:"Kurz nach dem Massieren bekommt der Patient plötzlich Atemnot und Brustschmerz. Reaktion?", optionen:[
+      {text:"Sofort Notfall/Arzt (Lungenembolie-Verdacht!), O₂ nach AO, Oberkörper hoch, Vitalzeichen, nicht weiter massieren", ziel:"end_mittel", fb:"Nie massieren – Embolie-Verdacht sofort handeln.", typ:"warn"},
+      {text:"Weiter die Wade massieren", ziel:"end_schlecht", fb:"Lungenembolie durch gelöstes Gerinnsel.", typ:"fehler"} ] },
+    bad_mobil:{ titel:"REAKTION", text:"Unter forciertem Gehen verschlechtert sich die Situation. Reaktion?", optionen:[
+      {text:"Stoppen, Bein ruhigstellen, Arzt/Diagnostik, auf LE-Zeichen achten, AO abwarten", ziel:"end_mittel", fb:"Erst abklären/AO.", typ:"warn"},
+      {text:"Weiter forcieren", ziel:"end_schlecht", fb:"Emboliegefahr.", typ:"fehler"} ] },
+    bad_self:{ titel:"REAKTION", text:"Die Fachkraft bemerkt die eigenmächtige Gabe. Reaktion?", optionen:[
+      {text:"Offen berichten, melden/dokumentieren, künftig nur nach AO", ziel:"end_mittel", fb:"Keine eigenmächtige Gabe.", typ:"warn"},
+      {text:"Es verschweigen", ziel:"end_schlecht", fb:"Gefährdet den Patienten, schwerer Fehler.", typ:"fehler"} ] },
+    bad_le:{ titel:"REAKTION", text:"Die ignorierte Atemnot nimmt zu, der Patient wird tachykard. Reaktion?", optionen:[
+      {text:"Sofort Notfall/Arzt (Lungenembolie!), O₂ nach AO, Oberkörper hoch, Vitalzeichen", ziel:"end_mittel", fb:"LE-Zeichen sofort melden.", typ:"warn"},
+      {text:"Weiter ignorieren", ziel:"end_schlecht", fb:"Unerkannte Lungenembolie.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die TVT wird erkannt, behandelt und der Patient engmaschig auf Embolie-Zeichen überwacht.", fazit:"Tiefe Venenthrombose (einseitig geschwollene, überwärmte, schmerzhafte Wade nach Immobilisation/OP): Bein ruhigstellen, NICHT massieren/kneten (Emboliegefahr!), Arzt/Diagnostik, Antikoagulation und Lagerung nach AO, engmaschig auf Lungenembolie-Zeichen (plötzliche Atemnot/Brustschmerz/Tachykardie) achten und sofort melden, Edukation/Prophylaxe; keine eigenmächtige Medikamentengabe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage wird beherrscht – konsequenteres Vorgehen wäre sicherer gewesen.", fazit:"Merke: nie massieren, Therapie nach AO, engmaschig auf Lungenembolie-Zeichen achten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zur Lungenembolie.", fazit:"Merke: TVT nie massieren/forcieren, keine eigenmächtige Gabe, plötzliche Atemnot sofort als Lungenembolie behandeln." } }
+},
+{ id:"ort_tep", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"🦿", farbe:"#14b8a6", titel:"Erste Mobilisation nach Hüft-TEP", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
+  vignette:"Eine Patientin nach Hüft-TEP (künstliches Hüftgelenk) soll erstmals mobilisiert werden; sie möchte sich aus dem Bett drehen und dabei die Beine übereinanderschlagen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"LAGERUNG", text:"Wie gehst du die Mobilisation an?", optionen:[
+      {text:"Luxationsprophylaxe beachten (verbotene Bewegungen vermeiden: Beine nicht übereinanderschlagen/überkreuzen, keine starke Beugung über 90°, nicht nach innen drehen), Beine z. B. mit Kissen abspreizen, ruhig erklären", ziel:"n2", fb:"Luxationsprophylaxe: verbotene Bewegungen vermeiden, Beine abspreizen.", typ:"gut"},
+      {text:"Sie die Beine übereinanderschlagen lassen", ziel:"bad_cross", fb:"Überkreuzen/Übereinanderschlagen kann die TEP luxieren – vermeiden.", typ:"fehler"},
+      {text:"Sie tief in die Hocke / über 90° beugen lassen", ziel:"bad_beug", fb:"Starke Beugung über 90° ist eine verbotene Bewegung – vermeiden.", typ:"warn"} ] },
+    n2:{ titel:"MOBILISATION", text:"Wie weiter (nach Vorgabe)?", optionen:[
+      {text:"Nach Vorgabe/Physiotherapie mobilisieren, erlaubte Bewegungen anleiten, Hilfsmittel nutzen, langsam und sicher, Schmerz beachten, DMS/Wunde beobachten", ziel:"n3", fb:"Nach Vorgabe/Physio, erlaubte Bewegungen, Hilfsmittel.", typ:"gut"},
+      {text:"Sie ruckartig und ohne Hilfsmittel aufstehen lassen", ziel:"bad_fast", fb:"Ruckartig/ohne Hilfsmittel droht Sturz/Luxation – langsam und sicher.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Luxationsprophylaxe/erlaubte Bewegungen, Thrombose-/Dekubitus-/Pneumonieprophylaxe, Schmerzmanagement, Wunde/DMS beobachten, Edukation, dokumentieren", ziel:"n4", fb:"Luxationsprophylaxe + weitere Prophylaxen, Wunde/DMS.", typ:"gut"},
+      {text:"Die Prophylaxen vernachlässigen", ziel:"bad_proph", fb:"Prophylaxen (Thrombose/Dekubitus/Pneumonie) sind wichtig.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Erlaubte Bewegungen/Luxationsprophylaxe, Prophylaxen, Schmerz/Wunde/DMS, sichere Mobilisation, Edukation, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach erstem Aufstehen nicht weiter anleiten", ziel:"end_mittel", fb:"Weiter zu erlaubten Bewegungen anleiten.", typ:"warn"} ] },
+    bad_cross:{ titel:"REAKTION", text:"Beim Übereinanderschlagen verspürt die Patientin plötzlich heftigen Hüftschmerz (Luxationsgefahr). Reaktion?", optionen:[
+      {text:"Bewegung sofort stoppen, korrekt lagern (abspreizen), Arzt, DMS/Schmerz prüfen", ziel:"end_mittel", fb:"Verbotene Bewegung stoppen.", typ:"warn"},
+      {text:"Sie weiter so bewegen lassen", ziel:"end_schlecht", fb:"Luxation der Hüft-TEP.", typ:"fehler"} ] },
+    bad_beug:{ titel:"REAKTION", text:"Bei der tiefen Beugung über 90° schmerzt die Hüfte stark. Reaktion?", optionen:[
+      {text:"Stoppen, erlaubte Position einnehmen, Arzt/Physio, DMS/Schmerz prüfen", ziel:"end_mittel", fb:"Keine Beugung über 90°.", typ:"warn"},
+      {text:"Weiter tief beugen lassen", ziel:"end_schlecht", fb:"Luxationsgefahr.", typ:"fehler"} ] },
+    bad_fast:{ titel:"REAKTION", text:"Beim ruckartigen Aufstehen ohne Hilfsmittel wird die Patientin unsicher. Reaktion?", optionen:[
+      {text:"Sichern/begleiten, Hilfsmittel nutzen, langsam nach Vorgabe mobilisieren", ziel:"end_mittel", fb:"Langsam und sicher.", typ:"warn"},
+      {text:"Weiter ruckartig/ohne Hilfsmittel", ziel:"end_schlecht", fb:"Sturz-/Luxationsgefahr.", typ:"fehler"} ] },
+    bad_proph:{ titel:"REAKTION", text:"Ohne Prophylaxen drohen Thrombose/Dekubitus/Pneumonie. Reaktion?", optionen:[
+      {text:"Prophylaxen konsequent umsetzen (nach AO), Mobilisation/Lagerung anpassen", ziel:"end_mittel", fb:"Prophylaxen nachholen.", typ:"warn"},
+      {text:"Weiterhin keine Prophylaxen", ziel:"end_schlecht", fb:"Komplikationen.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die Patientin wird sicher und luxationssicher mobilisiert, Prophylaxen laufen.", fazit:"Nach Hüft-TEP – Luxationsprophylaxe: verbotene Bewegungen vermeiden (Beine nicht überkreuzen/übereinanderschlagen, keine Beugung über 90°, kein starkes Innendrehen), Beine abspreizen, nach Vorgabe/Physiotherapie sicher mobilisieren (erlaubte Bewegungen, Hilfsmittel), Schmerz/Wunde/DMS beobachten, Thrombose-/Dekubitus-/Pneumonieprophylaxe, Edukation." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Mobilisation gelingt – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: verbotene Bewegungen vermeiden, nach Vorgabe sicher mobilisieren, Prophylaxen nicht vergessen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zur Luxation oder zu einem Sturz.", fazit:"Merke: Beine nicht überkreuzen, nicht über 90° beugen, nicht ruckartig/ohne Hilfsmittel – langsam nach Vorgabe mobilisieren." } }
+},
+{ id:"ort_wirbelsaeule", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"⚠️", farbe:"#dc2626", titel:"Sturz aus Höhe mit Rückenschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+  vignette:"Ein Patient ist aus größerer Höhe gestürzt und klagt über starke Rückenschmerzen, Kribbeln in den Beinen und Schwäche; er liegt am Boden.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"ERKENNEN", text:"Wie ordnest du das ein und reagierst zuerst?", optionen:[
+      {text:"An eine mögliche (instabile) Wirbelsäulenverletzung denken (Sturz aus Höhe + Rückenschmerz + neurologische Zeichen) – Patienten möglichst nicht bewegen/aufsetzen, flach und ruhig liegen lassen, HWS/Achse schützen, sofort Notfall/Arzt, Vitalzeichen, neurologische Zeichen erfassen", ziel:"n2", fb:"Bei diesem Mechanismus an instabile Wirbelsäule denken – nicht bewegen, Achse schützen.", typ:"gut"},
+      {text:"Den Patienten aufsetzen/hinstellen lassen", ziel:"bad_sit", fb:"Aufsetzen/Hinstellen kann bei instabiler Wirbelsäule das Rückenmark schädigen – nicht bewegen.", typ:"fehler"},
+      {text:"Ihn schnell und unkoordiniert umlagern", ziel:"bad_move", fb:"Unkoordiniertes Umlagern gefährdet das Rückenmark – nur koordiniert im Team.", typ:"warn"} ] },
+    n2:{ titel:"MASSNAHMEN", text:"Wie weiter (nach Vorgabe)?", optionen:[
+      {text:"Immobilisation/Achse wahren, Bewegungen nur koordiniert (Logroll) im Team nach Vorgabe, neurologische Befunde dokumentieren, Notfallteam, Vitalzeichen, Wärmeerhalt", ziel:"n3", fb:"Achse wahren, koordiniert im Team, Neurostatus, Notfallteam.", typ:"gut"},
+      {text:"Den Patienten allein und ruckartig umlagern", ziel:"bad_alone", fb:"Allein/ruckartig ist gefährlich – nur koordiniert im Team.", typ:"warn"} ] },
+    n3:{ titel:"PFLEGE", text:"Worauf achtest du?", optionen:[
+      {text:"Achse/Immobilisation, Neurostatus engmaschig (Sensibilität/Kraft), Vitalzeichen, koordinierte Bewegungen im Team, Druckstellen/Wärme, beruhigen, dokumentieren", ziel:"n4", fb:"Achse, Neurostatus, koordiniert, Vitalzeichen.", typ:"gut"},
+      {text:"Die neurologischen Zeichen nicht beachten", ziel:"bad_neuro", fb:"Die neurologischen Befunde sind hier entscheidend – engmaschig erfassen.", typ:"warn"} ] },
+    n4:{ titel:"ÜBERWACHUNG", text:"Weiteres Vorgehen?", optionen:[
+      {text:"Achse/Immobilisation, Neurostatus/Vitalzeichen engmaschig, koordinierte Bewegungen, Wärmeerhalt, bei Verschlechterung sofort Arzt, dokumentieren", ziel:"end_gut", fb:"", typ:"gut"},
+      {text:"Nach kurzer Zeit die Achse nicht mehr beachten", ziel:"end_mittel", fb:"Achse/Immobilisation konsequent wahren.", typ:"warn"} ] },
+    bad_sit:{ titel:"REAKTION", text:"Beim Aufsetzen nehmen Kribbeln und Schwäche in den Beinen zu. Reaktion?", optionen:[
+      {text:"Sofort wieder flach/ruhig lagern, Achse wahren, Notfallteam, Neurostatus, nicht weiter bewegen", ziel:"end_mittel", fb:"Nicht aufsetzen – Achse wahren.", typ:"warn"},
+      {text:"Ihn weiter aufrichten", ziel:"end_schlecht", fb:"Rückenmarkschaden.", typ:"fehler"} ] },
+    bad_move:{ titel:"REAKTION", text:"Beim unkoordinierten Umlagern verschlechtern sich die neurologischen Zeichen. Reaktion?", optionen:[
+      {text:"Stoppen, Achse wahren, nur koordiniert im Team (Logroll), Notfallteam, Neurostatus", ziel:"end_mittel", fb:"Nur koordiniert im Team.", typ:"warn"},
+      {text:"Weiter unkoordiniert bewegen", ziel:"end_schlecht", fb:"Rückenmarkschaden.", typ:"fehler"} ] },
+    bad_alone:{ titel:"REAKTION", text:"Beim alleinigen, ruckartigen Umlagern droht eine Verschlechterung. Reaktion?", optionen:[
+      {text:"Hilfe holen, nur koordiniert im Team umlagern (Logroll), Achse wahren", ziel:"end_mittel", fb:"Im Team, nicht allein.", typ:"warn"},
+      {text:"Weiter allein/ruckartig", ziel:"end_schlecht", fb:"Gefährdung des Rückenmarks.", typ:"fehler"} ] },
+    bad_neuro:{ titel:"REAKTION", text:"Eine Zunahme der Ausfälle bleibt unbemerkt. Reaktion?", optionen:[
+      {text:"Neurostatus engmaschig erheben, Achse wahren, sofort Arzt bei Verschlechterung", ziel:"end_mittel", fb:"Neurostatus engmaschig.", typ:"warn"},
+      {text:"Weiter nicht beachten", ziel:"end_schlecht", fb:"Verschlechterung übersehen.", typ:"fehler"} ] },
+    end_gut:{ ende:true, ergebnis:"gut", text:"Die mögliche Wirbelsäulenverletzung wird achsengerecht immobilisiert und überwacht, ohne Verschlechterung.", fazit:"Verdacht auf (instabile) Wirbelsäulenverletzung (Sturz aus Höhe + Rückenschmerz + neurologische Zeichen): Patienten nicht aufsetzen/hinstellen, flach und ruhig lagern, Achse/HWS wahren, Bewegungen nur koordiniert im Team (Logroll) nach Vorgabe, sofort Notfall, Neurostatus engmaschig dokumentieren, Vitalzeichen/Wärmeerhalt; keine unkoordinierte oder alleinige Umlagerung." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage bleibt beherrscht – konsequentere Immobilisation wäre sicherer gewesen.", fazit:"Merke: nicht aufsetzen, Achse wahren, nur koordiniert im Team bewegen, Neurostatus engmaschig." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Bewegung kommt es zu einer neurologischen Verschlechterung.", fazit:"Merke: bei Verdacht nie aufsetzen/allein umlagern – flach lagern, Achse wahren, koordiniert im Team, Neurostatus engmaschig." } }
+}
 ];
 
 function navGo(screen) {
