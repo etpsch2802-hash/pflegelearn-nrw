@@ -3047,7 +3047,168 @@ const KRANKHEITSBILDER = {
           {f:"Wann spricht man von Eklampsie?", opt:["Bei hohem Blutdruck allein","Bei Krampfanfall im Rahmen einer Präeklampsie – medizinischer Notfall!","Bei Ödemen","Bei Proteinurie"], k:1, e:"Eklampsie = tonisch-klonischer Krampfanfall bei Präeklampsie ohne andere Ursache. Häufig mit Bewusstlosigkeit. Notfallmaßnahmen: Seitenlage, Atemweg sichern, O₂, Diazepam i.v., Magnesium i.v., sofortige Entbindung vorbereiten."}
         ]
       }
-    ]
+    
+      ,{
+        name: "Endometriose",
+        icd: "N80",
+        definition: "Vorkommen von gebärmutterschleimhaut-ähnlichem Gewebe außerhalb der Gebärmutterhöhle. Häufige Ursache chronischer Unterbauchschmerzen und von Unfruchtbarkeit.",
+        symptome: ["Zyklusabhängige, oft starke Unterbauchschmerzen", "Dysmenorrhö (schmerzhafte Regel)", "Schmerzen beim Geschlechtsverkehr", "Zyklusstörungen", "Unerfüllter Kinderwunsch", "Müdigkeit"],
+        diagnostik: ["Anamnese (zyklusabhängiger Schmerz)", "Gynäkologische Untersuchung", "Sonografie", "Laparoskopie (Sicherung)", "Schmerzverlauf/Zyklusbezug"],
+        therapie: ["Schmerztherapie nach AO", "Hormontherapie nach AO", "Operative Entfernung der Herde (Laparoskopie)", "Kinderwunschbehandlung bei Bedarf", "Begleitung/Beratung"],
+        pflege: ["Schmerzmanagement nach AO, Zyklusbezug beobachten", "Perioperative Pflege bei Laparoskopie", "Psychische Unterstützung (chronischer Schmerz, Kinderwunsch)", "Wärme/Entspannung anbieten", "Edukation zu Therapie und Verlauf"],
+        merksatz: "Zyklusabhängiger Unterbauchschmerz + Dysmenorrhö + evtl. Sterilität = Endometriose: Schmerz-/Hormontherapie, ggf. Laparoskopie.",
+        pflegeplanung: [
+          {
+            problem: "Chronischer Schmerz r/t Endometriose m/d/s zyklusabhängigem Unterbauchschmerz, Dysmenorrhö",
+            ressourcen: ["Patientin kooperativ", "Behandlung läuft"],
+            ziel: "Die Patientin ist schmerzgelindert (NRS ≤ 3) und kann mit der Erkrankung umgehen",
+            massnahmen: ["Schmerzmanagement nach AO, Wirkung/Zyklusbezug dokumentieren", "Wärme/Entspannung anbieten", "Perioperative Pflege bei Eingriff", "Psychische Unterstützung (Schmerz, Kinderwunsch)", "Edukation zu Hormon-/Schmerztherapie"],
+            evaluation: "Schmerz gelindert, Patientin informiert und entlastet."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Uterus myomatosus (Myome)",
+        icd: "D25",
+        definition: "Gutartige Muskelknoten der Gebärmutter (Myome). Häufig; können Blutungsstörungen, Druckgefühl und Schmerzen verursachen.",
+        symptome: ["Verstärkte/verlängerte Regelblutung", "Unterbauchschmerzen/Druckgefühl", "Blutungsanämie möglich", "Harndrang/Obstipation bei Druck", "Oft auch beschwerdefrei"],
+        diagnostik: ["Gynäkologische Untersuchung", "Sonografie", "Labor (Anämie bei starker Blutung)", "Ggf. Hysteroskopie", "Verlaufskontrolle"],
+        therapie: ["Beobachtung bei Beschwerdefreiheit", "Hormon-/Blutungstherapie nach AO", "Operative Entfernung (Myomenukleation) oder Hysterektomie", "Behandlung der Anämie", "Beratung"],
+        pflege: ["Blutungsstärke beobachten, auf Anämiezeichen achten", "Perioperative Pflege bei OP", "Schmerzmanagement nach AO", "Eisen-/Anämietherapie nach AO unterstützen", "Psychische Unterstützung, Edukation"],
+        merksatz: "Starke Regelblutung + Druckgefühl = Myome: Blutung/Anämie beachten, je nach Beschwerden Hormontherapie oder OP.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr einer Anämie r/t verstärkter Blutung bei Uterus myomatosus m/d/s Hypermenorrhö, Müdigkeit",
+            ressourcen: ["Patientin kooperativ", "Behandlung verfügbar"],
+            ziel: "Die Blutung ist kontrolliert; eine Anämie wird erkannt und behandelt",
+            massnahmen: ["Blutungsstärke und Anämiezeichen beobachten", "Labor/Eisentherapie nach AO unterstützen", "Schmerzmanagement nach AO", "Perioperative Pflege bei OP", "Edukation zu Therapieoptionen"],
+            evaluation: "Blutung kontrolliert, keine/behandelte Anämie, Patientin informiert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Ovarialkarzinom",
+        icd: "C56",
+        definition: "Bösartiger Tumor der Eierstöcke, oft spät symptomatisch und daher häufig erst in fortgeschrittenem Stadium diagnostiziert.",
+        symptome: ["Lange unspezifisch/symptomarm", "Zunehmender Bauchumfang/Aszites", "Druck-/Völlegefühl, Verdauungsbeschwerden", "Unterbauchschmerzen", "Gewichtsverlust, Leistungsminderung"],
+        diagnostik: ["Gynäkologische Untersuchung", "Sonografie/CT", "Tumormarker (z. B. CA-125) nach AO", "Histologie (operativ)", "Staging"],
+        therapie: ["Operative Tumorentfernung", "Chemotherapie nach AO", "Symptom-/Aszitesmanagement", "Supportive/palliative Therapie bei Bedarf", "Psychoonkologische Begleitung"],
+        pflege: ["Perioperative und onkologische Pflege", "Aszites/Bauchumfang, Ernährung, Bilanz beobachten", "Chemotherapie-Nebenwirkungen managen nach AO", "Schmerz-/Symptomkontrolle", "Psychoonkologische Unterstützung, Angehörige einbeziehen"],
+        merksatz: "Ovarialkarzinom: spät symptomatisch (Bauchumfang/Aszites, Völlegefühl) – Operation + Chemotherapie, ganzheitliche Begleitung.",
+        pflegeplanung: [
+          {
+            problem: "Belastung durch Symptome und Diagnose r/t Ovarialkarzinom m/d/s Aszites, Schmerzen, Sorge",
+            ressourcen: ["Angehörige unterstützen", "Psychoonkologie verfügbar"],
+            ziel: "Die Patientin ist symptomkontrolliert und fühlt sich in der Krankheitsbewältigung unterstützt",
+            massnahmen: ["Perioperative/onkologische Pflege, Symptomkontrolle", "Aszites/Bauchumfang/Ernährung/Bilanz beobachten", "Chemotherapie-Nebenwirkungen nach AO managen", "Schmerztherapie nach AO", "Psychoonkologische Begleitung, Angehörige einbeziehen"],
+            evaluation: "Symptome kontrolliert, Patientin unterstützt und informiert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Zervixkarzinom (Gebärmutterhalskrebs)",
+        icd: "C53",
+        definition: "Bösartiger Tumor des Gebärmutterhalses, meist durch HPV-Infektion bedingt. Früherkennung (Vorsorge) und HPV-Impfung sind wichtig.",
+        symptome: ["Frühstadium oft symptomlos", "Kontaktblutungen (z. B. nach Verkehr)", "Zwischen-/Postmenopausenblutungen", "Ausfluss", "Fortgeschritten: Schmerzen, Beschwerden"],
+        diagnostik: ["Vorsorge: Zytologie (Pap), HPV-Test", "Kolposkopie, Biopsie", "Bildgebung zum Staging", "Gynäkologische Untersuchung"],
+        therapie: ["Operative Therapie (je nach Stadium)", "Strahlen-/Chemotherapie nach AO", "Nachsorge", "Prävention: HPV-Impfung, Vorsorge", "Psychoonkologische Begleitung"],
+        pflege: ["Perioperative/onkologische Pflege", "Nebenwirkungen von Strahlen-/Chemotherapie managen nach AO", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung, Intimsphäre wahren", "Edukation zu Vorsorge/Impfung, Angehörige einbeziehen"],
+        merksatz: "Zervixkarzinom (meist HPV): Kontaktblutungen beachten, Vorsorge/Impfung schützen – Therapie stadienabhängig.",
+        pflegeplanung: [
+          {
+            problem: "Belastung und Symptome r/t Zervixkarzinom und Therapie m/d/s Blutungen, Sorge, Therapienebenwirkungen",
+            ressourcen: ["Patientin kooperativ", "Psychoonkologie/Angehörige"],
+            ziel: "Die Patientin ist symptomkontrolliert und in der Bewältigung unterstützt",
+            massnahmen: ["Perioperative/onkologische Pflege", "Therapienebenwirkungen nach AO managen", "Schmerz-/Symptomkontrolle, Intimsphäre wahren", "Psychische Unterstützung", "Edukation zu Vorsorge/HPV-Impfung"],
+            evaluation: "Symptome kontrolliert, Patientin informiert und unterstützt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Extrauteringravidität (Eileiterschwangerschaft)",
+        icd: "O00",
+        definition: "Einnistung der befruchteten Eizelle außerhalb der Gebärmutterhöhle, meist im Eileiter. Notfall bei Ruptur mit Blutungsgefahr.",
+        symptome: ["Einseitige Unterbauchschmerzen", "Ausbleiben der Regel/positiver Schwangerschaftstest", "Schmierblutung", "Bei Ruptur: akute starke Schmerzen, Kreislaufschock", "Schulterschmerz bei Blutung ins Abdomen"],
+        diagnostik: ["Schwangerschaftstest/β-HCG-Verlauf", "Vaginale Sonografie", "Klinik (Schmerz, Kreislauf)", "Vitalzeichen", "Bei Rupturverdacht rasche Abklärung"],
+        therapie: ["Engmaschige Kontrolle/medikamentös bei frühem, stabilem Befund nach AO", "Operative Versorgung (oft laparoskopisch)", "Bei Ruptur: Notfall-OP, Volumen/Kreislauf", "Schmerztherapie", "Psychische Begleitung"],
+        pflege: ["Vitalzeichen/Schmerz überwachen, auf Schockzeichen achten", "Bei Ruptur OP-Vorbereitung, Volumen nach AO", "Schmerzmanagement nach AO", "Psychische Begleitung (Verlust/Sorge)", "Bilanz, Beobachtung der Blutung"],
+        merksatz: "Einseitiger Unterbauchschmerz + positiver Schwangerschaftstest = an Eileiterschwangerschaft denken; bei Ruptur Schock → Notfall-OP.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr eines hämorrhagischen Schocks r/t möglicher Tubarruptur m/d/s einseitigem Schmerz, Blutungsrisiko",
+            ressourcen: ["Frühzeitige Vorstellung", "Stationäre Versorgung"],
+            ziel: "Eine Ruptur/Blutung wird früh erkannt; die Patientin bleibt kreislaufstabil",
+            massnahmen: ["Vitalzeichen/Schmerz engmaschig, auf Schockzeichen achten", "Bei Ruptur OP-Vorbereitung, i.v.-Volumen nach AO", "Schmerzmanagement nach AO", "Blutung beobachten, Bilanz", "Psychische Begleitung"],
+            evaluation: "Kreislaufstabil, Komplikation früh erkannt, Patientin begleitet."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Adnexitis (Eileiter-/Eierstockentzündung)",
+        icd: "N70",
+        definition: "Entzündung der Adnexe (Eileiter/Eierstöcke), meist als aufsteigende Infektion. Kann zu Komplikationen (Abszess, Unfruchtbarkeit) führen.",
+        symptome: ["Unterbauchschmerzen (oft beidseitig)", "Fieber", "Ausfluss", "Schmerzen beim Verkehr", "Allgemeines Krankheitsgefühl", "Druck-/Portioschiebeschmerz"],
+        diagnostik: ["Gynäkologische Untersuchung", "Labor (Entzündungswerte)", "Abstrich/Erregernachweis", "Sonografie (Abszess?)", "Vitalzeichen"],
+        therapie: ["Antibiotika nach AO", "Schmerz-/Antipyrese nach AO", "Schonung", "Bei Abszess ggf. operative Therapie", "Partnerbehandlung/Beratung"],
+        pflege: ["Schmerz-/Temperaturüberwachung", "Antibiotika/Analgesie nach AO", "Schonung, Wärme anbieten", "Auf Komplikationszeichen achten (Abszess, Peritonitis)", "Edukation (Therapietreue, Prävention), Intimsphäre"],
+        merksatz: "Unterbauchschmerz + Fieber + Ausfluss = Adnexitis: Antibiotikum nach AO, auf Abszess/Komplikationen achten.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Infektion r/t Adnexitis m/d/s Unterbauchschmerz, Fieber",
+            ressourcen: ["Patientin kooperativ", "Frühzeitige Behandlung"],
+            ziel: "Die Patientin ist schmerzarm (NRS ≤ 3) und fieberfrei; Komplikationen werden früh erkannt",
+            massnahmen: ["Schmerz-/Temperaturüberwachung", "Antibiotika/Analgesie nach AO", "Schonung, Wärme anbieten", "Auf Abszess-/Peritonitiszeichen achten", "Edukation zu Therapietreue/Prävention"],
+            evaluation: "Schmerz reduziert, fieberfrei, keine Komplikationen."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Descensus genitalis (Beckenbodensenkung)",
+        icd: "N81",
+        definition: "Senkung von Gebärmutter und/oder Scheidenwänden durch Beckenbodenschwäche, teils bis zum Vorfall (Prolaps). Häufig nach Geburten und im Alter.",
+        symptome: ["Fremdkörper-/Druckgefühl nach unten", "Sicht-/tastbarer Vorfall", "Harninkontinenz oder Entleerungsstörung", "Stuhlentleerungsstörung", "Rückenschmerz/Ziehen im Unterbauch"],
+        diagnostik: ["Gynäkologische Untersuchung", "Beurteilung des Senkungsgrades", "Miktions-/Kontinenzanamnese", "Ggf. Restharnbestimmung", "Verlaufsbeurteilung"],
+        therapie: ["Beckenbodentraining/Physiotherapie", "Pessartherapie nach AO", "Operative Korrektur bei Bedarf", "Hormonelle Lokaltherapie nach AO", "Beratung (Heben/Gewicht)"],
+        pflege: ["Anleitung zu Beckenbodentraining", "Pessarpflege unterstützen, Hautkontrolle", "Bei OP perioperative Pflege", "Kontinenz-/Miktionsbeobachtung, Hautschutz", "Edukation: schweres Heben/Pressen meiden, Obstipationsprophylaxe"],
+        merksatz: "Druckgefühl nach unten + Vorfall + Inkontinenz = Descensus: Beckenbodentraining/Pessar, schweres Heben meiden, ggf. OP.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigtes Wohlbefinden/Kontinenz r/t Beckenbodensenkung m/d/s Druckgefühl, Inkontinenz",
+            ressourcen: ["Patientin motiviert", "Physiotherapie verfügbar"],
+            ziel: "Die Patientin ist beschwerdegelindert und beherrscht Beckenbodenübungen/Maßnahmen",
+            massnahmen: ["Beckenbodentraining anleiten", "Pessarpflege unterstützen, Haut kontrollieren", "Kontinenz-/Miktionsbeobachtung, Hautschutz", "Perioperative Pflege bei OP", "Edukation: Heben/Pressen meiden, Obstipationsprophylaxe"],
+            evaluation: "Beschwerden gelindert, Übungen/Maßnahmen umgesetzt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Wochenbett (Puerperium)",
+        icd: "O90",
+        definition: "Zeitraum nach der Geburt (ca. 6–8 Wochen) mit Rückbildung der Geburtsveränderungen. Pflegerischer Fokus: Rückbildung, Wochenfluss, Stillen und Komplikationsprävention.",
+        symptome: ["Uterusrückbildung (Involution)", "Wochenfluss (Lochien)", "Brustveränderungen/Milcheinschuss", "Erschöpfung, emotionale Labilität", "Risiken: Blutung, Infektion, Thrombose, postpartale Depression"],
+        diagnostik: ["Fundusstand/Uterusrückbildung beurteilen", "Lochien (Menge/Geruch/Farbe) beobachten", "Vitalzeichen, Blutungskontrolle", "Brust/Stillen, Ausscheidung", "Stimmung/psychisches Befinden"],
+        therapie: ["Rückbildung fördern (Mobilisation, Rückbildungsgymnastik)", "Stillberatung/Brustpflege", "Schmerz-/Wundmanagement (Damm/Sectio) nach AO", "Thrombose-/Infektionsprophylaxe", "Bei Komplikationen ärztliche Behandlung"],
+        pflege: ["Fundusstand und Lochien regelmäßig beobachten (postpartale Blutung!)", "Vitalzeichen, auf Infektions-/Thrombosezeichen achten", "Stillberatung, Brust- und Dammpflege, Hygiene", "Mobilisation, Thromboseprophylaxe", "Auf psychisches Befinden achten (Baby Blues/postpartale Depression), Anleitung"],
+        merksatz: "Wochenbett: Fundusstand und Lochien überwachen (Blutung!), Stillen/Hygiene unterstützen, Thrombose/Infektion und Psyche im Blick.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr von postpartaler Blutung/Infektion r/t Wochenbett m/d/s Uterusrückbildung, Wochenfluss, Wundheilung",
+            ressourcen: ["Mutter motiviert", "Unterstützung durch Partner/Familie"],
+            ziel: "Die Rückbildung verläuft komplikationslos; Blutungs-/Infektionszeichen werden früh erkannt",
+            massnahmen: ["Fundusstand und Lochien regelmäßig beobachten und dokumentieren", "Vitalzeichen, auf Infektions-/Thrombosezeichen achten", "Stillberatung, Brust-/Dammpflege, Hygiene", "Mobilisation und Thromboseprophylaxe", "Auf psychisches Befinden achten, Anleitung/Edukation"],
+            evaluation: "Rückbildung regelrecht, keine Blutung/Infektion, Mutter angeleitet."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
   urologie: {
     label: "Urologie",
@@ -3098,7 +3259,168 @@ const KRANKHEITSBILDER = {
           {f:"Was ist der IPSS?", opt:["Ein Bluttest","International Prostate Symptom Score: Fragebogen zur Einschätzung des Schweregrades der Miktionsbeschwerden","Ein Ultraschallwert","Ein Krebsmarker"], k:1, e:"IPSS (International Prostate Symptom Score): 7 Fragen zu Miktionssymptomen (Harnstrahl, Harndrang, Restharnfühl etc.) + 1 Frage Lebensqualität. 0-7 = leicht, 8-19 = mäßig, 20-35 = schwer. Wichtig für Therapieentscheidung und Verlaufskontrolle."}
         ]
       }
-    ]
+    
+      ,{
+        name: "Urolithiasis / Nierenkolik (Harnsteine)",
+        icd: "N20",
+        definition: "Steine in Niere/Harnleiter, die bei Abgang heftige kolikartige Schmerzen verursachen können. Gefahr von Harnstau und Infektion.",
+        symptome: ["Heftige, kolikartige Flankenschmerzen", "Ausstrahlung in Unterbauch/Leiste", "Übelkeit/Erbrechen", "Hämaturie (Blut im Urin)", "Harndrang, Unruhe", "Bei Infekt/Stau: Fieber"],
+        diagnostik: ["Klinik (Kolik), Urinstatus (Hämaturie)", "Sonografie/CT", "Labor (Entzündung, Nierenwerte)", "Vitalzeichen", "Auf Harnstau/Infekt achten"],
+        therapie: ["Analgesie/Spasmolyse nach AO", "Ausreichend Flüssigkeit, Bewegung", "Steinabgang fördern; ggf. Steinzertrümmerung (ESWL)/endoskopische Entfernung", "Bei Harnstau/Infekt rasche Entlastung nach AO", "Metaphylaxe/Beratung"],
+        pflege: ["Schmerzmanagement nach AO (Kolik!), Wirkung kontrollieren", "Flüssigkeit fördern, Urin auf Steinabgang sieben/beobachten, Bilanz", "Auf Fieber/Harnstau achten (Komplikation)", "Bewegung unterstützen", "Edukation zu Trinkmenge/Steinprophylaxe"],
+        merksatz: "Heftige Flankenkolik + Hämaturie = Harnstein: Analgesie/Spasmolyse, viel trinken; bei Fieber/Stau rasche Entlastung.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz r/t Nierenkolik m/d/s heftigem Flankenschmerz, Übelkeit",
+            ressourcen: ["Patient kooperativ", "Behandlung verfügbar"],
+            ziel: "Der Patient ist rasch schmerzgelindert (NRS ≤ 3); Komplikationen werden früh erkannt",
+            massnahmen: ["Analgesie/Spasmolyse nach AO, Wirkung kontrollieren", "Flüssigkeit fördern, Urin beobachten/sieben, Bilanz", "Auf Fieber/Harnstau achten", "Bewegung unterstützen", "Edukation zu Trinkmenge/Steinprophylaxe"],
+            evaluation: "Schmerz gelindert, kein Harnstau/Infekt, Steinabgang/Behandlung erfolgt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Prostatakarzinom",
+        icd: "C61",
+        definition: "Häufigster bösartiger Tumor des Mannes, oft langsam wachsend. Früh meist symptomlos; Vorsorge und individuelle Therapieentscheidung sind zentral.",
+        symptome: ["Frühstadium meist symptomlos", "Miktionsbeschwerden (spät)", "Hämaturie/Hämatospermie (selten)", "Bei Metastasen: Knochenschmerzen", "Leistungsminderung"],
+        diagnostik: ["Tastuntersuchung (DRU), PSA-Wert nach AO", "Biopsie (Sicherung)", "Bildgebung/Staging", "Verlaufskontrolle"],
+        therapie: ["Aktive Überwachung bei Niedrigrisiko", "Operation (Prostatektomie) oder Strahlentherapie", "Hormon-/Systemtherapie nach AO", "Symptom-/Schmerzkontrolle", "Psychoonkologische Begleitung"],
+        pflege: ["Perioperative/onkologische Pflege", "Nach Prostatektomie: Kontinenz-/Beckenbodentraining, Katheterpflege", "Therapienebenwirkungen managen nach AO", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung (Kontinenz/Sexualität), Edukation"],
+        merksatz: "Prostatakarzinom: oft symptomarm, PSA/Tastbefund zur Früherkennung – Therapie individuell, nach OP Kontinenztraining.",
+        pflegeplanung: [
+          {
+            problem: "Belastung und mögliche Inkontinenz r/t Prostatakarzinom/Therapie m/d/s Miktionsbeschwerden, Sorge",
+            ressourcen: ["Patient kooperativ", "Angehörige/Psychoonkologie"],
+            ziel: "Der Patient ist symptomkontrolliert und in Bewältigung/Kontinenz unterstützt",
+            massnahmen: ["Perioperative/onkologische Pflege", "Kontinenz-/Beckenbodentraining, Katheterpflege", "Therapienebenwirkungen nach AO managen", "Schmerz-/Symptomkontrolle", "Psychische Unterstützung, Edukation"],
+            evaluation: "Symptome kontrolliert, Kontinenz verbessert, Patient unterstützt."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Harninkontinenz",
+        icd: "N39.3",
+        definition: "Unwillkürlicher Harnverlust verschiedener Formen (z. B. Belastungs-, Drang-, Misch-, Überlaufinkontinenz). Häufig, mit hoher Belastung der Lebensqualität.",
+        symptome: ["Unwillkürlicher Urinverlust (bei Belastung/Drang)", "Häufiger/imperativer Harndrang", "Nächtliches Wasserlassen", "Hautprobleme im Intimbereich", "Sozialer Rückzug/Scham"],
+        diagnostik: ["Miktions-/Inkontinenztagebuch", "Anamnese (Form/Auslöser)", "Restharnbestimmung", "Urinstatus (Infekt ausschließen)", "Ärztliche Abklärung"],
+        therapie: ["Form-spezifisch: Beckenbodentraining, Blasentraining", "Medikamente nach AO", "Hilfsmittelversorgung", "Operative Optionen bei Bedarf", "Gewichts-/Lebensstilberatung"],
+        pflege: ["Form/Auslöser erfassen (Tagebuch), Toilettentraining/-rhythmus", "Beckenboden-/Blasentraining anleiten", "Hautschutz im Intimbereich, geeignete Hilfsmittel", "Würde/Intimsphäre wahren, Scham reduzieren", "Edukation, Flüssigkeits-/Toilettenmanagement"],
+        merksatz: "Inkontinenz hat Formen (Belastung/Drang): gezielt trainieren, Haut schützen, Würde wahren – nicht bagatellisieren.",
+        pflegeplanung: [
+          {
+            problem: "Beeinträchtigte Ausscheidung und Hautgefahr r/t Harninkontinenz m/d/s unwillkürlichem Urinverlust",
+            ressourcen: ["Patient/in motiviert", "Hilfsmittel verfügbar"],
+            ziel: "Die Kontinenzsituation verbessert sich; die Haut bleibt intakt und die Würde gewahrt",
+            massnahmen: ["Form/Auslöser erfassen, Toilettentraining/-rhythmus", "Beckenboden-/Blasentraining anleiten", "Hautschutz, geeignete Hilfsmittel", "Intimsphäre/Würde wahren", "Edukation, Flüssigkeits-/Toilettenmanagement"],
+            evaluation: "Weniger Urinverlust, Haut intakt, Lebensqualität verbessert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Harnblasenkarzinom",
+        icd: "C67",
+        definition: "Bösartiger Tumor der Harnblase, Risikofaktor v. a. Rauchen. Leitsymptom ist oft die schmerzlose Hämaturie.",
+        symptome: ["Schmerzlose Hämaturie (Blut im Urin)", "Häufiger Harndrang", "Schmerzen/Brennen beim Wasserlassen (später)", "Bei Fortschreiten: Beschwerden/Stau", "Leistungsminderung"],
+        diagnostik: ["Urinstatus/-zytologie", "Zystoskopie (Sicherung)", "Bildgebung/Staging", "Labor", "Verlaufskontrolle"],
+        therapie: ["Transurethrale Resektion (TUR-B)", "Lokale Instillationstherapie nach AO", "Bei Fortschreiten: radikale Therapie/Zystektomie (ggf. Harnableitung)", "Chemo-/Systemtherapie nach AO", "Nachsorge"],
+        pflege: ["Perioperative/onkologische Pflege, Spülkatheter/Blasenspülung nach AO", "Urin/Hämaturie beobachten, Bilanz", "Bei Harnableitung/Stoma: Versorgung und Anleitung", "Therapienebenwirkungen managen nach AO", "Psychische Unterstützung, Edukation (Rauchstopp)"],
+        merksatz: "Schmerzlose Hämaturie = bis zum Beweis des Gegenteils abklären (Blasenkarzinom?): Zystoskopie; Rauchstopp ist zentral.",
+        pflegeplanung: [
+          {
+            problem: "Belastung und Ausscheidungsveränderung r/t Blasenkarzinom/Therapie m/d/s Hämaturie, ggf. Harnableitung",
+            ressourcen: ["Patient kooperativ", "Angehörige/Stomatherapie"],
+            ziel: "Der Patient ist symptomkontrolliert und versorgt seine Ausscheidung/Harnableitung zunehmend selbstständig",
+            massnahmen: ["Perioperative/onkologische Pflege, Spülung/Katheter nach AO", "Urin/Hämaturie beobachten, Bilanz", "Bei Harnableitung Versorgung/Anleitung, Hautschutz", "Therapienebenwirkungen nach AO managen", "Psychische Unterstützung, Edukation (Rauchstopp)"],
+            evaluation: "Symptome kontrolliert, Versorgung sicher, zunehmende Selbstständigkeit."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Akuter Harnverhalt",
+        icd: "R33",
+        definition: "Plötzliche Unfähigkeit, die volle Blase zu entleeren – ein schmerzhafter Notfall, häufig bei BPH, postoperativ oder medikamentös bedingt.",
+        symptome: ["Starker Harndrang ohne Entleerung", "Schmerzen/Druck im Unterbauch", "Tastbare, prall gefüllte Blase", "Unruhe", "Überlaufinkontinenz (tröpfelnd) möglich"],
+        diagnostik: ["Klinik (prall gefüllte Blase)", "Sonografie/Restharnbestimmung", "Ursachensuche (BPH, Medikamente, postoperativ)", "Vitalzeichen"],
+        therapie: ["Sofortige Entlastung durch Katheterisierung nach AO (langsam ablassen)", "Ursache behandeln (z. B. BPH, Medikamente)", "Schmerztherapie", "Bilanz/Beobachtung nach Entlastung", "Beratung"],
+        pflege: ["Blasenentlastung durch Katheter nach AO, Urin langsam ablassen (Kreislauf!), Menge dokumentieren", "Schmerz-/Vitalzeichenüberwachung", "Nach Entlastung auf Polyurie/Kreislauf achten, Bilanz", "Katheterpflege/Hygiene", "Ursache/Edukation, Wiederauftreten vorbeugen"],
+        merksatz: "Praller Unterbauch + Harndrang ohne Entleerung = Harnverhalt: entlasten (Katheter nach AO), Urin langsam ablassen, Ursache klären.",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Harnverhalt r/t Blasenentleerungsstörung m/d/s prall gefüllter Blase, Unterbauchschmerz",
+            ressourcen: ["Stationäre Versorgung", "Patient kooperativ"],
+            ziel: "Die Blase wird sicher entlastet; der Patient ist schmerzfrei und kreislaufstabil",
+            massnahmen: ["Katheterisierung nach AO, Urin langsam ablassen, Menge dokumentieren", "Schmerz-/Vitalzeichenüberwachung", "Nach Entlastung Bilanz und Kreislauf beobachten", "Katheterpflege/Hygiene", "Ursache klären, Edukation"],
+            evaluation: "Blase entlastet, schmerzfrei, kreislaufstabil."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Pyelonephritis (Nierenbeckenentzündung)",
+        icd: "N10",
+        definition: "Bakterielle Entzündung von Nierenbecken und Nierengewebe, meist aufsteigend. Fieberhafte, ernste Form des Harnwegsinfekts.",
+        symptome: ["Hohes Fieber, Schüttelfrost", "Flankenschmerz/Klopfschmerz der Nierenlager", "Dysurie/Pollakisurie", "Übelkeit/Erbrechen", "Allgemeines Krankheitsgefühl"],
+        diagnostik: ["Urinstatus/-kultur", "Labor (Entzündungswerte)", "Sonografie (Stau/Abszess)", "Vitalzeichen", "Auf Komplikationen (Urosepsis) achten"],
+        therapie: ["Antibiotika nach AO", "Ausreichend Flüssigkeit", "Antipyrese/Analgesie nach AO", "Bei Harnstau Entlastung nach AO", "Stationär bei schwerem Verlauf"],
+        pflege: ["Temperatur-/Vitalzeichen-/Schmerzüberwachung", "Antibiotika/Medikamente zeitgerecht nach AO", "Flüssigkeit fördern, Bilanz, Urin beobachten", "Auf Urosepsiszeichen achten (Verschlechterung!)", "Edukation (Therapietreue, Prävention)"],
+        merksatz: "Fieber + Flankenklopfschmerz + Dysurie = Pyelonephritis: Antibiotikum nach AO, viel trinken, auf Urosepsis achten.",
+        pflegeplanung: [
+          {
+            problem: "Erhöhte Körpertemperatur und Infektion r/t Pyelonephritis m/d/s Fieber, Flankenschmerz",
+            ressourcen: ["Patient kooperativ", "Frühzeitige Behandlung"],
+            ziel: "Der Patient ist innerhalb weniger Tage fieberfrei und schmerzgelindert; eine Urosepsis wird früh erkannt",
+            massnahmen: ["Temperatur-/Vitalzeichen-/Schmerzüberwachung", "Antibiotika zeitgerecht nach AO", "Flüssigkeit fördern, Bilanz, Urin beobachten", "Auf Urosepsiszeichen achten", "Edukation zu Therapietreue/Prävention"],
+            evaluation: "Fieber rückläufig, schmerzgelindert, keine Urosepsis."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Hodentorsion",
+        icd: "N44",
+        definition: "Verdrehung des Hodens mit Unterbrechung der Durchblutung – ein urologischer Notfall. Ohne rasche Behandlung droht der Verlust des Hodens.",
+        symptome: ["Plötzlicher, heftiger Hodenschmerz", "Schwellung/Rötung des Hodens", "Übelkeit/Erbrechen", "Hochstand/Querlage des Hodens", "Schmerz oft ohne Linderung bei Anheben"],
+        diagnostik: ["Klinik (akuter Hodenschmerz)", "Dopplersonografie (Durchblutung)", "Rasche urologische Abklärung", "Vitalzeichen", "Zeit ist entscheidend!"],
+        therapie: ["Sofortige operative Freilegung/Detorsion (Notfall!)", "Schmerztherapie nach AO", "Nüchtern, OP-Vorbereitung", "Rasche Klinik-/Facharztvorstellung", "Beobachtung"],
+        pflege: ["Als Notfall behandeln: rasche OP-Vorbereitung, nüchtern", "Schmerzmanagement nach AO, Vitalzeichen", "Patienten beruhigen, Dringlichkeit ernst nehmen", "Postoperative Pflege (Wunde, Schmerz)", "Edukation/psychische Unterstützung"],
+        merksatz: "Plötzlicher heftiger Hodenschmerz = Hodentorsion bis zum Beweis des Gegenteils: sofort urologisch abklären/operieren (Zeit zählt!).",
+        pflegeplanung: [
+          {
+            problem: "Akuter Schmerz und Organgefahr r/t Hodentorsion m/d/s heftigem Hodenschmerz, Durchblutungsstörung",
+            ressourcen: ["Rasche Versorgung möglich", "Patient kooperativ"],
+            ziel: "Die Durchblutung wird rasch wiederhergestellt; der Patient ist schmerzgelindert",
+            massnahmen: ["Als Notfall behandeln: sofortige OP-Vorbereitung, nüchtern", "Schmerzmanagement nach AO, Vitalzeichen", "Patienten beruhigen, Dringlichkeit kommunizieren", "Postoperative Pflege", "Psychische Unterstützung/Edukation"],
+            evaluation: "Rasch operiert, Hoden erhalten, schmerzgelindert."
+          }
+        ],
+        fragen: []
+      },
+      {
+        name: "Transurethraler Dauerkatheter (DK) – Pflege",
+        icd: "Z46.6",
+        definition: "Liegender Blasenkatheter zur Harnableitung. Pflegerischer Schwerpunkt: Hygiene, Infektionsprävention (CAUTI) und sichere Handhabung; die Indikation ist regelmäßig zu prüfen.",
+        symptome: ["Liegender transurethraler Katheter mit Ableitungssystem", "Risiko: katheterassoziierter Harnwegsinfekt (CAUTI)", "Mögliche Probleme: Verstopfung, Leckage, Diskonnektion", "Blasenkrämpfe/Druckgefühl", "Hautreizung/Verletzung im Genitalbereich"],
+        diagnostik: ["Urin (Menge/Farbe/Beimengungen) beobachten, Bilanz", "Auf Infektzeichen achten (trüber/riechender Urin, Fieber)", "Durchgängigkeit/Lage des Systems prüfen", "Indikation regelmäßig überprüfen"],
+        therapie: ["Aseptische Anlage und geschlossenes System", "Katheter nur so lange wie nötig (Indikation prüfen)", "Bei Infekt/Komplikation Behandlung nach AO", "Ausreichend Flüssigkeit", "Frühzeitige Entfernung anstreben"],
+        pflege: ["Geschlossenes System, Beutel unter Blasenniveau, kein Abknicken/Diskonnektion", "Tägliche Katheter-/Meatuspflege, konsequente Händehygiene", "Urin/Bilanz beobachten, auf Infektzeichen achten (CAUTI)", "Ausreichend Flüssigkeit fördern", "Indikation regelmäßig prüfen, frühe Entfernung anstreben, Edukation"],
+        merksatz: "Dauerkatheter: geschlossenes System, Beutel tief, Hygiene – und Indikation täglich prüfen (so kurz wie möglich, CAUTI vermeiden).",
+        pflegeplanung: [
+          {
+            problem: "Infektionsgefahr r/t liegendem Blasenkatheter m/d/s Fremdkörper in den Harnwegen, CAUTI-Risiko",
+            ressourcen: ["Patient kooperativ", "Funktionierendes System"],
+            ziel: "Der Patient entwickelt keinen katheterassoziierten Harnwegsinfekt; die Ableitung funktioniert sicher",
+            massnahmen: ["Geschlossenes System, Beutel unter Blasenniveau, kein Abknicken", "Tägliche Katheter-/Meatuspflege, konsequente Händehygiene", "Urin/Bilanz beobachten, auf Infektzeichen achten", "Ausreichend Flüssigkeit fördern", "Indikation täglich prüfen, frühe Entfernung anstreben"],
+            evaluation: "Kein CAUTI, Ableitung sicher, Katheter so kurz wie möglich."
+          }
+        ],
+        fragen: []
+      }
+      ]
   },
   neurologie: {
     label: "Neurologie",
