@@ -1808,6 +1808,7 @@ async function sendMsg(text) {
   const a = AUSBILDUNGEN.find(x => x.id === currentAusb);
   appendMsg("user", txt, null);
   chatHistory.push({ role:"user", content: txt });
+  try { recordKIMessage(); } catch(e) {}
   isLoading = true;
   document.getElementById("send-btn").disabled = true;
   showTyping();
@@ -1941,6 +1942,7 @@ function showResult() {
   const retryBtn = document.getElementById("retry-btn");
   retryBtn.style.background = `linear-gradient(135deg,${kat?.color||"#94a3b8"}65,${kat?.color||"#94a3b8"}38)`;
   showScreen("result");
+  try { recordQuizResult(quizKat, score, quizList.length); } catch(e) {}
   try { renderHomeStats(); } catch(e) {}
 }
 
