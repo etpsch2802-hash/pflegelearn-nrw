@@ -433,12 +433,8 @@
   </button>
   <div class="header-btns">
     <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none">← Zurück</button>
-    <button class="hbtn" id="btn-med" onclick="showScreen('medizintechnik')" style="background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.25);color:#facc15;">⚙️ Technik</button>
-    <button class="hbtn hbtn-quiz" id="btn-quiz" onclick="showScreen('quizSelect')">📝 Quiz</button>
-    <button class="hbtn" onclick="showScreen('taschenkarten')" title="Taschenkarten" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25);color:#a78bfa">📇</button>
-    <button class="hbtn" onclick="showSearchOverlay()" title="Suche" style="background:rgba(var(--accent-rgb),.1);border-color:rgba(var(--accent-rgb),.25);color:#38bdf8">🔍</button>
     <button class="hbtn" id="btn-darkmode" onclick="toggleDarkMode()" title="Hell/Dunkel" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8">🌙</button>
-    <button class="hbtn" onclick="toggleNavMenu()" title="Navigation" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8" id="btn-hamburger">☰</button>
+    <button class="hbtn" onclick="toggleNavMenu()" title="Menü" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8" id="btn-hamburger">☰</button>
   </div>
 </header>
 
@@ -1592,8 +1588,26 @@ function goBack() {
   }
 }
 
-// System-Zurueck-Geste / Hardware-Back: durch die Screens blaettern statt App schliessen
+// Offenes Overlay (Suche/Menue/Modal) per Zurueck-Geste schliessen
+function _closeTopOverlay() {
+  const ids = ['search-overlay', 'nav-dropdown', 'logout-modal'];
+  for (let i = 0; i < ids.length; i++) {
+    const el = document.getElementById(ids[i]);
+    if (el && el.style.display && el.style.display !== 'none') {
+      el.style.display = 'none';
+      return true;
+    }
+  }
+  return false;
+}
+
+// System-Zurueck-Geste / Hardware-Back: erst Overlay schliessen, sonst durch Screens blaettern (statt App schliessen)
 window.addEventListener('popstate', function(e) {
+  if (_closeTopOverlay()) {
+    // Zurueck hat nur das Overlay geschlossen -> aktuellen Screen im Verlauf halten
+    try { window.history.pushState({ screen: currentScreen }, ''); } catch (err) {}
+    return;
+  }
   _navPopping = true;
   try {
     const target = (e.state && e.state.screen) ? e.state.screen : 'home';
