@@ -53,7 +53,7 @@
     --c4:#f97316; --c5:#fb7185; --c6:#22d3ee; --c7:#facc15;
   }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overscroll-behavior:none; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overscroll-behavior:none; padding-bottom:calc(66px + env(safe-area-inset-bottom)); }
   h1,h2,h3 { font-family:'DM Serif Display',serif; }
   button { font-family:'DM Sans',sans-serif; cursor:pointer; transition:opacity .15s,transform .15s; }
   button:active { opacity:.8; transform:scale(.97); }
@@ -236,10 +236,19 @@
   .pw-copyright { margin-top:20px; font-size:10px; color:var(--text3); text-align:center; }
 
   /* COPYRIGHT WATERMARK */
-  .watermark { position:fixed; bottom:8px; right:10px; font-size:9px; color:rgba(var(--accent-rgb),.25); z-index:50; pointer-events:none; letter-spacing:1px; }
+  .watermark { position:fixed; bottom:72px; right:10px; font-size:9px; color:rgba(var(--accent-rgb),.25); z-index:50; pointer-events:none; letter-spacing:1px; }
 
   /* INSTALL BUTTON */
-  .install-btn { display:none; position:fixed; bottom:20px; right:16px; background:linear-gradient(135deg,#0369a1,#0284c7); border:none; border-radius:50px; padding:10px 16px; color:white; font-size:12px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; z-index:90; box-shadow:0 4px 20px rgba(3,105,161,.4); gap:6px; align-items:center; }
+  .install-btn { display:none; position:fixed; bottom:80px; right:16px; background:linear-gradient(135deg,#0369a1,#0284c7); border:none; border-radius:50px; padding:10px 16px; color:white; font-size:12px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; z-index:90; box-shadow:0 4px 20px rgba(3,105,161,.4); gap:6px; align-items:center; }
+
+  /* UNTERE NAVIGATIONSLEISTE */
+  .bottom-nav { position:fixed; left:0; right:0; bottom:0; z-index:100; display:flex; justify-content:space-around; align-items:stretch; background:rgba(5,12,24,.94); backdrop-filter:blur(16px); border-top:1px solid rgba(var(--accent-rgb),.14); padding:6px 4px calc(6px + env(safe-area-inset-bottom)) 4px; }
+  .bottom-nav button { flex:1; background:none; border:none; color:#7f9bb3; font-family:'DM Sans',sans-serif; font-size:10px; font-weight:600; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:6px 2px; min-height:48px; cursor:pointer; border-radius:10px; transition:color .15s, background .15s; }
+  .bottom-nav button:active { background:rgba(var(--accent-rgb),.12); color:var(--accent); }
+  .bottom-nav button.bn-active { color:var(--accent); }
+  .bottom-nav .bn-ico { font-size:20px; line-height:1; }
+  body.light-mode .bottom-nav { background:rgba(255,255,255,.97); border-color:rgba(30,64,128,.12); }
+  body.light-mode .bottom-nav button { color:#475569; }
   .install-btn.visible { display:flex; }
 .demo-banner{background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;text-align:center;font-size:11px;color:#fb7185}
   /* ACCORDION */
@@ -400,6 +409,15 @@
 </div>
 
 <div class="watermark">© PflegeLearn NRW</div>
+
+<!-- UNTERE NAVIGATIONSLEISTE -->
+<nav class="bottom-nav" id="bottom-nav" aria-label="Hauptnavigation">
+  <button onclick="navGo('home')" id="bn-home"><span class="bn-ico">🏠</span>Start</button>
+  <button onclick="navGo('faelle')" id="bn-faelle"><span class="bn-ico">🩺</span>Fälle</button>
+  <button onclick="navGo('quizSelect')" id="bn-quiz"><span class="bn-ico">📝</span>Quiz</button>
+  <button onclick="showSearchOverlay()" id="bn-suche"><span class="bn-ico">🔍</span>Suche</button>
+  <button onclick="toggleNavMenu()" id="bn-menu"><span class="bn-ico">☰</span>Menü</button>
+</nav>
 
 <!-- INSTALL BUTTON -->
 <button class="install-btn" id="install-btn" onclick="installApp()">📲 Als App installieren</button>
@@ -1622,6 +1640,13 @@ function showScreen(name) {
   }
   if (btnQuiz) btnQuiz.style.display = isHome ? "inline-block" : "none";
   if (btnMed)  btnMed.style.display  = isHome ? "inline-block" : "none";
+  // Untere Navigationsleiste: aktiven Punkt markieren
+  try {
+    document.querySelectorAll('.bottom-nav button').forEach(function(b){ b.classList.remove('bn-active'); });
+    var _bnMap = { home:'bn-home', faelle:'bn-faelle', quizSelect:'bn-quiz' };
+    var _bnId = _bnMap[name];
+    if (_bnId) { var _bnEl = document.getElementById(_bnId); if (_bnEl) _bnEl.classList.add('bn-active'); }
+  } catch (e) {}
   // History-Eintrag fuer Vorwaerts-Navigation -> aktiviert die System-Zurueck-Geste
   try {
     if (!_navPopping && (!window.history.state || window.history.state.screen !== name)) {
