@@ -1559,15 +1559,32 @@ function renderQuizSelect() {
 // ─── NAVIGATION HISTORY ──────────────────────────────────────────────────
 let screenHistory = [];
 
+let _navPopping = false;   // true, waehrend popstate eine Navigation ausloest
+const _scrollPos = {};     // gemerkte Scroll-Position je Screen
+
 function goBack() {
-  if (screenHistory.length > 1) {
-    screenHistory.pop(); // aktuellen Screen entfernen
-    const prev = screenHistory.pop(); // vorherigen holen (wird von showScreen wieder gepusht)
-    showScreen(prev);
-  } else {
+  // Menue ggf. schliessen
+  try { const dd = document.getElementById('nav-dropdown'); if (dd) dd.style.display = 'none'; } catch (e) {}
+  // Einheitlich ueber die Browser-/Android-History zuruecknavigieren,
+  // damit der Button UND die System-Zurueck-Geste identisch funktionieren.
+  if (window.history.state && window.history.state.screen) {
+    window.history.back();
+  } else if (currentScreen && currentScreen !== 'home') {
     showScreen('home');
   }
 }
+
+// System-Zurueck-Geste / Hardware-Back: durch die Screens blaettern statt App schliessen
+window.addEventListener('popstate', function(e) {
+  _navPopping = true;
+  try {
+    const target = (e.state && e.state.screen) ? e.state.screen : 'home';
+    showScreen(target);
+  } catch (err) {
+  } finally {
+    _navPopping = false;
+  }
+});
 
 // ─── ZURÜCK ZUM LOGIN-SCREEN ────────────────────────────────────────────────
 function backToLogin() {
@@ -1577,6 +1594,8 @@ function backToLogin() {
 }
 
 function showScreen(name) {
+  // Scroll-Position des bisherigen Screens merken (fuer "zurueck an dieselbe Stelle")
+  if (currentScreen) { _scrollPos[currentScreen] = window.scrollY || window.pageYOffset || 0; }
   document.querySelectorAll(".page, .chat-page").forEach(p => { p.classList.remove("active"); });
   // Login-Screen immer ausblenden wenn ein anderer Screen gezeigt wird
   const pwS = document.getElementById("pw-screen");
@@ -1603,7 +1622,16 @@ function showScreen(name) {
   }
   if (btnQuiz) btnQuiz.style.display = isHome ? "inline-block" : "none";
   if (btnMed)  btnMed.style.display  = isHome ? "inline-block" : "none";
-  window.scrollTo(0, 0);
+  // History-Eintrag fuer Vorwaerts-Navigation -> aktiviert die System-Zurueck-Geste
+  try {
+    if (!_navPopping && (!window.history.state || window.history.state.screen !== name)) {
+      window.history.pushState({ screen: name }, '');
+    }
+  } catch (e) {}
+  // Scroll-Position wiederherstellen (gemerkte Position, sonst oben starten)
+  const _sp = _scrollPos[name] || 0;
+  window.scrollTo(0, _sp);
+  requestAnimationFrame(function(){ window.scrollTo(0, _sp); });
   // Screens re-rendern
   if (name === "medizintechnik") {
     const grid = document.getElementById("mt-grid");
