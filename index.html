@@ -1625,6 +1625,35 @@ function backToLogin() {
   if (pwS) pwS.classList.add('active');
 }
 
+// ─── MINI-ONBOARDING (einmalig beim ersten Start) ───────────────────────────
+function maybeShowOnboarding() {
+  try {
+    if (localStorage.getItem('pl_onboarded') === '1') return;
+    if (!currentUser) return;
+    if (document.getElementById('onboarding-overlay')) return;
+    const ov = document.createElement('div');
+    ov.id = 'onboarding-overlay';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:1200;background:rgba(3,9,18,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:24px;';
+    ov.innerHTML = ''
+      + '<div style="max-width:360px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
+      +   '<div style="font-size:34px;text-align:center;margin-bottom:6px">👋</div>'
+      +   '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;text-align:center;margin-bottom:16px">Willkommen bei PflegeLearn NRW</div>'
+      +   '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">'
+      +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px">⬅️</span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Mit der <b>Zurück-Geste</b> deines Handys gehst du jederzeit einen Schritt zurück.</div></div>'
+      +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px">📲</span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Unten ist die <b>Navigationsleiste</b>: Start, Fälle, Quiz, Suche und Menü.</div></div>'
+      +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px">🔍</span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Über die <b>Suche</b> findest du Krankheitsbilder, Quizfragen und Themen sofort.</div></div>'
+      +   '</div>'
+      +   '<button onclick="dismissOnboarding()" style="width:100%;background:linear-gradient(135deg,var(--accent),#0ea5e9);border:none;border-radius:12px;padding:14px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer">Los geht\'s</button>'
+      + '</div>';
+    document.body.appendChild(ov);
+  } catch (e) {}
+}
+function dismissOnboarding() {
+  try { localStorage.setItem('pl_onboarded', '1'); } catch (e) {}
+  const ov = document.getElementById('onboarding-overlay');
+  if (ov) ov.remove();
+}
+
 function showScreen(name) {
   // Scroll-Position des bisherigen Screens merken (fuer "zurueck an dieselbe Stelle")
   if (currentScreen) { _scrollPos[currentScreen] = window.scrollY || window.pageYOffset || 0; }
@@ -1671,6 +1700,7 @@ function showScreen(name) {
   const _sp = _scrollPos[name] || 0;
   window.scrollTo(0, _sp);
   requestAnimationFrame(function(){ window.scrollTo(0, _sp); });
+  if (name === 'home') { setTimeout(maybeShowOnboarding, 400); }
   // Screens re-rendern
   if (name === "medizintechnik") {
     const grid = document.getElementById("mt-grid");
