@@ -1440,6 +1440,24 @@ const QUIZ_FRAGEN = [
   {kat:"notfall",frage:"Wie tief wird beim Erwachsenen thoraxkomprimiert (ERC 2021)?",opt:["2–3 cm","3–4 cm","5–6 cm","7–8 cm"],k:2,erkl:"Drucktiefe 5–6 cm in der Brustmitte (untere Sternumhälfte).",s:"mittel"}
 ];
 
+// Antwortoptionen je Frage einmalig mischen, damit die richtige Loesung nicht
+// immer an derselben Position (frueher fast immer B) steht. k wird mitgefuehrt.
+(function shuffleQuizOptions(){
+  try {
+    QUIZ_FRAGEN.forEach(function(q){
+      if (!q || !Array.isArray(q.opt) || typeof q.k !== 'number') return;
+      var correct = q.opt[q.k];
+      for (var i = q.opt.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = q.opt[i]; q.opt[i] = q.opt[j]; q.opt[j] = t;
+      }
+      var ni = q.opt.indexOf(correct);
+      if (ni !== -1) q.k = ni;
+    });
+  } catch (e) {}
+})();
+
+
 const KATS = [
   {id:"alle",label:"Alle Fragen",icon:"📚",color:"#94a3b8"},
   {id:"pflegehelfer",label:"Pflegefachassistenz",icon:"🤝",color:"#34d399"},
