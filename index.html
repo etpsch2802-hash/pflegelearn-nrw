@@ -6592,6 +6592,12 @@ function chooseFall(idx){
   fallPfad.push(opt.text);
   fallLastFB={fb:opt.fb, typ:opt.typ};
   fallNode=opt.ziel;
+  const ziel=fallAktuell.nodes[fallNode];
+  // Sound auf Zwischenschritten; das Fall-Ende spielt seinen eigenen Ergebnis-Ton
+  if(!(ziel && ziel.ende)){
+    if(opt.typ==='gut'){ try{playCorrect();}catch(e){} }
+    else if(opt.typ==='fehler'){ try{playWrong();}catch(e){} }
+  }
   renderFall();
 }
 
@@ -6618,6 +6624,8 @@ function renderFall(){
     const erg=node.ergebnis;
     const map={gut:['#22c55e','✅','Gut gelöst'],mittel:['#eab308','⚠️','Mit Abstrichen'],schlecht:['#ef4444','❌','Kritischer Verlauf']};
     const m=map[erg]||map.mittel;
+    // Ergebnis-Sound wie im Quiz: bestanden / neutral / nicht bestanden
+    if(erg==='gut'){ try{playFinish();}catch(e){} } else if(erg==='schlecht'){ try{playWrong();}catch(e){} } else { try{playCorrect();}catch(e){} }
     el.innerHTML='<div style="max-width:680px;margin:0 auto">'+vig+pfad+fbHtml
       +'<div style="background:'+m[0]+'18;border:1px solid '+m[0]+'66;border-radius:14px;padding:16px;margin:10px 0;text-align:center">'
         +'<div style="font-size:34px">'+m[1]+'</div>'
