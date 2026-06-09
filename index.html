@@ -76,7 +76,7 @@
   /* PAGE WRAPPER */
   .page { display:none; max-width:740px; margin:0 auto; padding:18px 14px 16px; }
   .page.active { display:block; }
-  .chat-page { display:none; flex-direction:column; max-width:700px; margin:0 auto; padding:0 13px; height:calc(100vh - 62px); height:calc(100dvh - 62px); }
+  .chat-page { display:none; flex-direction:column; max-width:700px; margin:0 auto; padding:0 13px; height:calc(100vh - 128px); height:calc(100dvh - 128px - env(safe-area-inset-bottom, 0px)); }
   .chat-page.active { display:flex; }
 
   /* HOME */
@@ -9147,8 +9147,10 @@ function navGo(screen) {
 }
 document.addEventListener('click', function(e) {
   const d = document.getElementById('nav-dropdown');
+  if (!d || d.style.display === 'none' || d.style.display === '') return;
   const btn = document.getElementById('btn-hamburger');
-  if (d && btn && !d.contains(e.target) && !btn.contains(e.target)) {
+  const btn2 = document.getElementById('bn-menu');
+  if (!d.contains(e.target) && !(btn && btn.contains(e.target)) && !(btn2 && btn2.contains(e.target))) {
     d.style.display = 'none';
   }
 });
