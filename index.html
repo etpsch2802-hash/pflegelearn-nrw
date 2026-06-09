@@ -5145,6 +5145,7 @@ function openKrankheitsbild(fachId, bildIdx) {
   const cont = document.getElementById('kb-detail-content');
   if (!cont) return;
 
+  shuffleKBFragen(b.fragen);
   cont.innerHTML = `
     <div style="max-width:700px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
@@ -5225,7 +5226,6 @@ function openKrankheitsbild(fachId, bildIdx) {
       </button>
     </div>`;
 
-  shuffleKBFragen(b.fragen);
   showScreen('kb-detail');
 }
 
