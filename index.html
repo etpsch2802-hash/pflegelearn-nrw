@@ -1802,7 +1802,13 @@ function appendMsg(role, text, accentColor) {
   const aiLabel = role === "ai" ? `<div class="ai-label" style="color:${accentColor||"var(--accent)"}">🤖 PFLEGELEARN NRW</div>` : "";
   div.innerHTML = `<div class="bubble ${role}">${aiLabel}<span>${formatted}</span></div>`;
   msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  if (role === "ai") {
+    // Beginn der KI-Antwort oben halten, nicht ans Ende der Antwort springen
+    const top = div.getBoundingClientRect().top - msgs.getBoundingClientRect().top;
+    msgs.scrollTop = msgs.scrollTop + top;
+  } else {
+    msgs.scrollTop = msgs.scrollHeight;
+  }
 }
 
 function showTyping() {
@@ -6523,7 +6529,7 @@ function answerABCDE(idx){
 }
 
 // ─── FALLBEISPIELE: VERZWEIGTE ENGINE ───────────────────────
-let faelleFilter='alle', faelleOpenJahr=1, fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
+let faelleFilter='alle', faelleOpenJahr=null, fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
 
 function fachListe(){
   const seen={}, out=[];
