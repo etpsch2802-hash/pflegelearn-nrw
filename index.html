@@ -76,7 +76,7 @@
   /* PAGE WRAPPER */
   .page { display:none; max-width:740px; margin:0 auto; padding:18px 14px 16px; }
   .page.active { display:block; }
-  .chat-page { display:none; flex-direction:column; max-width:700px; margin:0 auto; padding:0 13px; height:calc(100vh - 128px); height:calc(100dvh - 128px - env(safe-area-inset-bottom, 0px)); }
+  .chat-page { display:none; flex-direction:column; max-width:700px; margin:0 auto; padding:0 13px; height:calc(100vh - 62px); }
   .chat-page.active { display:flex; }
 
   /* HOME */
@@ -129,7 +129,7 @@
   .modal-btn { flex:1; border:none; border-radius:9px; padding:12px; font-size:12px; font-weight:700; }
 
   /* CHAT */
-  .chat-context-bar { padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); margin-bottom:3px; display:flex; align-items:center; gap:7px; position:sticky; top:0; z-index:5; background:rgba(5,12,24,.96); backdrop-filter:blur(8px); }
+  .chat-context-bar { padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); margin-bottom:3px; display:flex; align-items:center; gap:7px; }
   .chat-context-name { font-size:11px; font-weight:700; }
   .chat-context-sub { font-size:9px; color:var(--text3); margin-left:5px; }
   .messages { flex:1; overflow-y:auto; padding:10px 0; display:flex; flex-direction:column; gap:10px; }
@@ -316,10 +316,6 @@
   body.light-mode .footer-note { background:rgba(3,105,161,.04); border-color:rgba(3,105,161,.1); color:#64748b; }
   body.light-mode #search-overlay { background:rgba(238,242,247,.97); }
   body.light-mode #search-input { background:white; color:#0f172a; border-color:rgba(30,64,128,.25); }
-  body.light-mode [style*="#ddf0fb"], body.light-mode [style*="#e0f2fe"], body.light-mode [style*="#bae6fd"] { color:#0f172a !important; }
-  body.light-mode [style*="#94a3b8"], body.light-mode [style*="#7fa6c4"] { color:#64748b !important; }
-  body.light-mode #search-back-btn { color:#0369a1 !important; background:rgba(3,105,161,.12) !important; border-color:rgba(3,105,161,.35) !important; }
-  body.light-mode .chat-context-bar { background:rgba(238,242,247,.96); border-bottom-color:rgba(30,64,128,.12); }
 
   /* ── SAISONALE PARTIKEL ─────────────────────────────────────────────────── */
   .particle-container {
@@ -496,7 +492,7 @@
   <div style="max-width:650px;margin:0 auto">
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <input id="search-input" type="text" placeholder="Suche in Fragen, Krankheitsbilder, Medikamente..." oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif">
-      <button onclick="closeSearchOverlay()" id="search-back-btn" style="background:rgba(var(--accent-rgb),.18);border:1px solid rgba(var(--accent-rgb),.45);border-radius:11px;padding:12px 18px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">← Zurück</button>
+      <button onclick="closeSearchOverlay()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:11px;padding:12px 16px;color:#94a3b8;font-size:15px;font-family:inherit;cursor:pointer">✕</button>
     </div>
     <div id="search-results" style="display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 110px);overflow-y:auto"></div>
   </div>
@@ -1802,13 +1798,7 @@ function appendMsg(role, text, accentColor) {
   const aiLabel = role === "ai" ? `<div class="ai-label" style="color:${accentColor||"var(--accent)"}">🤖 PFLEGELEARN NRW</div>` : "";
   div.innerHTML = `<div class="bubble ${role}">${aiLabel}<span>${formatted}</span></div>`;
   msgs.appendChild(div);
-  if (role === "ai") {
-    // Beginn der KI-Antwort oben halten, nicht ans Ende der Antwort springen
-    const top = div.getBoundingClientRect().top - msgs.getBoundingClientRect().top;
-    msgs.scrollTop = msgs.scrollTop + top;
-  } else {
-    msgs.scrollTop = msgs.scrollHeight;
-  }
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
 function showTyping() {
@@ -6529,7 +6519,7 @@ function answerABCDE(idx){
 }
 
 // ─── FALLBEISPIELE: VERZWEIGTE ENGINE ───────────────────────
-let faelleFilter='alle', faelleOpenJahr=null, fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
+let faelleFilter='alle', faelleJahr='alle', fallAktuell=null, fallNode=null, fallPfad=[], fallLastFB=null;
 
 function fachListe(){
   const seen={}, out=[];
@@ -6547,37 +6537,31 @@ function renderFaelle(){
   const fc=document.getElementById('faelle-faecher');
   const li=document.getElementById('faelle-liste');
   if(!fc||!li) return;
+  const jahre=[['alle','Alle'],['1','1. LJ'],['2','2. LJ'],['3','3. LJ']];
+  let jchips=jahre.map(function(j){ return '<button onclick="faelleJahr=\''+j[0]+'\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(faelleJahr===j[0]?'background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#04121f;font-weight:700':'')+'">'+j[1]+'</button>'; }).join('');
   const faecher=fachListe();
-  let chips='<button onclick="faelleFilter=\'alle\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:7px 12px;font-size:12px;'+(faelleFilter==='alle'?'background:rgba(var(--accent-rgb),.18);color:#e0f2fe;font-weight:700':'')+'">Alle Fächer</button>';
+  let chips='<button onclick="faelleFilter=\'alle\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(faelleFilter==='alle'?'background:rgba(var(--accent-rgb),.18);color:#e0f2fe;font-weight:700':'')+'">Alle Fächer</button>';
   faecher.forEach(function(f){
     const on=faelleFilter===f.fach;
-    chips+='<button onclick="faelleFilter=\''+f.fach+'\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:7px 12px;font-size:12px;'+(on?'background:'+f.farbe+';color:#04121f;font-weight:700':'color:'+f.farbe)+'">'+f.icon+' '+f.label+'</button>';
+    chips+='<button onclick="faelleFilter=\''+f.fach+'\';renderFaelle()" class="nav-drop-btn" style="display:inline-flex;width:auto;margin:3px;padding:8px 13px;'+(on?'background:'+f.farbe+';color:#04121f;font-weight:700':'color:'+f.farbe)+'">'+f.icon+' '+f.label+'</button>';
   });
-  fc.innerHTML='<div style="font-size:11px;color:#7fa6c4;letter-spacing:1px;text-transform:uppercase;margin:0 2px 6px;font-weight:700">Filter nach Fach</div><div>'+chips+'</div>';
+  fc.innerHTML='<div style="margin-bottom:4px">'+jchips+'</div><div>'+chips+'</div>';
   const matchFach=function(f){ return faelleFilter==='alle'||f.fach===faelleFilter; };
-  const farben={1:'#34d399',2:'#38bdf8',3:'#a78bfa'};
-  let html='';
-  [1,2,3].forEach(function(j){
-    const grp=FAELLE.filter(function(f){ return matchFach(f)&&Number(f.jahr)===j; });
-    const open=faelleOpenJahr===j;
-    const col=farben[j];
-    html+='<div class="acc-wrap'+(open?' open':'')+'" style="border-color:'+col+'33">'
-      +'<button class="acc-header" onclick="toggleFalljahr('+j+')">'
-        +'<span style="display:flex;align-items:center;gap:12px;flex:1;text-align:left">'
-          +'<span style="width:32px;height:32px;border-radius:9px;background:'+col+'22;color:'+col+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">'+j+'</span>'
-          +'<span><span style="display:block;font-size:14px;font-weight:700;color:#e0f2fe">'+j+'. Lernjahr</span>'
-          +'<span style="display:block;font-size:11px;color:#7fa6c4;font-weight:400;margin-top:1px">'+grp.length+' '+(grp.length===1?'Fall':'Fälle')+(faelleFilter!=='alle'?' (gefiltert)':'')+'</span></span>'
-        +'</span>'
-        +'<span class="acc-arrow" style="font-size:16px;color:'+col+'">›</span>'
-      +'</button>';
-    if(open){
-      html+='<div style="padding:4px 10px 10px">'+(grp.length?grp.map(fallKarte).join(''):'<div style="color:#4a7a9b;text-align:center;padding:14px;font-size:12px">Keine Fälle'+(faelleFilter!=='alle'?' für dieses Fach':'')+'.</div>')+'</div>';
-    }
-    html+='</div>';
-  });
-  li.innerHTML=html;
+  const empty='<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Noch keine Fälle hier.</div>';
+  if(faelleJahr==='alle'){
+    let html='';
+    [1,2,3].forEach(function(j){
+      const grp=FAELLE.filter(function(f){ return matchFach(f)&&Number(f.jahr)===j; });
+      if(!grp.length) return;
+      html+='<div style="font-size:11px;color:#7fa6c4;letter-spacing:1px;text-transform:uppercase;margin:16px 2px 8px;font-weight:700">'+j+'. Lernjahr <span style="color:#4a7a9b;font-weight:400">· '+grp.length+'</span></div>';
+      html+=grp.map(fallKarte).join('');
+    });
+    li.innerHTML=html||empty;
+  } else {
+    const list=FAELLE.filter(function(f){ return matchFach(f)&&String(f.jahr)===faelleJahr; });
+    li.innerHTML=list.map(fallKarte).join('')||empty;
+  }
 }
-function toggleFalljahr(j){ faelleOpenJahr=(faelleOpenJahr===j?null:j); renderFaelle(); }
 
 function startFall(id){
   fallAktuell=FAELLE.find(function(f){ return f.id===id; });
@@ -6592,12 +6576,6 @@ function chooseFall(idx){
   fallPfad.push(opt.text);
   fallLastFB={fb:opt.fb, typ:opt.typ};
   fallNode=opt.ziel;
-  const ziel=fallAktuell.nodes[fallNode];
-  // Sound auf Zwischenschritten; das Fall-Ende spielt seinen eigenen Ergebnis-Ton
-  if(!(ziel && ziel.ende)){
-    if(opt.typ==='gut'){ try{playCorrect();}catch(e){} }
-    else if(opt.typ==='fehler'){ try{playWrong();}catch(e){} }
-  }
   renderFall();
 }
 
@@ -6624,8 +6602,6 @@ function renderFall(){
     const erg=node.ergebnis;
     const map={gut:['#22c55e','✅','Gut gelöst'],mittel:['#eab308','⚠️','Mit Abstrichen'],schlecht:['#ef4444','❌','Kritischer Verlauf']};
     const m=map[erg]||map.mittel;
-    // Ergebnis-Sound wie im Quiz: bestanden / neutral / nicht bestanden
-    if(erg==='gut'){ try{playFinish();}catch(e){} } else if(erg==='schlecht'){ try{playWrong();}catch(e){} } else { try{playCorrect();}catch(e){} }
     el.innerHTML='<div style="max-width:680px;margin:0 auto">'+vig+pfad+fbHtml
       +'<div style="background:'+m[0]+'18;border:1px solid '+m[0]+'66;border-radius:14px;padding:16px;margin:10px 0;text-align:center">'
         +'<div style="font-size:34px">'+m[1]+'</div>'
@@ -6642,7 +6618,7 @@ function renderFall(){
     +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:14px;margin-top:4px">'
       +(node.titel?'<div style="font-size:12px;font-weight:700;color:#38bdf8;letter-spacing:1px;margin-bottom:6px">'+node.titel+'</div>':'')
       +'<div style="font-size:13px;color:#cfe6f5;line-height:1.6;margin-bottom:12px">'+node.text+'</div>'
-      +node.optionen.map(function(o,idx){ return '<button onclick="chooseFall('+idx+')" class="nav-drop-btn" style="text-align:left;white-space:normal;margin:5px 0;line-height:1.4">'+o.text+'</button>'; }).join('')
+      +(function(){var ord=node.optionen.map(function(_,i){return i;});for(var i=ord.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=ord[i];ord[i]=ord[j];ord[j]=t;}return ord.map(function(oi){return '<button onclick="chooseFall('+oi+')" class="nav-drop-btn" style="text-align:left;white-space:normal;margin:5px 0;line-height:1.4">'+node.optionen[oi].text+'</button>';}).join('');})()
     +'</div></div>';
   window.scrollTo(0,0);
 }
@@ -9161,10 +9137,8 @@ function navGo(screen) {
 }
 document.addEventListener('click', function(e) {
   const d = document.getElementById('nav-dropdown');
-  if (!d || d.style.display === 'none' || d.style.display === '') return;
   const btn = document.getElementById('btn-hamburger');
-  const btn2 = document.getElementById('bn-menu');
-  if (!d.contains(e.target) && !(btn && btn.contains(e.target)) && !(btn2 && btn2.contains(e.target))) {
+  if (d && btn && !d.contains(e.target) && !btn.contains(e.target)) {
     d.style.display = 'none';
   }
 });
