@@ -5668,11 +5668,18 @@ function openGeraet(id) {
                 </div>`).join("")}
             </div>`).join("")}
         </div>`).join("")}
-      <button class="mt-chat-btn" style="background:linear-gradient(135deg,${g.color}80,${g.color}50)" style="opacity:.4;cursor:default">
+      <button class="mt-chat-btn" style="background:linear-gradient(135deg,${g.color}80,${g.color}50);cursor:pointer" onclick="startGeraetChat('${id}')">
         🤖 KI-Assistent für ${g.name} starten
       </button>
     </div>`;
   showScreen("mt-detail");
+}
+
+function startGeraetChat(id) {
+  const g = GERAETE.find(x => x.id === id);
+  if (!g) { startChat(null, 'Hallo! Ich bin dein KI-Assistent fuer Medizintechnik. Stelle mir deine Frage!'); return; }
+  startChat(null, '🤖 KI-Assistent fuer ' + g.name + (g.sub ? ' (' + g.sub + ')' : '') + '\n\nFrag mich zu Bedienung, Alarmen, Parametern oder Sicherheit dieses Geraets.');
+  chatHistory.push({ role: 'assistant', content: 'Kontext fuer die folgenden Fragen: Es geht um das Medizingeraet "' + g.name + '"' + (g.sub ? ' (' + g.sub + ')' : '') + '. ' + (g.beschreibung || '') });
 }
 
 function switchTab(geraetId, tabId, color) {
