@@ -1,7 +1,7 @@
 {
   "name": "PflegeLearn NRW",
   "short_name": "PflegeLearn",
-  "description": "Lernassistent für Pflegeausbildung in NRW",
+  "description": "Lernassistent für die generalistische Pflegeausbildung nach PflBG 2020 – bundesweit einsetzbar",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
