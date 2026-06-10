@@ -486,6 +486,14 @@
     <button onclick="showThemePicker()" class="nav-drop-btn">🎨 Mein Theme</button>
     <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
     <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
+    <div class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;cursor:default">
+      <span>🔍 Zoom</span>
+      <span style="display:flex;gap:8px;align-items:center">
+        <button onclick="setAppZoom(-1)" style="background:rgba(var(--accent-rgb),.15);border:none;border-radius:7px;width:30px;height:28px;color:#ddf0fb;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">−</button>
+        <span id="app-zoom-val" style="min-width:42px;text-align:center;font-size:12px;color:#ddf0fb">100%</span>
+        <button onclick="setAppZoom(1)" style="background:rgba(var(--accent-rgb),.15);border:none;border-radius:7px;width:30px;height:28px;color:#ddf0fb;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">+</button>
+      </span>
+    </div>
     <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
   </div>
 
@@ -1532,6 +1540,7 @@ let selectedAns = null;
 // ─── INIT ───────────────────────────────────────────────────────────────────
 function init() {
   try {
+    restoreAppZoom();
     renderAusbList();
     renderQuizSelect();
   } catch(e) {
@@ -12876,6 +12885,23 @@ function toggleSound() {
   localStorage.setItem('pl_sound', soundEnabled ? 'on' : 'off');
   if (soundEnabled) playCorrect();
   return soundEnabled;
+}
+
+// ─── APP-ZOOM (Schriftgroesse / Desktop) ─────────────────────────────────────
+function applyAppZoom(z) {
+  document.body.style.zoom = z + '%';
+  const el = document.getElementById('app-zoom-val');
+  if (el) el.textContent = z + '%';
+}
+function setAppZoom(delta) {
+  let z = parseInt(localStorage.getItem('pl_zoom') || '100', 10);
+  z = Math.min(200, Math.max(70, z + delta * 10));
+  localStorage.setItem('pl_zoom', z);
+  applyAppZoom(z);
+}
+function restoreAppZoom() {
+  const z = parseInt(localStorage.getItem('pl_zoom') || '100', 10);
+  applyAppZoom(z);
 }
 
 // ─── EXAMEN-ERINNERUNG (In-App) ─────────────────────────────────────────────
