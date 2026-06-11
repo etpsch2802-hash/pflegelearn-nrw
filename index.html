@@ -9514,6 +9514,303 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Wegsehen bzw. Verschweigen kam es zu einer vermeidbaren Gefährdung.", fazit:"Auffälligkeiten nie ignorieren oder verschweigen – im Zweifel immer die Pflegefachkraft hinzuziehen." }
   }
 },
+{ id:"inn_fieber_1lj", fach:"innere", fachLabel:"Innere Medizin", icon:"❤️", farbe:"#f43f5e", titel:"Fieber auf Station", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Frau S., 72 J., fühlt sich seit dem Morgen schlapp und heiß. Du übernimmst die Grundpflege und Beobachtung.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SCHICHTBEGINN", text:"Womit beginnst du?", optionen:[
+      {text:"Temperatur und weitere Vitalzeichen messen und nach dem Befinden fragen", ziel:"n2", typ:"gut", fb:"Richtig – erst messen und einschätzen."},
+      {text:"Nur das Fenster öffnen und abwarten", ziel:"n2", typ:"warn", fb:"Lüften schadet nicht, ersetzt aber keine Einschätzung."},
+      {text:"Eigenmächtig ein fiebersenkendes Mittel geben", ziel:"bad1", typ:"fehler", fb:"Keine Medikamentengabe ohne ärztliche Anordnung."} ]},
+    n2:{ titel:"BEOBACHTUNG", text:"Temperatur 38,9 °C. Was erfasst du zusätzlich?", optionen:[
+      {text:"Bewusstsein, Hautzustand, Trinkmenge und Atmung beobachten und dokumentieren", ziel:"n3", typ:"gut", fb:"Sehr gut – umfassende Beobachtung."},
+      {text:"Nur die Temperatur notieren", ziel:"n3", typ:"warn", fb:"Zu wenig – der Gesamtzustand zählt."},
+      {text:"Gar nichts dokumentieren", ziel:"bad1", typ:"fehler", fb:"Ohne Dokumentation fehlt die Verlaufskontrolle."} ]},
+    n3:{ titel:"FLÜSSIGKEIT", text:"Die Patientin hat heute kaum getrunken. Was tust du?", optionen:[
+      {text:"Getränke anbieten und anreichen, Einfuhr beobachten und melden", ziel:"n4", typ:"gut", fb:"Richtig – Exsikkosegefahr bei älteren Menschen."},
+      {text:"Sie zum Trinken einer ganzen Kanne drängen", ziel:"n4", typ:"warn", fb:"Zwang vermeiden – lieber regelmäßig kleine Mengen anbieten."},
+      {text:"Den geringen Trinkverlauf ignorieren", ziel:"bad1", typ:"fehler", fb:"Flüssigkeitsmangel kann rasch gefährlich werden."} ]},
+    n4:{ titel:"MELDUNG", text:"Wie schließt du ab?", optionen:[
+      {text:"Befund an die Pflegefachkraft melden und vollständig dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Erst am Schichtende kurz erwähnen", ziel:"end_mittel", typ:"warn", fb:"Auffälligkeiten gehören zeitnah gemeldet."} ]},
+    bad1:{ text:"Die Patientin wird zunehmend matt und verwirrt. Reaktion?", optionen:[
+      {text:"Sofort Vitalzeichen kontrollieren, Pflegefachkraft holen und dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – hätte früher auffallen können."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Verschlechterung übersehen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau S. ist stabil, ausreichend versorgt und der Befund ist gemeldet.", fazit:"1. Lernjahr: Vitalzeichen messen, Gesamtzustand beobachten, Flüssigkeit im Blick behalten, zeitnah melden und dokumentieren." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Patientin bleibt stabil, es kam aber zu einer vermeidbaren Verzögerung.", fazit:"Beobachten, melden, dokumentieren – in der richtigen Reihenfolge." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Verschlechterung wurde zu spät bemerkt.", fazit:"Auffälligkeiten nie ignorieren – im Zweifel die Pflegefachkraft hinzuziehen." }
+  }
+},
+{ id:"paed_fieber_1lj", fach:"paediatrie", fachLabel:"Pädiatrie", icon:"🌡️", farbe:"#f59e0b", titel:"Fieber beim Kind", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Lena, 4 J., hat 39,2 °C Fieber. Die Eltern sind besorgt am Bett. Du sollst Lena betreuen und beobachten.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"KONTAKT", text:"Wie gehst du auf Kind und Eltern zu?", optionen:[
+      {text:"Ruhig und kindgerecht erklären, die Eltern einbeziehen, dann messen", ziel:"n2", typ:"gut", fb:"Richtig – Vertrauen nimmt dem Kind die Angst."},
+      {text:"Das Kind rasch festhalten und schnell durchmessen", ziel:"n2", typ:"warn", fb:"Möglichst ohne Zwang – das erhöht sonst die Angst."},
+      {text:"Die Eltern hinausschicken", ziel:"bad1", typ:"fehler", fb:"Bezugspersonen geben dem Kind Sicherheit."} ]},
+    n2:{ titel:"MASSNAHMEN", text:"Wie senkst du das Fieber unterstützend?", optionen:[
+      {text:"Maßnahmen nach Anordnung, ausreichend trinken, Wadenwickel nur bei warmen Beinen", ziel:"n3", typ:"gut", fb:"Sehr gut – Wickel nur bei warmer Peripherie."},
+      {text:"Das Kind kalt abduschen", ziel:"bad1", typ:"fehler", fb:"Kälteschock vermeiden – das ist kontraproduktiv."},
+      {text:"Warm zudecken, damit es schwitzt", ziel:"n3", typ:"warn", fb:"Wärmestau vermeiden – eher leicht bekleiden."} ]},
+    n3:{ titel:"BEOBACHTUNG", text:"Worauf achtest du besonders?", optionen:[
+      {text:"Bewusstsein, Trinkverhalten, Atmung und Hautausschlag beobachten", ziel:"n4", typ:"gut", fb:"Richtig – Warnzeichen früh erkennen."},
+      {text:"Nur die Temperatur erneut messen", ziel:"n4", typ:"warn", fb:"Zu eng – der Gesamtzustand zählt."},
+      {text:"Nichts weiter beobachten", ziel:"bad1", typ:"fehler", fb:"Bei Kindern kann sich der Zustand schnell ändern."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Eltern anleiten, Befund melden und dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur mündlich der Kollegin sagen", ziel:"end_mittel", typ:"warn", fb:"Dokumentation nicht vergessen."} ]},
+    bad1:{ text:"Lena wird sehr ruhig, trinkt nicht mehr und wirkt teilnahmslos. Reaktion?", optionen:[
+      {text:"Sofort Pflegefachkraft und Arzt informieren, weiter beobachten, dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Warnzeichen ernst nehmen."},
+      {text:"Abwarten, Kinder sind eben mal müde", ziel:"end_schlecht", typ:"fehler", fb:"Teilnahmslosigkeit ist ein Alarmzeichen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Lena ist versorgt, die Eltern sind beruhigt und der Verlauf ist dokumentiert.", fazit:"1. Lernjahr Pädiatrie: kindgerechte Kommunikation, Eltern einbeziehen, schonende Maßnahmen, Warnzeichen beobachten." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Das Kind ist stabil, es kam aber zu einer vermeidbaren Unsicherheit.", fazit:"Kindgerecht handeln und immer dokumentieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Ein Warnzeichen wurde zu spät erkannt.", fazit:"Bei Kindern Auffälligkeiten sofort melden – der Zustand kann rasch kippen." }
+  }
+},
+{ id:"neuro_sturz_1lj", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#6366f1", titel:"Sturzgefahr nach Schlaganfall", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+  vignette:"Herr B., 68 J., nach Schlaganfall halbseitig geschwächt, möchte allein zur Toilette aufstehen. Du bist im Zimmer.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SOFORTREAKTION", text:"Wie reagierst du?", optionen:[
+      {text:"Hilfe anbieten, ihn nicht allein aufstehen lassen, Klingel in Reichweite legen", ziel:"n2", typ:"gut", fb:"Richtig – hohes Sturzrisiko."},
+      {text:"Ihn allein gehen lassen, er kennt sich ja", ziel:"bad1", typ:"fehler", fb:"Bei Halbseitenschwäche ist das hochgefährlich."},
+      {text:"Ihn vorsichtshalber im Bett festbinden", ziel:"bad1", typ:"fehler", fb:"Fixierung ist freiheitsentziehend und nur mit Anordnung erlaubt."} ]},
+    n2:{ titel:"TRANSFER", text:"Wie unterstützt du den Toilettengang?", optionen:[
+      {text:"Zu zweit oder mit Hilfsmittel, betroffene Seite sichern, festes Schuhwerk", ziel:"n3", typ:"gut", fb:"Sehr gut – sicherer Transfer."},
+      {text:"Ihn schnell allein ziehen, geht schon", ziel:"bad1", typ:"fehler", fb:"Sturz- und Verletzungsgefahr."},
+      {text:"Ihn auf Socken laufen lassen", ziel:"n3", typ:"warn", fb:"Rutschgefahr – festes Schuhwerk ist sicherer."} ]},
+    n3:{ titel:"BEOBACHTUNG", text:"Worauf achtest du bei ihm?", optionen:[
+      {text:"Orientierung, Sprache und Schluckvermögen beobachten und Auffälligkeiten melden", ziel:"n4", typ:"gut", fb:"Richtig – z. B. Aspirationsgefahr bei Schluckstörung."},
+      {text:"Nur die Gehstrecke notieren", ziel:"n4", typ:"warn", fb:"Zu eng gefasst."},
+      {text:"Nichts beobachten", ziel:"bad1", typ:"fehler", fb:"Neurologische Verschlechterung würde übersehen."} ]},
+    n4:{ titel:"UMGEBUNG", text:"Wie sicherst du die Umgebung?", optionen:[
+      {text:"Hindernisse entfernen, Licht an, Klingel erreichbar, dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur die Bremsen am Bett prüfen", ziel:"end_mittel", typ:"warn", fb:"Ein Teilaspekt – die Sturzprophylaxe ist umfassender."} ]},
+    bad1:{ text:"Herr B. stürzt beinahe und klagt über Schwindel. Reaktion?", optionen:[
+      {text:"Sicher hinsetzen, Vitalzeichen prüfen, Pflegefachkraft holen, dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Sicherheit hat Vorrang."},
+      {text:"Aufstehen und weitergehen lassen", ziel:"end_schlecht", typ:"fehler", fb:"Erneute Sturzgefahr."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr B. ist sicher versorgt, kein Sturz, alles dokumentiert.", fazit:"1. Lernjahr Neurologie: Sturzrisiko erkennen, sicherer Transfer, Schlucken/Orientierung beobachten, keine eigenmächtige Fixierung." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Kein Schaden, aber die Sturzprophylaxe war unvollständig.", fazit:"Sturzprophylaxe ganzheitlich denken: Mensch, Hilfsmittel und Umgebung." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kam zu einer vermeidbaren Sturzgefährdung.", fazit:"Sicherheit vor Tempo – bei Schwäche nie allein mobilisieren." }
+  }
+},
+{ id:"gyn_wochenbett_1lj", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🩸", farbe:"#dc2626", titel:"Im Wochenbett", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Frau L., 1. Tag nach der Geburt. Du übernimmst Grundpflege und Beobachtung im Wochenbett.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SCHICHTBEGINN", text:"Wie beginnst du?", optionen:[
+      {text:"Befinden und Vitalzeichen erfassen und behutsam nach Blutung und Schmerzen fragen", ziel:"n2", typ:"gut", fb:"Richtig – einfühlsam und vollständig."},
+      {text:"Intime Themen aus Scham ganz weglassen", ziel:"n2", typ:"warn", fb:"Wichtig zu beobachten – sachlich und respektvoll ansprechen."},
+      {text:"Ungefragt die Vorlage kontrollieren", ziel:"bad1", typ:"fehler", fb:"Erst informieren und Einverständnis einholen."} ]},
+    n2:{ titel:"WOCHENFLUSS", text:"Worauf achtest du beim Wochenfluss (Lochien)?", optionen:[
+      {text:"Menge, Farbe und Geruch beobachten und die Intimhygiene anleiten", ziel:"n3", typ:"gut", fb:"Sehr gut – wichtige Verlaufsbeobachtung."},
+      {text:"Nur fragen, ob alles in Ordnung ist", ziel:"n3", typ:"warn", fb:"Beobachtung gehört dazu, nicht nur die Frage."},
+      {text:"Den Wochenfluss nicht beachten", ziel:"bad1", typ:"fehler", fb:"Eine verstärkte Blutung würde übersehen."} ]},
+    n3:{ titel:"UNTERSTÜTZUNG", text:"Wie unterstützt du sie weiter?", optionen:[
+      {text:"Bei Mobilisation und Stillen helfen, an Thromboseprophylaxe denken", ziel:"n4", typ:"gut", fb:"Richtig – frühe, dosierte Mobilisation."},
+      {text:"Strikte Bettruhe empfehlen", ziel:"n4", typ:"warn", fb:"Längere Bettruhe erhöht das Thromboserisiko."},
+      {text:"Sie ganz sich selbst überlassen", ziel:"bad1", typ:"fehler", fb:"Im Wochenbett ist Begleitung wichtig."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Auffälligkeiten melden und vollständig dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur kurz mündlich übergeben", ziel:"end_mittel", typ:"warn", fb:"Dokumentation nicht vergessen."} ]},
+    bad1:{ text:"Die Vorlage ist stark durchgeblutet, Frau L. wird blass. Reaktion?", optionen:[
+      {text:"Sofort melden, Vitalzeichen prüfen, flach lagern, dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – hätte früher auffallen müssen."},
+      {text:"Abwarten, das gibt sich", ziel:"end_schlecht", typ:"fehler", fb:"Eine starke Nachblutung ist ein Notfall."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau L. ist gut versorgt und der Verlauf ist dokumentiert.", fazit:"1. Lernjahr Gynäkologie: respektvoll kommunizieren, Wochenfluss beobachten, Mobilisation und Prophylaxe, Blutung sofort melden." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber mit vermeidbarer Unsicherheit.", fazit:"Sachlich beobachten und immer dokumentieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Nachblutung wurde zu spät erkannt.", fazit:"Verstärkte Blutung im Wochenbett ist ein Alarmzeichen." }
+  }
+},
+{ id:"hno_tonsill_1lj", fach:"hno", fachLabel:"HNO", icon:"🩸", farbe:"#dc2626", titel:"Nach der Mandel-OP", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+  vignette:"Tim, 16 J., einige Stunden nach Mandel-OP (Tonsillektomie). Du betreust ihn auf Station.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"BEOBACHTUNG", text:"Worauf achtest du als Erstes?", optionen:[
+      {text:"Auf Zeichen einer Nachblutung achten (häufiges Schlucken) und Vitalzeichen prüfen", ziel:"n2", typ:"gut", fb:"Richtig – Nachblutung ist die Hauptgefahr."},
+      {text:"Ihm warmen Tee und Suppe anbieten", ziel:"bad1", typ:"fehler", fb:"Wärme fördert die Blutung – kühle Kost ist richtig."},
+      {text:"Erst einmal abwarten", ziel:"n2", typ:"warn", fb:"Aktive Beobachtung ist besser als reines Abwarten."} ]},
+    n2:{ titel:"MASSNAHMEN", text:"Was empfiehlst du ihm?", optionen:[
+      {text:"Kühle, weiche Kost, kühlen, nicht räuspern, Kopf etwas erhöht", ziel:"n3", typ:"gut", fb:"Sehr gut – schont die Wundflächen."},
+      {text:"Kräftig Hals freiräuspern", ziel:"bad1", typ:"fehler", fb:"Das kann die Wunde aufreißen."},
+      {text:"Flach hinlegen ohne Erhöhung", ziel:"n3", typ:"warn", fb:"Leicht erhöhter Kopf ist günstiger."} ]},
+    n3:{ titel:"WARNZEICHEN", text:"Welche Zeichen sprechen für eine Nachblutung?", optionen:[
+      {text:"Häufiges Schlucken, Blut im Mund, Blässe und Unruhe sofort melden", ziel:"n4", typ:"gut", fb:"Richtig erkannt."},
+      {text:"Nur sichtbares Erbrechen von Blut zählt", ziel:"n4", typ:"warn", fb:"Auch häufiges Schlucken ist ein frühes Zeichen."},
+      {text:"Solche Zeichen ignorieren", ziel:"bad1", typ:"fehler", fb:"Eine Nachblutung kann lebensbedrohlich werden."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Beobachtungen melden und dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur am Ende kurz erwähnen", ziel:"end_mittel", typ:"warn", fb:"Zeitnah melden und dokumentieren."} ]},
+    bad1:{ text:"Tim schluckt auffällig oft und spuckt hellrotes Blut. Reaktion?", optionen:[
+      {text:"Sofort Pflegefachkraft und Arzt rufen, hinsetzen, kühlen, Vitalzeichen prüfen", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – nun zählt jede Minute."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Nachblutung kann zum Schock führen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Tim ist stabil, Warnzeichen werden beobachtet und alles ist dokumentiert.", fazit:"1. Lernjahr HNO: nach Tonsillektomie auf Nachblutung achten (häufiges Schlucken!), kühle Kost, sofort melden." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber mit vermeidbarer Verzögerung.", fazit:"Frühe Warnzeichen ernst nehmen und dokumentieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Nachblutung wurde zu spät erkannt.", fazit:"Häufiges Schlucken nach Mandel-OP ist ein Alarmzeichen." }
+  }
+},
+{ id:"uro_katheter_1lj", fach:"urologie", fachLabel:"Urologie", icon:"🚨", farbe:"#ef4444", titel:"Der Blasenkatheter", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Herr T., 70 J., hat einen transurethralen Dauerkatheter. Du übernimmst Pflege und Beobachtung.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"UMGANG", text:"Worauf achtest du beim Katheter?", optionen:[
+      {text:"Urinmenge und Farbe beobachten, Beutel unter Blasenniveau, geschlossenes System belassen", ziel:"n2", typ:"gut", fb:"Richtig – Rückfluss vermeiden, System geschlossen halten."},
+      {text:"Den Beutel zur Sicherheit aufs Bett legen", ziel:"bad1", typ:"fehler", fb:"Über Blasenniveau droht Rückfluss und Infektion."},
+      {text:"Den Katheter kurz abklemmen", ziel:"bad1", typ:"fehler", fb:"Eigenmächtiges Abklemmen kann Harnstau verursachen."} ]},
+    n2:{ titel:"HYGIENE", text:"Wie beugst du einer Infektion vor?", optionen:[
+      {text:"Händedesinfektion, sorgfältige Katheter- und Intimpflege, auf Infektzeichen achten", ziel:"n3", typ:"gut", fb:"Sehr gut – Hygiene senkt das HWI-Risiko."},
+      {text:"Nur einmal täglich kurz abwischen", ziel:"n3", typ:"warn", fb:"Regelmäßige, sorgfältige Pflege ist nötig."},
+      {text:"Ohne Händedesinfektion arbeiten", ziel:"bad1", typ:"fehler", fb:"Hauptübertragungsweg für Keime."} ]},
+    n3:{ titel:"BILANZ", text:"Es kommt auffällig wenig Urin. Was tust du?", optionen:[
+      {text:"Ein- und Ausfuhr bilanzieren, Katheter auf Abknicken prüfen und melden", ziel:"n4", typ:"gut", fb:"Richtig – Ursache suchen und melden."},
+      {text:"Einfach mehr trinken lassen ohne Meldung", ziel:"n4", typ:"warn", fb:"Trinken hilft, die geringe Ausfuhr muss aber gemeldet werden."},
+      {text:"Die geringe Menge ignorieren", ziel:"bad1", typ:"fehler", fb:"Kann auf Harnstau oder Nierenproblem hinweisen."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Werte dokumentieren und Auffälligkeiten melden", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur die Trinkmenge notieren", ziel:"end_mittel", typ:"warn", fb:"Ein- und Ausfuhr gehören vollständig erfasst."} ]},
+    bad1:{ text:"Der Urin ist trüb, riecht streng und Herr T. bekommt Fieber. Reaktion?", optionen:[
+      {text:"Vitalzeichen prüfen, Pflegefachkraft informieren, dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Verdacht auf Harnwegsinfekt."},
+      {text:"Abwarten, das riecht eben so", ziel:"end_schlecht", typ:"fehler", fb:"Infektzeichen nicht übersehen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr T. ist sicher versorgt, die Bilanz stimmt und alles ist dokumentiert.", fazit:"1. Lernjahr Urologie: geschlossenes System, Beutel unter Blasenniveau, Hygiene, Ein-/Ausfuhr bilanzieren, Infektzeichen melden." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber die Bilanzierung war unvollständig.", fazit:"Ein- und Ausfuhr immer vollständig erfassen und dokumentieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Ein Harnwegsinfekt wurde zu spät bemerkt.", fazit:"Trüben, übel riechenden Urin und Fieber sofort melden." }
+  }
+},
+{ id:"onko_chemo_1lj", fach:"onkologie", fachLabel:"Onkologie", icon:"🌡️", farbe:"#ef4444", titel:"Patientin unter Chemotherapie", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+  vignette:"Frau W., 58 J., erhält eine Chemotherapie und ist dadurch infektanfällig. Du betreust sie und hast selbst einen leichten Schnupfen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"INFEKTIONSSCHUTZ", text:"Wie gehst du mit deinem Schnupfen um?", optionen:[
+      {text:"Vorgesetzte informieren, Schutzmaßnahmen klären, strikte Händehygiene", ziel:"n2", typ:"gut", fb:"Richtig – Schutz der abwehrgeschwächten Patientin."},
+      {text:"Trotzdem ohne Maßnahmen pflegen", ziel:"bad1", typ:"fehler", fb:"Du könntest die Patientin gefährden."},
+      {text:"Maske nur tragen, wenn du daran denkst", ziel:"n2", typ:"warn", fb:"Schutzmaßnahmen müssen konsequent sein."} ]},
+    n2:{ titel:"GRUNDPFLEGE", text:"Worauf achtest du in der Pflege besonders?", optionen:[
+      {text:"Mundpflege, Hautbeobachtung, Ernährung und Übelkeit beobachten", ziel:"n3", typ:"gut", fb:"Sehr gut – Schleimhäute und Haut sind gefährdet."},
+      {text:"Nur die Körperpflege durchführen", ziel:"n3", typ:"warn", fb:"Mund- und Hautbeobachtung sind hier zentral."},
+      {text:"Mundpflege weglassen", ziel:"bad1", typ:"fehler", fb:"Mukositis-Risiko wird übersehen."} ]},
+    n3:{ titel:"FIEBER", text:"Frau W. bekommt 38,5 °C Fieber. Was bedeutet das?", optionen:[
+      {text:"Bei Abwehrschwäche ist Fieber ein Notfall – sofort melden", ziel:"n4", typ:"gut", fb:"Richtig – neutropenes Fieber ernst nehmen."},
+      {text:"Erst bei über 39 °C reagieren", ziel:"n4", typ:"warn", fb:"Bei Immunschwäche zählt schon dieses Fieber."},
+      {text:"Abwarten und beobachten", ziel:"bad1", typ:"fehler", fb:"Verzögerung kann gefährlich werden."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Einfühlsam kommunizieren, melden und dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur das Fieber notieren", ziel:"end_mittel", typ:"warn", fb:"Meldung und Gesamtdoku gehören dazu."} ]},
+    bad1:{ text:"Frau W. wirkt zunehmend krank und fiebert weiter. Reaktion?", optionen:[
+      {text:"Sofort Pflegefachkraft und Arzt informieren, Vitalzeichen prüfen, dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – jetzt rasch handeln."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Bei Immunschwäche lebensgefährlich."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau W. ist geschützt versorgt, das Fieber wurde sofort gemeldet.", fazit:"1. Lernjahr Onkologie: konsequenter Infektionsschutz, Mund-/Hautpflege, Fieber bei Abwehrschwäche ist ein Notfall." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber mit vermeidbarer Verzögerung.", fazit:"Bei abwehrgeschwächten Patienten frühzeitig und konsequent handeln." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Das Fieber wurde zu spät gemeldet.", fazit:"Neutropenes Fieber immer sofort melden – Lebensgefahr." }
+  }
+},
+{ id:"ortho_huefte_1lj", fach:"orthopaedie", fachLabel:"Orthopädie", icon:"🦴", farbe:"#f59e0b", titel:"Nach der neuen Hüfte", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+  vignette:"Frau R., 74 J., 1. Tag nach Hüft-TEP (künstliches Hüftgelenk). Du übernimmst Lagerung und Beobachtung.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"LAGERUNG", text:"Worauf achtest du bei der Lagerung?", optionen:[
+      {text:"Abduktionskissen nutzen, keine Beugung über 90°, Beine nicht überkreuzen", ziel:"n2", typ:"gut", fb:"Richtig – schützt vor Luxation der Prothese."},
+      {text:"Das Bein frei in jede Richtung bewegen lassen", ziel:"bad1", typ:"fehler", fb:"Luxationsgefahr durch falsche Bewegung."},
+      {text:"Frau R. flach und ohne Hilfsmittel lagern", ziel:"n2", typ:"warn", fb:"Korrekte Lagerung mit Abduktion ist sicherer."} ]},
+    n2:{ titel:"PROPHYLAXE", text:"Welche Prophylaxe ist jetzt wichtig?", optionen:[
+      {text:"Thromboseprophylaxe: Bewegung der Füße, Kompressionsstrümpfe und Heparin nach Anordnung", ziel:"n3", typ:"gut", fb:"Sehr gut – Thromboserisiko nach OP."},
+      {text:"Strikte, völlige Ruhigstellung", ziel:"n3", typ:"warn", fb:"Bewegungslosigkeit erhöht das Thromboserisiko."},
+      {text:"Gar keine Prophylaxe", ziel:"bad1", typ:"fehler", fb:"Hohes Thromboserisiko wird ignoriert."} ]},
+    n3:{ titel:"MOBILISATION", text:"Wie mobilisierst du sie?", optionen:[
+      {text:"Nach Anordnung, mit Gehhilfe und Anleitung, auf Sturzprophylaxe achten", ziel:"n4", typ:"gut", fb:"Richtig – dosiert und sicher."},
+      {text:"Allein und ohne Hilfsmittel aufstehen lassen", ziel:"bad1", typ:"fehler", fb:"Sturz- und Luxationsgefahr."},
+      {text:"Vorsichtshalber gar nicht mobilisieren", ziel:"n4", typ:"warn", fb:"Frühe, dosierte Mobilisation ist erwünscht."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Wunde und Durchblutung beobachten, melden und dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur die Mobilisation notieren", ziel:"end_mittel", typ:"warn", fb:"Wunde und Beobachtung gehören dazu."} ]},
+    bad1:{ text:"Frau R. klagt plötzlich über starke Hüftschmerzen, das Bein wirkt verdreht. Reaktion?", optionen:[
+      {text:"Bewegung stoppen, ruhig lagern, sofort melden, dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Verdacht auf Luxation."},
+      {text:"Sie weiter laufen lassen", ziel:"end_schlecht", typ:"fehler", fb:"Kann die Prothese schwer schädigen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau R. ist sicher gelagert, prophylaktisch versorgt und schmerzarm mobilisiert.", fazit:"1. Lernjahr Orthopädie nach Hüft-TEP: Abduktion, keine Beugung über 90°, Thromboseprophylaxe, sichere Mobilisation." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber mit vermeidbarer Unsicherheit.", fazit:"Lagerungsregeln und Prophylaxe konsequent beachten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kam zu einer vermeidbaren Gefährdung der Prothese.", fazit:"Luxationszeichen ernst nehmen und sofort melden." }
+  }
+},
+{ id:"psy_kontakt_1lj", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🆘", farbe:"#ef4444", titel:"Das erste Gespräch", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Herr A., 35 J., ist zurückgezogen und antriebslos. Du sollst eine vertrauensvolle Beziehung aufbauen und ihn begleiten.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"KONTAKT", text:"Wie nimmst du Kontakt auf?", optionen:[
+      {text:"Ruhig und wertschätzend Kontakt anbieten, Zeit geben und zuhören", ziel:"n2", typ:"gut", fb:"Richtig – Beziehung beginnt mit Zuhören."},
+      {text:"Ihn betont fröhlich aufmuntern und zum Reden drängen", ziel:"n2", typ:"warn", fb:"Gut gemeint, kann aber Druck erzeugen."},
+      {text:"Ihn einfach in Ruhe lassen und nicht ansprechen", ziel:"bad1", typ:"fehler", fb:"Beziehungsangebot ist gerade jetzt wichtig."} ]},
+    n2:{ titel:"BEOBACHTUNG", text:"Worauf achtest du im Verlauf?", optionen:[
+      {text:"Stimmung, Antrieb, Tagesstruktur sowie Essen und Trinken beobachten", ziel:"n3", typ:"gut", fb:"Sehr gut – wichtige Verlaufsbeobachtung."},
+      {text:"Nur darauf, ob er am Programm teilnimmt", ziel:"n3", typ:"warn", fb:"Der Gesamteindruck zählt."},
+      {text:"Gar nichts beobachten", ziel:"bad1", typ:"fehler", fb:"Veränderungen würden übersehen."} ]},
+    n3:{ titel:"TEAM", text:"Im Gespräch deutet er Hoffnungslosigkeit an. Was tust du?", optionen:[
+      {text:"Ihn ernst nehmen, zuhören und die Beobachtung umgehend im Team / an die Fachkraft weitergeben", ziel:"n4", typ:"gut", fb:"Richtig – Hinweise auf Eigengefährdung immer weitergeben."},
+      {text:"Ihm versprechen, es für dich zu behalten", ziel:"bad1", typ:"fehler", fb:"Solche Hinweise dürfen nie verschwiegen werden."},
+      {text:"Das Thema schnell wechseln", ziel:"n4", typ:"warn", fb:"Besser ernst nehmen und im Team besprechen."} ]},
+    n4:{ titel:"BEGLEITUNG", text:"Wie unterstützt du weiter?", optionen:[
+      {text:"Tagesstruktur fördern, verlässlich da sein und dokumentieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Ihn sich selbst überlassen", ziel:"end_mittel", typ:"warn", fb:"Verlässliche Begleitung ist wichtig."} ]},
+    bad1:{ text:"Herr A. zieht sich noch stärker zurück und reagiert kaum. Reaktion?", optionen:[
+      {text:"Zugewandt bleiben und die Beobachtung sofort an die Fachkraft / das Team weitergeben", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – Beobachtungen gehören ins Team."},
+      {text:"Es weiter für dich behalten", ziel:"end_schlecht", typ:"fehler", fb:"Verschweigen kann den Patienten gefährden."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr A. fasst etwas Vertrauen, Beobachtungen sind im Team und dokumentiert.", fazit:"1. Lernjahr Psychiatrie: wertschätzende Beziehung, zuhören, Stimmung beobachten, Hinweise auf Eigengefährdung immer ans Team weitergeben." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Tragfähiger Kontakt, aber mit vermeidbarer Unsicherheit.", fazit:"Beobachten, begleiten und im Team kommunizieren." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Wichtige Hinweise wurden nicht weitergegeben.", fazit:"Anzeichen von Eigengefährdung niemals verschweigen – immer das Team einbeziehen." }
+  }
+},
+{ id:"anae_vorbereitung_1lj", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"🔥", farbe:"#dc2626", titel:"Vorbereitung zur Narkose", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Frau D., 60 J., soll heute operiert werden. Du bereitest sie für den OP vor.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"IDENTITÄT", text:"Wie startest du die Vorbereitung?", optionen:[
+      {text:"Identität sichern, Nüchternheit prüfen und kontrollieren, ob Aufklärung/Einwilligung vorliegen", ziel:"n2", typ:"gut", fb:"Richtig – Patientensicherheit zuerst."},
+      {text:"Sie ohne Prüfung in den OP fahren", ziel:"bad1", typ:"fehler", fb:"Schwerer Sicherheitsfehler."},
+      {text:"Nur nach dem Namen fragen", ziel:"n2", typ:"warn", fb:"Identität und Checkliste gehören vollständig geprüft."} ]},
+    n2:{ titel:"CHECKLISTE", text:"Was gehört zur OP-Vorbereitung?", optionen:[
+      {text:"Schmuck, Prothesen und Nagellack entfernen, OP-Hemd, Allergien erfragen", ziel:"n3", typ:"gut", fb:"Sehr gut – vollständige Vorbereitung."},
+      {text:"Schmuck darf drangelassen werden", ziel:"n3", typ:"warn", fb:"Schmuck muss vor der OP entfernt werden."},
+      {text:"Allergien nicht erfragen", ziel:"bad1", typ:"fehler", fb:"Allergien sind sicherheitsrelevant."} ]},
+    n3:{ titel:"ANGST", text:"Frau D. ist sehr ängstlich. Wie reagierst du?", optionen:[
+      {text:"Zuwenden, verständlich informieren, beruhigen, Prämedikation nur nach Anordnung", ziel:"n4", typ:"gut", fb:"Richtig – Sicherheit durch Information und Zuwendung."},
+      {text:"Ihr sagen, sie solle sich nicht so anstellen", ziel:"bad1", typ:"fehler", fb:"Respektlos und nicht hilfreich."},
+      {text:"Das Thema übergehen", ziel:"n4", typ:"warn", fb:"Ängste ernst nehmen ist Teil der Vorbereitung."} ]},
+    n4:{ titel:"ÜBERGABE", text:"Wie schließt du die Vorbereitung ab?", optionen:[
+      {text:"Vollständige Übergabe an das OP-Team und sorgfältige Dokumentation", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur das Wichtigste mündlich nennen", ziel:"end_mittel", typ:"warn", fb:"Übergabe und Doku müssen vollständig sein."} ]},
+    bad1:{ text:"Im OP fällt auf, dass eine wichtige Angabe fehlt. Reaktion?", optionen:[
+      {text:"Sofort die fehlende Information klären und nachdokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – wäre vermeidbar gewesen."},
+      {text:"Einfach weitermachen", ziel:"end_schlecht", typ:"fehler", fb:"Gefährdet die Patientensicherheit."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Frau D. ist sicher und vollständig vorbereitet an den OP übergeben.", fazit:"1. Lernjahr Anästhesie: Identität und Nüchternheit prüfen, Checkliste vollständig, Ängste ernst nehmen, lückenlose Übergabe." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Stabil, aber mit vermeidbarer Lücke.", fazit:"Vorbereitung und Übergabe immer vollständig durchführen." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Sicherheitslücke wäre fast übersehen worden.", fazit:"OP-Vorbereitung ist Patientensicherheit – keine Abkürzungen." }
+  }
+},
+{ id:"intensiv_grundpflege_1lj", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🦠", farbe:"#84cc16", titel:"Grundpflege beim beatmeten Patienten", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+  vignette:"Herr K. liegt beatmet und bewusstlos auf der Intensivstation. Du unterstützt unter Anleitung bei der Grundpflege.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"HALTUNG", text:"Wie gehst du den bewusstlosen Patienten an?", optionen:[
+      {text:"Trotz Bewusstlosigkeit ansprechen, Würde wahren, vorher Händedesinfektion", ziel:"n2", typ:"gut", fb:"Richtig – Ansprache und Hygiene gehören dazu."},
+      {text:"Wortlos und ohne Vorstellung pflegen", ziel:"n2", typ:"warn", fb:"Auch bewusstlose Patienten ansprechen."},
+      {text:"Ohne Händedesinfektion und Handschuhe arbeiten", ziel:"bad1", typ:"fehler", fb:"Hohe Infektionsgefahr auf der Intensivstation."} ]},
+    n2:{ titel:"ÜBERWACHUNG", text:"Worauf achtest du am Monitor?", optionen:[
+      {text:"Puls, SpO₂ und Blutdruck im Blick behalten und Auffälligkeiten der Fachkraft melden", ziel:"n3", typ:"gut", fb:"Sehr gut – kontinuierliche Beobachtung."},
+      {text:"Nur auf den Patienten schauen, nicht auf den Monitor", ziel:"n3", typ:"warn", fb:"Monitorwerte sind hier zentral."},
+      {text:"Einen Alarm einfach wegdrücken", ziel:"bad1", typ:"fehler", fb:"Alarme müssen abgeklärt werden."} ]},
+    n3:{ titel:"PROPHYLAXE", text:"Welche Pflege ist besonders wichtig?", optionen:[
+      {text:"Mund-, Augen- und Hautpflege sowie Lagerung zur Prophylaxe, nur unter Anleitung", ziel:"n4", typ:"gut", fb:"Richtig – spezielle Prophylaxen beim beatmeten Patienten."},
+      {text:"Nur waschen, alles andere weglassen", ziel:"n4", typ:"warn", fb:"Mund-/Augenpflege sind hier unverzichtbar."},
+      {text:"Eigenständig am Beatmungsschlauch hantieren", ziel:"bad1", typ:"fehler", fb:"Nur Fachpersonal – Gefahr für den Patienten."} ]},
+    n4:{ titel:"ABSCHLUSS", text:"Wie schließt du ab?", optionen:[
+      {text:"Alles dokumentieren und im Team kommunizieren", ziel:"end_gut", typ:"gut", fb:"Genau richtig."},
+      {text:"Nur das Waschen notieren", ziel:"end_mittel", typ:"warn", fb:"Beobachtungen vollständig dokumentieren."} ]},
+    bad1:{ text:"Der Monitor alarmiert, die SpO₂ fällt sichtbar ab. Reaktion?", optionen:[
+      {text:"Sofort die Pflegefachkraft rufen, beim Patienten bleiben, beobachten", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – sofort Hilfe holen ist richtig."},
+      {text:"Den Alarm erneut wegdrücken", ziel:"end_schlecht", typ:"fehler", fb:"Lebensbedrohliche Verschlechterung übersehen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr K. ist würdevoll und sicher versorgt, Beobachtungen sind dokumentiert.", fazit:"1. Lernjahr Intensiv: Patienten ansprechen, strikte Hygiene, Monitor beobachten, Spezialpflege nur unter Anleitung, Alarme ernst nehmen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Versorgung gelungen, aber mit vermeidbarer Unsicherheit.", fazit:"Auf der Intensivstation immer beobachten, melden und unter Anleitung arbeiten." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Ein kritischer Alarm wurde übersehen.", fazit:"Monitoralarme nie wegdrücken – sofort Hilfe holen." }
+  }
+},
 ];
 
 function navGo(screen) {
