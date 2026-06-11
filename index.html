@@ -9520,9 +9520,12 @@ function recordKIMessage() {
 function showProgressModal() {
   if (!currentUser) return;
   const stats = getStats();
-  const s = stats[currentUser.token] || { sessions: [], ki_count: 0, quiz_count: 0, streak: 0 };
+  const s = stats[currentUser.token] ? Object.assign({}, stats[currentUser.token]) : { sessions: [], ki_count: 0, quiz_count: 0, streak: 0 };
+  const _prog = (typeof getProgress === 'function') ? getProgress() : {};
+  s.streak = Math.max(s.streak || 0, _prog.streak || 0);
+  s.quiz_count = s.quiz_count || _prog.quizTotal || 0;
   const sessions = s.sessions || [];
-  const avgPct = sessions.length ? Math.round(sessions.reduce((a,b)=>a+b.pct,0)/sessions.length) : 0;
+  const avgPct = sessions.length ? Math.round(sessions.reduce((a,b)=>a+b.pct,0)/sessions.length) : (_prog.quizTotal > 0 ? Math.round((_prog.quizCorrect || 0) / _prog.quizTotal * 100) : 0);
   const bestPct = sessions.length ? Math.max(...sessions.map(x=>x.pct)) : 0;
   const katMap = {};
   sessions.forEach(s => {
@@ -9550,7 +9553,7 @@ function showProgressModal() {
     </div>`).join('');
 
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:flex-end;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
   overlay.innerHTML = `
     <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
@@ -12005,67 +12008,6 @@ function renderHomeStats() {
     : '';
 
   
-// ── THEME / AKZENTFARBE ──────────────────────────────────────────────────────
-const THEMES = [
-  { id:'sky',    name:'Standard',  accent:'#38bdf8', accent2:'#7dd3f7', rgb:'56,189,248' },
-  { id:'violet', name:'Lila',      accent:'#a78bfa', accent2:'#c4b5fd', rgb:'167,139,250' },
-  { id:'green',  name:'Grün',      accent:'#22c55e', accent2:'#4ade80', rgb:'34,197,94' },
-  { id:'gold',   name:'Gold',      accent:'#fbbf24', accent2:'#fcd34d', rgb:'251,191,36' },
-  { id:'rose',   name:'Pink',      accent:'#f43f5e', accent2:'#fb7185', rgb:'244,63,94' },
-  { id:'orange', name:'Orange',    accent:'#f97316', accent2:'#fb923c', rgb:'249,115,22' },
-  { id:'teal',   name:'Teal',      accent:'#2dd4bf', accent2:'#5eead4', rgb:'45,212,191' },
-  { id:'silver', name:'Silber',    accent:'#cbd5e1', accent2:'#e2e8f0', rgb:'203,213,225' },
-];
-
-function applyTheme(themeId) {
-  const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
-  document.documentElement.style.setProperty('--accent', theme.accent);
-  document.documentElement.style.setProperty('--accent2', theme.accent2);
-  document.documentElement.style.setProperty('--accent-rgb', theme.rgb);
-  localStorage.setItem('pl_theme', themeId);
-}
-
-function initTheme() {
-  const saved = localStorage.getItem('pl_theme') || 'sky';
-  applyTheme(saved);
-  // Effekte-Button Label aktualisieren
-  setTimeout(() => {
-    const btn = document.getElementById('effekte-toggle-btn');
-    if (btn) btn.innerHTML = localStorage.getItem('pl_effekte')==='1' ? '✨ Effekte: An' : '✨ Effekte: Aus';
-    if (localStorage.getItem('pl_effekte')==='1') startPartikel();
-  }, 500);
-}
-
-function showThemePicker() {
-  const saved = localStorage.getItem('pl_theme') || 'sky';
-  const overlay = document.createElement('div');
-  overlay.id = 'theme-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:20px';
-  overlay.innerHTML = `
-    <div style="width:100%;max-width:420px;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(255,255,255,.1);border-radius:22px 22px 16px 16px;padding:24px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe">🎨 Mein Theme</div>
-        <button onclick="document.getElementById('theme-overlay').remove()" style="background:none;border:none;color:#4a7a9b;font-size:22px;cursor:pointer">✕</button>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
-        ${THEMES.map(t => `
-          <button onclick="applyTheme('${t.id}');document.querySelectorAll('.theme-btn').forEach(b=>b.style.border='1px solid rgba(255,255,255,.1)');this.style.border='2px solid ${t.accent}';localStorage.setItem('pl_theme','${t.id}')"
-            class="theme-btn"
-            style="background:rgba(255,255,255,.04);border:${t.id===saved?`2px solid ${t.accent}`:'1px solid rgba(255,255,255,.1)'};border-radius:14px;padding:12px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-            <div style="width:28px;height:28px;border-radius:50%;background:${t.accent};box-shadow:0 0 10px ${t.accent}55"></div>
-            <div style="font-size:10px;color:#94a3b8;font-family:'DM Sans',sans-serif">${t.name}</div>
-          </button>`).join('')}
-      </div>
-      <button onclick="document.getElementById('theme-overlay').remove()" style="width:100%;background:var(--accent);border:none;border-radius:12px;padding:13px;color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">✓ Fertig</button>
-    </div>`;
-  document.body.appendChild(overlay);
-}
-
-// Theme beim Start laden
-initTheme();
-// Gespeicherte Login-Daten vorausfüllen
-document.addEventListener('DOMContentLoaded', initSavedLogin);
-
 // ── SAISON & FEIERTAGE ──
   const saisonInfo = getSaisonInfo();
 
