@@ -9480,7 +9480,40 @@ const FAELLE = [
     end_gut:{ ende:true, ergebnis:"gut", text:"Die mögliche Wirbelsäulenverletzung wird achsengerecht immobilisiert und überwacht, ohne Verschlechterung.", fazit:"Verdacht auf (instabile) Wirbelsäulenverletzung (Sturz aus Höhe + Rückenschmerz + neurologische Zeichen): Patienten nicht aufsetzen/hinstellen, flach und ruhig lagern, Achse/HWS wahren, Bewegungen nur koordiniert im Team (Logroll) nach Vorgabe, sofort Notfall, Neurostatus engmaschig dokumentieren, Vitalzeichen/Wärmeerhalt; keine unkoordinierte oder alleinige Umlagerung." },
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage bleibt beherrscht – konsequentere Immobilisation wäre sicherer gewesen.", fazit:"Merke: nicht aufsetzen, Achse wahren, nur koordiniert im Team bewegen, Neurostatus engmaschig." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Bewegung kommt es zu einer neurologischen Verschlechterung.", fazit:"Merke: bei Verdacht nie aufsetzen/allein umlagern – flach lagern, Achse wahren, koordiniert im Team, Neurostatus engmaschig." } }
-}
+},
+{ id:"chi_postop_1lj", fach:"chirurgie", fachLabel:"Chirurgie", icon:"🔥", farbe:"#f97316", titel:"Erster Tag nach der OP", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+  vignette:"Herr M., 28 J., 1. Tag nach Blinddarm-OP (Appendektomie). Du betreust ihn im Frühdienst und übernimmst Grundpflege und Beobachtung. Er ist wach, klagt aber über Schmerzen.",
+  start:"n1",
+  nodes:{
+    n1:{ titel:"SCHICHTBEGINN", text:"Womit beginnst du sinnvoll deine Betreuung?", optionen:[
+      {text:"Vitalzeichen kontrollieren, nach Befinden und Schmerzen fragen, Verband ansehen", ziel:"n2", typ:"gut", fb:"Richtig – erst den aktuellen Zustand erfassen, bevor du handelst."},
+      {text:"Den Patienten sofort zum Aufstehen bewegen", ziel:"n2", typ:"warn", fb:"Mobilisation ist wichtig, aber zuerst gehört eine kurze Einschätzung von Zustand und Kreislauf."},
+      {text:"Ungefragt den Wundverband wechseln", ziel:"bad_start", typ:"fehler", fb:"Ein Verbandwechsel erfolgt nur nach Anordnung und mit Anleitung – nicht eigenmächtig."} ]},
+    n2:{ titel:"SCHMERZ", text:"Herr M. gibt seine Schmerzen mit 6 von 10 an. Wie gehst du vor?", optionen:[
+      {text:"Schmerz mit Skala erfassen, an die Pflegefachkraft melden, Gabe nach Anordnung, dokumentieren", ziel:"n3", typ:"gut", fb:"Genau so – strukturiert erfassen, weitergeben und dokumentieren."},
+      {text:"Abwarten, Schmerzen gehören nach einer OP eben dazu", ziel:"n3", typ:"warn", fb:"Schmerz muss ernst genommen werden – unbehandelt behindert er Atmung und Mobilisation."},
+      {text:"Selbst ein Schmerzmittel aus dem Schrank geben", ziel:"bad_med", typ:"fehler", fb:"Keine eigenmächtige Medikamentengabe – immer nur nach ärztlicher Anordnung."} ]},
+    n3:{ titel:"WUNDBEOBACHTUNG", text:"Der Verband ist leicht durchgeblutet. Was tust du?", optionen:[
+      {text:"Ausmaß und Farbe beobachten, Stelle markieren, melden und dokumentieren", ziel:"n4", typ:"gut", fb:"Sehr gut – beobachten, melden, dokumentieren ist der richtige Weg."},
+      {text:"Sofort selbst steril neu verbinden", ziel:"n4", typ:"warn", fb:"Ein Verbandwechsel erfolgt nach Anordnung und unter Anleitung, nicht spontan allein."},
+      {text:"Die Durchblutung ignorieren", ziel:"bad_wund", typ:"fehler", fb:"Eine Nachblutung darf nie übersehen werden."} ]},
+    n4:{ titel:"PROPHYLAXEN", text:"Was ist am 1. Tag nach der OP besonders wichtig?", optionen:[
+      {text:"Frühmobilisation nach Anordnung, Thrombose- und Pneumonieprophylaxe, Atemübungen", ziel:"end_gut", typ:"gut", fb:"Richtig – Bewegung und Prophylaxen beugen Komplikationen vor."},
+      {text:"Strikte Bettruhe anordnen, damit die Wunde heilt", ziel:"end_mittel", typ:"warn", fb:"Längere Bettruhe fördert Thrombose und Lungenentzündung – dosierte Mobilisation ist besser."} ]},
+    bad_start:{ text:"Durch das eigenmächtige Öffnen ist die Wunde nun unsteril offen und der Patient verunsichert. Wie rettest du die Situation?", optionen:[
+      {text:"Stelle steril abdecken, sofort Pflegefachkraft holen und den Vorgang dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Korrigiert – ein solcher Schritt gehört aber vorher abgesprochen."},
+      {text:"Wieder zudecken und nichts sagen", ziel:"end_schlecht", typ:"fehler", fb:"Verschweigen gefährdet den Patienten."} ]},
+    bad_med:{ text:"Du hast eigenmächtig ein Mittel gegeben. Der Patient reagiert ungewohnt. Reaktion?", optionen:[
+      {text:"Sofort Pflegefachkraft und Arzt informieren, Patient überwachen, alles dokumentieren", ziel:"end_mittel", typ:"warn", fb:"Richtig reagiert – die eigenmächtige Gabe war dennoch ein schwerer Fehler."},
+      {text:"Abwarten und hoffen, dass nichts passiert", ziel:"end_schlecht", typ:"fehler", fb:"Unterlassene Hilfe – gefährlich."} ]},
+    bad_wund:{ text:"Eine Stunde später ist der Verband stark durchgeblutet, der Patient wird blass. Reaktion?", optionen:[
+      {text:"Sofort melden, Vitalzeichen kontrollieren, Beine hochlagern, Wunde komprimieren", ziel:"end_mittel", typ:"warn", fb:"Richtig – hätte aber früher auffallen müssen."},
+      {text:"Weiter abwarten", ziel:"end_schlecht", typ:"fehler", fb:"Eine Nachblutung kann zum Kreislaufschock führen."} ]},
+    end_gut:{ ende:true, ergebnis:"gut", text:"Herr M. ist schmerzarm, die Wunde wird beobachtet und er ist sicher mobilisiert.", fazit:"1. Lernjahr postoperativ: zuerst beobachten (Vitalzeichen, Schmerz, Wunde), strukturiert melden und dokumentieren, keine eigenmächtige Medikamentengabe, frühe Mobilisation mit Prophylaxen." },
+    end_mittel:{ ende:true, ergebnis:"mittel", text:"Der Patient bleibt stabil, aber es kam zu einer vermeidbaren Unsicherheit.", fazit:"Beobachten, melden, dokumentieren in der richtigen Reihenfolge – und nur nach Anordnung handeln." },
+    end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Wegsehen bzw. Verschweigen kam es zu einer vermeidbaren Gefährdung.", fazit:"Auffälligkeiten nie ignorieren oder verschweigen – im Zweifel immer die Pflegefachkraft hinzuziehen." }
+  }
+},
 ];
 
 function navGo(screen) {
