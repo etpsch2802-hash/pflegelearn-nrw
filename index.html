@@ -6632,31 +6632,14 @@ function showTesterInfo() {
             ['📅','Lernplan','Persönlicher Lernplan bis zur Prüfung'],
             ['📇','Taschenkarten','15 druckfertige Karten im Kasack-Format'],
             ['🔍','Suchfunktion','Echtzeit-Suche durch alle Fragen'],
+            ['🤖','KI-Assistent','Fragen stellen, sofort Antworten (5/Tag gratis)'],
+            ['🃏','Karteikarten','Lernkarten mit Flip-Funktion & Wiederholung'],
+            ['📊','Lernfortschritt','Persönliche Statistiken und Erfolge'],
           ].map(([icon,titel,sub]) => `
           <div style="display:flex;gap:10px;align-items:flex-start">
             <span style="font-size:16px;flex-shrink:0">${icon}</span>
             <div>
               <div style="font-size:12px;font-weight:700;color:#ddf0fb">${titel}</div>
-              <div style="font-size:11px;color:#4a7a9b">${sub}</div>
-            </div>
-          </div>`).join('')}
-        </div>
-      </div>
-
-      <!-- WAS KOMMT NOCH -->
-      <div style="background:rgba(250,204,21,.05);border:1px solid rgba(250,204,21,.2);border-radius:14px;padding:16px;margin-bottom:14px">
-        <div style="font-size:10px;font-weight:700;color:#facc15;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">🔧 Was noch kommt</div>
-        <div style="display:flex;flex-direction:column;gap:7px">
-          ${[
-            ['🤖','KI-Assistent','Fragen stellen, sofort Antworten – in Entwicklung'],
-            ['🃏','Karteikarten','Lernkarten mit Flip-Funktion'],
-            ['📊','Lernfortschritt','Persönliche Statistiken und Erfolge'],
-            ['🏆','Play Store','App direkt installierbar ohne Umwege'],
-          ].map(([icon,titel,sub]) => `
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <span style="font-size:16px;flex-shrink:0">${icon}</span>
-            <div>
-              <div style="font-size:12px;font-weight:700;color:#fbbf24">${titel}</div>
               <div style="font-size:11px;color:#4a7a9b">${sub}</div>
             </div>
           </div>`).join('')}
