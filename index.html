@@ -2302,7 +2302,7 @@ function checkLokalWissen(frage) {
 // API Key ist sicher im Backend – kein CORS-Problem mehr
 const KI_ENDPOINT = '/api/chat';
 
-async function callGemini(messages, systemPrompt) {
+async function callKI(messages, systemPrompt) {
   // Timeout nach 30 Sekunden
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
@@ -2373,7 +2373,7 @@ async function sendMsg(text) {
       document.getElementById('send-btn').disabled = false;
       return;
     }
-    const reply = await callGemini(chatHistory, SYS);
+    const reply = await callKI(chatHistory, SYS);
     removeTyping();
     chatHistory.push({ role:"assistant", content: reply });
     appendMsg("ai", reply, a?.color);
@@ -2381,7 +2381,7 @@ async function sendMsg(text) {
     removeTyping();
     let errMsg = '⚠️ KI-Assistent nicht erreichbar.';
     if (e.message && e.message.includes('API-Key')) {
-      errMsg = '🔑 API-Key fehlt. Bitte in Vercel → Settings → Environment Variables → GEMINI_API_KEY eintragen.';
+      errMsg = '🔑 API-Key fehlt. Bitte in Vercel → Settings → Environment Variables → GROQ_API_KEY eintragen.';
     } else if (e.message) {
       errMsg = '⚠️ Fehler: ' + e.message;
     }
@@ -6060,7 +6060,7 @@ async function askMedKI() {
   resultEl.innerHTML = '<em style="color:#4a7a9b">KI analysiert Medikament...</em>';
   try {
     const medSys = 'Du bist ein Medikamenten-Experte für Pflegepersonal in Deutschland. Erkläre in dieser Struktur: Wirkstoff & Gruppe, Wirkungsmechanismus, Typische Dosierung, Erwünschte Wirkungen, Nebenwirkungen, Kontraindikationen, Pflegehinweise, Merkhilfe. Immer auf Deutsch.';
-    const reply = await callGemini([{role:'user', content:'Erkläre das Medikament: ' + text}], medSys);
+    const reply = await callKI([{role:'user', content:'Erkläre das Medikament: ' + text}], medSys);
     resultEl.innerHTML = md(reply);
   } catch(e) {
     resultEl.innerHTML = '⚠️ Verbindungsfehler. Bitte erneut versuchen.';
@@ -10618,10 +10618,10 @@ function adminTabExtended(tab) {
   if (tab === 'liste') renderTokenListe();
 }
 
-// ─── KI SYSTEM – Gemini Direct ───────────────────────────────────────────────
+// ─── KI SYSTEM – Groq ───────────────────────────────────────────────
 async function callAI(prompt, systemPrompt) {
   try {
-    const reply = await callGemini(
+    const reply = await callKI(
       [{ role: 'user', content: prompt }],
       systemPrompt
     );
@@ -13603,13 +13603,13 @@ function showDatenschutz() {
 
         <strong style="color:#ddf0fb">2. Erhobene und übertragene Daten</strong><br>
         <u>Registrierung & Feedback:</u> Name, E-Mail-Adresse und Ausbildungsbereich werden über EmailJS an externe Server übertragen, um den Zugangscode zuzusenden.<br>
-        <u>KI-Assistent:</u> Deine Chat-Eingaben werden über einen Vercel-Proxy an Google Gemini übertragen.<br>
+        <u>KI-Assistent:</u> Deine Chat-Eingaben werden über einen Vercel-Proxy an Groq (Groq Inc., USA) übertragen.<br>
         <u>Zahlungen:</u> Bei Käufen wirst du zu Stripe weitergeleitet. Stripe erhebt Zahlungsdaten eigenständig.<br>
         <u>Lokal gespeichert (kein Upload):</u> Lernfortschritt, Zugangscode, Theme, Einstellungen.<br><br>
 
         <strong style="color:#ddf0fb">3. Drittanbieter</strong><br>
         • EmailJS (E-Mail-Versand): emailjs.com/legal/privacy-policy<br>
-        • Google Gemini (KI): policies.google.com/privacy<br>
+        • Groq Inc. (KI): groq.com/privacy-policy<br>
         • Stripe (Zahlung): stripe.com/de/privacy<br>
         • Vercel (Hosting): vercel.com/legal/privacy-policy<br><br>
 
