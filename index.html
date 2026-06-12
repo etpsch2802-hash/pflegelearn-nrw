@@ -49,6 +49,10 @@
 <meta name="twitter:url" content="https://pflegelearn-nrw.vercel.app">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+@keyframes kiNeonGlow{0%,100%{box-shadow:0 0 10px rgba(34,211,238,.45),0 0 26px rgba(34,211,238,.22),inset 0 0 8px rgba(34,211,238,.15);}50%{box-shadow:0 0 18px rgba(34,211,238,.85),0 0 42px rgba(34,211,238,.45),inset 0 0 12px rgba(34,211,238,.28);}}
+.ki-neon-btn{animation:kiNeonGlow 2.2s ease-in-out infinite;}
+.ki-neon-btn:hover{filter:brightness(1.12);}
+
   :root {
     --bg: #050c18; --bg2: #091525; --bg3: #0b1c2e;
     --accent: #38bdf8; --accent2: #7dd3f7; --accent-rgb: 56,189,248;
@@ -368,6 +372,10 @@
     <div class="pw-error" id="pw-error" style="display:none"></div>
   </div>
 
+  <!-- KI CHAT NEON BUTTON (vor Anmeldung) -->
+  <button onclick="showKiTeaser()" class="ki-neon-btn" style="width:100%;max-width:320px;display:block;margin:16px auto 0;background:radial-gradient(circle at 50% 0%,rgba(34,211,238,.2),rgba(8,20,34,.55));border:1.5px solid #22d3ee;border-radius:14px;padding:13px 14px;color:#7ff0ff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:.5px;text-align:center;line-height:1.25">
+    KI Chat<br><span style="font-size:10px;font-weight:600;color:#67e8f9;opacity:.85;letter-spacing:0">Dein Lernassistent · sofort antworten</span>
+  </button>
   <!-- 7 TAGE GRATIS BUTTON (Vollzugriff) -->
   <button onclick="showScreen('registrierung')" style="width:100%;max-width:320px;display:block;margin:12px auto 0;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.05));border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:12px 14px;color:#34d399;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center">
     🎁 7 Tage kostenlos testen<br><span style="font-size:10px;font-weight:600;opacity:.85">Vollzugriff</span>
@@ -6313,6 +6321,20 @@ function initSavedLogin() {
   }
 }
 
+function showKiTeaser(){
+  const ov=document.createElement('div');
+  ov.id='ki-teaser';
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)";
+  ov.innerHTML=`
+    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1.5px solid #22d3ee;border-radius:20px;padding:26px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 0 32px rgba(34,211,238,.35)">
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#7ff0ff;margin-bottom:8px;letter-spacing:.5px">KI Chat</div>
+      <div style="font-size:12px;color:#cbd5e1;line-height:1.7;margin-bottom:18px">Dein persönlicher Lernassistent beantwortet jede Pflege-Frage sofort – Definitionen, Krankheitsbilder, Prüfungswissen. Verfügbar nach dem Start: <strong style="color:#7ff0ff">5 Fragen/Tag gratis</strong>, mit Vollzugriff mehr.</div>
+      <button onclick="document.getElementById('ki-teaser').remove();showGratisStart()" style="width:100%;background:radial-gradient(circle at 50% 0%,rgba(34,211,238,.25),rgba(8,20,34,.55));border:1.5px solid #22d3ee;border-radius:11px;padding:13px;color:#7ff0ff;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Gratis starten &amp; ausprobieren</button>
+      <button onclick="document.getElementById('ki-teaser').remove()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px;color:#94a3b8;font-size:12px;font-family:inherit;cursor:pointer">Schließen</button>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
+}
 function showGratisStart(){
   const ov=document.createElement('div');
   ov.id='gratis-modal';
