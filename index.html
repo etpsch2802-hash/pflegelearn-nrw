@@ -2379,6 +2379,26 @@ async function sendMsg(text) {
 }
 
 // ─── QUIZ ───────────────────────────────────────────────────────────────────
+function _qDayKey(){ return 'pl_quizday_' + new Date().toISOString().split('T')[0]; }
+function quizUsedToday(){ return parseInt(localStorage.getItem(_qDayKey())||'0',10) || 0; }
+function quizAddToday(n){ try{ localStorage.setItem(_qDayKey(), String(quizUsedToday()+n)); }catch(e){} }
+function showGratisLimit(type, n){
+  const txt = type === 'quiz'
+    ? `Im Gratis-Zugang kannst du ${n} Quizfragen pro Tag üben. Dein heutiges Kontingent ist aufgebraucht – morgen geht es weiter, oder schalte jetzt den vollen Zugang frei.`
+    : `Im Gratis-Zugang sind ${n} Fälle pro Fachgebiet als Vorschau frei. Schalte den vollen Zugang frei, um alle Fälle zu öffnen.`;
+  const ov = document.createElement('div');
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
+  ov.innerHTML = `
+    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(52,211,153,.35);border-radius:18px;padding:24px;width:100%;max-width:330px;text-align:center">
+      <div style="font-size:34px;margin-bottom:8px">${type==='quiz'?'⏳':'🔒'}</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe;margin-bottom:8px">Gratis-Limit erreicht</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.6;margin-bottom:18px">${txt}</div>
+      <button onclick="this.closest('div[style]').parentElement.remove();showScreen('preise')" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:10px;padding:13px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Vollzugriff freischalten (9,99 €)</button>
+      <button onclick="this.closest('div[style]').parentElement.remove()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px;color:#94a3b8;font-size:12px;font-family:inherit;cursor:pointer">Schließen</button>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+}
 function startQuiz(kat) {
   // Bereichscheck für Quiz
   if (currentBereich && currentBereich.quiz_kats && kat !== "alle") {
@@ -2404,6 +2424,11 @@ function startQuiz(kat) {
       k: indexed.findIndex(x => x.correct)
     };
   });
+  if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
+    const _used = quizUsedToday();
+    if (_used >= currentBereich.quiz_max) { showGratisLimit('quiz', currentBereich.quiz_max); return; }
+    quizList = quizList.slice(0, Math.max(1, currentBereich.quiz_max - _used));
+  }
   quizIdx = 0; quizAnswers = []; selectedAns = null; showExp = false;
   showScreen("quiz");
   renderQuestion();
@@ -2450,6 +2475,7 @@ function pickAnswer(i) {
   });
   if (i === q.k) playCorrect(); else playWrong();
   recordQuizAnswer(i === q.k);
+  if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
   const expEl = document.getElementById("explanation");
   expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`;
   expEl.style.display = "block";
@@ -6233,6 +6259,20 @@ const BEREICH_CONFIG = {
     ki_max: 3,
     quiz_max: 5,
   },
+  gratis: {
+    label: "Gratis",
+    icon: "🎓",
+    farbe: "#34d399",
+    ausbildungen: ["gpa"],
+    quiz_kats: ["alle","anatomie","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","anaesthesie","ata","intensiv","ota","innere","chirurgie","psychologie"],
+    medizintechnik: false,
+    medikamente: false,
+    ki_unbegrenzt: false,
+    ki_max: 5,
+    quiz_max: 20,
+    faelle_max_pro_fach: 2,
+    gratis: true,
+  },
   demo_kollege: {
     label: "Demo Fachpersonal",
     icon: "👨‍⚕️",
@@ -6944,11 +6984,17 @@ function fachListe(){
   return out;
 }
 function fallKarte(f){
-  return '<button onclick="startFall(\''+f.id+'\')" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid '+f.farbe+'33;border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
-    +'<span style="font-size:26px">'+f.icon+'</span>'
+  var _locked=false;
+  if (currentBereich && currentBereich.gratis && typeof currentBereich.faelle_max_pro_fach === 'number') {
+    var _l=FAELLE.filter(function(x){return x.fach===f.fach;});
+    if (_l.findIndex(function(x){return x.id===f.id;}) >= currentBereich.faelle_max_pro_fach) _locked=true;
+  }
+  var _click=_locked ? "showGratisLimit('faelle',"+(currentBereich&&currentBereich.faelle_max_pro_fach||2)+")" : "startFall('"+f.id+"')";
+  return '<button onclick="'+_click+'" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid '+f.farbe+'33;border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px'+(_locked?';opacity:.55':'')+'">'
+    +'<span style="font-size:26px'+(_locked?';filter:grayscale(1)':'')+'">'+f.icon+'</span>'
     +'<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:#e0f2fe">'+f.titel+'</span>'
     +'<span style="display:block;font-size:11px;color:'+f.farbe+';margin-top:2px">'+f.fachLabel+(f.jahr?' · '+f.jahr+'. Lernjahr':'')+(f.schwere?' · '+f.schwere:'')+'</span></span>'
-    +'<span style="font-size:18px;color:'+f.farbe+'">›</span></button>';
+    +'<span style="font-size:18px;color:'+f.farbe+'">'+(_locked?'🔒':'›')+'</span></button>';
 }
 function renderFaelle(){
   const fc=document.getElementById('faelle-faecher');
@@ -6989,6 +7035,10 @@ function toggleFalljahr(j){ faelleOpenJahr=(faelleOpenJahr===j?null:j); renderFa
 function startFall(id){
   fallAktuell=FAELLE.find(function(f){ return f.id===id; });
   if(!fallAktuell) return;
+  if (currentBereich && currentBereich.gratis && typeof currentBereich.faelle_max_pro_fach === 'number') {
+    const _list = FAELLE.filter(function(x){ return x.fach===fallAktuell.fach; });
+    if (_list.findIndex(function(x){ return x.id===id; }) >= currentBereich.faelle_max_pro_fach) { showGratisLimit('faelle', currentBereich.faelle_max_pro_fach); return; }
+  }
   fallNode=fallAktuell.start; fallPfad=[]; fallLastFB=null;
   showScreen('fall'); renderFall();
 }
