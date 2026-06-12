@@ -368,9 +368,13 @@
     <div class="pw-error" id="pw-error" style="display:none"></div>
   </div>
 
-  <!-- 7 TAGE GRATIS BUTTON -->
-  <button onclick="showScreen('registrierung')" style="width:100%;max-width:320px;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.05));border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:14px;color:#34d399;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:12px">
-    🎁 7 Tage kostenlos testen
+  <!-- 7 TAGE GRATIS BUTTON (Vollzugriff) -->
+  <button onclick="showScreen('registrierung')" style="width:100%;max-width:320px;display:block;margin:12px auto 0;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.05));border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:12px 14px;color:#34d399;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center">
+    🎁 7 Tage kostenlos testen<br><span style="font-size:10px;font-weight:600;opacity:.85">Vollzugriff</span>
+  </button>
+  <!-- GRATIS STARTEN (eingeschraenkt) -->
+  <button onclick="showGratisStart()" style="width:100%;max-width:320px;display:block;margin:10px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center">
+    Gratis starten<br><span style="font-size:10px;font-weight:600;opacity:.7">eingeschränkte Version</span>
   </button>
   <button onclick="goToStripe()" style="display:block; width:100%; max-width:320px; margin:12px auto 0 auto; text-align:center; background:linear-gradient(135deg, #635bff, #4338ca); color:white; padding:14px 12px; font-weight:bold; border:none; border-radius:8px; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.15); font-family:'DM Sans',sans-serif; font-size:14px;">
     💳 Direkt Vollzugriff freischalten
@@ -6139,6 +6143,7 @@ const TOKEN_DB = {
   "TEST-GAST-2026-02":     { name:"Gastzugang 2",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "TEST-GAST-2026-03":     { name:"Gastzugang 3",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "NeleLily2916":         { name:"Patrick",  bereich:"alle", ablauf:"2099-12-31", aktiv:true },
+  "GRATIS":                { name:"Gast",     bereich:"gratis", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T001":{ name:"Tester 1", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T002":{ name:"Tester 2", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T003":{ name:"Tester 3", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
@@ -6306,6 +6311,47 @@ function initSavedLogin() {
   }
 }
 
+function showGratisStart(){
+  const ov=document.createElement('div');
+  ov.id='gratis-modal';
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)";
+  ov.innerHTML=`
+    <div style="background:linear-gradient(160deg,#0d2135,#091525);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:24px;width:100%;max-width:340px">
+      <div style="text-align:center;font-size:30px;margin-bottom:6px">🎓</div>
+      <div style="text-align:center;font-family:'DM Serif Display',serif;font-size:19px;color:#e0f2fe;margin-bottom:4px">Gratis starten</div>
+      <div style="text-align:center;font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:16px">Eingeschränkte Version · 20 Quizfragen/Tag · 2 Fälle je Fach · Karteikarten · KI 5/Tag. Jederzeit auf Vollzugriff erweiterbar.</div>
+      <input id="gratis-name" type="text" placeholder="Dein Name" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">
+      <input id="gratis-email" type="email" placeholder="deine@email.de" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:8px">
+      <div style="font-size:9px;color:#4a7a9b;line-height:1.5;margin-bottom:14px">Mit dem Start stimmst du der Verarbeitung deiner Angaben gemäß Datenschutzerklärung zu.</div>
+      <button onclick="startGratis()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04231a;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Loslegen</button>
+      <button onclick="document.getElementById('gratis-modal').remove()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px;color:#94a3b8;font-size:12px;font-family:inherit;cursor:pointer">Abbrechen</button>
+    </div>`;
+  document.body.appendChild(ov);
+}
+function startGratis(){
+  const name=(document.getElementById('gratis-name').value||'').trim();
+  const email=(document.getElementById('gratis-email').value||'').trim();
+  if(!name){ alert('Bitte Name eingeben!'); return; }
+  if(!email || !email.includes('@')){ alert('Bitte gültige E-Mail eingeben!'); return; }
+  try { if(typeof emailjs!=='undefined'){ emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { name:name, email:email, ausbildung:'Gratis-Zugang (eingeschränkt)', datum:new Date().toLocaleString('de-DE'), message:'Neuer Gratis-Nutzer' }); } } catch(e){}
+  const m=document.getElementById('gratis-modal'); if(m) m.remove();
+  currentUser={ token:'GRATIS', name:name, email:email, bereich:'gratis', ablauf:'2099-12-31' };
+  currentBereich=BEREICH_CONFIG['gratis'];
+  kiNachrichtenCount=0;
+  sessionStorage.setItem('pl_token','GRATIS');
+  sessionStorage.setItem('pl_user',name);
+  sessionStorage.setItem('pl_gratis_email',email);
+  const ps=document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
+  showScreen('home');
+  renderAusbList();
+  applyBereichsFilter();
+  updateUserDisplay(name,false);
+  updateStreak();
+  renderHomeStats();
+  logLogin('GRATIS',name);
+  setTimeout(()=>{ try{unlockAudio();playHeartbeat();}catch(e){} },400);
+  setTimeout(showOnboarding,500);
+}
 function checkPW() {
   const tokenInput = document.getElementById("pw-input").value.trim();
   const nameInput = document.getElementById("pw-name").value.trim();
