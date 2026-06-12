@@ -653,7 +653,7 @@
         <button class="bottom-card" onclick="showScreen('preise')" style="background:rgba(99,91,255,.08);border-color:rgba(99,91,255,.3);color:#a5b4fc;grid-column:span 2">
           <div class="bottom-card-icon">💳</div>
           <div class="bottom-card-title">Plan &amp; Preise</div>
-          <div class="bottom-card-sub">7 Tage gratis &middot; danach Vollzugriff</div>
+          <div class="bottom-card-sub">7 Tage gratis &middot; danach 9,99 &euro;/Monat</div>
         </button>
       </div>
     </div>
@@ -996,7 +996,7 @@
 
   <div style="background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.35);border-radius:16px;padding:18px;margin-bottom:14px">
     <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px">Vollzugriff</div>
-    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">Dauerhafter Vollzugriff</div>
+    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">9,99 &euro; <span style="font-size:13px;font-weight:600;color:#94a3b8">/ Monat</span></div>
     <div style="font-size:12px;color:#94a3b8;margin:6px 0 12px">Freischaltung nach dem 7-Tage-Test &middot; alle Bereiche &middot; alle Updates</div>
     <button onclick="goToStripe()" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:11px;padding:14px;color:white;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,.15)">Direkt Vollzugriff freischalten</button>
   </div>
@@ -2754,21 +2754,15 @@ function renderStats() {
     </div>
     <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:14px">
       <div style="font-size:11px;font-weight:700;color:#34d399;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">💰 Einnahmen-Schätzung</div>
-      ${[
-        ["Basis (4,99€/Mo)", Object.values(allTokens).filter(t=>t.bereich==="pflegehelfer"&&t.aktiv).length, 4.99],
-        ["Standard (9,99€/Mo)", Object.values(allTokens).filter(t=>["gpa","anerkennung"].includes(t.bereich)&&t.aktiv).length, 9.99],
-        ["Pro (14,99€/Mo)", Object.values(allTokens).filter(t=>["ata","ota","anaesthesie","intensiv"].includes(t.bereich)&&t.aktiv).length, 14.99],
-      ].map(([l,n,p]) => `
+      ${(() => { const n = Object.values(allTokens).filter(t=>["pflegehelfer","gpa","anerkennung","ata","ota","anaesthesie","intensiv"].includes(t.bereich)&&t.aktiv).length; return `
         <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
-          <span style="color:#4a7a9b">${l} × ${n}</span>
-          <span style="color:#34d399;font-weight:700">${(n*p).toFixed(2)}€/Mo</span>
-        </div>`).join("")}
+          <span style="color:#4a7a9b">Vollzugang (9,99€/Mo) · ${n}</span>
+          <span style="color:#34d399;font-weight:700">${(n*9.99).toFixed(2)}€/Mo</span>
+        </div>`; })()}
       <div style="border-top:1px solid rgba(52,211,153,.2);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-size:13px;font-weight:700">
         <span style="color:#e0f2fe">Gesamt/Monat</span>
         <span style="color:#34d399">${(
-          Object.values(allTokens).filter(t=>t.bereich==="pflegehelfer"&&t.aktiv).length * 4.99 +
-          Object.values(allTokens).filter(t=>["gpa","anerkennung"].includes(t.bereich)&&t.aktiv).length * 9.99 +
-          Object.values(allTokens).filter(t=>["ata","ota","anaesthesie","intensiv"].includes(t.bereich)&&t.aktiv).length * 14.99
+          Object.values(allTokens).filter(t=>["pflegehelfer","gpa","anerkennung","ata","ota","anaesthesie","intensiv"].includes(t.bereich)&&t.aktiv).length * 9.99
         ).toFixed(2)}€</span>
       </div>
     </div>`;
@@ -6410,19 +6404,13 @@ function showUpgradeModal() {
       <div style="text-align:center;font-size:32px;margin-bottom:10px">🚀</div>
       <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe;text-align:center;margin-bottom:14px">Vollzugang anfragen</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-        ${[
-          ["🥉 Basis",    "4,99€/Monat", "1 Fachbereich + Quiz",              "#34d399"],
-          ["🥈 Standard", "9,99€/Monat", "3 Fachbereiche + KI-Chat",          "#60a5fa"],
-          ["🥇 Pro",      "14,99€/Monat","Alle Bereiche + Medizintechnik + KI","#facc15"],
-          ["🏫 Schule",   "99€/Monat",   "Unbegrenzte Schulnutzung",           "#a78bfa"],
-        ].map(([t,p,d,c]) => `
-          <div style="background:${c}12;border:1px solid ${c}30;border-radius:10px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:${c}">${t}</div>
-              <div style="font-size:10px;color:#4a7a9b">${d}</div>
-            </div>
-            <div style="font-size:13px;font-weight:700;color:#e0f2fe">${p}</div>
-          </div>`).join("")}
+        <div style="background:#38bdf812;border:1px solid #38bdf830;border-radius:10px;padding:12px 13px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#38bdf8">Vollzugang</div>
+            <div style="font-size:10px;color:#4a7a9b">Alle Bereiche + KI-Lernassistent</div>
+          </div>
+          <div style="font-size:14px;font-weight:800;color:#e0f2fe">9,99 €/Monat</div>
+        </div>
       </div>
       <div style="background:rgba(var(--accent-rgb),.08);border-radius:10px;padding:11px;text-align:center;margin-bottom:14px;font-size:12px;color:#38bdf8">
         📧 pflegelearn.nrw@gmail.com
@@ -10479,21 +10467,15 @@ function renderAdminStats() {
     </div>
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(var(--accent-rgb),.15);border-radius:12px;padding:16px;margin-bottom:10px">
       <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">💰 Umsatz-Schätzung</div>
-      ${[
-        ['Pflegehelfer (4,99€)',bereichCounts['pflegehelfer']||0,4.99],
-        ['GPA/Standard (9,99€)',(bereichCounts['gpa']||0)+(bereichCounts['anerkennung']||0),9.99],
-        ['Pro-Bereich (14,99€)',(bereichCounts['ata']||0)+(bereichCounts['ota']||0)+(bereichCounts['anaesthesie']||0)+(bereichCounts['intensiv']||0),14.99],
-      ].map(([lb,cnt,preis])=>`
+      ${(() => { const n=(bereichCounts['pflegehelfer']||0)+(bereichCounts['gpa']||0)+(bereichCounts['anerkennung']||0)+(bereichCounts['ata']||0)+(bereichCounts['ota']||0)+(bereichCounts['anaesthesie']||0)+(bereichCounts['intensiv']||0); return `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">
-          <div style="font-size:12px;color:#94a3b8">${lb} × ${cnt}</div>
-          <div style="font-size:13px;font-weight:700;color:#34d399">${(cnt*preis).toFixed(2)}€/Mo</div>
-        </div>`).join('')}
+          <div style="font-size:12px;color:#94a3b8">Vollzugang (9,99€) · ${n}</div>
+          <div style="font-size:13px;font-weight:700;color:#34d399">${(n*9.99).toFixed(2)}€/Mo</div>
+        </div>`; })()}
       <div style="display:flex;justify-content:space-between;padding:10px 0 0;font-weight:700">
         <div style="font-size:13px;color:#e0f2fe">Gesamt (Einzel)</div>
         <div style="font-size:15px;color:#34d399">${(
-          (bereichCounts['pflegehelfer']||0)*4.99+
-          ((bereichCounts['gpa']||0)+(bereichCounts['anerkennung']||0))*9.99+
-          ((bereichCounts['ata']||0)+(bereichCounts['ota']||0)+(bereichCounts['anaesthesie']||0)+(bereichCounts['intensiv']||0))*14.99
+          ((bereichCounts['pflegehelfer']||0)+(bereichCounts['gpa']||0)+(bereichCounts['anerkennung']||0)+(bereichCounts['ata']||0)+(bereichCounts['ota']||0)+(bereichCounts['anaesthesie']||0)+(bereichCounts['intensiv']||0))*9.99
         ).toFixed(2)}€/Mo</div>
       </div>
     </div>
