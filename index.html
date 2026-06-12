@@ -1908,11 +1908,24 @@ function renderAusbList() {
     </div>`).join("");
 }
 
+let quizNiveau = "alle";
+const QUIZ_NIVEAUS = [
+  {id:"alle",label:"Alle",icon:"📚",color:"#38bdf8"},
+  {id:"leicht",label:"Anfänger",icon:"🌱",color:"#34d399"},
+  {id:"mittel",label:"Fortgeschritten",icon:"🔥",color:"#f59e0b"},
+  {id:"schwer",label:"Experte",icon:"💎",color:"#a78bfa"}
+];
+function setQuizNiveau(n){ quizNiveau = n; renderQuizSelect(); }
 function renderQuizSelect() {
   const el = document.getElementById("quiz-select-list");
   if (!el) return;
-  el.innerHTML = KATS.map(kat => {
-    const n = kat.id === "alle" ? QUIZ_FRAGEN.length : QUIZ_FRAGEN.filter(q => q.kat === kat.id).length;
+  const _matchN = q => quizNiveau === "alle" || q.s === quizNiveau;
+  const _niveauBar = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">` + QUIZ_NIVEAUS.map(nv => {
+    const _a = quizNiveau === nv.id;
+    return `<button onclick="setQuizNiveau('${nv.id}')" style="flex:1;min-width:70px;border-radius:10px;padding:8px 5px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;border:1px solid ${nv.color}${_a?'':'40'};background:${nv.color}${_a?'2e':'10'};color:${nv.color}">${nv.icon} ${nv.label}</button>`;
+  }).join("") + `</div>`;
+  el.innerHTML = _niveauBar + KATS.map(kat => {
+    const n = (kat.id === "alle" ? QUIZ_FRAGEN : QUIZ_FRAGEN.filter(q => q.kat === kat.id)).filter(_matchN).length;
     const ab = AUSBILDUNGEN.find(a => a.id === kat.id);
     return `<button class="qs-btn" style="background:${kat.color}0c;border-color:${kat.color}28" onclick="startQuiz('${kat.id}')">
       <span class="qs-icon">${kat.icon}</span>
@@ -2336,7 +2349,9 @@ function startQuiz(kat) {
     ? (currentBereich && currentBereich.quiz_kats ? QUIZ_FRAGEN.filter(q => currentBereich.quiz_kats.includes(q.kat)) : QUIZ_FRAGEN)
     : QUIZ_FRAGEN.filter(q => q.kat === kat);
   // Shuffle questions AND shuffle answers for each question
-  quizList = [...pool].sort(() => Math.random() - 0.5).map(q => {
+  const _niveauPool = (quizNiveau && quizNiveau !== "alle") ? pool.filter(q => q.s === quizNiveau) : pool;
+  const _quizSrc = _niveauPool.length ? _niveauPool : pool;
+  quizList = [..._quizSrc].sort(() => Math.random() - 0.5).map(q => {
     // Create shuffled version with new correct index
     const indexed = q.opt.map((o, i) => ({text: o, correct: i === q.k}));
     indexed.sort(() => Math.random() - 0.5);
