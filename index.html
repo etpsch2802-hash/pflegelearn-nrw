@@ -484,6 +484,7 @@
   <div class="nav-sec-body" id="navsec-sonstiges" style="display:none">
     <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
     <button onclick="navGo('taschenkarten')" class="nav-drop-btn">📇 Taschenkarten</button>
+    <button onclick="navGo('preise')" class="nav-drop-btn">💳 Plan &amp; Preise</button>
     <button onclick="showThemePicker()" class="nav-drop-btn">🎨 Mein Theme</button>
     <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
     <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
@@ -648,6 +649,11 @@
           <div class="bottom-card-icon">📅</div>
           <div class="bottom-card-title">Lernplan erstellen</div>
           <div class="bottom-card-sub">Prüfungsdatum eingeben · Persönlicher Tagesplan</div>
+        </button>
+        <button class="bottom-card" onclick="showScreen('preise')" style="background:rgba(99,91,255,.08);border-color:rgba(99,91,255,.3);color:#a5b4fc;grid-column:span 2">
+          <div class="bottom-card-icon">💳</div>
+          <div class="bottom-card-title">Plan &amp; Preise</div>
+          <div class="bottom-card-sub">7 Tage gratis &middot; danach ab 4,99 &euro;/Monat</div>
         </button>
       </div>
     </div>
@@ -966,6 +972,47 @@
   <h2 style="font-size:18px;color:var(--accent);margin-bottom:4px">📝 Prüfungs-Quiz</h2>
   <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Wähle einen der 7 Bereiche oder alle Fragen zusammen</p>
   <div class="quiz-select-list" id="quiz-select-list"></div>
+</div>
+
+<!-- PLAN & PREISE -->
+<div class="page" id="screen-preise">
+  <div class="hero" style="margin-bottom:16px">
+    <h1>Plan &amp; <span>Preise</span></h1>
+    <p>Gratis testen &middot; danach frei w&auml;hlbares Paket</p>
+  </div>
+
+  <div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#34d399;margin-bottom:6px">Kostenlos starten</div>
+    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">7 Tage gratis</div>
+    <div style="font-size:12px;color:#94a3b8;margin:6px 0 12px">Voller Zugang &middot; keine Kreditkarte &middot; sofort startklar</div>
+    <div style="font-size:13px;color:#cde8f7;line-height:1.9;margin-bottom:14px">
+      &#10003; Alle Bereiche &amp; Fachrichtungen<br>
+      &#10003; Quiz, F&auml;lle, Karteikarten, Pr&uuml;fungssimulator<br>
+      &#10003; KI-Lernassistent
+    </div>
+    <button onclick="showScreen('registrierung')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer">7 Tage kostenlos testen</button>
+  </div>
+
+  <div style="background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.35);border-radius:16px;padding:18px;margin-bottom:14px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px">Vollzugriff</div>
+    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">ab 4,99 &euro; <span style="font-size:13px;font-weight:600;color:#94a3b8">/ Monat</span></div>
+    <div style="font-size:12px;color:#94a3b8;margin:6px 0 12px">Frei w&auml;hlbares Paket nach dem Test &middot; dauerhaft &middot; alle Updates</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px"><span style="font-size:13px;color:#e0f2fe;font-weight:700">Basis</span><span style="font-size:11px;color:#94a3b8;text-align:right">Pflegefachassistenz &middot; 4,99 &euro;</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px"><span style="font-size:13px;color:#e0f2fe;font-weight:700">Standard</span><span style="font-size:11px;color:#94a3b8;text-align:right">Generalistik &middot; Anerkennung &middot; 9,99 &euro;</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px"><span style="font-size:13px;color:#e0f2fe;font-weight:700">Pro</span><span style="font-size:11px;color:#94a3b8;text-align:right">ATA &middot; OTA &middot; An&auml;sthesie &middot; Intensiv &middot; 14,99 &euro;</span></div>
+    </div>
+    <button onclick="goToStripe()" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:11px;padding:14px;color:white;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,.15)">Direkt Vollzugriff freischalten</button>
+  </div>
+
+  <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.22);border-radius:16px;padding:18px;margin-bottom:14px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#38bdf8;margin-bottom:6px">Schule / Einrichtung</div>
+    <div style="font-size:17px;font-weight:800;color:#e0f2fe;line-height:1.15">Sammellizenzen f&uuml;r Pflegeschulen</div>
+    <div style="font-size:12px;color:#94a3b8;margin:6px 0 12px">Mehrere Zug&auml;nge, zentrale Verwaltung &middot; Konditionen auf Anfrage</div>
+    <a href="mailto:pflegelearn.nrw@gmail.com?subject=Schullizenz%20PflegeLearn%20NRW" style="display:block;text-align:center;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.4);border-radius:11px;padding:13px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;text-decoration:none">Anfrage senden</a>
+  </div>
+
+  <div style="font-size:10px;color:#4a7a9b;text-align:center;line-height:1.6;margin-bottom:8px">Codes sind personalisiert &amp; nicht &uuml;bertragbar. K&uuml;ndigung jederzeit zum Laufzeitende.</div>
 </div>
 
 <!-- ADMIN PANEL -->
