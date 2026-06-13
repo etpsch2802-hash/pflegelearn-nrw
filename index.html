@@ -401,6 +401,8 @@
     <a href="#impressum" onclick="showImpressum()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Impressum</a>
     <span style="font-size:10px;color:rgba(var(--accent-rgb),.2)">|</span>
     <a href="#datenschutz" onclick="showDatenschutz()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Datenschutz</a>
+    <span style="font-size:10px;color:rgba(var(--accent-rgb),.2)">|</span>
+    <a href="#agb" onclick="showAGB()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
   </div>
   <div class="pw-copyright">© PflegeLearn NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</div>
   <button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
@@ -514,6 +516,8 @@
   <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
   <button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📄 Impressum</button>
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🔒 Datenschutz</button>
+  <button onclick="showAGB()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📑 AGB & Widerruf</button>
+  <button onclick="showKuendigung()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🧾 Abo kündigen</button>
     <hr style="border-color:rgba(248,113,113,.15);margin:6px 0">
   <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700">🚪 Abmelden</button>
   <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.08);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8">🔧 Admin Panel</button></div>
@@ -13601,6 +13605,93 @@ function showImpressum() {
     </div>`;
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+function showAGB() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:1000;overflow-y:auto;padding:20px';
+  const S = (t) => `<strong style="color:#ddf0fb">${t}</strong>`;
+  overlay.innerHTML = `
+    <div style="max-width:600px;margin:0 auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.2);border-radius:18px;padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:#e0f2fe">📑 AGB & Widerruf</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 12px;color:#94a3b8;cursor:pointer;font-size:15px">✕</button>
+      </div>
+      <div style="font-size:12.5px;color:#94a3b8;line-height:1.75">
+        ${S('§ 1 Geltungsbereich und Anbieter')}<br>
+        Diese AGB gelten für die Nutzung der App „PflegeLearn NRW" (pflegelearn-nrw.vercel.app) sowie für alle darüber geschlossenen Verträge. Anbieter: Patrick Schenkelberger, Am Steinknapp 20a, 44795 Bochum, pflegelearn.nrw@gmail.com (Kleinunternehmer gem. § 19 UStG).<br><br>
+        ${S('§ 2 Leistung')}<br>
+        Die App stellt digitale Lerninhalte für die Pflegeausbildung bereit. Die Inhalte dienen ausschließlich Lernzwecken und ersetzen keine medizinische oder pflegerische Beratung. Ein Anspruch auf ununterbrochene Verfügbarkeit besteht nicht.<br><br>
+        ${S('§ 3 Kostenlose Testphase')}<br>
+        Eine 7-tägige Testphase wandelt sich NICHT automatisch in ein kostenpflichtiges Abo um. Nach Ablauf endet der Zugang ohne weitere Kosten, sofern kein Abo abgeschlossen wird.<br><br>
+        ${S('§ 4 Vertragsschluss')}<br>
+        Ein kostenpflichtiger Vertrag kommt durch Auswahl eines Abos und Bestätigung der Zahlung über den Zahlungsdienstleister zustande.<br><br>
+        ${S('§ 5 Preise und Zahlung')}<br>
+        Das Abonnement kostet 9,99 € pro Monat (keine USt., § 19 UStG). Zahlung über Stripe (u. a. Kreditkarte, PayPal, Klarna, Apple Pay, Google Pay).<br><br>
+        ${S('§ 6 Laufzeit und Kündigung')}<br>
+        Laufzeit 1 Monat, automatische Verlängerung um je 1 Monat. Jederzeit zum Ende des bezahlten Zeitraums kündbar; danach keine weitere Abbuchung. Kündigung über den Kündigungs-Button (unten), das Stripe-Kundenportal oder per E-Mail an pflegelearn.nrw@gmail.com.<br><br>
+        ${S('§ 7 Mindestalter / Minderjährige')}<br>
+        Kostenlose Nutzung altersunabhängig. Kostenpflichtiges Abo: ab 18 Jahren – ab 16 Jahren nur mit Einwilligung der Eltern; unter 16 ausgeschlossen. Schüler nutzen die App über die Schullizenz (Vertrag schließt die Schule bzw. der Träger), ohne eigenen kostenpflichtigen Vertrag.<br><br>
+        ${S('§ 8 Widerrufsrecht')}<br>
+        Verbrauchern steht ein 14-tägiges Widerrufsrecht zu (siehe Widerrufsbelehrung unten). Bei digitalen Inhalten kann es vorzeitig erlöschen, wenn der Nutzer ausdrücklich dem sofortigen Beginn zustimmt und den Verlust des Widerrufsrechts bestätigt.<br><br>
+        ${S('§ 9 Nutzungsrechte / Urheberrecht')}<br>
+        Alle Inhalte sind urheberrechtlich geschützt. Der Nutzer erhält ein einfaches, nicht übertragbares Nutzungsrecht zu persönlichen, nicht-kommerziellen Lernzwecken. Untersagt sind Scraping, Vervielfältigung, Weitergabe, öffentliche Zugänglichmachung, kommerzielle Verwertung und abgeleitete Werke. Zugangscodes sind personalisiert und nicht übertragbar.<br><br>
+        ${S('§ 10 Haftung')}<br>
+        Unbeschränkte Haftung bei Vorsatz/grober Fahrlässigkeit und bei Verletzung von Leben, Körper, Gesundheit. Bei einfacher Fahrlässigkeit nur bei Verletzung wesentlicher Vertragspflichten, begrenzt auf den vorhersehbaren Schaden.<br><br>
+        ${S('§ 11 Medizinischer Hinweis')}<br>
+        Die Inhalte dienen der Aus- und Weiterbildung und ersetzen keine medizinische, pflegerische oder rechtliche Beratung. Maßgeblich sind Leitlinien, ärztliche Anordnung und einrichtungsinterne Standards.<br><br>
+        ${S('§ 12 Streitbeilegung')}<br>
+        EU-Plattform zur Online-Streitbeilegung: ec.europa.eu/consumers/odr. Der Anbieter ist nicht verpflichtet und nicht bereit, an Verbraucherschlichtungsverfahren teilzunehmen.<br><br>
+        ${S('§ 13 Änderungen / § 14 Schlussbestimmungen')}<br>
+        Änderungen der AGB sind aus triftigem Grund mit Vorankündigung möglich. Es gilt deutsches Recht; sollte eine Bestimmung unwirksam sein, bleibt der Rest wirksam.<br><br>
+        <div style="border-top:1px solid rgba(255,255,255,.1);margin:6px 0 14px"></div>
+        ${S('Widerrufsbelehrung')}<br>
+        ${S('Widerrufsrecht:')} Sie haben das Recht, binnen 14 Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Frist beträgt 14 Tage ab Vertragsschluss. Zur Ausübung informieren Sie uns (Patrick Schenkelberger, Am Steinknapp 20a, 44795 Bochum, pflegelearn.nrw@gmail.com) mit einer eindeutigen Erklärung. Zur Fristwahrung genügt die rechtzeitige Absendung.<br><br>
+        ${S('Folgen des Widerrufs:')} Im Widerrufsfall erstatten wir alle erhaltenen Zahlungen unverzüglich, spätestens binnen 14 Tagen nach Eingang des Widerrufs, über dasselbe Zahlungsmittel.<br><br>
+        ${S('Digitale Inhalte:')} Das Widerrufsrecht erlischt, wenn wir mit der Ausführung begonnen haben, nachdem Sie ausdrücklich zugestimmt und bestätigt haben, dass Sie mit Beginn der Ausführung Ihr Widerrufsrecht verlieren.<br><br>
+        <div style="font-size:11px;color:#5a7a93">Stand: Juni 2026</div>
+      </div>
+      <button onclick="this.closest('[style*=fixed]').remove();showKuendigung()" style="width:100%;margin-top:16px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.4);border-radius:11px;padding:13px;color:#f87171;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Abo hier kündigen</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+function showKuendigung() {
+  const overlay = document.createElement('div');
+  overlay.id = 'kuendigung-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);z-index:1001;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
+  overlay.innerHTML = `
+    <div style="max-width:380px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(248,113,113,.35);border-radius:18px;padding:24px">
+      <div style="font-family:'DM Serif Display',serif;font-size:19px;color:#e0f2fe;margin-bottom:8px">Abonnement kündigen</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:14px">Hier kannst du dein kostenpflichtiges Abonnement kündigen. Die Kündigung wird zum Ende des bereits bezahlten Abrechnungszeitraums wirksam; danach erfolgt keine weitere Abbuchung.</div>
+      <input id="kuend-name" type="text" placeholder="Name" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit;margin-bottom:9px">
+      <input id="kuend-email" type="email" placeholder="E-Mail deines Kontos" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit;margin-bottom:14px">
+      <button onclick="sendKuendigung()" style="width:100%;background:linear-gradient(135deg,#ef4444,#b91c1c);border:none;border-radius:11px;padding:13px;color:white;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Jetzt verbindlich kündigen</button>
+      <button onclick="document.getElementById('kuendigung-modal').remove()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px;color:#94a3b8;font-size:12px;font-family:inherit;cursor:pointer">Abbrechen</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function sendKuendigung() {
+  const name = (document.getElementById('kuend-name').value || '').trim();
+  const email = (document.getElementById('kuend-email').value || '').trim();
+  if (!email || !email.includes('@')) { alert('Bitte die E-Mail deines Kontos eingeben.'); return; }
+  try {
+    if (typeof emailjs !== 'undefined') {
+      emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { name: name || email, email: email, ausbildung: 'KUENDIGUNG', datum: new Date().toLocaleString('de-DE'), message: 'Kuendigung des Abonnements' });
+    }
+  } catch (e) {}
+  const mail = 'mailto:pflegelearn.nrw@gmail.com?subject=' + encodeURIComponent('Kündigung Abonnement PflegeLearn NRW') + '&body=' + encodeURIComponent(`Hiermit kündige ich mein Abonnement.\nName: ${name}\nE-Mail: ${email}\nDatum: ${new Date().toLocaleDateString('de-DE')}`);
+  const m = document.getElementById('kuendigung-modal');
+  if (m) m.innerHTML = `
+    <div style="max-width:380px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(52,211,153,.4);border-radius:18px;padding:24px;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">✅</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe;margin-bottom:8px">Kündigung erfasst</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:16px">Deine Kündigung wurde übermittelt. Du erhältst eine Bestätigung per E-Mail. Falls sich kein E-Mail-Programm öffnet, sende bitte eine kurze E-Mail an pflegelearn.nrw@gmail.com.</div>
+      <a href="${mail}" style="display:block;text-align:center;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.4);border-radius:11px;padding:12px;color:#34d399;font-size:13px;font-weight:700;text-decoration:none;font-family:inherit;margin-bottom:8px">Bestätigungs-E-Mail öffnen</a>
+      <button onclick="document.getElementById('kuendigung-modal').remove()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px;color:#94a3b8;font-size:12px;font-family:inherit;cursor:pointer">Schließen</button>
+    </div>`;
 }
 
 function showDatenschutz() {
