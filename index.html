@@ -10811,11 +10811,23 @@ const VIDEO_LINKS = {
 
 // Video-Button Generator – einheitliches Design, zentral konfiguriert
 function videoBtn(key, label, plattform = 'tiktok') {
-  const url = VIDEO_LINKS[key] || VIDEO_LINKS.tiktok_profil;
+  const url = VIDEO_LINKS[key];
+  const _prof = [VIDEO_LINKS.tiktok_profil, VIDEO_LINKS.youtube_profil, VIDEO_LINKS.instagram_profil];
+  const _real = url && _prof.indexOf(url) === -1;
   const icons = { tiktok: '♪', youtube: '▶', instagram: '📸' };
   const colors = { tiktok: '#ff0050', youtube: '#ff0000', instagram: '#e1306c' };
   const icon = icons[plattform] || '▶';
   const color = colors[plattform] || '#ff0050';
+  if (!_real) {
+    return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.14);border-radius:12px;padding:11px 14px;margin-top:10px;opacity:.8;cursor:default">
+      <span style="font-size:20px;color:${color};opacity:.55">${icon}</span>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#cbd5e1">${label}</div>
+        <div style="font-size:10px;color:#f59e0b;font-weight:600">Video kommt bald</div>
+      </div>
+      <span style="margin-left:auto;font-size:9px;color:#f59e0b;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:2px 7px;font-weight:700;letter-spacing:.5px">BALD</span>
+    </div>`;
+  }
   return `<a href="${url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 14px;text-decoration:none;margin-top:10px;transition:background .15s">
     <span style="font-size:20px;color:${color}">${icon}</span>
     <div>
