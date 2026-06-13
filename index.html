@@ -2163,7 +2163,7 @@ function showScreen(name) {
   }
   // Neue Screens
   if (name === "taschenkarten") { renderTaschenkarten(); }  // fix: synchron
-  if (name === "wundversorgung") setTimeout(() => { renderWundversorgung(); }, 50);
+  if (name === "wundversorgung") { renderWundversorgung(); const _w = document.getElementById('screen-wundversorgung'); if (_w) _w.classList.add('active'); }
   if (name === "prophylaxen")   setTimeout(() => { renderProphylaxen(); }, 50);
   if (name === "kinaesthetik")  setTimeout(() => { renderKinaesthetik(); }, 50);
   if (name === "bobath")        setTimeout(() => { renderBobath(); }, 50);
