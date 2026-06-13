@@ -12969,6 +12969,12 @@ function renderHomeStats() {
   if (typeof startPartikel === 'function') startPartikel();
   if (typeof showNeueFeaturesBanner === 'function') showNeueFeaturesBanner();
 
+  // Adaptive Weiterlernen-/Startkarte (intuitiver Einstieg)
+  const istNeu = (quizTotal === 0 && karten === 0);
+  const weiterKarte = istNeu
+    ? `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">🚀</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#34d399">Leg los!</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Starte mit deinem ersten Quiz</div></div><div style="font-size:18px;color:#34d399">›</div></button>`
+    : `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.03));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">▶️</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#e0f2fe">Weiterlernen</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Mach weiter, wo du aufgehört hast</div></div><div style="font-size:18px;color:rgba(var(--accent-rgb),.85)">›</div></button>`;
+
   el.innerHTML = `
     <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:14px 16px;margin-bottom:14px;transition:all .5s">
       <div style="font-size:18px;font-weight:700;color:#e0f2fe">${gruss}</div>
@@ -12991,7 +12997,8 @@ function renderHomeStats() {
         <div style="font-size:18px;font-weight:800;color:#a78bfa">${karten}</div>
         <div style="font-size:9px;color:#64748b">Karten gelernt</div>
       </div>
-    </div>`;
+    </div>
+    ${weiterKarte}`;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
