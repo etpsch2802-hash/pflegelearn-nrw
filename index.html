@@ -24,6 +24,26 @@
 <title>PflegeLearn NRW – Lern-App für die Pflegeausbildung</title>
 <!-- PWA Manifest (extern) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Supabase (Phase 0: Client laden, kein Login-Zwang) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  try {
+    var SUPABASE_URL = "https://tpgverrpznsujvzbntmj.supabase.co";
+    var SUPABASE_KEY = "sb_publishable_37Wquc-WmPgV82HqtvWEFg_tjolOcMl";
+    if (window.supabase && window.supabase.createClient) {
+      window.SB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true }
+      });
+      console.log("[Supabase] Client initialisiert");
+    } else {
+      console.warn("[Supabase] CDN nicht geladen – App laeuft unveraendert weiter");
+    }
+  } catch (e) {
+    console.warn("[Supabase] Init-Fehler, App laeuft unveraendert weiter:", e);
+  }
+})();
+</script>
 <link rel="manifest" href="manifest.json">
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="favicon.ico">
