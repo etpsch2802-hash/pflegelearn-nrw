@@ -2204,7 +2204,7 @@ function openModal(id) {
     </div>
     <div class="weiterfuehrend">${a.weiterfuehrend}</div>
     <div class="modal-action-btns">
-      <button class="modal-btn" style="background:linear-gradient(135deg,${a.color}80,${a.color}50)" style="opacity:.4;cursor:default">🤖 KI-Assistent · Kommt bald</button>
+      <button class="modal-btn" style="background:linear-gradient(135deg,${a.color}80,${a.color}50)" onclick="closeModal();startChat(null,'Hallo! Wie kann ich dir bei deiner Ausbildung helfen?')">🤖 KI-Assistent fragen</button>
       <button class="modal-btn" style="background:rgba(255,255,255,.05);color:${a.color};border:1px solid ${a.color}30" onclick="closeModal();startQuiz('${a.id}')">📝 Quiz</button>
     </div>`;
   document.getElementById("modal").classList.add("active");
