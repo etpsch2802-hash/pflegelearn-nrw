@@ -527,7 +527,7 @@
 <div id="search-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:400;padding:16px">
   <div style="max-width:650px;margin:0 auto">
     <div style="display:flex;gap:10px;margin-bottom:16px">
-      <input id="search-input" type="text" placeholder="Suche in Fragen, Krankheitsbilder, Medikamente..." oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif">
+      <input id="search-input" type="text" placeholder="Suche: Sepsis, ABCDE, Dekubitus, Furosemid…" oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif">
       <button onclick="closeSearchOverlay()" id="search-back-btn" style="background:rgba(var(--accent-rgb),.18);border:1px solid rgba(var(--accent-rgb),.45);border-radius:11px;padding:12px 18px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">← Zurück</button>
     </div>
     <div id="search-results" style="display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 110px);overflow-y:auto"></div>
@@ -613,13 +613,13 @@
   <div id="home-stats"></div>
   <div class="section-label" style="display:none"></div>
   <!-- ── KI-ASSISTENT (aktiv für alle User) ── -->
-  <button onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.04));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
-    <div style="font-size:32px" id="ki-home-icon">🤖</div>
+  <button class="ki-neon-btn" onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.18),rgba(8,20,34,.5));border:1.5px solid #22d3ee;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:32px" id="ki-home-icon">💬</div>
     <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#38bdf8">KI-Assistent fragen</div>
+      <div style="font-size:15px;font-weight:700;color:#7ff0ff">KI-Assistent fragen</div>
       <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Stelle jede Frage · Sofortantwort · Powered by Groq</div>
     </div>
-    <div style="margin-left:auto;font-size:20px;color:#38bdf8">›</div>
+    <div style="margin-left:auto;font-size:20px;color:#7ff0ff">›</div>
   </button>
 
   <!-- ── NOTFALLMANAGEMENT (prominent) ── -->
@@ -12964,7 +12964,7 @@ function renderHomeStats() {
 
   // KI-Icon saisonal aktualisieren
   const kiIconEl = document.getElementById('ki-home-icon');
-  if (kiIconEl) kiIconEl.textContent = getKIIcon();
+  if (kiIconEl) kiIconEl.textContent = '💬';
   // Partikel starten
   if (typeof startPartikel === 'function') startPartikel();
   if (typeof showNeueFeaturesBanner === 'function') showNeueFeaturesBanner();
