@@ -65,17 +65,27 @@ export default async function handler(req, res) {
     if (!email) { res.status(200).json({ ignored: 'no_email' }); return; }
     email = email.toLowerCase();
 
-    // Supabase-User per E-Mail finden (Admin-API, Service-Role)
-    const adminR = await fetch(SB_URL + '/auth/v1/admin/users?per_page=500', {
-      headers: { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE }
+    // Supabase-User per E-Mail finden (RPC uid_by_email, Service-Role)
+    const rpcR = await fetch(SB_URL + '/rest/v1/rpc/uid_by_email', {
+      method: 'POST',
+      headers: {
+        'apikey': SB_SERVICE,
+        'Authorization': 'Bearer ' + SB_SERVICE,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ p_email: email })
     });
-    const adminJson = await adminR.json();
-    const users = Array.isArray(adminJson) ? adminJson : (adminJson.users || []);
-    const user = users.find(u => (u.email || '').toLowerCase() === email);
-    if (!user) {
+    if (!rpcR.ok) {
+      const t = await rpcR.text();
+      console.error('[stripe-webhook] rpc uid_by_email', rpcR.status, t);
+      res.status(500).json({ error: 'rpc', detail: t }); return;
+    }
+    const userId = await rpcR.json();
+    if (!userId) {
       console.warn('[stripe-webhook] kein Supabase-User fuer', email);
       res.status(200).json({ ignored: 'no_user', email }); return;
     }
+    const user = { id: userId };
 
     // Upsert in subscriptions (Service-Role umgeht RLS)
     const up = await fetch(SB_URL + '/rest/v1/subscriptions?on_conflict=user_id', {
