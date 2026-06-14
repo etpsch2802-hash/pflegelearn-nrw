@@ -78,7 +78,13 @@ export default async function handler(req, res) {
     if (!rpcR.ok) {
       const t = await rpcR.text();
       console.error('[stripe-webhook] rpc uid_by_email', rpcR.status, t);
-      res.status(500).json({ error: 'rpc', detail: t }); return;
+      const diag = {
+        rpc_status: rpcR.status,
+        url_ok: typeof SB_URL === 'string' && SB_URL.indexOf('supabase.co') !== -1,
+        key_len: (SB_SERVICE || '').length,
+        key_fmt: /^eyJ/.test(SB_SERVICE || '') ? ('jwt_dots_' + ((SB_SERVICE||'').split('.').length - 1)) : ((SB_SERVICE||'').indexOf('sb_secret') === 0 ? 'sb_secret' : 'unknown')
+      };
+      res.status(500).json({ error: 'rpc', diag: diag, detail: t }); return;
     }
     const userId = await rpcR.json();
     if (!userId) {
