@@ -7,7 +7,7 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ error: 'method' }); return; }
 
-  const STRIPE_SECRET = process.env.STRIPE_SECRET;
+  const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY;
   const SB_URL = process.env.SUPABASE_URL;
   const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE;
   if (!STRIPE_SECRET || !SB_URL || !SB_SERVICE) {
