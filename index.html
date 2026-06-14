@@ -14083,22 +14083,25 @@ window.addEventListener('load', () => {
     if(!session) return;
     try{
       var r=await SB.from('progress').select('daten').eq('user_id',session.user.id).eq('modul','progress_v2').maybeSingle();
+      if(r.error){ console.warn('[Cloud] pull-select',r.error); setStatus('Sync-Fehler: '+r.error.message); return; }
       var remote=(r.data&&r.data.daten)?r.data.daten:{};
       var merged=maxMerge(readLocal(),remote);
       writeLocal(merged);
-      await SB.from('progress').upsert({user_id:session.user.id,modul:'progress_v2',daten:merged,updated_at:new Date().toISOString()},{onConflict:'user_id,modul'});
+      var up=await SB.from('progress').upsert({user_id:session.user.id,modul:'progress_v2',daten:merged,updated_at:new Date().toISOString()},{onConflict:'user_id,modul'});
+      if(up.error){ console.warn('[Cloud] pull-upsert',up.error); setStatus('Sync-Fehler: '+up.error.message); return; }
       lastPushed=JSON.stringify(merged);
       document.dispatchEvent(new CustomEvent('pl_cloud_synced'));
       setStatus('Synchronisiert ('+new Date().toLocaleTimeString()+')');
-    }catch(e){ console.warn('[Cloud] pull',e); setStatus('Sync-Fehler'); }
+    }catch(e){ console.warn('[Cloud] pull',e); setStatus('Sync-Fehler: '+(e&&e.message||e)); }
   }
   async function push(){
     if(!session) return;
     var cur=JSON.stringify(readLocal()); if(cur===lastPushed) return;
     try{
-      await SB.from('progress').upsert({user_id:session.user.id,modul:'progress_v2',daten:readLocal(),updated_at:new Date().toISOString()},{onConflict:'user_id,modul'});
+      var up=await SB.from('progress').upsert({user_id:session.user.id,modul:'progress_v2',daten:readLocal(),updated_at:new Date().toISOString()},{onConflict:'user_id,modul'});
+      if(up.error){ console.warn('[Cloud] push',up.error); setStatus('Sync-Fehler: '+up.error.message); return; }
       lastPushed=cur; setStatus('Synchronisiert ('+new Date().toLocaleTimeString()+')');
-    }catch(e){ console.warn('[Cloud] push',e); }
+    }catch(e){ console.warn('[Cloud] push',e); setStatus('Sync-Fehler: '+(e&&e.message||e)); }
   }
 
   SB.auth.getSession().then(function(res){ session=res.data.session; renderAccount(); if(session) pull(); });
