@@ -14171,5 +14171,78 @@ window.addEventListener('load', () => {
   window.PLCloud={pull:pull,push:push,open:openModal,signOut:signOut};
 })();
 </script>
+<!-- Auto-Freischaltung per aktivem Abo (Supabase subscriptions) - additiv, ohne Token-Resend -->
+<script>
+(function(){
+  function grantFull(email, ablauf){
+    try{
+      var name = email || (currentUser && currentUser.name) || 'Abonnent';
+      var abl = ablauf || '2099-12-31';
+      currentUser = { token:'ABO', name:name, email:email||'', bereich:'alle', ablauf:abl };
+      currentBereich = BEREICH_CONFIG['alle'] || currentBereich;
+      try{ kiNachrichtenCount = 0; }catch(e){}
+      try{ localStorage.setItem('pl_sub_active','1'); if(email) localStorage.setItem('pl_sub_email',email); }catch(e){}
+      var ps = document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
+      if(typeof showScreen==='function') showScreen('home');
+      if(typeof updateUserDisplay==='function') updateUserDisplay(name,false);
+      if(typeof updateStreak==='function') updateStreak();
+      if(typeof renderHomeStats==='function') renderHomeStats();
+      if(typeof applyBereichsFilter==='function') applyBereichsFilter();
+      if(typeof renderAusbList==='function') renderAusbList();
+      if(typeof renderMTGrid==='function') renderMTGrid();
+      if(typeof showMedKat==='function'){ try{ showMedKat('anaesthesie'); }catch(e){} }
+      if(typeof checkExamenReminder==='function') setTimeout(checkExamenReminder,300);
+    }catch(e){ console.warn('[Abo] grantFull',e); }
+  }
+  function revokeOptimistic(){
+    try{ localStorage.removeItem('pl_sub_active'); localStorage.removeItem('pl_sub_email'); }catch(e){}
+  }
+  function isActive(s){ return s==='active' || s==='trialing' || s==='past_due'; }
+  function notExpired(pe){
+    if(!pe) return true;
+    try{ return new Date(pe).getTime() >= Date.now(); }catch(e){ return true; }
+  }
+
+  async function checkSub(session){
+    if(!session || !window.SB) return;
+    try{
+      var r = await window.SB.from('subscriptions')
+        .select('status,current_period_end')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      if(r.error){ console.warn('[Abo] select', r.error.message); return; }
+      var row = r.data;
+      if(row && isActive(row.status) && notExpired(row.current_period_end)){
+        var abl = row.current_period_end ? String(row.current_period_end).slice(0,10) : '2099-12-31';
+        grantFull(session.user.email, abl);
+      } else {
+        revokeOptimistic();
+      }
+    }catch(e){ console.warn('[Abo] checkSub', e); }
+  }
+
+  // Optimistische Sofort-Freischaltung fuer wiederkehrende Abonnenten (kein Login-Flash),
+  // unmittelbar danach serverseitig bestaetigt oder zurueckgenommen.
+  function optimistic(){
+    try{
+      var saved = sessionStorage.getItem('pl_token') || localStorage.getItem('pl_token');
+      var tokenFull = saved && typeof TOKEN_DB!=='undefined' && TOKEN_DB[saved] && TOKEN_DB[saved].bereich==='alle' && TOKEN_DB[saved].aktiv;
+      if(tokenFull) return;
+      if(localStorage.getItem('pl_sub_active')==='1' && (!currentUser || currentUser.bereich!=='alle')){
+        grantFull(localStorage.getItem('pl_sub_email')||'', '2099-12-31');
+      }
+    }catch(e){}
+  }
+
+  function init(){
+    optimistic();
+    if(!window.SB) return;
+    window.SB.auth.getSession().then(function(res){ checkSub(res && res.data ? res.data.session : null); });
+    window.SB.auth.onAuthStateChange(function(_e,s){ if(s) checkSub(s); });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
 </body>
 </html>
