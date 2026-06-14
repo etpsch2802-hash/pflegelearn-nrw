@@ -36,7 +36,8 @@ export default async function handler(req, res) {
     const plan = 'pflegelearn';
 
     if (type === 'checkout.session.completed') {
-      const session = await stripeGet('checkout/sessions/' + obj.id);
+      // Daten direkt aus dem (signierten) Event nehmen - kein Re-Fetch (Adaptive Pricing -> 404).
+      const session = obj;
       if (session.payment_status !== 'paid' && session.status !== 'complete') {
         res.status(200).json({ ignored: 'not_paid' }); return;
       }
@@ -45,9 +46,11 @@ export default async function handler(req, res) {
       subId = session.subscription || null;
       status = 'active';
       if (subId) {
-        const sub = await stripeGet('subscriptions/' + subId);
-        status = sub.status;
-        periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
+        try {
+          const sub = await stripeGet('subscriptions/' + subId);
+          status = sub.status;
+          periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
+        } catch (e) { console.warn('[stripe-webhook] sub-fetch optional', e); }
       }
     } else if (type === 'customer.subscription.updated' || type === 'customer.subscription.deleted') {
       const sub = await stripeGet('subscriptions/' + obj.id);
