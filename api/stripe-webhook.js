@@ -115,7 +115,7 @@ export default async function handler(req, res) {
     if (!up.ok) {
       const t = await up.text();
       console.error('[stripe-webhook] upsert', up.status, t);
-      res.status(500).json({ error: 'db' }); return;
+      res.status(500).json({ error: 'db', up_status: up.status, detail: t }); return;
     }
 
     res.status(200).json({ ok: true, user: user.id, status: status });
