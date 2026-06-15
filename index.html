@@ -13479,10 +13479,11 @@ window.sendFeedback = function() {
   const text = document.getElementById('fb-text')?.value?.trim() || '';
   if (!text) { alert('Bitte Nachricht eingeben.'); return; }
   emailjs.send('service_8hn8nqi', 'g7jbwbc', {
-    to_name: 'Patrick',
-    from_name: `App-Feedback: ${type}`,
+    name: `Feedback [${type}]`,
+    email: 'app@pflegelearn.nrw',
+    ausbildung: type,
+    datum: new Date().toLocaleString('de-DE'),
     message: text,
-    reply_to: 'noreply@pflegelearn.de',
   }).then(() => {
     document.querySelector('[style*=fixed]')?.remove();
     const t = document.createElement('div');
