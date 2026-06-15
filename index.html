@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- 
-  PflegeLearn NRW - Prüfungs-Portal für Pflegeausbildung
+  PLAN – Pflege Learn App NRW
   Entwickelt von: Patrick Schenkelberger
   Fachpfleger für Anästhesie & Intensivmedizin NRW
   Kontakt: pflegelearn.nrw@gmail.com
@@ -16,12 +16,12 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PflegeLearn NRW">
-<meta name="application-name" content="PflegeLearn NRW">
-<meta name="description" content="PflegeLearn NRW – das Prüfungs- und Lernportal für die generalistische Pflegeausbildung nach PflBG 2020, bundesweit einsetzbar. Mit 581 Prüfungsfragen, 100 Krankheitsbildern, Scores, Pflegeplanung &amp; Medizintechnik für angehende Pflegefachfrauen und Pflegefachmänner.">
+<meta name="apple-mobile-web-app-title" content="PLAN">
+<meta name="application-name" content="PLAN">
+<meta name="description" content="PLAN – Pflege Learn App NRW. Lernportal für die Pflegeausbildung nach PflBG 2020, bundesweit. Mit 581 Prüfungsfragen, 100 Krankheitsbildern, Scores, Pflegeplanung &amp; Medizintechnik für angehende Pflegefachfrauen und Pflegefachmänner.">
 <meta name="keywords" content="Pflege, Pflegeausbildung, generalistische Pflegeausbildung, Pflegefachfrau, Pflegefachmann, Pflegeexamen, Prüfungsvorbereitung, PflBG 2020, Pflege lernen, Pflege App, Deutschland, NRW, ATA, OTA, Intensivpflege, Anästhesie, GPA, Quiz, Fallbeispiele">
-<meta name="author" content="PflegeLearn NRW">
-<title>PflegeLearn NRW – Lern-App für die Pflegeausbildung</title>
+<meta name="author" content="PLAN – Pflege Learn App NRW">
+<title>PLAN – Pflege Learn App NRW</title>
 <!-- PWA Manifest (extern) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Supabase (Phase 0: Client laden, kein Login-Zwang) -->
@@ -52,18 +52,18 @@
 <!-- Apple Touch Icon -->
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <!-- Open Graph (Logo beim Teilen via WhatsApp/Social) -->
-<meta property="og:site_name" content="PflegeLearn NRW">
+<meta property="og:site_name" content="PLAN">
 <meta property="og:locale" content="de_DE">
-<meta property="og:title" content="PflegeLearn NRW – Prüfungs- &amp; Lernportal für die Pflegeausbildung (bundesweit)">
+<meta property="og:title" content="PLAN – Pflege Learn App NRW">
 <meta property="og:description" content="Lern-App für die generalistische Pflegeausbildung nach PflBG 2020 – bundesweit einsetzbar. Mit Prüfungsfragen, Scores, Krankheitsbildern und Pflegeplanungen.">
 <meta property="og:image" content="https://pflegelearn-nrw.vercel.app/icon-512.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
-<meta property="og:image:alt" content="PflegeLearn NRW Logo">
+<meta property="og:image:alt" content="PLAN Logo">
 <meta property="og:url" content="https://pflegelearn-nrw.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PflegeLearn NRW – Prüfungs- &amp; Lernportal für die Pflegeausbildung (bundesweit)">
+<meta name="twitter:title" content="PLAN – Pflege Learn App NRW">
 <meta name="twitter:description" content="Lern-App für die generalistische Pflegeausbildung nach PflBG 2020 – bundesweit einsetzbar. Mit Prüfungsfragen, Scores, Krankheitsbildern und Pflegeplanungen.">
 <meta name="twitter:image" content="https://pflegelearn-nrw.vercel.app/icon-512.png">
 <meta name="twitter:url" content="https://pflegelearn-nrw.vercel.app">
@@ -377,7 +377,7 @@
 
 <!-- PASSWORD SCREEN -->
 <div class="pw-screen active" id="pw-screen">
-  <div class="pw-logo"><img src="icon-192.png" alt="PflegeLearn NRW" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
+  <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
   <div class="pw-subtitle" style="margin-top:8px">Prüfungs-Portal NRW<br>© Fachpfleger für Anästhesie & Intensivmedizin NRW</div>
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px">👤 Dein Name</div>
@@ -424,7 +424,7 @@
     <span style="font-size:10px;color:rgba(var(--accent-rgb),.2)">|</span>
     <a href="#agb" onclick="showAGB()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
   </div>
-  <div class="pw-copyright">© PflegeLearn NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</div>
+  <div class="pw-copyright">© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</div>
   <button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
 </div>
 
@@ -450,7 +450,7 @@
   </div>
 </div>
 
-<div class="watermark">© PflegeLearn NRW</div>
+<div class="watermark">© PLAN</div>
 
 <!-- UNTERE NAVIGATIONSLEISTE -->
 <nav class="bottom-nav" id="bottom-nav" aria-label="Hauptnavigation">
@@ -467,9 +467,9 @@
 <!-- HEADER -->
 <header class="header">
   <button class="logo-btn" onclick="showScreen('home')">
-    <img src="icon-192.png" alt="PflegeLearn NRW" style="width:36px;height:36px;object-fit:contain">
+    <img src="icon-192.png" alt="PLAN" style="width:36px;height:36px;object-fit:contain">
     <div>
-      <div class="logo-title">PflegeLearn <span>NRW</span></div>
+      <div class="logo-title">PLAN <span>NRW</span></div>
       <div class="logo-sub">Prüfungs-Portal NRW</div>
     </div>
   </button>
@@ -625,8 +625,8 @@
 
 <div class="page" id="screen-home">
   <div class="hero">
-    <img src="icon-192.png" alt="PflegeLearn NRW" style="width:90px;height:90px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 18px rgba(var(--accent-rgb),.35))">
-    <h1>PflegeLearn <span>NRW</span></h1>
+    <img src="icon-192.png" alt="PLAN" style="width:90px;height:90px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 18px rgba(var(--accent-rgb),.35))">
+    <h1>PLAN <span>NRW</span></h1>
     <p>7 Ausbildungswege · 581 Fragen · 100 Krankheitsbilder · Scores · Von einem Fachpfleger & Ausbilder NRW</p>
     <p style="margin-top:7px"><span style="display:inline-block;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:.4px;padding:4px 11px;border-radius:999px">Generalistische Pflegeausbildung nach PflBG 2020 · bundesweit</span></p>
   </div>
@@ -1942,7 +1942,7 @@ const KATS = [
   {id:"notfall",label:"Notfallmanagement",icon:"🚨",color:"#ef4444"},
 ];
 
-const SYS = `Du bist PflegeLearn NRW – Lernassistent für alle 7 Pflegeausbildungswege in NRW und Medizintechnik:
+const SYS = `Du bist PLAN – Lernassistent für alle 7 Pflegeausbildungswege in NRW und Medizintechnik:
 1. Pflegefachassistenz (1J, PflfachassAPrV NRW 2021)
 2. Anerkennungsschüler (PflBG §66a, Pflegekammer NRW seit 2024)
 3. Generalistische Pflegeausbildung GPA (PflBG/PflAPrV 2020, CE 01–11)
@@ -2103,7 +2103,7 @@ function maybeShowOnboarding() {
     ov.innerHTML = ''
       + '<div style="max-width:360px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
       +   '<div style="font-size:34px;text-align:center;margin-bottom:6px">👋</div>'
-      +   '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;text-align:center;margin-bottom:16px">Willkommen bei PflegeLearn NRW</div>'
+      +   '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;text-align:center;margin-bottom:16px">Willkommen bei PLAN</div>'
       +   '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">'
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px">⬅️</span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Mit der <b>Zurück-Geste</b> deines Handys gehst du jederzeit einen Schritt zurück.</div></div>'
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px">📲</span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Unten ist die <b>Navigationsleiste</b>: Start, Fälle, Quiz, Suche und Menü.</div></div>'
@@ -2668,7 +2668,7 @@ function copyWhatsApp() {
   const text =
 `Hallo ${t.name}! 🎓
 
-Dein persönlicher Zugangscode für PflegeLearn NRW:
+Dein persönlicher Zugangscode für PLAN:
 
 🔑 ${t.token}
 
@@ -2852,7 +2852,7 @@ function renderVorlagen() {
     // Einzelner Schüler
     `Hallo [NAME]! 🎓
 
-Dein persönlicher Zugangscode für PflegeLearn NRW:
+Dein persönlicher Zugangscode für PLAN:
 
 🔑 [TOKEN EINFÜGEN]
 
@@ -2874,7 +2874,7 @@ Viel Erfolg! 🏥`,
     // Schullizenz
     `Guten Tag [SCHULE],
 
-anbei der Zugangscode für PflegeLearn NRW – 
+anbei dein Zugangscode für PLAN – 
 Schullizenz für [ANZAHL] Schüler:
 
 🔑 [TOKEN EINFÜGEN]
@@ -2889,7 +2889,7 @@ Mit freundlichen Grüßen`,
     // Demo
     `Hallo [NAME]! 👋
 
-Teste PflegeLearn NRW kostenlos – 
+Teste PLAN kostenlos – 
 dein persönlicher Demo-Zugangscode:
 
 🔑 [TOKEN EINFÜGEN]
@@ -2908,7 +2908,7 @@ Viel Spaß beim Ausprobieren! 🎓`,
     // Verlängerung
     `Hallo [NAME]! 🔄
 
-Dein PflegeLearn NRW Zugang wurde verlängert!
+Dein PLAN Zugang wurde verlängert!
 
 🔑 Dein Code bleibt: [TOKEN EINFÜGEN]
 📅 Neues Ablaufdatum: [DATUM]
@@ -6666,13 +6666,13 @@ function showTesterInfo() {
       <div style="text-align:center;margin-bottom:20px">
         <img src="icon-192.png" style="width:64px;height:64px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(var(--accent-rgb),.5))">
         <div style="font-size:20px;font-weight:900;color:#e0f2fe;font-family:'DM Sans',sans-serif">Willkommen zur Testphase! 🎉</div>
-        <div style="font-size:12px;color:#4a7a9b;margin-top:4px">PflegeLearn NRW · Beta v1.0</div>
+        <div style="font-size:12px;color:#4a7a9b;margin-top:4px">PLAN · Beta v1.0</div>
       </div>
 
       <!-- DANKESTEXT -->
       <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:14px;padding:16px;margin-bottom:14px">
         <div style="font-size:12px;color:#94a3b8;line-height:1.75">
-          Hallo! Vielen Dank, dass du dir die Zeit nimmst, <strong style="color:#34d399">PflegeLearn NRW</strong> zu testen. 
+          Hallo! Vielen Dank, dass du dir die Zeit nimmst, <strong style="color:#34d399">PLAN</strong> zu testen. 
           Diese App wurde von einem Fachpfleger und Ausbilder für Anästhesie & Intensivmedizin in NRW entwickelt – 
           für Pflegeazubis, von der Praxis aus gedacht.<br><br>
           Dein Feedback ist Gold wert. Bitte achte besonders auf das Folgende:
@@ -6943,7 +6943,7 @@ async function submitRegistrierung() {
     btn.style.background = 'rgba(248,113,133,.2)';
     btn.disabled = false;
     // Fallback: direkte E-Mail
-    window.location.href = 'mailto:pflegelearn.nrw@gmail.com?subject=Registrierung PflegeLearn NRW&body=Name: ' + encodeURIComponent(name) + '%0AE-Mail: ' + encodeURIComponent(email) + '%0AAusbildung: ' + encodeURIComponent(ausbildung);
+    window.location.href = 'mailto:pflegelearn.nrw@gmail.com?subject=Registrierung PLAN&body=Name: ' + encodeURIComponent(name) + '%0AE-Mail: ' + encodeURIComponent(email) + '%0AAusbildung: ' + encodeURIComponent(ausbildung);
   }
 }
 
@@ -10267,7 +10267,7 @@ function generateLernnachweis() {
   </style></head><body>
   <div class="header">
     <div style="font-size:40px">🏥</div>
-    <div class="title">PflegeLearn NRW</div>
+    <div class="title">PLAN</div>
     <div class="subtitle">Persönlicher Lernnachweis</div>
     <div class="badge">✅ Lernnachweis</div>
   </div>
@@ -10312,7 +10312,7 @@ function generateLernnachweis() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `PflegeLearn-Lernnachweis-${currentUser?.name || 'Nutzer'}-${datum.replace(/\./g,'-')}.html`;
+  a.download = `PLAN-Lernnachweis-${currentUser?.name || 'Nutzer'}-${datum.replace(/\./g,'-')}.html`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -11428,7 +11428,7 @@ function showTaschenkarte(id) {
       '<button onclick="druckeTaschenkarte(\'' + k.id + '\')" style="width:100%;background:linear-gradient(135deg,' + k.farbe + '22,' + k.farbe + '11);border:1px solid ' + k.farbe + '44;border-radius:12px;padding:12px;color:' + k.farbe + ';font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:14px">🖨️ Diese Karte drucken</button>' +
 
       '<div style="background:linear-gradient(145deg,#0d2135,#091525);border:2px solid ' + k.farbe + '55;border-radius:16px;padding:16px;margin-bottom:10px;position:relative;min-height:180px">' +
-        '<div style="font-size:8px;color:' + k.farbe + ';letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">VORDERSEITE · PflegeLearn NRW</div>' +
+        '<div style="font-size:8px;color:' + k.farbe + ';letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">VORDERSEITE · PLAN</div>' +
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;border-bottom:1px solid ' + k.farbe + '33;padding-bottom:8px">' +
           '<span style="font-size:22px">' + k.icon + '</span>' +
           '<div style="font-size:14px;font-weight:700;color:' + k.farbe + ';line-height:1.2">' + k.titel + '</div>' +
@@ -11442,7 +11442,7 @@ function showTaschenkarte(id) {
         '<div>' +
           '<div style="font-size:11px;font-weight:700;color:#0b1a35;margin-bottom:4px">📱 App scannen</div>' +
           '<div style="font-size:10px;color:#4a7a9b;margin-bottom:8px;line-height:1.4">pflegelearn-nrw.vercel.app</div>' +
-          '<div style="font-size:9px;color:#0b1a35;font-weight:700">PflegeLearn NRW</div>' +
+          '<div style="font-size:9px;color:#0b1a35;font-weight:700">PLAN</div>' +
           '<div style="font-size:8px;color:#64748b">Prüfungs-Portal NRW</div>' +
           '<div style="margin-top:6px;background:#0b1a35;border-radius:6px;padding:4px 8px;font-size:8px;color:' + k.farbe + ';font-weight:700;display:inline-block">' + k.icon + ' ' + k.titel + '</div>' +
         '</div>' +
@@ -11504,9 +11504,9 @@ function getTaschenkarteHTML(karten) {
       <div class="karte">
         <div class="karte-front" style="--akzent:${k.farbe}">
           <div class="karte-header">
-            <img src="${LOGO}" class="karte-logo" alt="PflegeLearn NRW">
+            <img src="${LOGO}" class="karte-logo" alt="PLAN">
             <div>
-              <div class="karte-brand">PflegeLearn <span style="color:${k.farbe}">NRW</span></div>
+              <div class="karte-brand">PLAN <span style="color:${k.farbe}">NRW</span></div>
               <div class="karte-titel" style="color:${k.farbe}">${k.icon} ${k.titel}</div>
             </div>
           </div>
@@ -11524,7 +11524,7 @@ function getTaschenkarteHTML(karten) {
           <div class="rueck-qr">${qrSvg}</div>
           <div class="rueck-info">
             <img src="${LOGO}" style="width:36px;height:36px;object-fit:contain;margin-bottom:3mm;display:block" alt="Logo">
-            <div style="font-size:9pt;font-weight:900;color:#0b1a35;line-height:1.1">PflegeLearn <span style="color:${k.farbe}">NRW</span></div>
+            <div style="font-size:9pt;font-weight:900;color:#0b1a35;line-height:1.1">PLAN <span style="color:${k.farbe}">NRW</span></div>
             <div style="font-size:6pt;color:#64748b;margin-bottom:2mm">Prüfungs-Portal NRW</div>
             <div style="font-size:6.5pt;color:#4a7a9b;margin-bottom:2mm">pflegelearn-nrw.vercel.app</div>
             <div class="rueck-tag" style="background:${k.farbe}22;border:0.3mm solid ${k.farbe}66;color:${k.farbe}">${k.icon} ${k.titel}</div>
@@ -11540,7 +11540,7 @@ function getTaschenkarteHTML(karten) {
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>PflegeLearn NRW – Taschenkarten</title>
+<title>PLAN – Taschenkarten</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;900&display=swap');
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -12584,7 +12584,7 @@ const APP_SIGNATURE = {
 };
 const STORAGE_KEY = 'pl_progress_v2';
 
-// © PflegeLearn NRW | Patrick Schenkelberger | Fachpfleger Anästhesie & Intensivmedizin | 18.05.2026
+// © PLAN | Patrick Schenkelberger | Fachpfleger Anästhesie & Intensivmedizin | 18.05.2026
 // Unbefugtes Kopieren oder Verwenden dieses Codes ist urheberrechtlich geschützt.
 // ── MIGRATIONS-CODE ──────────────────────────────────────────────────────────
 function migrateProgress() {
@@ -12801,7 +12801,7 @@ function showNeueFeaturesBanner() {
   setTimeout(() => {
     const banner = document.createElement("div");
     banner.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;background:linear-gradient(135deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.25);border-radius:14px;padding:14px 16px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px";
-    banner.innerHTML = "<div style=\"font-size:24px\">🎉</div><div style=\"flex:1\"><div style=\"font-size:13px;font-weight:700;color:#e0f2fe;margin-bottom:3px\">Neu in PflegeLearn!</div><div style=\"font-size:11px;color:#4a7a9b;line-height:1.5\">🎨 Theme-Picker · ✨ Saisonale Effekte · 🌸 KI-Icon wechselt mit der Jahreszeit</div></div><button onclick=\"this.parentElement.remove();localStorage.setItem('"+key+"','1')\" style=\"background:none;border:none;color:#4a7a9b;font-size:20px;cursor:pointer;padding:0 4px\">✕</button>";
+    banner.innerHTML = "<div style=\"font-size:24px\">🎉</div><div style=\"flex:1\"><div style=\"font-size:13px;font-weight:700;color:#e0f2fe;margin-bottom:3px\">Neu in PLAN!</div><div style=\"font-size:11px;color:#4a7a9b;line-height:1.5\">🎨 Theme-Picker · ✨ Saisonale Effekte · 🌸 KI-Icon wechselt mit der Jahreszeit</div></div><button onclick=\"this.parentElement.remove();localStorage.setItem('"+key+"','1')\" style=\"background:none;border:none;color:#4a7a9b;font-size:20px;cursor:pointer;padding:0 4px\">✕</button>";
     document.body.appendChild(banner);
     setTimeout(() => { if (banner.parentElement) { banner.remove(); localStorage.setItem(key,"1"); }}, 8000);
   }, 2000);
@@ -13044,9 +13044,9 @@ function showOnboarding() {
   const saisonSlides = {
     '🎃': { icon:'🎃', title:'Gruselig gut lernen!', text:'Halloween-Special: Zeig der Prüfung, wer hier der Grusel ist! 💀 Viel Erfolg beim Lernen!' },
     '🎄': { icon:'🎄', title:'Das schönste Geschenk!', text:'Weihnachtszeit = Lernzeit! Das beste Geschenk an dich selbst: die Prüfung bestehen! 🎁' },
-    '🎆': { icon:'🎆', title:'Guten Rutsch!', text:'Silvester-Vorsatz: Täglich lernen mit PflegeLearn NRW! Starte stark ins neue Jahr! 🥂' },
-    '🎉': { icon:'🎉', title:'Frohes Neues Jahr!', text:'Neues Jahr, neues Wissen! PflegeLearn NRW begleitet dich durch deine Prüfungsvorbereitung 2026! 💪' },
-    '🐣': { icon:'🐣', title:'Frohe Ostern!', text:'Ostereier suchen UND lernen? Beides geht! PflegeLearn NRW ist immer dabei. 🌸' },
+    '🎆': { icon:'🎆', title:'Guten Rutsch!', text:'Silvester-Vorsatz: Täglich lernen mit PLAN! Starte stark ins neue Jahr! 🥂' },
+    '🎉': { icon:'🎉', title:'Frohes Neues Jahr!', text:'Neues Jahr, neues Wissen! PLAN begleitet dich durch deine Prüfungsvorbereitung 2026! 💪' },
+    '🐣': { icon:'🐣', title:'Frohe Ostern!', text:'Ostereier suchen UND lernen? Beides geht! PLAN ist immer dabei. 🌸' },
     '🌙': { icon:'🌙', title:'Ramadan Mubarak!', text:'Kraft und Wissen in dieser besonderen Zeit. Lerne in deinem Tempo – die App wartet auf dich! 🤲' },
     '🕎': { icon:'🕎', title:'Chag Chanukka Sameach!', text:'Licht bringt Erkenntnis – genau wie Wissen! Lass uns gemeinsam lernen! ✨' },
     '💝': { icon:'💝', title:'Alles Liebe!', text:'Valentinstag: Die Liebe zum Beruf ist dein stärkster Antrieb! Weiter so! 💪' },
@@ -13064,7 +13064,7 @@ function showOnboarding() {
     : null;
 
   const baseSlides = [
-    { icon:'🎓', title:'Willkommen bei PflegeLearn NRW!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW – von einem Fachpfleger & Ausbilder entwickelt.' },
+    { icon:'🎓', title:'Willkommen bei PLAN!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW – von einem Fachpfleger & Ausbilder entwickelt.' },
     { icon:'📝', title:'581 Prüfungsfragen', text:'Übe mit realistischen Multiple-Choice-Fragen oder starte den Prüfungssimulator mit Zeitlimit und Note.' },
     { icon:'🃏', title:'Karteikarten & Spaced Repetition', text:'Lerne alle 100 Krankheitsbilder mit Karteikarten – das System zeigt dir schwierige Karten häufiger.' },
     { icon:'📊', title:'Scores & Taschenkarten', text:'29 Assessment-Skalen und 38 Taschenkarten im Kasack-Format – alles was du auf Station brauchst.' },
@@ -13613,10 +13613,10 @@ function startAusbChat(id) {
     document.body.appendChild(d);
   }
     // Screens werden beim Aufruf gerendert – keine dynamischen Kacheln mehr nötig
-  console.log("✅ PflegeLearn NRW v4.0 – Alle Screens bereit");
+  console.log("✅ PLAN v4.0 – Alle Screens bereit");
 })();
 
-console.log("✅ PflegeLearn NRW v4.0 – Alle Module geladen");
+console.log("✅ PLAN v4.0 – Alle Module geladen");
 
 // ─── IMPRESSUM & DATENSCHUTZ ─────────────────────────────────────────────────
 function showImpressum() {
@@ -13723,7 +13723,7 @@ function sendKuendigung() {
       emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { name: name || email, email: email, ausbildung: 'KUENDIGUNG', datum: new Date().toLocaleString('de-DE'), message: 'Kuendigung des Abonnements' });
     }
   } catch (e) {}
-  const mail = 'mailto:pflegelearn.nrw@gmail.com?subject=' + encodeURIComponent('Kündigung Abonnement PflegeLearn NRW') + '&body=' + encodeURIComponent(`Hiermit kündige ich mein Abonnement.\nName: ${name}\nE-Mail: ${email}\nDatum: ${new Date().toLocaleDateString('de-DE')}`);
+  const mail = 'mailto:pflegelearn.nrw@gmail.com?subject=' + encodeURIComponent('Kündigung Abonnement PLAN') + '&body=' + encodeURIComponent(`Hiermit kündige ich mein Abonnement.\nName: ${name}\nE-Mail: ${email}\nDatum: ${new Date().toLocaleDateString('de-DE')}`);
   const m = document.getElementById('kuendigung-modal');
   if (m) m.innerHTML = `
     <div style="max-width:380px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(52,211,153,.4);border-radius:18px;padding:24px;text-align:center">
