@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pflegelearn-nrw.vercel.app/sitemap.xml
