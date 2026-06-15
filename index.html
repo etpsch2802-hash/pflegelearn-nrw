@@ -6643,9 +6643,9 @@ function logoutConfirm() {
   const nm = document.getElementById("pw-name");
   if (inp) inp.value = "";
   if (nm) nm.value = "";
+  showScreen("home");
   const ps = document.getElementById("pw-screen");
   if (ps) ps.classList.add("active");
-  showScreen("home");
   // Reset alle Filter
   document.querySelectorAll(".ausb-card").forEach(c => { c.style.opacity="1"; c.style.pointerEvents="auto"; });
   // Tester-Info einmalig anzeigen
