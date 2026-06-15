@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.pflegelearn.nrw",
+      "sha256_cert_fingerprints": [
+        "AA:12:CC:8B:85:3B:05:F8:38:84:D4:94:75:64:90:E6:5C:48:B8:73:A7:5C:CF:1E:26:C6:B9:36:ED:2D:45:BE",
+        "75:03:EE:5D:C7:EB:47:E4:F0:C4:94:30:A2:C4:42:D6:F4:99:65:C8:24:37:D5:C6:23:E4:1E:16:9B:20:39:75"
+      ]
+    }
+  }
+]
