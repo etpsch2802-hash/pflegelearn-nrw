@@ -11421,6 +11421,7 @@ function showTaschenkarte(id) {
   modal.innerHTML =
     '<div style="max-width:400px;margin:0 auto">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
+        '<button onclick="document.getElementById(\'tk-modal\').remove();showScreen(\'taschenkarten\')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;color:#94a3b8;font-family:inherit;cursor:pointer;font-size:13px">← Zurück</button>' +
         '<div style="font-size:13px;font-weight:700;color:#ddf0fb">' + k.icon + ' ' + k.titel + '</div>' +
         '<button onclick="document.getElementById(\'tk-modal\').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 14px;color:#94a3b8;font-family:inherit;cursor:pointer;font-size:14px">✕</button>' +
       '</div>' +
