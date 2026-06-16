@@ -753,6 +753,16 @@
           <div class="bottom-card-title">Lernplan erstellen</div>
           <div class="bottom-card-sub">Prüfungsdatum eingeben · Persönlicher Tagesplan</div>
         </button>
+        <button class="bottom-card" onclick="openExamPicker('muendlich')" style="background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.3);color:#38bdf8">
+          <div class="bottom-card-icon">🎓</div>
+          <div class="bottom-card-title">Mündliche Prüfung</div>
+          <div class="bottom-card-sub">KI-Prüfer · Fragen · Note</div>
+        </button>
+        <button class="bottom-card" onclick="openExamPicker('schriftlich')" style="background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.3);color:#a78bfa">
+          <div class="bottom-card-icon">✍️</div>
+          <div class="bottom-card-title">Schriftliche Prüfung</div>
+          <div class="bottom-card-sub">Aufgabe · Punkte · Korrektur</div>
+        </button>
         <button class="bottom-card" onclick="showScreen('preise')" style="background:rgba(99,91,255,.08);border-color:rgba(99,91,255,.3);color:#a5b4fc;grid-column:span 2">
           <div class="bottom-card-icon">💳</div>
           <div class="bottom-card-title">Plan &amp; Preise</div>
@@ -2026,11 +2036,42 @@ MEDIZINTECHNIK-WISSEN:
 - B.Braun Infusomat Space / Fresenius Volumat: Bedienung, Alarme, Unterschied Perfusor vs. Infusomat
 Antworte auf Deutsch, korrekt, didaktisch, mit Merkhilfen. Kein Rat für reale Patienten.`;
 
+// ─── PRÜFUNGS-SIMULATION (System-Prompts) ────────────────────────────────────
+const SYS_EXAM_MUENDLICH = `Du bist ein erfahrener, fairer aber anspruchsvoller PRÜFER für die mündliche staatliche Prüfung in der Pflegeausbildung NRW (PflBG/PflAPrV bzw. die jeweilige APrV des Ausbildungswegs).
+
+ABLAUF:
+- Bei der ersten Nachricht "[START]": Begrüße kurz als Prüfer, nenne eine realistische Fallsituation oder ein Prüfungsthema und stelle die ERSTE Prüfungsfrage. Nur EINE Frage.
+- Danach: Stelle immer nur EINE Frage pro Nachricht und warte auf die Antwort des Prüflings.
+- Reagiere auf jede Antwort: Bestätige Richtiges kurz, hake bei Lücken nach ("Begründen Sie das", "Was tun Sie zuerst und warum?", "Was übersehen Sie hier?"), korrigiere fachliche Fehler knapp.
+- Steigere den Schwierigkeitsgrad schrittweise. Stelle insgesamt 5–6 Fragen.
+- Nach der letzten Frage: Gib eine STRUKTURIERTE BEWERTUNG aus:
+  Staerken / Wissensluecken / Note (deutsche Notenskala 1–6 bzw. bestanden/nicht bestanden) / 3 konkrete Lerntipps.
+
+REGELN:
+- Fachlich korrekt nach DNQP-Expertenstandards, S3-Leitlinien, KRINKO, NVL, ERC/SSC wo relevant.
+- Realistischer Pruefungston, sachlich, motivierend. Antworte ausschliesslich auf Deutsch.
+- Bleibe konsequent in der Pruefer-Rolle; gib keine fertige Loesung vorweg, bevor der Pruefling geantwortet hat.
+- Kein Rat fuer reale Patienten – reine Pruefungssimulation.`;
+
+const SYS_EXAM_SCHRIFTLICH = `Du bist Korrektor/Pruefer fuer die schriftliche staatliche Pruefung in der Pflegeausbildung NRW (PflBG/PflAPrV bzw. die jeweilige APrV des Ausbildungswegs).
+
+ABLAUF:
+- Bei der ersten Nachricht "[START]": Stelle GENAU EINE schriftliche Pruefungsaufgabe. Format wahlweise: Fallbeispiel mit offener Aufgabenstellung, eine Pflegeplanung (Problem–Ziel–Massnahme) oder eine fachsystematische Frage. Nenne die erreichbare Punktzahl (z. B. 10 Punkte) und was erwartet wird. Stelle dann KEINE weiteren Fragen, sondern warte auf die schriftliche Ausarbeitung des Prueflings.
+- Wenn der Pruefling antwortet, BEWERTE die Antwort:
+  Erreichte Punktzahl (x/10) mit kurzer Begruendung / Was war korrekt / Was fehlt oder ist falsch (konkret) / Kompakte Musterloesung bzw. Korrektur / Note (1–6).
+- Biete danach an, die naechste Aufgabe zu starten ("Schreibe 'weiter' fuer die naechste Aufgabe").
+
+REGELN:
+- Fachlich korrekt nach DNQP, S3-Leitlinien, KRINKO, NVL, ERC/SSC wo relevant.
+- Bewertung fair, nachvollziehbar, an Bewertungskriterien orientiert. Antworte ausschliesslich auf Deutsch.
+- Kein Rat fuer reale Patienten – reine Pruefungssimulation.`;
+
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let currentScreen = "home";
 let currentAusb = null;
 let chatHistory = [];
 let isLoading = false;
+let examMode = null; // null | 'muendlich' | 'schriftlich'
 let quizList = [];
 let quizIdx = 0;
 let quizAnswers = [];
@@ -2300,6 +2341,7 @@ document.getElementById("modal").addEventListener("click", function(e) { if (e.t
 
 // ─── CHAT ───────────────────────────────────────────────────────────────────
 function startChat(id, welcome) {
+  examMode = null;
   currentAusb = id;
   chatHistory = [];
   const a = AUSBILDUNGEN.find(x => x.id === id);
@@ -2351,6 +2393,73 @@ function showTyping() {
 }
 
 function removeTyping() { const t = document.getElementById("typing"); if (t) t.remove(); }
+
+// ─── PRÜFUNGS-SIMULATION (KI) ────────────────────────────────────────────────
+function openExamPicker(modus) {
+  // KI = Vollzugang erforderlich
+  if (currentBereich && !currentBereich.ki_unbegrenzt) { showUpgradeModal(); return; }
+  const titel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : '✍️ Schriftliche Prüfung';
+  const ov = document.createElement('div');
+  ov.id = 'exam-picker';
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
+  const rows = AUSBILDUNGEN.map(a => `
+    <button onclick="document.getElementById('exam-picker').remove();startKIExam('${modus}','${a.id}')" style="width:100%;display:flex;align-items:center;gap:10px;background:${a.color}12;border:1px solid ${a.color}30;border-radius:10px;padding:11px 13px;margin-bottom:7px;color:#e0f2fe;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;text-align:left">
+      <span style="font-size:18px">${a.icon}</span><span>${a.nr} · ${a.title}</span></button>`).join('');
+  ov.innerHTML = `
+    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.35);border-radius:18px;padding:22px;width:100%;max-width:360px;max-height:85vh;overflow-y:auto">
+      <div style="font-size:16px;font-weight:800;color:#38bdf8;margin-bottom:4px">${titel}</div>
+      <div style="font-size:12px;color:#7da7c4;margin-bottom:14px">Wähle deinen Ausbildungsweg:</div>
+      ${rows}
+      <button onclick="document.getElementById('exam-picker').remove();startKIExam('${modus}',null)" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px;margin-top:4px;color:#cbd5e1;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">🎲 Allgemein / gemischt</button>
+      <button onclick="document.getElementById('exam-picker').remove()" style="width:100%;background:transparent;border:none;color:#64748b;font-size:12px;margin-top:10px;font-family:inherit;cursor:pointer">Abbrechen</button>
+    </div>`;
+  document.body.appendChild(ov);
+}
+
+function startKIExam(modus, id) {
+  if (currentBereich && !currentBereich.ki_unbegrenzt) { showUpgradeModal(); return; }
+  examMode = modus;
+  currentAusb = id || null;
+  chatHistory = [];
+  const a = id ? AUSBILDUNGEN.find(x => x.id === id) : null;
+  const c = a ? a.color : "var(--accent)";
+  const bar = document.getElementById("chat-context-bar");
+  const modusLabel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : '✍️ Schriftliche Prüfung';
+  bar.style.display = "flex";
+  bar.style.borderBottomColor = (a ? a.color : "#38bdf8") + "20";
+  bar.innerHTML = `<span>${a ? a.icon : '📝'}</span><span class="chat-context-name" style="color:${c}">${modusLabel}</span><span class="chat-context-sub">${a ? a.nr + ' · ' + a.title : 'Allgemein'}</span>`;
+  document.getElementById("quick-prompts").style.display = "none";
+  document.getElementById("send-btn").style.background = `linear-gradient(135deg,${c},${c}88)`;
+  document.getElementById("messages").innerHTML = "";
+  const intro = modus === 'muendlich'
+    ? '🎓 **Mündliche Prüfungssimulation gestartet.**\n\nIch bin dein Prüfer. Ich stelle dir nacheinander Fragen, hake nach und bewerte am Ende mit Note. Antworte so, wie du es in der echten Prüfung würdest.\n\n_Einen Moment – ich eröffne die Prüfung…_'
+    : '✍️ **Schriftliche Prüfungssimulation gestartet.**\n\nIch gebe dir eine Prüfungsaufgabe. Schreibe deine Antwort in den Chat – ich bewerte mit Punkten, Musterlösung und Korrektur.\n\n_Einen Moment – ich erstelle die Aufgabe…_';
+  appendMsg("ai", intro, a?.color);
+  showScreen("chat");
+  examKickoff();
+}
+
+async function examKickoff() {
+  const a = AUSBILDUNGEN.find(x => x.id === currentAusb);
+  chatHistory.push({ role:"user", content:"[START]" });
+  isLoading = true;
+  document.getElementById("send-btn").disabled = true;
+  showTyping();
+  try {
+    let activeSys = examMode === 'muendlich' ? SYS_EXAM_MUENDLICH : SYS_EXAM_SCHRIFTLICH;
+    if (a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
+    const reply = await callKI(chatHistory, activeSys);
+    removeTyping();
+    chatHistory.push({ role:"assistant", content: reply });
+    appendMsg("ai", reply, a?.color);
+  } catch(e) {
+    removeTyping();
+    appendMsg("ai", '⚠️ Fehler: ' + (e.message || 'KI nicht erreichbar'), a?.color);
+    console.error('[KI-Prüfung]', e);
+  }
+  isLoading = false;
+  document.getElementById("send-btn").disabled = false;
+}
 
 // ─── HYBRID KI SYSTEM ────────────────────────────────────────────────────────
 // KI-Endpunkt → Vercel Serverless (Key sicher im Backend)
@@ -2467,7 +2576,7 @@ async function sendMsg(text) {
     const a = AUSBILDUNGEN.find(x => x.id === currentAusb);
     // Lokales Wissen als schneller Pre-Check
     const lokalAntwort = checkLokalWissen(txt);
-    if (lokalAntwort && chatHistory.length <= 2) {
+    if (lokalAntwort && chatHistory.length <= 2 && !examMode) {
       // Sofortantwort bei einfachen Begriffen (spart API-Aufruf)
       removeTyping();
       const lokReply = '💡 **Schnellantwort (lokal):**\n\n' + lokalAntwort + '\n\n_Für ausführlichere Infos: Frage nochmal mit mehr Kontext._';
@@ -2477,7 +2586,11 @@ async function sendMsg(text) {
       document.getElementById('send-btn').disabled = false;
       return;
     }
-    const reply = await callKI(chatHistory, SYS);
+    let activeSys = SYS;
+    if (examMode === 'muendlich') activeSys = SYS_EXAM_MUENDLICH;
+    else if (examMode === 'schriftlich') activeSys = SYS_EXAM_SCHRIFTLICH;
+    if (examMode && a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
+    const reply = await callKI(chatHistory, activeSys);
     removeTyping();
     chatHistory.push({ role:"assistant", content: reply });
     appendMsg("ai", reply, a?.color);
