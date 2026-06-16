@@ -698,11 +698,11 @@
   <div id="home-stats"></div>
   <div class="section-label" style="display:none"></div>
   <!-- ── KI-ASSISTENT (aktiv für alle User) ── -->
-  <button class="ki-neon-btn" onclick="startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.18),rgba(8,20,34,.5));border:1.5px solid #22d3ee;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+  <button class="ki-neon-btn" onclick="openKIChooser()" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.18),rgba(8,20,34,.5));border:1.5px solid #22d3ee;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
     <div style="font-size:32px" id="ki-home-icon">💬</div>
     <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#7ff0ff">KI-Assistent fragen</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Stelle jede Frage · Sofortantwort · Powered by Groq</div>
+      <div style="font-size:15px;font-weight:700;color:#7ff0ff">KI-Assistent &amp; Prüfung</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Chat · Mündliche &amp; schriftliche Prüfungssimulation</div>
     </div>
     <div style="margin-left:auto;font-size:20px;color:#7ff0ff">›</div>
   </button>
@@ -752,21 +752,6 @@
           <div class="bottom-card-icon">📅</div>
           <div class="bottom-card-title">Lernplan erstellen</div>
           <div class="bottom-card-sub">Prüfungsdatum eingeben · Persönlicher Tagesplan</div>
-        </button>
-        <button class="bottom-card" onclick="openExamPicker('muendlich')" style="background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.3);color:#38bdf8">
-          <div class="bottom-card-icon">🎓</div>
-          <div class="bottom-card-title">Mündliche Prüfung</div>
-          <div class="bottom-card-sub">KI-Prüfer · Fragen · Note</div>
-        </button>
-        <button class="bottom-card" onclick="openExamPicker('schriftlich')" style="background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.3);color:#a78bfa">
-          <div class="bottom-card-icon">✍️</div>
-          <div class="bottom-card-title">Schriftliche Prüfung</div>
-          <div class="bottom-card-sub">Aufgabe · Punkte · Korrektur</div>
-        </button>
-        <button class="bottom-card" onclick="showExamHistory()" style="background:rgba(148,163,184,.08);border-color:rgba(148,163,184,.3);color:#94a3b8;grid-column:span 2">
-          <div class="bottom-card-icon">📊</div>
-          <div class="bottom-card-title">Prüfungs-Verlauf</div>
-          <div class="bottom-card-sub">Deine absolvierten KI-Prüfungen · Note · Punkte</div>
         </button>
         <button class="bottom-card" onclick="showScreen('preise')" style="background:rgba(99,91,255,.08);border-color:rgba(99,91,255,.3);color:#a5b4fc;grid-column:span 2">
           <div class="bottom-card-icon">💳</div>
@@ -2406,6 +2391,29 @@ function showTyping() {
 function removeTyping() { const t = document.getElementById("typing"); if (t) t.remove(); }
 
 // ─── PRÜFUNGS-SIMULATION (KI) ────────────────────────────────────────────────
+
+// Auswahl: Chat oder Prüfung
+function openKIChooser() {
+  const ov = document.createElement('div');
+  ov.id = 'ki-chooser';
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
+  const opt = (icon, titel, sub, oncl, col) => `
+    <button onclick="document.getElementById('ki-chooser').remove();${oncl}" style="width:100%;display:flex;align-items:center;gap:12px;background:${col}12;border:1px solid ${col}35;border-radius:12px;padding:14px;margin-bottom:9px;color:#e0f2fe;font-family:inherit;cursor:pointer;text-align:left">
+      <span style="font-size:24px">${icon}</span>
+      <span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:${col}">${titel}</span><span style="display:block;font-size:11px;color:#7da7c4;margin-top:2px">${sub}</span></span>
+      <span style="font-size:18px;color:${col}">›</span></button>`;
+  ov.innerHTML = `
+    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(34,211,238,.35);border-radius:18px;padding:22px;width:100%;max-width:360px">
+      <div style="font-size:16px;font-weight:800;color:#22d3ee;margin-bottom:4px">🤖 KI-Assistent</div>
+      <div style="font-size:12px;color:#7da7c4;margin-bottom:16px">Was möchtest du tun?</div>
+      ${opt('💬','KI-Chat','Jede Frage · sofort beantwortet',"startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')",'#22d3ee')}
+      ${opt('🎓','Mündliche Prüfung','KI-Prüfer · Fragen · Note',"openExamPicker('muendlich')",'#38bdf8')}
+      ${opt('✍️','Schriftliche Prüfung','Aufgabe · Punkte · Korrektur',"openExamPicker('schriftlich')",'#a78bfa')}
+      ${opt('📊','Prüfungs-Verlauf','Deine absolvierten Prüfungen','showExamHistory()','#94a3b8')}
+      <button onclick="document.getElementById('ki-chooser').remove()" style="width:100%;background:transparent;border:none;color:#64748b;font-size:12px;margin-top:6px;font-family:inherit;cursor:pointer">Abbrechen</button>
+    </div>`;
+  document.body.appendChild(ov);
+}
 
 // Einstellungen laden/speichern (Niveau + TTS)
 function loadExamSettings() {
