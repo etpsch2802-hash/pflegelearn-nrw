@@ -179,6 +179,11 @@ section {
 .feat-card-icon { font-size: 28px; margin-bottom: 12px; }
 .feat-card-title { font-size: 15px; font-weight: 700; color: #e0f2fe; margin-bottom: 6px; }
 .feat-card-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.split-row { display: flex; gap: 18px; margin-top: 8px; flex-wrap: wrap; }
+.split-half { flex: 1; min-width: 180px; }
+.split-half-title { font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 5px; }
+.split-divider { width: 1px; background: var(--border); align-self: stretch; }
+@media (max-width: 540px) { .split-divider { display: none; } }
 
 /* ── AUSBILDUNG GRID ── */
 .ausb-grid {
@@ -322,10 +327,20 @@ footer {
       <div class="feat-card-title">Prüfungs-Quiz</div>
       <div class="feat-card-text">Multiple Choice für alle Ausbildungswege. Sofortiges Feedback mit Erklärung. 245+ Fragen.</div>
     </div>
-    <div class="feat-card">
+    <div class="feat-card" style="grid-column:span 2">
       <div class="feat-card-icon">🤖</div>
-      <div class="feat-card-title">KI-Assistent</div>
-      <div class="feat-card-text">Stelle jede Frage – rund um die Uhr. Pflegefachlich fundierte Antworten in Sekunden.</div>
+      <div class="feat-card-title">KI-Assistent &amp; Prüfungssimulation</div>
+      <div class="split-row">
+        <div class="split-half">
+          <div class="split-half-title">💬 KI-Chat</div>
+          <div class="feat-card-text">Stelle jede Frage – rund um die Uhr. Pflegefachlich fundierte Antworten in Sekunden.</div>
+        </div>
+        <div class="split-divider"></div>
+        <div class="split-half">
+          <div class="split-half-title">🎓 Prüfungssimulation</div>
+          <div class="feat-card-text">Übe die mündliche &amp; schriftliche Prüfung mit einem KI-Prüfer – Fragen, Nachhaken, Bewertung mit Note. Mit Schwierigkeitsgrad, Sprachausgabe &amp; Verlauf.</div>
+        </div>
+      </div>
     </div>
     <div class="feat-card">
       <div class="feat-card-icon">🏥</div>
