@@ -14139,11 +14139,18 @@ function applyLang(lang) {
   });
 }
 
+// Explizit global machen für onclick-Handler
+window.applyLang = applyLang;
+
 // Sprache beim Start anwenden
-document.addEventListener('DOMContentLoaded', () => {
-  const savedLang = localStorage.getItem('plan_lang') || 'de';
-  if (savedLang !== 'de') applyLang(savedLang);
-});
+const _savedLang = localStorage.getItem('plan_lang') || 'de';
+if (_savedLang !== 'de') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => applyLang(_savedLang));
+  } else {
+    applyLang(_savedLang);
+  }
+}
 // ═══════════════════════════════════════════════
 ;
 
