@@ -13689,7 +13689,7 @@ console.log("✅ PLAN v4.0 – Alle Module geladen")
 // ═══════════════════════════════════════════════
 // I18N – PLAN Mehrsprachigkeit
 // ═══════════════════════════════════════════════
-const I18N = {
+window.I18N = {
   de: {
     login_subtitle: 'Prüfungs-Portal NRW',
     ph_name: 'Vor- und Nachname',
@@ -14106,13 +14106,13 @@ const I18N = {
   }
 };
 
-let currentLang = localStorage.getItem('plan_lang') || 'de';
+window.currentLang = localStorage.getItem('plan_lang') || 'de';
 
-function applyLang(lang) {
-  if (!I18N[lang]) return;
-  currentLang = lang;
+window.applyLang = function(lang) {
+  if (!window.I18N || !window.I18N[lang]) { console.error("applyLang: kein I18N für", lang); return; }
+  window.currentLang = lang;
   localStorage.setItem('plan_lang', lang);
-  const t = I18N[lang];
+  const t = window.I18N[lang];
 
   // RTL für Arabisch
   document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
@@ -14138,9 +14138,6 @@ function applyLang(lang) {
     }
   });
 }
-
-// Explizit global machen für onclick-Handler
-window.applyLang = applyLang;
 
 // Sprache beim Start anwenden
 const _savedLang = localStorage.getItem('plan_lang') || 'de';
