@@ -415,41 +415,54 @@
 
 <!-- PASSWORD SCREEN -->
 <div class="pw-screen active" id="pw-screen">
-  <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
-  <div class="pw-subtitle" style="margin-top:8px">Prüfungs-Portal NRW<br>© Fachpfleger für Anästhesie & Intensivmedizin NRW</div>
+  
+<!-- SPRACHAUSWAHL -->
+<div id="lang-selector" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px auto 0;max-width:320px">
+  <button onclick="applyLang('de')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Deutsch">🇩🇪 DE</button>
+  <button onclick="applyLang('en')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="English">🇬🇧 EN</button>
+  <button onclick="applyLang('tr')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Türkçe">🇹🇷 TR</button>
+  <button onclick="applyLang('ar')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="العربية">🇸🇦 AR</button>
+  <button onclick="applyLang('ru')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Русский">🇷🇺 RU</button>
+  <button onclick="applyLang('pl')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Polski">🇵🇱 PL</button>
+  <button onclick="applyLang('uk')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Українська">🇺🇦 UK</button>
+  <button onclick="applyLang('ro')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Română">🇷🇴 RO</button>
+  <button onclick="applyLang('es')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Español">🇪🇸 ES</button>
+</div>
+<div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
+  <div class="pw-subtitle" style="margin-top:8px"><span data-i18n="login_subtitle">Prüfungs-Portal NRW</span></div>
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px">👤 Dein Name</div>
-    <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()">
+    <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" data-i18n-ph="ph_name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()">
     <div class="pw-label">🔑 Persönlicher Zugangscode</div>
-    <input class="pw-input" id="pw-input" type="text" placeholder="Dein Passwort" onkeydown="if(event.key==='Enter')checkPW()">
+    <input class="pw-input" id="pw-input" type="text" placeholder="Dein Passwort" data-i18n-ph="ph_pw" onkeydown="if(event.key==='Enter')checkPW()">
     <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;font-size:12px;color:#94a3b8;font-family:'DM Sans',sans-serif">
       <input type="checkbox" id="remember-me" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer">
-      Angemeldet bleiben
+      <span data-i18n="stay_logged_in">Angemeldet bleiben</span>
     </label>
-    <button class="pw-btn" style="margin-top:12px" onclick="checkPW()">Anmelden →</button>
+    <button class="pw-btn" style="margin-top:12px" onclick="checkPW()"><span data-i18n="btn_login">Anmelden →</span></button>
     <div class="pw-error" id="pw-error" style="display:none"></div>
   </div>
 
   <!-- KI CHAT NEON BUTTON (vor Anmeldung) -->
   <button onclick="showKiTeaser()" class="ki-neon-btn" style="width:100%;max-width:320px;display:block;margin:16px auto 0;background:radial-gradient(circle at 50% 0%,rgba(34,211,238,.2),rgba(8,20,34,.55));border:1.5px solid #22d3ee;border-radius:14px;padding:13px 14px;color:#7ff0ff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:.5px;text-align:center;line-height:1.25">
-    KI Chat<br><span style="font-size:10px;font-weight:600;color:#67e8f9;opacity:.85;letter-spacing:0">Dein Lernassistent · sofort antworten</span>
+    KI Chat<br><span style="font-size:10px;font-weight:600;color:#67e8f9;opacity:.85;letter-spacing:0"><span data-i18n="ki_chat_sub">Dein Lernassistent · sofort antworten</span></span>
   </button>
   <!-- 7 TAGE GRATIS BUTTON (Vollzugriff) -->
   <button onclick="showScreen('registrierung')" style="width:100%;max-width:320px;display:block;margin:12px auto 0;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.05));border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:12px 14px;color:#34d399;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center">
-    🎁 7 Tage kostenlos testen<br><span style="font-size:10px;font-weight:600;opacity:.85">Vollzugriff</span>
+    🎁 7 Tage kostenlos testen<br><span style="font-size:10px;font-weight:600;opacity:.85"><span data-i18n="btn_trial_sub">Vollzugriff</span></span>
   </button>
   <!-- GRATIS STARTEN (eingeschraenkt) -->
   <button onclick="showGratisStart()" style="width:100%;max-width:320px;display:block;margin:10px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center">
-    Gratis starten<br><span style="font-size:10px;font-weight:600;opacity:.7">eingeschränkte Version</span>
+    Gratis starten<br><span style="font-size:10px;font-weight:600;opacity:.7"><span data-i18n="btn_free_sub">eingeschränkte Version</span></span>
   </button>
   <button onclick="goToStripe()" style="display:block; width:100%; max-width:320px; margin:12px auto 0 auto; text-align:center; background:linear-gradient(135deg, #635bff, #4338ca); color:white; padding:14px 12px; font-weight:bold; border:none; border-radius:8px; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.15); font-family:'DM Sans',sans-serif; font-size:14px;">
-    💳 Direkt Vollzugriff freischalten
+    💳 <span data-i18n="btn_unlock">Direkt Vollzugriff freischalten</span>
   </button>
 
 
   <div style="margin-top:12px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
     <div style="font-size:10px;color:#4a7a9b;line-height:1.7">
-      🔑 Noch kein Zugangscode?<br>
+      <span data-i18n="no_code">🔑 Noch kein Zugangscode?</span><br>
       <span style="color:#38bdf8">pflegelearn.nrw@gmail.com</span><br>
       Codes sind personalisiert & nicht übertragbar.
     </div>
@@ -462,7 +475,7 @@
     <span style="font-size:10px;color:rgba(var(--accent-rgb),.2)">|</span>
     <a href="#agb" onclick="showAGB()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
   </div>
-  <div class="pw-copyright">© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</div>
+  <div class="pw-copyright"><span data-i18n="copyright">© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</span></div>
   <button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
 </div>
 
@@ -512,7 +525,7 @@
     </div>
   </button>
   <div class="header-btns">
-    <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none">← Zurück</button>
+    <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none"><span data-i18n="btn_back">← Zurück</span></button>
     <button class="hbtn" id="btn-darkmode" onclick="toggleDarkMode()" title="Hell/Dunkel" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8">🌙</button>
     <button class="hbtn" onclick="toggleNavMenu()" title="Menü" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8" id="btn-hamburger">☰</button>
   </div>
@@ -524,40 +537,40 @@
   <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#04121f;background:linear-gradient(135deg,#38bdf8,#0ea5e9);font-weight:700;justify-content:center;text-align:center">🔄 App aktualisieren</button>
   <hr style="border-color:rgba(255,255,255,.12);margin:8px 0">
 
-  <button onclick="toggleNavSec('lernen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">LERNEN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <button onclick="toggleNavSec('lernen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_lernen">LERNEN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-lernen" style="display:none">
-    <button onclick="navGo('faelle')" class="nav-drop-btn">🩺 Fallbeispiele</button>
-    <button onclick="navGo('karteikarten')" class="nav-drop-btn">🃏 Karteikarten</button>
-    <button onclick="navGo('lernplan')" class="nav-drop-btn">📅 Lernplan</button>
-    <button onclick="startExam()" class="nav-drop-btn">📄 Prüfungssimulator</button>
-    <button onclick="navGo('quizSelect')" class="nav-drop-btn">📝 Quiz</button>
+    <button onclick="navGo('faelle')" class="nav-drop-btn"><span data-i18n="nav_faelle">🩺 Fallbeispiele</span></button>
+    <button onclick="navGo('karteikarten')" class="nav-drop-btn"><span data-i18n="nav_karteikarten">🃏 Karteikarten</span></button>
+    <button onclick="navGo('lernplan')" class="nav-drop-btn"><span data-i18n="nav_lernplan">📅 Lernplan</span></button>
+    <button onclick="startExam()" class="nav-drop-btn"><span data-i18n="nav_pruefung">📄 Prüfungssimulator</span></button>
+    <button onclick="navGo('quizSelect')" class="nav-drop-btn"><span data-i18n="nav_quiz">📝 Quiz</span></button>
   </div>
 
-  <button onclick="toggleNavSec('wissen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">WISSEN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <button onclick="toggleNavSec('wissen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_wissen">WISSEN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-wissen" style="display:none">
-    <button onclick="navGo('atl')" class="nav-drop-btn">📋 ATL Pflegeplanung</button>
-    <button onclick="navGo('bobath')" class="nav-drop-btn">🧩 Bobath</button>
-    <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn">🏥 Krankheitsbilder</button>
-    <button onclick="navGo('anatomie')" class="nav-drop-btn">🩻 Anatomie</button>
-    <button onclick="navGo('kinaesthetik')" class="nav-drop-btn">🤸 Kinästhetik</button>
-    <button onclick="navGo('prophylaxen')" class="nav-drop-btn">🛡️ Prophylaxen</button>
-    <button onclick="navGo('wundversorgung')" class="nav-drop-btn">🩹 Wundversorgung</button>
+    <button onclick="navGo('atl')" class="nav-drop-btn"><span data-i18n="nav_atl">📋 ATL Pflegeplanung</span></button>
+    <button onclick="navGo('bobath')" class="nav-drop-btn"><span data-i18n="nav_bobath">🧩 Bobath</span></button>
+    <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn"><span data-i18n="nav_krankheit">🏥 Krankheitsbilder</span></button>
+    <button onclick="navGo('anatomie')" class="nav-drop-btn"><span data-i18n="nav_anatomie">🩻 Anatomie</span></button>
+    <button onclick="navGo('kinaesthetik')" class="nav-drop-btn"><span data-i18n="nav_kinaes">🤸 Kinästhetik</span></button>
+    <button onclick="navGo('prophylaxen')" class="nav-drop-btn"><span data-i18n="nav_prophylaxen">🛡️ Prophylaxen</span></button>
+    <button onclick="navGo('wundversorgung')" class="nav-drop-btn"><span data-i18n="nav_wund">🩹 Wundversorgung</span></button>
   </div>
 
-  <button onclick="toggleNavSec('medizin',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">MEDIZIN<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <button onclick="toggleNavSec('medizin',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_medizin">MEDIZIN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-medizin" style="display:none">
-    <button onclick="navGo('notfallmanagement')" class="nav-drop-btn">🚨 Notfallmanagement</button>
-    <button onclick="navGo('scores')" class="nav-drop-btn">📊 Assessment-Scores</button>
-    <button onclick="navGo('medikamente')" class="nav-drop-btn">💊 Medikamente</button>
-    <button onclick="navGo('medizintechnik')" class="nav-drop-btn">⚙️ Medizintechnik</button>
+    <button onclick="navGo('notfallmanagement')" class="nav-drop-btn"><span data-i18n="nav_notfall">🚨 Notfallmanagement</span></button>
+    <button onclick="navGo('scores')" class="nav-drop-btn"><span data-i18n="nav_scores">📊 Assessment-Scores</span></button>
+    <button onclick="navGo('medikamente')" class="nav-drop-btn"><span data-i18n="nav_medi">💊 Medikamente</span></button>
+    <button onclick="navGo('medizintechnik')" class="nav-drop-btn"><span data-i18n="nav_technik">⚙️ Medizintechnik</span></button>
   </div>
 
-  <button onclick="toggleNavSec('sonstiges',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)">SONSTIGES<span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
+  <button onclick="toggleNavSec('sonstiges',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_sonstiges">SONSTIGES</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-sonstiges" style="display:none">
-    <button onclick="navGo('home')" class="nav-drop-btn">🏠 Startseite</button>
-    <button onclick="navGo('taschenkarten')" class="nav-drop-btn">📇 Taschenkarten</button>
-    <button onclick="navGo('preise')" class="nav-drop-btn">💳 Plan &amp; Preise</button>
-    <button onclick="showThemePicker()" class="nav-drop-btn">🎨 Mein Theme</button>
+    <button onclick="navGo('home')" class="nav-drop-btn"><span data-i18n="nav_home">🏠 Startseite</span></button>
+    <button onclick="navGo('taschenkarten')" class="nav-drop-btn"><span data-i18n="nav_taschen">📇 Taschenkarten</span></button>
+    <button onclick="navGo('preise')" class="nav-drop-btn"><span data-i18n="nav_preise">💳 Plan &amp; Preise</span></button>
+    <button onclick="showThemePicker()" class="nav-drop-btn"><span data-i18n="nav_theme">🎨 Mein Theme</span></button>
     <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
     <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
     <div class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;cursor:default">
@@ -568,16 +581,32 @@
         <button onclick="setAppZoom(1)" style="background:rgba(var(--accent-rgb),.15);border:none;border-radius:7px;width:30px;height:28px;color:#ddf0fb;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">+</button>
       </span>
     </div>
-    <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399">💬 Feedback / Fehler melden</button>
+    <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399"><span data-i18n="nav_feedback">💬 Feedback / Fehler melden</span></button>
   </div>
 
   <hr style="border-color:rgba(255,255,255,.06);margin:6px 0">
-  <button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📄 Impressum</button>
-  <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🔒 Datenschutz</button>
-  <button onclick="showAGB()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">📑 AGB & Widerruf</button>
+  
+  <!-- SPRACHAUSWAHL NAV -->
+  <div style="padding:8px 6px;border-top:1px solid rgba(255,255,255,.06);margin-top:4px">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(56,189,248,.5);padding:4px 6px 6px">SPRACHE</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;padding:0 6px">
+      <button onclick="applyLang('de');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇩🇪 DE</button>
+      <button onclick="applyLang('en');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
+      <button onclick="applyLang('tr');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇹🇷 TR</button>
+      <button onclick="applyLang('ar');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇸🇦 AR</button>
+      <button onclick="applyLang('ru');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇷🇺 RU</button>
+      <button onclick="applyLang('pl');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇵🇱 PL</button>
+      <button onclick="applyLang('uk');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇺🇦 UK</button>
+      <button onclick="applyLang('ro');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇷🇴 RO</button>
+      <button onclick="applyLang('es');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇪🇸 ES</button>
+    </div>
+  </div>
+<button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_impressum">📄 Impressum</span></button>
+  <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_datenschutz">🔒 Datenschutz</span></button>
+  <button onclick="showAGB()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_agb">📑 AGB & Widerruf</span></button>
   <button onclick="showKuendigung()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🧾 Abo kündigen</button>
     <hr style="border-color:rgba(248,113,113,.15);margin:6px 0">
-  <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700">🚪 Abmelden</button>
+  <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700">🚪 <span data-i18n="btn_logout">Abmelden</span></button>
   <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.08);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8">🔧 Admin Panel</button></div>
 </div>
 
@@ -1067,7 +1096,7 @@
       &#10003; KI-Lernassistent
     </div>
     <div style="font-size:11px;color:#fbbf24;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:9px;padding:9px 11px;margin-bottom:12px">Nach 7 Tagen endet der Zugang automatisch &ndash; kein kostenloser Vollzugang. Weiternutzung nur mit Freischaltung.</div>
-    <button onclick="showScreen('registrierung')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer">7 Tage kostenlos testen</button>
+    <button onclick="showScreen('registrierung')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer"><span data-i18n="btn_trial">7 Tage kostenlos testen</span></button>
   </div>
 
   <div style="background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.35);border-radius:16px;padding:18px;margin-bottom:14px">
@@ -6405,7 +6434,7 @@ function showKiTeaser(){
   ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)";
   ov.innerHTML=`
     <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1.5px solid #22d3ee;border-radius:20px;padding:26px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 0 32px rgba(34,211,238,.35)">
-      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#7ff0ff;margin-bottom:8px;letter-spacing:.5px">KI Chat</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#7ff0ff;margin-bottom:8px;letter-spacing:.5px"><span data-i18n="ki_chat">KI Chat</span></div>
       <div style="font-size:12px;color:#cbd5e1;line-height:1.7;margin-bottom:18px">Dein persönlicher Lernassistent beantwortet jede Pflege-Frage sofort – Definitionen, Krankheitsbilder, Prüfungswissen. Verfügbar nach dem Start: <strong style="color:#7ff0ff">5 Fragen/Tag gratis</strong>, mit Vollzugriff mehr.</div>
       <button onclick="document.getElementById('ki-teaser').remove();showGratisStart()" style="width:100%;background:radial-gradient(circle at 50% 0%,rgba(34,211,238,.25),rgba(8,20,34,.55));border:1.5px solid #22d3ee;border-radius:11px;padding:13px;color:#7ff0ff;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Gratis starten &amp; ausprobieren</button>
       <button onclick="document.getElementById('ki-teaser').remove()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px;color:#94a3b8;font-size:12px;font-family:inherit;cursor:pointer">Schließen</button>
@@ -6420,7 +6449,7 @@ function showGratisStart(){
   ov.innerHTML=`
     <div style="background:linear-gradient(160deg,#0d2135,#091525);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:24px;width:100%;max-width:340px">
       <div style="text-align:center;font-size:30px;margin-bottom:6px">🎓</div>
-      <div style="text-align:center;font-family:'DM Serif Display',serif;font-size:19px;color:#e0f2fe;margin-bottom:4px">Gratis starten</div>
+      <div style="text-align:center;font-family:'DM Serif Display',serif;font-size:19px;color:#e0f2fe;margin-bottom:4px"><span data-i18n="btn_free">Gratis starten</span></div>
       <div style="text-align:center;font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:16px">Eingeschränkte Version · 20 Quizfragen/Tag · 2 Fälle je Fach · Karteikarten · KI 5/Tag. Jederzeit auf Vollzugriff erweiterbar.</div>
       <input id="gratis-name" type="text" placeholder="Dein Name" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">
       <input id="gratis-email" type="email" placeholder="deine@email.de" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:8px">
@@ -13655,7 +13684,468 @@ function startAusbChat(id) {
   console.log("✅ PLAN v4.0 – Alle Screens bereit");
 })();
 
-console.log("✅ PLAN v4.0 – Alle Module geladen");
+console.log("✅ PLAN v4.0 – Alle Module geladen")
+
+// ═══════════════════════════════════════════════
+// I18N – PLAN Mehrsprachigkeit
+// ═══════════════════════════════════════════════
+const I18N = {
+  de: {
+    login_subtitle: 'Prüfungs-Portal NRW',
+    ph_name: 'Vor- und Nachname',
+    ph_pw: 'Dein Passwort',
+    stay_logged_in: 'Angemeldet bleiben',
+    btn_login: 'Anmelden →',
+    ki_chat: 'KI Chat',
+    ki_chat_sub: 'Dein Lernassistent · sofort antworten',
+    btn_trial: '7 Tage kostenlos testen',
+    btn_trial_sub: 'Vollzugriff',
+    btn_free: 'Gratis starten',
+    btn_free_sub: 'eingeschränkte Version',
+    btn_unlock: 'Direkt Vollzugriff freischalten',
+    no_code: '🔑 Noch kein Zugangscode?',
+    copyright: '© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.',
+    btn_back: '← Zurück',
+    btn_logout: 'Abmelden',
+    nav_lernen: 'LERNEN',
+    nav_wissen: 'WISSEN',
+    nav_medizin: 'MEDIZIN',
+    nav_sonstiges: 'SONSTIGES',
+    nav_faelle: '🩺 Fallbeispiele',
+    nav_karteikarten: '🃏 Karteikarten',
+    nav_lernplan: '📅 Lernplan',
+    nav_pruefung: '📄 Prüfungssimulator',
+    nav_quiz: '📝 Quiz',
+    nav_atl: '📋 ATL Pflegeplanung',
+    nav_bobath: '🧩 Bobath',
+    nav_krankheit: '🏥 Krankheitsbilder',
+    nav_anatomie: '🩻 Anatomie',
+    nav_kinaes: '🤸 Kinästhetik',
+    nav_prophylaxen: '🛡️ Prophylaxen',
+    nav_wund: '🩹 Wundversorgung',
+    nav_notfall: '🚨 Notfallmanagement',
+    nav_scores: '📊 Assessment-Scores',
+    nav_medi: '💊 Medikamente',
+    nav_technik: '⚙️ Medizintechnik',
+    nav_home: '🏠 Startseite',
+    nav_taschen: '📇 Taschenkarten',
+    nav_preise: '💳 Plan & Preise',
+    nav_theme: '🎨 Mein Theme',
+    nav_feedback: '💬 Feedback / Fehler melden',
+    nav_impressum: '📄 Impressum',
+    nav_datenschutz: '🔒 Datenschutz',
+    nav_agb: '📑 AGB & Widerruf',
+  },
+  en: {
+    login_subtitle: 'Nursing Exam Portal NRW',
+    ph_name: 'First and last name',
+    ph_pw: 'Your password',
+    stay_logged_in: 'Stay logged in',
+    btn_login: 'Sign In →',
+    ki_chat: 'AI Chat',
+    ki_chat_sub: 'Your learning assistant · instant answers',
+    btn_trial: '7 days free trial',
+    btn_trial_sub: 'Full access',
+    btn_free: 'Start for free',
+    btn_free_sub: 'limited version',
+    btn_unlock: 'Unlock full access now',
+    no_code: '🔑 No access code yet?',
+    copyright: '© PLAN – Nursing Learning App NRW · All rights reserved<br>Unauthorized sharing will result in suspension.',
+    btn_back: '← Back',
+    btn_logout: 'Sign Out',
+    nav_lernen: 'LEARNING',
+    nav_wissen: 'KNOWLEDGE',
+    nav_medizin: 'MEDICINE',
+    nav_sonstiges: 'MORE',
+    nav_faelle: '🩺 Case Studies',
+    nav_karteikarten: '🃏 Flashcards',
+    nav_lernplan: '📅 Study Plan',
+    nav_pruefung: '📄 Exam Simulator',
+    nav_quiz: '📝 Quiz',
+    nav_atl: '📋 ATL Care Planning',
+    nav_bobath: '🧩 Bobath',
+    nav_krankheit: '🏥 Medical Conditions',
+    nav_anatomie: '🩻 Anatomy',
+    nav_kinaes: '🤸 Kinaesthetics',
+    nav_prophylaxen: '🛡️ Prophylaxis',
+    nav_wund: '🩹 Wound Care',
+    nav_notfall: '🚨 Emergency Management',
+    nav_scores: '📊 Assessment Scores',
+    nav_medi: '💊 Medications',
+    nav_technik: '⚙️ Medical Technology',
+    nav_home: '🏠 Home',
+    nav_taschen: '📇 Pocket Cards',
+    nav_preise: '💳 Plan & Pricing',
+    nav_theme: '🎨 My Theme',
+    nav_feedback: '💬 Feedback / Report Issue',
+    nav_impressum: '📄 Legal Notice',
+    nav_datenschutz: '🔒 Privacy Policy',
+    nav_agb: '📑 Terms & Conditions',
+  },
+  tr: {
+    login_subtitle: 'Hemşirelik Sınav Portalı NRW',
+    ph_name: 'Ad ve Soyad',
+    ph_pw: 'Şifreniz',
+    stay_logged_in: 'Giriş yapılı kal',
+    btn_login: 'Giriş Yap →',
+    ki_chat: 'Yapay Zeka Sohbet',
+    ki_chat_sub: 'Öğrenim asistanın · anında yanıt',
+    btn_trial: '7 gün ücretsiz dene',
+    btn_trial_sub: 'Tam erişim',
+    btn_free: 'Ücretsiz başla',
+    btn_free_sub: 'sınırlı sürüm',
+    btn_unlock: 'Tam erişimi şimdi aç',
+    no_code: '🔑 Henüz erişim kodunuz yok mu?',
+    copyright: '© PLAN – Hemşirelik Öğrenim Uygulaması NRW · Tüm hakları saklıdır',
+    btn_back: '← Geri',
+    btn_logout: 'Çıkış Yap',
+    nav_lernen: 'ÖĞRENME',
+    nav_wissen: 'BİLGİ',
+    nav_medizin: 'TIP',
+    nav_sonstiges: 'DAHA FAZLA',
+    nav_faelle: '🩺 Vaka Çalışmaları',
+    nav_karteikarten: '🃏 Kartlar',
+    nav_lernplan: '📅 Çalışma Planı',
+    nav_pruefung: '📄 Sınav Simülatörü',
+    nav_quiz: '📝 Quiz',
+    nav_atl: '📋 ATL Bakım Planlaması',
+    nav_bobath: '🧩 Bobath',
+    nav_krankheit: '🏥 Hastalık Tabloları',
+    nav_anatomie: '🩻 Anatomi',
+    nav_kinaes: '🤸 Kinesteji',
+    nav_prophylaxen: '🛡️ Profilaksi',
+    nav_wund: '🩹 Yara Bakımı',
+    nav_notfall: '🚨 Acil Yönetimi',
+    nav_scores: '📊 Değerlendirme Skorları',
+    nav_medi: '💊 İlaçlar',
+    nav_technik: '⚙️ Tıbbi Teknoloji',
+    nav_home: '🏠 Ana Sayfa',
+    nav_taschen: '📇 Cep Kartları',
+    nav_preise: '💳 Plan & Fiyatlar',
+    nav_theme: '🎨 Temam',
+    nav_feedback: '💬 Geri Bildirim / Hata Bildir',
+    nav_impressum: '📄 Yasal Bildirim',
+    nav_datenschutz: '🔒 Gizlilik Politikası',
+    nav_agb: '📑 Kullanım Koşulları',
+  },
+  ar: {
+    login_subtitle: 'بوابة امتحان التمريض NRW',
+    ph_name: 'الاسم الأول والأخير',
+    ph_pw: 'كلمة المرور',
+    stay_logged_in: 'ابقَ مسجلاً',
+    btn_login: 'تسجيل الدخول →',
+    ki_chat: 'المساعد الذكي',
+    ki_chat_sub: 'مساعدك التعليمي · إجابات فورية',
+    btn_trial: '7 أيام مجاناً',
+    btn_trial_sub: 'وصول كامل',
+    btn_free: 'ابدأ مجاناً',
+    btn_free_sub: 'نسخة محدودة',
+    btn_unlock: 'فعّل الوصول الكامل الآن',
+    no_code: '🔑 ليس لديك رمز وصول؟',
+    copyright: '© PLAN – تطبيق تعليم التمريض · جميع الحقوق محفوظة',
+    btn_back: 'رجوع →',
+    btn_logout: 'تسجيل الخروج',
+    nav_lernen: 'التعلم',
+    nav_wissen: 'المعرفة',
+    nav_medizin: 'الطب',
+    nav_sonstiges: 'المزيد',
+    nav_faelle: '🩺 دراسات الحالة',
+    nav_karteikarten: '🃏 البطاقات التعليمية',
+    nav_lernplan: '📅 خطة الدراسة',
+    nav_pruefung: '📄 محاكاة الامتحان',
+    nav_quiz: '📝 اختبار',
+    nav_atl: '📋 تخطيط الرعاية',
+    nav_bobath: '🧩 بوباث',
+    nav_krankheit: '🏥 الأمراض',
+    nav_anatomie: '🩻 التشريح',
+    nav_kinaes: '🤸 الحركية',
+    nav_prophylaxen: '🛡️ الوقاية',
+    nav_wund: '🩹 العناية بالجروح',
+    nav_notfall: '🚨 إدارة الطوارئ',
+    nav_scores: '📊 مقاييس التقييم',
+    nav_medi: '💊 الأدوية',
+    nav_technik: '⚙️ التكنولوجيا الطبية',
+    nav_home: '🏠 الرئيسية',
+    nav_taschen: '📇 بطاقات الجيب',
+    nav_preise: '💳 الباقات والأسعار',
+    nav_theme: '🎨 المظهر',
+    nav_feedback: '💬 ملاحظات / الإبلاغ عن مشكلة',
+    nav_impressum: '📄 الإشعار القانوني',
+    nav_datenschutz: '🔒 سياسة الخصوصية',
+    nav_agb: '📑 الشروط والأحكام',
+  },
+  ru: {
+    login_subtitle: 'Портал экзаменов по уходу NRW',
+    ph_name: 'Имя и фамилия',
+    ph_pw: 'Ваш пароль',
+    stay_logged_in: 'Оставаться в системе',
+    btn_login: 'Войти →',
+    ki_chat: 'ИИ Чат',
+    ki_chat_sub: 'Ваш учебный ассистент · мгновенные ответы',
+    btn_trial: '7 дней бесплатно',
+    btn_trial_sub: 'Полный доступ',
+    btn_free: 'Начать бесплатно',
+    btn_free_sub: 'ограниченная версия',
+    btn_unlock: 'Открыть полный доступ',
+    no_code: '🔑 Нет кода доступа?',
+    copyright: '© PLAN – Учебное приложение по уходу · Все права защищены',
+    btn_back: '← Назад',
+    btn_logout: 'Выйти',
+    nav_lernen: 'ОБУЧЕНИЕ',
+    nav_wissen: 'ЗНАНИЯ',
+    nav_medizin: 'МЕДИЦИНА',
+    nav_sonstiges: 'ЕЩЁ',
+    nav_faelle: '🩺 Клинические случаи',
+    nav_karteikarten: '🃏 Карточки',
+    nav_lernplan: '📅 План обучения',
+    nav_pruefung: '📄 Симулятор экзамена',
+    nav_quiz: '📝 Тест',
+    nav_atl: '📋 Планирование ухода',
+    nav_bobath: '🧩 Бобат',
+    nav_krankheit: '🏥 Заболевания',
+    nav_anatomie: '🩻 Анатомия',
+    nav_kinaes: '🤸 Кинестетика',
+    nav_prophylaxen: '🛡️ Профилактика',
+    nav_wund: '🩹 Уход за ранами',
+    nav_notfall: '🚨 Управление ЧС',
+    nav_scores: '📊 Оценочные шкалы',
+    nav_medi: '💊 Лекарства',
+    nav_technik: '⚙️ Медтехника',
+    nav_home: '🏠 Главная',
+    nav_taschen: '📇 Карманные карточки',
+    nav_preise: '💳 Тарифы',
+    nav_theme: '🎨 Моя тема',
+    nav_feedback: '💬 Обратная связь',
+    nav_impressum: '📄 Правовая информация',
+    nav_datenschutz: '🔒 Политика конфиденциальности',
+    nav_agb: '📑 Условия использования',
+  },
+  pl: {
+    login_subtitle: 'Portal Egzaminacyjny Pielęgniarstwa NRW',
+    ph_name: 'Imię i nazwisko',
+    ph_pw: 'Twoje hasło',
+    stay_logged_in: 'Pozostań zalogowany',
+    btn_login: 'Zaloguj się →',
+    ki_chat: 'Czat AI',
+    ki_chat_sub: 'Twój asystent nauki · natychmiastowe odpowiedzi',
+    btn_trial: '7 dni za darmo',
+    btn_trial_sub: 'Pełny dostęp',
+    btn_free: 'Zacznij za darmo',
+    btn_free_sub: 'wersja ograniczona',
+    btn_unlock: 'Odblokuj pełny dostęp',
+    no_code: '🔑 Nie masz kodu dostępu?',
+    copyright: '© PLAN – Aplikacja do Nauki Pielęgniarstwa · Wszelkie prawa zastrzeżone',
+    btn_back: '← Wstecz',
+    btn_logout: 'Wyloguj się',
+    nav_lernen: 'NAUKA',
+    nav_wissen: 'WIEDZA',
+    nav_medizin: 'MEDYCYNA',
+    nav_sonstiges: 'WIĘCEJ',
+    nav_faelle: '🩺 Studia przypadków',
+    nav_karteikarten: '🃏 Fiszki',
+    nav_lernplan: '📅 Plan nauki',
+    nav_pruefung: '📄 Symulator egzaminu',
+    nav_quiz: '📝 Quiz',
+    nav_atl: '📋 Planowanie opieki',
+    nav_bobath: '🧩 Bobath',
+    nav_krankheit: '🏥 Schorzenia',
+    nav_anatomie: '🩻 Anatomia',
+    nav_kinaes: '🤸 Kinestezja',
+    nav_prophylaxen: '🛡️ Profilaktyka',
+    nav_wund: '🩹 Pielęgnacja ran',
+    nav_notfall: '🚨 Zarządzanie kryzysowe',
+    nav_scores: '📊 Skale oceny',
+    nav_medi: '💊 Leki',
+    nav_technik: '⚙️ Technika medyczna',
+    nav_home: '🏠 Strona główna',
+    nav_taschen: '📇 Karty kieszonkowe',
+    nav_preise: '💳 Plan i ceny',
+    nav_theme: '🎨 Mój motyw',
+    nav_feedback: '💬 Opinie / zgłoś błąd',
+    nav_impressum: '📄 Informacja prawna',
+    nav_datenschutz: '🔒 Polityka prywatności',
+    nav_agb: '📑 Regulamin',
+  },
+  uk: {
+    login_subtitle: 'Портал іспитів з догляду NRW',
+    ph_name: "Ім'я та прізвище",
+    ph_pw: 'Ваш пароль',
+    stay_logged_in: 'Залишатися в системі',
+    btn_login: 'Увійти →',
+    ki_chat: 'ШІ Чат',
+    ki_chat_sub: 'Ваш навчальний асистент · миттєві відповіді',
+    btn_trial: '7 днів безкоштовно',
+    btn_trial_sub: 'Повний доступ',
+    btn_free: 'Почати безкоштовно',
+    btn_free_sub: 'обмежена версія',
+    btn_unlock: 'Відкрити повний доступ',
+    no_code: '🔑 Немає коду доступу?',
+    copyright: '© PLAN – Навчальний додаток з догляду · Всі права захищені',
+    btn_back: '← Назад',
+    btn_logout: 'Вийти',
+    nav_lernen: 'НАВЧАННЯ',
+    nav_wissen: 'ЗНАННЯ',
+    nav_medizin: 'МЕДИЦИНА',
+    nav_sonstiges: 'ЩЕ',
+    nav_faelle: '🩺 Клінічні випадки',
+    nav_karteikarten: '🃏 Картки',
+    nav_lernplan: '📅 План навчання',
+    nav_pruefung: '📄 Симулятор іспиту',
+    nav_quiz: '📝 Тест',
+    nav_atl: '📋 Планування догляду',
+    nav_bobath: '🧩 Бобат',
+    nav_krankheit: '🏥 Захворювання',
+    nav_anatomie: '🩻 Анатомія',
+    nav_kinaes: '🤸 Кінестетика',
+    nav_prophylaxen: '🛡️ Профілактика',
+    nav_wund: '🩹 Догляд за ранами',
+    nav_notfall: '🚨 Управління НС',
+    nav_scores: '📊 Оціночні шкали',
+    nav_medi: '💊 Ліки',
+    nav_technik: '⚙️ Медтехніка',
+    nav_home: '🏠 Головна',
+    nav_taschen: '📇 Кишенькові картки',
+    nav_preise: '💳 Тарифи',
+    nav_theme: '🎨 Моя тема',
+    nav_feedback: '💬 Зворотній зв\u2019язок',
+    nav_impressum: '📄 Правова інформація',
+    nav_datenschutz: '🔒 Політика конфіденційності',
+    nav_agb: '📑 Умови використання',
+  },
+  ro: {
+    login_subtitle: 'Portal Examen Nursing NRW',
+    ph_name: 'Prenume și nume',
+    ph_pw: 'Parola ta',
+    stay_logged_in: 'Rămâi autentificat',
+    btn_login: 'Autentificare →',
+    ki_chat: 'Chat AI',
+    ki_chat_sub: 'Asistentul tău de învățare · răspunsuri instant',
+    btn_trial: '7 zile gratuit',
+    btn_trial_sub: 'Acces complet',
+    btn_free: 'Începe gratuit',
+    btn_free_sub: 'versiune limitată',
+    btn_unlock: 'Deblochează accesul complet',
+    no_code: '🔑 Nu ai cod de acces?',
+    copyright: '© PLAN – Aplicație de Învățare Nursing · Toate drepturile rezervate',
+    btn_back: '← Înapoi',
+    btn_logout: 'Deconectare',
+    nav_lernen: 'ÎNVĂȚARE',
+    nav_wissen: 'CUNOȘTINȚE',
+    nav_medizin: 'MEDICINĂ',
+    nav_sonstiges: 'MAI MULT',
+    nav_faelle: '🩺 Studii de caz',
+    nav_karteikarten: '🃏 Carduri',
+    nav_lernplan: '📅 Plan de studiu',
+    nav_pruefung: '📄 Simulator examen',
+    nav_quiz: '📝 Quiz',
+    nav_atl: '📋 Planificare îngrijire',
+    nav_bobath: '🧩 Bobath',
+    nav_krankheit: '🏥 Boli',
+    nav_anatomie: '🩻 Anatomie',
+    nav_kinaes: '🤸 Kinestezie',
+    nav_prophylaxen: '🛡️ Profilaxie',
+    nav_wund: '🩹 Îngrijirea rănilor',
+    nav_notfall: '🚨 Management urgențe',
+    nav_scores: '📊 Scale de evaluare',
+    nav_medi: '💊 Medicamente',
+    nav_technik: '⚙️ Tehnologie medicală',
+    nav_home: '🏠 Acasă',
+    nav_taschen: '📇 Carduri de buzunar',
+    nav_preise: '💳 Plan & Prețuri',
+    nav_theme: '🎨 Tema mea',
+    nav_feedback: '💬 Feedback / Raportează problemă',
+    nav_impressum: '📄 Aviz legal',
+    nav_datenschutz: '🔒 Politică confidențialitate',
+    nav_agb: '📑 Termeni și condiții',
+  },
+  es: {
+    login_subtitle: 'Portal de Examen de Enfermería NRW',
+    ph_name: 'Nombre y apellido',
+    ph_pw: 'Tu contraseña',
+    stay_logged_in: 'Permanecer conectado',
+    btn_login: 'Iniciar sesión →',
+    ki_chat: 'Chat IA',
+    ki_chat_sub: 'Tu asistente de aprendizaje · respuestas inmediatas',
+    btn_trial: '7 días gratis',
+    btn_trial_sub: 'Acceso completo',
+    btn_free: 'Empezar gratis',
+    btn_free_sub: 'versión limitada',
+    btn_unlock: 'Desbloquear acceso completo',
+    no_code: '🔑 ¿Sin código de acceso?',
+    copyright: '© PLAN – App de Aprendizaje de Enfermería · Todos los derechos reservados',
+    btn_back: '← Atrás',
+    btn_logout: 'Cerrar sesión',
+    nav_lernen: 'APRENDER',
+    nav_wissen: 'CONOCIMIENTO',
+    nav_medizin: 'MEDICINA',
+    nav_sonstiges: 'MÁS',
+    nav_faelle: '🩺 Casos clínicos',
+    nav_karteikarten: '🃏 Tarjetas',
+    nav_lernplan: '📅 Plan de estudio',
+    nav_pruefung: '📄 Simulador de examen',
+    nav_quiz: '📝 Quiz',
+    nav_atl: '📋 Planificación de cuidados',
+    nav_bobath: '🧩 Bobath',
+    nav_krankheit: '🏥 Enfermedades',
+    nav_anatomie: '🩻 Anatomía',
+    nav_kinaes: '🤸 Cinestesia',
+    nav_prophylaxen: '🛡️ Profilaxis',
+    nav_wund: '🩹 Cuidado de heridas',
+    nav_notfall: '🚨 Gestión de emergencias',
+    nav_scores: '📊 Escalas de evaluación',
+    nav_medi: '💊 Medicamentos',
+    nav_technik: '⚙️ Tecnología médica',
+    nav_home: '🏠 Inicio',
+    nav_taschen: '📇 Tarjetas de bolsillo',
+    nav_preise: '💳 Plan & Precios',
+    nav_theme: '🎨 Mi tema',
+    nav_feedback: '💬 Feedback / Reportar problema',
+    nav_impressum: '📄 Aviso legal',
+    nav_datenschutz: '🔒 Política de privacidad',
+    nav_agb: '📑 Términos y condiciones',
+  }
+};
+
+let currentLang = localStorage.getItem('plan_lang') || 'de';
+
+function applyLang(lang) {
+  if (!I18N[lang]) return;
+  currentLang = lang;
+  localStorage.setItem('plan_lang', lang);
+  const t = I18N[lang];
+
+  // RTL für Arabisch
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+  // Alle data-i18n Elemente aktualisieren
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+
+  // Placeholders aktualisieren
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+
+  // Aktive Sprache hervorheben
+  document.querySelectorAll('[onclick*="applyLang"]').forEach(btn => {
+    const match = btn.getAttribute('onclick').match(/applyLang\('(\w+)'\)/);
+    if (match) {
+      btn.style.borderColor = match[1] === lang ? 'rgba(56,189,248,.8)' : 'rgba(255,255,255,.2)';
+      btn.style.color = match[1] === lang ? '#38bdf8' : '#cbd5e1';
+    }
+  });
+}
+
+// Sprache beim Start anwenden
+document.addEventListener('DOMContentLoaded', () => {
+  const savedLang = localStorage.getItem('plan_lang') || 'de';
+  if (savedLang !== 'de') applyLang(savedLang);
+});
+// ═══════════════════════════════════════════════
+;
 
 // ─── IMPRESSUM & DATENSCHUTZ ─────────────────────────────────────────────────
 function showImpressum() {
