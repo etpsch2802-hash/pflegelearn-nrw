@@ -415,20 +415,7 @@
 
 <!-- PASSWORD SCREEN -->
 <div class="pw-screen active" id="pw-screen">
-  
-<!-- SPRACHAUSWAHL -->
-<div id="lang-selector" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px auto 0;max-width:320px">
-  <button onclick="applyLang('de')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Deutsch">🇩🇪 DE</button>
-  <button onclick="applyLang('en')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="English">🇬🇧 EN</button>
-  <button onclick="applyLang('tr')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Türkçe">🇹🇷 TR</button>
-  <button onclick="applyLang('ar')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="العربية">🇸🇦 AR</button>
-  <button onclick="applyLang('ru')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Русский">🇷🇺 RU</button>
-  <button onclick="applyLang('pl')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Polski">🇵🇱 PL</button>
-  <button onclick="applyLang('uk')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Українська">🇺🇦 UK</button>
-  <button onclick="applyLang('ro')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Română">🇷🇴 RO</button>
-  <button onclick="applyLang('es')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:12px;cursor:pointer;font-family:inherit" title="Español">🇪🇸 ES</button>
-</div>
-<div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
+  <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
   <div class="pw-subtitle" style="margin-top:8px"><span data-i18n="login_subtitle">Prüfungs-Portal NRW</span></div>
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px">👤 Dein Name</div>
@@ -476,7 +463,18 @@
     <a href="#agb" onclick="showAGB()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
   </div>
   <div class="pw-copyright"><span data-i18n="copyright">© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</span></div>
-  <button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
+  <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:12px auto 0;max-width:320px">
+  <button type="button" onclick="window.applyLang('de')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Deutsch">🇩🇪</button>
+  <button type="button" onclick="window.applyLang('en')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="English">🇬🇧</button>
+  <button type="button" onclick="window.applyLang('tr')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Türkçe">🇹🇷</button>
+  <button type="button" onclick="window.applyLang('ar')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="العربية">🇸🇦</button>
+  <button type="button" onclick="window.applyLang('ru')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Русский">🇷🇺</button>
+  <button type="button" onclick="window.applyLang('pl')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Polski">🇵🇱</button>
+  <button type="button" onclick="window.applyLang('uk')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Українська">🇺🇦</button>
+  <button type="button" onclick="window.applyLang('ro')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Română">🇷🇴</button>
+  <button type="button" onclick="window.applyLang('es')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Español">🇪🇸</button>
+</div>
+<button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
 </div>
 
 <!-- WATERMARK -->
