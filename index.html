@@ -2899,6 +2899,7 @@ function showGratisLimit(type, n){
   ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
 }
 function startQuiz(kat) {
+  quizCE = null;
   // Bereichscheck für Quiz
   if (currentBereich && currentBereich.quiz_kats && kat !== "alle") {
     if (!currentBereich.quiz_kats.includes(kat)) {
