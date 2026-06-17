@@ -463,17 +463,9 @@
     <a href="#agb" onclick="showAGB()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
   </div>
   <div class="pw-copyright"><span data-i18n="copyright">© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</span></div>
-  <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:12px auto 0;max-width:320px">
-  <button type="button" onclick="window.applyLang('de')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Deutsch">🇩🇪</button>
-  <button type="button" onclick="window.applyLang('en')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="English">🇬🇧</button>
-  <button type="button" onclick="window.applyLang('tr')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Türkçe">🇹🇷</button>
-  <button type="button" onclick="window.applyLang('ar')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="العربية">🇸🇦</button>
-  <button type="button" onclick="window.applyLang('ru')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Русский">🇷🇺</button>
-  <button type="button" onclick="window.applyLang('pl')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Polski">🇵🇱</button>
-  <button type="button" onclick="window.applyLang('uk')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Українська">🇺🇦</button>
-  <button type="button" onclick="window.applyLang('ro')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Română">🇷🇴</button>
-  <button type="button" onclick="window.applyLang('es')" style="background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit" title="Español">🇪🇸</button>
-</div>
+  <div style="display:flex;justify-content:center;margin:12px auto 0;max-width:320px">
+    <button type="button" onclick="showLangSoon()" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:7px 14px;color:#7da7c4;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">🌍 <span>Sprachen / Languages</span></button>
+  </div>
 <button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
 </div>
 
@@ -586,18 +578,7 @@
   
   <!-- SPRACHAUSWAHL NAV -->
   <div style="padding:8px 6px;border-top:1px solid rgba(255,255,255,.06);margin-top:4px">
-    <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(56,189,248,.5);padding:4px 6px 6px">SPRACHE</div>
-    <div style="display:flex;gap:4px;flex-wrap:wrap;padding:0 6px">
-      <button onclick="applyLang('de');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇩🇪 DE</button>
-      <button onclick="applyLang('en');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
-      <button onclick="applyLang('tr');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇹🇷 TR</button>
-      <button onclick="applyLang('ar');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇸🇦 AR</button>
-      <button onclick="applyLang('ru');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇷🇺 RU</button>
-      <button onclick="applyLang('pl');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇵🇱 PL</button>
-      <button onclick="applyLang('uk');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇺🇦 UK</button>
-      <button onclick="applyLang('ro');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇷🇴 RO</button>
-      <button onclick="applyLang('es');document.getElementById('nav-dropdown').style.display='none'" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:3px 6px;color:#cbd5e1;font-size:11px;cursor:pointer;font-family:inherit">🇪🇸 ES</button>
-    </div>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLangSoon()" class="nav-drop-btn">🌍 Sprachen / Languages</button>
   </div>
 <button onclick="showImpressum()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_impressum">📄 Impressum</span></button>
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_datenschutz">🔒 Datenschutz</span></button>
@@ -6890,6 +6871,22 @@ function checkPW() {
   setTimeout(() => { unlockAudio(); playHeartbeat(); }, 400);
   setTimeout(showOnboarding, 500);
   setTimeout(checkExamenReminder, 800);
+}
+
+function showLangSoon() {
+  const ov = document.createElement('div');
+  ov.id = 'lang-soon';
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
+  ov.innerHTML = `
+    <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.35);border-radius:18px;padding:26px;width:100%;max-width:340px;text-align:center">
+      <div style="font-size:44px;margin-bottom:10px">🌍</div>
+      <div style="font-size:18px;font-weight:800;color:#38bdf8;margin-bottom:8px">Mehrsprachigkeit kommt bald</div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.7;margin-bottom:16px">PLAN wird bald in mehreren Sprachen verfügbar sein – damit noch mehr Pflege-Azubis profitieren.</div>
+      <div style="font-size:12px;color:#7da7c4;line-height:1.9;margin-bottom:20px">🇩🇪 Deutsch &nbsp; 🇬🇧 English &nbsp; 🇹🇷 Türkçe<br>🇸🇦 العربية &nbsp; 🇷🇺 Русский &nbsp; 🇵🇱 Polski<br>🇺🇦 Українська &nbsp; 🇷🇴 Română &nbsp; 🇪🇸 Español</div>
+      <button onclick="document.getElementById('lang-soon').remove()" style="width:100%;background:linear-gradient(135deg,#38bdf8,#0ea5e9);border:none;border-radius:10px;padding:12px;color:#04121f;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">Verstanden</button>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
 }
 
 function showError(msg) {
