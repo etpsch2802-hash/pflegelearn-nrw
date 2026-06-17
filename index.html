@@ -30,14 +30,14 @@
 <meta name="keywords" content="Pflege, Pflegeausbildung, generalistische Pflegeausbildung, Pflegefachfrau, Pflegefachmann, Pflegeexamen, Prüfungsvorbereitung, PflBG 2020, Pflege lernen, Pflege App, Deutschland, NRW, ATA, OTA, Intensivpflege, Anästhesie, GPA, Quiz, Fallbeispiele">
 <meta name="author" content="PLAN – Pflege Learn App NRW">
 <title>PLAN – Pflege Learn App NRW</title>
-<link rel="canonical" href="https://pflegelearn-nrw.vercel.app/">
+<link rel="canonical" href="https://plan-nrw.de/">
 <meta name="google-site-verification" content="KFsBl77K5mWtZxUlQYyi3WYe18ehWB0YmQRR7qdj0vk" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "PLAN – Pflege Learn App NRW",
-  "url": "https://pflegelearn-nrw.vercel.app",
+  "url": "https://plan-nrw.de",
   "description": "Lern-App für die generalistische Pflegeausbildung nach PflBG 2020. Mit 581 Prüfungsfragen, 100 Krankheitsbildern, Assessment-Scores, Pflegeplanungen und KI-Assistent.",
   "applicationCategory": "EducationApplication",
   "operatingSystem": "Web, Android, iOS",
@@ -94,17 +94,17 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="PLAN – Pflege Learn App NRW">
 <meta property="og:description" content="Lern-App für die generalistische Pflegeausbildung nach PflBG 2020 – bundesweit einsetzbar. Mit Prüfungsfragen, Scores, Krankheitsbildern und Pflegeplanungen.">
-<meta property="og:image" content="https://pflegelearn-nrw.vercel.app/icon-512.png">
+<meta property="og:image" content="https://plan-nrw.de/icon-512.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
 <meta property="og:image:alt" content="PLAN Logo">
-<meta property="og:url" content="https://pflegelearn-nrw.vercel.app">
+<meta property="og:url" content="https://plan-nrw.de">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PLAN – Pflege Learn App NRW">
 <meta name="twitter:description" content="Lern-App für die generalistische Pflegeausbildung nach PflBG 2020 – bundesweit einsetzbar. Mit Prüfungsfragen, Scores, Krankheitsbildern und Pflegeplanungen.">
-<meta name="twitter:image" content="https://pflegelearn-nrw.vercel.app/icon-512.png">
-<meta name="twitter:url" content="https://pflegelearn-nrw.vercel.app">
+<meta name="twitter:image" content="https://plan-nrw.de/icon-512.png">
+<meta name="twitter:url" content="https://plan-nrw.de">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @keyframes kiNeonGlow{0%,100%{box-shadow:0 0 10px rgba(34,211,238,.45),0 0 26px rgba(34,211,238,.22),inset 0 0 8px rgba(34,211,238,.15);}50%{box-shadow:0 0 18px rgba(34,211,238,.85),0 0 42px rgba(34,211,238,.45),inset 0 0 12px rgba(34,211,238,.28);}}
@@ -10718,7 +10718,7 @@ function generateLernnachweis() {
     </div>
   </div>
   <div class="footer">
-    <div>PflegeLearn NRW · pflegelearn-nrw.vercel.app</div>
+    <div>PLAN NRW · plan-nrw.de</div>
     <div>Entwickelt von Patrick Schenkelberger · Fachpfleger Anästhesie & Intensivmedizin NRW</div>
     <div style="margin-top:8px;font-size:10px">Dieser Lernnachweis ist kein staatlich anerkanntes Zertifikat.</div>
   </div>
@@ -11851,14 +11851,14 @@ function showTaschenkarte(id) {
           '<div style="font-size:14px;font-weight:700;color:' + k.farbe + ';line-height:1.2">' + k.titel + '</div>' +
         '</div>' +
         vsHtml +
-        '<div style="position:absolute;bottom:8px;right:10px;font-size:8px;color:' + k.farbe + '66">pflegelearn-nrw.vercel.app</div>' +
+        '<div style="position:absolute;bottom:8px;right:10px;font-size:8px;color:' + k.farbe + '66">plan-nrw.de</div>' +
       '</div>' +
 
       '<div style="background:white;border:2px solid ' + k.farbe + '55;border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px">' +
         qrSvg +
         '<div>' +
           '<div style="font-size:11px;font-weight:700;color:#0b1a35;margin-bottom:4px">📱 App scannen</div>' +
-          '<div style="font-size:10px;color:#4a7a9b;margin-bottom:8px;line-height:1.4">pflegelearn-nrw.vercel.app</div>' +
+          '<div style="font-size:10px;color:#4a7a9b;margin-bottom:8px;line-height:1.4">plan-nrw.de</div>' +
           '<div style="font-size:9px;color:#0b1a35;font-weight:700">PLAN</div>' +
           '<div style="font-size:8px;color:#64748b">Prüfungs-Portal NRW</div>' +
           '<div style="margin-top:6px;background:#0b1a35;border-radius:6px;padding:4px 8px;font-size:8px;color:' + k.farbe + ';font-weight:700;display:inline-block">' + k.icon + ' ' + k.titel + '</div>' +
@@ -11931,7 +11931,7 @@ function getTaschenkarteHTML(karten) {
             <div class="section-label" style="color:${k.farbe}">${s.label}</div>
             ${s.punkte.map(p => `<div class="punkt">• ${p}</div>`).join('')}
           `).join('')}
-          <div class="karte-footer">pflegelearn-nrw.vercel.app</div>
+          <div class="karte-footer">plan-nrw.de</div>
         </div>
       </div>
 
@@ -11943,7 +11943,7 @@ function getTaschenkarteHTML(karten) {
             <img src="${LOGO}" style="width:36px;height:36px;object-fit:contain;margin-bottom:3mm;display:block" alt="Logo">
             <div style="font-size:9pt;font-weight:900;color:#0b1a35;line-height:1.1">PLAN <span style="color:${k.farbe}">NRW</span></div>
             <div style="font-size:6pt;color:#64748b;margin-bottom:2mm">Prüfungs-Portal NRW</div>
-            <div style="font-size:6.5pt;color:#4a7a9b;margin-bottom:2mm">pflegelearn-nrw.vercel.app</div>
+            <div style="font-size:6.5pt;color:#4a7a9b;margin-bottom:2mm">plan-nrw.de</div>
             <div class="rueck-tag" style="background:${k.farbe}22;border:0.3mm solid ${k.farbe}66;color:${k.farbe}">${k.icon} ${k.titel}</div>
           </div>
         </div>
@@ -14077,7 +14077,7 @@ function showAGB() {
       </div>
       <div style="font-size:12.5px;color:#94a3b8;line-height:1.75">
         ${S('§ 1 Geltungsbereich und Anbieter')}<br>
-        Diese AGB gelten für die Nutzung der App „PLAN NRW" (pflegelearn-nrw.vercel.app) sowie für alle darüber geschlossenen Verträge. Anbieter: Patrick Schenkelberger, Am Steinknapp 20a, 44795 Bochum, kontakt@plan-nrw.de (Kleinunternehmer gem. § 19 UStG).<br><br>
+        Diese AGB gelten für die Nutzung der App „PLAN NRW" (plan-nrw.de) sowie für alle darüber geschlossenen Verträge. Anbieter: Patrick Schenkelberger, Am Steinknapp 20a, 44795 Bochum, kontakt@plan-nrw.de (Kleinunternehmer gem. § 19 UStG).<br><br>
         ${S('§ 2 Leistung')}<br>
         Die App stellt digitale Lerninhalte für die Pflegeausbildung bereit. Die Inhalte dienen ausschließlich Lernzwecken und ersetzen keine medizinische oder pflegerische Beratung. Ein Anspruch auf ununterbrochene Verfügbarkeit besteht nicht.<br><br>
         ${S('§ 3 Kostenlose Testphase')}<br>
@@ -14183,9 +14183,9 @@ function showDatenschutz() {
 
         <strong style="color:#ddf0fb">5. Datenlöschung</strong><br>
         • In der App: Einstellungen → Alle Daten löschen<br>
-        • Browser: Website-Daten für pflegelearn-nrw.vercel.app löschen<br>
+        • Browser: Website-Daten für plan-nrw.de löschen<br>
         • Per E-Mail: kontakt@plan-nrw.de<br>
-        Vollständige Datenschutzerklärung: <a href="https://pflegelearn-nrw.vercel.app/datenschutz.html" style="color:var(--accent)" target="_blank">pflegelearn-nrw.vercel.app/datenschutz.html</a><br><br>
+        Vollständige Datenschutzerklärung: <a href="https://plan-nrw.de/datenschutz.html" style="color:var(--accent)" target="_blank">plan-nrw.de/datenschutz.html</a><br><br>
 
         <strong style="color:#ddf0fb">6. Deine Rechte (DSGVO)</strong><br>
         Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch. Kontakt: kontakt@plan-nrw.de<br><br>
