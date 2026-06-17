@@ -2204,6 +2204,7 @@ function dismissOnboarding() {
 }
 
 function showScreen(name) {
+  if (name !== 'chat') { try { stopSpeak(); } catch(e) {} }
   // Scroll-Position des bisherigen Screens merken (fuer "zurueck an dieselbe Stelle")
   if (currentScreen) { _scrollPos[currentScreen] = window.scrollY || window.pageYOffset || 0; }
   document.querySelectorAll(".page, .chat-page").forEach(p => { p.classList.remove("active"); });
@@ -2459,6 +2460,7 @@ function speak(text, force) {
 }
 function stopSpeak() { try { if (ttsSupported()) speechSynthesis.cancel(); } catch(e) {} }
 if (ttsSupported()) { try { speechSynthesis.onvoiceschanged = populateVoiceDropdown; } catch(e) {} }
+document.addEventListener('visibilitychange', () => { if (document.hidden) { try { stopSpeak(); } catch(e) {} } });
 
 // ── Niveau-Auswahl im Picker ──
 function setExamLevel(l) {
