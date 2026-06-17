@@ -2045,6 +2045,7 @@ let isLoading = false;
 let examMode = null; // null | 'muendlich' | 'schriftlich'
 let examLevel = 'examen';      // 'azubi' | 'examen' | 'profi'
 let examLevelSel = 'examen';   // Auswahl im Picker
+let examTopic = '';            // Freitext-Thema (optional)
 let ttsEnabled = false;        // Sprachausgabe an/aus
 let ttsVoiceURI = null;        // gewaehlte Stimme
 let currentExamSession = null; // laufende Pruefung fuer Verlauf
@@ -2480,6 +2481,7 @@ function openExamPicker(modus) {
   // KI = Vollzugang erforderlich
   if (currentBereich && !currentBereich.ki_unbegrenzt) { showUpgradeModal(); return; }
   loadExamSettings();
+  examTopic = '';
   const titel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : '✍️ Schriftliche Prüfung';
   const ov = document.createElement('div');
   ov.id = 'exam-picker';
@@ -2513,6 +2515,9 @@ function openExamPicker(modus) {
         ${lvlBtn('examen','Examen','Abschluss')}
         ${lvlBtn('profi','Profi','FachWB')}
       </div>
+      <div style="font-size:11px;color:#7da7c4;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px">Thema (optional)</div>
+      <input type="text" id="exam-topic" oninput="examTopic=this.value.trim()" placeholder="z. B. Herzinsuffizienz, Schlaganfall, Diabetes …" style="width:100%;background:#0d2135;border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 12px;color:#e8f4fc;font-size:13px;font-family:inherit;margin-bottom:6px;box-sizing:border-box">
+      <div style="font-size:10px;color:#5a7a92;margin-bottom:14px">Leer lassen = Prüfer wählt das Thema selbst</div>
       ${ttsBlock}
       <div style="font-size:11px;color:#7da7c4;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px">Ausbildungsweg</div>
       ${rows}
@@ -2609,6 +2614,7 @@ async function examKickoff() {
     let activeSys = examMode === 'muendlich' ? SYS_EXAM_MUENDLICH : SYS_EXAM_SCHRIFTLICH;
     if (a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
     activeSys += `\n\n${examLevelText(examLevel)}`;
+    if (examTopic) activeSys += `\n\nPRÜFUNGSTHEMA: Prüfe gezielt und ausschließlich zum Thema "${examTopic}". Eröffne die Prüfung mit einer passenden Fallsituation oder Einstiegsfrage zu diesem Thema.`;
     const reply = await callKI(chatHistory, activeSys);
     removeTyping();
     chatHistory.push({ role:"assistant", content: reply });
@@ -2808,6 +2814,7 @@ async function sendMsg(text) {
     else if (examMode === 'schriftlich') activeSys = SYS_EXAM_SCHRIFTLICH;
     if (examMode && a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
     if (examMode) activeSys += `\n\n${examLevelText(examLevel)}`;
+    if (examMode && examTopic) activeSys += `\n\nPRÜFUNGSTHEMA: Halte die Prüfung thematisch beim Thema "${examTopic}".`;
     const reply = await callKI(chatHistory, activeSys);
     removeTyping();
     chatHistory.push({ role:"assistant", content: reply });
