@@ -647,7 +647,7 @@
         <option value="ATA">ATA – Anästhesietechnische Assistenz</option>
         <option value="Fachpflege Intensiv">Fachpflege Intensiv</option>
         <option value="OTA">OTA – Operationstechnische Assistenz</option>
-        <option value="Schüler/in allgemein">Schüler/in (allgemein)</option>
+        <option value="Auszubildende/r allgemein">Auszubildende/r (allgemein)</option>
         <option value="Pflegefachkraft">Pflegefachkraft (bereits examiniert)</option>
       </select>
     </div>
@@ -1213,7 +1213,7 @@
       <div style="background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.25);border-radius:14px;padding:16px;margin-bottom:12px">
         <div style="font-size:12px;font-weight:700;color:#25d366;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">📱 WhatsApp Nachrichtenvorlagen</div>
 
-        ${["Einzelner Schüler","Schullizenz","Demo / Kostenlos testen","Verlängerung"].map((t,i) => `
+        ${["Einzellizenz","Schullizenz","Demo / Kostenlos testen","Verlängerung"].map((t,i) => `
         <div style="margin-bottom:14px">
           <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">${["👤","🏫","🎁","🔄"][i]} ${t}</div>
           <div id="wa-vorlage-${i}" style="background:rgba(0,0,0,.3);border-radius:9px;padding:12px;font-size:12px;color:#94a3b8;line-height:1.8;white-space:pre-wrap"></div>
@@ -1438,7 +1438,7 @@ const QUIZ_FRAGEN = [
 {"kat":"pflegeplanung","frage":"Was ist das Orem-Pflegemodell?","opt":["AEDL-Modell","Maslow-Modell","Selbstpflegedefizit-Modell","Salutogenese"],"k":2,"erkl":"Orem: Pflege nur aktiv bei Selbstpflegedefizit. 3 Systeme: voll-kompensierend, teil-kompensierend, unterstützend-edukativ. Ziel: Selbstpflegekompetenz stärken.","s":"schwer"},
 {"kat":"pflegeplanung","frage":"Was ist das SBAR-Schema?","opt":["Beatmungseinstellung","Dekubitusklassifizierung","Strukturierte Kommunikation","Pflegediagnose"],"k":2,"erkl":"SBAR: S=Situation, B=Background (Vorgeschichte), A=Assessment (eigene Einschätzung), R=Recommendation (Empfehlung). Wichtig bei Notfällen, Arztgesprächen, Übergaben.","s":"mittel"},
 {"kat":"pflegeplanung","frage":"Was ist die NRS und wie wird sie eingesetzt?","opt":["Nationales Sturzregister","Reanimationsschema","Numerische Rating-Skala","Nutritional Risk Screening"],"k":2,"erkl":"NRS: Patient bewertet Schmerz 0-10. Ab NRS ≥4 = Handlungsbedarf. Vor und nach Schmerzmedikation dokumentieren. Alternativen: VAS, BPS/CPOT (nicht-kommunikativ).","s":"leicht"},
-{"kat":"pflegeplanung","frage":"Was ist Pflegevisite?","opt":["Nur Stationsleitung","Systematische Überprüfung des Pflegeprozesses","Nur Schüler","Arztvisite ohne Pflege"],"k":1,"erkl":"Pflegevisite: regelmäßige Überprüfung ob Pflegeziele erreicht, Plan aktuell, Patient zufrieden. Bezugspflegekraft + Patient + ggf. Angehörige. Unterschied: keine Arztvisite!","s":"mittel"},
+{"kat":"pflegeplanung","frage":"Was ist Pflegevisite?","opt":["Nur Stationsleitung","Systematische Überprüfung des Pflegeprozesses","Nur Auszubildende","Arztvisite ohne Pflege"],"k":1,"erkl":"Pflegevisite: regelmäßige Überprüfung ob Pflegeziele erreicht, Plan aktuell, Patient zufrieden. Bezugspflegekraft + Patient + ggf. Angehörige. Unterschied: keine Arztvisite!","s":"mittel"},
 {"kat":"pflegeplanung","frage":"Was ist das Braden-Assessment?","opt":["Risikoeinschätzungs-Skala","Schmerztest","Ernährungsbewertung","Sturzrisikotest"],"k":0,"erkl":"Braden-Skala: 6 Faktoren bewertet. Max. 23 Punkte. ≤18 Punkte = Dekubitusrisiko. Je niedrigerer Wert desto höheres Risiko. Einzusetzen bei Aufnahme und bei Veränderungen.","s":"mittel"},
 {"kat":"pflegeplanung","frage":"Was ist Dekubitus-Kategorie II?","opt":["Muskel/Knochen sichtbar","Blasenbildung oder Erosion","Vollhautverlust bis Subkutis","Nicht-wegdrückbare Rötung"],"k":1,"erkl":"Dekubitus-Kategorien: I = nicht-wegdrückbare Rötung (Haut intakt), II = Blasen/Erosion (Teilverlust Dermis), III = Vollhautverlust bis Subkutis, IV = Muskeln/Knochen/Sehnen betroffen.","s":"schwer"},
 {"kat":"pflegeplanung","frage":"Was ist Pflegeüberleitung?","opt":["Fortbildung","Eine Pflegediagnose","Übergabe innerhalb Station","Strukturierte Weitergabe"],"k":3,"erkl":"Pflegeüberleitung (Entlassungsmanagement): Pflegeprobleme, Ressourcen, Maßnahmen, Hilfsmittelbedarf, Medikamente, soziale Situation weitergeben. Expertenstandard DNQP.","s":"mittel"},
@@ -3253,7 +3253,7 @@ function renderStats() {
 
 function renderVorlagen() {
   const vorlagen = [
-    // Einzelner Schüler
+    // Einzellizenz
     `Hallo [NAME]! 🎓
 
 Dein persönlicher Zugangscode für PLAN:
@@ -3279,13 +3279,13 @@ Viel Erfolg! 🏥`,
     `Guten Tag [SCHULE],
 
 anbei dein Zugangscode für PLAN – 
-Schullizenz für [ANZAHL] Schüler:
+Schullizenz für [ANZAHL] Auszubildende:
 
 🔑 [TOKEN EINFÜGEN]
 📅 Gültig bis: [DATUM]
 💰 Betrag: [PREIS]€/Monat
 
-Dieser Code gilt für alle Schüler Ihrer Einrichtung.
+Dieser Code gilt für alle Auszubildenden Ihrer Einrichtung.
 
 Einrichtung: kontakt@plan-nrw.de
 Mit freundlichen Grüßen`,
@@ -14095,7 +14095,7 @@ function showAGB() {
         ${S('§ 6 Laufzeit und Kündigung')}<br>
         Laufzeit 1 Monat, automatische Verlängerung um je 1 Monat. Jederzeit zum Ende des bezahlten Zeitraums kündbar; danach keine weitere Abbuchung. Kündigung über den Kündigungs-Button (unten), das Stripe-Kundenportal oder per E-Mail an kontakt@plan-nrw.de.<br><br>
         ${S('§ 7 Mindestalter / Minderjährige')}<br>
-        Kostenlose Nutzung altersunabhängig. Kostenpflichtiges Abo: ab 18 Jahren – ab 16 Jahren nur mit Einwilligung der Eltern; unter 16 ausgeschlossen. Schüler nutzen die App über die Schullizenz (Vertrag schließt die Schule bzw. der Träger), ohne eigenen kostenpflichtigen Vertrag.<br><br>
+        Kostenlose Nutzung altersunabhängig. Kostenpflichtiges Abo: ab 18 Jahren – ab 16 Jahren nur mit Einwilligung der Eltern; unter 16 ausgeschlossen. Auszubildende nutzen die App über die Schullizenz (Vertrag schließt die Schule bzw. der Träger), ohne eigenen kostenpflichtigen Vertrag.<br><br>
         ${S('§ 8 Widerrufsrecht')}<br>
         Verbrauchern steht ein 14-tägiges Widerrufsrecht zu (siehe Widerrufsbelehrung unten). Bei digitalen Inhalten kann es vorzeitig erlöschen, wenn der Nutzer ausdrücklich dem sofortigen Beginn zustimmt und den Verlust des Widerrufsrechts bestätigt.<br><br>
         ${S('§ 9 Nutzungsrechte / Urheberrecht')}<br>
