@@ -705,6 +705,13 @@
     <div style="margin-left:auto;font-size:20px;color:#7dd3fc">›</div>
   </button>
 
+  <!-- ── LERNEN NACH CE (Kompetenzbereiche) ── -->
+  <button onclick="openCEHub()" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.16),rgba(16,185,129,.05));border:1px solid rgba(52,211,153,.25);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;margin-bottom:10px">
+    <div style="font-size:32px">🎯</div>
+    <div style="flex:1"><div style="font-size:15px;font-weight:700;color:#6ee7b7">Lernen nach Kompetenzbereichen</div><div style="font-size:11px;color:#4a7a9b;margin-top:3px">11 Curriculare Einheiten (CE) · Quiz & Fortschritt</div></div>
+    <div style="margin-left:auto;font-size:20px;color:#6ee7b7">›</div>
+  </button>
+
   <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
   <div class="acc-wrap" id="acc-ausb">
     <button class="acc-header" onclick="toggleAcc('acc-ausb')">
@@ -1267,6 +1274,19 @@
 
 <!-- KARTEIKARTEN -->
 
+
+<!-- LERNEN NACH CE (Kompetenzbereiche) -->
+<div class="page" id="screen-ce">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:10px">
+      <div class="hero-icon">🎯</div>
+      <h1>Kompetenz<span>bereiche</span></h1>
+      <p>Lernen entlang der 11 Curricularen Einheiten (CE)</p>
+    </div>
+    <button onclick="showScreen('home')" style="background:rgba(255,255,255,.06);border:1px solid rgba(100,180,220,.18);border-radius:9px;padding:8px 14px;color:#9fc4dc;font-size:12px;cursor:pointer;font-family:inherit;margin-bottom:12px">← Zurück</button>
+    <div id="ce-content"></div>
+  </div>
+</div>
 
 <!-- LERNPLAN -->
 <div class="page" id="screen-lernplan">
@@ -1987,6 +2007,28 @@ const KATS = [
   {id:"ota",label:"OTA",icon:"🔬",color:"#facc15"},
   {id:"notfall",label:"Notfallmanagement",icon:"🚨",color:"#ef4444"},
 ];
+// ─── CURRICULARE EINHEITEN (CE) — generalistische Pflegeausbildung, Rahmenplan §53 PflBG ───
+const CE_LISTE = [
+  {id:"ce01", nr:"CE 01", icon:"🚀", titel:"Ausbildungsstart – Pflegefachfrau/-mann werden", kurz:"Rolle, Pflegeteam, Berufswunsch, erste Orientierung", gruppe:"einsatz"},
+  {id:"ce02", nr:"CE 02", icon:"🛏️", titel:"Bewegung und Selbstversorgung unterstützen", kurz:"Mobilität, Körperpflege, Prophylaxen, ATL", gruppe:"handlung"},
+  {id:"ce03", nr:"CE 03", icon:"💬", titel:"Erste Pflegeerfahrungen reflektieren – kommunizieren", kurz:"Kommunikation, Beziehungsgestaltung, Reflexion", gruppe:"einsatz"},
+  {id:"ce04", nr:"CE 04", icon:"🛡️", titel:"Gesundheit fördern und präventiv handeln", kurz:"Prävention, Gesundheitsförderung, Beratung", gruppe:"handlung"},
+  {id:"ce05", nr:"CE 05", icon:"🏥", titel:"In kurativen Prozessen unterstützen & Patientensicherheit", kurz:"Akutpflege, Innere, Chirurgie, Sicherheit", gruppe:"handlung"},
+  {id:"ce06", nr:"CE 06", icon:"🚨", titel:"In Akutsituationen sicher handeln", kurz:"Notfall, Intensiv, akute Verschlechterung", gruppe:"handlung"},
+  {id:"ce07", nr:"CE 07", icon:"♻️", titel:"Rehabilitatives Pflegehandeln im interprof. Team", kurz:"Rehabilitation, Teilhabe, Zusammenarbeit", gruppe:"handlung"},
+  {id:"ce08", nr:"CE 08", icon:"🕊️", titel:"Kritische Lebenssituationen & letzte Lebensphase", kurz:"Palliation, Sterbebegleitung, Trauer", gruppe:"handlung"},
+  {id:"ce09", nr:"CE 09", icon:"🌱", titel:"Lebensgestaltung lebensweltorientiert unterstützen", kurz:"Sozialpflege, Alltag, Lebenswelt, Altenpflege", gruppe:"handlung"},
+  {id:"ce10", nr:"CE 10", icon:"👶", titel:"Entwicklung & Gesundheit in Kindheit und Jugend", kurz:"Pädiatrie, Pflichteinsatz Kinder/Jugendliche", gruppe:"einsatz"},
+  {id:"ce11", nr:"CE 11", icon:"🧠", titel:"Psychische Gesundheitsprobleme & kognitive Beeinträchtigung", kurz:"Psychiatrie, Pflichteinsatz, personenzentriert", gruppe:"einsatz"},
+];
+// Bestehende Quiz-Kategorien -> CE (nur Pflege-Wege; OTA/ATA/GPA/Pflegehelfer/Anerkennung behalten eigene Struktur)
+const KAT_ZU_CE = {
+  pflegeplanung:"ce01", psychologie:"ce03",
+  chirurgie:"ce05", innere:"ce05",
+  notfall:"ce06", intensiv:"ce06",
+  altenpflege:"ce09", paediatrie:"ce10", psychiatrie:"ce11"
+};
+let quizCE = null; // aktive CE im Quiz (Retry/Progress)
 
 const SYS = `Du bist PLAN – Lernassistent für alle 7 Pflegeausbildungswege in NRW und Medizintechnik:
 1. Pflegefachassistenz (1J, PflfachassAPrV NRW 2021)
@@ -2204,7 +2246,6 @@ function dismissOnboarding() {
 }
 
 function showScreen(name) {
-  if (name !== 'chat') { try { stopSpeak(); } catch(e) {} }
   // Scroll-Position des bisherigen Screens merken (fuer "zurueck an dieselbe Stelle")
   if (currentScreen) { _scrollPos[currentScreen] = window.scrollY || window.pageYOffset || 0; }
   document.querySelectorAll(".page, .chat-page").forEach(p => { p.classList.remove("active"); });
@@ -2460,7 +2501,6 @@ function speak(text, force) {
 }
 function stopSpeak() { try { if (ttsSupported()) speechSynthesis.cancel(); } catch(e) {} }
 if (ttsSupported()) { try { speechSynthesis.onvoiceschanged = populateVoiceDropdown; } catch(e) {} }
-document.addEventListener('visibilitychange', () => { if (document.hidden) { try { stopSpeak(); } catch(e) {} } });
 
 // ── Niveau-Auswahl im Picker ──
 function setExamLevel(l) {
@@ -2966,7 +3006,95 @@ function showResult() {
   try { renderHomeStats(); } catch(e) {}
 }
 
-function retryQuiz() { startQuiz(quizKat); }
+function retryQuiz() { if (quizCE) startQuizCE(quizCE); else startQuiz(quizKat); }
+
+// ─── CE-LERNHUB ───
+function ceFragenCount(ceId) {
+  if (ceId === "grundlagen") return QUIZ_FRAGEN.filter(q => q.kat === "anatomie").length;
+  return QUIZ_FRAGEN.filter(q => KAT_ZU_CE[q.kat] === ceId).length;
+}
+function getCEDone() { try { return JSON.parse(localStorage.getItem('pl_ce_done')) || {}; } catch(e){ return {}; } }
+function toggleCEDone(ceId) {
+  const d = getCEDone(); d[ceId] = !d[ceId];
+  try { localStorage.setItem('pl_ce_done', JSON.stringify(d)); } catch(e){}
+  renderCEHub();
+}
+function ceBestPct(ceId) {
+  try {
+    const stats = getStats(); const s = currentUser && stats[currentUser.token];
+    if (!s || !s.sessions) return null;
+    const rel = s.sessions.filter(x => x.kat === ceId);
+    if (!rel.length) return null;
+    return Math.max.apply(null, rel.map(x => x.pct));
+  } catch(e){ return null; }
+}
+function startQuizCE(ceId) {
+  const pool = ceId === "grundlagen"
+    ? QUIZ_FRAGEN.filter(q => q.kat === "anatomie")
+    : QUIZ_FRAGEN.filter(q => KAT_ZU_CE[q.kat] === ceId);
+  if (!pool.length) return;
+  if (currentBereich && currentBereich.quiz_kats) {
+    const allowed = pool.filter(q => currentBereich.quiz_kats.includes(q.kat));
+    if (!allowed.length) { showUpgradeModal(); return; }
+  }
+  quizCE = ceId; quizKat = ceId;
+  const _niveauPool = (quizNiveau && quizNiveau !== "alle") ? pool.filter(q => q.s === quizNiveau) : pool;
+  let _src = _niveauPool.length ? _niveauPool : pool;
+  if (currentBereich && currentBereich.quiz_kats) {
+    const f = _src.filter(q => currentBereich.quiz_kats.includes(q.kat));
+    if (f.length) _src = f;
+  }
+  quizList = _src.slice().sort(() => Math.random() - 0.5).map(q => {
+    const indexed = q.opt.map((o, i) => ({text:o, correct:i === q.k}));
+    indexed.sort(() => Math.random() - 0.5);
+    return Object.assign({}, q, { opt: indexed.map(x => x.text), k: indexed.findIndex(x => x.correct) });
+  });
+  if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
+    const _used = quizUsedToday();
+    if (_used >= currentBereich.quiz_max) { showGratisLimit('quiz', currentBereich.quiz_max); return; }
+    quizList = quizList.slice(0, Math.max(1, currentBereich.quiz_max - _used));
+  }
+  quizIdx = 0; quizAnswers = []; selectedAns = null; showExp = false;
+  showScreen("quiz"); renderQuestion();
+}
+function openCEHub() { renderCEHub(); showScreen("ce"); }
+function renderCEHub() {
+  const done = getCEDone();
+  const total = CE_LISTE.length;
+  const doneCount = CE_LISTE.filter(c => done[c.id]).length;
+  const card = function(c) {
+    const cnt = ceFragenCount(c.id);
+    const best = ceBestPct(c.id);
+    const isDone = !!done[c.id];
+    const badge = isDone ? '<span style="color:#34d399;font-size:11px;font-weight:700">✓ gelernt</span>'
+      : (best !== null ? '<span style="color:#fbbf24;font-size:11px;font-weight:700">' + best + '% best</span>' : '<span style="color:#64748b;font-size:11px">offen</span>');
+    const quizBtn = cnt > 0
+      ? '<button onclick="startQuizCE(\'' + c.id + '\')" style="flex:1;background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);border-radius:8px;padding:8px;color:#7dd3fc;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">▶ Quiz (' + cnt + ')</button>'
+      : '<span style="flex:1;text-align:center;padding:8px;color:#64748b;font-size:11px">Fragen folgen</span>';
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(100,180,220,.14);border-radius:12px;padding:13px;margin-bottom:10px">'
+      + '<div style="display:flex;align-items:center;gap:9px;margin-bottom:4px"><span style="font-size:22px">' + c.icon + '</span>'
+      + '<div style="flex:1"><div style="font-size:11px;color:#7da7c4;font-weight:700;letter-spacing:.5px">' + c.nr + '</div>'
+      + '<div style="font-size:13px;color:#e8f4fc;font-weight:700;line-height:1.3">' + c.titel + '</div></div>' + badge + '</div>'
+      + '<div style="font-size:11px;color:#5a7a92;margin:4px 0 10px">' + c.kurz + '</div>'
+      + '<div style="display:flex;gap:7px"><button onclick="toggleCEDone(\'' + c.id + '\')" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:8px 11px;color:#6ee7b7;font-size:13px;cursor:pointer;font-family:inherit">' + (isDone ? '↩' : '✓') + '</button>' + quizBtn + '</div></div>';
+  };
+  const grp = function(titel, ce) { return '<div style="font-size:11px;color:#7da7c4;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:14px 0 8px">' + titel + '</div>' + ce.map(card).join(''); };
+  const einsatz = CE_LISTE.filter(c => c.gruppe === 'einsatz');
+  const handlung = CE_LISTE.filter(c => c.gruppe === 'handlung');
+  const gCnt = ceFragenCount('grundlagen');
+  document.getElementById('ce-content').innerHTML =
+    '<div style="background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(14,165,233,.05));border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:13px;margin-bottom:14px">'
+    + '<div style="font-size:13px;color:#7dd3fc;font-weight:700">Dein Fortschritt</div>'
+    + '<div style="font-size:12px;color:#94a3b8;margin-top:3px">' + doneCount + ' von ' + total + ' Kompetenzbereichen als gelernt markiert</div>'
+    + '<div style="background:rgba(255,255,255,.08);border-radius:6px;height:7px;margin-top:8px;overflow:hidden"><div style="height:100%;width:' + Math.round(doneCount / total * 100) + '%;background:linear-gradient(90deg,#38bdf8,#34d399)"></div></div></div>'
+    + '<div style="font-size:12px;color:#5a7a92;margin-bottom:6px">Generalistische Pflegeausbildung · 11 Curriculare Einheiten (Rahmenplan §53 PflBG). Inhalte sind den Kompetenzen zugeordnet – keine Fächer mehr.</div>'
+    + grp('Ausbildungseinsätze & Orientierung', einsatz)
+    + grp('Pflegerische Handlungsfelder', handlung)
+    + '<div style="font-size:11px;color:#7da7c4;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:14px 0 8px">Grundlagen (Bezugswissenschaften)</div>'
+    + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(100,180,220,.14);border-radius:12px;padding:13px"><div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><span style="font-size:22px">🩻</span><div style="flex:1"><div style="font-size:13px;color:#e8f4fc;font-weight:700">Anatomie & Physiologie</div><div style="font-size:11px;color:#5a7a92">Bezugswissenschaft – quer zu allen CE</div></div></div>'
+    + (gCnt > 0 ? '<button onclick="startQuizCE(\'grundlagen\')" style="width:100%;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);border-radius:8px;padding:9px;color:#5eead4;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">▶ Quiz (' + gCnt + ')</button>' : '')
+    + '</div>';
+}
 
 // ─── ADMIN PANEL ─────────────────────────────────────────────────────────────
 let lastGeneratedToken = null;
