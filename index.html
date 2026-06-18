@@ -3095,6 +3095,7 @@ function startQuizCE(ceId) {
     indexed.sort(() => Math.random() - 0.5);
     return Object.assign({}, q, { opt: indexed.map(x => x.text), k: indexed.findIndex(x => x.correct) });
   });
+  quizList = quizList.slice(0, 20); // CE-Quiz: einheitlich max. 20 Fragen
   if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
     const _used = quizUsedToday();
     if (_used >= currentBereich.quiz_max) { showGratisLimit('quiz', currentBereich.quiz_max); return; }
