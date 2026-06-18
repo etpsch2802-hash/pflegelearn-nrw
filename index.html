@@ -7172,10 +7172,10 @@ function logLogin(token, name) {
 function applyBereichsFilter() {
   if (!currentBereich) return;
   // Admin-Button nur für Vollzugang (bereich === "alle")
-  const adminBtn = document.getElementById("btn-admin");
+  const adminBtn = document.getElementById("nav-admin-btn");
   if (adminBtn) {
     if (currentUser && currentUser.bereich === "alle") {
-      adminBtn.style.display = "inline-block";
+      adminBtn.style.display = "block";
       console.log("Admin Button eingeblendet für:", currentUser.name);
     } else {
       adminBtn.style.display = "none";
