@@ -11157,7 +11157,7 @@ function showProgressModal() {
   });
   const katRows = Object.entries(katMap).map(([k,v]) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-      <div style="font-size:12px;color:#94a3b8;text-transform:capitalize">${k}</div>
+      <div style="font-size:12px;color:#94a3b8">${katLabel(k)}</div>
       <div style="display:flex;align-items:center;gap:8px">
         <div style="background:rgba(var(--accent-rgb),.1);border-radius:20px;height:6px;width:80px;overflow:hidden">
           <div style="background:linear-gradient(90deg,var(--accent),#0ea5e9);height:100%;width:${Math.round(v.total/v.count)}%;border-radius:20px"></div>
@@ -11181,7 +11181,7 @@ function showProgressModal() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
         <div>
           <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe">📊 Mein Fortschritt</div>
-          <div style="font-size:11px;color:#4a7a9b;margin-top:2px">${currentUser.name} · ${currentBereich.label}</div>
+          <div style="font-size:11px;color:#4a7a9b;margin-top:2px">${displayName()} · ${currentBereich.label}</div>
         </div>
         <button onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;font-size:14px;cursor:pointer">✕</button>
       </div>
@@ -13728,6 +13728,20 @@ function saveUserName() {
 function hideNameModal() {
   const m = document.getElementById('name-modal');
   if (m) m.style.display = 'none';
+}
+function katLabel(k) {
+  if (!k) return '';
+  try {
+    if (typeof CE_LISTE !== 'undefined') { const ce = CE_LISTE.find(c => c.id === k); if (ce) return ce.nr; }
+    if (k === 'grundlagen') return 'Grundlagen';
+    if (typeof KATS !== 'undefined') { const kt = KATS.find(x => x.id === k); if (kt) return kt.label; }
+  } catch (e) {}
+  return k.charAt(0).toUpperCase() + k.slice(1);
+}
+function displayName() {
+  try { const n = (localStorage.getItem('pl_user_name') || '').trim(); if (n) return n; } catch (e) {}
+  const u = (typeof currentUser !== 'undefined' && currentUser && currentUser.name) || '';
+  return u.indexOf('@') > -1 ? u.split('@')[0] : u;
 }
 
 function renderMerksaetze(filter) {
