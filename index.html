@@ -716,17 +716,6 @@
     <div style="margin-left:auto;font-size:20px;color:#7dd3fc">›</div>
   </button>
 
-  <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
-  <div class="acc-wrap" id="acc-ausb">
-    <button class="acc-header" onclick="toggleAcc('acc-ausb')">
-      <span>🎓 Ausbildungswege</span>
-      <span class="acc-arrow">›</span>
-    </button>
-    <div class="acc-body">
-      <div class="ausb-list" id="ausb-list" style="margin-top:4px"></div>
-    </div>
-  </div>
-
   <!-- ── AKKORDEON: LERNEN & PRÜFUNG ── -->
   <div class="acc-wrap" id="acc-lernen">
     <button class="acc-header" onclick="toggleAcc('acc-lernen')">
@@ -740,21 +729,30 @@
           <div class="bottom-card-title">Prüfungs-Quiz</div>
           <div class="bottom-card-sub">Multiple Choice · 20 Fragen</div>
         </button>
+        <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316;grid-column:span 2">
+          <div class="bottom-card-icon">🎓</div>
+          <div class="bottom-card-title">Prüfungssimulator</div>
+          <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
+        </button>
+        <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+          <div class="bottom-card-icon">🃏</div>
+          <div class="bottom-card-title">Karteikarten</div>
+          <div class="bottom-card-sub">568 Karten · Spaced Repetition</div>
+        </button>
+        <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+          <div class="bottom-card-icon">📇</div>
+          <div class="bottom-card-title">Taschenkarten</div>
+          <div class="bottom-card-sub">38 Karten · Kasack-Format</div>
+        </button>
         <button class="bottom-card" onclick="showScreen('lernplan')" style="background:rgba(var(--accent-rgb),.07);border-color:rgba(var(--accent-rgb),.25);color:var(--accent);grid-column:span 2">
           <div class="bottom-card-icon">📅</div>
           <div class="bottom-card-title">Lernplan erstellen</div>
           <div class="bottom-card-sub">Prüfungsdatum eingeben · Persönlicher Tagesplan</div>
         </button>
-        <button class="bottom-card" onclick="showScreen('preise')" style="background:rgba(99,91,255,.08);border-color:rgba(99,91,255,.3);color:#a5b4fc;grid-column:span 2">
-          <div class="bottom-card-icon">💳</div>
-          <div class="bottom-card-title">Plan &amp; Preise</div>
-          <div class="bottom-card-sub">7 Tage gratis &middot; danach 9,99 &euro;/Monat</div>
-        </button>
       </div>
     </div>
   </div>
 
-  <!-- ── AKKORDEON: PFLEGE-WISSEN ── -->
   <!-- ── AKKORDEON: KLINISCHES WISSEN ── -->
   <div class="acc-wrap" id="acc-klinisch">
     <button class="acc-header" onclick="toggleAcc('acc-klinisch')">
@@ -793,34 +791,7 @@
           <div class="bottom-card-title">ATL-Pflegeplanung</div>
           <div class="bottom-card-sub">10 ATLs · P+Ä+Z komplett</div>
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── AKKORDEON: LERNEN & ÜBEN ── -->
-  <div class="acc-wrap" id="acc-lernen2">
-    <button class="acc-header" onclick="toggleAcc('acc-lernen2')">
-      <span>📖 Lernen & Üben</span>
-      <span class="acc-arrow">›</span>
-    </button>
-    <div class="acc-body">
-      <div class="bottom-grid" style="padding:4px 0 8px">
-        <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
-          <div class="bottom-card-icon">🃏</div>
-          <div class="bottom-card-title">Karteikarten</div>
-          <div class="bottom-card-sub">568 Karten · Spaced Repetition</div>
-        </button>
-        <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
-          <div class="bottom-card-icon">📝</div>
-          <div class="bottom-card-title">Prüfungssimulator</div>
-          <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
-          <div class="bottom-card-icon">📇</div>
-          <div class="bottom-card-title">Taschenkarten</div>
-          <div class="bottom-card-sub">38 Karten · Kasack-Format</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('kinaesthetik')" style="background:rgba(var(--accent-rgb),.07);border-color:rgba(var(--accent-rgb),.25);color:#38bdf8">
+        <button class="bottom-card" onclick="showScreen('kinaesthetik')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8">
           <div class="bottom-card-icon">🤸</div>
           <div class="bottom-card-title">Kinästhetik</div>
           <div class="bottom-card-sub">Transfers · Selbstschutz</div>
@@ -859,6 +830,24 @@
       </div>
     </div>
   </div>
+
+  <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
+  <div class="acc-wrap" id="acc-ausb">
+    <button class="acc-header" onclick="toggleAcc('acc-ausb')">
+      <span>🎓 Ausbildungswege</span>
+      <span class="acc-arrow">›</span>
+    </button>
+    <div class="acc-body">
+      <div class="ausb-list" id="ausb-list" style="margin-top:4px"></div>
+    </div>
+  </div>
+
+  <!-- ── PLAN & PREISE (eigenständig, kein Lerninhalt) ── -->
+  <button onclick="showScreen('preise')" style="width:100%;background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.3);border-radius:12px;padding:12px 16px;margin:6px 0 4px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:22px">💳</div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#a5b4fc">Plan &amp; Preise</div><div style="font-size:11px;color:#4a7a9b;margin-top:2px">7 Tage gratis &middot; danach 9,99 &euro;/Monat</div></div>
+    <div style="margin-left:auto;font-size:18px;color:#a5b4fc">›</div>
+  </button>
 
   <div class="footer-note" style="margin-top:8px;margin-bottom:0">💡 Entwickelt von einem Ausbilder & Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
 </div>
