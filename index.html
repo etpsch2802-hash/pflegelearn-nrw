@@ -678,17 +678,34 @@
   <div id="home-stats"></div>
   <div class="section-label" style="display:none"></div>
 
-  <!-- ── HAUPTNAVIGATION: LERNEN NACH CE (Kompetenzbereiche) ── -->
+  <!-- ── HAUPTKACHELN ── -->
   <button onclick="openCEHub()" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(16,185,129,.08));border:1.5px solid #34d399;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left;box-shadow:0 0 18px rgba(52,211,153,.18)">
     <div style="font-size:32px">🎯</div>
     <div style="flex:1">
       <div style="font-size:15px;font-weight:700;color:#6ee7b7">Lernen nach Kompetenzbereichen</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Dein Lernweg · 11 Curriculare Einheiten (CE) · Quiz &amp; Fortschritt</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Dein Lernweg · 11 CE · Quiz &amp; Fortschritt</div>
     </div>
     <div style="margin-left:auto;font-size:20px;color:#6ee7b7">›</div>
   </button>
 
-  <!-- ── KI-ASSISTENT (aktiv für alle User) ── -->
+  <button onclick="showScreen('uebenpruefen')" style="width:100%;background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(99,91,255,.06));border:1.5px solid rgba(167,139,250,.6);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:32px">📚</div>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700;color:#c4b5fd">Üben &amp; Prüfen</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Quiz · Simulator · Karteikarten · Taschenkarten · Lernplan · Fälle</div>
+    </div>
+    <div style="margin-left:auto;font-size:20px;color:#c4b5fd">›</div>
+  </button>
+
+  <button onclick="showScreen('wissenpraxis')" style="width:100%;background:linear-gradient(135deg,rgba(251,113,133,.16),rgba(244,63,94,.05));border:1.5px solid rgba(251,113,133,.55);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
+    <div style="font-size:32px">🏥</div>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700;color:#fda4af">Wissen &amp; Praxis</div>
+      <div style="font-size:11px;color:#4a7a9b;margin-top:3px">Krankheitsbilder · Anatomie · Scores · Prophylaxen · Technik · Notfall</div>
+    </div>
+    <div style="margin-left:auto;font-size:20px;color:#fda4af">›</div>
+  </button>
+
   <button class="ki-neon-btn" onclick="openKIChooser()" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.18),rgba(8,20,34,.5));border:1.5px solid #22d3ee;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
     <div style="font-size:32px" id="ki-home-icon">💬</div>
     <div style="flex:1">
@@ -698,150 +715,11 @@
     <div style="margin-left:auto;font-size:20px;color:#7ff0ff">›</div>
   </button>
 
-  <!-- ── KOMPAKT: NOTFALL + FÄLLE ── -->
-  <div style="display:flex;gap:10px;margin-bottom:12px">
-    <button onclick="navGo('notfallmanagement')" style="flex:1;background:linear-gradient(135deg,rgba(239,68,68,.16),rgba(249,115,22,.06));border:1px solid rgba(239,68,68,.4);border-radius:14px;padding:13px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit">
-      <div style="font-size:26px">🚨</div>
-      <div style="font-size:13px;font-weight:700;color:#fca5a5;text-align:center">Notfall</div>
-    </button>
-    <button onclick="navGo('faelle')" style="flex:1;background:linear-gradient(135deg,rgba(56,189,248,.16),rgba(14,165,233,.06));border:1px solid rgba(56,189,248,.4);border-radius:14px;padding:13px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit">
-      <div style="font-size:26px">🩺</div>
-      <div style="font-size:13px;font-weight:700;color:#7dd3fc;text-align:center">Fallbeispiele</div>
-    </button>
+  <!-- ── SEKUNDÄR (dezent) ── -->
+  <div style="display:flex;gap:10px;margin:4px 0 2px">
+    <button onclick="showScreen('ausbildungswege')" style="flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:11px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;color:#94a3b8;font-size:12px;font-weight:600">🎓 Ausbildungswege</button>
+    <button onclick="showScreen('preise')" style="flex:1;background:rgba(99,91,255,.06);border:1px solid rgba(99,91,255,.25);border-radius:11px;padding:11px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;color:#a5b4fc;font-size:12px;font-weight:600">💳 Plan &amp; Preise</button>
   </div>
-
-  <!-- ── AKKORDEON: LERNEN & PRÜFUNG ── -->
-  <div class="acc-wrap" id="acc-lernen">
-    <button class="acc-header" onclick="toggleAcc('acc-lernen')">
-      <span>📚 Lernen &amp; Prüfung</span>
-      <span class="acc-arrow">›</span>
-    </button>
-    <div class="acc-body">
-      <div class="bottom-grid" style="padding:4px 0 8px">
-        <button class="bottom-card" onclick="showScreen('quizSelect')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399;grid-column:span 2">
-          <div class="bottom-card-icon">📝</div>
-          <div class="bottom-card-title">Prüfungs-Quiz</div>
-          <div class="bottom-card-sub">Multiple Choice · 20 Fragen</div>
-        </button>
-        <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316;grid-column:span 2">
-          <div class="bottom-card-icon">🎓</div>
-          <div class="bottom-card-title">Prüfungssimulator</div>
-          <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
-        </button>
-        <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
-          <div class="bottom-card-icon">🃏</div>
-          <div class="bottom-card-title">Karteikarten</div>
-          <div class="bottom-card-sub">568 Karten · Spaced Repetition</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
-          <div class="bottom-card-icon">📇</div>
-          <div class="bottom-card-title">Taschenkarten</div>
-          <div class="bottom-card-sub">38 Karten · Kasack-Format</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('lernplan')" style="background:rgba(var(--accent-rgb),.07);border-color:rgba(var(--accent-rgb),.25);color:var(--accent);grid-column:span 2">
-          <div class="bottom-card-icon">📅</div>
-          <div class="bottom-card-title">Lernplan erstellen</div>
-          <div class="bottom-card-sub">Prüfungsdatum eingeben · Persönlicher Tagesplan</div>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── AKKORDEON: KLINISCHES WISSEN ── -->
-  <div class="acc-wrap" id="acc-klinisch">
-    <button class="acc-header" onclick="toggleAcc('acc-klinisch')">
-      <span>🏥 Klinisches Wissen</span>
-      <span class="acc-arrow">›</span>
-    </button>
-    <div class="acc-body">
-      <div class="bottom-grid" style="padding:4px 0 8px">
-        <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
-          <div class="bottom-card-icon">🏥</div>
-          <div class="bottom-card-title">Krankheitsbilder</div>
-          <div class="bottom-card-sub">100 KB · Innere · Chirurgie · Neurologie · Onkologie</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('anatomie');renderAnatomie();" style="background:rgba(45,212,191,.07);border-color:rgba(45,212,191,.25);color:#2dd4bf;grid-column:span 2">
-          <div class="bottom-card-icon">🩻</div>
-          <div class="bottom-card-title">Anatomie</div>
-          <div class="bottom-card-sub">9 Körpersysteme · Aufbau · Funktion · Erklärbilder</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('scores')" style="background:rgba(var(--accent-rgb),.07);border-color:rgba(var(--accent-rgb),.25);color:#38bdf8">
-          <div class="bottom-card-icon">📊</div>
-          <div class="bottom-card-title">Assessment-Scores</div>
-          <div class="bottom-card-sub">29 Skalen · Braden · NEWS2 · SOFA</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('wundversorgung')" style="background:rgba(251,113,133,.07);border-color:rgba(251,113,133,.25);color:#fb7185">
-          <div class="bottom-card-icon">🩹</div>
-          <div class="bottom-card-title">Wundversorgung</div>
-          <div class="bottom-card-sub">Wundstatus · Wundauflagen · Dokumentation</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('prophylaxen')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399">
-          <div class="bottom-card-icon">🛡️</div>
-          <div class="bottom-card-title">Prophylaxen</div>
-          <div class="bottom-card-sub">16 Prophylaxen komplett</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('atl')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15">
-          <div class="bottom-card-icon">📋</div>
-          <div class="bottom-card-title">ATL-Pflegeplanung</div>
-          <div class="bottom-card-sub">10 ATLs · P+Ä+Z komplett</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('kinaesthetik')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8">
-          <div class="bottom-card-icon">🤸</div>
-          <div class="bottom-card-title">Kinästhetik</div>
-          <div class="bottom-card-sub">Transfers · Selbstschutz</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('bobath')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
-          <div class="bottom-card-icon">🧠</div>
-          <div class="bottom-card-title">Bobath-Konzept</div>
-          <div class="bottom-card-sub">Lagerung · Transfers · 24h</div>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── AKKORDEON: MEDIZIN & TECHNIK ── -->
-  <div class="acc-wrap" id="acc-medizin">
-    <button class="acc-header" onclick="toggleAcc('acc-medizin')">
-      <span>💊 Medizin &amp; Technik</span>
-      <span class="acc-arrow">›</span>
-    </button>
-    <div class="acc-body">
-      <div class="bottom-grid" style="padding:4px 0 8px">
-        <button class="bottom-card" onclick="showScreen('medikamente')" style="background:rgba(248,113,133,.07);border-color:rgba(248,113,133,.25);color:#fb7185">
-          <div class="bottom-card-icon">💊</div>
-          <div class="bottom-card-title">Medikamente</div>
-          <div class="bottom-card-sub">Anästhesie · Intensiv · Notfall</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('medNeu')" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
-          <div class="bottom-card-icon"><img src="icon-192.png" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(var(--accent-rgb),.4))"></div>
-          <div class="bottom-card-title">Medikamente Pflege</div>
-        </button>
-        <button class="bottom-card" onclick="showScreen('medizintechnik')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15;grid-column:span 2">
-          <div class="bottom-card-icon">⚙️</div>
-          <div class="bottom-card-title">Medizintechnik</div>
-          <div class="bottom-card-sub">ECMO · Perfusoren · Beatmung · BLS · ACLS</div>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── AKKORDEON: AUSBILDUNGSWEGE ── -->
-  <div class="acc-wrap" id="acc-ausb">
-    <button class="acc-header" onclick="toggleAcc('acc-ausb')">
-      <span>🎓 Ausbildungswege</span>
-      <span class="acc-arrow">›</span>
-    </button>
-    <div class="acc-body">
-      <div class="ausb-list" id="ausb-list" style="margin-top:4px"></div>
-    </div>
-  </div>
-
-  <!-- ── PLAN & PREISE (eigenständig, kein Lerninhalt) ── -->
-  <button onclick="showScreen('preise')" style="width:100%;background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.3);border-radius:12px;padding:12px 16px;margin:6px 0 4px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left">
-    <div style="font-size:22px">💳</div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#a5b4fc">Plan &amp; Preise</div><div style="font-size:11px;color:#4a7a9b;margin-top:2px">7 Tage gratis &middot; danach 9,99 &euro;/Monat</div></div>
-    <div style="margin-left:auto;font-size:18px;color:#a5b4fc">›</div>
-  </button>
 
   <div class="footer-note" style="margin-top:8px;margin-bottom:0">💡 Entwickelt von einem Ausbilder & Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
 </div>
@@ -872,6 +750,134 @@
 </div>
 
 <!-- KRANKHEITSBILDER -->
+<!-- ÜBEN & PRÜFEN (Hub) -->
+<div class="page" id="screen-uebenpruefen">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:14px">
+      <div class="hero-icon">📚</div>
+      <h1>Üben &amp; <span>Prüfen</span></h1>
+      <p>Quiz · Simulator · Karteikarten · Lernplan</p>
+    </div>
+    <div class="bottom-grid">
+      <button class="bottom-card" onclick="showScreen('quizSelect')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399;grid-column:span 2">
+        <div class="bottom-card-icon">📝</div>
+        <div class="bottom-card-title">Prüfungs-Quiz</div>
+        <div class="bottom-card-sub">Multiple Choice · 20 Fragen</div>
+      </button>
+      <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316;grid-column:span 2">
+        <div class="bottom-card-icon">🎓</div>
+        <div class="bottom-card-title">Prüfungssimulator</div>
+        <div class="bottom-card-sub">30 Fragen · 45 Min. · Note</div>
+      </button>
+      <button class="bottom-card" onclick="navGo('karteikarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+        <div class="bottom-card-icon">🃏</div>
+        <div class="bottom-card-title">Karteikarten</div>
+        <div class="bottom-card-sub">Spaced Repetition</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('taschenkarten')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+        <div class="bottom-card-icon">📇</div>
+        <div class="bottom-card-title">Taschenkarten</div>
+        <div class="bottom-card-sub">Kasack-Format</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('lernplan')" style="background:rgba(var(--accent-rgb),.07);border-color:rgba(var(--accent-rgb),.25);color:var(--accent)">
+        <div class="bottom-card-icon">📅</div>
+        <div class="bottom-card-title">Lernplan</div>
+        <div class="bottom-card-sub">Persönlicher Tagesplan</div>
+      </button>
+      <button class="bottom-card" onclick="navGo('faelle')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#7dd3fc">
+        <div class="bottom-card-icon">🩺</div>
+        <div class="bottom-card-title">Fallbeispiele</div>
+        <div class="bottom-card-sub">Interaktive Fälle</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- WISSEN & PRAXIS (Hub) -->
+<div class="page" id="screen-wissenpraxis">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:14px">
+      <div class="hero-icon">🏥</div>
+      <h1>Wissen &amp; <span>Praxis</span></h1>
+      <p>Krankheitsbilder · Anatomie · Scores · Technik · Notfall</p>
+    </div>
+    <div class="bottom-grid">
+      <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
+        <div class="bottom-card-icon">🏥</div>
+        <div class="bottom-card-title">Krankheitsbilder</div>
+        <div class="bottom-card-sub">100 KB · Innere · Chirurgie · Neuro · Onko</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('anatomie');renderAnatomie();" style="background:rgba(45,212,191,.07);border-color:rgba(45,212,191,.25);color:#2dd4bf;grid-column:span 2">
+        <div class="bottom-card-icon">🩻</div>
+        <div class="bottom-card-title">Anatomie</div>
+        <div class="bottom-card-sub">9 Körpersysteme · Erklärbilder</div>
+      </button>
+      <button class="bottom-card" onclick="navGo('notfallmanagement')" style="background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;grid-column:span 2">
+        <div class="bottom-card-icon">🚨</div>
+        <div class="bottom-card-title">Notfallmanagement</div>
+        <div class="bottom-card-sub">Triage · BLS · ACLS · ABCDE · Simulator</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('scores')" style="background:rgba(var(--accent-rgb),.07);border-color:rgba(var(--accent-rgb),.25);color:#38bdf8">
+        <div class="bottom-card-icon">📊</div>
+        <div class="bottom-card-title">Scores</div>
+        <div class="bottom-card-sub">29 Skalen</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('wundversorgung')" style="background:rgba(251,113,133,.07);border-color:rgba(251,113,133,.25);color:#fb7185">
+        <div class="bottom-card-icon">🩹</div>
+        <div class="bottom-card-title">Wundversorgung</div>
+        <div class="bottom-card-sub">Status · Auflagen</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('prophylaxen')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399">
+        <div class="bottom-card-icon">🛡️</div>
+        <div class="bottom-card-title">Prophylaxen</div>
+        <div class="bottom-card-sub">16 komplett</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('atl')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15">
+        <div class="bottom-card-icon">📋</div>
+        <div class="bottom-card-title">ATL-Pflegeplanung</div>
+        <div class="bottom-card-sub">10 ATLs · P+Ä+Z</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('kinaesthetik')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#38bdf8">
+        <div class="bottom-card-icon">🤸</div>
+        <div class="bottom-card-title">Kinästhetik</div>
+        <div class="bottom-card-sub">Transfers</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('bobath')" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25);color:#a78bfa">
+        <div class="bottom-card-icon">🧠</div>
+        <div class="bottom-card-title">Bobath</div>
+        <div class="bottom-card-sub">Lagerung · 24h</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('medikamente')" style="background:rgba(248,113,133,.07);border-color:rgba(248,113,133,.25);color:#fb7185">
+        <div class="bottom-card-icon">💊</div>
+        <div class="bottom-card-title">Medikamente</div>
+        <div class="bottom-card-sub">Anästhesie · Intensiv</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('medNeu')" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
+        <div class="bottom-card-icon">💉</div>
+        <div class="bottom-card-title">Medikamente Pflege</div>
+        <div class="bottom-card-sub">Pflegerelevant</div>
+      </button>
+      <button class="bottom-card" onclick="showScreen('medizintechnik')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15;grid-column:span 2">
+        <div class="bottom-card-icon">⚙️</div>
+        <div class="bottom-card-title">Medizintechnik</div>
+        <div class="bottom-card-sub">ECMO · Perfusoren · Beatmung</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- AUSBILDUNGSWEGE -->
+<div class="page" id="screen-ausbildungswege">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:14px">
+      <div class="hero-icon">🎓</div>
+      <h1>Ausbildungs<span>wege</span></h1>
+      <p>7 Wege der generalistischen Pflegeausbildung NRW</p>
+    </div>
+    <div class="ausb-list" id="ausb-list"></div>
+  </div>
+</div>
+
 <div class="page" id="screen-krankheitsbilder">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
