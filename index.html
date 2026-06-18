@@ -515,6 +515,20 @@
 
 <div class="watermark">© PLAN</div>
 
+<!-- NAMENS-EINGABE (In-App, PLAN-Design) -->
+<div id="name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px">
+  <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:16px;padding:24px;width:100%;max-width:320px">
+    <div style="font-size:32px;text-align:center;margin-bottom:8px">👋</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe;text-align:center;margin-bottom:4px">Dein Name</div>
+    <div style="font-size:12px;color:#4a7a9b;text-align:center;margin-bottom:16px">Für die persönliche Begrüßung auf der Startseite</div>
+    <input id="name-input" type="text" maxlength="30" placeholder="Vorname" onkeydown="if(event.key==='Enter')saveUserName()" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:12px 14px;color:#e0f2fe;font-size:15px;font-family:inherit;margin-bottom:16px">
+    <div style="display:flex;gap:8px">
+      <button onclick="hideNameModal()" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;color:#94a3b8;font-size:13px;font-family:inherit;cursor:pointer">Abbrechen</button>
+      <button onclick="saveUserName()" style="flex:1;background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.4);border-radius:10px;padding:12px;color:var(--accent);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Speichern</button>
+    </div>
+  </div>
+</div>
+
 <!-- UNTERE NAVIGATIONSLEISTE -->
 <nav class="bottom-nav" id="bottom-nav" aria-label="Hauptnavigation">
   <button onclick="navGo('home')" id="bn-home"><span class="bn-ico">🏠</span>Start</button>
@@ -1246,6 +1260,7 @@
 
     <!-- TAB: STATISTIKEN -->
     <div id="admin-stats" class="admin-tab-content" style="display:none">
+      <div id="live-user-stats" style="margin-bottom:12px"></div>
       <div id="stats-content" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
 
@@ -3400,7 +3415,33 @@ function copyTokenFromList(token) {
     .catch(() => alert(token));
 }
 
+async function renderLiveUserStats() {
+  const el = document.getElementById("live-user-stats");
+  if (!el) return;
+  const wrap = (inner) => '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:16px">' + inner + '</div>';
+  const statCard = (label, val) => '<div style="background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">' + (val ?? '–') + '</div><div style="font-size:10px;color:#94a3b8;margin-top:3px">' + label + '</div></div>';
+  el.innerHTML = wrap('<div style="font-size:12px;color:#94a3b8">⏳ Lade Nutzerzahlen…</div>');
+  if (!window.SB) { el.innerHTML = wrap('<div style="font-size:12px;color:#94a3b8">Supabase nicht verbunden.</div>'); return; }
+  try {
+    const { data, error } = await SB.rpc('get_app_stats');
+    if (error || !data) throw error || new Error('no data');
+    const d = Array.isArray(data) ? data[0] : data;
+    el.innerHTML = wrap(
+      '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">👥 Live-Nutzerzahlen</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+      + statCard('Registriert', d.total_users)
+      + statCard('Aktiv (7 T.)', d.active_7d)
+      + statCard('Abos', d.subscriptions)
+      + '</div>'
+      + '<div style="font-size:10px;color:#4a7a9b;margin-top:10px">Quelle: Supabase · zusätzlich Google Analytics (Echtzeit) für Besucher</div>'
+    );
+  } catch (e) {
+    el.innerHTML = '<div style="background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.3);border-radius:14px;padding:16px;font-size:12px;color:#facc15;line-height:1.6">⚙️ Einmalige Einrichtung nötig: Lege in Supabase die Funktion <b>get_app_stats</b> an. Danach erscheinen hier Registrierte, Aktive (7 Tage) und Abos automatisch.</div>';
+  }
+}
+
 function renderStats() {
+  try { renderLiveUserStats(); } catch(e){}
   const el = document.getElementById("stats-content");
   if (!el) return;
   const allTokens = { ...TOKEN_DB, ...localTokenDB };
@@ -13671,12 +13712,22 @@ function renderHomeStats() {
 }
 
 function setUserName() {
-  let cur = '';
-  try { cur = (localStorage.getItem('pl_user_name')||'').trim(); } catch(e){}
-  const v = prompt('Dein Vorname (für die persönliche Begrüßung):', cur);
-  if (v === null) return;
-  try { localStorage.setItem('pl_user_name', v.trim().slice(0,30)); } catch(e){}
+  const m = document.getElementById('name-modal');
+  const inp = document.getElementById('name-input');
+  if (!m || !inp) return;
+  try { inp.value = (localStorage.getItem('pl_user_name')||'').trim(); } catch(e){ inp.value=''; }
+  m.style.display = 'flex';
+  setTimeout(function(){ try { inp.focus(); } catch(e){} }, 50);
+}
+function saveUserName() {
+  const inp = document.getElementById('name-input');
+  try { localStorage.setItem('pl_user_name', (inp ? inp.value : '').trim().slice(0,30)); } catch(e){}
+  hideNameModal();
   try { renderHomeStats(); } catch(e){}
+}
+function hideNameModal() {
+  const m = document.getElementById('name-modal');
+  if (m) m.style.display = 'none';
 }
 
 function renderMerksaetze(filter) {
