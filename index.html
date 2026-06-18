@@ -791,8 +791,8 @@
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:12px">
       <div class="hero-icon">💡</div>
-      <h1>Merk<span>sätze</span></h1>
-      <p>Suche z. B. „Myokardinfarkt" und sieh die Eselsbrücke</p>
+      <h1 data-i18n="merk_hero">Merk<span>sätze</span></h1>
+      <p data-i18n="merk_sub">Suche z. B. „Myokardinfarkt" und sieh die Eselsbrücke</p>
     </div>
     <input id="merk-search" type="text" oninput="renderMerksaetze(this.value)" placeholder="Krankheitsbild oder Stichwort suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.3);border-radius:11px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;margin-bottom:10px">
     <div id="merk-count" style="font-size:11px;color:var(--text2);margin-bottom:10px"></div>
@@ -805,8 +805,8 @@
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
       <div class="hero-icon">📚</div>
-      <h1>Üben &amp; <span>Prüfen</span></h1>
-      <p>Quiz · Simulator · Karteikarten · Lernplan</p>
+      <h1 data-i18n="ueben_hero">Üben &amp; <span>Prüfen</span></h1>
+      <p data-i18n="ueben_sub">Quiz · Simulator · Karteikarten · Lernplan</p>
     </div>
     <div class="bottom-grid">
       <button class="bottom-card" onclick="showScreen('quizSelect')" style="background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#34d399;grid-column:span 2">
@@ -853,8 +853,8 @@
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
       <div class="hero-icon">🏥</div>
-      <h1>Wissen &amp; <span>Praxis</span></h1>
-      <p>Krankheitsbilder · Anatomie · Scores · Technik · Notfall</p>
+      <h1 data-i18n="wissen_hero">Wissen &amp; <span>Praxis</span></h1>
+      <p data-i18n="wissen_sub">Krankheitsbilder · Anatomie · Scores · Technik · Notfall</p>
     </div>
     <div class="bottom-grid">
       <button class="bottom-card" onclick="showScreen('krankheitsbilder');renderKBFaecher();" style="background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.25);color:#f43f5e;grid-column:span 2">
@@ -6849,7 +6849,7 @@ init();
 
 const TOKEN_DB = {
   // ── 7-Tage-Trial (manuell vergeben) ──
-  "GPA-2026-E3OH-PEKDEMIR": { name:"Fati (Pekdemir)", bereich:"alle", ablauf:"2026-06-25", aktiv:true },
+  "GPA-2026-E3OH-PEKDEMIR": { name:"Fati (Pekdemir)", bereich:"alle", ablauf:"2026-06-24", aktiv:true },
   // ── Neue Testzugaenge (2 Wochen, gueltig bis 2026-06-20) ──
   "TEST-MAIKE-2026":       { name:"Maike (Lehrerin)",        bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "TEST-SOPHIE-2026":      { name:"Sophie (Azubi Paediatrie)", bereich:"alle", ablauf:"2026-06-20", aktiv:true },
@@ -15045,6 +15045,12 @@ window.I18N = {
     nav_impressum: '📄 Impressum',
     nav_datenschutz: '🔒 Datenschutz',
     nav_agb: '📑 AGB & Widerruf',
+    ueben_hero: 'Üben & <span>Prüfen</span>',
+    ueben_sub: 'Quiz · Simulator · Karteikarten · Lernplan',
+    wissen_hero: 'Wissen & <span>Praxis</span>',
+    wissen_sub: 'Krankheitsbilder · Anatomie · Scores · Technik · Notfall',
+    merk_hero: 'Merk<span>sätze</span>',
+    merk_sub: 'Suche z. B. „Myokardinfarkt" und sieh die Eselsbrücke',
     home_ce_t: 'Lernen nach Kompetenzbereichen',
     home_ce_s: 'Dein Lernweg · 11 CE · Quiz & Fortschritt',
     home_ueben_t: 'Üben & Prüfen',
@@ -15100,6 +15106,12 @@ window.I18N = {
     nav_impressum: '📄 Legal Notice',
     nav_datenschutz: '🔒 Privacy Policy',
     nav_agb: '📑 Terms & Conditions',
+    ueben_hero: 'Practice & <span>Exam</span>',
+    ueben_sub: 'Quiz · Simulator · Flashcards · Study plan',
+    wissen_hero: 'Knowledge & <span>Practice</span>',
+    wissen_sub: 'Conditions · Anatomy · Scores · Technology · Emergency',
+    merk_hero: 'Mne<span>monics</span>',
+    merk_sub: 'Search e.g. "Myocardial infarction" to see the memory aid',
     home_ce_t: 'Learn by Competence Areas',
     home_ce_s: 'Your learning path · 11 CE · Quiz & progress',
     home_ueben_t: 'Practice & Exam',
@@ -15155,6 +15167,12 @@ window.I18N = {
     nav_impressum: '📄 Yasal Bildirim',
     nav_datenschutz: '🔒 Gizlilik Politikası',
     nav_agb: '📑 Kullanım Koşulları',
+    ueben_hero: 'Alıştırma & <span>Sınav</span>',
+    ueben_sub: 'Test · Simülatör · Kartlar · Çalışma planı',
+    wissen_hero: 'Bilgi & <span>Uygulama</span>',
+    wissen_sub: 'Hastalıklar · Anatomi · Skorlar · Teknik · Acil',
+    merk_hero: 'Hafıza <span>Notları</span>',
+    merk_sub: 'Örn. „Miyokard enfarktüsü" ara ve hafıza notunu gör',
     home_ce_t: 'Yetkinlik Alanlarına Göre Öğren',
     home_ce_s: 'Öğrenme yolun · 11 CE · Test & ilerleme',
     home_ueben_t: 'Alıştırma & Sınav',
@@ -15210,6 +15228,12 @@ window.I18N = {
     nav_impressum: '📄 الإشعار القانوني',
     nav_datenschutz: '🔒 سياسة الخصوصية',
     nav_agb: '📑 الشروط والأحكام',
+    ueben_hero: 'التدريب <span>والامتحان</span>',
+    ueben_sub: 'اختبار · محاكي · بطاقات · خطة دراسة',
+    wissen_hero: 'المعرفة <span>والممارسة</span>',
+    wissen_sub: 'الأمراض · التشريح · المقاييس · التقنية · الطوارئ',
+    merk_hero: 'وسائل <span>التذكّر</span>',
+    merk_sub: 'ابحث مثلاً عن „احتشاء عضلة القلب" لرؤية وسيلة التذكّر',
     home_ce_t: 'التعلّم حسب مجالات الكفاءة',
     home_ce_s: 'مسارك التعليمي · 11 وحدة · اختبار وتقدّم',
     home_ueben_t: 'التدريب والامتحان',
@@ -15265,6 +15289,12 @@ window.I18N = {
     nav_impressum: '📄 Правовая информация',
     nav_datenschutz: '🔒 Политика конфиденциальности',
     nav_agb: '📑 Условия использования',
+    ueben_hero: 'Практика и <span>экзамен</span>',
+    ueben_sub: 'Тест · Симулятор · Карточки · План',
+    wissen_hero: 'Знания и <span>практика</span>',
+    wissen_sub: 'Заболевания · Анатомия · Шкалы · Техника · Неотложка',
+    merk_hero: 'Мне<span>моники</span>',
+    merk_sub: 'Введите, напр. „Инфаркт миокарда", чтобы увидеть подсказку',
     home_ce_t: 'Обучение по областям компетенций',
     home_ce_s: 'Ваш путь обучения · 11 CE · Тест и прогресс',
     home_ueben_t: 'Практика и экзамен',
@@ -15320,6 +15350,12 @@ window.I18N = {
     nav_impressum: '📄 Informacja prawna',
     nav_datenschutz: '🔒 Polityka prywatności',
     nav_agb: '📑 Regulamin',
+    ueben_hero: 'Ćwiczenia i <span>egzamin</span>',
+    ueben_sub: 'Quiz · Symulator · Fiszki · Plan',
+    wissen_hero: 'Wiedza i <span>praktyka</span>',
+    wissen_sub: 'Choroby · Anatomia · Skale · Technika · Nagłe',
+    merk_hero: 'Mne<span>motechniki</span>',
+    merk_sub: 'Wyszukaj np. „Zawał serca", aby zobaczyć skojarzenie',
     home_ce_t: 'Nauka według obszarów kompetencji',
     home_ce_s: 'Twoja ścieżka · 11 CE · Quiz i postępy',
     home_ueben_t: 'Ćwiczenia i egzamin',
@@ -15375,6 +15411,12 @@ window.I18N = {
     nav_impressum: '📄 Правова інформація',
     nav_datenschutz: '🔒 Політика конфіденційності',
     nav_agb: '📑 Умови використання',
+    ueben_hero: 'Практика та <span>іспит</span>',
+    ueben_sub: 'Тест · Симулятор · Картки · План',
+    wissen_hero: 'Знання та <span>практика</span>',
+    wissen_sub: 'Захворювання · Анатомія · Шкали · Техніка · Невідкладна',
+    merk_hero: 'Мне<span>моніки</span>',
+    merk_sub: 'Введіть, напр. „Інфаркт міокарда", щоб побачити підказку',
     home_ce_t: 'Навчання за сферами компетенцій',
     home_ce_s: 'Твій шлях навчання · 11 CE · Тест і прогрес',
     home_ueben_t: 'Практика та іспит',
@@ -15430,6 +15472,12 @@ window.I18N = {
     nav_impressum: '📄 Aviz legal',
     nav_datenschutz: '🔒 Politică confidențialitate',
     nav_agb: '📑 Termeni și condiții',
+    ueben_hero: 'Exersare și <span>examen</span>',
+    ueben_sub: 'Test · Simulator · Cartonașe · Plan',
+    wissen_hero: 'Cunoștințe și <span>practică</span>',
+    wissen_sub: 'Boli · Anatomie · Scoruri · Tehnică · Urgență',
+    merk_hero: 'Mne<span>motehnici</span>',
+    merk_sub: 'Caută ex. „Infarct miocardic" pentru a vedea asocierea',
     home_ce_t: 'Învățare pe domenii de competență',
     home_ce_s: 'Traseul tău · 11 CE · Test și progres',
     home_ueben_t: 'Exersare și examen',
@@ -15485,6 +15533,12 @@ window.I18N = {
     nav_impressum: '📄 Aviso legal',
     nav_datenschutz: '🔒 Política de privacidad',
     nav_agb: '📑 Términos y condiciones',
+    ueben_hero: 'Practicar y <span>examen</span>',
+    ueben_sub: 'Test · Simulador · Tarjetas · Plan',
+    wissen_hero: 'Conocimiento y <span>práctica</span>',
+    wissen_sub: 'Enfermedades · Anatomía · Escalas · Técnica · Urgencias',
+    merk_hero: 'Reglas <span>mnemotécnicas</span>',
+    merk_sub: 'Busca p. ej. „Infarto de miocardio" para ver la regla',
     home_ce_t: 'Aprender por áreas de competencia',
     home_ce_s: 'Tu ruta de aprendizaje · 11 CE · Test y progreso',
     home_ueben_t: 'Practicar y examen',
