@@ -2343,6 +2343,7 @@ function dismissOnboarding() {
 }
 
 function showScreen(name) {
+  if (name === 'admin' && !isAdmin()) { name = 'home'; }
   // Scroll-Position des bisherigen Screens merken (fuer "zurueck an dieselbe Stelle")
   if (currentScreen) { _scrollPos[currentScreen] = window.scrollY || window.pageYOffset || 0; }
   document.querySelectorAll(".page, .chat-page").forEach(p => { p.classList.remove("active"); });
@@ -7171,15 +7172,10 @@ function logLogin(token, name) {
 
 function applyBereichsFilter() {
   if (!currentBereich) return;
-  // Admin-Button nur für Vollzugang (bereich === "alle")
+  // Admin-Panel NUR für Eigentümer-Konto (nicht für jeden Vollzugang/Abonnenten)
   const adminBtn = document.getElementById("nav-admin-btn");
   if (adminBtn) {
-    if (currentUser && currentUser.bereich === "alle") {
-      adminBtn.style.display = "block";
-      console.log("Admin Button eingeblendet für:", currentUser.name);
-    } else {
-      adminBtn.style.display = "none";
-    }
+    adminBtn.style.display = isAdmin() ? "block" : "none";
   }
 
   // Ausbildungskarten filtern
@@ -10789,6 +10785,7 @@ function openAnatBild(id){
 
 function navGo(screen) {
   document.getElementById('nav-dropdown').style.display = 'none';
+  if (screen === 'admin' && !isAdmin()) { showScreen('home'); return; }
   if (screen === 'taschenkarten') {
     showScreen('taschenkarten');
   } else if (screen === 'wundversorgung') {
@@ -13742,6 +13739,16 @@ function displayName() {
   try { const n = (localStorage.getItem('pl_user_name') || '').trim(); if (n) return n; } catch (e) {}
   const u = (typeof currentUser !== 'undefined' && currentUser && currentUser.name) || '';
   return u.indexOf('@') > -1 ? u.split('@')[0] : u;
+}
+// Admin-Panel ausschließlich für Eigentümer-Konto (UI-Sperre, kein Server-Schutz)
+const ADMIN_EMAILS = ['pschenkelberger@web.de','pflegelearn.nrw@gmail.com','etpsch2802@gmail.com'];
+function isAdmin() {
+  try {
+    const ids = [];
+    if (typeof currentUser !== 'undefined' && currentUser) { ids.push(currentUser.email); ids.push(currentUser.name); }
+    try { ids.push(localStorage.getItem('pl_sub_email')); } catch (e) {}
+    return ids.some(function(x){ return x && ADMIN_EMAILS.indexOf(String(x).trim().toLowerCase()) > -1; });
+  } catch (e) { return false; }
 }
 
 function renderMerksaetze(filter) {
