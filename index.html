@@ -1159,7 +1159,7 @@
     <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#38bdf8;margin-bottom:6px">Schule / Einrichtung</div>
     <div style="font-size:17px;font-weight:800;color:#e0f2fe;line-height:1.15">Sammellizenzen f&uuml;r Pflegeschulen</div>
     <div style="font-size:12px;color:#94a3b8;margin:6px 0 12px">Mehrere Zug&auml;nge, zentrale Verwaltung &middot; Konditionen auf Anfrage</div>
-    <a href="mailto:kontakt@plan-nrw.de?subject=Schullizenz%20PflegeLearn%20NRW" style="display:block;text-align:center;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.4);border-radius:11px;padding:13px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;text-decoration:none">Anfrage senden</a>
+    <a href="mailto:kontakt@plan-nrw.de?subject=Schullizenz%20PLAN%20NRW" style="display:block;text-align:center;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.4);border-radius:11px;padding:13px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;text-decoration:none">Anfrage senden</a>
   </div>
 
   <div style="font-size:10px;color:#4a7a9b;text-align:center;line-height:1.6;margin-bottom:8px">Codes sind personalisiert &amp; nicht &uuml;bertragbar. K&uuml;ndigung jederzeit zum Laufzeitende.</div>
@@ -7524,7 +7524,7 @@ if ('serviceWorker' in navigator) {
             }
           });
         });
-      }).catch(err => console.warn('[PflegeLearn] SW Fehler:', err));
+      }).catch(err => console.warn('[PLAN] SW Fehler:', err));
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!refreshing) { refreshing = true; window.location.reload(); }
@@ -13799,7 +13799,7 @@ function showOnboarding() {
     '🕎': { icon:'🕎', title:'Chag Chanukka Sameach!', text:'Licht bringt Erkenntnis – genau wie Wissen! Lass uns gemeinsam lernen! ✨' },
     '💝': { icon:'💝', title:'Alles Liebe!', text:'Valentinstag: Die Liebe zum Beruf ist dein stärkster Antrieb! Weiter so! 💪' },
     '🌸': { icon:'🌸', title:'Frühling ist da!', text:'Neue Energie, neues Wissen! Der Frühling ist perfekt für einen Lernstart. 🌿' },
-    '☀️': { icon:'☀️', title:'Schöner Sommer!', text:'Auch im Sommer ein bisschen lernen hält fit! PflegeLearn ist immer dabei. 😎' },
+    '☀️': { icon:'☀️', title:'Schöner Sommer!', text:'Auch im Sommer ein bisschen lernen hält fit! PLAN ist immer dabei. 😎' },
     '🍂': { icon:'🍂', title:'Goldene Lernzeit!', text:'Herbst = beste Lernzeit! Kuschelig drinnen, Wissen drinnen! 📖' },
     '❄️': { icon:'❄️', title:'Winterzeit – Lernzeit!', text:'Draußen kalt, drinnen warm und klug! Der Winter ist deine Lernzeit. ☕' },
     '🕯️': { icon:'🕯️', title:'Besinnliche Zeit!', text:'Advent oder Allerheiligen – stille Zeit für ruhiges, konzentriertes Lernen. ✨' },
@@ -14228,7 +14228,7 @@ window.sendFeedback = function() {
   if (!text) { alert('Bitte Nachricht eingeben.'); return; }
   emailjs.send('service_8hn8nqi', 'g7jbwbc', {
     name: `Feedback [${type}]`,
-    email: 'app@pflegelearn.nrw',
+    email: 'kontakt@plan-nrw.de',
     ausbildung: type,
     datum: new Date().toLocaleString('de-DE'),
     message: text,
@@ -14696,7 +14696,7 @@ function checkExamenReminder() {
       // Kurz NACH Examen → Conversion-Moment!
       icon = '🎉';
       titel = 'Examen geschafft? Glückwunsch!';
-      text = 'Als examinierte Fachkraft kannst du PflegeLearn weiter nutzen – für Fachweiterbildungen, Auffrischung und den Berufsalltag. Bleib dabei und sichere dir weiterhin Vollzugriff!';
+      text = 'Als examinierte Fachkraft kannst du PLAN weiter nutzen – für Fachweiterbildungen, Auffrischung und den Berufsalltag. Bleib dabei und sichere dir weiterhin Vollzugriff!';
       farbe = '#34d399';
     } else {
       return; // außerhalb des relevanten Zeitfensters
