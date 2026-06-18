@@ -671,10 +671,9 @@
 
 <div class="page" id="screen-home">
   <div class="hero">
-    <img src="icon-192.png" alt="PLAN" style="width:90px;height:90px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 18px rgba(var(--accent-rgb),.35))">
+    <img src="icon-192.png" alt="PLAN" style="width:60px;height:60px;object-fit:contain;margin-bottom:6px;filter:drop-shadow(0 0 14px rgba(var(--accent-rgb),.35))">
     <h1>PLAN <span>NRW</span></h1>
-    <p>7 Ausbildungswege · 581 Fragen · 100 Krankheitsbilder · Scores · Von einem Fachpfleger & Ausbilder NRW</p>
-    <p style="margin-top:7px"><span style="display:inline-block;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:.4px;padding:4px 11px;border-radius:999px">Generalistische Pflegeausbildung nach PflBG 2020 · bundesweit</span></p>
+    <p style="font-size:12px">7 Ausbildungswege · 581 Fragen · 100 Krankheitsbilder</p>
   </div>
   <div id="home-stats"></div>
   <div class="section-label" style="display:none"></div>
@@ -13564,15 +13563,14 @@ function renderHomeStats() {
   const pct = quizTotal > 0 ? Math.round(quizCorrect / quizTotal * 100) : 0;
 
   // ── PERSONALISIERTE BEGRÜSSUNG ──
-  const vorname = (currentUser?.name || '').split(' ')[0] || 'Hallo';
+  const _vn = (currentUser?.name || '').split(' ')[0] || '';
+  const vorname = _vn.includes('@') ? '' : _vn;
+  const anrede = vorname ? `, ${vorname}` : '';
   const h = new Date().getHours();
-  const gruss = h < 11 ? `Guten Morgen, ${vorname}! ☀️`
-              : h < 17 ? `Guten Tag, ${vorname}! 👋`
-              : h < 22 ? `Guten Abend, ${vorname}! 🌙`
-              :           `Guten Lerntag, ${vorname}! 📚`;
-  const streakMsg = streak > 1
-    ? `<div style="font-size:12px;color:#fbbf24;margin-top:5px">🔥 Tag ${streak} in Folge – weiter so!</div>`
-    : '';
+  const gruss = h < 11 ? `Guten Morgen${anrede}! ☀️`
+              : h < 17 ? `Guten Tag${anrede}! 👋`
+              : h < 22 ? `Guten Abend${anrede}! 🌙`
+              :           `Guten Lerntag${anrede}! 📚`;
 
   
 // ── SAISON & FEIERTAGE ──
@@ -13592,10 +13590,8 @@ function renderHomeStats() {
     : `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.03));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">▶️</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#e0f2fe">Weiterlernen</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Mach weiter, wo du aufgehört hast</div></div><div style="font-size:18px;color:rgba(var(--accent-rgb),.85)">›</div></button>`;
 
   el.innerHTML = `
-    <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:14px 16px;margin-bottom:14px;transition:all .5s">
-      <div style="font-size:18px;font-weight:700;color:#e0f2fe">${gruss}</div>
-      ${streakMsg}
-      ${saisonInfo.msg ? `<div style="font-size:12px;color:${saisonInfo.color};margin-top:6px">${saisonInfo.msg}</div>` : ''}
+    <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:11px 16px;margin-bottom:12px;transition:all .5s">
+      <div style="font-size:16px;font-weight:700;color:#e0f2fe">${gruss}</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
