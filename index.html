@@ -3041,7 +3041,7 @@ function retryQuiz() { if (quizCE) startQuizCE(quizCE); else startQuiz(quizKat);
 // ─── CE-LERNHUB ───
 function ceFragenCount(ceId) {
   if (ceId === "grundlagen") return QUIZ_FRAGEN.filter(q => q.kat === "anatomie").length;
-  return QUIZ_FRAGEN.filter(q => KAT_ZU_CE[q.kat] === ceId).length;
+  return QUIZ_FRAGEN.filter(q => KAT_ZU_CE[q.kat] === ceId || q.ce === ceId).length;
 }
 function getCEDone() { try { return JSON.parse(localStorage.getItem('pl_ce_done')) || {}; } catch(e){ return {}; } }
 function toggleCEDone(ceId) {
@@ -3061,7 +3061,7 @@ function ceBestPct(ceId) {
 function startQuizCE(ceId) {
   const pool = ceId === "grundlagen"
     ? QUIZ_FRAGEN.filter(q => q.kat === "anatomie")
-    : QUIZ_FRAGEN.filter(q => KAT_ZU_CE[q.kat] === ceId);
+    : QUIZ_FRAGEN.filter(q => KAT_ZU_CE[q.kat] === ceId || q.ce === ceId);
   if (!pool.length) return;
   if (currentBereich && currentBereich.quiz_kats) {
     const allowed = pool.filter(q => currentBereich.quiz_kats.includes(q.kat));
