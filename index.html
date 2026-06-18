@@ -3425,7 +3425,8 @@ async function renderLiveUserStats() {
   if (!window.SB) { el.innerHTML = wrap('<div style="font-size:12px;color:#94a3b8">Supabase nicht verbunden.</div>'); return; }
   try {
     const { data, error } = await SB.rpc('get_app_stats');
-    if (error || !data) throw error || new Error('no data');
+    if (error) throw new Error(error.message || error.hint || error.details || 'RPC-Fehler');
+    if (!data) throw new Error('Funktion lieferte keine Daten');
     const d = Array.isArray(data) ? data[0] : data;
     el.innerHTML = wrap(
       '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">👥 Live-Nutzerzahlen</div>'
@@ -3437,7 +3438,8 @@ async function renderLiveUserStats() {
       + '<div style="font-size:10px;color:#4a7a9b;margin-top:10px">Quelle: Supabase · zusätzlich Google Analytics (Echtzeit) für Besucher</div>'
     );
   } catch (e) {
-    el.innerHTML = '<div style="background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.3);border-radius:14px;padding:16px;font-size:12px;color:#facc15;line-height:1.6">⚙️ Einmalige Einrichtung nötig: Lege in Supabase die Funktion <b>get_app_stats</b> an. Danach erscheinen hier Registrierte, Aktive (7 Tage) und Abos automatisch.</div>';
+    const msg = (e && e.message) ? e.message : String(e);
+    el.innerHTML = '<div style="background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.3);border-radius:14px;padding:16px;font-size:12px;color:#facc15;line-height:1.6">⚙️ Nutzerzahlen nicht geladen.<br><span style="color:#fca5a5">Grund: ' + msg + '</span><br><span style="color:#94a3b8">Prüfe in Supabase: Funktion <b>get_app_stats</b> vorhanden und für „authenticated" ausführbar?</span></div>';
   }
 }
 
