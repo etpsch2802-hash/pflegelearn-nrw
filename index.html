@@ -368,6 +368,8 @@
   body.light-mode .page [style*="color:#e8f4fc"] { color:#0f172a !important; }
   body.light-mode .page [style*="color:#ddf0fb"] { color:#0f172a !important; }
   body.light-mode .page [style*="color:#7dd3fc"] { color:#0369a1 !important; }
+  body.light-mode .page [style*="color:#cbd5e1"] { color:#334155 !important; }
+  body.light-mode #merk-search { background:#fff !important; color:#0f172a !important; border-color:rgba(30,64,128,.2) !important; }
   body.light-mode .ausb-card { background:white; border-color:rgba(30,64,128,.15); color:#0f172a; box-shadow:0 2px 8px rgba(0,0,0,.06); }
   body.light-mode .ausb-name { color:#0f172a; }
   body.light-mode .ausb-sub { color:#64748b; }
@@ -770,6 +772,20 @@
 </div>
 
 <!-- KRANKHEITSBILDER -->
+<!-- MERKSÄTZE (durchsuchbar) -->
+<div class="page" id="screen-merksaetze">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:12px">
+      <div class="hero-icon">💡</div>
+      <h1>Merk<span>sätze</span></h1>
+      <p>Suche z. B. „Myokardinfarkt" und sieh die Eselsbrücke</p>
+    </div>
+    <input id="merk-search" type="text" oninput="renderMerksaetze(this.value)" placeholder="Krankheitsbild oder Stichwort suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.3);border-radius:11px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;margin-bottom:10px">
+    <div id="merk-count" style="font-size:11px;color:var(--text2);margin-bottom:10px"></div>
+    <div id="merk-list"></div>
+  </div>
+</div>
+
 <!-- ÜBEN & PRÜFEN (Hub) -->
 <div class="page" id="screen-uebenpruefen">
   <div style="max-width:720px;margin:0 auto">
@@ -803,6 +819,11 @@
         <div class="bottom-card-icon">📅</div>
         <div class="bottom-card-title">Lernplan</div>
         <div class="bottom-card-sub">Persönlicher Tagesplan</div>
+      </button>
+      <button class="bottom-card" onclick="navGo('merksaetze')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15">
+        <div class="bottom-card-icon">💡</div>
+        <div class="bottom-card-title">Merksätze</div>
+        <div class="bottom-card-sub">Eselsbrücken · durchsuchbar</div>
       </button>
       <button class="bottom-card" onclick="navGo('faelle')" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#7dd3fc">
         <div class="bottom-card-icon">🩺</div>
@@ -2376,6 +2397,7 @@ function showScreen(name) {
   if (name === "atl")           setTimeout(() => { renderATL(); }, 50);
   if (name === "scores")        { renderScores(); }
   if (name === "karteikarten")  { renderKarteikarten(); }
+  if (name === "merksaetze")    { renderMerksaetze(document.getElementById('merk-search') ? document.getElementById('merk-search').value : ''); }
   if (name === "exam")          { /* renderExam() wird von startExam() aufgerufen */ }
   if (name === "medNeu")        setTimeout(() => { renderMedNeu(); }, 50);
 }
@@ -13655,6 +13677,34 @@ function setUserName() {
   if (v === null) return;
   try { localStorage.setItem('pl_user_name', v.trim().slice(0,30)); } catch(e){}
   try { renderHomeStats(); } catch(e){}
+}
+
+function renderMerksaetze(filter) {
+  const el = document.getElementById('merk-list');
+  if (!el) return;
+  filter = (filter || '').trim().toLowerCase();
+  const items = [];
+  try {
+    Object.values(KRANKHEITSBILDER).forEach(function(fach){
+      (fach.bilder || []).forEach(function(b){
+        if (b && b.merksatz) items.push({ name: b.name || '', merksatz: b.merksatz, farbe: fach.farbe || '#38bdf8', icon: fach.icon || '🏥' });
+      });
+    });
+  } catch(e){}
+  items.sort(function(a,b){ return a.name.localeCompare(b.name, 'de'); });
+  const list = filter ? items.filter(function(i){ return (i.name + ' ' + i.merksatz).toLowerCase().includes(filter); }) : items;
+  const cnt = document.getElementById('merk-count');
+  if (cnt) cnt.textContent = list.length + ' von ' + items.length + ' Merksätzen';
+  if (!list.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:24px;font-size:13px">Kein Merksatz gefunden. Versuche z. B. „Myokardinfarkt".</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(i){
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-left:3px solid ' + i.farbe + ';border-radius:10px;padding:12px 14px;margin-bottom:10px">'
+      + '<div style="font-size:13px;font-weight:700;color:#e0f2fe;margin-bottom:4px">' + i.icon + ' ' + i.name + '</div>'
+      + '<div style="font-size:13px;color:#cbd5e1;line-height:1.45">💡 ' + i.merksatz + '</div>'
+      + '</div>';
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
