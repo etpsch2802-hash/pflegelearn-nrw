@@ -58,6 +58,30 @@ export default async function handler(req, res) {
       periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
       const cust = await stripeGet('customers/' + customerId);
       email = cust && cust.email ? cust.email : null;
+    } else if (type === 'charge.refunded') {
+      // Rueckerstattung -> Zugang entziehen
+      const charge = obj;
+      customerId = charge.customer || null;
+      email = (charge.billing_details && charge.billing_details.email) || charge.receipt_email || null;
+      if (!email && customerId) {
+        try { const cust = await stripeGet('customers/' + customerId); email = cust && cust.email ? cust.email : null; } catch (e) {}
+      }
+      status = 'revoked';
+      periodEnd = new Date().toISOString();
+    } else if (type === 'charge.dispute.created') {
+      // Chargeback -> Zugang entziehen
+      const dispute = obj;
+      let charge = null;
+      try { charge = await stripeGet('charges/' + dispute.charge); } catch (e) {}
+      if (charge) {
+        customerId = charge.customer || null;
+        email = (charge.billing_details && charge.billing_details.email) || charge.receipt_email || null;
+      }
+      if (!email && customerId) {
+        try { const cust = await stripeGet('customers/' + customerId); email = cust && cust.email ? cust.email : null; } catch (e) {}
+      }
+      status = 'revoked';
+      periodEnd = new Date().toISOString();
     } else {
       res.status(200).json({ ignored: type }); return;
     }
