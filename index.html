@@ -7188,6 +7188,7 @@ function checkPW() {
   // Login erfolgreich
   const userName = nameInput || token.name;
   currentUser = { token: tokenInput, name: userName, bereich: token.bereich, ablauf: token.ablauf };
+  gaEvent('login', { method: 'token', bereich: token.bereich });
   currentBereich = BEREICH_CONFIG[token.bereich] || BEREICH_CONFIG["demo"];
   kiNachrichtenCount = 0;
 
@@ -7665,6 +7666,7 @@ async function submitRegistrierung() {
     });
 
     btn.innerHTML = '✅ Erfolgreich gesendet!';
+    gaEvent('sign_up', { method: 'registration_form', ausbildung: ausbildung || 'na' });
     btn.style.background = 'linear-gradient(135deg,#059669,#34d399)';
 
     // Erfolgs-Modal
@@ -13846,6 +13848,7 @@ REGELN:
 - Zugangscode-Probleme: exakte Schreibweise prüfen, App aktualisieren (Menü → App aktualisieren), sonst kontakt@plan-nrw.de.
 - Kündigung: über den Button „Abo kündigen" im Menü; der Zugang endet nach dem bezahlten Zeitraum und ist jederzeit reaktivierbar.
 - Antworte kurz, freundlich und auf Deutsch. Wenn du etwas nicht lösen kannst, verweise auf kontakt@plan-nrw.de.`;
+window.gaEvent = function(n, p) { try { if (typeof gtag === 'function') gtag('event', n, p || {}); } catch (e) {} };
 let supportThread = [];
 let supportBusy = false;
 function supportBubble(who, text) {
@@ -15059,6 +15062,7 @@ window.addEventListener('load', () => {
       currentBereich = BEREICH_CONFIG['alle'] || currentBereich;
       try{ kiNachrichtenCount = 0; }catch(e){}
       try{ localStorage.setItem('pl_sub_active','1'); if(email) localStorage.setItem('pl_sub_email',email); }catch(e){}
+      try{ var _pk='pl_purchase_logged_'+(email||'anon'); if(!localStorage.getItem(_pk)){ gaEvent('purchase',{ currency:'EUR', items:[{ item_name:'PLAN Abo' }] }); localStorage.setItem(_pk,'1'); } }catch(e){}
       var ps = document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
       if(typeof showScreen==='function') showScreen('home');
       if(typeof updateUserDisplay==='function') updateUserDisplay(name,false);
