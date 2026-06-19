@@ -15192,9 +15192,14 @@ window.addEventListener('load', () => {
     }catch(e){ console.warn('[Abo] grantFull',e); }
   }
   function revokeOptimistic(){
-    try{ localStorage.removeItem('pl_sub_active'); localStorage.removeItem('pl_sub_email'); }catch(e){}
+    try{
+      localStorage.removeItem('pl_sub_active'); localStorage.removeItem('pl_sub_email');
+      // Einmalkauf-Flags ebenfalls entfernen (Refund/Chargeback)
+      localStorage.removeItem('pl_paid_until'); localStorage.removeItem('pl_paid_name'); localStorage.removeItem('pl_paid_plan');
+    }catch(e){}
   }
   function isActive(s){ return s==='active' || s==='trialing' || s==='past_due'; }
+  function isRevoked(s){ return s==='revoked' || s==='canceled' || s==='unpaid' || s==='incomplete_expired'; }
   function notExpired(pe){
     if(!pe) return true;
     try{ return new Date(pe).getTime() >= Date.now(); }catch(e){ return true; }
@@ -15214,6 +15219,15 @@ window.addEventListener('load', () => {
         grantFull(session.user.email, abl);
       } else {
         revokeOptimistic();
+        // Harter Entzug (Refund/Chargeback/Kuendigung): laufende Kauf-/Abo-Session sofort sperren.
+        // Token-Nutzer (z. B. Trial/Admin) bleiben unberuehrt.
+        try{
+          if(row && isRevoked(row.status) && currentUser &&
+             (currentUser.token==='STRIPE-PAID' || currentUser.token==='ABO')){
+            currentUser = null;
+            location.reload();
+          }
+        }catch(e){}
       }
     }catch(e){ console.warn('[Abo] checkSub', e); }
   }
