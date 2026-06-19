@@ -14954,6 +14954,28 @@ window.addEventListener('load', function() {
     localStorage.setItem('pl_paid_plan', plan);
   } catch(e) {}
 
+  // GA4 purchase-Event (Einmalkauf-Pfad), dedupliziert
+  try {
+    var PL_PLAN_GA = {
+      '1m':  { value:9.99,  name:'PLAN 1 Monat'  },
+      '3m':  { value:24.99, name:'PLAN 3 Monate' },
+      '6m':  { value:44.99, name:'PLAN 6 Monate' },
+      '12m': { value:79.99, name:'PLAN 12 Monate' }
+    };
+    var ga = PL_PLAN_GA[plan] || PL_PLAN_GA['1m'];
+    var txId = params.get('session_id') || (localStorage.getItem('pl_paid_plan') + '_' + ablaufStr);
+    var _gk = 'pl_purchase_logged_' + txId;
+    if (!localStorage.getItem(_gk)) {
+      gaEvent('purchase', {
+        transaction_id: txId,
+        currency: 'EUR',
+        value: ga.value,
+        items: [{ item_name: ga.name, price: ga.value, quantity: 1 }]
+      });
+      localStorage.setItem(_gk, '1');
+    }
+  } catch(e) {}
+
   // URL sofort sauber entfernen
   window.history.replaceState({}, document.title, window.location.pathname);
 
