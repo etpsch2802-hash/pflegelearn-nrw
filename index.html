@@ -483,7 +483,7 @@
   <!-- VOLLZUGRIFF PREISE (4 Laufzeiten) -->
   <div style="width:100%;max-width:320px;margin:14px auto 0">
     <div style="text-align:center;font-size:11px;font-weight:800;letter-spacing:.6px;color:#8aa;margin-bottom:4px">VOLLZUGRIFF FREISCHALTEN</div>
-    <div style="text-align:center;font-size:10px;color:#4a7a9b;margin-bottom:10px">628 Fragen · KI-Prüfungssimulation · 11 CE · alle 7 Ausbildungswege</div>
+    <div style="text-align:center;font-size:10px;color:#4a7a9b;margin-bottom:10px">627 Fragen · KI-Prüfungssimulation · 11 CE · alle 7 Ausbildungswege</div>
 
     <button onclick="kaufPlan('12m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:linear-gradient(135deg,#635bff,#4338ca);border:1.5px solid #a5b4fc;border-radius:12px;padding:13px 14px;color:#fff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span style="position:absolute;top:-9px;right:10px;background:#34d399;color:#04220f;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BESTER PREIS</span>
@@ -753,7 +753,7 @@
   <div class="hero">
     <img src="icon-192.png" alt="PLAN" style="width:60px;height:60px;object-fit:contain;margin-bottom:6px;filter:drop-shadow(0 0 14px rgba(var(--accent-rgb),.35))">
     <h1>PLAN <span>NRW</span></h1>
-    <p style="font-size:12px">7 Ausbildungswege · 628 Fragen · 100 Krankheitsbilder</p>
+    <p style="font-size:12px">7 Ausbildungswege · 627 Fragen · 100 Krankheitsbilder</p>
     <p style="font-size:12px;color:var(--accent);font-weight:600;margin-top:4px">Damit du immer einen PLAN hast.</p>
   </div>
   <div id="home-stats"></div>
@@ -1606,7 +1606,6 @@ const QUIZ_FRAGEN = [
 {"kat":"pflegehelfer","ce":"ce05","frage":"Was ist Behandlungspflege?","opt":["Ernährungsberatung","Körperpflege und Lagerung","Ärztlich verordnete Maßnahmen","Physiotherapie"],"k":2,"erkl":"Behandlungspflege = ärztlich verordnete Maßnahmen die an qualifiziertes Pflegepersonal delegiert werden. Kein eigenständiges Handeln ohne Anordnung.","s":"mittel"},
 {"kat":"pflegehelfer","ce":"ce02","frage":"Was gehört zur Grundpflege?","opt":["Körperpflege, Lagerung","Wundversorgung","Injektionen und Infusionen","EKG"],"k":0,"erkl":"Grundpflege = ATL-Unterstützung ohne ärztliche Anordnung.","s":"leicht"},
 {"kat":"pflegehelfer","ce":"ce02","frage":"Was bedeutet aktivierende Pflege?","opt":["Vollständige Bettruhe","Pflegeperson übernimmt alles","Förderung der Selbstständigkeit des Patienten","Mehr Medikamente geben"],"k":2,"erkl":"Aktivierende Pflege fördert vorhandene Fähigkeiten. Ziel: Selbstständigkeit erhalten/wiederherstellen.","s":"leicht"},
-{"kat":"pflegehelfer","ce":"ce02","frage":"Was ist ein Dekubitus?","opt":["Blutvergiftung","Wundinfektion durch Bakterien","Muskelentzündung","Druckgeschwür durch anhaltenden Druck"],"k":3,"erkl":"Dekubitus = druckbedingte Gewebeschädigung. Grad I-IV. Prädilektionsstellen: Steißbein, Fersen, Knöchel.","s":"leicht"},
 {"kat":"pflegehelfer","ce":"ce02","frage":"Wie oft sollte ein immobiler Patient umgelagert werden?","opt":["Nur bei Schmerzen","Alle 6-8 Stunden","Einmal täglich","Alle 2-4 Stunden (Risikopatient)"],"k":3,"erkl":"Laut Expertenstandard: individuell je nach Risiko, Standard alle 2-4h. Druckentlastung wichtiger als feste Intervalle.","s":"mittel"},
 {"kat":"pflegehelfer","ce":"ce01","frage":"Was gilt rechtlich für die Pflegedokumentation?","opt":["Einmal täglich reicht","Nur Probleme dokumentieren","Zeitnah, vollständig, korrekt, leserlich","Kann auch von Angehörigen gemacht werden"],"k":2,"erkl":"Pflegedokumentation ist rechtlich bindend: nicht dokumentiert gilt als nicht durchgeführt.","s":"mittel"},
 {"kat":"pflegehelfer","ce":"ce01","frage":"Was sind Ressourcen in der Pflege?","opt":["Medikamentenliste","Probleme des Patienten","Vorhandene Fähigkeiten","Arztdiagnosen"],"k":2,"erkl":"Ressourcen = Stärken des Patienten: z.B. 'Kann rechtes Bein heben', 'Motiviert', 'Familienhilfe'. Basis für aktivierende Pflege.","s":"mittel"},
@@ -2128,7 +2127,7 @@ const QUIZ_FRAGEN = [
 {"kat":"anatomie","frage":"Wie reagiert die Haut zur Wärmeabgabe bei Hitze?","opt":["Gefäßverengung","Gefäßerweiterung und Schwitzen","Gänsehaut","Verstärkte Verhornung"],"k":1,"erkl":"Bei Hitze weiten sich die Hautgefäße (mehr Wärmeabgabe) und die Schweißdrüsen produzieren Schweiß. Bei Kälte verengen sich die Gefäße.","s":"mittel"},
 {"kat":"anatomie","frage":"Woraus bestehen Nägel und Haare hauptsächlich?","opt":["Aus Kalzium","Aus dem Eiweiß Keratin","Aus Melanin","Aus Kollagen"],"k":1,"erkl":"Nägel und Haare bestehen überwiegend aus dem festen Faserprotein Keratin. Nägel schützen die empfindlichen Finger- und Zehenspitzen.","s":"mittel"},
 {"kat":"anatomie","frage":"Welcher kleine Muskel richtet die Körperhaare auf (Gänsehaut)?","opt":["M. detrusor","M. arrector pili (Haaraufrichter)","M. masseter","M. gluteus maximus"],"k":1,"erkl":"Der M. arrector pili (Haaraufrichtemuskel) stellt das Haar auf → Gänsehaut. Ursprünglich diente das der Wärmeisolierung.","s":"schwer"},
-{"kat":"anatomie","frage":"Was ist ein Dekubitus?","opt":["Ein Pilzbefall","Ein Druckgeschwür durch anhaltenden Druck und Minderdurchblutung","Eine allergische Reaktion","Eine Verbrennung"],"k":1,"erkl":"Ein Dekubitus ist eine Druckschädigung von Haut und Gewebe durch anhaltenden Druck, meist über Knochenvorsprüngen, mit Minderdurchblutung.","s":"leicht"},
+{"kat":"anatomie","ce":"ce02","frage":"Was ist ein Dekubitus?","opt":["Ein Pilzbefall","Ein Druckgeschwür durch anhaltenden Druck und Minderdurchblutung","Eine allergische Reaktion","Eine Verbrennung"],"k":1,"erkl":"Ein Dekubitus ist eine Druckschädigung von Haut und Gewebe durch anhaltenden Druck, meist über Knochenvorsprüngen, mit Minderdurchblutung.","s":"leicht"},
 {"kat":"anatomie","frage":"Welche Körperstellen sind besonders dekubitusgefährdet?","opt":["Bauch und Brust","Kreuz-/Steißbein, Fersen und Trochanter (Hüfte)","Die Handflächen","Die Stirn"],"k":1,"erkl":"Prädilektionsstellen liegen über Knochenvorsprüngen: Kreuz-/Steißbein (Sakrum), Fersen, Trochanter major, Sitzbein, Ellenbogen, Hinterkopf.","s":"mittel"},
 {"kat":"anatomie","frage":"Welche Maßnahme ist zentral in der Dekubitusprophylaxe?","opt":["Bettruhe ohne Bewegung","Regelmäßiger Positionswechsel und Druckentlastung","Häufiges Waschen mit Seife","Wärmflaschen auflegen"],"k":1,"erkl":"Wichtigste Maßnahme ist die Druckentlastung durch regelmäßigen Positionswechsel, ergänzt durch Mobilisation, Hautbeobachtung, Hautpflege und Lagerungshilfsmittel.","s":"mittel"},
 {"kat":"anatomie","frage":"Was zeigt der Fingertest bei einer Hautrötung?","opt":["Den Blutzucker","Ob die Rötung wegdrückbar ist (sonst Dekubitus Kategorie 1)","Die Hauttemperatur","Den pH-Wert"],"k":1,"erkl":"Beim Fingertest wird auf die Rötung gedrückt: Bleibt sie bestehen (nicht wegdrückbar), liegt bereits ein Dekubitus Kategorie 1 vor.","s":"schwer"},
@@ -7507,7 +7506,7 @@ function showTesterInfo() {
         <div style="font-size:10px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">✅ Was jetzt in der App ist</div>
         <div style="display:flex;flex-direction:column;gap:8px">
           ${[
-            ['📝','Prüfungs-Quiz','628 Fragen · 7 Ausbildungswege · Multiple Choice mit Erklärungen'],
+            ['📝','Prüfungs-Quiz','627 Fragen · 7 Ausbildungswege · Multiple Choice mit Erklärungen'],
             ['🏥','Krankheitsbilder','100 Krankheitsbilder mit vollständiger Pflegeplanung'],
             ['📋','ATL-Pflegeplanung','10 ATLs komplett – Problem, Ziel, Maßnahmen'],
             ['🛡️','Prophylaxen','16 Prophylaxen inkl. Händedesinfektion, Handschuhe, Hygiene'],
