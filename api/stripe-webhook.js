@@ -53,11 +53,20 @@ export default async function handler(req, res) {
         } catch (e) { console.warn('[stripe-webhook] sub-fetch optional', e); }
       }
     } else if (type === 'customer.subscription.updated' || type === 'customer.subscription.deleted') {
-      const sub = await stripeGet('subscriptions/' + obj.id);
-      subId = sub.id; customerId = sub.customer; status = sub.status;
-      periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
-      const cust = await stripeGet('customers/' + customerId);
-      email = cust && cust.email ? cust.email : null;
+      // Subscription steckt bereits vollstaendig im signierten Event - KEIN Re-Fetch
+      // (führte bei Kündigung zu 404 -> 500 -> endlose Stripe-Retries).
+      const sub = obj;
+      subId = sub.id || null;
+      customerId = sub.customer || null;
+      status = (type === 'customer.subscription.deleted') ? 'canceled' : (sub.status || null);
+      const cpe = sub.current_period_end
+        || (sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].current_period_end)
+        || sub.cancel_at || null;
+      periodEnd = cpe ? new Date(cpe * 1000).toISOString() : null;
+      if (customerId) {
+        try { const cust = await stripeGet('customers/' + customerId); email = cust && cust.email ? cust.email : null; }
+        catch (e) { console.warn('[stripe-webhook] customer-fetch optional', e); }
+      }
     } else if (type === 'charge.refunded') {
       // Rueckerstattung -> Zugang entziehen
       const charge = obj;
