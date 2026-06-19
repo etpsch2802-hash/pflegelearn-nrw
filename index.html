@@ -522,6 +522,8 @@
     <a href="#datenschutz" onclick="showDatenschutz()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Datenschutz</a>
     <span style="font-size:10px;color:rgba(var(--accent-rgb),.2)">|</span>
     <a href="#agb" onclick="showAGB()" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
+    <span style="font-size:10px;color:rgba(var(--accent-rgb),.2)">|</span>
+    <a href="#cookies" onclick="plOpenConsent();return false;" style="font-size:10px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Cookie-Einstellungen</a>
   </div>
   <div class="pw-copyright"><span data-i18n="copyright">© PLAN – Pflege Learn App NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</span></div>
   <div style="display:flex;justify-content:center;margin:12px auto 0;max-width:320px">
@@ -660,6 +662,7 @@
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_datenschutz">🔒 Datenschutz</span></button>
   <button onclick="showAGB()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px"><span data-i18n="nav_agb">📑 AGB & Widerruf</span></button>
   <button onclick="showKuendigung()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🧾 Abo kündigen</button>
+  <button onclick="plOpenConsent()" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🍪 Cookie-Einstellungen</button>
     <hr style="border-color:rgba(248,113,113,.15);margin:6px 0">
   <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700">🚪 <span data-i18n="btn_logout">Abmelden</span></button>
   <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.08);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8">🔧 Admin Panel</button></div>
@@ -15888,14 +15891,19 @@ if (_savedLang !== 'de') {
     }
     var b=document.getElementById('pl-consent'); if(b) b.style.display='none';
   }
-  function init(){
-    var chosen;
-    try{ chosen = localStorage.getItem('pl_consent'); }catch(e){}
-    if (chosen) return;
-    var b=document.getElementById('pl-consent'); if(b) b.style.display='block';
+  function wire(){
     var y=document.getElementById('pl-consent-yes'); if(y) y.onclick=function(){setConsent('granted');};
     var n=document.getElementById('pl-consent-no');  if(n) n.onclick=function(){setConsent('denied');};
   }
+  function show(){ var b=document.getElementById('pl-consent'); if(b) b.style.display='block'; }
+  function init(){
+    wire();
+    var chosen;
+    try{ chosen = localStorage.getItem('pl_consent'); }catch(e){}
+    if (!chosen) show();
+  }
+  // Erneut oeffnen (Widerruf / Aenderung der Cookie-Einwilligung)
+  window.plOpenConsent = function(){ wire(); show(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
