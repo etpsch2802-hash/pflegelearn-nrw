@@ -608,6 +608,7 @@
         <button onclick="setAppZoom(1)" style="background:rgba(var(--accent-rgb),.15);border:none;border-radius:7px;width:30px;height:28px;color:#ddf0fb;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">+</button>
       </span>
     </div>
+    <button onclick="navGo('support')" class="nav-drop-btn" style="color:#38bdf8"><span data-i18n="nav_support">🛟 Hilfe & Support</span></button>
     <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399"><span data-i18n="nav_feedback">💬 Feedback / Fehler melden</span></button>
   </div>
 
@@ -789,6 +790,78 @@
 
 <!-- KRANKHEITSBILDER -->
 <!-- MERKSÄTZE (durchsuchbar) -->
+<div class="page" id="screen-support">
+  <div style="max-width:680px;margin:0 auto;padding:0 4px">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:40px">🛟</div>
+      <h1 style="font-family:'DM Serif Display',serif;font-size:26px;margin:6px 0 2px;color:var(--text,#e0f2fe)">Hilfe & <span style="color:var(--accent)">Support</span></h1>
+      <p style="font-size:13px;color:var(--text2,#94a3b8)">Rund um die Uhr – die häufigsten Fragen sofort beantwortet</p>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔑 Mein Zugangscode funktioniert nicht</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Achte auf die exakte Schreibweise – Groß-/Kleinschreibung und Bindestriche genau wie erhalten. Aktualisiere zuerst die App (Menü → App aktualisieren) und versuche es erneut. Klappt es weiterhin nicht, schreib an kontakt@plan-nrw.de und nenne deinen Code.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>⏳ Mein Zugang ist abgelaufen oder weg</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Zugänge haben eine feste Laufzeit. Du kannst ihn jederzeit über „Plan & Preise" (Menü) verlängern oder neu aktivieren. Bei Fragen: kontakt@plan-nrw.de.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🎁 Testphase & Preise</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Alle aktuellen Konditionen findest du unter „Plan & Preise" (Menü). Dort siehst du die verfügbaren Laufzeiten und Preise immer auf dem neuesten Stand.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>💳 Zahlung & Rechnung</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Die Zahlung läuft sicher über Stripe (u. a. Karte, PayPal, Klarna, Apple/Google Pay). Eine Bestätigung erhältst du per E-Mail. Bei Problemen mit einer Zahlung: kontakt@plan-nrw.de.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🧾 Kündigung</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Jederzeit kündbar über den Button „🧾 Abo kündigen" (Menü). Nach Ende des bezahlten Zeitraums endet der Zugang automatisch – es wird nichts weiter abgebucht. Du kannst den Zugang jederzeit wieder aktivieren.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔄 App lädt nicht / alte Version</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Tippe auf Menü → „App aktualisieren". Schließe die App danach komplett und öffne sie neu. Das behebt fast alle Anzeige- und Ladeprobleme.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🐞 Fehler im Inhalt gefunden</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Danke dir! Melde ihn über Menü → „Feedback / Fehler melden" oder an kontakt@plan-nrw.de – am besten mit kurzem Hinweis, wo der Fehler steht.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>📲 App aufs Handy installieren</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Öffne die App im Browser und wähle „Zum Startbildschirm hinzufügen". Danach startest du PLAN wie eine normale App.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🖥️ Auf mehreren Geräten lernen</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Ja. Melde dich auf jedem Gerät mit demselben Zugang an – dein Fortschritt wird synchronisiert.</div>
+    </div>
+
+    <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔒 Datenschutz & meine Daten</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Details findest du unter „Datenschutz" (Menü). Bei Fragen zu deinen Daten: kontakt@plan-nrw.de.</div>
+    </div>
+
+    <a href="mailto:kontakt@plan-nrw.de?subject=Support-Anfrage%20PLAN%20NRW" style="display:block;text-align:center;background:rgba(var(--accent-rgb),.14);border:1px solid rgba(var(--accent-rgb),.4);color:var(--accent);font-weight:700;border-radius:14px;padding:14px;margin:16px 0;text-decoration:none">✉️ Direkt schreiben: kontakt@plan-nrw.de</a>
+
+    <div style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:16px;padding:16px;margin-top:8px">
+      <div style="font-weight:700;color:var(--accent);margin-bottom:4px">🤖 Freie Frage an den Support</div>
+      <div style="font-size:12px;color:var(--text2,#94a3b8);margin-bottom:10px">Nur zu App, Konto & Zahlung. Fachfragen (Pflege/Medizin) beantwortet der KI-Assistent auf der Startseite.</div>
+      <div id="support-chat" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+      <div style="display:flex;gap:8px">
+        <input id="support-input" class="pw-input" placeholder="z. B. Mein Code funktioniert nicht" style="flex:1;letter-spacing:0;margin:0" onkeydown="if(event.key==='Enter')sendSupportMsg()">
+        <button onclick="sendSupportMsg()" class="pw-btn" style="width:auto;padding:0 18px;margin:0">Senden</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="page" id="screen-merksaetze">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:12px">
@@ -13754,6 +13827,59 @@ function isAdmin() {
     return ids.some(function(x){ return x && ADMIN_EMAILS.indexOf(String(x).trim().toLowerCase()) > -1; });
   } catch (e) { return false; }
 }
+// ── Support-Screen: FAQ + beschränkte KI-Frage ──
+function toggleFaq(head) {
+  const ans = head.parentNode.querySelector('.faq-answer');
+  const arr = head.querySelector('.faq-arrow');
+  if (!ans) return;
+  const open = ans.style.display === 'block';
+  ans.style.display = open ? 'none' : 'block';
+  if (arr) arr.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+const SUPPORT_SYSTEM_PROMPT = `Du bist der SUPPORT-ASSISTENT der Lern-App "PLAN NRW". Du hilfst AUSSCHLIESSLICH bei Fragen zur App, zum Konto, zum Zugangscode, zur Zahlung, zur Kündigung und zur Installation.
+
+REGELN:
+- Beantworte NUR App-, Konto- und Zahlungsfragen.
+- Bei Pflege-, Medizin- oder Prüfungs-Fachfragen antworte NICHT inhaltlich, sondern sage freundlich: "Fachfragen beantwortet dir der KI-Assistent auf der Startseite – ich bin nur für App- und Konto-Hilfe da."
+- Nenne KEINE konkreten Preise oder Beträge. Verweise für Preise und Laufzeiten immer auf „Plan & Preise" im Menü.
+- Erfinde keine Regeln zu Erstattungen oder Rückbuchungen. Verweise dafür auf kontakt@plan-nrw.de.
+- Zugangscode-Probleme: exakte Schreibweise prüfen, App aktualisieren (Menü → App aktualisieren), sonst kontakt@plan-nrw.de.
+- Kündigung: über den Button „Abo kündigen" im Menü; der Zugang endet nach dem bezahlten Zeitraum und ist jederzeit reaktivierbar.
+- Antworte kurz, freundlich und auf Deutsch. Wenn du etwas nicht lösen kannst, verweise auf kontakt@plan-nrw.de.`;
+let supportThread = [];
+let supportBusy = false;
+function supportBubble(who, text) {
+  const mine = who === 'user';
+  const safe = String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  return '<div style="align-self:' + (mine ? 'flex-end' : 'flex-start') + ';max-width:85%;background:' + (mine ? 'rgba(var(--accent-rgb),.18)' : 'var(--card,rgba(255,255,255,.06))') + ';border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;padding:8px 12px;font-size:13px;line-height:1.5;color:var(--text,#e0f2fe)">' + safe + '</div>';
+}
+async function sendSupportMsg() {
+  const inp = document.getElementById('support-input');
+  const box = document.getElementById('support-chat');
+  if (!inp || !box) return;
+  const txt = inp.value.trim();
+  if (!txt || supportBusy) return;
+  inp.value = '';
+  supportThread.push({ role:'user', content:txt });
+  box.innerHTML += supportBubble('user', txt);
+  box.scrollTop = box.scrollHeight;
+  supportBusy = true;
+  const wait = document.createElement('div');
+  wait.textContent = '…';
+  wait.style.cssText = 'color:var(--text2,#94a3b8);font-size:13px;align-self:flex-start';
+  box.appendChild(wait);
+  try {
+    const reply = await callKI(supportThread.slice(-8), SUPPORT_SYSTEM_PROMPT);
+    wait.remove();
+    supportThread.push({ role:'assistant', content:reply });
+    box.innerHTML += supportBubble('ai', reply);
+  } catch (e) {
+    wait.remove();
+    box.innerHTML += supportBubble('ai', 'Entschuldige, das hat gerade nicht geklappt. Bei dringenden Fragen schreib uns direkt an kontakt@plan-nrw.de.');
+  }
+  supportBusy = false;
+  box.scrollTop = box.scrollHeight;
+}
 
 function renderMerksaetze(filter) {
   const el = document.getElementById('merk-list');
@@ -15047,6 +15173,7 @@ window.I18N = {
     nav_impressum: '📄 Impressum',
     nav_datenschutz: '🔒 Datenschutz',
     nav_agb: '📑 AGB & Widerruf',
+    nav_support: '🛟 Hilfe & Support',
     ueben_hero: 'Üben & <span>Prüfen</span>',
     ueben_sub: 'Quiz · Simulator · Karteikarten · Lernplan',
     wissen_hero: 'Wissen & <span>Praxis</span>',
@@ -15108,6 +15235,7 @@ window.I18N = {
     nav_impressum: '📄 Legal Notice',
     nav_datenschutz: '🔒 Privacy Policy',
     nav_agb: '📑 Terms & Conditions',
+    nav_support: '🛟 Help & Support',
     ueben_hero: 'Practice & <span>Exam</span>',
     ueben_sub: 'Quiz · Simulator · Flashcards · Study plan',
     wissen_hero: 'Knowledge & <span>Practice</span>',
@@ -15169,6 +15297,7 @@ window.I18N = {
     nav_impressum: '📄 Yasal Bildirim',
     nav_datenschutz: '🔒 Gizlilik Politikası',
     nav_agb: '📑 Kullanım Koşulları',
+    nav_support: '🛟 Yardım & Destek',
     ueben_hero: 'Alıştırma & <span>Sınav</span>',
     ueben_sub: 'Test · Simülatör · Kartlar · Çalışma planı',
     wissen_hero: 'Bilgi & <span>Uygulama</span>',
@@ -15230,6 +15359,7 @@ window.I18N = {
     nav_impressum: '📄 الإشعار القانوني',
     nav_datenschutz: '🔒 سياسة الخصوصية',
     nav_agb: '📑 الشروط والأحكام',
+    nav_support: '🛟 المساعدة والدعم',
     ueben_hero: 'التدريب <span>والامتحان</span>',
     ueben_sub: 'اختبار · محاكي · بطاقات · خطة دراسة',
     wissen_hero: 'المعرفة <span>والممارسة</span>',
@@ -15291,6 +15421,7 @@ window.I18N = {
     nav_impressum: '📄 Правовая информация',
     nav_datenschutz: '🔒 Политика конфиденциальности',
     nav_agb: '📑 Условия использования',
+    nav_support: '🛟 Помощь и поддержка',
     ueben_hero: 'Практика и <span>экзамен</span>',
     ueben_sub: 'Тест · Симулятор · Карточки · План',
     wissen_hero: 'Знания и <span>практика</span>',
@@ -15352,6 +15483,7 @@ window.I18N = {
     nav_impressum: '📄 Informacja prawna',
     nav_datenschutz: '🔒 Polityka prywatności',
     nav_agb: '📑 Regulamin',
+    nav_support: '🛟 Pomoc i wsparcie',
     ueben_hero: 'Ćwiczenia i <span>egzamin</span>',
     ueben_sub: 'Quiz · Symulator · Fiszki · Plan',
     wissen_hero: 'Wiedza i <span>praktyka</span>',
@@ -15413,6 +15545,7 @@ window.I18N = {
     nav_impressum: '📄 Правова інформація',
     nav_datenschutz: '🔒 Політика конфіденційності',
     nav_agb: '📑 Умови використання',
+    nav_support: '🛟 Довідка та підтримка',
     ueben_hero: 'Практика та <span>іспит</span>',
     ueben_sub: 'Тест · Симулятор · Картки · План',
     wissen_hero: 'Знання та <span>практика</span>',
@@ -15474,6 +15607,7 @@ window.I18N = {
     nav_impressum: '📄 Aviz legal',
     nav_datenschutz: '🔒 Politică confidențialitate',
     nav_agb: '📑 Termeni și condiții',
+    nav_support: '🛟 Ajutor și asistență',
     ueben_hero: 'Exersare și <span>examen</span>',
     ueben_sub: 'Test · Simulator · Cartonașe · Plan',
     wissen_hero: 'Cunoștințe și <span>practică</span>',
@@ -15535,6 +15669,7 @@ window.I18N = {
     nav_impressum: '📄 Aviso legal',
     nav_datenschutz: '🔒 Política de privacidad',
     nav_agb: '📑 Términos y condiciones',
+    nav_support: '🛟 Ayuda y soporte',
     ueben_hero: 'Practicar y <span>examen</span>',
     ueben_sub: 'Test · Simulador · Tarjetas · Plan',
     wissen_hero: 'Conocimiento y <span>práctica</span>',
