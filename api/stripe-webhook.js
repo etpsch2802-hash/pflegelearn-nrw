@@ -95,28 +95,45 @@ export default async function handler(req, res) {
       res.status(200).json({ ignored: type }); return;
     }
 
-    if (!email) { res.status(200).json({ ignored: 'no_email' }); return; }
-    email = email.toLowerCase();
+    if (email) email = email.toLowerCase();
 
-    // Supabase-User per E-Mail finden (RPC uid_by_email, Service-Role)
-    const rpcR = await fetch(SB_URL + '/rest/v1/rpc/uid_by_email', {
-      method: 'POST',
-      headers: {
-        'apikey': SB_SERVICE,
-        'Authorization': 'Bearer ' + SB_SERVICE,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ p_email: email })
-    });
-    if (!rpcR.ok) {
-      const t = await rpcR.text();
-      console.error('[stripe-webhook] rpc uid_by_email', rpcR.status, t);
-      res.status(500).json({ error: 'rpc', detail: t }); return;
+    // Supabase-User aufloesen: 1) ueber bestehende stripe_customer_id in der DB
+    // (unabhaengig von der Stripe-API), 2) Fallback ueber E-Mail-RPC.
+    let userId = null;
+
+    if (customerId) {
+      try {
+        const q = SB_URL + '/rest/v1/subscriptions?stripe_customer_id=eq.' +
+          encodeURIComponent(customerId) + '&select=user_id&limit=1';
+        const r = await fetch(q, { headers: { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE } });
+        if (r.ok) {
+          const rows = await r.json();
+          if (Array.isArray(rows) && rows.length && rows[0].user_id) userId = rows[0].user_id;
+        }
+      } catch (e) { console.warn('[stripe-webhook] lookup by customer_id', e); }
     }
-    const userId = await rpcR.json();
+
+    if (!userId && email) {
+      const rpcR = await fetch(SB_URL + '/rest/v1/rpc/uid_by_email', {
+        method: 'POST',
+        headers: {
+          'apikey': SB_SERVICE,
+          'Authorization': 'Bearer ' + SB_SERVICE,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ p_email: email })
+      });
+      if (!rpcR.ok) {
+        const t = await rpcR.text();
+        console.error('[stripe-webhook] rpc uid_by_email', rpcR.status, t);
+        res.status(500).json({ error: 'rpc', detail: t }); return;
+      }
+      userId = await rpcR.json();
+    }
+
     if (!userId) {
-      console.warn('[stripe-webhook] kein Supabase-User fuer', email);
-      res.status(200).json({ ignored: 'no_user', email }); return;
+      console.warn('[stripe-webhook] kein Supabase-User', { email, customerId });
+      res.status(200).json({ ignored: 'no_user', email, customerId }); return;
     }
     const user = { id: userId };
 
