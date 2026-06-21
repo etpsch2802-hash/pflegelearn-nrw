@@ -15930,5 +15930,82 @@ if (_savedLang !== 'de') {
   else init();
 })();
 </script>
+<!-- PLAN NRW: Gratis-Eselsbruecken Lead-Capture (Route /gratis) -->
+<script>
+(function(){
+  function isGratisRoute(){
+    var p = (location.pathname||'').toLowerCase().replace(/\/+$/,'');
+    if (p === '/gratis') return true;
+    if ((location.search||'').toLowerCase().indexOf('gratis') !== -1) return true;
+    if ((location.hash||'').toLowerCase().indexOf('gratis') !== -1) return true;
+    return false;
+  }
+  function build(){
+    if (document.getElementById('plg-overlay')) return;
+    var ov = document.createElement('div');
+    ov.id = 'plg-overlay';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99999;overflow-y:auto;background:linear-gradient(160deg,#0a1626,#06101d);display:flex;align-items:flex-start;justify-content:center;padding:30px 18px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif';
+    ov.innerHTML =
+      '<div style="position:absolute;top:14px;right:16px"><a href="/" style="color:#5b7894;font-size:12px;text-decoration:none">Zur App &rarr;</a></div>'
+      + '<div id="plg-card" style="width:100%;max-width:430px;margin-top:8px">'
+      +   '<div style="text-align:center;margin-bottom:18px">'
+      +     '<img src="/icon-512.png" alt="PLAN NRW" style="width:84px;height:84px;border-radius:20px;box-shadow:0 0 30px rgba(34,211,238,.25)">'
+      +   '</div>'
+      +   '<div style="text-align:center;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#22d3ee;font-weight:700;margin-bottom:8px">PLAN NRW &middot; Gratis f&uuml;r dich</div>'
+      +   '<h1 style="text-align:center;font-family:\'DM Serif Display\',Georgia,serif;font-size:27px;line-height:1.25;color:#eaf4fb;margin:0 0 10px">12 Eselsbr&uuml;cken f&uuml;rs Pflegeexamen</h1>'
+      +   '<p style="text-align:center;font-size:14px;line-height:1.6;color:#9fb6c9;margin:0 0 18px">Die wichtigsten Merkhilfen f&uuml;r Pflegeplanung, Pflegeziele, ATL, AEDL, Pflegediagnosen &amp; mehr &ndash; kostenlos als PDF.</p>'
+      +   '<div style="display:flex;flex-direction:column;gap:8px;margin:0 auto 20px;max-width:320px">'
+      +     '<div style="font-size:13px;color:#cbd9e6"><span style="color:#34d399;font-weight:800">&#10003;</span> Sofort per E-Mail als PDF</div>'
+      +     '<div style="font-size:13px;color:#cbd9e6"><span style="color:#34d399;font-weight:800">&#10003;</span> Von einem Fachpfleger &amp; Pr&uuml;fer erstellt</div>'
+      +     '<div style="font-size:13px;color:#cbd9e6"><span style="color:#34d399;font-weight:800">&#10003;</span> Perfekt zum Ausdrucken f&uuml;r deinen Lernplatz</div>'
+      +   '</div>'
+      +   '<div style="background:linear-gradient(160deg,#0d2135,#091525);border:1px solid rgba(52,211,153,.28);border-radius:18px;padding:20px 18px 18px">'
+      +     '<input id="plg-email" type="email" inputmode="email" autocomplete="email" placeholder="deine@email.de" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:14px 15px;color:#ddf0fb;font-size:15px;outline:none;font-family:inherit;margin-bottom:10px">'
+      +     '<button id="plg-btn" type="button" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:15px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">PDF kostenlos sichern</button>'
+      +     '<div id="plg-msg" style="min-height:16px;font-size:12px;text-align:center;margin-top:9px;color:#fca5a5"></div>'
+      +     '<div style="font-size:10px;color:#5b7894;line-height:1.6;margin-top:6px;text-align:center">Mit dem Absenden stimmst du zu, dass wir dir das PDF und gelegentlich Lerntipps per E-Mail senden. Abmeldung jederzeit. Mehr in der <a href="/datenschutz.html" style="color:#7aa6c4">Datenschutzerkl&auml;rung</a>.</div>'
+      +   '</div>'
+      + '</div>';
+    document.body.appendChild(ov);
+
+    var inp = document.getElementById('plg-email');
+    var btn = document.getElementById('plg-btn');
+    var msg = document.getElementById('plg-msg');
+
+    function submit(){
+      var email = (inp.value||'').trim().toLowerCase();
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!re.test(email)) { msg.style.color='#fca5a5'; msg.textContent='Bitte gib eine g\u00fcltige E-Mail-Adresse ein.'; return; }
+      btn.disabled = true; btn.textContent = 'Wird gesendet \u2026';
+      fetch('/api/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, source: 'gratis-eselsbruecken' }) })
+        .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { ok:r.ok, j:j }; }); })
+        .then(function(res){
+          if (res.ok) { success(); }
+          else { btn.disabled=false; btn.textContent='PDF kostenlos sichern'; msg.style.color='#fca5a5'; msg.textContent='Etwas ist schiefgelaufen. Bitte versuch es nochmal.'; }
+        })
+        .catch(function(){ btn.disabled=false; btn.textContent='PDF kostenlos sichern'; msg.style.color='#fca5a5'; msg.textContent='Keine Verbindung. Bitte versuch es gleich nochmal.'; });
+    }
+
+    function success(){
+      var card = document.getElementById('plg-card');
+      card.innerHTML =
+        '<div style="text-align:center;padding:20px 6px">'
+        + '<div style="width:74px;height:74px;border-radius:50%;background:rgba(52,211,153,.15);border:2px solid #34d399;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:36px;color:#34d399">&#10003;</div>'
+        + '<h1 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:25px;color:#eaf4fb;margin:0 0 10px">Fast geschafft!</h1>'
+        + '<p style="font-size:14px;line-height:1.65;color:#9fb6c9;margin:0 0 8px">Wir haben dir die <strong style="color:#cbd9e6">12 Eselsbr&uuml;cken</strong> gerade per E-Mail geschickt.</p>'
+        + '<p style="font-size:13px;line-height:1.6;color:#7e97ab;margin:0 0 22px">Schau in dein Postfach &ndash; und bitte auch im <strong>Spam-Ordner</strong> nach.</p>'
+        + '<a href="/" style="display:inline-block;background:rgba(34,211,238,.12);border:1px solid #22d3ee;border-radius:11px;padding:13px 22px;color:#7ff0ff;font-size:14px;font-weight:700;text-decoration:none">App entdecken &middot; 7 Tage gratis</a>'
+        + '</div>';
+    }
+
+    btn.addEventListener('click', submit);
+    inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') { submit(); } });
+    setTimeout(function(){ try { inp.focus(); } catch(e){} }, 200);
+  }
+  function init(){ if (isGratisRoute()) build(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 </body>
 </html>
