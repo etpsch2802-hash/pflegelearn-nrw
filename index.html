@@ -11417,6 +11417,242 @@ function showPruefungsreife() {
   overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.remove(); });
 }
 
+// ─── EXAMEN-SIMULATION (getaktet, navigierbar, Auswertung mit Note) ───────────
+let _examState = null;
+let _examLastWeakest = null;
+
+function examenConfig() {
+  const b = (currentUser && currentUser.bereich) || (currentBereich && currentBereich.id) || 'gpa';
+  const map = {
+    gpa: { count: 30, minutes: 35 }, alle: { count: 30, minutes: 35 },
+    anaesthesie: { count: 25, minutes: 30 }, intensiv: { count: 25, minutes: 30 },
+    ata: { count: 25, minutes: 30 }, ota: { count: 25, minutes: 30 },
+    anerkennung: { count: 25, minutes: 30 }, pflegehelfer: { count: 20, minutes: 24 }
+  };
+  const c = map[b] || { count: 25, minutes: 30 };
+  const rel = _prRelevantKats();
+  let pool = 0;
+  QUIZ_FRAGEN.forEach(function(q){ if (q && rel.indexOf(q.kat) >= 0) pool++; });
+  return { count: Math.min(c.count, pool), minutes: c.minutes, passPct: 50, pool: pool };
+}
+
+function examenCardHTML() {
+  if (!currentUser) return '';
+  const cfg = examenConfig();
+  if (cfg.pool < 5) return '';
+  const lim = !!(currentBereich && currentBereich.gratis);
+  const sub = lim ? 'Schnupper: 5 Fragen · Vollversion im Abo' : (cfg.count + ' Fragen · ' + cfg.minutes + ' Min · auf Zeit');
+  return '<button onclick="openExamenIntro()" style="width:100%;text-align:left;background:linear-gradient(135deg,rgba(244,63,94,.15),rgba(244,63,94,.05));border:1px solid rgba(244,63,94,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit">'
+    + '<div style="font-size:26px">📝</div>'
+    + '<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#fecdd3">Examen-Simulation</div><div style="font-size:11px;color:#fb9aa8;margin-top:2px">' + sub + '</div></div>'
+    + '<div style="font-size:18px;color:#fb7185">›</div></button>';
+}
+
+function closeExamenIntro() { const o = document.querySelector('[data-exam-intro]'); if (o) o.remove(); }
+
+function openExamenIntro() {
+  if (!currentUser) return;
+  const cfg = examenConfig();
+  const lim = !!(currentBereich && currentBereich.gratis);
+  const cnt = lim ? Math.min(5, cfg.count) : cfg.count;
+  const mins = lim ? Math.max(4, Math.round(cfg.minutes * 5 / Math.max(1, cfg.count))) : cfg.minutes;
+  const startBtns = lim
+    ? '<button onclick="startExamen(false)" style="width:100%;background:linear-gradient(135deg,#f43f5e,#be123c);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Schnupper-Examen starten (' + cnt + ' Fragen)</button>'
+      + '<button onclick="goToStripe()" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:11px;padding:13px;color:white;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer">🔓 Vollzugang – vollständiges Examen (' + cfg.count + ' Fragen)</button>'
+    : '<button onclick="startExamen(true)" style="width:100%;background:linear-gradient(135deg,#f43f5e,#be123c);border:none;border-radius:11px;padding:15px;color:white;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer">Prüfung starten →</button>';
+  const ov = document.createElement('div');
+  ov.setAttribute('data-exam-intro', '1');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
+  ov.innerHTML = '<div style="background:linear-gradient(160deg,#1a0e14,#2a1018);border:1px solid rgba(244,63,94,.3);border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px"><div><div style="font-size:18px;font-weight:800;color:#fecdd3">📝 Examen-Simulation</div><div style="font-size:11px;color:#fb9aa8;margin-top:2px">' + (currentBereich ? currentBereich.label : '') + '</div></div><button onclick="closeExamenIntro()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;font-size:14px;cursor:pointer">✕</button></div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">'
+    +   '<div style="background:rgba(255,255,255,.04);border-radius:11px;padding:11px;text-align:center"><div style="font-size:17px;font-weight:800;color:#fecdd3">' + cnt + '</div><div style="font-size:9px;color:#94a3b8">Fragen</div></div>'
+    +   '<div style="background:rgba(255,255,255,.04);border-radius:11px;padding:11px;text-align:center"><div style="font-size:17px;font-weight:800;color:#fecdd3">' + mins + '</div><div style="font-size:9px;color:#94a3b8">Minuten</div></div>'
+    +   '<div style="background:rgba(255,255,255,.04);border-radius:11px;padding:11px;text-align:center"><div style="font-size:17px;font-weight:800;color:#fecdd3">50%</div><div style="font-size:9px;color:#94a3b8">bestanden</div></div>'
+    + '</div>'
+    + '<div style="background:rgba(255,255,255,.03);border-radius:12px;padding:13px;margin-bottom:16px">'
+    +   '<div style="font-size:11px;color:#cbd5e1;line-height:1.7">• Läuft auf Zeit – bei 0:00 wird automatisch abgegeben<br>• Erklärungen erst nach der Abgabe<br>• Du kannst zwischen Fragen springen<br>• Am Ende: Note, Auswertung pro Thema, schwächstes Thema direkt üben</div>'
+    + '</div>'
+    + (lim ? '<div style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.25);border-radius:11px;padding:11px;margin-bottom:14px;font-size:11px;color:#fda4af">Im Gratis-Zugang testest du das Format mit ' + cnt + ' Fragen. Das vollständige Examen mit ' + cfg.count + ' Fragen unter Echtbedingungen ist im Vollzugang enthalten.</div>' : '')
+    + startBtns
+    + '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
+}
+
+function _examShuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+
+function _examPickQuestions(count) {
+  const rel = _prRelevantKats();
+  const byKat = {};
+  rel.forEach(function(k){ byKat[k] = []; });
+  QUIZ_FRAGEN.forEach(function(q){ if (q && byKat[q.kat]) byKat[q.kat].push(q); });
+  rel.forEach(function(k){ byKat[k] = _examShuffle(byKat[k]); });
+  const cursor = {}; rel.forEach(function(k){ cursor[k] = 0; });
+  const order = _examShuffle(rel.slice());
+  const picked = [];
+  let added = true;
+  while (picked.length < count && added) {
+    added = false;
+    for (let oi = 0; oi < order.length; oi++) {
+      const k = order[oi];
+      if (picked.length >= count) break;
+      if (cursor[k] < byKat[k].length) { picked.push(byKat[k][cursor[k]]); cursor[k]++; added = true; }
+    }
+  }
+  return _examShuffle(picked).slice(0, count).map(function(q){
+    const idx = q.opt.map(function(o, i){ return { o: o, correct: i === q.k }; });
+    const sh = _examShuffle(idx);
+    return { frage: q.frage, opts: sh.map(function(x){ return x.o; }), correctIdx: sh.findIndex(function(x){ return x.correct; }), erkl: q.erkl, kat: q.kat };
+  });
+}
+
+function startExamen(full) {
+  const intro = document.querySelector('[data-exam-intro]'); if (intro) intro.remove();
+  const cfg = examenConfig();
+  const count = full ? cfg.count : Math.min(5, cfg.count);
+  const minutes = full ? cfg.minutes : Math.max(4, Math.round(cfg.minutes * 5 / Math.max(1, cfg.count)));
+  const qs = _examPickQuestions(count);
+  if (!qs.length) { alert('Nicht genug Fragen verfügbar.'); return; }
+  _examState = { questions: qs, idx: 0, answers: new Array(qs.length).fill(null), timeLeft: minutes * 60, timerId: null, full: !!full, passPct: cfg.passPct, startTs: Date.now(), finished: false };
+  let ov = document.querySelector('[data-exam-overlay]');
+  if (!ov) { ov = document.createElement('div'); ov.setAttribute('data-exam-overlay', '1'); ov.style.cssText = 'position:fixed;inset:0;background:#081320;z-index:1100;overflow-y:auto'; document.body.appendChild(ov); }
+  renderExamQuestion();
+  if (_examState.timerId) clearInterval(_examState.timerId);
+  _examState.timerId = setInterval(_examTick, 1000);
+}
+
+function _examTick() {
+  if (!_examState || _examState.finished) return;
+  _examState.timeLeft -= 1;
+  const t = document.getElementById('exam-timer');
+  if (t) {
+    const tl = Math.max(0, _examState.timeLeft);
+    const m = Math.floor(tl / 60), s = tl % 60;
+    t.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    t.style.color = _examState.timeLeft <= 60 ? '#f87171' : '#e0f2fe';
+  }
+  if (_examState.timeLeft <= 0) finishExamen(true);
+}
+
+function renderExamQuestion() {
+  const ov = document.querySelector('[data-exam-overlay]'); if (!ov || !_examState) return;
+  const st = _examState; const q = st.questions[st.idx];
+  const tl = Math.max(0, st.timeLeft); const m = Math.floor(tl / 60), s = tl % 60;
+  const timeStr = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  const opts = q.opts.map(function(o, i){
+    const seld = st.answers[st.idx] === i;
+    return '<button onclick="examSelect(' + i + ')" style="display:block;width:100%;text-align:left;margin-bottom:8px;padding:13px 14px;border-radius:11px;font-family:inherit;font-size:13px;line-height:1.4;cursor:pointer;border:1px solid ' + (seld ? '#38bdf8' : 'rgba(255,255,255,.12)') + ';background:' + (seld ? 'rgba(56,189,248,.16)' : 'rgba(255,255,255,.04)') + ';color:' + (seld ? '#e0f2fe' : '#cbd5e1') + '">' + o + '</button>';
+  }).join('');
+  const chips = st.questions.map(function(_, i){
+    const ans = st.answers[i] !== null; const cur = i === st.idx;
+    return '<button onclick="examGoto(' + i + ')" style="width:26px;height:26px;border-radius:7px;font-size:10px;font-weight:700;font-family:inherit;cursor:pointer;border:1px solid ' + (cur ? '#38bdf8' : 'rgba(255,255,255,.12)') + ';background:' + (ans ? 'rgba(56,189,248,.25)' : 'rgba(255,255,255,.04)') + ';color:' + (ans ? '#e0f2fe' : '#64748b') + '">' + (i + 1) + '</button>';
+  }).join('');
+  const answeredCount = st.answers.filter(function(a){ return a !== null; }).length;
+  const last = st.idx === st.questions.length - 1;
+  ov.innerHTML = '<div style="max-width:560px;margin:0 auto;padding:16px 16px 90px 16px">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#081320;padding:10px 0 12px 0;z-index:2">'
+    +   '<div style="font-size:12px;color:#94a3b8;font-weight:700">Examen · Frage ' + (st.idx + 1) + '/' + st.questions.length + '</div>'
+    +   '<div style="display:flex;align-items:center;gap:10px"><div id="exam-timer" style="font-family:monospace;font-size:16px;font-weight:800;color:' + (st.timeLeft <= 60 ? '#f87171' : '#e0f2fe') + '">' + timeStr + '</div>'
+    +   '<button onclick="closeExamen(false)" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;font-size:13px;cursor:pointer">✕</button></div></div>'
+    + '<div style="background:rgba(255,255,255,.06);border-radius:20px;height:5px;overflow:hidden;margin-bottom:16px"><div style="background:#38bdf8;height:100%;width:' + Math.round((st.idx + 1) / st.questions.length * 100) + '%"></div></div>'
+    + '<div style="font-size:15px;font-weight:700;color:#e0f2fe;line-height:1.5;margin-bottom:16px">' + q.frage + '</div>'
+    + opts
+    + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 14px 0">' + chips + '</div>'
+    + '<div style="display:flex;gap:8px">'
+    +   '<button onclick="examNav(-1)" ' + (st.idx === 0 ? 'disabled' : '') + ' style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:13px;color:#cbd5e1;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;opacity:' + (st.idx === 0 ? '.4' : '1') + '">‹ Zurück</button>'
+    +   (last
+        ? '<button onclick="finishExamen(false)" style="flex:1;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:11px;padding:13px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">Abgeben ✓</button>'
+        : '<button onclick="examNav(1)" style="flex:1;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:13px;color:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Weiter ›</button>')
+    + '</div>'
+    + '<button onclick="finishExamen(false)" style="width:100%;margin-top:10px;background:none;border:1px solid rgba(34,197,94,.35);border-radius:11px;padding:11px;color:#4ade80;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Prüfung abgeben (' + answeredCount + '/' + st.questions.length + ' beantwortet)</button>'
+    + '</div>';
+}
+
+function examSelect(i) { if (!_examState) return; _examState.answers[_examState.idx] = i; renderExamQuestion(); }
+function examNav(d) { if (!_examState) return; const n = _examState.idx + d; if (n < 0 || n >= _examState.questions.length) return; _examState.idx = n; renderExamQuestion(); }
+function examGoto(i) { if (!_examState) return; if (i < 0 || i >= _examState.questions.length) return; _examState.idx = i; renderExamQuestion(); }
+
+function _examGrade(pct) {
+  if (pct >= 92) return { note: '1', text: 'sehr gut', col: '#34d399' };
+  if (pct >= 81) return { note: '2', text: 'gut', col: '#4ade80' };
+  if (pct >= 67) return { note: '3', text: 'befriedigend', col: '#38bdf8' };
+  if (pct >= 50) return { note: '4', text: 'ausreichend', col: '#fbbf24' };
+  if (pct >= 30) return { note: '5', text: 'mangelhaft', col: '#fb923c' };
+  return { note: '6', text: 'ungenügend', col: '#f87171' };
+}
+
+function finishExamen(auto) {
+  if (!_examState || _examState.finished) return;
+  if (_examState.timerId) { clearInterval(_examState.timerId); _examState.timerId = null; }
+  const st = _examState; st.finished = true;
+  let richtig = 0;
+  st.questions.forEach(function(q, i){
+    const sel = st.answers[i];
+    const ok = sel !== null && sel === q.correctIdx;
+    if (ok) richtig++;
+    if (sel !== null && typeof recordKatAnswer === 'function') recordKatAnswer(q.kat, ok);
+  });
+  const total = st.questions.length;
+  const pct = total ? Math.round(richtig / total * 100) : 0;
+  if (typeof recordQuizResult === 'function') recordQuizResult('examen', richtig, total);
+  renderExamResults(richtig, total, pct, auto);
+}
+
+function renderExamResults(richtig, total, pct, auto) {
+  const ov = document.querySelector('[data-exam-overlay]'); const st = _examState; if (!ov || !st) return;
+  const g = _examGrade(pct); const pass = pct >= (st.passPct || 50);
+  const secs = Math.round((Date.now() - st.startTs) / 1000); const mm = Math.floor(secs / 60), ssx = secs % 60;
+  const km = {};
+  st.questions.forEach(function(q, i){ const ok = st.answers[i] !== null && st.answers[i] === q.correctIdx; if (!km[q.kat]) km[q.kat] = { c: 0, t: 0 }; km[q.kat].t++; if (ok) km[q.kat].c++; });
+  let weakest = null, wacc = 2;
+  Object.keys(km).forEach(function(k){ const a = km[k].c / km[k].t; if (a < wacc) { wacc = a; weakest = k; } });
+  _examLastWeakest = weakest;
+  const katRows = Object.keys(km).map(function(k){
+    const v = km[k]; const a = Math.round(v.c / v.t * 100); const col = a >= 75 ? '#34d399' : a >= 50 ? '#fbbf24' : '#f87171';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="flex:1;font-size:11px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (typeof katLabel === 'function' ? katLabel(k) : k) + '</span><span style="font-size:11px;color:#64748b">' + v.c + '/' + v.t + '</span><span style="font-size:11px;font-weight:700;color:' + col + ';min-width:34px;text-align:right">' + a + '%</span></div>';
+  }).join('');
+  const wrong = [];
+  st.questions.forEach(function(q, i){ const sel = st.answers[i]; if (sel !== q.correctIdx) wrong.push({ q: q, sel: sel }); });
+  const wrongRows = wrong.map(function(w){
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:12px;margin-bottom:9px">'
+      + '<div style="font-size:12px;color:#e0f2fe;font-weight:600;margin-bottom:7px">' + w.q.frage + '</div>'
+      + '<div style="font-size:11px;color:#f87171;margin-bottom:3px">Deine Antwort: ' + (w.sel !== null ? w.q.opts[w.sel] : 'nicht beantwortet') + '</div>'
+      + '<div style="font-size:11px;color:#34d399;margin-bottom:6px">Richtig: ' + w.q.opts[w.q.correctIdx] + '</div>'
+      + '<div style="font-size:11px;color:#94a3b8;line-height:1.5">' + w.q.erkl + '</div></div>';
+  }).join('') || '<div style="font-size:12px;color:#34d399;text-align:center;padding:10px">Alles richtig – perfekt!</div>';
+  const cta = !st.full
+    ? '<button onclick="goToStripe()" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">🔓 Vollständiges Examen freischalten</button><button onclick="closeExamen(true)" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:12px;color:#cbd5e1;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Schließen</button>'
+    : '<button onclick="examUebenSchwaeche()" ' + (weakest ? '' : 'disabled') + ' style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px;opacity:' + (weakest ? '1' : '.5') + '">📌 Schwächstes Thema üben</button><div style="display:flex;gap:8px"><button onclick="openExamenIntro()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:12px;color:#cbd5e1;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Neues Examen</button><button onclick="closeExamen(true)" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:12px;color:#cbd5e1;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Schließen</button></div>';
+  ov.innerHTML = '<div style="max-width:560px;margin:0 auto;padding:20px 16px 60px 16px">'
+    + '<div style="text-align:center;margin-bottom:18px">'
+    +   '<div style="display:inline-block;background:' + (pass ? 'rgba(52,211,153,.14)' : 'rgba(248,113,113,.14)') + ';border:1px solid ' + (pass ? 'rgba(52,211,153,.4)' : 'rgba(248,113,113,.4)') + ';border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;color:' + (pass ? '#34d399' : '#f87171') + ';margin-bottom:12px">' + (pass ? 'BESTANDEN' : 'NICHT BESTANDEN') + (auto ? ' · Zeit abgelaufen' : '') + '</div>'
+    +   '<div style="font-size:50px;font-weight:800;color:' + g.col + ';line-height:1">' + pct + '%</div>'
+    +   '<div style="font-size:13px;color:' + g.col + ';font-weight:700;margin-top:4px">Note ' + g.note + ' – ' + g.text + '</div>'
+    +   '<div style="font-size:11px;color:#4a7a9b;margin-top:5px">' + richtig + '/' + total + ' richtig · Zeit: ' + mm + ':' + (ssx < 10 ? '0' : '') + ssx + ' Min</div>'
+    + '</div>'
+    + '<div style="font-size:10px;color:#4a7a9b;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Ergebnis pro Thema</div>' + katRows
+    + '<div style="font-size:10px;color:#4a7a9b;letter-spacing:1px;text-transform:uppercase;margin:18px 0 8px 0">Falsch beantwortet (' + wrong.length + ')</div>' + wrongRows
+    + '<div style="margin-top:18px">' + cta + '</div>'
+    + '</div>';
+  ov.scrollTop = 0;
+}
+
+function examUebenSchwaeche() { const k = _examLastWeakest; closeExamen(true); if (k) startQuiz(k); }
+
+function closeExamen(force) {
+  if (_examState && _examState.timerId && !force) {
+    if (!confirm('Examen abbrechen? Dein Fortschritt in diesem Durchlauf geht verloren.')) return;
+  }
+  if (_examState && _examState.timerId) clearInterval(_examState.timerId);
+  _examState = null;
+  const ov = document.querySelector('[data-exam-overlay]'); if (ov) ov.remove();
+}
+
 function showProgressModal() {
   if (!currentUser) return;
   const stats = getStats();
@@ -13970,6 +14206,7 @@ function renderHomeStats() {
       <button onclick="setUserName()" title="Name ändern" style="background:none;border:none;cursor:pointer;font-size:15px;opacity:.55;font-family:inherit;padding:2px">✏️</button>
     </div>
     ${pruefungsreifeCardHTML()}
+    ${examenCardHTML()}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:22px">🔥</div>
