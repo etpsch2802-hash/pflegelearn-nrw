@@ -3211,6 +3211,7 @@ function pickAnswer(i) {
   });
   if (i === q.k) playCorrect(); else playWrong();
   recordQuizAnswer(i === q.k);
+  recordKatAnswer(q.kat, i === q.k);
   if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
   const expEl = document.getElementById("explanation");
   expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`;
@@ -11306,6 +11307,116 @@ function recordKIMessage() {
   saveStats(stats);
 }
 
+// ─── PRÜFUNGSREIFE & SCHWÄCHENANALYSE ────────────────────────────────────────
+function recordKatAnswer(katId, richtig) {
+  if (!currentUser || !katId) return;
+  const stats = getStats();
+  const key = currentUser.token;
+  if (!stats[key]) stats[key] = { name: currentUser.name, bereich: currentUser.bereich, sessions: [], ki_count: 0, quiz_count: 0, streak: 0, last_date: null };
+  if (!stats[key].katStats) stats[key].katStats = {};
+  const ks = stats[key].katStats;
+  if (!ks[katId]) ks[katId] = { c: 0, t: 0 };
+  ks[katId].t += 1;
+  if (richtig) ks[katId].c += 1;
+  saveStats(stats);
+}
+
+function getKatStats() {
+  if (!currentUser) return {};
+  const stats = getStats();
+  return (stats[currentUser.token] && stats[currentUser.token].katStats) || {};
+}
+
+function _prRelevantKats() {
+  let kats = (currentBereich && currentBereich.quiz_kats) ? currentBereich.quiz_kats.slice() : KATS.map(function(k){return k.id;});
+  kats = kats.filter(function(id){ return id !== 'alle'; });
+  const withQ = {};
+  QUIZ_FRAGEN.forEach(function(q){ if (q && q.kat) withQ[q.kat] = true; });
+  const known = {}; KATS.forEach(function(k){ known[k.id] = true; });
+  kats = kats.filter(function(id){ return withQ[id] && known[id]; });
+  return kats.filter(function(id, i){ return kats.indexOf(id) === i; });
+}
+
+function computePruefungsreife() {
+  const ks = getKatStats();
+  const rel = _prRelevantKats();
+  const perKat = rel.map(function(id){
+    const d = ks[id] || { c: 0, t: 0 };
+    const t = d.t || 0, c = d.c || 0;
+    const acc = t > 0 ? c / t : 0;
+    const reliability = Math.min(1, t / 8);
+    const score = acc * reliability;
+    const status = t === 0 ? 'offen' : (acc >= 0.75 ? 'stark' : acc >= 0.5 ? 'mittel' : 'schwach');
+    const katObj = KATS.find(function(k){ return k.id === id; }) || {};
+    return { id: id, label: (typeof katLabel === 'function' ? katLabel(id) : id), color: katObj.color || '#94a3b8', t: t, c: c, acc: Math.round(acc * 100), score: score, status: status };
+  });
+  const score = perKat.length ? Math.round(perKat.reduce(function(a,b){ return a + b.score; }, 0) / perKat.length * 100) : 0;
+  const assessed = perKat.filter(function(k){ return k.t > 0; }).length;
+  const total = perKat.length;
+  let label, col;
+  if (assessed === 0) { label = 'Noch keine Daten'; col = '#64748b'; }
+  else if (score < 35) { label = 'Am Anfang'; col = '#f87171'; }
+  else if (score < 55) { label = 'Auf Kurs'; col = '#fbbf24'; }
+  else if (score < 75) { label = 'Solide'; col = '#38bdf8'; }
+  else if (score < 90) { label = 'Prüfungsbereit'; col = '#34d399'; }
+  else { label = 'Top vorbereitet'; col = '#a78bfa'; }
+  const started = perKat.filter(function(k){ return k.t > 0; }).slice().sort(function(a,b){ return a.acc - b.acc; });
+  const luecken = started.slice(0, 3);
+  const offen = perKat.filter(function(k){ return k.t === 0; });
+  const weakest = (luecken[0] && luecken[0].id) || (offen[0] && offen[0].id) || (rel[0] || 'alle');
+  return { score: score, label: label, col: col, assessed: assessed, total: total, perKat: perKat, luecken: luecken, offen: offen, weakest: weakest };
+}
+
+function pruefungsreifeCardHTML() {
+  if (!currentUser) return '';
+  const pr = computePruefungsreife();
+  const sub = pr.assessed === 0 ? 'Starte ein Quiz, um sie zu berechnen' : (pr.label + ' · ' + pr.assessed + '/' + pr.total + ' Themen');
+  return '<button onclick="showPruefungsreife()" style="width:100%;text-align:left;background:linear-gradient(135deg,' + pr.col + '1f,' + pr.col + '0a);border:1px solid ' + pr.col + '44;border-radius:14px;padding:13px 16px;margin-bottom:14px;cursor:pointer;font-family:inherit">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+    + '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎯</span><span style="font-size:13px;font-weight:800;color:#e0f2fe">Prüfungsreife</span></div>'
+    + '<span style="font-size:21px;font-weight:800;color:' + pr.col + '">' + pr.score + '%</span></div>'
+    + '<div style="background:rgba(255,255,255,.07);border-radius:20px;height:8px;overflow:hidden;margin-bottom:7px"><div style="background:' + pr.col + ';height:100%;width:' + pr.score + '%;border-radius:20px;transition:width .6s"></div></div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#7a9b8c"><span>' + sub + '</span><span>Details ›</span></div></button>';
+}
+
+function showPruefungsreife() {
+  if (!currentUser) return;
+  const pr = computePruefungsreife();
+  const isLimited = !!(currentBereich && currentBereich.gratis);
+  const dot = { stark: '#34d399', mittel: '#fbbf24', schwach: '#f87171', offen: '#475569' };
+  const ordered = pr.perKat.slice().sort(function(a,b){
+    if (a.t === 0 && b.t > 0) return 1;
+    if (b.t === 0 && a.t > 0) return -1;
+    return a.acc - b.acc;
+  });
+  const rows = ordered.map(function(k){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+      + '<span style="width:8px;height:8px;border-radius:50%;background:' + (dot[k.status] || '#475569') + ';flex-shrink:0"></span>'
+      + '<span style="flex:1;font-size:11px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + k.label + '</span>'
+      + (k.t > 0
+          ? '<div style="background:rgba(255,255,255,.07);border-radius:20px;height:6px;width:64px;overflow:hidden"><div style="background:' + (dot[k.status] || '#94a3b8') + ';height:100%;width:' + k.acc + '%"></div></div><span style="font-size:11px;font-weight:700;color:' + (dot[k.status] || '#94a3b8') + ';min-width:34px;text-align:right">' + k.acc + '%</span>'
+          : '<span style="font-size:10px;color:#64748b;min-width:104px;text-align:right">noch offen</span>')
+      + '</div>';
+  }).join('');
+  const lueckenTxt = pr.luecken.length
+    ? pr.luecken.map(function(k){ return k.label + ' (' + k.acc + '%)'; }).join(' · ')
+    : (pr.offen.length ? 'Beginne mit: ' + pr.offen.slice(0, 3).map(function(k){ return k.label; }).join(' · ') : 'Keine – stark!');
+  const cta = isLimited
+    ? '<button onclick="goToStripe()" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:6px">🔓 Vollzugang freischalten – alle Themen üben</button>'
+    : '<button onclick="document.querySelectorAll(\'[data-pr-overlay]\').forEach(function(o){o.remove();});startQuiz(\'' + pr.weakest + '\')" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:6px">📌 Schwächstes Thema jetzt üben</button>';
+  const overlay = document.createElement('div');
+  overlay.setAttribute('data-pr-overlay', '1');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
+  overlay.innerHTML = '<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid ' + pr.col + '4d;border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px"><div><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">🎯 Prüfungsreife</div><div style="font-size:11px;color:#4a7a9b;margin-top:2px">' + (currentBereich ? currentBereich.label : '') + '</div></div><button onclick="this.closest(\'[data-pr-overlay]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;font-size:14px;cursor:pointer">✕</button></div>'
+    + '<div style="text-align:center;margin-bottom:18px"><div style="font-size:46px;font-weight:800;color:' + pr.col + ';line-height:1">' + pr.score + '%</div><div style="font-size:12px;color:' + pr.col + ';font-weight:700;margin-top:4px">' + pr.label + '</div><div style="font-size:10px;color:#4a7a9b;margin-top:3px">' + pr.assessed + ' von ' + pr.total + ' Themen mit Daten</div></div>'
+    + '<div style="background:' + pr.col + '14;border:1px solid ' + pr.col + '2e;border-radius:12px;padding:11px 13px;margin-bottom:16px"><div style="font-size:9px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Größte Lücken</div><div style="font-size:12px;color:#e0f2fe;font-weight:600">' + lueckenTxt + '</div></div>'
+    + '<div style="font-size:10px;color:#4a7a9b;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Alle Themen</div>' + rows
+    + '<div style="margin-top:16px">' + cta + '</div></div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.remove(); });
+}
+
 function showProgressModal() {
   if (!currentUser) return;
   const stats = getStats();
@@ -13858,6 +13969,7 @@ function renderHomeStats() {
       <div style="flex:1;font-size:16px;font-weight:700;color:#e0f2fe">${gruss}</div>
       <button onclick="setUserName()" title="Name ändern" style="background:none;border:none;cursor:pointer;font-size:15px;opacity:.55;font-family:inherit;padding:2px">✏️</button>
     </div>
+    ${pruefungsreifeCardHTML()}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:22px">🔥</div>
