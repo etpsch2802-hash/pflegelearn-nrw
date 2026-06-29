@@ -3212,6 +3212,7 @@ function pickAnswer(i) {
   if (i === q.k) playCorrect(); else playWrong();
   recordQuizAnswer(i === q.k);
   recordKatAnswer(q.kat, i === q.k);
+  srsRecord(q.frage, q.kat, i === q.k);
   if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
   const expEl = document.getElementById("explanation");
   expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`;
@@ -11596,6 +11597,7 @@ function finishExamen(auto) {
     const ok = sel !== null && sel === q.correctIdx;
     if (ok) richtig++;
     if (sel !== null && typeof recordKatAnswer === 'function') recordKatAnswer(q.kat, ok);
+    if (sel !== null && typeof srsRecord === 'function') srsRecord(q.frage, q.kat, ok);
   });
   const total = st.questions.length;
   const pct = total ? Math.round(richtig / total * 100) : 0;
@@ -11652,6 +11654,154 @@ function closeExamen(force) {
   _examState = null;
   const ov = document.querySelector('[data-exam-overlay]'); if (ov) ov.remove();
 }
+
+// ─── LEITNER SPACED-REPETITION (falsch beantwortete Quizfragen) ───────────────
+let _srsState = null;
+
+function _srsHash(s) {
+  let h = 5381; s = String(s || '');
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) + h) + s.charCodeAt(i); h = h & 0xffffffff; }
+  return 'q' + (h >>> 0).toString(36);
+}
+function _srsInterval(box) {
+  const days = { 1: 0, 2: 1, 3: 2, 4: 4, 5: 8 };
+  return (days[box] || 0) * 86400000;
+}
+function getSRS() {
+  if (!currentUser) return {};
+  const st = getStats();
+  return (st[currentUser.token] && st[currentUser.token].srs) || {};
+}
+function _srsSave(srs) {
+  if (!currentUser) return;
+  const st = getStats(); const key = currentUser.token;
+  if (!st[key]) st[key] = { name: currentUser.name, bereich: currentUser.bereich, sessions: [], ki_count: 0, quiz_count: 0, streak: 0, last_date: null };
+  st[key].srs = srs; saveStats(st);
+}
+function srsRecord(frage, kat, richtig) {
+  if (!currentUser || !frage) return;
+  const srs = getSRS(); const k = _srsHash(frage); const now = Date.now(); const cur = srs[k];
+  if (richtig) {
+    if (!cur) return;
+    const nb = Math.min(5, (cur.box || 1) + 1);
+    cur.box = nb; cur.due = now + _srsInterval(nb); cur.streak = (cur.streak || 0) + 1; cur.last = now; if (kat) cur.kat = kat;
+    srs[k] = cur;
+  } else {
+    srs[k] = { box: 1, due: now, streak: 0, last: now, kat: kat || (cur && cur.kat) || null };
+  }
+  _srsSave(srs);
+}
+function _srsResolveMap() {
+  const m = {};
+  QUIZ_FRAGEN.forEach(function(q){ if (q && q.frage) m[_srsHash(q.frage)] = q; });
+  return m;
+}
+function srsDueList(limit) {
+  const srs = getSRS(); const map = _srsResolveMap(); const now = Date.now(); const out = [];
+  Object.keys(srs).forEach(function(k){ const c = srs[k]; const q = map[k]; if (!q) return; if ((c.due || 0) <= now) out.push({ key: k, q: q, box: c.box || 1 }); });
+  out.sort(function(a, b){ return (a.box - b.box) || ((srs[a.key].due || 0) - (srs[b.key].due || 0)); });
+  return limit ? out.slice(0, limit) : out;
+}
+function srsCounts() {
+  const srs = getSRS(); const map = _srsResolveMap(); const now = Date.now();
+  let due = 0, total = 0, mastered = 0, nextDue = null;
+  Object.keys(srs).forEach(function(k){ if (!map[k]) return; const c = srs[k]; total++; if ((c.due || 0) <= now) due++; else if (nextDue === null || c.due < nextDue) nextDue = c.due; if ((c.box || 1) >= 5) mastered++; });
+  return { due: due, total: total, mastered: mastered, nextDue: nextDue };
+}
+function srsCardHTML() {
+  if (!currentUser) return '';
+  const c = srsCounts();
+  if (c.total === 0) return '';
+  const due = c.due; const col = due > 0 ? '#f59e0b' : '#34d399';
+  let sub;
+  if (due > 0) sub = due + ' ' + (due === 1 ? 'Karte' : 'Karten') + ' fällig · ' + c.total + ' im Training';
+  else {
+    const mins = c.nextDue ? Math.max(1, Math.round((c.nextDue - Date.now()) / 60000)) : 0;
+    const when = mins >= 1440 ? Math.round(mins / 1440) + ' Tg' : mins >= 60 ? Math.round(mins / 60) + ' Std' : mins + ' Min';
+    sub = 'Alles wiederholt · nächste in ' + when;
+  }
+  const badge = due > 0
+    ? '<div style="background:' + col + ';color:#0b1320;font-size:13px;font-weight:800;border-radius:20px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;padding:0 8px">' + due + '</div>'
+    : '<div style="font-size:18px;color:' + col + '">✓</div>';
+  return '<button onclick="startSRSReview()" ' + (due > 0 ? '' : 'disabled') + ' style="width:100%;text-align:left;background:linear-gradient(135deg,' + col + '1f,' + col + '0a);border:1px solid ' + col + '44;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:' + (due > 0 ? 'pointer' : 'default') + ';font-family:inherit;opacity:' + (due > 0 ? '1' : '.75') + '">'
+    + '<div style="font-size:24px">🔁</div>'
+    + '<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#e0f2fe">Wiederholen</div><div style="font-size:11px;color:#9bb3c4;margin-top:2px">' + sub + '</div></div>'
+    + badge + '</button>';
+}
+function startSRSReview() {
+  if (!currentUser) return;
+  const due = srsDueList(20);
+  if (!due.length) return;
+  _srsState = { cards: due, idx: 0, results: { up: 0, down: 0 }, done: 0 };
+  let ov = document.querySelector('[data-srs-overlay]');
+  if (!ov) { ov = document.createElement('div'); ov.setAttribute('data-srs-overlay', '1'); ov.style.cssText = 'position:fixed;inset:0;background:#081320;z-index:1100;overflow-y:auto'; document.body.appendChild(ov); }
+  renderSRSCard();
+}
+function renderSRSCard() {
+  const ov = document.querySelector('[data-srs-overlay]'); if (!ov || !_srsState) return;
+  const st = _srsState; const card = st.cards[st.idx]; const q = card.q;
+  if (!card.shuf) card.shuf = _examShuffle(q.opt.map(function(o, i){ return { o: o, correct: i === q.k }; }));
+  const answered = card.selected !== undefined;
+  const opts = card.shuf.map(function(x, i){
+    let bg = 'rgba(255,255,255,.04)', bd = 'rgba(255,255,255,.12)', cl = '#cbd5e1';
+    if (answered) {
+      if (x.correct) { bg = 'rgba(52,211,153,.16)'; bd = '#34d399'; cl = '#a7f3d0'; }
+      else if (i === card.selected) { bg = 'rgba(248,113,113,.16)'; bd = '#f87171'; cl = '#fecaca'; }
+    }
+    return '<button onclick="srsAnswer(' + i + ')" ' + (answered ? 'disabled' : '') + ' style="display:block;width:100%;text-align:left;margin-bottom:8px;padding:13px 14px;border-radius:11px;font-family:inherit;font-size:13px;line-height:1.4;cursor:' + (answered ? 'default' : 'pointer') + ';border:1px solid ' + bd + ';background:' + bg + ';color:' + cl + '">' + x.o + '</button>';
+  }).join('');
+  const srsNow = getSRS()[card.key]; const boxNow = (srsNow && srsNow.box) || card.box;
+  let feedback = '';
+  if (answered) {
+    const correct = card.shuf[card.selected] && card.shuf[card.selected].correct;
+    feedback = '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:13px;margin-top:6px">'
+      + '<div style="font-size:12px;font-weight:700;color:' + (correct ? '#34d399' : '#f87171') + ';margin-bottom:6px">' + (correct ? 'Richtig – Fach ' + boxNow + ' / 5' : 'Falsch – zurück in Fach 1') + '</div>'
+      + '<div style="font-size:11px;color:#94a3b8;line-height:1.5">' + (q.erkl || '') + '</div></div>'
+      + '<button onclick="srsNext()" style="width:100%;margin-top:12px;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">' + (st.idx < st.cards.length - 1 ? 'Weiter ›' : 'Fertig ✓') + '</button>';
+  }
+  ov.innerHTML = '<div style="max-width:560px;margin:0 auto;padding:16px 16px 80px 16px">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#081320;padding:10px 0 12px 0;z-index:2">'
+    +   '<div style="font-size:12px;color:#9bb3c4;font-weight:700">🔁 Wiederholen · ' + (st.idx + 1) + '/' + st.cards.length + '</div>'
+    +   '<button onclick="closeSRS()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;font-size:13px;cursor:pointer">✕</button></div>'
+    + '<div style="background:rgba(255,255,255,.06);border-radius:20px;height:5px;overflow:hidden;margin-bottom:8px"><div style="background:#f59e0b;height:100%;width:' + Math.round((st.idx + 1) / st.cards.length * 100) + '%"></div></div>'
+    + '<div style="font-size:10px;color:#64748b;margin-bottom:14px">' + (typeof katLabel === 'function' ? katLabel(q.kat) : '') + ' · Fach ' + boxNow + '/5</div>'
+    + '<div style="font-size:15px;font-weight:700;color:#e0f2fe;line-height:1.5;margin-bottom:16px">' + q.frage + '</div>'
+    + opts + feedback
+    + '</div>';
+}
+function srsAnswer(i) {
+  if (!_srsState) return; const st = _srsState; const card = st.cards[st.idx];
+  if (card.selected !== undefined) return;
+  card.selected = i;
+  const correct = card.shuf[i] && card.shuf[i].correct;
+  srsRecord(card.q.frage, card.q.kat, !!correct);
+  if (correct) st.results.up++; else st.results.down++;
+  st.done++;
+  renderSRSCard();
+}
+function srsNext() {
+  if (!_srsState) return; const st = _srsState;
+  if (st.idx < st.cards.length - 1) { st.idx++; renderSRSCard(); }
+  else renderSRSResults();
+}
+function renderSRSResults() {
+  const ov = document.querySelector('[data-srs-overlay]'); const st = _srsState; if (!ov || !st) return;
+  const c = srsCounts();
+  ov.innerHTML = '<div style="max-width:560px;margin:0 auto;padding:30px 16px 60px 16px;text-align:center">'
+    + '<div style="font-size:42px;margin-bottom:10px">🎉</div>'
+    + '<div style="font-size:20px;font-weight:800;color:#e0f2fe;margin-bottom:6px">Wiederholung fertig</div>'
+    + '<div style="font-size:13px;color:#9bb3c4;margin-bottom:22px">' + st.done + ' Karten wiederholt</div>'
+    + '<div style="display:flex;gap:10px;margin-bottom:18px">'
+    +   '<div style="flex:1;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:14px"><div style="font-size:22px;font-weight:800;color:#34d399">' + st.results.up + '</div><div style="font-size:10px;color:#94a3b8">ins nächste Fach</div></div>'
+    +   '<div style="flex:1;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:12px;padding:14px"><div style="font-size:22px;font-weight:800;color:#f87171">' + st.results.down + '</div><div style="font-size:10px;color:#94a3b8">zurück in Fach 1</div></div>'
+    + '</div>'
+    + '<div style="font-size:12px;color:#64748b;margin-bottom:20px">' + (c.due > 0 ? (c.due + ' weitere fällig') : 'Alles für jetzt erledigt') + ' · ' + c.mastered + '/' + c.total + ' gemeistert</div>'
+    + (c.due > 0 ? '<button onclick="startSRSReview()" style="width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:11px;padding:14px;color:#0b1320;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Weiter wiederholen (' + c.due + ')</button>' : '')
+    + '<button onclick="closeSRS()" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:13px;color:#cbd5e1;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Schließen</button>'
+    + '</div>';
+  ov.scrollTop = 0; _srsState = null;
+}
+function closeSRS() { _srsState = null; const ov = document.querySelector('[data-srs-overlay]'); if (ov) ov.remove(); }
 
 function showProgressModal() {
   if (!currentUser) return;
@@ -14207,6 +14357,7 @@ function renderHomeStats() {
     </div>
     ${pruefungsreifeCardHTML()}
     ${examenCardHTML()}
+    ${srsCardHTML()}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:22px">🔥</div>
