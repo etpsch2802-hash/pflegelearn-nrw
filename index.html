@@ -468,7 +468,7 @@
   </div>
 
   <!-- 7 TAGE GRATIS – HAUPT-CTA (Vollzugriff) -->
-  <button onclick="showScreen('registrierung')" style="width:100%;max-width:320px;display:block;margin:16px auto 0;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px 16px;color:#04231a;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center;box-shadow:0 8px 28px rgba(16,185,129,.45)">
+  <button onclick="showTrialStart()" style="width:100%;max-width:320px;display:block;margin:16px auto 0;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px 16px;color:#04231a;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center;box-shadow:0 8px 28px rgba(16,185,129,.45)">
     🎁 7 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.8"><span data-i18n="btn_trial_sub">Voller Zugriff · keine Zahlungsdaten nötig</span></span>
   </button>
 
@@ -1247,7 +1247,7 @@
       &#10003; KI-Lernassistent
     </div>
     <div style="font-size:11px;color:#fbbf24;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:9px;padding:9px 11px;margin-bottom:12px">Nach 7 Tagen endet der Zugang automatisch &ndash; kein kostenloser Vollzugang. Weiternutzung nur mit Freischaltung.</div>
-    <button onclick="showScreen('registrierung')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer"><span data-i18n="btn_trial">7 Tage kostenlos testen</span></button>
+    <button onclick="showTrialStart()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer"><span data-i18n="btn_trial">7 Tage kostenlos testen</span></button>
   </div>
 
   <div style="background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.35);border-radius:16px;padding:18px;margin-bottom:14px">
@@ -7220,6 +7220,63 @@ function startGratis(){
   setTimeout(()=>{ try{unlockAudio();playHeartbeat();}catch(e){} },400);
   setTimeout(showOnboarding,500);
 }
+function showTrialStart(){
+  // Bereits bezahlt? -> kein Trial noetig
+  try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
+  // Trial schon genutzt & abgelaufen -> Gratis-Fallback
+  var used=false; try{ used=(localStorage.getItem('pl_trial_used')==='1'); }catch(e){}
+  var tu=null; try{ tu=localStorage.getItem('pl_trial_until'); }catch(e){}
+  var today=new Date().toISOString().split('T')[0];
+  if(used && (!tu || today>tu)){ showGratisStart(); return; }
+  var ov=document.createElement('div');
+  ov.id='trial-modal';
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px";
+  ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:26px 22px;max-width:380px;width:100%;text-align:center">'
+    +'<div style="font-size:40px;margin-bottom:6px">\U0001F381</div>'
+    +'<div style="font-size:21px;font-weight:900;color:#fff;margin-bottom:6px">7 Tage Vollzugang</div>'
+    +'<div style="font-size:13px;color:#9fc3da;line-height:1.5;margin-bottom:16px">Sofort startklar \u00b7 keine Kreditkarte \u00b7 alle 627 Fragen, KI &amp; Examen-Simulation</div>'
+    +'<input id="trial-name" type="text" placeholder="Dein Name" style="width:100%;padding:13px;border-radius:11px;border:1px solid rgba(56,189,248,.3);background:rgba(2,12,24,.6);color:#fff;font-size:15px;margin-bottom:10px;box-sizing:border-box">'
+    +'<input id="trial-email" type="email" placeholder="E-Mail (optional)" style="width:100%;padding:13px;border-radius:11px;border:1px solid rgba(56,189,248,.3);background:rgba(2,12,24,.6);color:#fff;font-size:15px;margin-bottom:14px;box-sizing:border-box">'
+    +'<button onclick="startTrial()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04221a;font-size:16px;font-weight:900;cursor:pointer">7 Tage gratis starten \u2192</button>'
+    +'<button onclick="document.getElementById(\'trial-modal\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:13px;margin-top:10px;cursor:pointer">Abbrechen</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  setTimeout(function(){ var n=document.getElementById('trial-name'); if(n) n.focus(); },100);
+}
+function startTrial(){
+  var used=false; try{ used=(localStorage.getItem('pl_trial_used')==='1'); }catch(e){}
+  var tu=null; try{ tu=localStorage.getItem('pl_trial_until'); }catch(e){}
+  var today=new Date().toISOString().split('T')[0];
+  if(used && (!tu || today>tu)){ var mm=document.getElementById('trial-modal'); if(mm) mm.remove(); showGratisStart(); return; }
+  var name=(document.getElementById('trial-name')?document.getElementById('trial-name').value:'').trim();
+  var email=(document.getElementById('trial-email')?document.getElementById('trial-email').value:'').trim();
+  if(!name){ alert('Bitte Name eingeben!'); return; }
+  var d=new Date(); d.setDate(d.getDate()+7);
+  var ablauf=d.toISOString().split('T')[0];
+  try{
+    localStorage.setItem('pl_trial_until',ablauf);
+    localStorage.setItem('pl_trial_name',name);
+    if(email) localStorage.setItem('pl_trial_email',email);
+    localStorage.setItem('pl_trial_used','1');
+    localStorage.removeItem('pl_trial_expired');
+  }catch(e){}
+  try{ if(typeof emailjs!=='undefined' && email){ emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{name:name,email:email,ausbildung:'7-Tage-Trial (Sofortstart)',datum:new Date().toLocaleString('de-DE'),message:'Trial automatisch gestartet'}); } }catch(e){}
+  try{ gaEvent('sign_up',{method:'trial_instant'}); gaEvent('begin_trial',{}); }catch(e){}
+  var m=document.getElementById('trial-modal'); if(m) m.remove();
+  currentUser={ token:'TRIAL', name:name, email:email, bereich:'alle', ablauf:ablauf };
+  currentBereich=BEREICH_CONFIG['alle'];
+  kiNachrichtenCount=0;
+  try{ sessionStorage.setItem('pl_user',name); }catch(e){}
+  var ps=document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
+  showScreen('home');
+  renderAusbList(); applyBereichsFilter();
+  updateUserDisplay(name,false);
+  updateStreak(); renderHomeStats();
+  try{ logLogin('TRIAL',name); }catch(e){}
+  setTimeout(function(){ try{unlockAudio();playHeartbeat();}catch(e){} },400);
+  setTimeout(showOnboarding,500);
+}
 function checkPW() {
   const tokenInput = document.getElementById("pw-input").value.trim();
   const nameInput = document.getElementById("pw-name").value.trim();
@@ -7415,6 +7472,41 @@ window.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem('pl_paid_until');
         localStorage.removeItem('pl_paid_name');
         localStorage.removeItem('pl_paid_plan');
+      }
+    }
+  } catch(e) {}
+
+  // Persistenter 7-Tage-Trial (laufzeitbasiert, kein Server) - Vorrang nach Paid
+  try {
+    const trialUntil = localStorage.getItem('pl_trial_until');
+    if (trialUntil) {
+      const heuteT = new Date().toISOString().split("T")[0];
+      if (heuteT <= trialUntil) {
+        const tname = localStorage.getItem('pl_trial_name') || 'Trial';
+        currentUser = { token: 'TRIAL', name: tname, bereich: 'alle', ablauf: trialUntil };
+        currentBereich = BEREICH_CONFIG['alle'];
+        const psT = document.getElementById("pw-screen");
+        if (psT) psT.classList.remove("active");
+        showScreen('home');
+        updateUserDisplay(currentUser.name, false);
+        updateStreak();
+        renderHomeStats();
+        setTimeout(() => {
+          applyBereichsFilter(); renderAusbList(); renderMTGrid();
+          showMedKat("anaesthesie"); checkExamenReminder();
+        }, 150);
+        return;
+      } else {
+        // Trial abgelaufen -> Downgrade auf Gratis (Entscheidung F2)
+        localStorage.removeItem('pl_trial_until');
+        try {
+          localStorage.setItem('pl_trial_expired','1');
+          if(!localStorage.getItem('pl_paid_until')){
+            localStorage.setItem('pl_token','GRATIS');
+            const tn = localStorage.getItem('pl_trial_name');
+            if(tn) localStorage.setItem('pl_user', tn);
+          }
+        } catch(e){}
       }
     }
   } catch(e) {}
