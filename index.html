@@ -15210,7 +15210,43 @@ function kaufPlan(plan) {
   const pl = STRIPE_PLANS[plan] || STRIPE_PLANS['1m'];
   window.location.href = pl.url;
 }
-function goToStripe() { kaufPlan('1m'); }
+function showPlanPicker(){
+  try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
+  try{ gaEvent('view_item_list',{item_list_name:'plan_picker'}); }catch(e){}
+  var ov=document.createElement('div');
+  ov.id='plan-picker';
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1200;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto";
+  ov.innerHTML=`<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:22px 18px;max-width:360px;width:100%">
+    <div style="text-align:center;font-size:19px;font-weight:900;color:#fff;margin-bottom:4px">Vollzugang freischalten</div>
+    <div style="text-align:center;font-size:11px;color:#7fa6c2;margin-bottom:14px">627 Fragen \u00b7 KI-Pr\u00fcfungssimulation \u00b7 Examen \u00b7 alle 7 Ausbildungswege</div>
+    <button onclick="kaufPlan('1m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+      <span><span style="font-size:14px;font-weight:800">1 Monat</span><br><span style="font-size:10px;opacity:.7">9,99 €/Mon.</span></span>
+      <span style="font-size:15px;font-weight:800">9,99 €</span>
+    </button>
+
+    <button onclick="kaufPlan('3m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.18);border:1.5px solid rgba(165,180,252,.7);border-radius:12px;padding:13px 14px;color:#eef0ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+      <span style="position:absolute;top:-9px;right:10px;background:#38bdf8;color:#04222e;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BELIEBT</span>
+      <span><span style="font-size:14px;font-weight:800">3 Monate</span><br><span style="font-size:10px;opacity:.75">8,33 €/Mon. · spare 17%</span></span>
+      <span style="font-size:15px;font-weight:800">24,99 €</span>
+    </button>
+
+    <button onclick="kaufPlan('6m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.1);border:1px solid rgba(99,91,255,.35);border-radius:12px;padding:12px 14px;color:#dfe3ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+      <span><span style="font-size:14px;font-weight:800">6 Monate</span><br><span style="font-size:10px;opacity:.7">7,50 €/Mon. · spare 25%</span></span>
+      <span style="font-size:15px;font-weight:800">44,99 €</span>
+    </button>
+
+    <button onclick="kaufPlan('12m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:linear-gradient(135deg,#635bff,#4338ca);border:1.5px solid #a5b4fc;border-radius:12px;padding:13px 14px;color:#fff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+      <span style="position:absolute;top:-9px;right:10px;background:#34d399;color:#04220f;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BESTER PREIS</span>
+      <span><span style="font-size:14px;font-weight:800">12 Monate</span><br><span style="font-size:10px;opacity:.85">6,67 €/Mon. · spare 33%</span></span>
+      <span style="font-size:16px;font-weight:800">79,99 €</span>
+    </button>
+    <div style="text-align:center;font-size:10px;color:#5a7d96;margin-top:6px;line-height:1.5">Einmalzahlung \u00b7 kein Auto-Abo \u00b7 von Fachpfleger entwickelt</div>
+    <button onclick="document.getElementById('plan-picker').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:12px;margin-top:8px;cursor:pointer">Vielleicht sp\u00e4ter</button>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+}
+function goToStripe() { showPlanPicker(); }
 
 
 
