@@ -34,7 +34,7 @@ Auslieferung als:
 ### Single-File-Client (`index.html`)
 - Die gesamte UI ist ein Dokument. „Seiten" sind `<div id="screen-*" class="page">`-Elemente, die per **`showScreen(name)`** (~Zeile 2459) umgeschaltet werden: entfernt `.active` von allen `.page`/`.chat-page` und setzt es auf `#screen-<name>`. Ein manuelles `screenHistory`-Array steuert den Zurück-Button; `_scrollPos` merkt sich die Scroll-Position pro Screen.
 - **Vorhandene Screens:** `home`, `quiz`, `quizSelect`, `faelle`, `fall`, `chat`, `merksaetze`, `krankheitsbilder` (+ `kb-detail`), `medikamente`, `anatomie` (+ `an-detail`), `medizintechnik` (+ `mt-detail`), `notfallmanagement`, `lernplan`, `ce`, `abcde-sim`, `ausbildungswege`, `wissenpraxis`, `uebenpruefen`, `preise`, `registrierung`, `result`, `support`, `admin`.
-- **Lerninhalt ist Inline-Daten**, nichts wird nachgeladen: `const FAELLE = …` (klinische Fälle, ~Z. 8161), `const fragen = …` / `const themen = …` / `KATS = …` (Quizfragen + Kategorien, ~Z. 2197 / 11303 / 11334), `const karten = …` / `const kartenHTML = …` (Karteikarten, ~Z. 12808 / 14288 / 14696). Inhalte werden **direkt in diesen Literalen** editiert.
+- **Lerninhalt ist Inline-Daten**, nichts wird nachgeladen: `const FAELLE = …` (klinische Fälle, ~Z. 8161), `const QUIZ_FRAGEN = […]` (**alle 627 Quizfragen** im JSON-Format `{"kat","frage","opt":[4],"k","e"}`, ~Z. 1549) + `const KATS = […]` (Kategorien/Filter, ~Z. 2197), `const karten = …` / `const kartenHTML = …` (Karteikarten, ~Z. 12808 / 14288 / 14696). Inhalte werden **direkt in diesen Literalen** editiert. *(Hinweis: `themen` ~Z. 11303 und `fragen` ~Z. 11334 sind NICHT die Quizfragen, sondern Lernplan-Variablen.)*
 - Top of file: `gtag` (Google Analytics `G-YJLC762MTC`), Consent-Gating (`pl_consent`), JSON-LD/SEO, Supabase-Init, Font-Loading.
 
 ### Datenfluss & Zustand
@@ -370,7 +370,7 @@ Wöchentlicher Kurzbericht (neue Pflege-Apps, KI-Modelle, Play-Store-/Apple-Rich
 | `showScreen()` | 2459 |
 | `KI_ENDPOINT` | 2994 |
 | `FAELLE` (klinische Fälle) | 8161 |
-| `themen` / `fragen` (Quiz) | 11303 / 11334 |
+| `QUIZ_FRAGEN` (alle 627 Quizfragen) | 1549 |
 | Registrierung / Trial-Start | ~7200 |
 | Startup-Revalidierung (Trial/Paid) | ~7460 |
 | `kartenHTML` / `karten` | 12808 / 14288 / 14696 |
