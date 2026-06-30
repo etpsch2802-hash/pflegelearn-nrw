@@ -53,6 +53,7 @@ Auslieferung als:
 - `api/chat.js`, `api/lead.js`, `api/stripe-webhook.js` – Vercel-Serverless-Funktionen.
 - `scripts/send-reminders.mjs` – Push-Reminder-Sender (läuft via GitHub Actions, nicht Vercel).
 - `vercel.json` – Routing/Rewrites.
+- `.mcp.json` – **Werkzeug-Konfiguration** (kein ausgeliefertes App-Asset): definiert die projekt-bezogenen MCP-Server für Claude Code (Supabase read-only, Vercel). Enthält **keine Geheimnisse** – nur öffentliche Werte und den Platzhalter `${SUPABASE_ACCESS_TOKEN}` (siehe Abschnitt 22).
 - `.well-known/assetlinks.json` – Android-TWA-Verknüpfung.
 - `assets/eselsbruecken.pdf` – Lead-Magnet-PDF (per Resend versendet).
 - Statische HTML-Landingpages: `landingpage.html`, `datenschutz.html`, `impressum.html`, `flyer-pflegelearn.html`, `testernachrichten.html`, `links.html`, `k.html`, `robots.txt`, `sitemap.xml`, Icons.
@@ -237,7 +238,9 @@ Die CLAUDE.md ist die zentrale, **lebende** Dokumentation. Nach jeder wichtigen 
 
 Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). Bei neuen Entscheidungen hier ergänzen.
 
-- **Sprint 1.5 „Intelligenter Trial"** – Trial-Vollzugang **7 → 21 Tage** (Azubi-Lernrhythmus: Schichtdienst/Blockunterricht, Aha-Moment sicherer erreichen). Neuer **engagement-getriggerter Upsell** am Wert-Peak (Prüfungsreife ≥ 50 % & ≥ 30 Fragen **oder** erste Examens-Sim; einmalig via `pl_engage_upsell_shown`; isolierte IIFE, die `showScreen` additiv wrappt). Free-Tier KI-Chat **5 → 8**. **Bewusst NICHT** umgesetzt: „Trial endet früher bei Intensivnutzung" (bestraft die engagiertesten Nutzer). Erkenntnis: Die **Reverse-Trial-Struktur existierte bereits** (Downgrade nach Trial auf `gratis`-Bereich mit 20 Fragen/Tag, 8 KI, 2 Fälle/Fach; Medizintechnik/Medikamente gesperrt). Erste **E2E-Tests** unter `tests/` (Playwright, 10/10 grün).
+- **Adaptive „Lerncoach"-Startseite (#7/#8)** – Home vom Modul-Menü zum persönlichen Coach umgekehrt: EIN adaptiver nächster Schritt (5 datengetriebene Zustände: Erstnutzer, Endspurt, Tagesziel-fast, größte Lücke, Weitermachen) statt vier gleichwertiger Kacheln (Hick's Law). Begrüßung mit Examens-Countdown, Module in ruhiger Auswahl, `home-stats` verschlankt. Doppelter Examen-Endspurt-Toast entfernt (Coach übernimmt). Kein neuer `pl_*`-Key.
+- **Sprint 1.5 „Intelligenter Trial" (#9)** – Trial-Vollzugang **7 → 21 Tage** (Azubi-Lernrhythmus: Schichtdienst/Blockunterricht, Aha-Moment sicherer erreichen). Neuer **engagement-getriggerter Upsell** am Wert-Peak (Prüfungsreife ≥ 50 % & ≥ 30 Fragen **oder** erste Examens-Sim; einmalig via `pl_engage_upsell_shown`; isolierte IIFE, die `showScreen` additiv wrappt). Free-Tier KI-Chat **5 → 8**. **Bewusst NICHT** umgesetzt: „Trial endet früher bei Intensivnutzung" (bestraft die engagiertesten Nutzer). Erkenntnis: Die **Reverse-Trial-Struktur existierte bereits** (Downgrade nach Trial auf `gratis`-Bereich mit 20 Fragen/Tag, 8 KI, 2 Fälle/Fach; Medizintechnik/Medikamente gesperrt). Erste **E2E-Tests** unter `tests/` (Playwright, 10/10 grün).
+- **MCP-Anbindung für Claude Code (projekt-bezogen via `.mcp.json`)** – Supabase (read-only, auf Projekt-Ref beschränkt) + Vercel (gehosteter OAuth-Server). **Bewusst minimalistisch** gehalten: Filesystem-/Browser-MCP verworfen, weil Claude Code Datei-Tools (`Read`/`Grep`/`Glob`/`Edit`) und `WebSearch`/`WebFetch` bereits eingebaut hat – zusätzliche MCPs würden nur Kontext-Overhead erzeugen. Standard dokumentiert in Abschnitt 22.
 - **Push-Versand via GitHub Actions + Node `web-push` statt Deno** – Fallback-Lösung, läuft als Cron-Workflow (`5fa4799`, `485e523`). Selbstheiler `plResyncPush` re-synct Abos bei App-Start (`50da843`).
 - **Web-Push hinter VAPID-Key gegated** – Opt-in-Client bleibt inert, bis `PL_VAPID_PUBLIC` gesetzt ist (Sprint 2 D, `3fdb3d6`/`4686656`/`11589a3`).
 - **Gamification für Bindung** – Tagesziel-Ring, Streak-Verlustaversion, Meilenstein-Feiern (Sprint 2 A–C, `98032ef`).
@@ -258,6 +261,10 @@ Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). B
 - **Aktive/Issue-Tracking-Quelle:** `[vom Team zu pflegen]` – falls GitHub Issues genutzt werden, hier verlinken.
 - **Nächste Sprints / geplante Features:** `[vom Team zu pflegen]`
 - **Bekannte offene Aufgaben aus dem Code (von Claude identifiziert):**
+  - **🔴 Priorität: PDF-Versand des Lead-Funnels reparieren.** `RESEND_API_KEY` ist in Vercel **nicht gesetzt** (verifiziert am 2026-06-30: nur `SUPABASE_SERVICE_ROLE`, `SUPABASE_URL`, `GROQ_API_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY` vorhanden). Folge: `api/lead.js` speichert den Lead, überspringt aber den Versand → **alle `leads` haben `pdf_sent = false`** (per Supabase-MCP bestätigt). Conversion-relevant (Gratis-PDF kommt nie an). To-do: Resend-Account + Domain-Verifizierung `plan-nrw.de` (DNS bei IONOS) + `RESEND_API_KEY` in Vercel; danach Nachversand für Bestands-Leads.
+  - **Lerninhalt aus `index.html` auslagern** (Quizfragen/Fälle/Karten → JSON) – größter Hebel für Wartbarkeit, Token-Effizienz und Bug-Reduktion (Details Abschnitt 22). **Daten zuerst, Code-Split später** (kein Build/Bundler vorhanden).
+  - **MCP-Ausbau:** Playwright-MCP ergänzen (Funnel-/Quiz-/Stripe-E2E-Tests), Vercel-MCP-OAuth lokal abschließen (Inkognito-Fenster, da Browser-Erweiterungen die Team-Auswahl blockierten).
+  - **„Technologie-Scout"-Routine** (Idee P. Schenkelberger): wöchentlicher Kurzbericht (neue Pflege-Apps, KI-Modelle, Play-Store-/Apple-Richtlinien) als geplanter Claude-Code-Trigger + `WebSearch` – **kein eigener MCP nötig**.
   - Altlasten-Bereinigung (`files 3/`, `files.1/`, `files.2.zip`, `manifest (1).json`, ungenutzte Root-`chat.js`).
   - Platzhalter-Stripe-Links `buy.stripe.com/XXXXX_*` (~Z. 11985 ff.) prüfen/entfernen – die Live-Links stehen in `STRIPE_PLANS`.
   - Konsistente Fragenzahl (627) an allen Meta-/SEO-Stellen sicherstellen (war wiederholt Quelle von Inkonsistenzen).
@@ -281,7 +288,9 @@ Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). B
 **Bekannte Bug-Klassen (historisch wiederkehrend)**
 - Quiz-Content: abgeschnittene Antworten, schwache Distraktoren, Kategorie-Lücken in `KATS`/`quiz_kats`.
 - Inkonsistente Fragenzahl in Meta/SEO.
-- Aktuell offene Bugs: `[vom Team zu pflegen]`
+
+**Aktuell offene Bugs**
+- **Lead-PDF-Versand inaktiv (2026-06-30):** `RESEND_API_KEY` fehlt in der Vercel-Env → `api/lead.js` versendet das „12 Eselsbrücken"-PDF nie, alle `leads.pdf_sent = false`. Conversion-Verlust im Gratis-Funnel. Behebung siehe Roadmap (Abschnitt 18). *Hinweis:* Der Code ist korrekt – es ist ein **Konfigurations-**, kein Code-Fehler.
 
 ---
 
@@ -311,6 +320,44 @@ Von Claude bei der Analyse identifizierte Verbesserungsmöglichkeiten an Archite
 - **CSS/JS aus `index.html` extrahieren** (Caching, Lesbarkeit) – sobald ein Build-Schritt existiert.
 - **Stripe-Webhook optional auf HMAC-Signaturprüfung** umstellen (zusätzlich zum API-Re-Fetch), näher am Standard.
 - **Modul-Bibliothek für PLAN Digital** definieren (Auth/Sync, Paywall, Push, KI-Proxy als wiederverwendbare Pakete).
+
+---
+
+## 22. MCP- & Effizienz-Standard für PLAN Digital
+
+Leitlinie für den Einsatz von **MCP-Servern** (Model Context Protocol) und für **token-effizientes Arbeiten** mit Claude Code. Gilt für PLAN NRW und als Vorlage für alle Folgeprodukte von PLAN Digital. Entstanden aus der Einrichtungs-/Strategiesitzung am 2026-06-30.
+
+### Grundprinzip
+**So wenige MCPs wie möglich, so viele wie nötig.** Jeder aktive MCP-Server lädt seine Werkzeug-Beschreibungen in den Kontext und erzeugt damit Grundlast. Ein MCP spart **nicht automatisch** Token – er lohnt sich nur, wenn er Claude wiederholtes, teures Lesen/Recherchieren erspart. **Vier MCPs mit je klarem Job schlagen acht, die sich überlappen.**
+
+### Verbindlicher MCP-Kanon
+| MCP | Status | Zweck | Bewertung |
+|---|---|---|---|
+| **GitHub** | ✅ aktiv | Repo, Commits, PRs, Branches, Code-Suche | Pflicht |
+| **Supabase** | ✅ aktiv (read-only) | DB-Tabellen lesen/abfragen, Debugging echter Daten | Pflicht |
+| **Vercel** | ⏳ konfiguriert, OAuth offen | Deployments, Logs, Build-Fehler, Env-Übersicht | Sinnvoll, sekundär |
+| **Playwright** | 🔜 geplant | E2E: Trial-/Quiz-/Stripe-/Paywall-Funnel echt durchklicken, Bugs finden | Empfohlen (größter Praxisnutzen für die PWA) |
+
+### Bewusst NICHT installiert (für dieses Projekt)
+- **Filesystem-MCP** – **redundant in Claude Code.** Die eingebauten Tools `Read`/`Grep`/`Glob`/`Edit` lesen bereits gezielt einzelne Funktionen/Bereiche statt der ganzen `index.html`. (Nur in Claude Desktop relevant.)
+- **Browser-MCP** – `WebSearch`/`WebFetch` sind in Claude Code eingebaut; Wettbewerbs-/SEO-Recherche braucht keinen Extra-Server.
+- **Context7** – glänzt bei Framework-Projekten; PLAN NRW hat **keine Dependencies / keinen Build**, daher geringer Nutzen.
+- **Figma** – erst sinnvoll, sobald ein echter Figma-Designprozess existiert.
+- **Slack/Discord/Notion/Drive** – erst bei Team-/Prozess-Bedarf.
+
+### „Technologie-Scout" – als Routine, nicht als MCP
+Wöchentlicher Kurzbericht (neue Pflege-Apps, KI-Modelle, Play-Store-/Apple-Richtlinien) über einen **geplanten Claude-Code-Trigger** + `WebSearch`. Kein eigener MCP nötig.
+
+### Token-Effizienz – Hebel nach Wirkung
+1. **`CLAUDE.md` pflegen (größter Hebel, kein MCP):** Claude liest sie und hat sofort Architektur, Workflows und Entscheidungen – ohne sie pro Sitzung neu zu rekonstruieren.
+2. **Lerninhalt aus `index.html` in JSON auslagern:** Statt 1,9 MB Monolith nur die relevante Datendatei lesen/ändern. Beseitigt zugleich die häufigste Bug-Klasse. **Reihenfolge: Daten zuerst.**
+3. **Gezielt lesen statt ganzer Datei:** Zeilen-Anker (unten) + `Grep`/`Read`-Offsets nutzen – die große Datei NICHT komplett einlesen.
+4. **Code-Modularisierung (`quiz.js`, `auth.js`, `stripe.js` …) – später & vorsichtig:** Echter Mehrwert v. a. für Wartbarkeit, aber Refactoring **ohne Tests** ist riskant (Entitlement-/Sync-Logik). Erst mit Minimal-Tests und einem leichten Build-Schritt angehen; die „kein Build"-Entscheidung ist bewusst getroffen.
+
+### Sicherheitsregeln für MCP-Betrieb
+- **Supabase bewusst `--read-only`** und auf die Projekt-Ref beschränkt (`.mcp.json`). Schreibzugriff nur nach expliziter Entscheidung.
+- **Secrets nie ins Repo / nie in den Chat / nie in Screenshots.** `SUPABASE_ACCESS_TOKEN` lokal als Umgebungsvariable; der `SUPABASE_SERVICE_ROLE`-Key (umgeht RLS) und `RESEND_API_KEY` sind besonders schützenswert. Exponierte Tokens sofort widerrufen und neu erzeugen.
+- **Claude Code on the web hat aktuell keinen sicheren Secret-Speicher** – MCPs, die geheime Tokens brauchen (Supabase), daher **lokal** betreiben (Claude Code Desktop/CLI). Read-only-Tokens, die personenbezogene Daten lesen können, sind DSGVO-relevant.
 
 ---
 
