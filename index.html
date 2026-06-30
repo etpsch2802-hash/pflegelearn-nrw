@@ -15488,6 +15488,22 @@ function plBerechneAblauf(plan) {
   const d = new Date(); d.setDate(d.getDate() + tage);
   return d.toISOString().split('T')[0];
 }
+function promptSubLogin(){
+  try{ if(localStorage.getItem('pl_sub_login_prompted')==='1') return; }catch(e){}
+  try{ localStorage.setItem('pl_sub_login_prompted','1'); }catch(e){}
+  var ov=document.createElement('div');
+  ov.id='sub-login-prompt';
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1400;display:flex;align-items:center;justify-content:center;padding:20px";
+  ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:26px 22px;max-width:380px;width:100%;text-align:center">'
+    +'<div style="font-size:40px;margin-bottom:6px">✅</div>'
+    +'<div style="font-size:19px;font-weight:900;color:#fff;margin-bottom:8px">Monats-Abo aktiv</div>'
+    +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:16px">Damit dein Zugang bei der monatlichen Verlängerung automatisch erhalten bleibt, melde dich einmalig mit der <b>gleichen E-Mail</b> an, mit der du bei Stripe bezahlt hast.</div>'
+    +'<button onclick="document.getElementById(\'sub-login-prompt\').remove(); if(window.PLCloud&&PLCloud.open)PLCloud.open();" style="width:100%;background:linear-gradient(135deg,#22d3ee,#0891b2);border:none;border-radius:12px;padding:15px;color:#04222e;font-size:16px;font-weight:900;cursor:pointer">Jetzt anmelden (E-Mail-Link)</button>'
+    +'<button onclick="document.getElementById(\'sub-login-prompt\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:13px;margin-top:10px;cursor:pointer">Später</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+  try{ gaEvent('sub_login_prompt',{}); }catch(e){}
+}
 window.addEventListener('load', function() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('payment') !== 'success') return;
@@ -15574,6 +15590,7 @@ window.addEventListener('load', function() {
     }
   }
   setTimeout(tryActivateHome, 500);
+  if (plan === '1m') setTimeout(function(){ try{ promptSubLogin(); }catch(e){} }, 1600);
 });
 
 function showSuccessToast() {
