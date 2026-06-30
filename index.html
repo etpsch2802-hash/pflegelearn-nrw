@@ -454,6 +454,20 @@
   <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
   <div class="pw-subtitle" style="margin-top:8px"><span data-i18n="login_subtitle">Prüfungs-Portal NRW</span></div>
   <div style="text-align:center;color:var(--accent);font-weight:600;font-size:13px;margin-top:6px">Damit du immer einen PLAN hast.</div>
+  <!-- HERO: 7 Tage Gratis-Trial (Vollzugang) -->
+  <button onclick="showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
+    🎁 7 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
+  </button>
+
+  <!-- Sekundär: Gratis schnuppern -->
+  <button onclick="showGratisStart()" style="background:none;border:none;color:#7fa6c2;font-size:13px;margin-top:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Lieber erst schnuppern? Gratis starten (eingeschränkt)</button>
+
+  <!-- Vertrauen -->
+  <div style="width:100%;max-width:340px;margin:14px auto 0;text-align:center;font-size:11px;color:#5a7d96;line-height:1.7">👨‍⚕️ Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
+
+  <!-- Login einklappbar (wiederkehrende Nutzer) -->
+  <button onclick="toggleLoginBox()" id="login-toggle" style="width:100%;max-width:340px;margin:20px auto 0;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:10px;padding:11px;color:#9fc3da;font-size:13px;font-weight:700;cursor:pointer">🔑 Schon einen Zugangscode? Anmelden</button>
+  <div id="login-collapse" style="display:none;width:100%;max-width:340px;margin:10px auto 0">
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px">👤 Dein Name</div>
     <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" data-i18n-ph="ph_name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()">
@@ -466,56 +480,13 @@
     <button class="pw-btn" style="margin-top:12px" onclick="checkPW()"><span data-i18n="btn_login">Anmelden →</span></button>
     <div class="pw-error" id="pw-error" style="display:none"></div>
   </div>
-
-  <!-- 7 TAGE GRATIS – HAUPT-CTA (Vollzugriff) -->
-  <button onclick="showTrialStart()" style="width:100%;max-width:320px;display:block;margin:16px auto 0;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px 16px;color:#04231a;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center;box-shadow:0 8px 28px rgba(16,185,129,.45)">
-    🎁 7 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.8"><span data-i18n="btn_trial_sub">Voller Zugriff · keine Zahlungsdaten nötig</span></span>
-  </button>
-
-  <!-- KI CHAT NEON BUTTON (vor Anmeldung) -->
-  <button onclick="showKiTeaser()" class="ki-neon-btn" style="width:100%;max-width:320px;display:block;margin:10px auto 0;background:radial-gradient(circle at 50% 0%,rgba(34,211,238,.2),rgba(8,20,34,.55));border:1.5px solid #22d3ee;border-radius:14px;padding:13px 14px;color:#7ff0ff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:.5px;text-align:center;line-height:1.25">
-    KI Chat<br><span style="font-size:10px;font-weight:600;color:#67e8f9;opacity:.85;letter-spacing:0"><span data-i18n="ki_chat_sub">Dein Lernassistent · sofort antworten</span></span>
-  </button>
-  <!-- GRATIS STARTEN (eingeschraenkt) -->
-  <button onclick="showGratisStart()" style="width:100%;max-width:320px;display:block;margin:10px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.25;text-align:center">
-    Gratis starten<br><span style="font-size:10px;font-weight:600;opacity:.7"><span data-i18n="btn_free_sub">eingeschränkte Version</span></span>
-  </button>
-  <!-- VOLLZUGRIFF PREISE (4 Laufzeiten) -->
-  <div style="width:100%;max-width:320px;margin:14px auto 0">
-    <div style="text-align:center;font-size:11px;font-weight:800;letter-spacing:.6px;color:#8aa;margin-bottom:4px">VOLLZUGRIFF FREISCHALTEN</div>
-    <div style="text-align:center;font-size:10px;color:#4a7a9b;margin-bottom:10px">627 Fragen · KI-Prüfungssimulation · 11 CE · alle 7 Ausbildungswege</div>
-
-    <button onclick="kaufPlan('1m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
-      <span><span style="font-size:14px;font-weight:800">1 Monat</span><br><span style="font-size:10px;opacity:.7">9,99 €/Mon.</span></span>
-      <span style="font-size:15px;font-weight:800">9,99 €</span>
-    </button>
-
-    <button onclick="kaufPlan('3m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.18);border:1.5px solid rgba(165,180,252,.7);border-radius:12px;padding:13px 14px;color:#eef0ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
-      <span style="position:absolute;top:-9px;right:10px;background:#38bdf8;color:#04222e;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BELIEBT</span>
-      <span><span style="font-size:14px;font-weight:800">3 Monate</span><br><span style="font-size:10px;opacity:.75">8,33 €/Mon. · spare 17%</span></span>
-      <span style="font-size:15px;font-weight:800">24,99 €</span>
-    </button>
-
-    <button onclick="kaufPlan('6m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.1);border:1px solid rgba(99,91,255,.35);border-radius:12px;padding:12px 14px;color:#dfe3ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
-      <span><span style="font-size:14px;font-weight:800">6 Monate</span><br><span style="font-size:10px;opacity:.7">7,50 €/Mon. · spare 25%</span></span>
-      <span style="font-size:15px;font-weight:800">44,99 €</span>
-    </button>
-
-    <button onclick="kaufPlan('12m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:linear-gradient(135deg,#635bff,#4338ca);border:1.5px solid #a5b4fc;border-radius:12px;padding:13px 14px;color:#fff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
-      <span style="position:absolute;top:-9px;right:10px;background:#34d399;color:#04220f;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BESTER PREIS</span>
-      <span><span style="font-size:14px;font-weight:800">12 Monate</span><br><span style="font-size:10px;opacity:.85">6,67 €/Mon. · spare 33%</span></span>
-      <span style="font-size:16px;font-weight:800">79,99 €</span>
-    </button>
-  </div>
-
-
-  <div style="width:100%;max-width:320px;margin:10px auto 0;text-align:center;font-size:10px;color:#5a7d96;line-height:1.8">🔒 Sichere Zahlung &uuml;ber Stripe · ⚡ Sofort freigeschaltet<br>👨‍⚕️ Von Ausbilder &amp; Fachpfleger (An&auml;sthesie/Intensiv) entwickelt<br><span style="color:#7fa6c2">1&#8239;Monat = Abo (mtl. k&uuml;ndbar) &middot; ab 3&#8239;Monate Einmalzahlung</span></div>
   <div style="margin-top:12px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
     <div style="font-size:10px;color:#4a7a9b;line-height:1.7">
       <span data-i18n="no_code">🔑 Noch kein Zugangscode?</span><br>
       <span style="color:#38bdf8">kontakt@plan-nrw.de</span><br>
       Codes sind personalisiert & nicht übertragbar.
     </div>
+  </div>
   </div>
   <!-- Rechtliche Links: Login-Screen -->
   <div style="display:flex;gap:16px;justify-content:center;margin-top:14px;margin-bottom:4px">
@@ -531,7 +502,7 @@
   <div style="display:flex;justify-content:center;margin:12px auto 0;max-width:320px">
     <button type="button" onclick="showLangSoon()" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:7px 14px;color:#7da7c4;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">🌍 <span>Sprachen / Languages</span></button>
   </div>
-<button onclick="sessionStorage.clear();localStorage.removeItem('pl_local_tokens');location.reload();" style="background:none;border:none;color:rgba(var(--accent-rgb),.15);font-size:9px;cursor:pointer;margin-top:10px;font-family:inherit;padding:5px">🔄 Version 2.1 · Neu laden</button>
+<!-- Debug-Reload entfernt (Storage-Clear-Risiko fuer Endnutzer) -->
 </div>
 
 <!-- WATERMARK -->
@@ -7283,6 +7254,20 @@ function startTrial(){
   setTimeout(function(){ try{unlockAudio();playHeartbeat();}catch(e){} },400);
   setTimeout(showOnboarding,500);
 }
+function toggleLoginBox(){
+  var c=document.getElementById('login-collapse');
+  var t=document.getElementById('login-toggle');
+  if(!c) return;
+  if(c.style.display==='none' || !c.style.display){
+    c.style.display='block';
+    if(t) t.style.display='none';
+    var n=document.getElementById('pw-name'); if(n) n.focus();
+    setTimeout(function(){ try{c.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){} },80);
+  } else {
+    c.style.display='none';
+    if(t) t.style.display='block';
+  }
+}
 function checkPW() {
   const tokenInput = document.getElementById("pw-input").value.trim();
   const nameInput = document.getElementById("pw-name").value.trim();
@@ -7550,6 +7535,14 @@ window.addEventListener("DOMContentLoaded", () => {
   // Kein gültiger Token → Login-Screen zeigen
   const ps = document.getElementById("pw-screen");
   if (ps) ps.classList.add("active");
+  try {
+    if (localStorage.getItem('pl_user')) {
+      const lc = document.getElementById('login-collapse');
+      const lt = document.getElementById('login-toggle');
+      if (lc) lc.style.display = 'block';
+      if (lt) lt.style.display = 'none';
+    }
+  } catch(e) {}
 });
 
 function updateUserDisplay(name, isDemo) {
