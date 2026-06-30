@@ -1,0 +1,20 @@
+name: reminder-push
+on:
+  schedule:
+    - cron: '0 17 * * *'
+  workflow_dispatch: {}
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install web-push@3
+      - run: node scripts/send-reminders.mjs
+        env:
+          SUPABASE_URL: https://tpgverrpznsujvzbntmj.supabase.co
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          VAPID_PUBLIC: BET7sC0bTQQxomBNnjb53GFlufCu2iWVgIvUyalI1DD1vNFoOtHsQgIeWURUfav-P9OHNMS9vR5u-QyH4ogLeHY
+          VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
