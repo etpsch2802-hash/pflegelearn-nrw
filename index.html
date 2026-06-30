@@ -13942,6 +13942,7 @@ function updateStreak() {
   if (p.lastDay === today) return;
   const yesterday = new Date(Date.now() - 86400000).toDateString();
   p.streak = (p.lastDay === yesterday) ? (p.streak || 0) + 1 : 1;
+  try{ plCheckStreakMilestone(p.streak); }catch(e){}
   p.lastDay = today;
   p.totalDays = (p.totalDays || 0) + 1;
   saveProgress(p);
@@ -13953,6 +13954,7 @@ function recordQuizAnswer(correct) {
   if (correct) p.quizCorrect = (p.quizCorrect || 0) + 1;
   saveProgress(p);
   updateStreak();
+  try{ plIncAnsToday(); plCheckQuizMilestone(p.quizTotal); plDailyGoalDone(); if(typeof renderEngagement==='function') renderEngagement(); }catch(e){}
 }
 
 function recordKarteikarte() {
@@ -14339,6 +14341,7 @@ function renderHomeStats() {
       </div>
     </div>
     ${weiterKarte}`;
+  try{ renderEngagement(); }catch(e){}
 }
 
 function setUserName() {
@@ -15455,6 +15458,91 @@ function maybeAskRating(pct){
     document.body.appendChild(ov);
     try{ if(typeof gaEvent==='function') gaEvent('rating_prompt_view',{}); }catch(e){}
   },1400);
+}
+
+/* ── Sprint 2: Nutzerbindung (Tagesziel, Streak-Verlustaversion, Meilensteine) ── */
+var PL_DAILY_GOAL = 10;
+function _plDay(){ return new Date().toISOString().split('T')[0]; }
+function plAnsToday(){ try{ return parseInt(localStorage.getItem('pl_ans_'+_plDay())||'0',10)||0; }catch(e){ return 0; } }
+function plIncAnsToday(){ try{ localStorage.setItem('pl_ans_'+_plDay(), String(plAnsToday()+1)); }catch(e){} }
+
+function plCelebrate(msg, emoji){
+  try{
+    var b=document.createElement('div');
+    b.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:1500;background:linear-gradient(135deg,#f59e0b,#f97316);color:#1a1206;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:800;box-shadow:0 8px 26px rgba(0,0,0,.4);display:flex;align-items:center;gap:8px;max-width:90%';
+    b.innerHTML='<span style="font-size:20px">'+(emoji||'\uD83C\uDF89')+'</span><span></span>';
+    b.lastChild.textContent=msg;
+    document.body.appendChild(b);
+    try{ if(typeof playCorrect==='function') playCorrect(); }catch(e){}
+    setTimeout(function(){ b.style.transition='opacity .5s,transform .5s'; b.style.opacity='0'; b.style.transform='translateX(-50%) translateY(-12px)'; },2600);
+    setTimeout(function(){ b.remove(); },3200);
+  }catch(e){}
+}
+
+function plCheckStreakMilestone(streak){
+  try{
+    if([3,7,14,30,50,100,200,365].indexOf(streak)<0) return;
+    var key='pl_ms_streak_'+streak;
+    if(localStorage.getItem(key)) return;
+    localStorage.setItem(key,'1');
+    plCelebrate(streak+' Tage am St\u00fcck \u2013 bleib dran!', '\uD83D\uDD25');
+    if(typeof gaEvent==='function') gaEvent('streak_milestone',{value:streak});
+  }catch(e){}
+}
+function plCheckQuizMilestone(total){
+  try{
+    if([50,100,250,500,1000,2000].indexOf(total)<0) return;
+    var key='pl_ms_quiz_'+total;
+    if(localStorage.getItem(key)) return;
+    localStorage.setItem(key,'1');
+    plCelebrate(total+' Fragen ge\u00fcbt \u2013 stark!', '\uD83D\uDCAA');
+    if(typeof gaEvent==='function') gaEvent('quiz_milestone',{value:total});
+  }catch(e){}
+}
+function plDailyGoalDone(){
+  try{
+    if(plAnsToday()<PL_DAILY_GOAL) return;
+    var key='pl_goaldone_'+_plDay();
+    if(localStorage.getItem(key)) return;
+    localStorage.setItem(key,'1');
+    plCelebrate('Tagesziel erreicht: '+PL_DAILY_GOAL+' Fragen!', '\u2705');
+    if(typeof gaEvent==='function') gaEvent('daily_goal_done',{});
+  }catch(e){}
+}
+
+function renderEngagement(){
+  try{
+    var host=document.getElementById('home-stats');
+    if(!host) return;
+    var p=(typeof getProgress==='function')?getProgress():{};
+    var streak=p.streak||0;
+    var today=new Date().toDateString();
+    var used=plAnsToday();
+    var studiedToday=(p.lastDay===today)||(used>0);
+    var goalPct=Math.min(100, Math.round(used/PL_DAILY_GOAL*100));
+    var deg=Math.round(goalPct*3.6);
+    var done=goalPct>=100;
+    var html='';
+    html+='<div style="display:flex;align-items:center;gap:14px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:14px;padding:13px 15px">';
+    html+= '<div style="width:54px;height:54px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--accent) '+deg+'deg, rgba(255,255,255,.08) '+deg+'deg);display:flex;align-items:center;justify-content:center">';
+    html+=   '<div style="width:42px;height:42px;border-radius:50%;background:#0a1c30;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#e0f2fe">'+Math.min(used,PL_DAILY_GOAL)+'/'+PL_DAILY_GOAL+'</div></div>';
+    html+= '<div style="flex:1">';
+    html+=   '<div style="font-size:13px;font-weight:800;color:#e0f2fe">'+(done?'Tagesziel erreicht \uD83C\uDF89':'Heutiges Tagesziel')+'</div>';
+    html+=   '<div style="font-size:11px;color:#94a3b8;margin-top:2px">'+(done?('Stark! Komm morgen wieder.'):(Math.max(0,PL_DAILY_GOAL-used)+' Fragen bis zum Ziel'))+'</div>';
+    html+= '</div>';
+    if(streak>0){ html+='<div style="text-align:center"><div style="font-size:20px">\uD83D\uDD25</div><div style="font-size:11px;font-weight:800;color:#f59e0b">'+streak+'</div></div>'; }
+    html+='</div>';
+    if(streak>0 && !studiedToday){
+      html+='<div style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.35);border-radius:12px;padding:11px 13px;font-size:12px;color:#fdba74;line-height:1.4">\u26A0\uFE0F Deine <b>'+streak+'-Tage-Serie</b> ist in Gefahr \u2013 heute noch keine Frage. Schon 1 Quiz h\u00e4lt sie am Leben.</div>';
+    }
+    var existing=document.getElementById('pl-engagement');
+    if(existing) existing.remove();
+    var block=document.createElement('div');
+    block.id='pl-engagement';
+    block.style.cssText='margin-bottom:14px;display:flex;flex-direction:column;gap:10px';
+    block.innerHTML=html;
+    host.insertBefore(block, host.firstChild);
+  }catch(e){}
 }
 
 function showPlanPicker(){
