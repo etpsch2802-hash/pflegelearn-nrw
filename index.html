@@ -15586,6 +15586,23 @@ async function plEnableReminders(){
   }catch(e){ return false; }
 }
 
+async function plResyncPush(){
+  try{
+    if(!plPushAvailable()) return;
+    if(Notification.permission!=='granted') return;
+    if(!window.SB) return;
+    var reg=await navigator.serviceWorker.ready;
+    var sub=await reg.pushManager.getSubscription();
+    if(!sub) return;
+    window.SB.from('push_subs').upsert({
+      endpoint: sub.endpoint,
+      sub: JSON.stringify(sub),
+      name: localStorage.getItem('pl_user') || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict:'endpoint' });
+    try{ localStorage.setItem('pl_push_on','1'); }catch(e){}
+  }catch(e){}
+}
 function maybeOfferReminders(){
   try{
     if(!plPushAvailable()) return;                                   // inaktiv ohne VAPID-Key
@@ -15993,6 +16010,7 @@ function showSuccessToast() {
 window.addEventListener('load', () => { setTimeout(function(){ try{ renderSocialProof(); }catch(e){} }, 700); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeSaveProgressPrompt(); }catch(e){} }, 2500); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeOfferReminders(); }catch(e){} }, 4200); });
+window.addEventListener('load', () => { setTimeout(function(){ try{ plResyncPush(); }catch(e){} }, 3000); });
 // Sound-Toggle Label beim Laden setzen
 window.addEventListener('load', () => {
   const btn = document.getElementById('sound-toggle-btn');
