@@ -15545,6 +15545,89 @@ function renderEngagement(){
   }catch(e){}
 }
 
+/* ── Sprint 2 D: Erinnerungen via Web Push (inaktiv bis PL_VAPID_PUBLIC gesetzt) ── */
+var PL_VAPID_PUBLIC = ''; // <-- VAPID Public Key hier eintragen (siehe Server-Setup)
+
+function plPushAvailable(){
+  try{
+    return !!PL_VAPID_PUBLIC && ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+  }catch(e){ return false; }
+}
+function _plB64ToU8(s){
+  var pad='='.repeat((4 - s.length % 4) % 4);
+  var b=(s+pad).replace(/-/g,'+').replace(/_/g,'/');
+  var raw=atob(b); var arr=new Uint8Array(raw.length);
+  for(var i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+async function plEnableReminders(){
+  try{
+    if(!plPushAvailable()) return false;
+    var perm=await Notification.requestPermission();
+    if(perm!=='granted') return false;
+    var reg=await navigator.serviceWorker.ready;
+    var sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      sub=await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:_plB64ToU8(PL_VAPID_PUBLIC) });
+    }
+    try{
+      if(window.SB){
+        window.SB.from('push_subs').upsert({
+          endpoint: sub.endpoint,
+          sub: JSON.stringify(sub),
+          name: localStorage.getItem('pl_user') || null,
+          updated_at: new Date().toISOString()
+        }, { onConflict:'endpoint' });
+      }
+    }catch(e){}
+    try{ localStorage.setItem('pl_push_on','1'); }catch(e){}
+    try{ if(typeof gaEvent==='function') gaEvent('reminders_enabled',{}); }catch(e){}
+    return true;
+  }catch(e){ return false; }
+}
+
+function maybeOfferReminders(){
+  try{
+    if(!plPushAvailable()) return;                                   // inaktiv ohne VAPID-Key
+    if(localStorage.getItem('pl_push_on')==='1') return;
+    if(localStorage.getItem('pl_push_offered')==='1') return;
+    if(Notification.permission==='denied') return;
+    var ps=document.getElementById('pw-screen');
+    if(ps && ps.classList.contains('active')) return;                // nur eingeloggt/Home
+    var hasProgress=false;
+    try{ var p=JSON.parse(localStorage.getItem('pl_progress_v2')||'{}'); hasProgress=((p.quizTotal||0)>=5)||((p.streak||0)>=2); }catch(e){}
+    if(!hasProgress) return;
+    localStorage.setItem('pl_push_offered','1');
+  }catch(e){ return; }
+  if(document.getElementById('push-modal')) return;
+  var ov=document.createElement('div');
+  ov.id='push-modal';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1350;display:flex;align-items:center;justify-content:center;padding:20px';
+  var card=document.createElement('div');
+  card.style.cssText='background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:24px 20px;max-width:360px;width:100%;text-align:center';
+  card.innerHTML='<div style="font-size:36px">\uD83D\uDD14</div>'
+    +'<div style="font-size:18px;font-weight:900;color:#fff;margin:6px 0">T\u00e4gliche Lern-Erinnerung?</div>'
+    +'<div style="font-size:12px;color:#9fc3da;line-height:1.5;margin-bottom:14px">Ein kurzer Stups pro Tag h\u00e4lt deine Serie am Leben \u2013 du entscheidest die Uhrzeit sp\u00e4ter. Jederzeit abschaltbar.</div>';
+  var go=document.createElement('button');
+  go.textContent='Erinnerung aktivieren';
+  go.style.cssText='width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04221a;font-size:15px;font-weight:900;cursor:pointer';
+  go.addEventListener('click',async function(){
+    go.disabled=true; go.textContent='\u2026';
+    var ok=await plEnableReminders();
+    ov.remove();
+    if(ok) plCelebrate('Erinnerung aktiviert!', '\uD83D\uDD14');
+  });
+  var skip=document.createElement('button');
+  skip.textContent='Nicht jetzt';
+  skip.style.cssText='width:100%;background:none;border:none;color:#6f93ab;font-size:12px;margin-top:8px;cursor:pointer';
+  skip.addEventListener('click',function(){ ov.remove(); });
+  card.appendChild(go); card.appendChild(skip);
+  ov.appendChild(card);
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+  try{ if(typeof gaEvent==='function') gaEvent('reminders_prompt_view',{}); }catch(e){}
+}
+
 function showPlanPicker(){
   try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
   try{ gaEvent('view_item_list',{item_list_name:'plan_picker'}); }catch(e){}
@@ -15909,6 +15992,7 @@ function showSuccessToast() {
 // Social Proof (Live-Zahlen + Testimonials)
 window.addEventListener('load', () => { setTimeout(function(){ try{ renderSocialProof(); }catch(e){} }, 700); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeSaveProgressPrompt(); }catch(e){} }, 2500); });
+window.addEventListener('load', () => { setTimeout(function(){ try{ maybeOfferReminders(); }catch(e){} }, 4200); });
 // Sound-Toggle Label beim Laden setzen
 window.addEventListener('load', () => {
   const btn = document.getElementById('sound-toggle-btn');
