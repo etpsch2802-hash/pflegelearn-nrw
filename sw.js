@@ -59,3 +59,29 @@ self.addEventListener('fetch', e => {
 self.addEventListener('message', e => {
   if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
+
+// ── Web Push (Erinnerungen) ──────────────────────────────────────────────────
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data ? e.data.text() : '' }; }
+  const title = d.title || 'PLAN NRW';
+  const body  = d.body  || 'Zeit zum Lernen – halte deine Serie am Leben!';
+  e.waitUntil(self.registration.showNotification(title, {
+    body,
+    icon: '/icon192.png',
+    badge: '/favicon.png',
+    tag: d.tag || 'pl-reminder',
+    data: { url: d.url || '/' }
+  }));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || '/';
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cl => {
+      for (const c of cl) { if ('focus' in c) { c.navigate && c.navigate(url); return c.focus(); } }
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
+});
