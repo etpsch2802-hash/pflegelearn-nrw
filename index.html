@@ -464,6 +464,7 @@
 
   <!-- Vertrauen -->
   <div style="width:100%;max-width:340px;margin:14px auto 0;text-align:center;font-size:11px;color:#5a7d96;line-height:1.7">👨‍⚕️ Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
+  <div id="pl-socialproof" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
 
   <!-- Login einklappbar (wiederkehrende Nutzer) -->
   <button onclick="toggleLoginBox()" id="login-toggle" style="width:100%;max-width:340px;margin:20px auto 0;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:10px;padding:11px;color:#9fc3da;font-size:13px;font-weight:700;cursor:pointer">🔑 Schon einen Zugangscode? Anmelden</button>
@@ -11694,6 +11695,7 @@ function finishExamen(auto) {
   const pct = total ? Math.round(richtig / total * 100) : 0;
   if (typeof recordQuizResult === 'function') recordQuizResult('examen', richtig, total);
   renderExamResults(richtig, total, pct, auto);
+  try{ maybeAskTestimonial(pct); }catch(e){}
 }
 
 function renderExamResults(richtig, total, pct, auto) {
@@ -15244,6 +15246,113 @@ function maybeTrialCountdown(until){
     document.body.appendChild(b);
   }catch(e){}
 }
+function renderSocialProof(){
+  var host=document.getElementById('pl-socialproof');
+  if(!host || !window.SB) return;
+  // A: Live-Zahlen, nur ab glaubwuerdiger Schwelle (>=50)
+  try{
+    window.SB.rpc('get_app_stats').then(function(res){
+      try{
+        if(res.error || !res.data) return;
+        var d=Array.isArray(res.data)?res.data[0]:res.data;
+        var n=parseInt(d && d.total_users,10)||0;
+        if(n>=50){
+          var line=document.createElement('div');
+          line.style.cssText='width:100%;max-width:340px;margin:14px auto 0;text-align:center;font-size:12px;color:#9fc3da;font-weight:700';
+          line.textContent='\uD83D\uDC65 Bereits '+n.toLocaleString('de-DE')+' Azubis lernen mit PLAN NRW';
+          host.appendChild(line);
+        }
+      }catch(e){}
+    });
+  }catch(e){}
+  // B: veroeffentlichte Testimonials (moderiert: published=true)
+  try{
+    window.SB.from('testimonials').select('name,text,bereich').eq('published',true).limit(3).then(function(res){
+      try{
+        if(res.error || !res.data || !res.data.length) return;
+        var box=document.createElement('div');
+        box.style.cssText='width:100%;max-width:340px;margin:14px auto 0;display:flex;flex-direction:column;gap:8px';
+        res.data.forEach(function(t){
+          var c=document.createElement('div');
+          c.style.cssText='background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:11px;text-align:left';
+          var q=document.createElement('div');
+          q.style.cssText='font-size:12px;color:#cfe8ff;line-height:1.5';
+          q.textContent='\u201E'+String(t.text||'').slice(0,180)+'\u201C';
+          var w=document.createElement('div');
+          w.style.cssText='font-size:10px;color:#5a7d96;margin-top:6px';
+          w.textContent=(t.name||'Azubi')+(t.bereich?(' \u00b7 '+t.bereich):'');
+          c.appendChild(q); c.appendChild(w); box.appendChild(c);
+        });
+        host.appendChild(box);
+      }catch(e){}
+    });
+  }catch(e){}
+}
+
+function maybeAskTestimonial(pct){
+  try{
+    if(pct<70) return;
+    if(localStorage.getItem('pl_testimonial_asked')==='1') return;
+    localStorage.setItem('pl_testimonial_asked','1');
+  }catch(e){}
+  setTimeout(function(){
+    if(document.getElementById('testi-modal')) return;
+    var ov=document.createElement('div');
+    ov.id='testi-modal';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1400;display:flex;align-items:center;justify-content:center;padding:20px';
+    var card=document.createElement('div');
+    card.style.cssText='background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:24px 20px;max-width:380px;width:100%';
+    var html='';
+    html+='<div style="text-align:center;font-size:34px">\uD83C\uDF1F</div>';
+    html+='<div style="text-align:center;font-size:18px;font-weight:900;color:#fff;margin-bottom:6px">Stark, '+pct+'%!</div>';
+    html+='<div style="text-align:center;font-size:12px;color:#9fc3da;line-height:1.5;margin-bottom:14px">Hilft dir PLAN bei der Pr\u00fcfungsvorbereitung? Ein, zwei S\u00e4tze helfen anderen Azubis bei der Entscheidung.</div>';
+    html+='<textarea id="testi-text" rows="3" placeholder="Was bringt dir PLAN?" style="width:100%;background:rgba(2,12,24,.6);border:1px solid rgba(56,189,248,.3);border-radius:10px;color:#fff;font-size:14px;padding:10px;box-sizing:border-box;resize:vertical"></textarea>';
+    html+='<input id="testi-name" type="text" placeholder="Vorname (optional)" style="width:100%;margin-top:8px;background:rgba(2,12,24,.6);border:1px solid rgba(56,189,248,.3);border-radius:10px;color:#fff;font-size:14px;padding:10px;box-sizing:border-box">';
+    html+='<label style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:11px;color:#9fc3da;line-height:1.4;cursor:pointer"><input type="checkbox" id="testi-consent" style="margin-top:2px"> Ich bin einverstanden, dass mein Text (mit Vorname) in der App gezeigt werden darf.</label>';
+    card.innerHTML=html;
+    var send=document.createElement('button');
+    send.textContent='Absenden';
+    send.style.cssText='width:100%;margin-top:12px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04221a;font-size:15px;font-weight:900;cursor:pointer';
+    send.addEventListener('click',submitTestimonial);
+    var skip=document.createElement('button');
+    skip.textContent='Nicht jetzt';
+    skip.style.cssText='width:100%;background:none;border:none;color:#6f93ab;font-size:12px;margin-top:8px;cursor:pointer';
+    skip.addEventListener('click',function(){ ov.remove(); });
+    card.appendChild(send); card.appendChild(skip);
+    ov.appendChild(card);
+    document.body.appendChild(ov);
+  },1400);
+}
+
+function submitTestimonial(){
+  var tEl=document.getElementById('testi-text');
+  var nEl=document.getElementById('testi-name');
+  var cEl=document.getElementById('testi-consent');
+  var t=tEl?tEl.value.trim():'';
+  var nm=nEl?nEl.value.trim():'';
+  var consent=cEl?cEl.checked:false;
+  if(t.length<8){ alert('Bitte ein, zwei S\u00e4tze schreiben.'); return; }
+  if(!consent){ alert('Bitte der Anzeige zustimmen, oder \u201ENicht jetzt\u201C w\u00e4hlen.'); return; }
+  try{
+    var ber=(typeof currentBereich!=='undefined' && currentBereich && currentBereich.label)?currentBereich.label:'';
+    if(window.SB){ window.SB.from('testimonials').insert({ name:nm.slice(0,40), text:t.slice(0,400), bereich:ber, consent:true, published:false }); }
+    if(typeof gaEvent==='function') gaEvent('testimonial_submit',{});
+  }catch(e){}
+  var m=document.getElementById('testi-modal');
+  if(m){
+    m.innerHTML='';
+    var c=document.createElement('div');
+    c.style.cssText='background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:26px;max-width:360px;width:100%;text-align:center';
+    c.innerHTML='<div style="font-size:34px">\uD83D\uDE4F</div><div style="font-size:16px;font-weight:800;color:#fff;margin:8px 0">Danke!</div><div style="font-size:12px;color:#9fc3da">Wir pr\u00fcfen deinen Beitrag und schalten ihn ggf. frei.</div>';
+    var close=document.createElement('button');
+    close.textContent='Schlie\u00dfen';
+    close.style.cssText='margin-top:14px;background:rgba(56,189,248,.15);border:1px solid #38bdf8;color:#ddf0fb;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer';
+    close.addEventListener('click',function(){ m.remove(); });
+    c.appendChild(close);
+    m.appendChild(c);
+  }
+}
+
 function showPlanPicker(){
   try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
   try{ gaEvent('view_item_list',{item_list_name:'plan_picker'}); }catch(e){}
@@ -15605,6 +15714,8 @@ function showSuccessToast() {
 }
 
 
+// Social Proof (Live-Zahlen + Testimonials)
+window.addEventListener('load', () => { setTimeout(function(){ try{ renderSocialProof(); }catch(e){} }, 700); });
 // Sound-Toggle Label beim Laden setzen
 window.addEventListener('load', () => {
   const btn = document.getElementById('sound-toggle-btn');
