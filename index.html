@@ -15372,6 +15372,41 @@ function submitTestimonial(){
   }
 }
 
+function maybeSaveProgressPrompt(){
+  try{
+    var ps=document.getElementById('pw-screen');
+    if(ps && ps.classList.contains('active')) return;            // nur eingeloggt/auf Home
+    if(localStorage.getItem('pl_saveprog_prompted')==='1') return;
+    var hasProgress=false;
+    try{ var p=JSON.parse(localStorage.getItem('pl_progress_v2')||'{}'); hasProgress=((p.quizTotal||0)>=5)||((p.streak||0)>=2); }catch(e){}
+    if(!hasProgress) return;
+    if(localStorage.getItem('pl_sub_active')==='1') return;       // Abonnent: schon Konto
+    localStorage.setItem('pl_saveprog_prompted','1');
+  }catch(e){ return; }
+  if(document.getElementById('saveprog-modal')) return;
+  var ov=document.createElement('div');
+  ov.id='saveprog-modal';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1350;display:flex;align-items:center;justify-content:center;padding:20px';
+  var card=document.createElement('div');
+  card.style.cssText='background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:24px 20px;max-width:360px;width:100%;text-align:center';
+  card.innerHTML='<div style="font-size:36px">\u2601\uFE0F</div>'
+    +'<div style="font-size:18px;font-weight:900;color:#fff;margin:6px 0">Fortschritt auf allen Ger\u00e4ten sichern</div>'
+    +'<div style="font-size:12px;color:#9fc3da;line-height:1.5;margin-bottom:14px">Melde dich einmalig per E-Mail-Link an \u2013 dein Streak, deine Statistik und dein Zugang sind dann auf Handy, Tablet und PC verf\u00fcgbar. Kein Passwort n\u00f6tig.</div>';
+  var go=document.createElement('button');
+  go.textContent='Konto per E-Mail-Link anlegen';
+  go.style.cssText='width:100%;background:linear-gradient(135deg,#22d3ee,#0891b2);border:none;border-radius:11px;padding:13px;color:#04222e;font-size:15px;font-weight:900;cursor:pointer';
+  go.addEventListener('click',function(){ ov.remove(); try{ if(window.PLCloud&&PLCloud.open) PLCloud.open(); }catch(e){} });
+  var skip=document.createElement('button');
+  skip.textContent='Sp\u00e4ter';
+  skip.style.cssText='width:100%;background:none;border:none;color:#6f93ab;font-size:12px;margin-top:8px;cursor:pointer';
+  skip.addEventListener('click',function(){ ov.remove(); });
+  card.appendChild(go); card.appendChild(skip);
+  ov.appendChild(card);
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+  try{ if(typeof gaEvent==='function') gaEvent('account_prompt_view',{}); }catch(e){}
+}
+
 function showPlanPicker(){
   try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
   try{ gaEvent('view_item_list',{item_list_name:'plan_picker'}); }catch(e){}
@@ -15735,6 +15770,7 @@ function showSuccessToast() {
 
 // Social Proof (Live-Zahlen + Testimonials)
 window.addEventListener('load', () => { setTimeout(function(){ try{ renderSocialProof(); }catch(e){} }, 700); });
+window.addEventListener('load', () => { setTimeout(function(){ try{ maybeSaveProgressPrompt(); }catch(e){} }, 2500); });
 // Sound-Toggle Label beim Laden setzen
 window.addEventListener('load', () => {
   const btn = document.getElementById('sound-toggle-btn');
@@ -15933,6 +15969,73 @@ window.addEventListener('load', () => {
     if(!window.SB) return;
     window.SB.auth.getSession().then(function(res){ checkSub(res && res.data ? res.data.session : null); });
     window.SB.auth.onAuthStateChange(function(_e,s){ if(s) checkSub(s); });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+<script>
+/* L3 – Geraeteuebergreifender Zugang: Trial/Paid folgen dem Supabase-Auth-Konto (additiv) */
+(function(){
+  if(!window.SB) return;
+  function today(){ return new Date().toISOString().split('T')[0]; }
+  function later(a,b){ if(!a) return b||null; if(!b) return a; return a>=b?a:b; }
+  async function syncAccess(session){
+    if(!session || !window.SB) return;
+    try{
+      var localTrial = localStorage.getItem('pl_trial_until');
+      var localPaid  = localStorage.getItem('pl_paid_until');
+      var r = await window.SB.from('access')
+        .select('trial_until,paid_until,paid_plan,name')
+        .eq('user_id', session.user.id).maybeSingle();
+      if(r && r.error){ console.warn('[Access] select', r.error.message); }
+      var srv = (r && r.data) ? r.data : null;
+      var mTrial = later(localTrial, srv ? srv.trial_until : null);
+      var mPaid  = later(localPaid,  srv ? srv.paid_until  : null);
+      try{
+        if(mTrial && mTrial!==localTrial) localStorage.setItem('pl_trial_until', mTrial);
+        if(mPaid && mPaid!==localPaid){
+          localStorage.setItem('pl_paid_until', mPaid);
+          if(srv && srv.paid_plan) localStorage.setItem('pl_paid_plan', srv.paid_plan);
+          if(srv && srv.name)      localStorage.setItem('pl_paid_name', srv.name);
+        }
+      }catch(e){}
+      await window.SB.from('access').upsert({
+        user_id: session.user.id,
+        email: session.user.email || null,
+        trial_until: mTrial,
+        paid_until: mPaid,
+        paid_plan: localStorage.getItem('pl_paid_plan') || (srv && srv.paid_plan) || null,
+        name: localStorage.getItem('pl_user') || (srv && srv.name) || null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+      var t = today();
+      var paidOk  = mPaid  && t <= mPaid;
+      var trialOk = mTrial && t <= mTrial;
+      if((paidOk || trialOk) && (typeof currentUser==='undefined' || !currentUser || currentUser.bereich!=='alle')){
+        try{
+          currentUser = {
+            token: paidOk ? 'STRIPE-PAID' : 'TRIAL',
+            name: localStorage.getItem('pl_user') || session.user.email || 'Konto',
+            email: session.user.email || '',
+            bereich: 'alle',
+            ablauf: paidOk ? mPaid : mTrial
+          };
+          if(typeof BEREICH_CONFIG!=='undefined') currentBereich = BEREICH_CONFIG['alle'] || currentBereich;
+          var ps=document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
+          if(typeof showScreen==='function') showScreen('home');
+          if(typeof updateUserDisplay==='function') updateUserDisplay(currentUser.name,false);
+          if(typeof updateStreak==='function') updateStreak();
+          if(typeof renderHomeStats==='function') renderHomeStats();
+          if(typeof applyBereichsFilter==='function') applyBereichsFilter();
+        }catch(e){ console.warn('[Access] grant', e); }
+      }
+    }catch(e){ console.warn('[Access] sync', e); }
+  }
+  function init(){
+    window.SB.auth.getSession().then(function(res){ syncAccess(res && res.data ? res.data.session : null); });
+    window.SB.auth.onAuthStateChange(function(_e,s){ if(s) syncAccess(s); });
   }
   if(document.readyState!=='loading') init();
   else document.addEventListener('DOMContentLoaded', init);
