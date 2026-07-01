@@ -1,0 +1,51 @@
+name: ci
+# Qualitaetssicherung vor Deploy: Syntax-Check aller JS-Dateien + (falls vorhanden) E2E-Tests.
+# Bewusst leichtgewichtig gehalten – passt zur "kein Build"-Architektur (siehe CLAUDE.md).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  syntax:
+    name: node --check (JS-Syntax)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Syntax-Check aller JS-Dateien
+        run: |
+          set -e
+          for f in api/chat.js api/lead.js api/stripe-webhook.js scripts/send-reminders.mjs chat.js; do
+            if [ -f "$f" ]; then node --check "$f" && echo "OK: $f"; fi
+          done
+
+  e2e:
+    name: E2E (Playwright, falls Tests vorhanden)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: E2E-Tests ausfuehren (falls tests/ vorhanden)
+        run: |
+          if [ -f tests/trial-e2e.js ]; then
+            npm i -D playwright
+            npx playwright install --with-deps chromium
+            python3 -m http.server 8099 --bind 127.0.0.1 &
+            SRV=$!
+            # kurz warten bis der Server bereit ist (max ~10s)
+            for i in $(seq 1 20); do
+              if curl -s -o /dev/null http://127.0.0.1:8099/index.html; then break; fi
+              sleep 0.5
+            done
+            BASE_URL=http://127.0.0.1:8099 node tests/trial-e2e.js
+            code=$?
+            kill $SRV 2>/dev/null || true
+            exit $code
+          else
+            echo "Keine tests/trial-e2e.js gefunden – E2E uebersprungen (kommt mit PR #3 in main)."
+          fi
