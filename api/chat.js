@@ -1,5 +1,5 @@
 // PflegeLearn NRW – KI-Chat Backend (Vercel Serverless Function)
-// Modell: Groq (llama-3.3-70b) | Route: /api/chat
+// Modell: Groq (gpt-oss-120b) | Route: /api/chat
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   ];
 
   const requestBody = {
-    model: 'llama-3.3-70b-versatile',
+    model: 'openai/gpt-oss-120b',
     messages: groqMessages,
     temperature: 0.7,
     max_tokens: 1024,
