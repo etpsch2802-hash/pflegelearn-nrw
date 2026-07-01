@@ -14321,26 +14321,10 @@ function renderHomeStats() {
       <div style="flex:1;font-size:16px;font-weight:700;color:#e0f2fe">${gruss}</div>
       <button onclick="setUserName()" title="Name ändern" style="background:none;border:none;cursor:pointer;font-size:15px;opacity:.55;font-family:inherit;padding:2px">✏️</button>
     </div>`;
+  // Sprint UI: Home entschlackt - Examen-Karte + 3 Stat-Kacheln entfernt (bleiben ueber
+  // Module bzw. Pruefungsreife-Details erreichbar). Streak lebt nur noch im Tagesziel-Ring.
   el.innerHTML = `
     ${pruefungsreifeCardHTML()}
-    ${examenCardHTML()}
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:22px">🔥</div>
-        <div style="font-size:18px;font-weight:800;color:#fbbf24">${streak}</div>
-        <div style="font-size:9px;color:#64748b">Tage Streak</div>
-      </div>
-      <div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:22px">✅</div>
-        <div style="font-size:18px;font-weight:800;color:#22c55e">${pct}%</div>
-        <div style="font-size:9px;color:#64748b">Quiz-Quote</div>
-      </div>
-      <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:22px">🃏</div>
-        <div style="font-size:18px;font-weight:800;color:#a78bfa">${karten}</div>
-        <div style="font-size:9px;color:#64748b">Karten gelernt</div>
-      </div>
-    </div>
     ${weiterKarte}`;
   try{ renderEngagement(); }catch(e){}
 }
