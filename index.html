@@ -454,9 +454,9 @@
   <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
   <div class="pw-subtitle" style="margin-top:8px"><span data-i18n="login_subtitle">Prüfungs-Portal NRW</span></div>
   <div style="text-align:center;color:var(--accent);font-weight:600;font-size:13px;margin-top:6px">Damit du immer einen PLAN hast.</div>
-  <!-- HERO: 7 Tage Gratis-Trial (Vollzugang) -->
+  <!-- HERO: 21 Tage Gratis-Trial (Vollzugang) -->
   <button onclick="showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
-    🎁 7 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
+    🎁 21 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
   </button>
 
   <!-- Sekundär: Gratis schnuppern -->
@@ -663,7 +663,7 @@
 <div class="page" id="screen-registrierung">
   <div class="hero" style="margin-bottom:20px">
     <img src="icon-192.png" style="width:72px;height:72px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(var(--accent-rgb),.5))">
-    <h1>7 Tage <span>kostenlos</span></h1>
+    <h1>21 Tage <span>kostenlos</span></h1>
     <p>Vollzugang · Keine Kreditkarte · Sofort starten</p>
   </div>
 
@@ -672,7 +672,7 @@
       <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ 627 Prüfungsfragen · 7 Ausbildungswege</div>
       <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ Krankheitsbilder · Prophylaxen · ATL · Wundversorgung</div>
       <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ Taschenkarten · Lernplan · Medizintechnik</div>
-      <div style="font-size:12px;color:#fbbf24;display:flex;gap:8px;align-items:center">⏳ Nach 7 Tagen endet der Test – Weiternutzung nur mit kostenpflichtiger Freischaltung</div>
+      <div style="font-size:12px;color:#fbbf24;display:flex;gap:8px;align-items:center">⏳ Nach 21 Tagen endet der Test – Weiternutzung nur mit kostenpflichtiger Freischaltung</div>
     </div>
   </div>
 
@@ -1198,15 +1198,15 @@
 
   <div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
     <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#34d399;margin-bottom:6px">Kostenlos starten</div>
-    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">7 Tage gratis</div>
+    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">21 Tage gratis</div>
     <div style="font-size:12px;color:#94a3b8;margin:6px 0 12px">Voller Zugang &middot; keine Kreditkarte &middot; sofort startklar</div>
     <div style="font-size:13px;color:#cde8f7;line-height:1.9;margin-bottom:14px">
       &#10003; Alle Bereiche &amp; Fachrichtungen<br>
       &#10003; Quiz, F&auml;lle, Karteikarten, Pr&uuml;fungssimulator<br>
       &#10003; KI-Lernassistent
     </div>
-    <div style="font-size:11px;color:#fbbf24;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:9px;padding:9px 11px;margin-bottom:12px">Nach 7 Tagen endet der Zugang automatisch &ndash; kein kostenloser Vollzugang. Weiternutzung nur mit Freischaltung.</div>
-    <button onclick="showTrialStart()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer"><span data-i18n="btn_trial">7 Tage kostenlos testen</span></button>
+    <div style="font-size:11px;color:#fbbf24;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:9px;padding:9px 11px;margin-bottom:12px">Nach 21 Tagen endet der Zugang automatisch &ndash; kein kostenloser Vollzugang. Weiternutzung nur mit Freischaltung.</div>
+    <button onclick="showTrialStart()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:14px;font-weight:800;font-family:'DM Sans',sans-serif;cursor:pointer"><span data-i18n="btn_trial">21 Tage kostenlos testen</span></button>
   </div>
 
   <div style="background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.35);border-radius:16px;padding:18px;margin-bottom:14px">
@@ -6950,7 +6950,7 @@ init();
 // Ablauf: YYYY-MM-DD
 
 const TOKEN_DB = {
-  // ── 7-Tage-Trial (manuell vergeben) ──
+  // ── 21-Tage-Trial (manuell vergeben) ──
   "GPA-2026-E3OH-PEKDEMIR": { name:"Fati (Pekdemir)", bereich:"alle", ablauf:"2026-06-24", aktiv:true },
   // ── Neue Testzugaenge (2 Wochen, gueltig bis 2026-06-20) ──
   "TEST-MAIKE-2026":       { name:"Maike (Lehrerin)",        bereich:"alle", ablauf:"2026-06-20", aktiv:true },
@@ -7090,7 +7090,7 @@ const BEREICH_CONFIG = {
     medizintechnik: false,
     medikamente: false,
     ki_unbegrenzt: false,
-    ki_max: 5,
+    ki_max: 8,
     quiz_max: 20,
     faelle_max_pro_fach: 2,
     gratis: true,
@@ -7213,12 +7213,12 @@ function showTrialStart(){
   ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px";
   ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:26px 22px;max-width:380px;width:100%;text-align:center">'
     +'<div style="font-size:40px;margin-bottom:6px">🎁</div>'
-    +'<div style="font-size:21px;font-weight:900;color:#fff;margin-bottom:6px">7 Tage Vollzugang</div>'
+    +'<div style="font-size:21px;font-weight:900;color:#fff;margin-bottom:6px">21 Tage Vollzugang</div>'
     +'<div style="font-size:13px;color:#9fc3da;line-height:1.5;margin-bottom:16px">Sofort startklar \u00b7 keine Kreditkarte \u00b7 alle 627 Fragen, KI &amp; Examen-Simulation</div>'
     +'<input id="trial-name" type="text" placeholder="Dein Name" style="width:100%;padding:13px;border-radius:11px;border:1px solid rgba(56,189,248,.3);background:rgba(2,12,24,.6);color:#fff;font-size:15px;margin-bottom:10px;box-sizing:border-box">'
     +'<input id="trial-email" type="email" placeholder="E-Mail (optional)" style="width:100%;padding:13px;border-radius:11px;border:1px solid rgba(56,189,248,.3);background:rgba(2,12,24,.6);color:#fff;font-size:15px;margin-bottom:14px;box-sizing:border-box">'
     +'<label style="display:flex;align-items:flex-start;gap:7px;margin:-4px 0 12px;font-size:10px;color:#9fc3da;line-height:1.4;text-align:left;cursor:pointer"><input type="checkbox" id="trial-consent" style="margin-top:2px"> Erinnerung &amp; Lerntipps per E-Mail (optional, jederzeit abbestellbar)</label>'
-    +'<button onclick="startTrial()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04221a;font-size:16px;font-weight:900;cursor:pointer">7 Tage gratis starten \u2192</button>'
+    +'<button onclick="startTrial()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04221a;font-size:16px;font-weight:900;cursor:pointer">21 Tage gratis starten \u2192</button>'
     +'<button onclick="document.getElementById(\'trial-modal\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:13px;margin-top:10px;cursor:pointer">Abbrechen</button>'
     +'</div>';
   document.body.appendChild(ov);
@@ -7234,7 +7234,7 @@ function startTrial(){
   var email=(document.getElementById('trial-email')?document.getElementById('trial-email').value:'').trim();
   var tconsent=false; try{ var _ce=document.getElementById('trial-consent'); tconsent=_ce?_ce.checked:false; }catch(e){}
   if(!name){ alert('Bitte Name eingeben!'); return; }
-  var d=new Date(); d.setDate(d.getDate()+7);
+  var d=new Date(); d.setDate(d.getDate()+21); // Sprint 1.5: Trial 7 -> 21 Tage (Azubi-Lernrhythmus, Aha-Moment sicherer erreichen)
   var ablauf=d.toISOString().split('T')[0];
   try{
     localStorage.setItem('pl_trial_until',ablauf);
@@ -7243,9 +7243,9 @@ function startTrial(){
     localStorage.setItem('pl_trial_used','1');
     localStorage.removeItem('pl_trial_expired');
   }catch(e){}
-  try{ if(typeof emailjs!=='undefined' && email){ emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{name:name,email:email,ausbildung:'7-Tage-Trial (Sofortstart)',datum:new Date().toLocaleString('de-DE'),message:'Trial automatisch gestartet'}); } }catch(e){}
+  try{ if(typeof emailjs!=='undefined' && email){ emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{name:name,email:email,ausbildung:'21-Tage-Trial (Sofortstart)',datum:new Date().toLocaleString('de-DE'),message:'Trial automatisch gestartet'}); } }catch(e){}
   try{ plSaveLead(email, name, 'trial', ablauf, tconsent); }catch(e){}
-  try{ gaEvent('sign_up',{method:'trial_instant'}); gaEvent('begin_trial',{}); }catch(e){}
+  try{ gaEvent('sign_up',{method:'trial_instant'}); gaEvent('begin_trial',{dauer:21}); }catch(e){}
   var m=document.getElementById('trial-modal'); if(m) m.remove();
   currentUser={ token:'TRIAL', name:name, email:email, bereich:'alle', ablauf:ablauf };
   currentBereich=BEREICH_CONFIG['alle'];
@@ -7473,7 +7473,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   } catch(e) {}
 
-  // Persistenter 7-Tage-Trial (laufzeitbasiert, kein Server) - Vorrang nach Paid
+  // Persistenter 21-Tage-Trial (laufzeitbasiert, kein Server) - Vorrang nach Paid
   try {
     const trialUntil = localStorage.getItem('pl_trial_until');
     if (trialUntil) {
@@ -15498,7 +15498,7 @@ function showTrialExpiredUpsell(){
   ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px";
   ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:26px 22px;max-width:380px;width:100%;text-align:center">'
     +'<div style="font-size:40px;margin-bottom:6px">⏰</div>'
-    +'<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:8px">Dein 7-Tage-Vollzugang ist abgelaufen</div>'
+    +'<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:8px">Dein 21-Tage-Vollzugang ist abgelaufen</div>'
     +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:16px">Du lernst eingeschränkt weiter (20 Fragen/Tag, KI 5/Tag). Mit Vollzugang: alle 627 Fragen, KI unbegrenzt, komplette Examen-Simulation.</div>'
     +'<button onclick="document.getElementById(\'trial-expired\').remove();showPlanPicker();" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:12px;padding:15px;color:#fff;font-size:16px;font-weight:900;cursor:pointer">🔓 Vollzugang sichern</button>'
     +'<button onclick="document.getElementById(\'trial-expired\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:13px;margin-top:10px;cursor:pointer">Mit Gratis weiterlernen</button>'
@@ -16560,7 +16560,7 @@ window.I18N = {
     btn_login: 'Anmelden →',
     ki_chat: 'KI Chat',
     ki_chat_sub: 'Dein Lernassistent · sofort antworten',
-    btn_trial: '7 Tage kostenlos testen',
+    btn_trial: '21 Tage kostenlos testen',
     btn_trial_sub: 'Voller Zugriff · keine Zahlungsdaten nötig',
     btn_free: 'Gratis starten',
     btn_free_sub: 'eingeschränkte Version',
@@ -17259,7 +17259,7 @@ if (_savedLang !== 'de') {
         + '<h1 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:25px;color:#eaf4fb;margin:0 0 10px">Fast geschafft!</h1>'
         + '<p style="font-size:14px;line-height:1.65;color:#9fb6c9;margin:0 0 8px">Wir haben dir die <strong style="color:#cbd9e6">12 Eselsbr&uuml;cken</strong> gerade per E-Mail geschickt.</p>'
         + '<p style="font-size:13px;line-height:1.6;color:#7e97ab;margin:0 0 22px">Schau in dein Postfach &ndash; und bitte auch im <strong>Spam-Ordner</strong> nach.</p>'
-        + '<a href="/" style="display:inline-block;background:rgba(34,211,238,.12);border:1px solid #22d3ee;border-radius:11px;padding:13px 22px;color:#7ff0ff;font-size:14px;font-weight:700;text-decoration:none">App entdecken &middot; 7 Tage gratis</a>'
+        + '<a href="/" style="display:inline-block;background:rgba(34,211,238,.12);border:1px solid #22d3ee;border-radius:11px;padding:13px 22px;color:#7ff0ff;font-size:14px;font-weight:700;text-decoration:none">App entdecken &middot; 21 Tage gratis</a>'
         + '</div>';
     }
 
@@ -17270,6 +17270,92 @@ if (_savedLang !== 'de') {
   function init(){ if (isGratisRoute()) build(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+})();
+</script>
+<script>
+(function(){
+  // ── Sprint 1.5: Engagement-getriggerter Upsell ──────────────────────────────
+  // Zeigt EINMALIG einen positiven Kauf-Prompt am Wert-Peak (Pruefungsreife-Sprung
+  // oder erste Examens-Sim) statt Zeitdruck. Additiv & isoliert: wrappt showScreen,
+  // veraendert KEINE bestehende Funktion. Beruehrt NICHT: Trial-Ende-Logik, Paywall.
+  var SHOWN_KEY = 'pl_engage_upsell_shown';
+
+  function hatBezahlt(){
+    try {
+      var pu = localStorage.getItem('pl_paid_until');
+      if (pu) { var today = new Date().toISOString().split('T')[0]; if (today <= pu) return true; }
+      if (localStorage.getItem('pl_sub_active') === '1') return true;
+    } catch(e){}
+    return false;
+  }
+  function beantworteteFragen(){
+    try {
+      if (typeof getKatStats === 'function') {
+        var ks = getKatStats(), sum = 0;
+        for (var k in ks) { if (ks[k] && typeof ks[k].t === 'number') sum += ks[k].t; }
+        if (sum > 0) return sum;
+      }
+      var p = JSON.parse(localStorage.getItem('pl_progress_v2') || '{}');
+      return p.quizTotal || 0;
+    } catch(e){ return 0; }
+  }
+  function examensAbsolviert(){
+    try { return (JSON.parse(localStorage.getItem('pl_exam_history') || '[]')).length; } catch(e){ return 0; }
+  }
+  function aktuelleReife(){
+    try { if (typeof computePruefungsreife === 'function') return computePruefungsreife(); } catch(e){}
+    return null;
+  }
+  function bedingungErfuellt(){
+    try { if (localStorage.getItem(SHOWN_KEY) === '1') return false; } catch(e){}
+    if (hatBezahlt()) return false;
+    // Trigger A: >=30 Fragen UND Pruefungsreife >=50%
+    if (beantworteteFragen() >= 30) {
+      var pr = aktuelleReife();
+      if (pr && pr.assessed > 0 && pr.score >= 50) return true;
+    }
+    // Trigger B: erste Examens-Simulation abgeschlossen
+    if (examensAbsolviert() >= 1) return true;
+    return false;
+  }
+  function zeigeUpsell(){
+    if (document.getElementById('engage-upsell')) return;
+    try { localStorage.setItem(SHOWN_KEY, '1'); } catch(e){}
+    var fragen = beantworteteFragen();
+    var pr = aktuelleReife(), score = pr ? pr.score : 0;
+    try { if (typeof gaEvent === 'function') gaEvent('engagement_upsell_view', { score: score, fragen: fragen }); } catch(e){}
+    var ov = document.createElement('div');
+    ov.id = 'engage-upsell';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1290;display:flex;align-items:center;justify-content:center;padding:20px';
+    ov.innerHTML = '<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(52,211,153,.35);border-radius:20px;max-width:360px;width:100%;padding:26px 22px;text-align:center;font-family:inherit">'
+      + '<div style="font-size:40px;margin-bottom:8px">🎯</div>'
+      + '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:8px">Starker Fortschritt!</div>'
+      + '<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:18px">Du hast schon <b style="color:#fff">' + fragen + ' Fragen</b> gemeistert'
+      + (score ? ' und deine Prüfungsreife auf <b style="color:#34d399">' + score + '%</b> gebracht' : '')
+      + '. Genau so kommst du sicher durchs Examen – sichere dir den vollen Lernplan bis zur Prüfung.</div>'
+      + '<button id="engage-upsell-cta" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:14px;color:#04231a;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px">Vollzugang ansehen</button>'
+      + '<button id="engage-upsell-later" style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer">Später</button>'
+      + '</div>';
+    document.body.appendChild(ov);
+    function close(){ var el = document.getElementById('engage-upsell'); if (el) el.remove(); }
+    ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
+    var cta = document.getElementById('engage-upsell-cta');
+    if (cta) cta.onclick = function(){ close(); try { if (typeof showPlanPicker === 'function') showPlanPicker(); else showScreen('preise'); } catch(e){ try { showScreen('preise'); } catch(_){} } };
+    var later = document.getElementById('engage-upsell-later');
+    if (later) later.onclick = close;
+  }
+  window.plCheckEngagementUpsell = function(){
+    try { if (bedingungErfuellt()) setTimeout(zeigeUpsell, 700); } catch(e){}
+  };
+  // Additiv: showScreen wrappen, ohne die Originalfunktion zu veraendern.
+  if (typeof window.showScreen === 'function') {
+    var _origShowScreen = window.showScreen;
+    window.showScreen = function(name){
+      var r = _origShowScreen.apply(this, arguments);
+      if (name === 'result' || name === 'home') { try { window.plCheckEngagementUpsell(); } catch(e){} }
+      return r;
+    };
+  }
 })();
 </script>
 </body>
