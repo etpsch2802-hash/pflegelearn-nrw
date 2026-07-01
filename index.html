@@ -723,16 +723,11 @@
 </div>
 
 <div class="page" id="screen-home">
-  <div class="hero">
-    <img src="icon-192.png" alt="PLAN" style="width:60px;height:60px;object-fit:contain;margin-bottom:6px;filter:drop-shadow(0 0 14px rgba(var(--accent-rgb),.35))">
-    <h1>PLAN <span>NRW</span></h1>
-    <p style="font-size:12px">7 Ausbildungswege · 627 Fragen · 100 Krankheitsbilder</p>
-    <p style="font-size:12px;color:var(--accent);font-weight:600;margin-top:4px">Damit du immer einen PLAN hast.</p>
-  </div>
-  <div id="home-stats"></div>
+  <!-- Sprint UI: schlanke persoenliche Begruessung statt grossem Branding-Block (Header traegt das Logo) -->
+  <div id="home-greeting" style="margin-top:6px"></div>
   <div class="section-label" style="display:none"></div>
 
-  <!-- ── HAUPTKACHELN ── -->
+  <!-- ── HAUPTKACHELN (Kern-Navigation zuerst) ── -->
   <button onclick="openCEHub()" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(16,185,129,.08));border:1.5px solid #34d399;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left;box-shadow:0 0 18px rgba(52,211,153,.18)">
     <div style="font-size:32px">🎯</div>
     <div style="flex:1">
@@ -768,6 +763,9 @@
     </div>
     <div style="margin-left:auto;font-size:20px;color:#7ff0ff">›</div>
   </button>
+
+  <!-- Status/Fortschritt NACH den Modulen (dynamisch gefuellt) -->
+  <div id="home-stats" style="margin-top:6px"></div>
 
   <!-- ── SEKUNDÄR (dezent) ── -->
   <div style="display:flex;gap:10px;margin:4px 0 2px">
@@ -14316,11 +14314,14 @@ function renderHomeStats() {
     ? `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">🚀</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#34d399">Leg los!</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Starte mit deinem ersten Quiz</div></div><div style="font-size:18px;color:#34d399">›</div></button>`
     : `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.03));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">▶️</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#e0f2fe">Weiterlernen</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Mach weiter, wo du aufgehört hast</div></div><div style="font-size:18px;color:rgba(var(--accent-rgb),.85)">›</div></button>`;
 
-  el.innerHTML = `
+  // Begruessung schlank ganz oben (eigener Container ueber den Modulen)
+  const greetEl = document.getElementById('home-greeting');
+  if (greetEl) greetEl.innerHTML = `
     <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:11px 16px;margin-bottom:12px;transition:all .5s;display:flex;align-items:center;gap:10px">
       <div style="flex:1;font-size:16px;font-weight:700;color:#e0f2fe">${gruss}</div>
       <button onclick="setUserName()" title="Name ändern" style="background:none;border:none;cursor:pointer;font-size:15px;opacity:.55;font-family:inherit;padding:2px">✏️</button>
-    </div>
+    </div>`;
+  el.innerHTML = `
     ${pruefungsreifeCardHTML()}
     ${examenCardHTML()}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
