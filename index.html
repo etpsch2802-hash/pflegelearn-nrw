@@ -723,49 +723,37 @@
 </div>
 
 <div class="page" id="screen-home">
-  <!-- Sprint UI: schlanke persoenliche Begruessung statt grossem Branding-Block (Header traegt das Logo) -->
+  <!-- Sprint UI "Lerncoach": persoenliche Begruessung + EIN adaptiver naechster Schritt statt Menue -->
   <div id="home-greeting" style="margin-top:6px"></div>
   <div class="section-label" style="display:none"></div>
 
-  <!-- ── HAUPTKACHELN (Kern-Navigation zuerst) ── -->
-  <button onclick="openCEHub()" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(16,185,129,.08));border:1.5px solid #34d399;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left;box-shadow:0 0 18px rgba(52,211,153,.18)">
-    <div style="font-size:32px">🎯</div>
-    <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#6ee7b7" data-i18n="home_ce_t">Lernen nach Kompetenzbereichen</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px" data-i18n="home_ce_s">Dein Lernweg · 11 CE · Quiz &amp; Fortschritt</div>
-    </div>
-    <div style="margin-left:auto;font-size:20px;color:#6ee7b7">›</div>
-  </button>
+  <!-- ── COACH-HERO: adaptiver naechster Schritt (per JS in #home-coach gefuellt) ── -->
+  <div id="home-coach-label" style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:2px 2px 8px;font-weight:700">Dein nächster Schritt</div>
+  <div id="home-coach" style="margin-bottom:4px"></div>
 
-  <button onclick="showScreen('uebenpruefen')" style="width:100%;background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(99,91,255,.06));border:1.5px solid rgba(167,139,250,.6);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
-    <div style="font-size:32px">📚</div>
-    <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#c4b5fd" data-i18n="home_ueben_t">Üben &amp; Prüfen</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px" data-i18n="home_ueben_s">Quiz · Simulator · Karteikarten · Taschenkarten · Lernplan · Fälle</div>
-    </div>
-    <div style="margin-left:auto;font-size:20px;color:#c4b5fd">›</div>
-  </button>
+  <!-- Status/Fortschritt: Tagesziel-Ring + Pruefungsreife (dynamisch gefuellt) -->
+  <div id="home-stats" style="margin-top:12px"></div>
 
-  <button onclick="showScreen('wissenpraxis')" style="width:100%;background:linear-gradient(135deg,rgba(251,113,133,.16),rgba(244,63,94,.05));border:1.5px solid rgba(251,113,133,.55);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
-    <div style="font-size:32px">🏥</div>
-    <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#fda4af" data-i18n="home_wissen_t">Wissen &amp; Praxis</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px" data-i18n="home_wissen_s">Krankheitsbilder · Anatomie · Scores · Prophylaxen · Technik · Notfall</div>
-    </div>
-    <div style="margin-left:auto;font-size:20px;color:#fda4af">›</div>
-  </button>
-
-  <button class="ki-neon-btn" onclick="openKIChooser()" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.18),rgba(8,20,34,.5));border:1.5px solid #22d3ee;border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left">
-    <div style="font-size:32px" id="ki-home-icon">💬</div>
-    <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:#7ff0ff" data-i18n="home_ki_t">KI-Assistent &amp; Prüfung</div>
-      <div style="font-size:11px;color:#4a7a9b;margin-top:3px" data-i18n="home_ki_s">Chat · Mündliche &amp; schriftliche Prüfungssimulation</div>
-    </div>
-    <div style="margin-left:auto;font-size:20px;color:#7ff0ff">›</div>
-  </button>
-
-  <!-- Status/Fortschritt NACH den Modulen (dynamisch gefuellt) -->
-  <div id="home-stats" style="margin-top:6px"></div>
+  <!-- ── MODULE: ruhige Auswahl statt grosser Kacheln – du entscheidest ── -->
+  <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:16px 2px 8px;font-weight:700">Oder frei wählen</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+    <button onclick="openCEHub()" style="background:linear-gradient(135deg,rgba(52,211,153,.16),rgba(16,185,129,.05));border:1px solid rgba(52,211,153,.45);border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:23px">🎯</span>
+      <span style="font-size:12.5px;font-weight:700;color:#6ee7b7;line-height:1.25" data-i18n="home_ce_t">Lernen nach Kompetenzbereichen</span>
+    </button>
+    <button onclick="showScreen('uebenpruefen')" style="background:linear-gradient(135deg,rgba(167,139,250,.14),rgba(99,91,255,.05));border:1px solid rgba(167,139,250,.5);border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:23px">📚</span>
+      <span style="font-size:12.5px;font-weight:700;color:#c4b5fd;line-height:1.25" data-i18n="home_ueben_t">Üben &amp; Prüfen</span>
+    </button>
+    <button onclick="showScreen('wissenpraxis')" style="background:linear-gradient(135deg,rgba(251,113,133,.14),rgba(244,63,94,.05));border:1px solid rgba(251,113,133,.5);border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:23px">🏥</span>
+      <span style="font-size:12.5px;font-weight:700;color:#fda4af;line-height:1.25" data-i18n="home_wissen_t">Wissen &amp; Praxis</span>
+    </button>
+    <button class="ki-neon-btn" onclick="openKIChooser()" style="background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.16),rgba(8,20,34,.5));border:1px solid #22d3ee;border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:23px" id="ki-home-icon">💬</span>
+      <span style="font-size:12.5px;font-weight:700;color:#7ff0ff;line-height:1.25" data-i18n="home_ki_t">KI-Assistent &amp; Prüfung</span>
+    </button>
+  </div>
 
   <!-- ── SEKUNDÄR (dezent) ── -->
   <div style="display:flex;gap:10px;margin:4px 0 2px">
@@ -14276,6 +14264,90 @@ function getKIIcon() {
   return map[emoji] || '🤖';
 }
 
+// ── COACH-HERO (Sprint UI "Lerncoach") ───────────────────────────────────────
+// Beruehrt bewusst NUR den Home-Screen. Statt eines Menues schlaegt die App
+// EINEN sinnvollen naechsten Schritt vor. Alle Zustaende sind datengetrieben
+// (Fortschritt, Pruefungsreife, Tagesziel, Examensdatum) und nach Dringlichkeit
+// priorisiert. Kein neuer localStorage-Key, keine Server-Abhaengigkeit.
+function coachExamTage() {
+  try {
+    var d = localStorage.getItem('pl_examen_datum') || localStorage.getItem('pl_pruefungsdatum');
+    if (!d) return null;
+    var t = Math.ceil((new Date(d) - new Date()) / 86400000);
+    return isNaN(t) ? null : t;
+  } catch (e) { return null; }
+}
+function coachVorname() {
+  var local = ''; try { local = (localStorage.getItem('pl_user_name') || '').trim(); } catch (e) {}
+  var vn = ((currentUser && currentUser.name) || '').split(' ')[0] || '';
+  return local || (vn.indexOf('@') >= 0 ? '' : vn);
+}
+function _coachTone(k) {
+  var m = {
+    cyan:  { a: '#22d3ee', b: '#0891b2', t: '#04222e' },
+    green: { a: '#34d399', b: '#10b981', t: '#04231a' },
+    rose:  { a: '#fb7185', b: '#e11d48', t: '#ffffff' },
+    gold:  { a: '#fbbf24', b: '#f59e0b', t: '#3a2a05' }
+  };
+  return m[k] || m.cyan;
+}
+function _coachCard(o) {
+  var c = _coachTone(o.tone), a = c.a;
+  var prog = (o.prog != null)
+    ? '<div style="height:7px;border-radius:20px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:13px"><div style="height:100%;width:' + o.prog + '%;background:' + a + ';opacity:.85"></div></div>'
+    : '';
+  return '<div style="border-radius:18px;padding:18px 18px 16px;background:linear-gradient(150deg,' + a + '1f,rgba(8,20,34,.42));border:1.5px solid ' + a + '88;box-shadow:0 0 22px ' + a + '26">'
+    + '<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px"><span style="font-size:26px">' + o.emoji + '</span><span style="font-size:11px;letter-spacing:.5px;text-transform:uppercase;font-weight:800;color:' + a + '">' + o.kicker + '</span></div>'
+    + '<div style="font-size:15px;line-height:1.45;font-weight:600;color:#eaf4fb;margin-bottom:14px">' + o.msg + '</div>'
+    + prog
+    + '<button onclick="' + o.onclick + '" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,' + a + ',' + c.b + ');border:none;border-radius:12px;padding:13px 16px;color:' + c.t + ';font-weight:800;font-size:14px;font-family:inherit;cursor:pointer"><span>' + o.cta + '</span><span aria-hidden="true">→</span></button>'
+    + '</div>';
+}
+function coachCardHTML() {
+  if (!currentUser) return '';
+  var p = (typeof getProgress === 'function') ? getProgress() : {};
+  var quizTotal = p.quizTotal || 0, karten = p.kartenReviewed || 0;
+  var istNeu = (quizTotal === 0 && karten === 0);
+  var vn = coachVorname(); var an = vn ? (', ' + vn) : '';
+  var used = (typeof plAnsToday === 'function') ? plAnsToday() : 0;
+  var goal = (typeof PL_DAILY_GOAL !== 'undefined') ? PL_DAILY_GOAL : 10;
+  var remaining = Math.max(0, goal - used);
+  var tage = coachExamTage();
+
+  // 1) Erstnutzer – sanfter Einstieg
+  if (istNeu) {
+    return _coachCard({ tone: 'green', emoji: '👋', kicker: 'Willkommen',
+      msg: 'Schön, dass du da bist' + an + '. Lass uns in <b>3 Minuten</b> herausfinden, wo du stehst – ein paar kurze Fragen, ganz entspannt.',
+      cta: "Los geht's", onclick: "navGo('quizSelect')" });
+  }
+  // 2) Examen steht kurz bevor – Endspurt
+  if (tage !== null && tage > 0 && tage <= 7) {
+    return _coachCard({ tone: 'rose', emoji: '⏳', kicker: 'Endspurt · noch ' + tage + (tage === 1 ? ' Tag' : ' Tage'),
+      msg: 'Jetzt zählt der Ernstfall. Teste dich unter echten Bedingungen – <b>eine volle Prüfungssimulation</b> zeigt dir, wo du wirklich stehst.',
+      cta: 'Simulation starten', onclick: 'openExamenIntro()' });
+  }
+  // 3) Tagesziel fast erreicht – Zielgradient
+  if (used > 0 && remaining > 0 && remaining <= 3) {
+    return _coachCard({ tone: 'gold', emoji: '🔥', kicker: 'Fast geschafft', prog: Math.min(100, Math.round(used / goal * 100)),
+      msg: 'Nur noch <b>' + remaining + (remaining === 1 ? ' Frage' : ' Fragen') + '</b> bis zu deinem Tagesziel. Zieh es durch – der Moment gehört dir.',
+      cta: 'Ziel holen', onclick: "navGo('quizSelect')" });
+  }
+  // 4) Groesste Luecke – gezielt Punkte holen
+  try {
+    var pr = computePruefungsreife();
+    if (pr && pr.assessed > 0 && pr.luecken && pr.luecken[0] && pr.luecken[0].acc < 60) {
+      var l = pr.luecken[0];
+      return _coachCard({ tone: 'rose', emoji: '🎯', kicker: 'Deine größte Lücke',
+        msg: 'In <b>' + l.label + '</b> bist du gerade bei <b>' + l.acc + ' %</b>. Genau hier holst du am schnellsten Punkte – ich begleite dich.',
+        cta: l.label + ' üben', onclick: "startQuiz('" + l.id + "')" });
+    }
+  } catch (e) {}
+  // 5) Weitermachen – Standard
+  return _coachCard({ tone: 'cyan', emoji: '📖', kicker: 'Weitermachen',
+    msg: 'Schön, dass du wieder da bist' + an + '. Lass uns da anknüpfen, wo du aufgehört hast – Schritt für Schritt näher ans Examen.',
+    cta: 'Weiterlernen', onclick: "navGo('quizSelect')" });
+}
+
 function renderHomeStats() {
   const el = document.getElementById('home-stats');
   if (!el) return;
@@ -14308,40 +14380,28 @@ function renderHomeStats() {
   if (typeof startPartikel === 'function') startPartikel();
   if (typeof showNeueFeaturesBanner === 'function') showNeueFeaturesBanner();
 
-  // Adaptive Weiterlernen-/Startkarte (intuitiver Einstieg)
-  const istNeu = (quizTotal === 0 && karten === 0);
-  const weiterKarte = istNeu
-    ? `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">🚀</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#34d399">Leg los!</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Starte mit deinem ersten Quiz</div></div><div style="font-size:18px;color:#34d399">›</div></button>`
-    : `<button onclick="navGo('quizSelect')" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.03));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:26px">▶️</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:#e0f2fe">Weiterlernen</div><div style="font-size:11px;color:#7a9b8c;margin-top:2px">Mach weiter, wo du aufgehört hast</div></div><div style="font-size:18px;color:rgba(var(--accent-rgb),.85)">›</div></button>`;
-
-  // Begruessung schlank ganz oben (eigener Container ueber den Modulen)
+  // Begruessung schlank ganz oben (eigener Container ueber dem Coach) – mit Examens-Countdown
+  const _cTage = coachExamTage();
+  const _cd = (_cTage !== null && _cTage > 0)
+    ? ` &middot; <span style="color:#fbbf24;font-weight:700">Noch ${_cTage} ${_cTage === 1 ? 'Tag' : 'Tage'}</span> bis zum Examen`
+    : '';
   const greetEl = document.getElementById('home-greeting');
   if (greetEl) greetEl.innerHTML = `
     <div style="background:${saisonInfo.bg};border:1px solid ${saisonInfo.border};border-radius:14px;padding:11px 16px;margin-bottom:12px;transition:all .5s;display:flex;align-items:center;gap:10px">
-      <div style="flex:1;font-size:16px;font-weight:700;color:#e0f2fe">${gruss}</div>
+      <div style="flex:1;font-size:16px;font-weight:700;color:#e0f2fe">${gruss}${_cd}</div>
       <button onclick="setUserName()" title="Name ändern" style="background:none;border:none;cursor:pointer;font-size:15px;opacity:.55;font-family:inherit;padding:2px">✏️</button>
     </div>`;
-  el.innerHTML = `
-    ${pruefungsreifeCardHTML()}
-    ${examenCardHTML()}
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:22px">🔥</div>
-        <div style="font-size:18px;font-weight:800;color:#fbbf24">${streak}</div>
-        <div style="font-size:9px;color:#64748b">Tage Streak</div>
-      </div>
-      <div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:22px">✅</div>
-        <div style="font-size:18px;font-weight:800;color:#22c55e">${pct}%</div>
-        <div style="font-size:9px;color:#64748b">Quiz-Quote</div>
-      </div>
-      <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:22px">🃏</div>
-        <div style="font-size:18px;font-weight:800;color:#a78bfa">${karten}</div>
-        <div style="font-size:9px;color:#64748b">Karten gelernt</div>
-      </div>
-    </div>
-    ${weiterKarte}`;
+
+  // Adaptive Coach-Karte (EIN naechster Schritt) im eigenen Container ueber den Statistiken
+  var _coachHtml = '';
+  try { _coachHtml = coachCardHTML(); } catch (e) {}
+  var coachEl = document.getElementById('home-coach');
+  if (coachEl) coachEl.innerHTML = _coachHtml;
+  var coachLbl = document.getElementById('home-coach-label');
+  if (coachLbl) coachLbl.style.display = _coachHtml ? '' : 'none';
+
+  // home-stats: Pruefungsreife-Karte; renderEngagement stellt den Tagesziel-Ring davor
+  el.innerHTML = pruefungsreifeCardHTML();
   try{ renderEngagement(); }catch(e){}
 }
 
