@@ -15891,11 +15891,9 @@ function checkExamenReminder() {
     let titel = '', text = '', farbe = '', icon = '';
 
     if (tage > 0 && tage <= 7) {
-      // Kurz VOR Examen
-      icon = '🔥';
-      titel = 'Dein Examen steht kurz bevor!';
-      text = `Nur noch ${tage} ${tage === 1 ? 'Tag' : 'Tage'}. Nutze die Karteikarten und den Prüfungssimulator für den Endspurt. Du schaffst das!`;
-      farbe = '#f97316';
+      // Endspurt-Hinweis uebernimmt jetzt die adaptive Coach-Karte auf der Home
+      // (coachCardHTML, Zustand "Endspurt"). Doppelten Toast bewusst unterdruecken.
+      return;
     } else if (tage <= 0 && tage >= -14) {
       // Kurz NACH Examen → Conversion-Moment!
       icon = '🎉';
