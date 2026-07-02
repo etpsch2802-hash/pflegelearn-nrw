@@ -15169,20 +15169,40 @@ window.sendFeedback = function() {
   const type = document.getElementById('fb-type')?.value || 'unbekannt';
   const text = document.getElementById('fb-text')?.value?.trim() || '';
   if (!text) { alert('Bitte Nachricht eingeben.'); return; }
-  emailjs.send('service_8hn8nqi', 'g7jbwbc', {
-    name: `Feedback [${type}]`,
-    email: 'kontakt@plan-nrw.de',
-    ausbildung: type,
-    datum: new Date().toLocaleString('de-DE'),
-    message: text,
-  }).then(() => {
+
+  // Erfolgs-Toast (EmailJS hat den Versand bestaetigt)
+  function fbErfolg() {
     document.querySelector('[style*=fixed]')?.remove();
     const t = document.createElement('div');
     t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#22c55e;color:white;padding:10px 20px;border-radius:10px;z-index:9999;font-weight:700';
     t.textContent = '✅ Feedback gesendet!';
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3000);
-  }).catch(() => alert('Fehler beim Senden. Bitte E-Mail an kontakt@plan-nrw.de'));
+  }
+  // Robuster Fallback: oeffnet die Mail-App mit vorausgefuelltem Text, damit KEIN Feedback verloren geht,
+  // wenn EmailJS blockt (z. B. nicht freigegebene Domain / Quota) oder gar nicht geladen ist.
+  function fbFallback() {
+    var subject = 'Feedback PLAN NRW [' + type + ']';
+    var body = text + '\n\n--\nGesendet aus der App';
+    try {
+      window.location.href = 'mailto:kontakt@plan-nrw.de?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    } catch (e) {
+      alert('Bitte sende dein Feedback an kontakt@plan-nrw.de – danke!');
+    }
+  }
+
+  try { if (typeof gaEvent === 'function') gaEvent('feedback_submit', { type: type }); } catch (e) {}
+
+  try {
+    if (typeof emailjs === 'undefined' || !emailjs || typeof emailjs.send !== 'function') { fbFallback(); return; }
+    emailjs.send('service_8hn8nqi', 'g7jbwbc', {
+      name: `Feedback [${type}]`,
+      email: 'kontakt@plan-nrw.de',
+      ausbildung: type,
+      datum: new Date().toLocaleString('de-DE'),
+      message: text,
+    }).then(fbErfolg).catch(fbFallback);
+  } catch (e) { fbFallback(); }
 };
 
 
