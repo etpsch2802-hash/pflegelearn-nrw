@@ -21,7 +21,7 @@ Auslieferung als:
 **Wichtigste Kennzahlen (im Code referenziert):** 627 Prüfungsfragen, 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege.
 
 ### Business-Kontext
-- **Geschäftsmodell:** Freemium mit 7-Tage-Trial und kostenpflichtigen Laufzeit-Tarifen (siehe Abschnitt „Stripe / Monetarisierung").
+- **Geschäftsmodell:** Freemium mit 21-Tage-Trial (Sprint 1.5: von 7 auf 21 Tage verlängert) und kostenpflichtigen Laufzeit-Tarifen (siehe Abschnitt „Stripe / Monetarisierung").
 - **Erstes Produkt von PLAN Digital.** Architekturentscheidungen sollen so getroffen werden, dass Bausteine (Auth/Sync, Paywall, Push, KI-Proxy, Lead-Funnel) **später für weitere Produkte wiederverwendbar** sind (z. B. Notfall-App, weitere Pflege-Apps, künftige KI-Lösungen).
 - **Konkrete Business-KPIs / Conversion-Zielwerte:** `[vom Team zu pflegen]`
 
@@ -124,7 +124,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 |---|---|
 | `pl_token` | `'GRATIS'` (Free) oder bezahlter Token |
 | `pl_user` / `pl_user_name` | Anzeigename |
-| `pl_trial_until` / `pl_trial_used` / `pl_trial_expired` / `pl_trial_name` / `pl_trial_email` | 7-Tage-Trial (echter Sofort-Trial, Auto-Login, Gratis-Downgrade bei Ablauf) |
+| `pl_trial_until` / `pl_trial_used` / `pl_trial_expired` / `pl_trial_name` / `pl_trial_email` | 21-Tage-Trial (echter Sofort-Trial, Auto-Login, Gratis-Downgrade bei Ablauf; Sprint 1.5: 7 → 21 Tage) |
 | `pl_paid_until` / `pl_paid_name` / `pl_paid_plan` | Bezahlter Zugang (Einmalzahlung) |
 | `pl_sub_active` / `pl_sub_email` / `pl_sub_login_prompted` | Aktives Abo aus Supabase |
 | `pl_stripe_name` / `pl_stripe_plan` | Zwischenspeicher vor Stripe-Redirect |
