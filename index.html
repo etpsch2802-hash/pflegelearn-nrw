@@ -11512,7 +11512,8 @@ function showPruefungsreife() {
     + '<div style="background:' + pr.col + '14;border:1px solid ' + pr.col + '2e;border-radius:12px;padding:11px 13px;margin-bottom:16px"><div style="font-size:9px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Größte Lücken</div><div style="font-size:12px;color:#e0f2fe;font-weight:600">' + lueckenTxt + '</div></div>'
     + '<div style="font-size:10px;color:#4a7a9b;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Alle Themen</div>' + rows
     + '<div style="margin-top:16px">' + cta + '</div>'
-    + '<button onclick="plShareResultCard()" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);border-radius:11px;padding:12px;color:#38bdf8;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:8px">📤 Ergebnis als Bild teilen</button></div>';
+    + '<button onclick="plShareResultCard()" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);border-radius:11px;padding:12px;color:#38bdf8;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:8px">📤 Ergebnis als Bild teilen</button>'
+    + '<button onclick="plKlasseShow()" style="width:100%;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:11px;padding:12px;color:#fbbf24;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:8px">🏆 Klassen-Ranking</button></div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.remove(); });
 }
@@ -11576,6 +11577,132 @@ async function plShareResultCard() {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'plan-nrw-pruefungsreife.png';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+  }, 'image/png');
+}
+
+// ─── STREAK-VERLUST-WARNUNG ───────────────────────────────────────────────────
+function plStreakWarnCheck() {
+  var p = (typeof getProgress === 'function') ? getProgress() : {};
+  var streak = p.streak || 0;
+  if (streak < 3) return;
+  var today = new Date().toISOString().split('T')[0];
+  var yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  if (p.lastDay !== yesterday) return;
+  if (new Date().getHours() < 17) return;
+  try { if (sessionStorage.getItem('pl_streak_warned') === today) return; sessionStorage.setItem('pl_streak_warned', today); } catch(e){}
+  var b = document.createElement('div');
+  b.style.cssText = 'position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:1300;background:linear-gradient(135deg,#7c2d12,#9a3412);border:1px solid #f97316;border-radius:14px;padding:12px 16px;max-width:340px;width:calc(100% - 32px);box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;cursor:pointer';
+  b.innerHTML = '<span style="font-size:22px">🔥</span><div style="flex:1"><div style="font-size:13px;font-weight:800;color:#fff">Deine ' + streak + '-Tage-Serie läuft heute ab!</div><div style="font-size:11px;color:#fed7aa;margin-top:1px">Ein kurzes Quiz genügt, um sie zu retten.</div></div>';
+  b.onclick = function(){ b.remove(); try { showScreen('quiz'); } catch(e){} };
+  document.body.appendChild(b);
+  setTimeout(function(){ if (b.parentNode) b.remove(); }, 10000);
+}
+
+// ─── KLASSEN-RANKING (Supabase: class_ranking) ────────────────────────────────
+function plKlasseCode() { try { return localStorage.getItem('pl_klasse_code') || ''; } catch(e){ return ''; } }
+function plKlasseName() {
+  try {
+    var n = (localStorage.getItem('pl_user_name') || '').trim();
+    if (!n && currentUser && currentUser.name) n = String(currentUser.name).split(' ')[0];
+    return (n || 'Anonym').slice(0, 20);
+  } catch(e){ return 'Anonym'; }
+}
+async function plKlasseSync() {
+  if (!window.SB) return;
+  var code = plKlasseCode();
+  if (!code) return;
+  try {
+    var pr = computePruefungsreife();
+    await window.SB.from('class_ranking').upsert(
+      { code: code, name: plKlasseName(), score: pr.score, updated_at: new Date().toISOString() },
+      { onConflict: 'code,name' });
+  } catch(e){}
+}
+async function plKlasseShow() {
+  if (!window.SB) { alert('Klassen-Ranking benötigt Internetverbindung.'); return; }
+  var code = plKlasseCode();
+  if (!code) {
+    var input = prompt('Klassen-Code eingeben (oder neuen erfinden, z.B. GPA26-BOCHUM):');
+    if (!input) return;
+    code = input.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24);
+    if (code.length < 4) { alert('Code zu kurz (mind. 4 Zeichen).'); return; }
+    try { localStorage.setItem('pl_klasse_code', code); } catch(e){}
+  }
+  await plKlasseSync();
+  var rows = [];
+  try {
+    var res = await window.SB.from('class_ranking').select('name,score,updated_at').eq('code', code).order('score', { ascending: false }).limit(30);
+    rows = res.data || [];
+  } catch(e){}
+  var me = plKlasseName();
+  var list = rows.length ? rows.map(function(r, i){
+    var self = r.name === me;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)' + (self ? ';background:rgba(56,189,248,.08);border-radius:8px;padding-left:6px' : '') + '">'
+      + '<span style="font-size:12px;font-weight:800;color:' + (i === 0 ? '#fbbf24' : i === 1 ? '#cbd5e1' : i === 2 ? '#f97316' : '#4a7a9b') + ';min-width:24px">' + (i + 1) + '.</span>'
+      + '<span style="flex:1;font-size:12px;color:' + (self ? '#38bdf8' : '#cbd5e1') + ';font-weight:' + (self ? '800' : '500') + '">' + r.name + (self ? ' (du)' : '') + '</span>'
+      + '<span style="font-size:13px;font-weight:800;color:#e0f2fe">' + r.score + '%</span></div>';
+  }).join('') : '<div style="font-size:12px;color:#64748b;text-align:center;padding:16px">Noch keine Einträge – teile den Code mit deiner Klasse!</div>';
+  var ov = document.createElement('div');
+  ov.setAttribute('data-kl-overlay', '1');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
+  ov.innerHTML = '<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.3);border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px"><div><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">🏆 Klassen-Ranking</div><div style="font-size:11px;color:#4a7a9b;margin-top:2px">Code: <strong style="color:#38bdf8">' + code + '</strong></div></div><button onclick="this.closest(\'[data-kl-overlay]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;font-size:14px;cursor:pointer">✕</button></div>'
+    + list
+    + '<button onclick="navigator.clipboard&&navigator.clipboard.writeText(\'' + code + '\');this.textContent=\'✓ Kopiert!\'" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);border-radius:11px;padding:12px;color:#38bdf8;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:14px">📋 Code kopieren &amp; Klasse einladen</button>'
+    + '<button onclick="localStorage.removeItem(\'pl_klasse_code\');this.closest(\'[data-kl-overlay]\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:11px;margin-top:8px;cursor:pointer">Klasse verlassen</button></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
+}
+
+// ─── SIMULATOR-ERGEBNIS TEILEN ────────────────────────────────────────────────
+function plShareSimCard(pct, correct, total, note, noteColor) {
+  const W = 1080, H = 1920;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0b1a2e'); bg.addColorStop(1, '#0d2135');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = noteColor + '66'; ctx.lineWidth = 6;
+  ctx.strokeRect(40, 40, W - 80, H - 80);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = '900 92px sans-serif';
+  ctx.fillText('PLAN NRW', W / 2, 300);
+  ctx.fillStyle = '#4a7a9b';
+  ctx.font = 'italic 42px sans-serif';
+  ctx.fillText('Dein Examen. Dein Plan.', W / 2, 375);
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '700 48px sans-serif';
+  ctx.fillText('PRÜFUNGSSIMULATOR', W / 2, 700);
+  ctx.fillStyle = noteColor;
+  ctx.font = '900 340px sans-serif';
+  ctx.fillText(pct + '%', W / 2, 1080);
+  ctx.font = '800 64px sans-serif';
+  ctx.fillText('Note: ' + note, W / 2, 1190);
+  ctx.fillStyle = '#cbd5e1';
+  ctx.font = '600 44px sans-serif';
+  ctx.fillText(correct + ' von ' + total + ' Fragen richtig', W / 2, 1300);
+  ctx.fillStyle = '#e0f2fe';
+  ctx.font = '800 56px sans-serif';
+  ctx.fillText('Schaffst du mehr?', W / 2, 1560);
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = '700 52px sans-serif';
+  ctx.fillText('plan-nrw.de', W / 2, 1700);
+  cv.toBlob(async function(blob) {
+    if (!blob) return;
+    const file = new File([blob], 'plan-nrw-simulator.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'Mein Simulator-Ergebnis', text: 'Prüfungssimulator bei PLAN NRW: ' + pct + '% (Note ' + note + ') – schaffst du mehr? plan-nrw.de' });
+        return;
+      } catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'plan-nrw-simulator.png';
     a.click();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
   }, 'image/png');
@@ -14416,6 +14543,7 @@ function coachCardHTML() {
 function renderHomeStats() {
   const el = document.getElementById('home-stats');
   if (!el) return;
+  try { plStreakWarnCheck(); } catch(e){}
   const p = getProgress();
   const streak = p.streak || 0;
   const quizTotal = p.quizTotal || 0;
@@ -14798,7 +14926,8 @@ function finishExam() {
         </div>`).join('')}
     </div>` : '<div style="color:#22c55e;text-align:center;padding:20px">🏆 Alle Fragen richtig!</div>'}
 
-    <button onclick="startExam()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:14px;color:white;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:10px">🔄 Nochmal versuchen</button>
+    <button onclick="plShareSimCard(${pct},${correct},${total},'${note.replace(/'/g,'')}','${noteColor}')" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);border-radius:12px;padding:13px;color:#38bdf8;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:10px">📤 Ergebnis als Bild teilen</button>
+    <button onclick="startExam()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:14px;color:white;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">🔄 Nochmal versuchen</button>
     <button onclick="navGo('home')" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;color:#94a3b8;font-size:14px;font-family:inherit;cursor:pointer;margin-top:8px">🏠 Zurück zur Startseite</button>`;
 
   examState = null;
@@ -15771,6 +15900,16 @@ function maybeOfferReminders(){
   try{ if(typeof gaEvent==='function') gaEvent('reminders_prompt_view',{}); }catch(e){}
 }
 
+function plCountdownHint(){
+  try {
+    var d = localStorage.getItem('pl_examen_datum') || localStorage.getItem('pl_pruefungsdatum');
+    if (!d) return '';
+    var diff = Math.ceil((new Date(d) - new Date()) / 86400000);
+    if (diff <= 0 || diff > 365) return '';
+    var empf = diff <= 35 ? '1-Monats' : diff <= 100 ? '3-Monats' : diff <= 190 ? '6-Monats' : '12-Monats';
+    return '<div style="text-align:center;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#e0f2fe">Noch <strong style="color:#38bdf8">' + diff + ' Tage</strong> bis zu deinem Examen \u2013 das <strong style="color:#38bdf8">' + empf + '-Paket</strong> passt genau.</div>';
+  } catch(e){ return ''; }
+}
 function showPlanPicker(){
   try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
   try{ gaEvent('view_item_list',{item_list_name:'plan_picker'}); }catch(e){}
@@ -15780,6 +15919,7 @@ function showPlanPicker(){
   ov.innerHTML=`<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:22px 18px;max-width:360px;width:100%">
     <div style="text-align:center;font-size:19px;font-weight:900;color:#fff;margin-bottom:4px">Vollzugang freischalten</div>
     <div style="text-align:center;font-size:11px;color:#7fa6c2;margin-bottom:14px">627 Fragen \u00b7 KI-Pr\u00fcfungssimulation \u00b7 Examen \u00b7 alle 7 Ausbildungswege</div>
+    ${plCountdownHint()}
     <button onclick="kaufPlan('1m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span><span style="font-size:14px;font-weight:800">1 Monat</span><br><span style="font-size:10px;opacity:.7">9,99 €/Mon.</span></span>
       <span style="font-size:15px;font-weight:800">9,99 €</span>
