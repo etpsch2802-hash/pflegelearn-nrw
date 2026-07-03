@@ -1,5 +1,5 @@
 // PflegeLearn NRW – Service Worker v5.0
-const CACHE = 'pflegelearn-v20';
+const CACHE = 'pflegelearn-v21';
 
 function sameOrigin(req) {
   try { return new URL(req.url).origin === self.location.origin; }
