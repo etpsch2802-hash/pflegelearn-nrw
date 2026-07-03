@@ -15500,12 +15500,25 @@ const STRIPE_PLANS = {
   '6m':  { url:'https://buy.stripe.com/6oU8wPa59aB2bEPgKw6sw07', preis:'44,99 \u20ac', pm:'7,50 \u20ac/Mon.' },
   '12m': { url:'https://buy.stripe.com/00wfZh6SXaB238j79W6sw08', preis:'79,99 \u20ac', pm:'6,67 \u20ac/Mon.' }
 };
-function kaufPlan(plan) {
+// Trial 2.0: Numerische Preise fuer GA-Ecommerce (begin_checkout/value)
+const _PLAN_WERT = { '1m': 9.99, '3m': 24.99, '6m': 44.99, '12m': 79.99 };
+// Choke-Point aller Kaufklicks. 'src' = Herkunft des Klicks (preise/plan_picker/
+// engagement/trial_expired/trial_countdown/inline_gate) -> macht den Funnel je
+// Trigger messbar (View -> begin_checkout -> purchase).
+function kaufPlan(plan, src) {
+  var _src = src || 'preise';
+  try {
+    if (typeof gaEvent === 'function') gaEvent('begin_checkout', {
+      source: _src, plan: plan, currency: 'EUR', value: (_PLAN_WERT[plan] || 0),
+      items: [{ item_id: plan, item_name: 'PLAN ' + plan }]
+    });
+  } catch(e) {}
   try {
     const nameEl = document.getElementById('pw-name');
     const name = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Neuer Nutzer';
     localStorage.setItem('pl_stripe_name', name);
     localStorage.setItem('pl_stripe_plan', plan);
+    localStorage.setItem('pl_stripe_src', _src);
   } catch(e) {}
   const pl = STRIPE_PLANS[plan] || STRIPE_PLANS['1m'];
   window.location.href = pl.url;
@@ -15513,19 +15526,38 @@ function kaufPlan(plan) {
 function showTrialExpiredUpsell(){
   try{ localStorage.removeItem('pl_trial_expired'); }catch(e){}
   if(document.getElementById('trial-expired')) return;
+  // Trial 2.0: Wert-Recap (Verlustaversion) aus vorhandenen Daten – zeigt, was der
+  // Nutzer in 21 Tagen aufgebaut hat, genau im Moment der Kaufentscheidung.
+  var _p={}; try{ _p=(typeof getProgress==='function')?getProgress():{}; }catch(e){}
+  var _fragen=_p.quizTotal||0, _streak=_p.streak||0, _score=0;
+  try{ if(typeof computePruefungsreife==='function'){ var _pr=computePruefungsreife(); if(_pr && _pr.assessed>0) _score=_pr.score; } }catch(e){}
+  var _chips=[];
+  if(_fragen>0) _chips.push(['📚', _fragen, 'Fragen gemeistert']);
+  if(_score>0)  _chips.push(['🎯', _score+'%', 'Prüfungsreife']);
+  if(_streak>1) _chips.push(['🔥', _streak, 'Tage-Serie']);
+  var _recap = _chips.length
+    ? '<div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.28);border-radius:14px;padding:12px 10px;margin-bottom:14px">'
+      + '<div style="font-size:10px;color:#8fd6bf;letter-spacing:.6px;text-transform:uppercase;margin-bottom:9px;font-weight:700">Deine 21 Tage haben sich gelohnt</div>'
+      + '<div style="display:flex;justify-content:center;gap:8px">'
+      + _chips.map(function(c){ return '<div style="flex:1;background:rgba(255,255,255,.04);border-radius:10px;padding:8px 4px"><div style="font-size:17px">'+c[0]+'</div><div style="font-size:16px;font-weight:800;color:#eaf4fb;line-height:1.1">'+c[1]+'</div><div style="font-size:9px;color:#7fa6c2;margin-top:2px">'+c[2]+'</div></div>'; }).join('')
+      + '</div>'
+      + '<div style="font-size:12px;color:#cbe6d8;margin-top:10px;line-height:1.5">Diesen Fortschritt <b>behältst du</b> – schalte frei, um <b>ohne Tageslimit</b> bis zur Prüfung weiterzulernen.</div>'
+      + '</div>'
+    : '';
   var ov=document.createElement('div');
   ov.id='trial-expired';
-  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px";
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto";
   ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:20px;padding:26px 22px;max-width:380px;width:100%;text-align:center">'
     +'<div style="font-size:40px;margin-bottom:6px">⏰</div>'
     +'<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:8px">Dein 21-Tage-Vollzugang ist abgelaufen</div>'
-    +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:16px">Du lernst eingeschränkt weiter (20 Fragen/Tag, KI 5/Tag). Mit Vollzugang: alle 627 Fragen, KI unbegrenzt, komplette Examen-Simulation.</div>'
-    +'<button onclick="document.getElementById(\'trial-expired\').remove();showPlanPicker();" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:12px;padding:15px;color:#fff;font-size:16px;font-weight:900;cursor:pointer">🔓 Vollzugang sichern</button>'
+    +_recap
+    +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:16px">Du lernst eingeschränkt weiter (20 Fragen/Tag, KI 8/Tag). Mit Vollzugang: alle 627 Fragen, KI unbegrenzt, komplette Examen-Simulation.</div>'
+    +'<button onclick="document.getElementById(\'trial-expired\').remove();showPlanPicker(\'trial_expired\');" style="width:100%;background:linear-gradient(135deg,#635bff,#4338ca);border:none;border-radius:12px;padding:15px;color:#fff;font-size:16px;font-weight:900;cursor:pointer">🔓 Vollzugang sichern</button>'
     +'<button onclick="document.getElementById(\'trial-expired\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:13px;margin-top:10px;cursor:pointer">Mit Gratis weiterlernen</button>'
     +'</div>';
   document.body.appendChild(ov);
   ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
-  try{ gaEvent('trial_expired_view',{}); }catch(e){}
+  try{ gaEvent('trial_expired_view',{ fragen:_fragen, score:_score }); }catch(e){}
 }
 function maybeTrialCountdown(until){
   try{
@@ -15538,7 +15570,7 @@ function maybeTrialCountdown(until){
     var b=document.createElement('div');
     b.style.cssText="position:fixed;left:12px;right:12px;bottom:78px;z-index:1250;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px";
     b.innerHTML='<span style="font-size:18px">⏳</span><span style="flex:1">Dein Vollzugang endet in '+days+' Tag'+(days===1?'':'en')+'. Jetzt sichern?</span>'
-      +'<button onclick="this.parentElement.remove();showPlanPicker();" style="background:#fff;color:#0369a1;border:none;border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer">Sichern</button>'
+      +'<button onclick="this.parentElement.remove();showPlanPicker(\'trial_countdown\');" style="background:#fff;color:#0369a1;border:none;border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer">Sichern</button>'
       +'<button onclick="this.parentElement.remove()" style="background:none;border:none;color:#cfe8ff;font-size:18px;cursor:pointer;line-height:1">×</button>';
     document.body.appendChild(b);
   }catch(e){}
@@ -15930,9 +15962,10 @@ function plCountdownHint(){
     return '<div style="text-align:center;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#e0f2fe">Noch <strong style="color:#38bdf8">' + diff + ' Tage</strong> bis zu deinem Examen \u2013 das <strong style="color:#38bdf8">' + empf + '-Paket</strong> passt genau.</div>';
   } catch(e){ return ''; }
 }
-function showPlanPicker(){
+function showPlanPicker(src){
+  var _psrc = src || 'plan_picker';
   try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
-  try{ gaEvent('view_item_list',{item_list_name:'plan_picker'}); }catch(e){}
+  try{ gaEvent('view_item_list',{item_list_name:'plan_picker', source:_psrc}); }catch(e){}
   var ov=document.createElement('div');
   ov.id='plan-picker';
   ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1200;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto";
@@ -15940,23 +15973,23 @@ function showPlanPicker(){
     <div style="text-align:center;font-size:19px;font-weight:900;color:#fff;margin-bottom:4px">Vollzugang freischalten</div>
     <div style="text-align:center;font-size:11px;color:#7fa6c2;margin-bottom:14px">627 Fragen \u00b7 KI-Pr\u00fcfungssimulation \u00b7 Examen \u00b7 alle 7 Ausbildungswege</div>
     ${plCountdownHint()}
-    <button onclick="kaufPlan('1m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+    <button onclick="kaufPlan('1m','${_psrc}')" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span><span style="font-size:14px;font-weight:800">1 Monat</span><br><span style="font-size:10px;opacity:.7">9,99 €/Mon.</span></span>
       <span style="font-size:15px;font-weight:800">9,99 €</span>
     </button>
 
-    <button onclick="kaufPlan('3m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.18);border:1.5px solid rgba(165,180,252,.7);border-radius:12px;padding:13px 14px;color:#eef0ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+    <button onclick="kaufPlan('3m','${_psrc}')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.18);border:1.5px solid rgba(165,180,252,.7);border-radius:12px;padding:13px 14px;color:#eef0ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span style="position:absolute;top:-9px;right:10px;background:#38bdf8;color:#04222e;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BELIEBT</span>
       <span><span style="font-size:14px;font-weight:800">3 Monate</span><br><span style="font-size:10px;opacity:.75">8,33 €/Mon. · spare 17%</span></span>
       <span style="font-size:15px;font-weight:800">24,99 €</span>
     </button>
 
-    <button onclick="kaufPlan('6m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.1);border:1px solid rgba(99,91,255,.35);border-radius:12px;padding:12px 14px;color:#dfe3ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+    <button onclick="kaufPlan('6m','${_psrc}')" style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:rgba(99,91,255,.1);border:1px solid rgba(99,91,255,.35);border-radius:12px;padding:12px 14px;color:#dfe3ff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span><span style="font-size:14px;font-weight:800">6 Monate</span><br><span style="font-size:10px;opacity:.7">7,50 €/Mon. · spare 25%</span></span>
       <span style="font-size:15px;font-weight:800">44,99 €</span>
     </button>
 
-    <button onclick="kaufPlan('12m')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:linear-gradient(135deg,#635bff,#4338ca);border:1.5px solid #a5b4fc;border-radius:12px;padding:13px 14px;color:#fff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
+    <button onclick="kaufPlan('12m','${_psrc}')" style="position:relative;width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:linear-gradient(135deg,#635bff,#4338ca);border:1.5px solid #a5b4fc;border-radius:12px;padding:13px 14px;color:#fff;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span style="position:absolute;top:-9px;right:10px;background:#34d399;color:#04220f;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.5px">BESTER PREIS</span>
       <span><span style="font-size:14px;font-weight:800">12 Monate</span><br><span style="font-size:10px;opacity:.85">6,67 €/Mon. · spare 33%</span></span>
       <span style="font-size:16px;font-weight:800">79,99 €</span>
@@ -15967,7 +16000,7 @@ function showPlanPicker(){
   document.body.appendChild(ov);
   ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
 }
-function goToStripe() { showPlanPicker(); }
+function goToStripe(src) { showPlanPicker(src || 'inline_gate'); }
 
 
 
@@ -17361,7 +17394,7 @@ if (_savedLang !== 'de') {
     function close(){ var el = document.getElementById('engage-upsell'); if (el) el.remove(); }
     ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
     var cta = document.getElementById('engage-upsell-cta');
-    if (cta) cta.onclick = function(){ close(); try { if (typeof showPlanPicker === 'function') showPlanPicker(); else showScreen('preise'); } catch(e){ try { showScreen('preise'); } catch(_){} } };
+    if (cta) cta.onclick = function(){ close(); try { if (typeof showPlanPicker === 'function') showPlanPicker('engagement'); else showScreen('preise'); } catch(e){ try { showScreen('preise'); } catch(_){} } };
     var later = document.getElementById('engage-upsell-later');
     if (later) later.onclick = close;
   }
