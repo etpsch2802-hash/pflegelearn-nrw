@@ -469,6 +469,26 @@
     .pl-confetti { display:none !important; }
   }
 
+  /* ── ERFAHRUNGSBERICHTE (wischbares Karussell, echte Azubi-Stimmen) ─────── */
+  .pl-testi-wrap { margin-bottom:14px; }
+  .pl-testi-head { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#34d399; margin-bottom:11px; display:flex; align-items:center; justify-content:space-between; }
+  .pl-testi-hint { font-size:10px; color:#5a7d96; text-transform:none; letter-spacing:0; font-weight:600; }
+  .pl-testi-row { display:flex; gap:11px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; padding:2px 2px 8px; scrollbar-width:none; }
+  .pl-testi-row::-webkit-scrollbar { display:none; }
+  .pl-testi { flex:0 0 82%; max-width:295px; scroll-snap-align:start; background:rgba(52,211,153,.06); border:1px solid rgba(52,211,153,.26); border-radius:14px; padding:14px 15px; display:flex; flex-direction:column; gap:11px; }
+  .pl-testi-q { font-size:12.5px; color:#d5e6f0; line-height:1.55; font-style:italic; }
+  .pl-testi-who { display:flex; align-items:center; gap:10px; margin-top:auto; }
+  .pl-testi-av { width:34px; height:34px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,#059669,#34d399); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#04231a; }
+  .pl-testi-nm { font-size:12.5px; font-weight:800; color:#e0f2fe; }
+  .pl-testi-rl { font-size:10px; color:#7fa6c2; }
+  .pl-testi-badge { margin-left:auto; text-align:right; }
+  .pl-testi-badge .l { font-size:8.5px; letter-spacing:.5px; text-transform:uppercase; color:#8fd6bf; }
+  .pl-testi-badge .v { font-size:14px; font-weight:900; color:#34d399; line-height:1.1; }
+  body.light-mode .pl-testi { background:rgba(4,120,87,.06); border-color:rgba(4,120,87,.24); }
+  body.light-mode .pl-testi-q { color:#334155; }
+  body.light-mode .pl-testi-nm { color:#0f172a; }
+  body.light-mode .pl-testi-rl { color:#475569; }
+
   /* ── SAISONALE PARTIKEL ─────────────────────────────────────────────────── */
   .particle-container {
     position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;
@@ -1297,17 +1317,46 @@
     </table>
   </div>
 
-  <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.28);border-radius:16px;padding:16px;margin-bottom:14px">
-    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#34d399;margin-bottom:11px">Das sagen Azubis</div>
-    <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px">
-      <div style="width:42px;height:42px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#04231a">L</div>
-      <div>
-        <div style="font-size:13.5px;font-weight:800;color:#e0f2fe">Lily</div>
-        <div style="font-size:11px;color:#7fa6c2">Auszubildende in der Pflege</div>
+  <div class="pl-testi-wrap">
+    <div class="pl-testi-head"><span>Das sagen Azubis</span><span class="pl-testi-hint">← wischen für mehr</span></div>
+    <div class="pl-testi-row">
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Ich liebe diese App einfach. In den letzten drei Arbeiten hatte ich eine 1 – auch der KI-Bot hat mir viel geholfen. Ich kann die App nur empfehlen."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">L</div><div><div class="pl-testi-nm">Lily</div><div class="pl-testi-rl">Pflege-Azubi</div></div><div class="pl-testi-badge"><div class="l">3 Arbeiten</div><div class="v">Note 1</div></div></div>
       </div>
-      <div style="margin-left:auto;text-align:right"><div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#8fd6bf">Letzte 3 Arbeiten</div><div style="font-size:18px;font-weight:900;color:#34d399;line-height:1.1">Note&nbsp;1</div></div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Die App hat mir bei der Vorbereitung auf mein Pflegeexamen enorm geholfen. Die Fragen sind verständlich und das Lernen macht deutlich mehr Spaß als mit Büchern."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">A</div><div><div class="pl-testi-nm">Alina</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Endlich eine App, die speziell auf das Pflegeexamen zugeschnitten ist. Die Erklärungen und Fragen sind wirklich hilfreich."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">C</div><div><div class="pl-testi-nm">Christoph</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Ich hätte nicht gedacht, dass Lernen per App so effektiv sein kann. Die Fragen sind abwechslungsreich und motivieren zum Dranbleiben."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">R</div><div><div class="pl-testi-nm">Raphaela</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Sehr übersichtlich aufgebaut und einfach zu bedienen. Besonders die vielen Prüfungsfragen helfen dabei, den eigenen Wissensstand einzuschätzen."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">N</div><div><div class="pl-testi-nm">Nadine</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Preis-Leistung passt. Ich fühle mich durch die regelmäßige Nutzung deutlich sicherer für die Prüfung."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">J</div><div><div class="pl-testi-nm">Julia</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Für alle in der Pflegeausbildung eine klare Empfehlung. Man kann jederzeit zwischendurch lernen und seinen Fortschritt sehen."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">A</div><div><div class="pl-testi-nm">Adrian</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Die App läuft stabil und die Inhalte sind gut. Ich freue mich schon auf weitere Updates mit neuen Fragen."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">M</div><div><div class="pl-testi-nm">Mohammad</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
+      <div class="pl-testi">
+        <div class="pl-testi-q">„Ich nutze die App fast täglich. Ein paar zusätzliche Lernmodi wären noch schön, aber insgesamt bin ich wirklich zufrieden."</div>
+        <div class="pl-testi-who"><div class="pl-testi-av">B</div><div><div class="pl-testi-nm">Björn</div><div class="pl-testi-rl">Pflege-Azubi</div></div></div>
+      </div>
     </div>
-    <div style="font-size:13px;color:#d5e6f0;line-height:1.6;font-style:italic;border-left:2px solid rgba(52,211,153,.4);padding-left:11px">&bdquo;Ich liebe diese App einfach. In den letzten drei Arbeiten hatte ich eine&nbsp;1 &ndash; auch der KI-Bot hat mir viel geholfen. Ich kann die App nur empfehlen.&ldquo;</div>
   </div>
 
   <div style="background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.35);border-radius:16px;padding:18px;margin-bottom:14px">
