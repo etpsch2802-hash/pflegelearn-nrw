@@ -423,6 +423,44 @@
   body.light-mode #search-back-btn { color:#0369a1 !important; background:rgba(3,105,161,.12) !important; border-color:rgba(3,105,161,.35) !important; }
   body.light-mode .chat-context-bar { background:rgba(238,242,247,.96); border-bottom-color:rgba(30,64,128,.12); }
 
+  /* ── TAG-MODUS: kräftigerer Kontrast (Farben/Schriften deutlich lesbarer) ── */
+  body.light-mode { --text:#0f172a; --text2:#334155; --text3:#475569; --accent:#0284c7; --accent2:#0369a1; }
+  body.light-mode .logo-sub, body.light-mode .ausb-sub, body.light-mode .bottom-card-sub,
+  body.light-mode .mt-card-sub, body.light-mode .result-msg, body.light-mode .section-label,
+  body.light-mode .modal-grid-val, body.light-mode .footer-note, body.light-mode .qs-count { color:#475569; }
+  body.light-mode .hero p, body.light-mode .modal-desc, body.light-mode .mt-item { color:#334155; }
+  body.light-mode .bottom-card-sub, body.light-mode .ausb-sub { font-weight:500; }
+  body.light-mode .bottom-nav button { color:#334155; font-weight:600; }
+  body.light-mode .q-text, body.light-mode .bottom-card-title, body.light-mode .modal-title { font-weight:700; }
+
+  /* ── ANIMIERTE MENÜ-ICONS (ansprechend für Azubis, GPU-schonend) ────────── */
+  .bottom-card-icon { display:inline-block; animation:plIcoFloat 3.6s ease-in-out infinite; will-change:transform; }
+  .bottom-card:nth-child(3n)   .bottom-card-icon { animation-delay:.5s; }
+  .bottom-card:nth-child(3n+1) .bottom-card-icon { animation-delay:1.1s; }
+  .bottom-card:nth-child(3n+2) .bottom-card-icon { animation-delay:1.7s; }
+  .bottom-card:active .bottom-card-icon { animation:plIcoPop .45s ease; }
+  .bn-ico { display:inline-block; transition:transform .2s cubic-bezier(.34,1.56,.64,1); }
+  .bottom-nav button:active .bn-ico { transform:scale(1.22); }
+  .bottom-nav button.bn-active .bn-ico { animation:plIcoPop .5s ease; }
+  @keyframes plIcoFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  @keyframes plIcoPop { 0%{transform:scale(1)} 42%{transform:scale(1.3)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+
+  /* ── QUIZ-ABSCHLUSS: Emoji-Pop, Zahl-Countup & Konfetti ─────────────────── */
+  .result-emoji { display:inline-block; }
+  @keyframes plEmojiPop { 0%{transform:scale(.3) rotate(-12deg);opacity:0} 55%{transform:scale(1.18) rotate(6deg);opacity:1} 100%{transform:scale(1) rotate(0)} }
+  .pl-confetti { position:fixed; inset:0; pointer-events:none; z-index:120; overflow:hidden; }
+  .pl-confetti i { position:absolute; top:-18px; border-radius:2px; opacity:0; animation-name:plConfettiFall; animation-timing-function:cubic-bezier(.2,.6,.5,1); animation-fill-mode:forwards; }
+  @keyframes plConfettiFall {
+    0%{ transform:translateY(-12px) translateX(0) rotate(0); opacity:0; }
+    8%{ opacity:1; }
+    88%{ opacity:1; }
+    100%{ transform:translateY(104vh) translateX(var(--pl-drift)) rotate(var(--pl-rot)); opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bottom-card-icon, .bn-ico, .result-emoji { animation:none !important; }
+    .pl-confetti { display:none !important; }
+  }
+
   /* ── SAISONALE PARTIKEL ─────────────────────────────────────────────────── */
   .particle-container {
     position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;
@@ -3705,10 +3743,59 @@ function showResult() {
   const retryBtn = document.getElementById("retry-btn");
   retryBtn.style.background = `linear-gradient(135deg,${kat?.color||"#94a3b8"}65,${kat?.color||"#94a3b8"}38)`;
   showScreen("result");
+  try { plQuizCelebrate(pct); } catch(e) {}
   try { recordQuizResult(quizKat, score, quizList.length); } catch(e) {}
   try { renderHomeStats(); } catch(e) {}
   // #16: starkes Ergebnis -> Store-Bewertung/Testimonial anstossen (Gate ab 70%, einmalig)
   try{ if(localStorage.getItem('pl_testimonial_asked')==='1'){ maybeAskRating(pct); } else { maybeAskTestimonial(pct); } }catch(e){}
+}
+
+// ─── QUIZ-ABSCHLUSS-ANIMATION (Emoji-Pop, Zahl-Countup, Konfetti) ───
+function plReduceMotion(){ try { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } }
+function plQuizCelebrate(pct){
+  var reduce = plReduceMotion();
+  // Emoji „ploppt" herein
+  try {
+    var em = document.getElementById('result-emoji');
+    if (em && !reduce) { em.style.animation='none'; void em.offsetWidth; em.style.animation='plEmojiPop .6s cubic-bezier(.34,1.56,.64,1)'; }
+  } catch(e){}
+  // Prozentzahl zählt hoch
+  try {
+    var el = document.getElementById('result-pct');
+    if (el) {
+      if (reduce || !window.requestAnimationFrame) { el.textContent = pct + '%'; }
+      else {
+        var start = null, dur = 850;
+        var step = function(ts){ if(start===null) start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3); el.textContent=Math.round(e*pct)+'%'; if(p<1) requestAnimationFrame(step); else el.textContent=pct+'%'; };
+        requestAnimationFrame(step);
+      }
+    }
+  } catch(e){}
+  // Konfetti nur bei erfreulichem Ergebnis
+  if (!reduce && pct >= 50) { plConfetti(pct >= 75 ? 68 : 40); }
+}
+function plConfetti(n){
+  try {
+    var cont = document.createElement('div'); cont.className='pl-confetti';
+    var cols = ['#34d399','#38bdf8','#a78bfa','#f97316','#fb7185','#facc15','#22d3ee'];
+    var html = '';
+    for (var i=0;i<n;i++){
+      var left = Math.random()*100;
+      var delay = Math.random()*0.4;
+      var dur = 1.7 + Math.random()*1.4;
+      var col = cols[i % cols.length];
+      var w = 6 + Math.random()*7;
+      var h = w*0.5 + 3;
+      var drift = ((Math.random()*2)-1)*90;
+      var rot = 360 + Math.random()*540;
+      html += '<i style="left:'+left.toFixed(1)+'%;background:'+col+';width:'+w.toFixed(1)+'px;height:'+h.toFixed(1)+'px;'
+        + 'animation-delay:'+delay.toFixed(2)+'s;animation-duration:'+dur.toFixed(2)+'s;'
+        + '--pl-drift:'+drift.toFixed(0)+'px;--pl-rot:'+rot.toFixed(0)+'deg;"></i>';
+    }
+    cont.innerHTML = html;
+    document.body.appendChild(cont);
+    setTimeout(function(){ if(cont.parentNode) cont.parentNode.removeChild(cont); }, 3600);
+  } catch(e){}
 }
 
 function retryQuiz() { if (quizCE) startQuizCE(quizCE); else startQuiz(quizKat); }
