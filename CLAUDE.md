@@ -18,7 +18,7 @@ Auslieferung als:
 
 **Entwickelt von** P. Schenkelberger (Ausbilder & Fachpfleger für Anästhesie/Intensivmedizin) – dies ist ein wiederkehrendes Vertrauenssignal in der App und in den Lead-Mails.
 
-**Wichtigste Kennzahlen (im Code referenziert):** 627 Prüfungsfragen, 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege.
+**Wichtigste Kennzahlen (im Code referenziert):** **1075 Prüfungsfragen** (Stand 2026-07-04; vorher 627), 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege. **Die Fragenzahl ist nicht mehr hart kodiert**, sondern wird via `.pl-fragen-count`-Spans + `plSyncFragenCount()` sowie `QUIZ_FRAGEN.length` an allen UI-Stellen gespiegelt; SEO/Meta-Texte tragen „über 1050".
 
 ### Business-Kontext
 - **Geschäftsmodell:** Freemium mit 21-Tage-Trial (Sprint 1.5: von 7 auf 21 Tage verlängert) und kostenpflichtigen Laufzeit-Tarifen (siehe Abschnitt „Stripe / Monetarisierung").
@@ -34,7 +34,7 @@ Auslieferung als:
 ### Single-File-Client (`index.html`)
 - Die gesamte UI ist ein Dokument. „Seiten" sind `<div id="screen-*" class="page">`-Elemente, die per **`showScreen(name)`** (~Zeile 2459) umgeschaltet werden: entfernt `.active` von allen `.page`/`.chat-page` und setzt es auf `#screen-<name>`. Ein manuelles `screenHistory`-Array steuert den Zurück-Button; `_scrollPos` merkt sich die Scroll-Position pro Screen.
 - **Vorhandene Screens:** `home`, `quiz`, `quizSelect`, `faelle`, `fall`, `chat`, `merksaetze`, `krankheitsbilder` (+ `kb-detail`), `medikamente`, `anatomie` (+ `an-detail`), `medizintechnik` (+ `mt-detail`), `notfallmanagement`, `lernplan`, `ce`, `abcde-sim`, `ausbildungswege`, `wissenpraxis`, `uebenpruefen`, `preise`, `registrierung`, `result`, `support`, `admin`.
-- **Lerninhalt ist Inline-Daten**, nichts wird nachgeladen: `const FAELLE = …` (klinische Fälle, ~Z. 8161), `const QUIZ_FRAGEN = […]` (**alle 627 Quizfragen** im JSON-Format `{"kat","frage","opt":[4],"k","e"}`, ~Z. 1549) + `const KATS = […]` (Kategorien/Filter, ~Z. 2197), `const karten = …` / `const kartenHTML = …` (Karteikarten, ~Z. 12808 / 14288 / 14696). Inhalte werden **direkt in diesen Literalen** editiert. *(Hinweis: `themen` ~Z. 11303 und `fragen` ~Z. 11334 sind NICHT die Quizfragen, sondern Lernplan-Variablen.)*
+- **Lerninhalt ist Inline-Daten**, nichts wird nachgeladen: `const FAELLE = …` (klinische Fälle, ~Z. 8161), `const QUIZ_FRAGEN = […]` (**alle 1075 Quizfragen** im JSON-Format `{"kat","frage","opt":[4],"k":0-3,"erkl","s":"leicht|mittel|schwer"}`, `const QUIZ_FRAGEN = [` beginnt ~Z. 1584, Array-Ende `];`; Anker mit `grep -n "const QUIZ_FRAGEN"` suchen statt Zeilennummer verlassen) + `const KATS = […]` (Kategorien/Filter, ~Z. 2197), `const karten = …` / `const kartenHTML = …` (Karteikarten, ~Z. 12808 / 14288 / 14696). Inhalte werden **direkt in diesen Literalen** editiert. *(Hinweis: `themen` ~Z. 11303 und `fragen` ~Z. 11334 sind NICHT die Quizfragen, sondern Lernplan-Variablen.)*
 - Top of file: `gtag` (Google Analytics `G-YJLC762MTC`), Consent-Gating (`pl_consent`), JSON-LD/SEO, Supabase-Init, Font-Loading.
 
 ### Datenfluss & Zustand
@@ -52,6 +52,7 @@ Auslieferung als:
 - `manifest.json` – PWA-Manifest.
 - `api/chat.js`, `api/lead.js`, `api/stripe-webhook.js` – Vercel-Serverless-Funktionen.
 - `scripts/send-reminders.mjs` – Push-Reminder-Sender (läuft via GitHub Actions, nicht Vercel).
+- `scripts/validate-quiz.mjs` – **Content-QA-Werkzeug** (kein ausgeliefertes Asset): validiert `QUIZ_FRAGEN` in `index.html` (Struktur, Dubletten, Kategorie-Verteilung). Pflicht nach jeder Fragen-Änderung.
 - `vercel.json` – Routing/Rewrites.
 - `.mcp.json` – **Werkzeug-Konfiguration** (kein ausgeliefertes App-Asset): definiert die projekt-bezogenen MCP-Server für Claude Code (Supabase read-only, Vercel). Enthält **keine Geheimnisse** – nur öffentliche Werte und den Platzhalter `${SUPABASE_ACCESS_TOKEN}` (siehe Abschnitt 22).
 - `.well-known/assetlinks.json` – Android-TWA-Verknüpfung.
@@ -144,7 +145,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 9. PWA, Service Worker & Web Push
 
-**Service Worker (`sw.js`)** – Cache-Name `pflegelearn-v6`:
+**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v37` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
 - **Network-first für alles** (HTML mit `cache: 'no-store'`); Cache nur als Offline-Fallback. Es werden **nur same-origin OK-Antworten** gecacht (niemals Stripe/Drittanbieter).
 - **Web Push:** `push` → `showNotification`, `notificationclick` → App fokussieren/öffnen.
 - **Regel:** Bei Änderungen an gecachten Assets oder SW-Verhalten **`CACHE`-Konstante hochzählen**, sonst aktualisieren Clients nicht.
@@ -172,6 +173,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 | Aufgabe | Vorgehen |
 |---|---|
 | **Syntax-Check (Pflicht vor jedem Push)** | `node --check api/chat.js && node --check api/lead.js && node --check api/stripe-webhook.js && node --check scripts/send-reminders.mjs` |
+| **Quiz-Content prüfen (Pflicht nach jeder `QUIZ_FRAGEN`-Änderung)** | `node scripts/validate-quiz.mjs` – validiert Struktur (genau 4 Optionen, `k` 0–3, `erkl` vorhanden, gültige `kat`/`s`), erkennt **Dubletten** (normalisierte Frage) und gibt die **Verteilung pro Kategorie** aus. Exit 1 bei Fehler. Hat in der Praxis echte Bugs abgefangen (versehentlich 5-optige Fragen, Dublette). |
 | **Lokale Vorschau (statisch)** | `python3 -m http.server 8080`, dann `index.html` öffnen. **Achtung:** `/api/*` und SPA-Rewrites laufen so **nicht** – nur unter `vercel dev`. |
 | **Lokal mit Funktionen** | `vercel dev` (benötigt gesetzte Env-Variablen). |
 | **Push-Reminder manuell testen** | GitHub Actions → `reminder-push` → „Run workflow" (workflow_dispatch). |
@@ -195,10 +197,11 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 13. Testverfahren
 
-- **Automatisierte Tests existieren nicht.** Qualitätssicherung erfolgt aktuell durch:
+- **Automatisierte Content-Validierung vorhanden** (`scripts/validate-quiz.mjs`), umfassende UI-Tests weiterhin manuell/ad hoc. Qualitätssicherung erfolgt aktuell durch:
   1. `node --check` für alle JS-Dateien vor dem Push (Pflicht).
-  2. Manuelle Verifikation im Browser (PWA-Flows: Trial-Start, Quiz, KI-Chat, Kauf-Redirect, Cloud-Sync nach Magic-Link).
-  3. Content-QA für Quizfragen (abgeschnittene Antworten, „faule Distraktoren", Dubletten, Kategorie-Zuordnung in `KATS`/`quiz_kats`) – ein wiederkehrendes Thema in der Historie.
+  2. **`node scripts/validate-quiz.mjs` nach jeder `QUIZ_FRAGEN`-Änderung (Pflicht):** extrahiert das Array, prüft Struktur/Dubletten/Verteilung, bricht bei Fehlern ab. Ersetzt die früher rein manuelle Content-QA für die häufigste Bug-Klasse (abgeschnittene Antworten, „faule Distraktoren", Dubletten, fehlende Kategorien).
+  3. Manuelle Verifikation im Browser (PWA-Flows: Trial-Start, Quiz, KI-Chat, Kauf-Redirect, Cloud-Sync nach Magic-Link); für UI-Änderungen ad-hoc-Playwright-Smoke-Tests (headless), z. B. Konfetti/Count-up/Light-Mode.
+  4. Erste **E2E-Tests** unter `tests/` (Playwright).
 - **Einschränkung / Risiko:** Ohne Testabdeckung sind Regressionen am Entitlement-/Sync-Verhalten schwer zu erkennen. Siehe „Empfehlungen für die Zukunft".
 
 ---
@@ -238,6 +241,9 @@ Die CLAUDE.md ist die zentrale, **lebende** Dokumentation. Nach jeder wichtigen 
 
 Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). Bei neuen Entscheidungen hier ergänzen.
 
+- **UI-Politur „Lebendigkeit & Tag-Modus" (2026-07-04, PRs #37/#38)** – Drei additive, `prefers-reduced-motion`-sichere Verbesserungen: (1) **Tag-Modus-Kontrast** repariert – Ursache war, dass `body.light-mode` die CSS-Variablen `--text2`/`--text3` NICHT überschrieb und daher Dark-Werte (blasses Grau) auf hellem Grund standen; jetzt setzt `body.light-mode` kräftige Variablen (`--text2:#334155`, `--text3:#475569`, `--accent:#0284c7`) → alle Sekundärtexte lesbar. **Merke: neue Light-Mode-Farben immer über die Variablen lösen, nicht Selektor für Selektor.** (2) **Animierte Menü-Icons** (`.bottom-card-icon` wippen versetzt via `plIcoFloat`, Buch-Emojis klappen via `plBookOpen` auf – automatisch getaggt durch `plTagBookIcons()`, Bottom-Nav poppt beim Aktivieren). (3) **Quiz-Abschluss-Animation** statt statischem Bild: `plQuizCelebrate()` (Emoji-Pop, Prozent-Count-up) + `plConfetti()` (DOM-Partikel, ab 50 %/75 %), aufgerufen in `showResult()`. Alles isoliert, kein neuer `pl_*`-Key.
+- **Content-Offensive 627 → 1075 Fragen + QA-Validator (2026-07-04, PRs #25–#36)** – Alle 19 Fachkategorien (außer `anatomie`, 315) systematisch auf **je 40 Fragen** ausbalanciert; medizinisch/rechtlich geprüft, richtige Antworten bewusst über `k=0/1/2/3` verteilt (kein „immer C"-Muster). **Neu: `scripts/validate-quiz.mjs`** als Content-QA-Gate (Struktur, Dubletten, Verteilung) – Pflicht nach jeder `QUIZ_FRAGEN`-Änderung; hat reale Fehler abgefangen. **Fragenzahl jetzt dynamisch** (`plSyncFragenCount()` + `.pl-fragen-count` + inline `QUIZ_FRAGEN.length`) statt hart kodiert; SEO auf „über 1050". Batch-Muster: pro Kategorie/PR validieren → SW-Cache hochzählen → squash-mergen.
+- **Trial 2.0 / Conversion-Offensive (2026-07, ohne Preisänderung)** – Bewusste Entscheidung P. Schenkelberger: **Preis bleibt 9,99 €** (1 M); statt Rabatt den **wahrgenommenen Wert** heben. Umgesetzt: Preis-Seite mit Ergebnis-Hero, Vergleichstabelle vor den Preisen, **14-Tage-Zufriedenheitsgarantie** (Risikoumkehr; AGB-Entwurf + FAQ; **rechtlich prüfen lassen**), Mini-FAQ, „⭐ Empfehlung: 3 Monate", Gründer-Block „Wer dahinter steht" (Monogramm statt Foto), Examensdatum-Prompt, Willkommen-im-Vollzugang, `begin_checkout`-GA4-Event mit `source`. **Rechtlicher Leitplanken (UWG): NIEMALS erfundene Testimonials/Bewertungen/Nutzerzahlen** – nur Substanz-Vertrauenssignale, bis echte Kundenstimmen vorliegen. Neue `pl_*`-Keys: `pl_stripe_src`, `pl_examdate_prompted`, `pl_welcome_full_shown`.
 - **Adaptive „Lerncoach"-Startseite (#7/#8)** – Home vom Modul-Menü zum persönlichen Coach umgekehrt: EIN adaptiver nächster Schritt (5 datengetriebene Zustände: Erstnutzer, Endspurt, Tagesziel-fast, größte Lücke, Weitermachen) statt vier gleichwertiger Kacheln (Hick's Law). Begrüßung mit Examens-Countdown, Module in ruhiger Auswahl, `home-stats` verschlankt. Doppelter Examen-Endspurt-Toast entfernt (Coach übernimmt). Kein neuer `pl_*`-Key.
 - **Sprint 1.5 „Intelligenter Trial" (#9)** – Trial-Vollzugang **7 → 21 Tage** (Azubi-Lernrhythmus: Schichtdienst/Blockunterricht, Aha-Moment sicherer erreichen). Neuer **engagement-getriggerter Upsell** am Wert-Peak (Prüfungsreife ≥ 50 % & ≥ 30 Fragen **oder** erste Examens-Sim; einmalig via `pl_engage_upsell_shown`; isolierte IIFE, die `showScreen` additiv wrappt). Free-Tier KI-Chat **5 → 8**. **Bewusst NICHT** umgesetzt: „Trial endet früher bei Intensivnutzung" (bestraft die engagiertesten Nutzer). Erkenntnis: Die **Reverse-Trial-Struktur existierte bereits** (Downgrade nach Trial auf `gratis`-Bereich mit 20 Fragen/Tag, 8 KI, 2 Fälle/Fach; Medizintechnik/Medikamente gesperrt). Erste **E2E-Tests** unter `tests/` (Playwright, 10/10 grün).
 - **MCP-Anbindung für Claude Code (projekt-bezogen via `.mcp.json`)** – Supabase (read-only, auf Projekt-Ref beschränkt) + Vercel (gehosteter OAuth-Server). **Bewusst minimalistisch** gehalten: Filesystem-/Browser-MCP verworfen, weil Claude Code Datei-Tools (`Read`/`Grep`/`Glob`/`Edit`) und `WebSearch`/`WebFetch` bereits eingebaut hat – zusätzliche MCPs würden nur Kontext-Overhead erzeugen. Standard dokumentiert in Abschnitt 22.
@@ -250,7 +256,7 @@ Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). B
 - **Echter Sofort-Trial (7 Tage Vollzugang)** statt 24h-Token, mit Auto-Login und Gratis-Downgrade bei Ablauf (`48cd3ed`).
 - **Tarifstruktur auf 4 Laufzeiten** (1/3/6/12 Monate) statt Einzelpreis; 1 Monat = Abo, ab 3 Monate Einmalzahlung; „BELIEBT"-Badge auf 3 Monate (niedrigere Kaufhürde, Azubi-Zielgruppe) (`0dc8df6`, `8f84669`, `db941e2`, `95f00bd`).
 - **Conversion-Features:** Prüfungsreife-Score + Schwächenanalyse (`e84aff7`), Examen-Simulation mit Note/Auswertung (`5f76c15`), Leitner Spaced-Repetition für falsch beantwortete Fragen (`a4f1a67`), zweistufiger Rating-Prompt (`fd08c1b`), Social Proof + Testimonial-Pipeline (`f785b07`).
-- **Content-Qualitätsoffensive** – mehrere Etappen: abgeschnittene richtige Antworten repariert, „faule Distraktoren" überarbeitet, Dubletten entfernt, fehlende Kategorien in `KATS` ergänzt (`50826fb`…`e502ead`, `b9b6952`, `15b7871`). Fragenzahl konsolidiert auf **627**.
+- **Content-Qualitätsoffensive** – mehrere Etappen: abgeschnittene richtige Antworten repariert, „faule Distraktoren" überarbeitet, Dubletten entfernt, fehlende Kategorien in `KATS` ergänzt (`50826fb`…`e502ead`, `b9b6952`, `15b7871`). Fragenzahl damals konsolidiert auf **627** – 2026-07 dann per Kategorie-Ausbau auf **1075** erweitert (siehe oberster Decision-Log-Eintrag).
 
 ---
 
@@ -267,7 +273,8 @@ Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). B
   - **„Technologie-Scout"-Routine** (Idee P. Schenkelberger): wöchentlicher Kurzbericht (neue Pflege-Apps, KI-Modelle, Play-Store-/Apple-Richtlinien) als geplanter Claude-Code-Trigger + `WebSearch` – **kein eigener MCP nötig**.
   - Altlasten-Bereinigung (`files 3/`, `files.1/`, `files.2.zip`, `manifest (1).json`, ungenutzte Root-`chat.js`).
   - Platzhalter-Stripe-Links `buy.stripe.com/XXXXX_*` (~Z. 11985 ff.) prüfen/entfernen – die Live-Links stehen in `STRIPE_PLANS`.
-  - Konsistente Fragenzahl (627) an allen Meta-/SEO-Stellen sicherstellen (war wiederholt Quelle von Inkonsistenzen).
+  - ~~Konsistente Fragenzahl an allen Meta-/SEO-Stellen sicherstellen~~ **erledigt (2026-07):** Zahl ist jetzt dynamisch (`plSyncFragenCount()`), SEO trägt „über 1050". Bei weiterem Ausbau nur die SEO-„über NNN"-Rundung und `sw.js`-Cache anpassen.
+  - **`anatomie` (315 Fragen) inhaltlich sichten** – einzige noch unbalancierte Kategorie; groß gewachsen, lohnt Dubletten-/Qualitätsdurchsicht (Validator meldet aktuell keine Dubletten, aber Stichprobe sinnvoll).
 
 ---
 
@@ -370,7 +377,7 @@ Wöchentlicher Kurzbericht (neue Pflege-Apps, KI-Modelle, Play-Store-/Apple-Rich
 | `showScreen()` | 2459 |
 | `KI_ENDPOINT` | 2994 |
 | `FAELLE` (klinische Fälle) | 8161 |
-| `QUIZ_FRAGEN` (alle 627 Quizfragen) | 1549 |
+| `QUIZ_FRAGEN` (alle 1075 Quizfragen; `const QUIZ_FRAGEN = [`) | ~1584 |
 | Registrierung / Trial-Start | ~7200 |
 | Startup-Revalidierung (Trial/Paid) | ~7460 |
 | `kartenHTML` / `karten` | 12808 / 14288 / 14696 |
