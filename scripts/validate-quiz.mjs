@@ -20,6 +20,7 @@ const errors = [];
 const norm = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').replace(/[^\wäöüß ]/g, '').trim();
 const seen = new Map();
 const perKat = {};
+const perKatK = {}; // pro Kategorie: [c0,c1,c2,c3] – Verteilung der richtigen Antwortposition
 
 FRAGEN.forEach((q, i) => {
   const at = `#${i} "${String(q && q.frage || '').slice(0, 55)}…"`;
@@ -38,11 +39,39 @@ FRAGEN.forEach((q, i) => {
   const nf = norm(q.frage);
   if (nf) { if (seen.has(nf)) errors.push(`${at}: DUBLETTE zu #${seen.get(nf)}`); else seen.set(nf, i); }
   perKat[q.kat] = (perKat[q.kat] || 0) + 1;
+  if (Number.isInteger(q.k) && q.k >= 0 && q.k <= 3) {
+    (perKatK[q.kat] = perKatK[q.kat] || [0, 0, 0, 0])[q.k]++;
+  }
 });
 
 console.log('Fragen gesamt:', FRAGEN.length);
 console.log('\nVerteilung pro Kategorie:');
 Object.entries(perKat).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => console.log(`  ${String(v).padStart(4)}  ${k}`));
+
+// ── k-Verteilungs-Warnung (nicht-fatal): erkennt „ratbare" Kategorien ──
+// Ideal ist ~25 % je Position. Gewarnt wird bei genug Fragen (>=16), wenn EINE
+// Position stark dominiert (>45 %) oder eine Position gar nicht vorkommt (0 %).
+// Ziel: Positions-Bias (wie einst in anatomie: 93 % auf B) früh sichtbar machen.
+const K_MIN_N = 16;      // erst ab so vielen Fragen aussagekräftig
+const K_DOMINANZ = 0.45; // Warnschwelle für die häufigste Position
+const kWarnings = [];
+Object.entries(perKatK).forEach(([kat, c]) => {
+  const n = c[0] + c[1] + c[2] + c[3];
+  if (n < K_MIN_N) return;
+  const maxShare = Math.max(...c) / n;
+  const leer = c.map((v, i) => v === 0 ? i : -1).filter(i => i >= 0);
+  const verteilung = c.map((v, i) => `${'ABCD'[i]}:${v}`).join(' ');
+  if (maxShare > K_DOMINANZ) {
+    kWarnings.push(`${kat} (n=${n}): eine Position dominiert mit ${(maxShare * 100).toFixed(0)} %  [${verteilung}]`);
+  } else if (leer.length) {
+    kWarnings.push(`${kat} (n=${n}): Position(en) ${leer.map(i => 'ABCD'[i]).join('/')} nie genutzt  [${verteilung}]`);
+  }
+});
+if (kWarnings.length) {
+  console.log(`\n⚠️  k-Verteilung – ${kWarnings.length} Kategorie(n) mit auffälliger Antwortposition (nur Hinweis, kein Fehler):`);
+  kWarnings.forEach(w => console.log('  - ' + w));
+  console.log('  → richtige Antwort bewusst über A/B/C/D streuen, damit das Quiz nicht ratbar wird.');
+}
 
 if (errors.length) {
   console.log(`\n❌ ${errors.length} Problem(e):`);
