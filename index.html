@@ -786,6 +786,9 @@
       Bereits registriert? → Zum Login
     </button>
   </div>
+  <div style="text-align:center;margin-top:10px">
+    <button onclick="showTester()" style="background:none;border:none;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">🧪 Tester werden – 6 Monate gratis</button>
+  </div>
 </div>
 
 <div class="page" id="screen-home">
@@ -1417,6 +1420,44 @@
   </div>
 
   <div style="font-size:10px;color:#4a7a9b;text-align:center;line-height:1.6;margin-bottom:8px">Codes sind personalisiert &amp; nicht &uuml;bertragbar. K&uuml;ndigung jederzeit zum Laufzeitende.</div>
+</div>
+
+<!-- TESTER-PROGRAMM -->
+<div class="page" id="screen-tester">
+  <div class="hero" style="margin-bottom:16px">
+    <div class="hero-icon">🧪</div>
+    <h1>Werde <span>Tester</span></h1>
+    <p>Hilf, PLAN offiziell in den Play Store zu bringen &ndash; und lerne 6&nbsp;Monate gratis.</p>
+  </div>
+
+  <div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#34d399;margin-bottom:6px">Dein Dankeschön</div>
+    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">6&nbsp;Monate Vollzugang gratis</div>
+    <div style="font-size:12px;color:#9fc3da;margin:8px 0 0;line-height:1.6">Als Dankeschön fürs Testen schalten wir dir den kompletten Vollzugang für 6&nbsp;Monate frei &ndash; über <span class="pl-fragen-count">1075</span> Fragen, KI-Tutor, Prüfungssimulation.</div>
+  </div>
+
+  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;margin-bottom:14px">
+    <div style="font-size:13px;color:#cde8f7;line-height:1.95">
+      &#9989; Du bekommst 6&nbsp;Monate Vollzugang geschenkt<br>
+      &#9989; Du hilfst, die App offiziell in den Play&nbsp;Store zu bringen<br>
+      &#9203; Bitte die App während der Testphase 14&nbsp;Tage installiert lassen
+    </div>
+    <div id="tester-slots" style="font-size:11px;color:#8fd6bf;margin:12px 0 0;font-weight:700"></div>
+  </div>
+
+  <div id="tester-form" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px">
+    <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">Vorname</div>
+    <input id="tester-name" type="text" placeholder="Dein Vorname" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box;margin-bottom:12px">
+    <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">Deine Gmail-Adresse (für die Test-Einladung)</div>
+    <input id="tester-email" type="email" placeholder="deine@gmail.com" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box">
+    <div style="font-size:10px;color:#5a7d96;margin:6px 0 16px;line-height:1.5">Für den geschlossenen Google-Play-Test wird eine Google-/Gmail-Adresse benötigt (mit ihr trittst du dem Test bei).</div>
+    <button id="tester-btn" onclick="submitTester()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">🧪 Als Tester registrieren</button>
+    <div id="tester-msg" style="font-size:12px;margin-top:12px;text-align:center;line-height:1.5"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:16px">
+    <button onclick="showScreen('home')" style="background:none;border:none;color:#4a7a9b;font-size:12px;font-family:inherit;cursor:pointer">← Zurück</button>
+  </div>
 </div>
 
 <!-- ADMIN PANEL -->
@@ -15884,6 +15925,77 @@ window.sendFeedback = function() {
   } catch (e) { fbFallback(); }
 };
 
+
+// ─── TESTER-PROGRAMM (6 Monate gratis, Cap = 15) ───
+var PL_TESTER_LIMIT = 15;
+var PL_TESTER_OPTIN_URL = ''; // <- hier den Google-Play-Closed-Test-Opt-in-Link eintragen (dann erscheint ein „Test beitreten"-Button)
+function showTester(){ try{ showScreen('tester'); }catch(e){} plTesterLoadCount(); }
+function plTesterLock(txt){
+  var b=document.getElementById('tester-btn');
+  if(b){ b.disabled=true; b.style.opacity='.5'; b.style.cursor='not-allowed'; if(txt) b.textContent=txt; }
+}
+function plTesterLoadCount(){
+  var slots=document.getElementById('tester-slots');
+  fetch('/api/tester').then(function(r){ return r.json(); }).then(function(d){
+    if(!d || typeof d.remaining==='undefined') return;
+    if(slots) slots.textContent = d.full
+      ? ('Alle '+PL_TESTER_LIMIT+' Testerplätze sind vergeben – danke! 🙏')
+      : ('Noch '+d.remaining+' von '+PL_TESTER_LIMIT+' Plätzen frei');
+    if(d.full) plTesterLock('Alle Plätze vergeben');
+  }).catch(function(){ /* lokal/offline: Button aktiv lassen – der Server erzwingt den Cap ohnehin */ });
+}
+function plTesterGrant(name){
+  try{
+    var dt=new Date(); dt.setDate(dt.getDate()+182); // ~6 Monate
+    var until=dt.toISOString().split('T')[0];
+    localStorage.setItem('pl_paid_until', until);
+    localStorage.setItem('pl_paid_plan', 'tester');
+    localStorage.setItem('pl_paid_name', name||'Tester');
+    if(name){ localStorage.setItem('pl_user_name', name); localStorage.setItem('pl_user', name); }
+    localStorage.setItem('pl_token', 'TESTER');
+  }catch(e){}
+  try{ if(typeof gaEvent==='function') gaEvent('tester_signup', {}); }catch(e){}
+  var form=document.getElementById('tester-form');
+  if(form){
+    form.innerHTML='<div style="text-align:center"><div style="font-size:40px">🎉</div>'
+      +'<div style="font-size:17px;font-weight:800;color:#e0f2fe;margin:8px 0">Willkommen an Bord!</div>'
+      +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dein <b>6-Monats-Vollzugang</b> ist freigeschaltet. '
+      +(PL_TESTER_OPTIN_URL
+        ? 'Letzter Schritt: Tritt dem geschlossenen Test bei und lass die App 14&nbsp;Tage installiert.'
+        : 'Die Einladung zum geschlossenen Play-Test kommt in Kürze per E-Mail. Bitte die App dann 14&nbsp;Tage installiert lassen.')
+      +'</div>'
+      +(PL_TESTER_OPTIN_URL
+        ? '<a href="'+PL_TESTER_OPTIN_URL+'" target="_blank" rel="noopener" style="display:block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:10px">Dem Test beitreten</a>'
+        : '')
+      +'<button onclick="showScreen(\'home\')" style="width:100%;background:rgba(56,189,248,.15);border:1px solid #38bdf8;color:#ddf0fb;border-radius:11px;padding:12px;font-weight:700;font-family:inherit;cursor:pointer">Los geht\'s → zur App</button></div>';
+  }
+}
+function submitTester(){
+  var nameEl=document.getElementById('tester-name');
+  var mailEl=document.getElementById('tester-email');
+  var msg=document.getElementById('tester-msg');
+  var name=(nameEl&&nameEl.value?nameEl.value:'').trim();
+  var email=(mailEl&&mailEl.value?mailEl.value:'').trim().toLowerCase();
+  var re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function warn(t){ if(msg){ msg.style.color='#fbbf24'; msg.textContent=t; } }
+  if(!name){ warn('Bitte gib deinen Vornamen ein.'); return; }
+  if(!re.test(email)){ warn('Bitte gib eine gültige E-Mail-Adresse ein.'); return; }
+  var b=document.getElementById('tester-btn');
+  if(b){ b.disabled=true; b.textContent='Wird registriert…'; }
+  fetch('/api/tester', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email:email, name:name }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.full){ plTesterLock('Alle Plätze vergeben'); warn('Schade – alle '+PL_TESTER_LIMIT+' Testerplätze sind bereits vergeben.'); return; }
+      if(d && d.ok){ plTesterGrant(name); return; }
+      throw new Error('resp');
+    })
+    .catch(function(){
+      if(b){ b.disabled=false; b.textContent='🧪 Als Tester registrieren'; }
+      if(msg){ msg.style.color='#fb7185'; msg.textContent='Das hat nicht geklappt – bitte später erneut versuchen oder an kontakt@plan-nrw.de schreiben.'; }
+    });
+}
+// Deep-Link: plan-nrw.de/#tester führt direkt zur Tester-Anmeldung (für Recruiting-Posts)
+try{ if(location.hash==='#tester'){ window.addEventListener('load', function(){ setTimeout(showTester, 400); }); } }catch(e){}
 
 const AUSB_WELCOME = {"pflegehelfer": "Hallo! Ich helfe dir bei der Pflegefachassistenz-Ausbildung in NRW 🤝 Frag mich zu Grundpflege, Behandlungspflege, Prüfungsfragen oder Berufsbild – was möchtest du wissen?", "anerkennung": "Hallo! Ich unterstütze dich als Anerkennungsschüler/in in NRW 🌍 Frag mich zu Defizitfeststellung, Anpassungslehrgang, Prüfungsanforderungen oder spezifischen Pflegethemen – was brauchst du?", "gpa": "Hallo! Ich bin dein Lernbegleiter für die Generalistische Pflegeausbildung NRW 🎓 3 Jahre, alle Bereiche – Frag mich zu Pflegeprozess, ATL, Prüfungsvorbereitung, Krankheitsbilder oder Ausbildungsinhalte!", "anaesthesie": "Hallo! Ich helfe dir bei der Fachpflege Anästhesie 💉 TIVA, Narkoseverfahren, Monitoring, Regionalanästhesie, Notfallmanagement im OP – was möchtest du vertiefen?", "ata": "Hallo! Ich unterstütze dich in der ATA-Ausbildung 🔧 Anästhesiologische Technik, Gerätemanagement, Narkosevorbereitung, ATA-OTA-Gesetz – stell mir deine Fragen!", "intensiv": "Hallo! Ich bin dein KI-Assistent für die Fachpflege Intensivmedizin 🏥 Beatmung, Monitoring, Katecholamine, Sepsis, ARDS – ich helfe dir bei allen Intensivthemen!", "ota": "Hallo! Ich helfe dir bei der OTA-Ausbildung 🔪 OP-Lagerung, Instrumentierkunde, Sterilisation, OP-Hygiene, ATA-OTA-Gesetz – was möchtest du lernen?"};
 
