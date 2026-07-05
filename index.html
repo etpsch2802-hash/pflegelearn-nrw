@@ -15928,7 +15928,8 @@ window.sendFeedback = function() {
 
 // ─── TESTER-PROGRAMM (6 Monate gratis, Cap = 15) ───
 var PL_TESTER_LIMIT = 15;
-var PL_TESTER_OPTIN_URL = 'https://play.google.com/store/apps/details?id=com.pflegelearn.nrw'; // Play-Beitritts-Link (funktioniert erst, wenn die Gmail in der Play-Console-Testliste steht)
+var PL_TESTER_OPTIN_URL = 'https://play.google.com/store/apps/details?id=com.pflegelearn.nrw'; // Play-Test-Link (funktioniert nach Beitritt zur Tester-Gruppe)
+var PL_TESTER_GROUP_URL = 'https://groups.google.com/g/plan-nrw-tester'; // Google-Gruppe: hier treten Tester selbst bei
 function showTester(){ try{ showScreen('tester'); }catch(e){} plTesterLoadCount(); }
 function plTesterLock(txt){
   var b=document.getElementById('tester-btn');
@@ -15959,14 +15960,17 @@ function plTesterGrant(name){
   if(form){
     form.innerHTML='<div style="text-align:center"><div style="font-size:40px">🎉</div>'
       +'<div style="font-size:17px;font-weight:800;color:#e0f2fe;margin:8px 0">Willkommen an Bord!</div>'
-      +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dein <b>6-Monats-Vollzugang</b> ist freigeschaltet. Damit dein Test auch für den Play&nbsp;Store zählt, sind noch 3 kurze Schritte nötig:</div>'
+      +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dein <b>6-Monats-Vollzugang</b> ist freigeschaltet. Damit dein Test auch für den Play&nbsp;Store zählt, mach bitte diese 3 Schritte – am besten gleich:</div>'
       +'<div style="text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px 15px;font-size:12.5px;color:#cde8f7;line-height:1.7;margin-bottom:14px">'
-        +'<b style="color:#e0f2fe">1.</b> Wir tragen deine Gmail in die Testliste ein (meist innerhalb eines Tages).<br>'
-        +'<b style="color:#e0f2fe">2.</b> Danach die App über den Play&nbsp;Store installieren.<br>'
+        +'<b style="color:#e0f2fe">1.</b> Der <b>Tester-Gruppe beitreten</b> (Button unten).<br>'
+        +'<b style="color:#e0f2fe">2.</b> Danach die App über den <b>Play&nbsp;Store installieren</b>.<br>'
         +'<b style="color:#34d399">3. Wichtig:</b> Die App die vollen <b style="color:#34d399">14 Tage installiert lassen</b> – nicht deinstallieren – und <b style="color:#34d399">ab und zu kurz öffnen</b>. Nur dann zählt dein Test.'
       +'</div>'
+      +(PL_TESTER_GROUP_URL
+        ? '<a href="'+PL_TESTER_GROUP_URL+'" target="_blank" rel="noopener" style="display:block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px">1 · Tester-Gruppe beitreten</a>'
+        : '')
       +(PL_TESTER_OPTIN_URL
-        ? '<a href="'+PL_TESTER_OPTIN_URL+'" target="_blank" rel="noopener" style="display:block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:10px">Zur App im Play Store</a>'
+        ? '<a href="'+PL_TESTER_OPTIN_URL+'" target="_blank" rel="noopener" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:10px">2 · App im Play Store installieren</a>'
         : '')
       +'<button onclick="showScreen(\'home\')" style="width:100%;background:rgba(56,189,248,.15);border:1px solid #38bdf8;color:#ddf0fb;border-radius:11px;padding:12px;font-weight:700;font-family:inherit;cursor:pointer">Jetzt schon loslegen → zur App</button></div>';
   }
