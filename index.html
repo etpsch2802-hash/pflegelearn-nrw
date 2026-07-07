@@ -682,6 +682,8 @@
     <button onclick="navGo('home')" class="nav-drop-btn"><span data-i18n="nav_home">🏠 Startseite</span></button>
     <button onclick="navGo('taschenkarten')" class="nav-drop-btn"><span data-i18n="nav_taschen">📇 Taschenkarten</span></button>
     <button onclick="navGo('preise')" class="nav-drop-btn"><span data-i18n="nav_preise">💳 Plan &amp; Preise</span></button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showKlasseBeitreten()" class="nav-drop-btn"><span>🎓 Klasse beitreten</span></button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLehrer()" class="nav-drop-btn"><span>👩‍🏫 Lehrer-Bereich</span></button>
     <button onclick="showThemePicker()" class="nav-drop-btn"><span data-i18n="nav_theme">🎨 Mein Theme</span></button>
     <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
     <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
@@ -1458,6 +1460,63 @@
     <div style="font-size:10px;color:#5a7d96;margin:6px 0 16px;line-height:1.5">Für den geschlossenen Google-Play-Test wird eine Google-/Gmail-Adresse benötigt (mit ihr trittst du dem Test bei).</div>
     <button id="tester-btn" onclick="submitTester()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">🧪 Als Tester registrieren</button>
     <div id="tester-msg" style="font-size:12px;margin-top:12px;text-align:center;line-height:1.5"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:16px">
+    <button onclick="showScreen('home')" style="background:none;border:none;color:#4a7a9b;font-size:12px;font-family:inherit;cursor:pointer">← Zurück</button>
+  </div>
+</div>
+
+<!-- KLASSE BEITRETEN (Schul-Lizenz) -->
+<div class="page" id="screen-klasse-beitreten">
+  <div class="hero" style="margin-bottom:16px">
+    <div class="hero-icon">🎓</div>
+    <h1>Klasse <span>beitreten</span></h1>
+    <p>Gib den Code deiner Lehrkraft ein und schalte deinen Vollzugang für die Kurslaufzeit frei.</p>
+  </div>
+  <div id="kb-inclass" style="display:none;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:14px;padding:15px;margin-bottom:14px"></div>
+  <div id="kb-form" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px">
+    <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">Klassen-Code</div>
+    <input id="kb-code" type="text" maxlength="8" oninput="this.value=this.value.toUpperCase();plKlassePruef()" placeholder="z. B. ABC123" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:18px;letter-spacing:3px;font-family:monospace;outline:none;box-sizing:border-box;margin-bottom:10px">
+    <div id="kb-preview" style="display:none;font-size:12px;line-height:1.6;background:rgba(255,255,255,.04);border-radius:10px;padding:10px 12px;margin-bottom:12px"></div>
+    <div style="font-size:11px;color:#4a7a9b;margin-bottom:6px">Dein Vorname</div>
+    <input id="kb-name" type="text" placeholder="Dein Vorname" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:16px">
+    <button id="kb-btn" onclick="plKlasseBeitreten()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:15px;color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">Klasse beitreten</button>
+    <div id="kb-msg" style="font-size:12px;margin-top:12px;text-align:center;line-height:1.5"></div>
+  </div>
+  <div style="text-align:center;margin-top:16px">
+    <button onclick="showScreen('home')" style="background:none;border:none;color:#4a7a9b;font-size:12px;font-family:inherit;cursor:pointer">← Zurück</button>
+  </div>
+</div>
+
+<!-- LEHRER-BEREICH (Schul-Lizenz, Pilot) -->
+<div class="page" id="screen-lehrer">
+  <div class="hero" style="margin-bottom:16px">
+    <div class="hero-icon">👩‍🏫</div>
+    <h1>Lehrer<span>-Bereich</span></h1>
+    <p>Lege Klassen an, verteile Aufgaben &amp; Fallbeispiele und behalte den Fortschritt im Blick.</p>
+  </div>
+
+  <div id="lehrer-gate" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px">
+    <div style="font-size:13px;color:#cde8f7;line-height:1.6;margin-bottom:12px">Melde dich einmalig mit deiner dienstlichen E-Mail an – damit sind deine Klassen dir zugeordnet.</div>
+    <input id="lehrer-email" type="email" placeholder="lehrkraft@schule.de" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:12px">
+    <button onclick="plLehrerLogin()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:14px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer">Weiter zum Dashboard</button>
+    <div id="lehrer-gate-msg" style="font-size:12px;margin-top:10px;text-align:center"></div>
+  </div>
+
+  <div id="lehrer-main" style="display:none">
+    <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.28);border-radius:14px;padding:16px;margin-bottom:14px">
+      <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#34d399;margin-bottom:8px">Neue Klasse</div>
+      <input id="lk-name" type="text" placeholder="Klassenname (z. B. Kurs GKP 24a)" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:11px 13px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:9px">
+      <input id="lk-schule" type="text" placeholder="Schule (optional)" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:11px 13px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:11px">
+      <button id="lk-btn" onclick="plKlasseCreate()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04231a;font-weight:800;font-family:inherit;cursor:pointer">➕ Klasse anlegen</button>
+      <div id="lk-msg" style="font-size:12px;margin-top:10px;text-align:center;line-height:1.5"></div>
+    </div>
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:0 2px 10px">Meine Klassen</div>
+    <div id="lehrer-klassen"></div>
+    <div style="text-align:center;margin-top:6px">
+      <button onclick="plLehrerLogout()" style="background:none;border:none;color:#4a7a9b;font-size:11px;font-family:inherit;cursor:pointer">Andere Lehrkraft / abmelden</button>
+    </div>
   </div>
 
   <div style="text-align:center;margin-top:16px">
@@ -16001,6 +16060,237 @@ function submitTester(){
 }
 // Deep-Link: plan-nrw.de/#tester führt direkt zur Tester-Anmeldung (für Recruiting-Posts)
 try{ if(location.hash==='#tester'){ window.addEventListener('load', function(){ setTimeout(showTester, 400); }); } }catch(e){}
+
+
+// ─── SCHUL-LIZENZ / LEHRER-DASHBOARD (Pilot) ──────────────────────────────────
+// Baut auf api/klasse.js + Supabase (klassen / klassen_mitglieder / aufgaben).
+// Schüler-Beitritt nutzt exakt den Tester-Grant-Pfad (pl_paid_until) → keine neue Paywall-Logik.
+// Beruehrt NICHT: Entitlement-Revalidierung, Sync, Tester-Programm.
+var _plKlassen = [];
+function plEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function plKlUserEmail(){ try{ return localStorage.getItem('pl_user_email')||localStorage.getItem('pl_sub_email')||localStorage.getItem('pl_trial_email')||''; }catch(e){ return ''; } }
+function plOverlay(inner){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:1200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)';
+  ov.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px;padding:20px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto">'+inner+'</div>';
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+  return ov;
+}
+
+// ── Schüler: Klasse beitreten ──
+function showKlasseBeitreten(){
+  try{ showScreen('klasse-beitreten'); }catch(e){}
+  var m=document.getElementById('kb-msg'); if(m) m.textContent='';
+  var pv=document.getElementById('kb-preview'); if(pv) pv.style.display='none';
+  var banner=document.getElementById('kb-inclass');
+  var kn=''; try{ kn=localStorage.getItem('pl_klasse_name')||''; }catch(e){}
+  if(banner){
+    if(kn){
+      banner.style.display='block';
+      banner.innerHTML='<div style="font-size:13px;color:#e0f2fe;font-weight:700;margin-bottom:8px">Du bist in der Klasse „'+plEsc(kn)+'"</div>'
+        +'<button onclick="showMeineAufgaben()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:10px;padding:11px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer">📋 Meine Aufgaben</button>';
+    } else { banner.style.display='none'; }
+  }
+}
+function plKlassePruef(){
+  var el=document.getElementById('kb-code'); if(!el) return;
+  var code=(el.value||'').trim().toUpperCase();
+  var pv=document.getElementById('kb-preview');
+  if(!pv) return;
+  if(code.length<4){ pv.style.display='none'; return; }
+  fetch('/api/klasse?code='+encodeURIComponent(code)).then(function(r){return r.json();}).then(function(d){
+    if(d && d.found){
+      pv.style.display='block';
+      pv.innerHTML = d.aktiv
+        ? ('<b style="color:#34d399">'+plEsc(d.name)+'</b>'+(d.schule?(' · '+plEsc(d.schule)):'')+'<br><span style="color:#9fc3da">Zugang bis '+plEsc(d.lizenz_bis)+' · noch '+d.remaining+' Plätze frei</span>')
+        : '<span style="color:#fb7185">Diese Klasse ist abgelaufen.</span>';
+    } else { pv.style.display='block'; pv.innerHTML='<span style="color:#fbbf24">Kein Kurs mit diesem Code gefunden.</span>'; }
+  }).catch(function(){});
+}
+function plKlasseBeitreten(){
+  var code=(document.getElementById('kb-code').value||'').trim().toUpperCase();
+  var name=(document.getElementById('kb-name').value||'').trim();
+  var msg=document.getElementById('kb-msg');
+  function warn(t){ if(msg){ msg.style.color='#fbbf24'; msg.textContent=t; } }
+  if(code.length<4){ warn('Bitte gib den Klassen-Code ein.'); return; }
+  if(!name){ warn('Bitte gib deinen Vornamen ein.'); return; }
+  var b=document.getElementById('kb-btn'); if(b){ b.disabled=true; b.textContent='Wird geprüft…'; }
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join',code:code,name:name,email:plKlUserEmail()})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d && d.ok){ try{ localStorage.setItem('pl_klasse_code',code); }catch(e){} plKlasseGrant(d,name); return; }
+      if(b){ b.disabled=false; b.textContent='Klasse beitreten'; }
+      var reason=d&&d.reason;
+      warn(reason==='full'?'Diese Klasse ist leider voll.':reason==='expired'?'Diese Klasse ist abgelaufen.':'Kein Kurs mit diesem Code gefunden.');
+    }).catch(function(){ if(b){ b.disabled=false; b.textContent='Klasse beitreten'; } warn('Hat nicht geklappt – bitte später erneut versuchen.'); });
+}
+function plKlasseGrant(d,name){
+  try{
+    localStorage.setItem('pl_paid_until', d.lizenz_bis);
+    localStorage.setItem('pl_paid_plan','schule');
+    localStorage.setItem('pl_paid_name', name||'Schüler:in');
+    localStorage.setItem('pl_token','SCHULE');
+    localStorage.setItem('pl_klasse_name', d.klasse_name||'');
+    if(name){ localStorage.setItem('pl_user_name',name); localStorage.setItem('pl_user',name); }
+  }catch(e){}
+  try{ if(typeof gaEvent==='function') gaEvent('klasse_join',{}); }catch(e){}
+  var form=document.getElementById('kb-form');
+  if(form){
+    form.innerHTML='<div style="text-align:center"><div style="font-size:40px">🎓</div>'
+      +'<div style="font-size:17px;font-weight:800;color:#e0f2fe;margin:8px 0">Willkommen in „'+plEsc(d.klasse_name||'deiner Klasse')+'"!</div>'
+      +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dein Vollzugang ist bis <b>'+plEsc(d.lizenz_bis)+'</b> freigeschaltet. Aufgaben deiner Lehrkraft findest du unter „Meine Aufgaben".</div>'
+      +'<button onclick="showMeineAufgaben()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:13px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">📋 Meine Aufgaben ansehen</button>'
+      +'<button onclick="showScreen(\'home\')" style="width:100%;background:rgba(56,189,248,.15);border:1px solid #38bdf8;color:#ddf0fb;border-radius:11px;padding:12px;font-weight:700;font-family:inherit;cursor:pointer">Zur App</button></div>';
+  }
+}
+
+// ── Schüler: Meine Aufgaben ──
+function showMeineAufgaben(){
+  var code=''; try{ code=localStorage.getItem('pl_klasse_code')||''; }catch(e){}
+  var kn=''; try{ kn=localStorage.getItem('pl_klasse_name')||''; }catch(e){}
+  if(!code){ plOverlay('<div style="text-align:center;color:#cde8f7"><div style="font-size:34px">📋</div><div style="font-size:15px;font-weight:700;margin:8px 0">Du bist noch in keiner Klasse.</div><button onclick="this.closest(\'[style*=fixed]\').remove();showKlasseBeitreten()" style="background:rgba(56,189,248,.15);border:1px solid #38bdf8;color:#ddf0fb;border-radius:10px;padding:10px 16px;font-weight:700;font-family:inherit;cursor:pointer">Klasse beitreten</button></div>'); return; }
+  var ov=plOverlay('<div style="text-align:center;color:#9fc3da;font-size:13px;padding:20px">Aufgaben werden geladen…</div>');
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'aufgaben',code:code})})
+    .then(function(r){return r.json();}).then(function(d){
+      var box=ov.firstChild; var auf=(d&&d.aufgaben)||[];
+      var head='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">📋 Meine Aufgaben</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;cursor:pointer">✕</button></div>'
+        +(kn?('<div style="font-size:11px;color:#4a7a9b;margin:-8px 0 12px">Klasse „'+plEsc(kn)+'"</div>'):'');
+      if(!auf.length){ box.innerHTML=head+'<div style="text-align:center;color:#4a7a9b;font-size:13px;padding:16px 0">Noch keine Aufgaben – deine Lehrkraft hat noch nichts verteilt.</div>'; return; }
+      box.innerHTML=head+auf.map(function(a){
+        var inh=a.inhalt||{}; var faellig=a.faellig_am?('<span style="color:#fbbf24">fällig '+plEsc(a.faellig_am)+'</span>'):'';
+        var action='';
+        if(a.typ==='quiz-set' && inh.kat){ action='<button onclick="this.closest(\'[style*=fixed]\').remove();plStartAufgabenQuiz(\''+plEsc(inh.kat)+'\')" style="margin-top:8px;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;border-radius:9px;padding:8px 12px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">▶ Quiz starten</button>'; }
+        else if(a.typ==='fall'){ action='<button onclick="this.closest(\'[style*=fixed]\').remove();showScreen(\'faelle\')" style="margin-top:8px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:9px;padding:8px 12px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">🩺 Zu den Fällen</button>'; }
+        return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px;margin-bottom:10px">'
+          +'<div style="font-size:14px;font-weight:700;color:#e0f2fe">'+plEsc(a.titel)+'</div>'
+          +(inh.text?('<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-top:4px">'+plEsc(inh.text)+'</div>'):'')
+          +(faellig?('<div style="font-size:11px;margin-top:6px">'+faellig+'</div>'):'')
+          +action+'</div>';
+      }).join('');
+    }).catch(function(){ ov.firstChild.innerHTML='<div style="text-align:center;color:#fb7185;padding:20px">Konnte Aufgaben nicht laden.</div>'; });
+}
+function plStartAufgabenQuiz(kat){ try{ if(typeof startQuiz==='function'){ startQuiz(kat); return; } }catch(e){} try{ showScreen('quizSelect'); }catch(e){} }
+
+// ── Lehrkraft: Dashboard ──
+function showLehrer(){
+  try{ showScreen('lehrer'); }catch(e){}
+  var le=''; try{ le=localStorage.getItem('pl_lehrer_email')||''; }catch(e){}
+  var gate=document.getElementById('lehrer-gate'); var main=document.getElementById('lehrer-main');
+  if(le){ if(gate)gate.style.display='none'; if(main)main.style.display='block'; plLehrerLoad(); }
+  else { if(gate)gate.style.display='block'; if(main)main.style.display='none'; }
+}
+function plLehrerLogin(){
+  var e=(document.getElementById('lehrer-email').value||'').trim().toLowerCase();
+  var re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var m=document.getElementById('lehrer-gate-msg');
+  if(!re.test(e)){ if(m){ m.style.color='#fbbf24'; m.textContent='Bitte gültige E-Mail eingeben.'; } return; }
+  try{ localStorage.setItem('pl_lehrer_email',e); }catch(e2){}
+  showLehrer();
+}
+function plLehrerLogout(){ try{ localStorage.removeItem('pl_lehrer_email'); }catch(e){} showLehrer(); }
+function plLehrerLoad(){
+  var le=''; try{ le=localStorage.getItem('pl_lehrer_email')||''; }catch(e){}
+  var host=document.getElementById('lehrer-klassen'); if(host) host.innerHTML='<div style="color:#4a7a9b;font-size:12px;padding:8px 0">Lädt…</div>';
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list',lehrer_email:le})})
+    .then(function(r){return r.json();}).then(function(d){ _plKlassen=(d&&d.klassen)||[]; plLehrerRender(); })
+    .catch(function(){ if(host) host.innerHTML='<div style="color:#fb7185;font-size:12px">Konnte Klassen nicht laden.</div>'; });
+}
+function plLehrerRender(){
+  var host=document.getElementById('lehrer-klassen'); if(!host) return;
+  if(!_plKlassen.length){ host.innerHTML='<div style="color:#4a7a9b;font-size:13px;text-align:center;padding:14px 0">Noch keine Klasse – lege oben deine erste an.</div>'; return; }
+  host.innerHTML=_plKlassen.map(function(k){
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:15px;margin-bottom:12px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+        +'<div><div style="font-size:15px;font-weight:800;color:#e0f2fe">'+plEsc(k.name)+'</div>'
+        +(k.schule?('<div style="font-size:11px;color:#9fc3da">'+plEsc(k.schule)+'</div>'):'')+'</div>'
+        +'<div style="text-align:right"><div style="font-size:10px;color:#4a7a9b;text-transform:uppercase;letter-spacing:1px">Code</div>'
+        +'<div style="font-family:monospace;font-size:20px;font-weight:800;color:#38bdf8;letter-spacing:2px">'+plEsc(k.join_code)+'</div></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:14px;margin:10px 0 12px;font-size:12px;color:#9fc3da"><span>👥 '+(k.mitglieder||0)+'/'+k.sitzplaetze+' Azubis</span><span>· bis '+plEsc(k.lizenz_bis)+'</span></div>'
+      +'<div style="display:flex;gap:8px">'
+        +'<button onclick="plAssignOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;border-radius:10px;padding:10px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">➕ Aufgabe</button>'
+        +'<button onclick="plMembersOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:10px;padding:10px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">👥 Mitglieder</button>'
+      +'</div></div>';
+  }).join('');
+}
+function plKlasseCreate(){
+  var le=''; try{ le=localStorage.getItem('pl_lehrer_email')||''; }catch(e){}
+  var name=(document.getElementById('lk-name').value||'').trim();
+  var schule=(document.getElementById('lk-schule').value||'').trim();
+  var msg=document.getElementById('lk-msg');
+  if(name.length<2){ if(msg){ msg.style.color='#fbbf24'; msg.textContent='Bitte gib einen Klassennamen ein.'; } return; }
+  var b=document.getElementById('lk-btn'); if(b){ b.disabled=true; b.textContent='Wird angelegt…'; }
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create',lehrer_email:le,name:name,schule:schule})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(b){ b.disabled=false; b.textContent='➕ Klasse anlegen'; }
+      if(d && d.ok){ document.getElementById('lk-name').value=''; document.getElementById('lk-schule').value='';
+        if(msg){ msg.style.color='#34d399'; msg.innerHTML='Klasse angelegt – Code <b style="font-family:monospace;letter-spacing:2px">'+plEsc(d.klasse.join_code)+'</b>'; }
+        plLehrerLoad(); }
+      else if(msg){ msg.style.color='#fb7185'; msg.textContent='Konnte Klasse nicht anlegen.'; }
+    }).catch(function(){ if(b){ b.disabled=false; b.textContent='➕ Klasse anlegen'; } if(msg){ msg.style.color='#fb7185'; msg.textContent='Fehler – bitte erneut versuchen.'; } });
+}
+function _plFindKlasse(id){ for(var i=0;i<_plKlassen.length;i++){ if(String(_plKlassen[i].id)===String(id)) return _plKlassen[i]; } return null; }
+function plMembersOpen(id){
+  var k=_plFindKlasse(id); if(!k) return;
+  var ov=plOverlay('<div style="text-align:center;color:#9fc3da;font-size:13px;padding:20px">Mitglieder werden geladen…</div>');
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'members',klasse_id:id})})
+    .then(function(r){return r.json();}).then(function(d){
+      var mem=(d&&d.mitglieder)||[]; var box=ov.firstChild;
+      var head='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">👥 '+plEsc(k.name)+'</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;cursor:pointer">✕</button></div>'
+        +'<div style="font-size:11px;color:#4a7a9b;margin-bottom:12px">'+mem.length+' von '+k.sitzplaetze+' Plätzen belegt</div>';
+      if(!mem.length){ box.innerHTML=head+'<div style="text-align:center;color:#4a7a9b;font-size:13px;padding:14px 0">Noch keine Azubis beigetreten. Teile den Code <b style="font-family:monospace;color:#38bdf8">'+plEsc(k.join_code)+'</b>.</div>'; return; }
+      box.innerHTML=head+mem.map(function(m){
+        return '<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px"><span style="color:#e0f2fe">'+plEsc(m.name||'—')+'</span><span style="color:#4a7a9b;font-size:11px">'+(m.beigetreten_at?plEsc(String(m.beigetreten_at).slice(0,10)):'')+'</span></div>';
+      }).join('');
+    }).catch(function(){ ov.firstChild.innerHTML='<div style="text-align:center;color:#fb7185;padding:20px">Konnte Mitglieder nicht laden.</div>'; });
+}
+function plAssignOpen(id){
+  var k=_plFindKlasse(id); if(!k) return;
+  var katOpts=''; try{ katOpts=KATS.map(function(kt){ return '<option value="'+plEsc(kt.id)+'">'+plEsc(typeof katLabel==='function'?katLabel(kt.id):kt.id)+'</option>'; }).join(''); }catch(e){ katOpts='<option value="">–</option>'; }
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">➕ Aufgabe verteilen</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;cursor:pointer">✕</button></div>'
+    +'<div style="font-size:11px;color:#4a7a9b;margin-bottom:14px">an Klasse „'+plEsc(k.name)+'"</div>'
+    +'<div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Art der Aufgabe</div>'
+    +'<select id="asg-typ" onchange="plAssignTypChange()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;margin-bottom:12px">'
+      +'<option value="quiz-set">📝 Quiz-Set (Kategorie)</option>'
+      +'<option value="fall">🩺 Fallbeispiel bearbeiten</option>'
+      +'<option value="frei">✏️ Freie Aufgabe</option></select>'
+    +'<div id="asg-quiz"><div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Kategorie</div>'
+      +'<select id="asg-kat" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;margin-bottom:12px">'+katOpts+'</select></div>'
+    +'<div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Titel</div>'
+    +'<input id="asg-titel" type="text" placeholder="z. B. Anästhesie bis Freitag" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;box-sizing:border-box;margin-bottom:12px">'
+    +'<div id="asg-text-wrap" style="display:none"><div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Anweisung an die Klasse</div>'
+      +'<textarea id="asg-text" rows="3" placeholder="Was sollen die Azubis tun?" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;box-sizing:border-box;margin-bottom:12px;resize:vertical"></textarea></div>'
+    +'<div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Fällig am (optional)</div>'
+    +'<input id="asg-faellig" type="date" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;box-sizing:border-box;margin-bottom:16px">'
+    +'<button id="asg-btn" onclick="plAssignSubmit(\''+plEsc(k.id)+'\')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04231a;font-weight:800;font-family:inherit;cursor:pointer">Aufgabe verteilen</button>'
+    +'<div id="asg-msg" style="font-size:12px;margin-top:10px;text-align:center"></div>';
+  plOverlay(html);
+}
+function plAssignTypChange(){
+  var t=document.getElementById('asg-typ').value;
+  var q=document.getElementById('asg-quiz'); var tx=document.getElementById('asg-text-wrap');
+  if(q) q.style.display=(t==='quiz-set')?'block':'none';
+  if(tx) tx.style.display=(t==='frei'||t==='fall')?'block':'none';
+}
+function plAssignSubmit(id){
+  var typ=document.getElementById('asg-typ').value;
+  var titel=(document.getElementById('asg-titel').value||'').trim();
+  var faellig=(document.getElementById('asg-faellig').value||'').trim();
+  var msg=document.getElementById('asg-msg');
+  if(titel.length<2){ if(msg){ msg.style.color='#fbbf24'; msg.textContent='Bitte gib einen Titel ein.'; } return; }
+  var inhalt={};
+  if(typ==='quiz-set'){ inhalt.kat=document.getElementById('asg-kat').value; }
+  else { var tv=document.getElementById('asg-text'); inhalt.text=(tv&&tv.value?tv.value:'').trim(); }
+  var b=document.getElementById('asg-btn'); if(b){ b.disabled=true; b.textContent='Wird verteilt…'; }
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'assign',klasse_id:id,typ:typ,titel:titel,inhalt:inhalt,faellig_am:faellig||null})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d && d.ok){ if(msg){ msg.style.color='#34d399'; msg.textContent='Aufgabe verteilt! ✅'; } setTimeout(function(){ var ov=document.querySelector('[style*="z-index:1200"]'); if(ov) ov.remove(); },900); }
+      else { if(b){ b.disabled=false; b.textContent='Aufgabe verteilen'; } if(msg){ msg.style.color='#fb7185'; msg.textContent='Konnte nicht verteilen.'; } }
+    }).catch(function(){ if(b){ b.disabled=false; b.textContent='Aufgabe verteilen'; } if(msg){ msg.style.color='#fb7185'; msg.textContent='Fehler – bitte erneut versuchen.'; } });
+}
+// Deep-Links: #lehrer / #klasse
+try{ if(location.hash==='#lehrer'){ window.addEventListener('load', function(){ setTimeout(showLehrer, 400); }); } }catch(e){}
+try{ if(location.hash==='#klasse'){ window.addEventListener('load', function(){ setTimeout(showKlasseBeitreten, 400); }); } }catch(e){}
 
 const AUSB_WELCOME = {"pflegehelfer": "Hallo! Ich helfe dir bei der Pflegefachassistenz-Ausbildung in NRW 🤝 Frag mich zu Grundpflege, Behandlungspflege, Prüfungsfragen oder Berufsbild – was möchtest du wissen?", "anerkennung": "Hallo! Ich unterstütze dich als Anerkennungsschüler/in in NRW 🌍 Frag mich zu Defizitfeststellung, Anpassungslehrgang, Prüfungsanforderungen oder spezifischen Pflegethemen – was brauchst du?", "gpa": "Hallo! Ich bin dein Lernbegleiter für die Generalistische Pflegeausbildung NRW 🎓 3 Jahre, alle Bereiche – Frag mich zu Pflegeprozess, ATL, Prüfungsvorbereitung, Krankheitsbilder oder Ausbildungsinhalte!", "anaesthesie": "Hallo! Ich helfe dir bei der Fachpflege Anästhesie 💉 TIVA, Narkoseverfahren, Monitoring, Regionalanästhesie, Notfallmanagement im OP – was möchtest du vertiefen?", "ata": "Hallo! Ich unterstütze dich in der ATA-Ausbildung 🔧 Anästhesiologische Technik, Gerätemanagement, Narkosevorbereitung, ATA-OTA-Gesetz – stell mir deine Fragen!", "intensiv": "Hallo! Ich bin dein KI-Assistent für die Fachpflege Intensivmedizin 🏥 Beatmung, Monitoring, Katecholamine, Sepsis, ARDS – ich helfe dir bei allen Intensivthemen!", "ota": "Hallo! Ich helfe dir bei der OTA-Ausbildung 🔪 OP-Lagerung, Instrumentierkunde, Sterilisation, OP-Hygiene, ATA-OTA-Gesetz – was möchtest du lernen?"};
 
