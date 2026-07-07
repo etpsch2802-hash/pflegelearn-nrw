@@ -16363,6 +16363,7 @@ function plKlasseCreate(){
   var name=(document.getElementById('lk-name').value||'').trim();
   var schule=(document.getElementById('lk-schule').value||'').trim();
   var msg=document.getElementById('lk-msg');
+  if(!le){ if(msg){ msg.style.color='#fbbf24'; msg.textContent='Bitte zuerst mit deiner E-Mail anmelden.'; } showLehrer(); return; }
   if(name.length<2){ if(msg){ msg.style.color='#fbbf24'; msg.textContent='Bitte gib einen Klassennamen ein.'; } return; }
   var b=document.getElementById('lk-btn'); if(b){ b.disabled=true; b.textContent='Wird angelegt…'; }
   fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create',lehrer_email:le,name:name,schule:schule})})
@@ -16371,7 +16372,7 @@ function plKlasseCreate(){
       if(d && d.ok){ document.getElementById('lk-name').value=''; document.getElementById('lk-schule').value='';
         if(msg){ msg.style.color='#34d399'; msg.innerHTML='Klasse angelegt – Code <b style="font-family:monospace;letter-spacing:2px">'+plEsc(d.klasse.join_code)+'</b>'; }
         plLehrerLoad(); }
-      else if(msg){ msg.style.color='#fb7185'; msg.textContent='Konnte Klasse nicht anlegen.'; }
+      else if(msg){ msg.style.color='#fb7185'; msg.textContent='Konnte Klasse nicht anlegen ['+((d&&d.error)?d.error:'unbekannt')+((d&&d.detail)?(': '+String(d.detail).slice(0,140)):'')+']'; }
     }).catch(function(){ if(b){ b.disabled=false; b.textContent='➕ Klasse anlegen'; } if(msg){ msg.style.color='#fb7185'; msg.textContent='Fehler – bitte erneut versuchen.'; } });
 }
 function _plFindKlasse(id){ for(var i=0;i<_plKlassen.length;i++){ if(String(_plKlassen[i].id)===String(id)) return _plKlassen[i]; } return null; }
