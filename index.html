@@ -16986,7 +16986,9 @@ async function plResyncPush(){
     if(!window.SB) return;
     var reg=await navigator.serviceWorker.ready;
     var sub=await reg.pushManager.getSubscription();
-    if(!sub) return;
+    if(!sub){
+      try{ sub=await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:_plB64ToU8(PL_VAPID_PUBLIC) }); }catch(e){ return; }
+    }
     window.SB.from('push_subs').upsert({
       endpoint: sub.endpoint,
       sub: JSON.stringify(sub),
