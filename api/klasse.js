@@ -212,6 +212,19 @@ export default async function handler(req, res) {
       return;
     }
 
+    // ── Aufgabe löschen (Lehrkraft) ──
+    if (action === 'delete') {
+      var did = (body.aufgabe_id ? String(body.aufgabe_id) : '').trim();
+      if (!did) { res.status(400).json({ error: 'aufgabe_id' }); return; }
+      var dr = await fetch(SB_URL + '/rest/v1/aufgaben?id=eq.' + encodeURIComponent(did), {
+        method: 'DELETE',
+        headers: sbHeaders(SB_SERVICE, { 'Prefer': 'return=minimal' })
+      });
+      if (!dr.ok) { var dt = await dr.text(); console.error('[klasse] delete', dr.status, dt); res.status(500).json({ error: 'delete', detail: (dt || '').slice(0, 200) }); return; }
+      res.status(200).json({ ok: true });
+      return;
+    }
+
     res.status(400).json({ error: 'action' });
   } catch (e) {
     console.error('[klasse] server', e);

@@ -16303,7 +16303,7 @@ function showMeineAufgaben(){
         var inh=a.inhalt||{}; var faellig=a.faellig_am?('<span style="color:#fbbf24">fällig '+plEsc(a.faellig_am)+'</span>'):'';
         var action='';
         if(a.typ==='quiz-set' && inh.kat){ action='<button onclick="this.closest(\'[style*=fixed]\').remove();plStartAufgabenQuiz(\''+plEsc(inh.kat)+'\')" style="margin-top:8px;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;border-radius:9px;padding:8px 12px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">▶ Quiz starten</button>'; }
-        else if(a.typ==='fall'){ action='<button onclick="this.closest(\'[style*=fixed]\').remove();showScreen(\'faelle\')" style="margin-top:8px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:9px;padding:8px 12px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">🩺 Zu den Fällen</button>'; }
+        else if(a.typ==='fall'){ var _fx=inh.fallId?('plStartAufgabenFall(\''+plEsc(inh.fallId)+'\')'):'showScreen(\'faelle\')'; action='<button onclick="this.closest(\'[style*=fixed]\').remove();'+_fx+'" style="margin-top:8px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:9px;padding:8px 12px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">🩺 Fall öffnen</button>'; }
         return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px;margin-bottom:10px">'
           +'<div style="font-size:14px;font-weight:700;color:#e0f2fe">'+plEsc(a.titel)+'</div>'
           +(inh.text?('<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-top:4px">'+plEsc(inh.text)+'</div>'):'')
@@ -16313,6 +16313,7 @@ function showMeineAufgaben(){
     }).catch(function(){ ov.firstChild.innerHTML='<div style="text-align:center;color:#fb7185;padding:20px">Konnte Aufgaben nicht laden.</div>'; });
 }
 function plStartAufgabenQuiz(kat){ try{ if(typeof startQuiz==='function'){ startQuiz(kat); return; } }catch(e){} try{ showScreen('quizSelect'); }catch(e){} }
+function plStartAufgabenFall(id){ try{ if(typeof startFall==='function'){ startFall(id); return; } }catch(e){} try{ showScreen('faelle'); }catch(e){} }
 
 // ── Lehrkraft: Dashboard ──
 function showLehrer(){
@@ -16350,9 +16351,10 @@ function plLehrerRender(){
         +'<div style="font-family:monospace;font-size:20px;font-weight:800;color:#38bdf8;letter-spacing:2px">'+plEsc(k.join_code)+'</div></div>'
       +'</div>'
       +'<div style="display:flex;gap:14px;margin:10px 0 12px;font-size:12px;color:#9fc3da"><span>👥 '+(k.mitglieder||0)+'/'+k.sitzplaetze+' Azubis</span><span>· bis '+plEsc(k.lizenz_bis)+'</span></div>'
-      +'<div style="display:flex;gap:8px">'
-        +'<button onclick="plAssignOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;border-radius:10px;padding:10px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">➕ Aufgabe</button>'
-        +'<button onclick="plMembersOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:10px;padding:10px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer">👥 Mitglieder</button>'
+      +'<div style="display:flex;gap:7px">'
+        +'<button onclick="plAssignOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;border-radius:10px;padding:10px 6px;font-weight:700;font-family:inherit;font-size:11.5px;cursor:pointer">➕ Verteilen</button>'
+        +'<button onclick="plAufgabenOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);color:#fcd34d;border-radius:10px;padding:10px 6px;font-weight:700;font-family:inherit;font-size:11.5px;cursor:pointer">📋 Aufgaben</button>'
+        +'<button onclick="plMembersOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:10px;padding:10px 6px;font-weight:700;font-family:inherit;font-size:11.5px;cursor:pointer">👥 Azubis</button>'
       +'</div></div>';
   }).join('');
 }
@@ -16390,6 +16392,7 @@ function plMembersOpen(id){
 function plAssignOpen(id){
   var k=_plFindKlasse(id); if(!k) return;
   var katOpts=''; try{ katOpts=KATS.map(function(kt){ return '<option value="'+plEsc(kt.id)+'">'+plEsc(typeof katLabel==='function'?katLabel(kt.id):kt.id)+'</option>'; }).join(''); }catch(e){ katOpts='<option value="">–</option>'; }
+  var fallOpts=''; try{ fallOpts=FAELLE.map(function(f){ return '<option value="'+plEsc(f.id)+'">'+plEsc((f.icon?f.icon+' ':'')+f.titel+' · '+f.fachLabel)+'</option>'; }).join(''); }catch(e){ fallOpts='<option value="">–</option>'; }
   var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">➕ Aufgabe verteilen</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;cursor:pointer">✕</button></div>'
     +'<div style="font-size:11px;color:#4a7a9b;margin-bottom:14px">an Klasse „'+plEsc(k.name)+'"</div>'
     +'<div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Art der Aufgabe</div>'
@@ -16399,6 +16402,8 @@ function plAssignOpen(id){
       +'<option value="frei">✏️ Freie Aufgabe</option></select>'
     +'<div id="asg-quiz"><div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Kategorie</div>'
       +'<select id="asg-kat" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;margin-bottom:12px">'+katOpts+'</select></div>'
+    +'<div id="asg-fall-wrap" style="display:none"><div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Fallbeispiel</div>'
+      +'<select id="asg-fall" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;margin-bottom:12px">'+fallOpts+'</select></div>'
     +'<div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Titel</div>'
     +'<input id="asg-titel" type="text" placeholder="z. B. Anästhesie bis Freitag" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:10px;color:#ddf0fb;font-size:13px;font-family:inherit;box-sizing:border-box;margin-bottom:12px">'
     +'<div id="asg-text-wrap" style="display:none"><div style="font-size:11px;color:#9fc3da;margin-bottom:5px">Anweisung an die Klasse</div>'
@@ -16411,9 +16416,10 @@ function plAssignOpen(id){
 }
 function plAssignTypChange(){
   var t=document.getElementById('asg-typ').value;
-  var q=document.getElementById('asg-quiz'); var tx=document.getElementById('asg-text-wrap');
+  var q=document.getElementById('asg-quiz'); var fw=document.getElementById('asg-fall-wrap'); var tx=document.getElementById('asg-text-wrap');
   if(q) q.style.display=(t==='quiz-set')?'block':'none';
-  if(tx) tx.style.display=(t==='frei'||t==='fall')?'block':'none';
+  if(fw) fw.style.display=(t==='fall')?'block':'none';
+  if(tx) tx.style.display=(t==='frei')?'block':'none';
 }
 function plAssignSubmit(id){
   var typ=document.getElementById('asg-typ').value;
@@ -16423,6 +16429,7 @@ function plAssignSubmit(id){
   if(titel.length<2){ if(msg){ msg.style.color='#fbbf24'; msg.textContent='Bitte gib einen Titel ein.'; } return; }
   var inhalt={};
   if(typ==='quiz-set'){ inhalt.kat=document.getElementById('asg-kat').value; }
+  else if(typ==='fall'){ var fs=document.getElementById('asg-fall'); inhalt.fallId=fs?fs.value:''; if(fs&&fs.options[fs.selectedIndex]) inhalt.fallTitel=fs.options[fs.selectedIndex].text; }
   else { var tv=document.getElementById('asg-text'); inhalt.text=(tv&&tv.value?tv.value:'').trim(); }
   var b=document.getElementById('asg-btn'); if(b){ b.disabled=true; b.textContent='Wird verteilt…'; }
   fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'assign',klasse_id:id,typ:typ,titel:titel,inhalt:inhalt,faellig_am:faellig||null})})
@@ -16430,6 +16437,39 @@ function plAssignSubmit(id){
       if(d && d.ok){ if(msg){ msg.style.color='#34d399'; msg.textContent='Aufgabe verteilt! ✅'; } setTimeout(function(){ var ov=document.querySelector('.pl-ov'); if(ov) ov.remove(); },900); }
       else { if(b){ b.disabled=false; b.textContent='Aufgabe verteilen'; } if(msg){ msg.style.color='#fb7185'; msg.textContent='Konnte nicht verteilen.'; } }
     }).catch(function(){ if(b){ b.disabled=false; b.textContent='Aufgabe verteilen'; } if(msg){ msg.style.color='#fb7185'; msg.textContent='Fehler – bitte erneut versuchen.'; } });
+}
+function plAufgabenOpen(id){
+  var k=_plFindKlasse(id); if(!k) return;
+  var ov=plOverlay('<div style="text-align:center;color:#9fc3da;font-size:13px;padding:20px">Aufgaben werden geladen…</div>');
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'aufgaben',klasse_id:id})})
+    .then(function(r){return r.json();}).then(function(d){
+      var auf=(d&&d.aufgaben)||[]; var box=ov.firstChild;
+      var head='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe">📋 Aufgaben</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:#94a3b8;cursor:pointer">✕</button></div>'
+        +'<div style="font-size:11px;color:#4a7a9b;margin-bottom:12px">Klasse „'+plEsc(k.name)+'"</div>';
+      if(!auf.length){ box.innerHTML=head+'<div style="text-align:center;color:#4a7a9b;font-size:13px;padding:14px 0">Noch keine Aufgaben verteilt.</div>'; return; }
+      var ICON={'quiz-set':'📝','fall':'🩺','frei':'✏️'};
+      box.innerHTML=head+auf.map(function(a){
+        var inh=a.inhalt||{}; var sub='';
+        if(a.typ==='quiz-set'&&inh.kat) sub=(typeof katLabel==='function'?katLabel(inh.kat):inh.kat);
+        else if(a.typ==='fall') sub=inh.fallTitel||'Fallbeispiel';
+        else if(inh.text) sub=inh.text;
+        return '<div class="asg-row" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+          +'<div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:#e0f2fe">'+(ICON[a.typ]||'•')+' '+plEsc(a.titel)+'</div>'
+          +(sub?('<div style="font-size:11.5px;color:#9fc3da;margin-top:2px">'+plEsc(sub)+'</div>'):'')
+          +(a.faellig_am?('<div style="font-size:11px;color:#fbbf24;margin-top:2px">fällig '+plEsc(a.faellig_am)+'</div>'):'')+'</div>'
+          +'<button onclick="plAufgabeDelete(\''+plEsc(a.id)+'\',this)" title="Löschen" style="background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);color:#f87171;border-radius:8px;padding:6px 9px;font-size:13px;cursor:pointer;font-family:inherit">🗑</button>'
+        +'</div>';
+      }).join('');
+    }).catch(function(){ ov.firstChild.innerHTML='<div style="text-align:center;color:#fb7185;padding:20px">Konnte Aufgaben nicht laden.</div>'; });
+}
+function plAufgabeDelete(aufgabeId, btn){
+  if(!confirm('Diese Aufgabe für die Klasse löschen?')) return;
+  if(btn){ btn.disabled=true; btn.textContent='…'; }
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',aufgabe_id:aufgabeId})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d&&d.ok){ var row=btn&&btn.closest?btn.closest('.asg-row'):null; if(row) row.remove(); }
+      else if(btn){ btn.disabled=false; btn.textContent='🗑'; }
+    }).catch(function(){ if(btn){ btn.disabled=false; btn.textContent='🗑'; } });
 }
 // Startseiten-Kachel: Chooser für Azubi (Klasse beitreten) bzw. Lehrkraft (Dashboard)
 function openSchuleChooser(){
