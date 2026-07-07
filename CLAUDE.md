@@ -18,7 +18,7 @@ Auslieferung als:
 
 **Entwickelt von** P. Schenkelberger (Ausbilder & Fachpfleger für Anästhesie/Intensivmedizin) – dies ist ein wiederkehrendes Vertrauenssignal in der App und in den Lead-Mails.
 
-**Wichtigste Kennzahlen (im Code referenziert):** **1075 Prüfungsfragen** (Stand 2026-07-04; vorher 627), 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege. **Die Fragenzahl ist nicht mehr hart kodiert**, sondern wird via `.pl-fragen-count`-Spans + `plSyncFragenCount()` sowie `QUIZ_FRAGEN.length` an allen UI-Stellen gespiegelt; SEO/Meta-Texte tragen „über 1050".
+**Wichtigste Kennzahlen (im Code referenziert):** **1107 Prüfungsfragen** (Stand 2026-07-07; Verlauf 627 → 1075 → 1107), 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege. **Die Fragenzahl ist nicht mehr hart kodiert**, sondern wird via `.pl-fragen-count`-Spans + `plSyncFragenCount()` sowie `QUIZ_FRAGEN.length` an allen UI-Stellen gespiegelt; SEO/Meta-Texte tragen „über 1050".
 
 ### Business-Kontext
 - **Geschäftsmodell:** Freemium mit 21-Tage-Trial (Sprint 1.5: von 7 auf 21 Tage verlängert) und kostenpflichtigen Laufzeit-Tarifen (siehe Abschnitt „Stripe / Monetarisierung").
@@ -33,7 +33,7 @@ Auslieferung als:
 
 ### Single-File-Client (`index.html`)
 - Die gesamte UI ist ein Dokument. „Seiten" sind `<div id="screen-*" class="page">`-Elemente, die per **`showScreen(name)`** (~Zeile 2459) umgeschaltet werden: entfernt `.active` von allen `.page`/`.chat-page` und setzt es auf `#screen-<name>`. Ein manuelles `screenHistory`-Array steuert den Zurück-Button; `_scrollPos` merkt sich die Scroll-Position pro Screen.
-- **Vorhandene Screens:** `home`, `quiz`, `quizSelect`, `faelle`, `fall`, `chat`, `merksaetze`, `krankheitsbilder` (+ `kb-detail`), `medikamente`, `anatomie` (+ `an-detail`), `medizintechnik` (+ `mt-detail`), `notfallmanagement`, `lernplan`, `ce`, `abcde-sim`, `ausbildungswege`, `wissenpraxis`, `uebenpruefen`, `preise`, `registrierung`, `result`, `support`, `admin`.
+- **Vorhandene Screens:** `home`, `quiz`, `quizSelect`, `faelle`, `fall`, `chat`, `merksaetze`, `krankheitsbilder` (+ `kb-detail`), `medikamente`, `anatomie` (+ `an-detail`), `medizintechnik` (+ `mt-detail`), `notfallmanagement`, `lernplan`, `ce`, `abcde-sim`, `ausbildungswege`, `wissenpraxis`, `uebenpruefen`, `preise`, `registrierung`, `result`, `support`, `tester`, `lehrer`, `klasse-beitreten`, `admin`.
 - **Lerninhalt ist Inline-Daten**, nichts wird nachgeladen: `const FAELLE = …` (klinische Fälle, ~Z. 8161), `const QUIZ_FRAGEN = […]` (**alle 1075 Quizfragen** im JSON-Format `{"kat","frage","opt":[4],"k":0-3,"erkl","s":"leicht|mittel|schwer"}`, `const QUIZ_FRAGEN = [` beginnt ~Z. 1584, Array-Ende `];`; Anker mit `grep -n "const QUIZ_FRAGEN"` suchen statt Zeilennummer verlassen) + `const KATS = […]` (Kategorien/Filter, ~Z. 2197), `const karten = …` / `const kartenHTML = …` (Karteikarten, ~Z. 12808 / 14288 / 14696). Inhalte werden **direkt in diesen Literalen** editiert. *(Hinweis: `themen` ~Z. 11303 und `fragen` ~Z. 11334 sind NICHT die Quizfragen, sondern Lernplan-Variablen.)*
 - Top of file: `gtag` (Google Analytics `G-YJLC762MTC`), Consent-Gating (`pl_consent`), JSON-LD/SEO, Supabase-Init, Font-Loading.
 
@@ -50,7 +50,7 @@ Auslieferung als:
 - `index.html` – die komplette Client-App.
 - `sw.js` – Service Worker (Cache + Web Push).
 - `manifest.json` – PWA-Manifest.
-- `api/chat.js`, `api/lead.js`, `api/stripe-webhook.js` – Vercel-Serverless-Funktionen.
+- `api/chat.js`, `api/lead.js`, `api/stripe-webhook.js`, `api/tester.js`, `api/klasse.js` – Vercel-Serverless-Funktionen.
 - `scripts/send-reminders.mjs` – Push-Reminder-Sender (läuft via GitHub Actions, nicht Vercel).
 - `scripts/validate-quiz.mjs` – **Content-QA-Werkzeug** (kein ausgeliefertes Asset): validiert `QUIZ_FRAGEN` in `index.html` (Struktur, Dubletten, Kategorie-Verteilung). Pflicht nach jeder Fragen-Änderung.
 - `vercel.json` – Routing/Rewrites.
@@ -77,6 +77,8 @@ Jede Datei ist ein Default-Export `handler(req, res)`. Secrets kommen aus Vercel
 | `POST /api/chat` | KI-Chat-Tutor (Live-Endpoint, Client-Konstante `KI_ENDPOINT='/api/chat'`, ~Z. 2994) | **Groq** `llama-3.3-70b-versatile` (OpenAI-kompatibel) | `GROQ_API_KEY` |
 | `POST /api/lead` | Lead-Erfassung + automatischer PDF-Versand der „12 Eselsbrücken" | **Supabase** (`leads`) + **Resend** (Mail von `kontakt@plan-nrw.de`) | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE`, `RESEND_API_KEY` |
 | `POST /api/stripe-webhook` | Stripe → Supabase Auto-Freischaltung | **Stripe API** + **Supabase** (`subscriptions`) | `STRIPE_SECRET_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE` |
+| `GET/POST /api/tester` | Tester-Registrierung (Cap 15) für die Play-Store-Testphase | **Supabase** (`leads` mit `source='tester'`) | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE` |
+| `GET/POST /api/klasse` | **Schul-Lizenz / Lehrer-Dashboard**: Klassen anlegen (`create`), per Code beitreten (`join`), `list`/`members`/`assign`/`aufgaben`; GET `?code=` = Vorschau | **Supabase** (`klassen`/`klassen_mitglieder`/`aufgaben`, Service-Role) | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE` |
 
 **Wichtige Backend-Eigenheiten:**
 - `api/lead.js`: Speichert zuerst den Lead (idempotent, `409` wird toleriert), versendet dann das PDF; der Mailversand ist **nicht fatal** (Lead bleibt gespeichert, auch wenn Resend fehlschlägt). Das PDF wird per GitHub-`raw`-URL aus `assets/eselsbruecken.pdf` geladen.
@@ -94,6 +96,7 @@ Client-SDK (`@supabase/supabase-js@2`) wird per CDN geladen und inline in `index
 - `leads` – geschrieben von `api/lead.js` (`email`, `source`, `pdf_sent`).
 - `push_subs` – Web-Push-Subscriptions (`endpoint` + `sub`-JSON).
 - `access` – geräteübergreifender Zugang (Konto-Prompt „Fortschritt sichern", Commit `4ef8c17`).
+- `klassen` / `klassen_mitglieder` / `aufgaben` – **Schul-Lizenz / Lehrer-Dashboard** (geschrieben von `api/klasse.js` via Service-Role, RLS aktiv ohne Public-Policies). `klassen`: `lehrer_email`, `name`, `schule`, `join_code` (6-stellig, unique), `lizenz_bis`, `sitzplaetze`. `klassen_mitglieder`: `klasse_id`, `email`, `name` (unique je Klasse). `aufgaben`: `klasse_id`, `typ` (`quiz-set`/`fall`/`frei`), `titel`, `inhalt` (jsonb), `faellig_am`.
 - RPC `uid_by_email(p_email)` – löst Supabase-User per E-Mail auf (Webhook-Fallback).
 
 **RLS-Hinweis:** Schreibzugriffe der Serverless-Funktionen nutzen die **Service-Role** und umgehen damit RLS bewusst. Client-seitige Zugriffe laufen unter dem anon/publishable Key + Auth-Session.
@@ -126,9 +129,11 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 | `pl_token` | `'GRATIS'` (Free) oder bezahlter Token |
 | `pl_user` / `pl_user_name` | Anzeigename |
 | `pl_trial_until` / `pl_trial_used` / `pl_trial_expired` / `pl_trial_name` / `pl_trial_email` | 21-Tage-Trial (echter Sofort-Trial, Auto-Login, Gratis-Downgrade bei Ablauf; Sprint 1.5: 7 → 21 Tage) |
-| `pl_paid_until` / `pl_paid_name` / `pl_paid_plan` | Bezahlter Zugang (Einmalzahlung) |
+| `pl_paid_until` / `pl_paid_name` / `pl_paid_plan` | Bezahlter Zugang (Einmalzahlung). `pl_paid_plan` ist nur ein Label (`'tester'`, `'schule'`, …) – der Zugang hängt **allein an `pl_paid_until`** (Datumsprüfung), keine Whitelist. |
 | `pl_sub_active` / `pl_sub_email` / `pl_sub_login_prompted` | Aktives Abo aus Supabase |
 | `pl_stripe_name` / `pl_stripe_plan` | Zwischenspeicher vor Stripe-Redirect |
+| `pl_klasse_name` / `pl_klasse_code` | Schul-Lizenz: Klasse, der der Azubi beigetreten ist (Grant setzt `pl_paid_until` + `pl_paid_plan='schule'` + `pl_token='SCHULE'`, identisch zum Tester-Grant) |
+| `pl_lehrer_email` | Lehrer-Dashboard: Owner-Kennung der Lehrkraft (lokal, für `api/klasse` list/create) |
 
 **Regeln:** Abgelaufener Trial fällt auf `pl_token='GRATIS'` zurück. In den letzten 2 Tagen gibt es einen Countdown-Hinweis; nach Ablauf ein Upsell-Modal mit Tarif-Picker. **`pl_*`-Keys niemals umbenennen** – das würde Nutzer stillschweigend ausloggen / Fortschritt zurücksetzen.
 
@@ -241,6 +246,7 @@ Die CLAUDE.md ist die zentrale, **lebende** Dokumentation. Nach jeder wichtigen 
 
 Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). Bei neuen Entscheidungen hier ergänzen.
 
+- **Schul-Lizenz + Lehrer-Dashboard (Pilot) & Nischen-Content (2026-07-07, PRs #54–#56)** – Fundament für den B2B-Schulvertrieb (Phase 2 der Marktführer-Strategie, siehe Konkurrenzanalyse). Neue Serverless-Route `api/klasse.js` (nach `api/tester.js`-Muster, Service-Role) + 3 Supabase-Tabellen (`klassen`/`klassen_mitglieder`/`aufgaben`, RLS ohne Public-Policies). Front-End: Screens `#screen-lehrer` (Klasse anlegen, 6-stelliger Beitritts-Code, Aufgabe verteilen: Quiz-Set/Fall/Freitext, Mitgliederliste) und `#screen-klasse-beitreten` (Azubi tritt per Code bei → „Meine Aufgaben"). **Bewusste Designentscheidung:** Schüler-Freischaltung nutzt exakt den Tester-Grant-Pfad (`pl_paid_until`) → keine neue Paywall-Logik; `pl_paid_plan='schule'` ist nur ein Label. **Pilot-Modus** (Lizenz 1 Jahr, kostenlos); Empfehlung fürs Bezahlmodell später: „Pauschale pro Klasse" (Stripe folgt), Recht (DSGVO/AVV, Minderjährige) vor echtem Verkauf klären. Parallel **Nischen-Content-Offensive**: `intensiv` 40→56 und `anaesthesie` 40→56 (u. a. leichte Einstiegsfragen – beide hatten 0–1 leichte Fragen –, Atemweg/Pharma/Beatmung/Sepsis/Hämodynamik). Gesamt 1075→1107. *Hinweis: KI-erstellter Lehrbuch-Content, finale fachliche Endkontrolle durch den Ausbilder steht aus.*
 - **k-Verteilungs-Warnung im Validator + 4 Kategorien ausbalanciert (2026-07-04, PR #42)** – `validate-quiz.mjs` warnt jetzt **nicht-fatal** bei Antwort-Positions-Bias (ab 16 Fragen/Kategorie: eine Position > 45 % oder nie genutzt). Beim ersten Lauf deckte die Warnung auf, dass **mobilitaet (57 %), rehabilitation/palliation (53 %), praevention (50 %)** noch B-lastig waren – Ursache: ihre vorbestehenden Basis-Fragen (altes spaced-JSON-Format) lagen fast alle auf B und zogen die Verteilung trotz balancierter Neuzugänge schief. Alle vier auf ~25 % je Position umsortiert (gegen HEAD verifiziert: 160 Fragen inhaltlich unverändert, nur Position; spaced-Fragen dabei aufs kompakte Format normalisiert). **Damit prüft das QA-Gate Positions-Bias jetzt automatisch** – die frühere „manuelle Sorgfalt"-Lücke ist geschlossen.
 - **anatomie-QA: Antwortpositionen ausbalanciert (2026-07-04, PR #40)** – Qualitätsdurchsicht der größten Kategorie (315 Fragen) via Analyse-Skript ergab einen **Antwort-Positions-Bias**: die richtige Antwort stand bei **93 % auf Position B** (k=1) → Kategorie war ratbar. Fix: deterministische Umsortierung auf **25 % je Position** (79/79/79/78); gegen HEAD verifiziert, dass bei allen 315 Fragen richtige Antwort/Optionsmenge/Erklärung unverändert blieben (nur Position wechselt). Zusätzlich eine echte Redundanz entfernt (zwei „Insulin senkt Blutzucker"-Fragen → eine durch neue Iris/Pupillen-Frage ersetzt). **Lehre für neue Fragen-Batches: richtige Antwort von Anfang an über k=0–3 streuen** – seit PR #42 warnt der Validator automatisch, falls das vergessen wird. Erklärungen waren durchweg ausreichend (0 zu kurze).
 - **UI-Politur „Lebendigkeit & Tag-Modus" (2026-07-04, PRs #37/#38)** – Drei additive, `prefers-reduced-motion`-sichere Verbesserungen: (1) **Tag-Modus-Kontrast** repariert – Ursache war, dass `body.light-mode` die CSS-Variablen `--text2`/`--text3` NICHT überschrieb und daher Dark-Werte (blasses Grau) auf hellem Grund standen; jetzt setzt `body.light-mode` kräftige Variablen (`--text2:#334155`, `--text3:#475569`, `--accent:#0284c7`) → alle Sekundärtexte lesbar. **Merke: neue Light-Mode-Farben immer über die Variablen lösen, nicht Selektor für Selektor.** (2) **Animierte Menü-Icons** (`.bottom-card-icon` wippen versetzt via `plIcoFloat`, Buch-Emojis klappen via `plBookOpen` auf – automatisch getaggt durch `plTagBookIcons()`, Bottom-Nav poppt beim Aktivieren). (3) **Quiz-Abschluss-Animation** statt statischem Bild: `plQuizCelebrate()` (Emoji-Pop, Prozent-Count-up) + `plConfetti()` (DOM-Partikel, ab 50 %/75 %), aufgerufen in `showResult()`. Alles isoliert, kein neuer `pl_*`-Key.
