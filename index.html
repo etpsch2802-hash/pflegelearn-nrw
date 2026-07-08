@@ -134,7 +134,7 @@
     --c4:#f97316; --c5:#fb7185; --c6:#22d3ee; --c7:#facc15;
   }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overscroll-behavior:none; padding-bottom:calc(66px + env(safe-area-inset-bottom)); }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:500; min-height:100vh; overscroll-behavior:none; padding-bottom:calc(66px + env(safe-area-inset-bottom)); }
   h1,h2,h3 { font-family:'DM Serif Display',serif; }
   button { font-family:'DM Sans',sans-serif; cursor:pointer; transition:opacity .15s,transform .15s; }
   button:active { opacity:.8; transform:scale(.97); }
@@ -386,6 +386,12 @@
   body.light-mode .page [style*="color:#ddf0fb"] { color:#0f172a !important; }
   body.light-mode .page [style*="color:#7dd3fc"] { color:#0369a1 !important; }
   body.light-mode .page [style*="color:#cbd5e1"] { color:#334155 !important; }
+  /* Light-Mode: weitere blasse Content-Textfarben (z. B. Fall-Vignette/Frage) kräftig lesbar */
+  body.light-mode .page [style*="color:#cfe6f5"] { color:#0f172a !important; }
+  body.light-mode .page [style*="color:#cde8f7"] { color:#0f172a !important; }
+  body.light-mode .page [style*="color:#9fc3da"] { color:#334155 !important; }
+  body.light-mode .page [style*="color:#9ec7d8"] { color:#334155 !important; }
+  body.light-mode .page [style*="color:#9fb3c8"] { color:#334155 !important; }
   body.light-mode #merk-search { background:#fff !important; color:#0f172a !important; border-color:rgba(30,64,128,.2) !important; }
   body.light-mode .ausb-card { background:white; border-color:rgba(30,64,128,.15); color:#0f172a; box-shadow:0 2px 8px rgba(0,0,0,.06); }
   body.light-mode .ausb-name { color:#0f172a; }
