@@ -429,8 +429,10 @@
   body.light-mode .footer-note { background:rgba(3,105,161,.04); border-color:rgba(3,105,161,.1); color:#64748b; }
   body.light-mode #search-overlay { background:rgba(238,242,247,.97); }
   body.light-mode #search-input { background:white; color:#0f172a; border-color:rgba(30,64,128,.25); }
-  body.light-mode [style*="#ddf0fb"], body.light-mode [style*="#e0f2fe"], body.light-mode [style*="#bae6fd"] { color:#0f172a !important; }
-  body.light-mode [style*="#94a3b8"], body.light-mode [style*="#7fa6c4"] { color:#64748b !important; }
+  body.light-mode .page [style*="#ddf0fb"], body.light-mode .page [style*="#e0f2fe"], body.light-mode .page [style*="#bae6fd"] { color:#0f172a !important; }
+  body.light-mode .page [style*="#94a3b8"], body.light-mode .page [style*="#7fa6c4"] { color:#64748b !important; }
+  /* Dunkle Overlays (.pl-ov) sind immer dunkel -> Standard-Textfarbe hell, damit uncolorierter Text im Tag-Modus nicht dunkel-auf-dunkel erbt */
+  .pl-ov { color:#e6eef7; }
   body.light-mode #search-back-btn { color:#0369a1 !important; background:rgba(3,105,161,.12) !important; border-color:rgba(3,105,161,.35) !important; }
   body.light-mode .chat-context-bar { background:rgba(238,242,247,.96); border-bottom-color:rgba(30,64,128,.12); }
 
