@@ -435,6 +435,11 @@
   body.light-mode #search-input { background:white; color:#0f172a; border-color:rgba(30,64,128,.25); }
   body.light-mode .page [style*="#ddf0fb"], body.light-mode .page [style*="#e0f2fe"], body.light-mode .page [style*="#bae6fd"] { color:#0f172a !important; }
   body.light-mode .page [style*="#94a3b8"], body.light-mode .page [style*="#7fa6c4"] { color:#64748b !important; }
+  /* Formularfelder mit fest dunklem Hintergrund (#0b1c2e: Admin-Selects, Lernplan-Datum/Select) im Tag-Modus aufhellen -> sonst dunkler Text (schon gedunkelt) auf dunklem Grund */
+  body.light-mode .page [style*="background:#0b1c2e"] { background:#ffffff !important; border-color:rgba(30,64,128,.25) !important; }
+  /* Karteikarte (#sr-card) ist bewusst dunkel -> Text hell halten, damit er nicht vom .page-Tag-Modus-Override gedunkelt wird */
+  body.light-mode #sr-card [style*="color:#e0f2fe"] { color:#eaf3fb !important; }
+  body.light-mode #sr-card [style*="color:#94a3b8"] { color:#cbd5e1 !important; }
   /* Dunkle Overlays (.pl-ov) sind immer dunkel -> Standard-Textfarbe hell, damit uncolorierter Text im Tag-Modus nicht dunkel-auf-dunkel erbt */
   .pl-ov { color:#e6eef7; }
   body.light-mode #search-back-btn { color:#0369a1 !important; background:rgba(3,105,161,.12) !important; border-color:rgba(3,105,161,.35) !important; }
