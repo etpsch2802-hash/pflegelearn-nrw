@@ -396,6 +396,25 @@
   body.light-mode .page [style*="color:#bbf7d0"], body.light-mode .page [style*="color:#86efac"], body.light-mode .page [style*="color:#6ee7b7"], body.light-mode .page [style*="color:#bbe7c8"] { color:#15803d !important; }
   body.light-mode .page [style*="color:#fecaca"], body.light-mode .page [style*="color:#fca5a5"] { color:#b91c1c !important; }
   body.light-mode .page [style*="color:#fde68a"], body.light-mode .page [style*="color:#fde047"], body.light-mode .page [style*="color:#fdba74"] { color:#b45309 !important; }
+  /* Light-Mode: nahezu weisse/pastellfarbene Texte (Preis-Karten, Home-Begruessung, Gruender-Zitat) sind sonst unsichtbar auf hellem Grund -> kraeftig dunkel */
+  body.light-mode .page [style*="color:#eaf4fb"], body.light-mode .page [style*="color:#dfe3ff"], body.light-mode .page [style*="color:#eef0ff"], body.light-mode .page [style*="color:#d5e6f0"], body.light-mode .page [style*="color:#7ff0ff"], body.light-mode .page [style*="color:#8fd6bf"], body.light-mode .page [style*="color:#c4b5fd"], body.light-mode .page [style*="color:#9fc4dc"] { color:#0f172a !important; }
+  /* Light-Mode: helle Kategorie-/Akzentfarben (Chips, Labels, Ausbildungsweg-Kacheln) als Text auf hellem Grund -> je Farbton kraeftig abgedunkelt, damit lesbar (Identitaet bleibt via Icon/Rand/Hintergrundtoenung) */
+  body.light-mode .page [style*="color:#facc15"] { color:#a16207 !important; }
+  body.light-mode .page [style*="color:#2dd4bf"] { color:#0f766e !important; }
+  body.light-mode .page [style*="color:#22d3ee"] { color:#0e7490 !important; }
+  body.light-mode .page [style*="color:#4ade80"] { color:#15803d !important; }
+  body.light-mode .page [style*="color:#84cc16"] { color:#4d7c0f !important; }
+  body.light-mode .page [style*="color:#38bdf8"] { color:#0369a1 !important; }
+  body.light-mode .page [style*="color:#93c5fd"] { color:#1d4ed8 !important; }
+  body.light-mode .page [style*="color:#818cf8"] { color:#4338ca !important; }
+  body.light-mode .page [style*="color:#a78bfa"] { color:#6d28d9 !important; }
+  body.light-mode .page [style*="color:#fda4af"], body.light-mode .page [style*="color:#fb7185"], body.light-mode .page [style*="color:#f43f5e"] { color:#be123c !important; }
+  body.light-mode .page [style*="color:#f97316"] { color:#c2410c !important; }
+  body.light-mode .page [style*="color:#f59e0b"], body.light-mode .page [style*="color:#fbbf24"] { color:#b45309 !important; }
+  body.light-mode .page [style*="color:#34d399"] { color:#047857 !important; }
+  body.light-mode .page [style*="color:#a5b4fc"] { color:#4338ca !important; }
+  body.light-mode .page [style*="color:#60a5fa"] { color:#1d4ed8 !important; }
+  body.light-mode .page [style*="color:#fb923c"] { color:#c2410c !important; }
   body.light-mode #merk-search { background:#fff !important; color:#0f172a !important; border-color:rgba(30,64,128,.2) !important; }
   body.light-mode .ausb-card { background:white; border-color:rgba(30,64,128,.15); color:#0f172a; box-shadow:0 2px 8px rgba(0,0,0,.06); }
   body.light-mode .ausb-name { color:#0f172a; }
@@ -440,6 +459,18 @@
   /* Karteikarte (#sr-card) ist bewusst dunkel -> Text hell halten, damit er nicht vom .page-Tag-Modus-Override gedunkelt wird */
   body.light-mode #sr-card [style*="color:#e0f2fe"] { color:#eaf3fb !important; }
   body.light-mode #sr-card [style*="color:#94a3b8"] { color:#cbd5e1 !important; }
+  body.light-mode #sr-card [style*="color:#34d399"] { color:#34d399 !important; }
+  /* KI-Neon-Button (Home) ist bewusst dunkel -> Text hell halten (hoehere Spezifitaet schlaegt die generischen .page-Aufhell-Regeln) */
+  body.light-mode .page .ki-neon-btn [data-i18n="home_ki_t"], body.light-mode .page .ki-neon-btn [style*="color:#7ff0ff"] { color:#7ff0ff !important; }
+  body.light-mode .page .ki-neon-btn [data-i18n="home_ki_s"] { color:#9ec7d8 !important; }
+  /* Testimonial-Karte (.pl-testi, heller Grund im Tag-Modus) -> klassenbasierte helle Textfarben kraeftig abdunkeln */
+  body.light-mode .pl-testi-head { color:#047857 !important; }
+  body.light-mode .pl-testi-q { color:#334155 !important; }
+  body.light-mode .pl-testi-nm { color:#0f172a !important; }
+  body.light-mode .pl-testi-badge .l { color:#0f766e !important; }
+  body.light-mode .pl-testi-badge .v { color:#047857 !important; }
+  /* Result-„Nochmal"-Button: JS setzt eine Kategorie-Tönung als Hintergrund, die im Tag-Modus hell werden kann -> weisser Text unsichtbar. Fester lesbarer Blauverlauf. */
+  body.light-mode #retry-btn { background:linear-gradient(135deg,#0369a1,#0284c7) !important; color:#fff !important; }
   /* Dunkle Overlays (.pl-ov) sind immer dunkel -> Standard-Textfarbe hell, damit uncolorierter Text im Tag-Modus nicht dunkel-auf-dunkel erbt */
   .pl-ov { color:#e6eef7; }
   body.light-mode #search-back-btn { color:#0369a1 !important; background:rgba(3,105,161,.12) !important; border-color:rgba(3,105,161,.35) !important; }
