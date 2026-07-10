@@ -11,7 +11,7 @@ let FRAGEN;
 try { FRAGEN = Function('return ' + m[1])(); }
 catch (e) { console.error('❌ Array nicht auswertbar (Syntaxfehler in QUIZ_FRAGEN):', e.message); process.exit(1); }
 
-const VALID_KATS = new Set(['anatomie','pflegeplanung','altenpflege','anerkennung','gpa','anaesthesie',
+const VALID_KATS = new Set(['ana_herz','ana_atmung','ana_niere','ana_hormone','ana_verdauung','ana_nerven','ana_bewegung','ana_sinne','ana_blut','ana_grundlagen','pflegeplanung','altenpflege','anerkennung','gpa','anaesthesie',
   'psychiatrie','paediatrie','pflegehelfer','ata','intensiv','ota','rehabilitation','palliation',
   'praevention','innere','chirurgie','psychologie','notfall','mobilitaet']);
 const VALID_S = new Set(['leicht','mittel','schwer']);
