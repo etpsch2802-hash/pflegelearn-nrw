@@ -721,7 +721,7 @@
   <div class="nav-sec-body" id="navsec-medizin" style="display:none">
     <button onclick="navGo('notfallmanagement')" class="nav-drop-btn"><span data-i18n="nav_notfall">🚨 Notfallmanagement</span></button>
     <button onclick="navGo('scores')" class="nav-drop-btn"><span data-i18n="nav_scores">📊 Assessment-Scores</span></button>
-    <button onclick="navGo('medikamente')" class="nav-drop-btn"><span data-i18n="nav_medi">💊 Medikamente</span></button>
+    <button onclick="navGo('medikamente')" class="nav-drop-btn"><span data-i18n="nav_medi">💊 Medikamente · Fachbereich</span></button>
     <button onclick="navGo('medizintechnik')" class="nav-drop-btn"><span data-i18n="nav_technik">⚙️ Medizintechnik</span></button>
   </div>
 
@@ -895,7 +895,7 @@
 <div class="page" id="screen-medikamente">
   <div class="hero" style="margin-bottom:14px">
     <div class="hero-icon">💊</div>
-    <h1>Medikamente<span> & Wirkstoffe</span></h1>
+    <h1>Medikamente<span> nach Fachbereich</span></h1>
     <p>Wirkung · Nebenwirkungen · Kontraindikationen · KI-Assistent</p>
   </div>
   <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
@@ -1031,6 +1031,12 @@
         <div class="bottom-card-title">Prüfungs-Quiz</div>
         <div class="bottom-card-sub">Multiple Choice · 20 Fragen</div>
       </button>
+      <button class="bottom-card" onclick="openExamPicker('muendlich')" style="background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(124,58,237,.05));border-color:rgba(167,139,250,.4);color:#a78bfa;grid-column:span 2;position:relative">
+        <div style="position:absolute;top:8px;right:10px;background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:800;color:#c4b5fd;letter-spacing:.5px">MIT SPRACHE</div>
+        <div class="bottom-card-icon">🗣️</div>
+        <div class="bottom-card-title">Mündliche Prüfung</div>
+        <div class="bottom-card-sub">KI-Prüfer stellt Fragen · hakt nach · benotet</div>
+      </button>
       <button class="bottom-card" onclick="startExam()" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316;grid-column:span 2">
         <div class="bottom-card-icon">🎓</div>
         <div class="bottom-card-title">Prüfungssimulator</div>
@@ -1121,13 +1127,13 @@
       </button>
       <button class="bottom-card" onclick="showScreen('medikamente')" style="background:rgba(248,113,133,.07);border-color:rgba(248,113,133,.25);color:#fb7185">
         <div class="bottom-card-icon">💊</div>
-        <div class="bottom-card-title">Medikamente</div>
-        <div class="bottom-card-sub">Anästhesie · Intensiv</div>
+        <div class="bottom-card-title">Medikamente · Fachbereich</div>
+        <div class="bottom-card-sub">Anästhesie · Intensiv · Notfall</div>
       </button>
       <button class="bottom-card" onclick="showScreen('medNeu')" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.25);color:#f97316">
         <div class="bottom-card-icon">💉</div>
-        <div class="bottom-card-title">Medikamente Pflege</div>
-        <div class="bottom-card-sub">Pflegerelevant</div>
+        <div class="bottom-card-title">Medikamente · Organsystem</div>
+        <div class="bottom-card-sub">Herz · Lunge · Station – mit Pflegehinweis</div>
       </button>
       <button class="bottom-card" onclick="showScreen('medizintechnik')" style="background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:#facc15;grid-column:span 2">
         <div class="bottom-card-icon">⚙️</div>
@@ -18063,7 +18069,7 @@ window.I18N = {
     nav_wund: '🩹 Wundversorgung',
     nav_notfall: '🚨 Notfallmanagement',
     nav_scores: '📊 Assessment-Scores',
-    nav_medi: '💊 Medikamente',
+    nav_medi: '💊 Medikamente · Fachbereich',
     nav_technik: '⚙️ Medizintechnik',
     nav_home: '🏠 Startseite',
     nav_taschen: '📇 Taschenkarten',
