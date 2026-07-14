@@ -4351,13 +4351,16 @@ Viel Erfolg! 🏥`;
     .catch(() => alert(text));
 }
 
-function addToLocalDB() {
+async function addToLocalDB() {
   if (!lastGeneratedToken) return;
   const t = lastGeneratedToken;
+  // Lokal (Sofort-Anzeige im Admin-Panel)
   localTokenDB[t.token] = { name:t.name, bereich:t.bereich, ablauf:t.ablauf, preis:t.preis, erstellt:new Date().toISOString().split("T")[0], aktiv:true };
   localStorage.setItem("pl_local_tokens", JSON.stringify(localTokenDB));
-  showCopyFeedback("In lokaler Liste gespeichert! ✅");
   renderTokenListe();
+  // Supabase (macht den Code SOFORT login-faehig – kein Code-Push mehr noetig)
+  const res = await plSaveToken(t);
+  showCopyFeedback(res.ok ? "Gespeichert – Code ist sofort aktiv! ✅" : ("Nur lokal gespeichert ⚠️ " + res.err));
 }
 
 function showCopyFeedback(msg) {
@@ -4425,12 +4428,23 @@ function filterTokenListe() {
   });
 }
 
-function toggleToken(token) {
+async function toggleToken(token) {
+  if (token === 'TEST-PFLEGE-2026-T001') { showCopyFeedback("Dieser Code ist geschuetzt 🔒"); return; }
+  let neu = null;
   if (localTokenDB[token]) {
     localTokenDB[token].aktiv = !localTokenDB[token].aktiv;
+    neu = localTokenDB[token].aktiv;
     localStorage.setItem("pl_local_tokens", JSON.stringify(localTokenDB));
     renderTokenListe();
   }
+  if (neu === null) {
+    const cur = await plLookupToken(token);
+    if (!cur) return;
+    neu = !cur.aktiv;
+  }
+  const res = await plSetTokenAktiv(token, neu);
+  if (!res.ok) showCopyFeedback("Supabase-Update fehlgeschlagen ⚠️");
+  renderTokenListe();
 }
 
 function copyTokenFromList(token) {
@@ -8206,7 +8220,42 @@ function toggleLoginBox(){
     if(t) t.style.display='block';
   }
 }
-function checkPW() {
+/* ══ TOKEN-SYSTEM: Supabase-first, TOKEN_DB als Fallback ═══════════════════ */
+async function plLookupToken(code) {
+  // 1) Supabase (Single Source of Truth)
+  try {
+    if (window.SB) {
+      const { data, error } = await window.SB
+        .from('tokens').select('token,name,bereich,ablauf,aktiv')
+        .eq('token', code).maybeSingle();
+      if (!error && data) return { name:data.name, bereich:data.bereich, ablauf:data.ablauf, aktiv:data.aktiv !== false, _src:'sb' };
+    }
+  } catch(e) { console.warn('[Token] Supabase-Lookup fehlgeschlagen, nutze Fallback', e); }
+  // 2) Fallback: hardcodierte TOKEN_DB (Offline / SB down)
+  const t = (typeof TOKEN_DB !== 'undefined') ? TOKEN_DB[code] : null;
+  return t ? Object.assign({}, t, { _src:'local' }) : null;
+}
+
+async function plSaveToken(t) {
+  if (!window.SB) return { ok:false, err:'Supabase nicht verfuegbar' };
+  try {
+    const { error } = await window.SB.from('tokens').upsert({
+      token: t.token, name: t.name, bereich: t.bereich,
+      ablauf: t.ablauf, preis: t.preis || null, aktiv: true
+    }, { onConflict: 'token' });
+    return error ? { ok:false, err:error.message } : { ok:true };
+  } catch(e) { return { ok:false, err:String(e) }; }
+}
+
+async function plSetTokenAktiv(code, aktiv) {
+  if (!window.SB) return { ok:false, err:'Supabase nicht verfuegbar' };
+  try {
+    const { error } = await window.SB.from('tokens').update({ aktiv: aktiv }).eq('token', code);
+    return error ? { ok:false, err:error.message } : { ok:true };
+  } catch(e) { return { ok:false, err:String(e) }; }
+}
+
+async function checkPW() {
   const tokenInput = document.getElementById("pw-input").value.trim();
   const nameInput = document.getElementById("pw-name").value.trim();
   const err = document.getElementById("pw-error");
@@ -8216,7 +8265,7 @@ function checkPW() {
     return;
   }
 
-  const token = TOKEN_DB[tokenInput];
+  const token = await plLookupToken(tokenInput);
 
   if (!token) {
     showError("❌ Unbekannter Zugangscode. Bitte prüfen.");
@@ -8376,7 +8425,7 @@ function showUpgradeModal() {
 }
 
 // Auto-Login wenn Session noch aktiv
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   // Persistente Stripe-Einmalkauf-Freischaltung (laufzeitbasiert)
   try {
     const paidUntil = localStorage.getItem('pl_paid_until');
@@ -8443,7 +8492,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const savedToken = sessionStorage.getItem("pl_token") || localStorage.getItem("pl_token");
   if (savedToken) {
-    const token = TOKEN_DB[savedToken];
+    const token = await plLookupToken(savedToken);
     if (token && token.aktiv) {
       const today = new Date().toISOString().split("T")[0];
       if (today <= token.ablauf) {
