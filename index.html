@@ -1570,14 +1570,14 @@
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button onclick="copyToken()" style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);border-radius:8px;padding:8px 14px;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">📋 Token kopieren</button>
             <button onclick="copyWhatsApp()" style="background:rgba(37,211,102,.2);border:1px solid rgba(37,211,102,.4);border-radius:8px;padding:8px 14px;color:#25d366;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">📱 WhatsApp-Text kopieren</button>
-            <button onclick="addToLocalDB()" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:8px;padding:8px 14px;color:var(--accent);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">💾 In Liste speichern</button>
+            <button onclick="addToLocalDB()" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:8px;padding:8px 14px;color:var(--accent);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">💾 Speichern &amp; aktivieren</button>
           </div>
         </div>
       </div>
 
       <!-- DB Eintrag Code -->
       <div id="gen-code-block" style="display:none;background:rgba(0,0,0,.4);border:1px solid rgba(100,180,220,.15);border-radius:11px;padding:14px">
-        <div style="font-size:10px;color:#4a7a9b;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">📝 Code für TOKEN_DB (in HTML einfügen)</div>
+        <div style="font-size:10px;color:#4a7a9b;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">🛟 Fallback-Code (optional)</div><div style="font-size:10px;color:#64748b;line-height:1.6;margin-bottom:8px">Nicht nötig. Tokens liegen seit dem Supabase-Umbau in der Tabelle <code style="color:#7dd3f7">tokens</code> und sind nach „Speichern &amp; aktivieren“ sofort gültig. Nur einfügen, wenn der Code auch bei ausgefallenem Supabase funktionieren muss.</div>
         <pre id="gen-code" style="font-size:11px;color:#34d399;white-space:pre-wrap;word-break:break-all;margin:0;line-height:1.7"></pre>
         <button onclick="copyCode()" style="margin-top:10px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:7px 13px;color:#34d399;font-size:11px;font-family:inherit;cursor:pointer">📋 Code kopieren</button>
       </div>
