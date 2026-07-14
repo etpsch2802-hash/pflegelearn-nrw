@@ -12141,7 +12141,41 @@ function plBuildSearchHits(q) {
   });
   if (hit(BOBATH.definition) || hit(BOBATH.schlaganfallMuster)) hits.push({type:'Bereich', icon:'🧠', color:'#a78bfa', title:'Bobath-Konzept', sub:'Lagerung · Transfers · 24h-Konzept', action:"showScreen('bobath')"});
 
-  return hits;
+  return plRankHits(hits, q);
+}
+
+/* Relevanz-Ranking + Deckelung pro Typ.
+   Ziel: Module/Krankheitsbilder/Medikamente vor der Quiz-Flut. */
+var PL_TYPE_PRIO = {
+  'Bereich':0, 'Krankheitsbild':1, 'Medikament':2, 'Anatomie':3, 'Prophylaxe':4,
+  'Score':5, 'Wundversorgung':6, 'ATL':7, 'Kinästhetik':8, 'Bobath':9,
+  'Taschenkarte':10, 'Merksatz':11, 'Fallbeispiel':12, 'Medizintechnik':13, 'Quiz':14
+};
+var PL_TYPE_CAP = { 'Quiz':5, 'Merksatz':4, 'Taschenkarte':4, 'Fallbeispiel':4 };
+
+function plRankHits(hits, q) {
+  function score(h) {
+    var t = String(h.title || '').toLowerCase();
+    var s = 0;
+    if (t === q) s -= 40;                      // exakter Titel-Treffer
+    else if (t.indexOf(q) === 0) s -= 25;      // Titel beginnt mit Suchbegriff
+    else if (t.indexOf(q) !== -1) s -= 12;     // Suchbegriff im Titel
+    s += (PL_TYPE_PRIO[h.type] !== undefined ? PL_TYPE_PRIO[h.type] : 20);
+    s += Math.min(t.length / 60, 3);           // kurze, praezise Titel bevorzugen
+    return s;
+  }
+  hits.forEach(function(h){ h._s = score(h); });
+  hits.sort(function(a, b){ return a._s - b._s; });
+
+  var count = {}, out = [];
+  hits.forEach(function(h){
+    var cap = PL_TYPE_CAP[h.type];
+    count[h.type] = (count[h.type] || 0) + 1;
+    if (cap && count[h.type] > cap) return;
+    delete h._s;
+    out.push(h);
+  });
+  return out;
 }
 
 function openMerksatzSearch(term) {
