@@ -906,7 +906,7 @@
     <div id="lib-title" style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;font-weight:700">Bibliothek</div>
     <div id="lib-count" style="font-size:10px;color:#2d5a72;font-weight:700"></div>
   </div>
-  <input id="lib-search" class="lib-search" type="search" placeholder="Modul suchen – z. B. Anatomie, Notfall, Prophylaxe" oninput="renderHomeLibrary()" autocomplete="off">
+  <input id="lib-search" class="lib-search" type="search" placeholder="Modul suchen – z. B. Anatomie, Notfall, Prophylaxe" oninput="plLibOnInput()" autocomplete="off">
   <div id="home-library"></div>
 
   <!-- ── SEKUNDÄR (dezent) ── -->
@@ -12012,6 +12012,145 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// ─── GLOBAL CONTENT-SEARCH (geteilt: Overlay-Suche + Home-Bibliothek) ──────────
+function plBuildSearchHits(q) {
+  function hit(t){ return String(t==null?'':t).toLowerCase().includes(q); }
+  const hits = [];
+
+  // Bereich: Notfallmanagement (Manchester Triage / ABCDE / Reanimation)
+  if (['notfall','notfallmanagement','manchester','triage','mts','abcde','reanimation','bls','wiederbelebung','dringlichkeit','ersteinschätzung','ersteinschaetzung'].some(function(t){ return t.includes(q) || q.includes(t); })) {
+    hits.push({type:'Bereich', icon:'🚨', color:'#ef4444', title:'Notfallmanagement', sub:'Manchester Triage · ABCDE · Reanimation', action:"navGo('notfallmanagement')"});
+  }
+
+  // Quiz
+  QUIZ_FRAGEN.forEach(function(f){
+    if (hit(f.frage) || hit(f.erkl) || (f.opt && f.opt.some(hit))) {
+      hits.push({type:'Quiz', icon:'📝', color:'#60a5fa', title:f.frage, sub:f.opt[f.k], action:"startQuiz('"+f.kat+"')"});
+    }
+  });
+
+  // Krankheitsbilder (verschachtelt nach Fach) + Merksätze
+  Object.keys(KRANKHEITSBILDER).forEach(function(fid){
+    const fach = KRANKHEITSBILDER[fid];
+    (fach.bilder||[]).forEach(function(b, idx){
+      const blob = [b.name, b.icd, b.definition].concat(b.symptome||[]).join(' ');
+      const kbHit = hit(blob);
+      if (kbHit) {
+        hits.push({type:'Krankheitsbild', icon:fach.icon||'🏥', color:fach.farbe||'#f43f5e', title:b.name, sub:fach.label+(b.icd && b.icd!=='–'?' · ICD '+b.icd:''), action:"openKrankheitsbild('"+fid+"',"+idx+")"});
+      }
+      if (b.merksatz && hit(b.merksatz) && !kbHit) {
+        hits.push({type:'Merksatz', icon:'💡', color:'#fbbf24', title:b.name, sub:String(b.merksatz).substring(0,70), action:"openMerksatzSearch('"+String(b.name).replace(/'/g,"\\'")+"')"});
+      }
+    });
+  });
+
+  // Taschenkarten
+  TASCHENKARTEN.forEach(function(k){
+    let blob = k.titel;
+    (k.vorderseite||[]).forEach(function(s){ blob += ' '+s.label+' '+(s.punkte||[]).join(' '); });
+    if (hit(blob)) hits.push({type:'Taschenkarte', icon:k.icon||'📇', color:k.farbe||'#38bdf8', title:k.titel, sub:'Lernkarte', action:"showTaschenkarte('"+k.id+"')"});
+  });
+
+  // Medizintechnik / Geräte
+  GERAETE.forEach(function(g){
+    if (hit(g.name) || hit(g.sub) || hit(g.beschreibung)) hits.push({type:'Medizintechnik', icon:g.icon||'⚙️', color:g.color||'#22d3ee', title:g.name, sub:g.sub||'', action:"openGeraet('"+g.id+"')"});
+  });
+
+  // Prophylaxen
+  PROPHYLAXEN.forEach(function(p){
+    const blob = [p.name, p.definition].concat(p.risikofaktoren||[]).join(' ');
+    if (hit(blob)) hits.push({type:'Prophylaxe', icon:p.icon||'🛡️', color:'#34d399', title:p.name, sub:'Prophylaxe', action:"navGo('prophylaxen')"});
+  });
+
+  // Assessment-Scores
+  SCORES.forEach(function(sc){
+    if (hit(sc.name) || hit(sc.kategorie) || hit(sc.zweck)) hits.push({type:'Score', icon:sc.icon||'📊', color:sc.farbe||'#60a5fa', title:sc.name, sub:sc.zweck||sc.kategorie||'', action:"navGo('scores')"});
+  });
+
+  // Fallbeispiele
+  FAELLE.forEach(function(fa){
+    if (hit(fa.titel) || hit(fa.fachLabel) || hit(fa.vignette)) hits.push({type:'Fallbeispiel', icon:fa.icon||'🩺', color:fa.farbe||'#38bdf8', title:fa.titel, sub:fa.fachLabel, action:"startFall('"+fa.id+"')"});
+  });
+
+  // Medikamente · Fachbereich
+  (function(){
+    const lbl = {anaesthesie:'Anästhesie', intensiv:'Intensivmedizin', notfall:'Notfallmedizin', pflege:'Allg. Pflege'};
+    const col = {anaesthesie:'#f97316', intensiv:'#22d3ee', notfall:'#f87171', pflege:'#34d399'};
+    Object.keys(MEDIKAMENTE).forEach(function(kat){
+      (MEDIKAMENTE[kat]||[]).forEach(function(m){
+        const blob = [m.name, m.gruppe, m.dosis, m.wirkung, m.nw, m.ki, m.pflege].join(' ');
+        if (hit(blob)) hits.push({type:'Medikament', icon:'💊', color:col[kat]||'#f97316', title:m.name, sub:(m.gruppe||'')+' · '+(lbl[kat]||kat), action:"showScreen('medikamente');showMedKat('"+kat+"')"});
+      });
+    });
+  })();
+
+  // Medikamente · Organsystem
+  (function(){
+    const lbl = {herz:'Herz/RR', antikoagulation:'Antikoagulation', schmerz:'Schmerz', neuropsych:'Neuro/Psych', diabetes:'Diabetes'};
+    const col = {herz:'#f43f5e', antikoagulation:'#f87171', schmerz:'#fbbf24', neuropsych:'#6366f1', diabetes:'#34d399'};
+    Object.keys(MEDIKAMENTE_NEU).forEach(function(kat){
+      (MEDIKAMENTE_NEU[kat]||[]).forEach(function(m){
+        const blob = [m.name, m.gruppe, m.indikation, m.wirkung, m.nw, m.ki, m.pflege].join(' ');
+        if (hit(blob)) hits.push({type:'Medikament', icon:'💊', color:col[kat]||'#f43f5e', title:m.name, sub:(m.gruppe||'')+' · '+(lbl[kat]||kat), action:"showScreen('medNeu');renderMedNeu('"+kat+"')"});
+      });
+    });
+  })();
+
+  // ATL-Pflegeplanungen
+  PFLEGEPLANUNGEN_ATL.forEach(function(p, i){
+    const blob = [p.atl, p.problem, p.aet, p.ziel].concat(p.massnahmen||[]).join(' ');
+    if (hit(blob)) hits.push({type:'ATL', icon:p.icon||'📋', color:'#a78bfa', title:'ATL: '+p.atl, sub:'Pflegeplanung (P+Ä+Z)', action:"showScreen('atl');renderATL("+i+")"});
+  });
+
+  // Anatomie (Körpersysteme) – SVG bewusst ausgeschlossen
+  Object.keys(ANATOMIE).forEach(function(id){
+    const s = ANATOMIE[id];
+    const blob = [s.label].concat(s.aufbau||[], s.funktion||[], s.pflege||[], s.merke||[]).join(' ');
+    if (hit(blob)) hits.push({type:'Anatomie', icon:s.icon||'🧬', color:s.farbe||'#2dd4bf', title:s.label, sub:'Aufbau · Funktion · Pflegebezug', action:"openAnatomie('"+id+"')"});
+  });
+
+  // Wundversorgung: Wundarten + Wundauflagen (granular) + Bereich
+  (WUNDVERSORGUNG.wundarten||[]).forEach(function(w){
+    const blob = [w.name, w.beschreibung].concat(w.beispiele||[]).join(' ');
+    if (hit(blob)) hits.push({type:'Wundversorgung', icon:'🩹', color:'#fb7185', title:w.name, sub:'Wundart', action:"navGo('wundversorgung')"});
+  });
+  (WUNDVERSORGUNG.wundauflagen||[]).forEach(function(w){
+    const blob = [w.kategorie, w.indikation, w.beispiele, w.vorteil].join(' ');
+    if (hit(blob)) hits.push({type:'Wundversorgung', icon:'🩹', color:'#fb7185', title:w.kategorie, sub:w.indikation||'Wundauflage', action:"navGo('wundversorgung')"});
+  });
+  if (hit(WUNDVERSORGUNG.definition)) hits.push({type:'Bereich', icon:'🩹', color:'#fb7185', title:'Wundversorgung', sub:'Wundarten · Wundheilung · Wundauflagen', action:"navGo('wundversorgung')"});
+
+  // Kinästhetik
+  (KINAESTHETIK.grundkonzepte||[]).forEach(function(k){
+    if (hit(k.name) || hit(k.beschreibung) || hit(k.pflegerelevanz)) hits.push({type:'Kinästhetik', icon:'🤸', color:'#38bdf8', title:k.name, sub:'Grundkonzept', action:"showScreen('kinaesthetik')"});
+  });
+  (KINAESTHETIK.transfers||[]).forEach(function(t){
+    if (hit(t.name) || (t.schritte||[]).some(hit)) hits.push({type:'Kinästhetik', icon:'🤸', color:'#38bdf8', title:t.name, sub:'Transfer', action:"showScreen('kinaesthetik')"});
+  });
+  (KINAESTHETIK.selbstschutz||[]).forEach(function(txt){
+    if (hit(txt)) hits.push({type:'Kinästhetik', icon:'🤸', color:'#38bdf8', title:'Selbstschutz', sub:String(txt).substring(0,70), action:"showScreen('kinaesthetik')"});
+  });
+  if (hit(KINAESTHETIK.definition)) hits.push({type:'Bereich', icon:'🤸', color:'#38bdf8', title:'Kinästhetik', sub:'Transfers · Bewegung · Selbstschutz', action:"showScreen('kinaesthetik')"});
+
+  // Bobath
+  (BOBATH.grundprinzipien||[]).forEach(function(g){
+    if (hit(g.name) || hit(g.beschreibung)) hits.push({type:'Bobath', icon:'🧠', color:'#a78bfa', title:g.name, sub:'Grundprinzip', action:"showScreen('bobath')"});
+  });
+  (BOBATH.transfers||[]).forEach(function(t){
+    if (hit(t.name) || (t.schritte||[]).some(hit)) hits.push({type:'Bobath', icon:'🧠', color:'#a78bfa', title:t.name, sub:'Transfer nach Bobath', action:"showScreen('bobath')"});
+  });
+  if (hit(BOBATH.definition) || hit(BOBATH.schlaganfallMuster)) hits.push({type:'Bereich', icon:'🧠', color:'#a78bfa', title:'Bobath-Konzept', sub:'Lagerung · Transfers · 24h-Konzept', action:"showScreen('bobath')"});
+
+  return hits;
+}
+
+function openMerksatzSearch(term) {
+  navGo('merksaetze');
+  const inp = document.getElementById('merk-search');
+  if (inp) inp.value = term;
+  renderMerksaetze(term);
+}
+
 // ─── SEARCH ────────────────────────────────────────────────────
 function showSearchOverlay() {
   const o = document.getElementById('search-overlay');
@@ -12029,51 +12168,7 @@ function doSearch() {
   const res = document.getElementById('search-results');
   if (q.length < 2) { res.innerHTML = '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Mind. 2 Zeichen eingeben…</div>'; return; }
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
-  function hit(t){ return String(t==null?'':t).toLowerCase().includes(q); }
-  const hits = [];
-  // Bereich: Notfallmanagement (Manchester Triage / ABCDE / Reanimation)
-  if (['notfall','notfallmanagement','manchester','triage','mts','abcde','reanimation','bls','wiederbelebung','dringlichkeit','ersteinschätzung','ersteinschaetzung'].some(function(t){ return t.includes(q) || q.includes(t); })) {
-    hits.push({type:'Bereich', icon:'🚨', color:'#ef4444', title:'Notfallmanagement', sub:'Manchester Triage · ABCDE · Reanimation', action:"navGo('notfallmanagement')"});
-  }
-  // Quiz
-  QUIZ_FRAGEN.forEach(function(f){
-    if (hit(f.frage) || hit(f.erkl) || (f.opt && f.opt.some(hit))) {
-      hits.push({type:'Quiz', icon:'📝', color:'#60a5fa', title:f.frage, sub:f.opt[f.k], action:"startQuiz('"+f.kat+"')"});
-    }
-  });
-  // Krankheitsbilder (verschachtelt nach Fach)
-  Object.keys(KRANKHEITSBILDER).forEach(function(fid){
-    const fach = KRANKHEITSBILDER[fid];
-    (fach.bilder||[]).forEach(function(b, idx){
-      const blob = [b.name, b.icd, b.definition].concat(b.symptome||[]).join(' ');
-      if (hit(blob)) {
-        hits.push({type:'Krankheitsbild', icon:fach.icon||'🏥', color:fach.farbe||'#f43f5e', title:b.name, sub:fach.label+(b.icd && b.icd!=='–'?' · ICD '+b.icd:''), action:"openKrankheitsbild('"+fid+"',"+idx+")"});
-      }
-    });
-  });
-  // Taschenkarten
-  TASCHENKARTEN.forEach(function(k){
-    let blob = k.titel;
-    (k.vorderseite||[]).forEach(function(s){ blob += ' '+s.label+' '+(s.punkte||[]).join(' '); });
-    if (hit(blob)) hits.push({type:'Taschenkarte', icon:k.icon||'📇', color:k.farbe||'#38bdf8', title:k.titel, sub:'Lernkarte', action:"showTaschenkarte('"+k.id+"')"});
-  });
-  // Medizintechnik / Geräte
-  GERAETE.forEach(function(g){
-    if (hit(g.name) || hit(g.sub) || hit(g.beschreibung)) hits.push({type:'Medizintechnik', icon:g.icon||'⚙️', color:g.color||'#22d3ee', title:g.name, sub:g.sub||'', action:"openGeraet('"+g.id+"')"});
-  });
-  // Prophylaxen
-  PROPHYLAXEN.forEach(function(p){
-    const blob = [p.name, p.definition].concat(p.risikofaktoren||[]).join(' ');
-    if (hit(blob)) hits.push({type:'Prophylaxe', icon:p.icon||'🛡️', color:'#34d399', title:p.name, sub:'Prophylaxe', action:"navGo('prophylaxen')"});
-  });
-  // Assessment-Scores
-  SCORES.forEach(function(sc){
-    if (hit(sc.name) || hit(sc.kategorie) || hit(sc.zweck)) hits.push({type:'Score', icon:sc.icon||'📊', color:sc.farbe||'#60a5fa', title:sc.name, sub:sc.zweck||sc.kategorie||'', action:"navGo('scores')"});
-  });
-
-  FAELLE.forEach(function(fa){
-    if (hit(fa.titel) || hit(fa.fachLabel) || hit(fa.vignette)) hits.push({type:'Fallbeispiel', icon:fa.icon||'🩺', color:fa.farbe||'#38bdf8', title:fa.titel, sub:fa.fachLabel, action:"startFall('"+fa.id+"')"});
-  });
+  const hits = plBuildSearchHits(q);
   if (!hits.length) {
     res.innerHTML = '<div style="color:#4a7a9b;text-align:center;padding:20px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + esc(q) + '</strong></div>';
     return;
@@ -12566,7 +12661,7 @@ var PL_LIB = [
 
 /* Bibliothek-Uebersetzungen (Fallback: Deutsch aus PL_LIB) */
 var PL_LIB_I18N = {
-  en: { ui_lib:'Library', ui_quick:'Quick access', ui_ph:'Search module \u2013 e.g. anatomy, emergency', ui_mods:'modules', ui_none:'No module found. Try a different spelling?',
+  en: { ui_lib:'Library', ui_quick:'Quick access', ui_ph:'Search module \u2013 e.g. anatomy, emergency', ui_mods:'modules', ui_none:'No module found. Try a different spelling?', ui_content:'Results in your learning content',
     g_ueben:'Practice & Exam', g_wissen:'Knowledge & Practice',
     quiz:['Exam Quiz','Multiple choice \u00b7 20 questions'], oral:['Oral Exam','AI examiner \u00b7 voice \u00b7 graded'], sim:['Exam Simulator','30 questions \u00b7 45 min \u00b7 grade'],
     cards:['Flashcards','Spaced repetition \u00b7 Leitner'], pocket:['Pocket Cards','Scrub-pocket format'], plan:['Study Plan','Personal daily plan'],
@@ -12576,7 +12671,7 @@ var PL_LIB_I18N = {
     kin:['Kinaesthetics','Transfers \u00b7 movement'], bobath:['Bobath','Positioning \u00b7 24h concept'],
     med1:['Drugs \u00b7 by Specialty','Anaesthesia \u00b7 ICU \u00b7 Emergency'], med2:['Drugs \u00b7 by Organ System','Heart \u00b7 lungs \u00b7 ward'], tech:['Medical Technology','ECMO \u00b7 syringe pumps \u00b7 ventilation'] },
 
-  tr: { ui_lib:'K\u00fct\u00fcphane', ui_quick:'H\u0131zl\u0131 eri\u015fim', ui_ph:'Mod\u00fcl ara \u2013 \u00f6rn. anatomi, acil', ui_mods:'mod\u00fcl', ui_none:'Mod\u00fcl bulunamad\u0131.',
+  tr: { ui_lib:'K\u00fct\u00fcphane', ui_quick:'H\u0131zl\u0131 eri\u015fim', ui_ph:'Mod\u00fcl ara \u2013 \u00f6rn. anatomi, acil', ui_mods:'mod\u00fcl', ui_none:'Mod\u00fcl bulunamad\u0131.', ui_content:'\u0130\u00e7eriklerindeki sonu\u00e7lar',
     g_ueben:'Al\u0131\u015ft\u0131rma & S\u0131nav', g_wissen:'Bilgi & Uygulama',
     quiz:['S\u0131nav Quiz\u2019i','\u00c7oktan se\u00e7meli \u00b7 20 soru'], oral:['S\u00f6zl\u00fc S\u0131nav','YZ s\u0131navc\u0131 \u00b7 sesli \u00b7 notlu'], sim:['S\u0131nav Sim\u00fclat\u00f6r\u00fc','30 soru \u00b7 45 dk \u00b7 not'],
     cards:['Bilgi Kartlar\u0131','Aral\u0131kl\u0131 tekrar \u00b7 Leitner'], pocket:['Cep Kartlar\u0131','\u00d6nl\u00fck cebi format\u0131'], plan:['\u00d6\u011frenme Plan\u0131','Ki\u015fisel g\u00fcnl\u00fck plan'],
@@ -12586,7 +12681,7 @@ var PL_LIB_I18N = {
     kin:['Kinestetik','Transferler \u00b7 hareket'], bobath:['Bobath','Pozisyonlama \u00b7 24s konsept'],
     med1:['\u0130la\u00e7lar \u00b7 Uzmanl\u0131k','Anestezi \u00b7 Yo\u011fun bak\u0131m \u00b7 Acil'], med2:['\u0130la\u00e7lar \u00b7 Organ Sistemi','Kalp \u00b7 akci\u011fer \u00b7 servis'], tech:['T\u0131bbi Teknoloji','ECMO \u00b7 perf\u00fcz\u00f6r \u00b7 ventilasyon'] },
 
-  ar: { ui_lib:'\u0627\u0644\u0645\u0643\u062a\u0628\u0629', ui_quick:'\u0648\u0635\u0648\u0644 \u0633\u0631\u064a\u0639', ui_ph:'\u0627\u0628\u062d\u062b \u0639\u0646 \u0648\u062d\u062f\u0629 \u2013 \u0645\u062b\u0644 \u0627\u0644\u062a\u0634\u0631\u064a\u062d\u060c \u0627\u0644\u0637\u0648\u0627\u0631\u0626', ui_mods:'\u0648\u062d\u062f\u0629', ui_none:'\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0648\u062d\u062f\u0629.',
+  ar: { ui_lib:'\u0627\u0644\u0645\u0643\u062a\u0628\u0629', ui_quick:'\u0648\u0635\u0648\u0644 \u0633\u0631\u064a\u0639', ui_ph:'\u0627\u0628\u062d\u062b \u0639\u0646 \u0648\u062d\u062f\u0629 \u2013 \u0645\u062b\u0644 \u0627\u0644\u062a\u0634\u0631\u064a\u062d\u060c \u0627\u0644\u0637\u0648\u0627\u0631\u0626', ui_mods:'\u0648\u062d\u062f\u0629', ui_none:'\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0648\u062d\u062f\u0629.', ui_content:'\u0646\u062a\u0627\u0626\u062c \u0641\u064a \u0645\u062d\u062a\u0648\u0649 \u062a\u0639\u0644\u0645\u0643',
     g_ueben:'\u0627\u0644\u062a\u062f\u0631\u064a\u0628 \u0648\u0627\u0644\u0627\u0645\u062a\u062d\u0627\u0646', g_wissen:'\u0627\u0644\u0645\u0639\u0631\u0641\u0629 \u0648\u0627\u0644\u062a\u0637\u0628\u064a\u0642',
     quiz:['\u0627\u062e\u062a\u0628\u0627\u0631 \u0627\u0644\u0627\u0645\u062a\u062d\u0627\u0646','\u0627\u062e\u062a\u064a\u0627\u0631 \u0645\u0646 \u0645\u062a\u0639\u062f\u062f \u00b7 20 \u0633\u0624\u0627\u0644'], oral:['\u0627\u0644\u0627\u0645\u062a\u062d\u0627\u0646 \u0627\u0644\u0634\u0641\u0648\u064a','\u0645\u0645\u062a\u062d\u0646 \u0630\u0643\u064a \u00b7 \u0628\u0627\u0644\u0635\u0648\u062a \u00b7 \u0628\u062a\u0642\u064a\u064a\u0645'], sim:['\u0645\u062d\u0627\u0643\u064a \u0627\u0644\u0627\u0645\u062a\u062d\u0627\u0646','30 \u0633\u0624\u0627\u0644 \u00b7 45 \u062f\u0642\u064a\u0642\u0629 \u00b7 \u062f\u0631\u062c\u0629'],
     cards:['\u0627\u0644\u0628\u0637\u0627\u0642\u0627\u062a \u0627\u0644\u062a\u0639\u0644\u064a\u0645\u064a\u0629','\u062a\u0643\u0631\u0627\u0631 \u0645\u062a\u0628\u0627\u0639\u062f \u00b7 \u0644\u0627\u064a\u062a\u0646\u0631'], pocket:['\u0628\u0637\u0627\u0642\u0627\u062a \u0627\u0644\u062c\u064a\u0628','\u0628\u062d\u062c\u0645 \u062c\u064a\u0628 \u0627\u0644\u0645\u0639\u0637\u0641'], plan:['\u062e\u0637\u0629 \u0627\u0644\u062a\u0639\u0644\u0645','\u062e\u0637\u0629 \u064a\u0648\u0645\u064a\u0629 \u0634\u062e\u0635\u064a\u0629'],
@@ -12596,7 +12691,7 @@ var PL_LIB_I18N = {
     kin:['\u0627\u0644\u062d\u0631\u0643\u0629 \u0627\u0644\u0639\u0644\u0627\u062c\u064a\u0629','\u0627\u0644\u0646\u0642\u0644 \u00b7 \u0627\u0644\u062d\u0631\u0643\u0629'], bobath:['\u0628\u0648\u0628\u0627\u062b','\u0627\u0644\u0648\u0636\u0639\u064a\u0629 \u00b7 \u0645\u0641\u0647\u0648\u0645 24 \u0633\u0627\u0639\u0629'],
     med1:['\u0627\u0644\u0623\u062f\u0648\u064a\u0629 \u00b7 \u0627\u0644\u062a\u062e\u0635\u0635','\u062a\u062e\u062f\u064a\u0631 \u00b7 \u0639\u0646\u0627\u064a\u0629 \u0645\u0631\u0643\u0632\u0629 \u00b7 \u0637\u0648\u0627\u0631\u0626'], med2:['\u0627\u0644\u0623\u062f\u0648\u064a\u0629 \u00b7 \u0627\u0644\u062c\u0647\u0627\u0632','\u0642\u0644\u0628 \u00b7 \u0631\u0626\u0629 \u00b7 \u0642\u0633\u0645'], tech:['\u0627\u0644\u062a\u0642\u0646\u064a\u0629 \u0627\u0644\u0637\u0628\u064a\u0629','ECMO \u00b7 \u0645\u0636\u062e\u0627\u062a \u00b7 \u062a\u0646\u0641\u0633 \u0635\u0646\u0627\u0639\u064a'] },
 
-  ru: { ui_lib:'\u0411\u0438\u0431\u043b\u0438\u043e\u0442\u0435\u043a\u0430', ui_quick:'\u0411\u044b\u0441\u0442\u0440\u044b\u0439 \u0434\u043e\u0441\u0442\u0443\u043f', ui_ph:'\u041f\u043e\u0438\u0441\u043a \u043c\u043e\u0434\u0443\u043b\u044f \u2013 \u043d\u0430\u043f\u0440. \u0430\u043d\u0430\u0442\u043e\u043c\u0438\u044f', ui_mods:'\u043c\u043e\u0434\u0443\u043b\u0435\u0439', ui_none:'\u041c\u043e\u0434\u0443\u043b\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d.',
+  ru: { ui_lib:'\u0411\u0438\u0431\u043b\u0438\u043e\u0442\u0435\u043a\u0430', ui_quick:'\u0411\u044b\u0441\u0442\u0440\u044b\u0439 \u0434\u043e\u0441\u0442\u0443\u043f', ui_ph:'\u041f\u043e\u0438\u0441\u043a \u043c\u043e\u0434\u0443\u043b\u044f \u2013 \u043d\u0430\u043f\u0440. \u0430\u043d\u0430\u0442\u043e\u043c\u0438\u044f', ui_mods:'\u043c\u043e\u0434\u0443\u043b\u0435\u0439', ui_none:'\u041c\u043e\u0434\u0443\u043b\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d.', ui_content:'\u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u044b \u0432 \u0432\u0430\u0448\u0438\u0445 \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u0430\u0445',
     g_ueben:'\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430 \u0438 \u044d\u043a\u0437\u0430\u043c\u0435\u043d', g_wissen:'\u0417\u043d\u0430\u043d\u0438\u044f \u0438 \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u0430',
     quiz:['\u042d\u043a\u0437\u0430\u043c\u0435\u043d\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u0439 \u0442\u0435\u0441\u0442','\u0412\u044b\u0431\u043e\u0440 \u043e\u0442\u0432\u0435\u0442\u0430 \u00b7 20 \u0432\u043e\u043f\u0440\u043e\u0441\u043e\u0432'], oral:['\u0423\u0441\u0442\u043d\u044b\u0439 \u044d\u043a\u0437\u0430\u043c\u0435\u043d','\u0418\u0418-\u044d\u043a\u0437\u0430\u043c\u0435\u043d\u0430\u0442\u043e\u0440 \u00b7 \u0433\u043e\u043b\u043e\u0441 \u00b7 \u043e\u0446\u0435\u043d\u043a\u0430'], sim:['\u0421\u0438\u043c\u0443\u043b\u044f\u0442\u043e\u0440 \u044d\u043a\u0437\u0430\u043c\u0435\u043d\u0430','30 \u0432\u043e\u043f\u0440\u043e\u0441\u043e\u0432 \u00b7 45 \u043c\u0438\u043d \u00b7 \u043e\u0446\u0435\u043d\u043a\u0430'],
     cards:['\u041a\u0430\u0440\u0442\u043e\u0447\u043a\u0438','\u0418\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u044c\u043d\u043e\u0435 \u043f\u043e\u0432\u0442\u043e\u0440\u0435\u043d\u0438\u0435'], pocket:['\u041a\u0430\u0440\u043c\u0430\u043d\u043d\u044b\u0435 \u043a\u0430\u0440\u0442\u044b','\u0424\u043e\u0440\u043c\u0430\u0442 \u0434\u043b\u044f \u043a\u0430\u0440\u043c\u0430\u043d\u0430'], plan:['\u041f\u043b\u0430\u043d \u043e\u0431\u0443\u0447\u0435\u043d\u0438\u044f','\u041b\u0438\u0447\u043d\u044b\u0439 \u043f\u043b\u0430\u043d \u043d\u0430 \u0434\u0435\u043d\u044c'],
@@ -12606,7 +12701,7 @@ var PL_LIB_I18N = {
     kin:['\u041a\u0438\u043d\u0435\u0441\u0442\u0435\u0442\u0438\u043a\u0430','\u041f\u0435\u0440\u0435\u043c\u0435\u0449\u0435\u043d\u0438\u0435 \u00b7 \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u0435'], bobath:['\u0411\u043e\u0431\u0430\u0442','\u041f\u043e\u0437\u0438\u0446\u0438\u043e\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u00b7 24 \u0447'],
     med1:['\u041f\u0440\u0435\u043f\u0430\u0440\u0430\u0442\u044b \u00b7 \u043f\u043e \u043f\u0440\u043e\u0444\u0438\u043b\u044e','\u0410\u043d\u0435\u0441\u0442\u0435\u0437\u0438\u044f \u00b7 \u041e\u0420\u0418\u0422 \u00b7 \u043d\u0435\u043e\u0442\u043b\u043e\u0436\u043a\u0430'], med2:['\u041f\u0440\u0435\u043f\u0430\u0440\u0430\u0442\u044b \u00b7 \u043f\u043e \u0441\u0438\u0441\u0442\u0435\u043c\u0430\u043c','\u0421\u0435\u0440\u0434\u0446\u0435 \u00b7 \u043b\u0451\u0433\u043a\u0438\u0435 \u00b7 \u043e\u0442\u0434\u0435\u043b\u0435\u043d\u0438\u0435'], tech:['\u041c\u0435\u0434\u0442\u0435\u0445\u043d\u0438\u043a\u0430','\u042d\u041a\u041c\u041e \u00b7 \u043f\u0435\u0440\u0444\u0443\u0437\u043e\u0440\u044b \u00b7 \u0418\u0412\u041b'] },
 
-  pl: { ui_lib:'Biblioteka', ui_quick:'Szybki dost\u0119p', ui_ph:'Szukaj modu\u0142u \u2013 np. anatomia, nag\u0142e', ui_mods:'modu\u0142\u00f3w', ui_none:'Nie znaleziono modu\u0142u.',
+  pl: { ui_lib:'Biblioteka', ui_quick:'Szybki dost\u0119p', ui_ph:'Szukaj modu\u0142u \u2013 np. anatomia, nag\u0142e', ui_mods:'modu\u0142\u00f3w', ui_none:'Nie znaleziono modu\u0142u.', ui_content:'Wyniki w Twoich tre\u015bciach',
     g_ueben:'\u0106wiczenia i egzamin', g_wissen:'Wiedza i praktyka',
     quiz:['Quiz egzaminacyjny','Wielokrotny wyb\u00f3r \u00b7 20 pyta\u0144'], oral:['Egzamin ustny','Egzaminator AI \u00b7 g\u0142os \u00b7 ocena'], sim:['Symulator egzaminu','30 pyta\u0144 \u00b7 45 min \u00b7 ocena'],
     cards:['Fiszki','Powt\u00f3rki roz\u0142o\u017cone \u00b7 Leitner'], pocket:['Karty kieszonkowe','Format kieszonkowy'], plan:['Plan nauki','Osobisty plan dnia'],
@@ -12616,7 +12711,7 @@ var PL_LIB_I18N = {
     kin:['Kinestetyka','Transfery \u00b7 ruch'], bobath:['Bobath','Pozycjonowanie \u00b7 koncepcja 24h'],
     med1:['Leki \u00b7 specjalizacja','Anestezja \u00b7 OIT \u00b7 ratunkowe'], med2:['Leki \u00b7 uk\u0142ad narz\u0105d\u00f3w','Serce \u00b7 p\u0142uca \u00b7 oddzia\u0142'], tech:['Technika medyczna','ECMO \u00b7 pompy \u00b7 wentylacja'] },
 
-  uk: { ui_lib:'\u0411\u0456\u0431\u043b\u0456\u043e\u0442\u0435\u043a\u0430', ui_quick:'\u0428\u0432\u0438\u0434\u043a\u0438\u0439 \u0434\u043e\u0441\u0442\u0443\u043f', ui_ph:'\u041f\u043e\u0448\u0443\u043a \u043c\u043e\u0434\u0443\u043b\u044f \u2013 \u043d\u0430\u043f\u0440. \u0430\u043d\u0430\u0442\u043e\u043c\u0456\u044f', ui_mods:'\u043c\u043e\u0434\u0443\u043b\u0456\u0432', ui_none:'\u041c\u043e\u0434\u0443\u043b\u044c \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e.',
+  uk: { ui_lib:'\u0411\u0456\u0431\u043b\u0456\u043e\u0442\u0435\u043a\u0430', ui_quick:'\u0428\u0432\u0438\u0434\u043a\u0438\u0439 \u0434\u043e\u0441\u0442\u0443\u043f', ui_ph:'\u041f\u043e\u0448\u0443\u043a \u043c\u043e\u0434\u0443\u043b\u044f \u2013 \u043d\u0430\u043f\u0440. \u0430\u043d\u0430\u0442\u043e\u043c\u0456\u044f', ui_mods:'\u043c\u043e\u0434\u0443\u043b\u0456\u0432', ui_none:'\u041c\u043e\u0434\u0443\u043b\u044c \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e.', ui_content:'\u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u0438 \u0443 \u0432\u0430\u0448\u0438\u0445 \u043c\u0430\u0442\u0435\u0440\u0456\u0430\u043b\u0430\u0445',
     g_ueben:'\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430 \u0442\u0430 \u0456\u0441\u043f\u0438\u0442', g_wissen:'\u0417\u043d\u0430\u043d\u043d\u044f \u0442\u0430 \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u0430',
     quiz:['\u0415\u043a\u0437\u0430\u043c\u0435\u043d\u0430\u0446\u0456\u0439\u043d\u0438\u0439 \u0442\u0435\u0441\u0442','\u0412\u0438\u0431\u0456\u0440 \u0432\u0456\u0434\u043f\u043e\u0432\u0456\u0434\u0456 \u00b7 20 \u043f\u0438\u0442\u0430\u043d\u044c'], oral:['\u0423\u0441\u043d\u0438\u0439 \u0456\u0441\u043f\u0438\u0442','\u0428\u0406-\u0435\u043a\u0437\u0430\u043c\u0435\u043d\u0430\u0442\u043e\u0440 \u00b7 \u0433\u043e\u043b\u043e\u0441 \u00b7 \u043e\u0446\u0456\u043d\u043a\u0430'], sim:['\u0421\u0438\u043c\u0443\u043b\u044f\u0442\u043e\u0440 \u0456\u0441\u043f\u0438\u0442\u0443','30 \u043f\u0438\u0442\u0430\u043d\u044c \u00b7 45 \u0445\u0432 \u00b7 \u043e\u0446\u0456\u043d\u043a\u0430'],
     cards:['\u041a\u0430\u0440\u0442\u043a\u0438','\u0406\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u044c\u043d\u0435 \u043f\u043e\u0432\u0442\u043e\u0440\u0435\u043d\u043d\u044f'], pocket:['\u041a\u0438\u0448\u0435\u043d\u044c\u043a\u043e\u0432\u0456 \u043a\u0430\u0440\u0442\u043a\u0438','\u041a\u0438\u0448\u0435\u043d\u044c\u043a\u043e\u0432\u0438\u0439 \u0444\u043e\u0440\u043c\u0430\u0442'], plan:['\u041f\u043b\u0430\u043d \u043d\u0430\u0432\u0447\u0430\u043d\u043d\u044f','\u041e\u0441\u043e\u0431\u0438\u0441\u0442\u0438\u0439 \u043f\u043b\u0430\u043d \u043d\u0430 \u0434\u0435\u043d\u044c'],
@@ -12626,7 +12721,7 @@ var PL_LIB_I18N = {
     kin:['\u041a\u0456\u043d\u0435\u0441\u0442\u0435\u0442\u0438\u043a\u0430','\u041f\u0435\u0440\u0435\u043c\u0456\u0449\u0435\u043d\u043d\u044f \u00b7 \u0440\u0443\u0445'], bobath:['\u0411\u043e\u0431\u0430\u0442','\u041f\u043e\u0437\u0438\u0446\u0456\u043e\u043d\u0443\u0432\u0430\u043d\u043d\u044f \u00b7 24 \u0433\u043e\u0434'],
     med1:['\u041f\u0440\u0435\u043f\u0430\u0440\u0430\u0442\u0438 \u00b7 \u0437\u0430 \u043f\u0440\u043e\u0444\u0456\u043b\u0435\u043c','\u0410\u043d\u0435\u0441\u0442\u0435\u0437\u0456\u044f \u00b7 \u0412\u0406\u0422 \u00b7 \u043d\u0435\u0432\u0456\u0434\u043a\u043b\u0430\u0434\u043d\u0430'], med2:['\u041f\u0440\u0435\u043f\u0430\u0440\u0430\u0442\u0438 \u00b7 \u0437\u0430 \u0441\u0438\u0441\u0442\u0435\u043c\u0430\u043c\u0438','\u0421\u0435\u0440\u0446\u0435 \u00b7 \u043b\u0435\u0433\u0435\u043d\u0456 \u00b7 \u0432\u0456\u0434\u0434\u0456\u043b\u0435\u043d\u043d\u044f'], tech:['\u041c\u0435\u0434\u0442\u0435\u0445\u043d\u0456\u043a\u0430','\u0415\u041a\u041c\u041e \u00b7 \u043f\u0435\u0440\u0444\u0443\u0437\u043e\u0440\u0438 \u00b7 \u0428\u0412\u041b'] },
 
-  ro: { ui_lib:'Bibliotec\u0103', ui_quick:'Acces rapid', ui_ph:'Caut\u0103 modul \u2013 ex. anatomie, urgen\u021be', ui_mods:'module', ui_none:'Niciun modul g\u0103sit.',
+  ro: { ui_lib:'Bibliotec\u0103', ui_quick:'Acces rapid', ui_ph:'Caut\u0103 modul \u2013 ex. anatomie, urgen\u021be', ui_mods:'module', ui_none:'Niciun modul g\u0103sit.', ui_content:'Rezultate \u00een con\u021binutul t\u0103u',
     g_ueben:'Exersare & Examen', g_wissen:'Cuno\u0219tin\u021be & Practic\u0103',
     quiz:['Quiz de examen','Gril\u0103 \u00b7 20 \u00eentreb\u0103ri'], oral:['Examen oral','Examinator AI \u00b7 voce \u00b7 notat'], sim:['Simulator de examen','30 \u00eentreb\u0103ri \u00b7 45 min \u00b7 not\u0103'],
     cards:['Fi\u0219e de \u00eenv\u0103\u021bare','Repeti\u021bie spa\u021biat\u0103 \u00b7 Leitner'], pocket:['Carduri de buzunar','Format de buzunar'], plan:['Plan de \u00eenv\u0103\u021bare','Plan zilnic personal'],
@@ -12636,7 +12731,7 @@ var PL_LIB_I18N = {
     kin:['Kinestezie','Transferuri \u00b7 mi\u0219care'], bobath:['Bobath','Pozi\u021bionare \u00b7 concept 24h'],
     med1:['Medicamente \u00b7 specialitate','Anestezie \u00b7 ATI \u00b7 urgen\u021be'], med2:['Medicamente \u00b7 sistem de organe','Inim\u0103 \u00b7 pl\u0103m\u00e2ni \u00b7 sec\u021bie'], tech:['Tehnic\u0103 medical\u0103','ECMO \u00b7 injectomate \u00b7 ventila\u021bie'] },
 
-  es: { ui_lib:'Biblioteca', ui_quick:'Acceso r\u00e1pido', ui_ph:'Buscar m\u00f3dulo \u2013 p. ej. anatom\u00eda, urgencias', ui_mods:'m\u00f3dulos', ui_none:'No se encontr\u00f3 ning\u00fan m\u00f3dulo.',
+  es: { ui_lib:'Biblioteca', ui_quick:'Acceso r\u00e1pido', ui_ph:'Buscar m\u00f3dulo \u2013 p. ej. anatom\u00eda, urgencias', ui_mods:'m\u00f3dulos', ui_none:'No se encontr\u00f3 ning\u00fan m\u00f3dulo.', ui_content:'Resultados en tus contenidos',
     g_ueben:'Pr\u00e1ctica y examen', g_wissen:'Conocimiento y pr\u00e1ctica',
     quiz:['Cuestionario de examen','Opci\u00f3n m\u00faltiple \u00b7 20 preguntas'], oral:['Examen oral','Examinador IA \u00b7 voz \u00b7 con nota'], sim:['Simulador de examen','30 preguntas \u00b7 45 min \u00b7 nota'],
     cards:['Tarjetas','Repetici\u00f3n espaciada \u00b7 Leitner'], pocket:['Tarjetas de bolsillo','Formato de bolsillo'], plan:['Plan de estudio','Plan diario personal'],
@@ -12647,7 +12742,7 @@ var PL_LIB_I18N = {
     med1:['F\u00e1rmacos \u00b7 especialidad','Anestesia \u00b7 UCI \u00b7 urgencias'], med2:['F\u00e1rmacos \u00b7 sistema org\u00e1nico','Coraz\u00f3n \u00b7 pulm\u00f3n \u00b7 planta'], tech:['Tecnolog\u00eda m\u00e9dica','ECMO \u00b7 perfusores \u00b7 ventilaci\u00f3n'] }
 };
 
-var PL_LIB_UI_DE = { ui_lib:'Bibliothek', ui_quick:'Schnellzugriff', ui_ph:'Modul suchen \u2013 z. B. Anatomie, Notfall, Prophylaxe', ui_mods:'Module', ui_none:'Kein Modul gefunden. Andere Schreibweise probieren?' };
+var PL_LIB_UI_DE = { ui_lib:'Bibliothek', ui_quick:'Schnellzugriff', ui_ph:'Modul suchen \u2013 z. B. Anatomie, Notfall, Prophylaxe', ui_mods:'Module', ui_none:'Kein Modul gefunden. Andere Schreibweise probieren?', ui_content:'Treffer in deinen Lerninhalten' };
 
 function plLibDict() {
   try {
@@ -12677,6 +12772,13 @@ function plLibLocked(item) {
   if (!item.prem) return false;
   return !!(currentBereich && currentBereich[item.prem] === false);
 }
+var _plLibTimer = null;
+function plLibOnInput() {
+  clearTimeout(_plLibTimer);
+  _plLibTimer = setTimeout(renderHomeLibrary, 90);
+}
+function plLibEsc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
 function renderHomeLibrary() {
   var host = document.getElementById('home-library');
   if (!host) return;
@@ -12684,6 +12786,24 @@ function renderHomeLibrary() {
   var inp = document.getElementById('lib-search');
   var q = (inp && inp.value ? inp.value : '').trim().toLowerCase();
   var total = 0, shown = 0, html = '';
+
+  // Treffer in den Lerninhalten (Quiz, Krankheitsbilder, Medikamente, Taschenkarten, ATL, Anatomie, Merksätze, u.v.m.)
+  var contentHits = (q.length >= 2 && typeof plBuildSearchHits === 'function') ? plBuildSearchHits(q) : [];
+  var contentHtml = '';
+  if (contentHits.length) {
+    var shownHits = contentHits.slice(0, 30);
+    contentHtml = '<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:2px 2px 8px;font-weight:700">'
+      + plLibUI('ui_content') + ' · ' + contentHits.length + (contentHits.length > 30 ? ' (30 gezeigt)' : '') + '</div>'
+      + '<div class="lib-grid" style="margin-bottom:18px">'
+      + shownHits.map(function(h){
+          return '<button class="lib-row" onclick="' + h.action + '">'
+            + '<span class="lib-ico">' + (h.icon || '📌') + '</span>'
+            + '<span class="lib-txt"><span class="lib-t">' + plLibEsc(h.title) + '</span><span class="lib-s">' + plLibEsc(h.type) + (h.sub ? ' · ' + plLibEsc(h.sub) : '') + '</span></span>'
+            + '<span class="lib-chev">\u203a</span>'
+            + '</button>';
+        }).join('')
+      + '</div>';
+  }
 
   // UI-Beschriftungen (i18n)
   try {
@@ -12723,8 +12843,8 @@ function renderHomeLibrary() {
     html += '</div>';
   });
 
-  if (!shown) html = '<div class="lib-empty">' + plLibUI('ui_none') + '</div>';
-  host.innerHTML = html;
+  if (!shown && !contentHits.length) html = '<div class="lib-empty">' + plLibUI('ui_none') + '</div>';
+  host.innerHTML = contentHtml + html;
   var cnt = document.getElementById('lib-count');
   if (cnt) cnt.textContent = (q ? shown + ' / ' + total : total + ' ' + plLibUI('ui_mods'));
 }
