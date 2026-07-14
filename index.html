@@ -7893,7 +7893,7 @@ const TOKEN_DB = {
   "TEST-GAST-2026-01":     { name:"Gastzugang 1",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "TEST-GAST-2026-02":     { name:"Gastzugang 2",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "TEST-GAST-2026-03":     { name:"Gastzugang 3",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
-  "NeleLily2916":         { name:"Patrick",  bereich:"alle", ablauf:"2099-12-31", aktiv:true },
+  "NeleLily2916":         { name:"Patrick",  bereich:"alle", ablauf:"2099-12-31", aktiv:true, admin:true },
   "GRATIS":                { name:"Gast",     bereich:"gratis", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T001":{ name:"Tester 1", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T002":{ name:"Tester 2", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
@@ -8226,9 +8226,9 @@ async function plLookupToken(code) {
   try {
     if (window.SB) {
       const { data, error } = await window.SB
-        .from('tokens').select('token,name,bereich,ablauf,aktiv')
+        .from('tokens').select('token,name,bereich,ablauf,aktiv,admin')
         .eq('token', code).maybeSingle();
-      if (!error && data) return { name:data.name, bereich:data.bereich, ablauf:data.ablauf, aktiv:data.aktiv !== false, _src:'sb' };
+      if (!error && data) return { name:data.name, bereich:data.bereich, ablauf:data.ablauf, aktiv:data.aktiv !== false, admin:data.admin === true, _src:'sb' };
     }
   } catch(e) { console.warn('[Token] Supabase-Lookup fehlgeschlagen, nutze Fallback', e); }
   // 2) Fallback: hardcodierte TOKEN_DB (Offline / SB down)
@@ -8285,7 +8285,7 @@ async function checkPW() {
 
   // Login erfolgreich
   const userName = nameInput || token.name;
-  currentUser = { token: tokenInput, name: userName, bereich: token.bereich, ablauf: token.ablauf };
+  currentUser = { token: tokenInput, name: userName, bereich: token.bereich, ablauf: token.ablauf, admin: token.admin === true };
   gaEvent('login', { method: 'token', bereich: token.bereich });
   currentBereich = BEREICH_CONFIG[token.bereich] || BEREICH_CONFIG["demo"];
   kiNachrichtenCount = 0;
@@ -8496,7 +8496,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (token && token.aktiv) {
       const today = new Date().toISOString().split("T")[0];
       if (today <= token.ablauf) {
-        currentUser = { token: savedToken, name: sessionStorage.getItem("pl_user") || localStorage.getItem("pl_user") || token.name, bereich: token.bereich, ablauf: token.ablauf };
+        currentUser = { token: savedToken, name: sessionStorage.getItem("pl_user") || localStorage.getItem("pl_user") || token.name, bereich: token.bereich, ablauf: token.ablauf, admin: token.admin === true };
         currentBereich = BEREICH_CONFIG[token.bereich] || BEREICH_CONFIG["demo"];
         try { sessionStorage.setItem("pl_token", savedToken); sessionStorage.setItem("pl_user", currentUser.name); } catch(e){}
         const ps = document.getElementById("pw-screen");
@@ -16097,6 +16097,8 @@ function displayName() {
 const ADMIN_EMAILS = ['pschenkelberger@web.de','pflegelearn.nrw@gmail.com','etpsch2802@gmail.com','kontakt@plan-nrw.de'];
 function isAdmin() {
   try {
+    // Token-basiertes Admin-Flag (Supabase-Spalte tokens.admin) – geraeteunabhaengig
+    if (typeof currentUser !== 'undefined' && currentUser && currentUser.admin === true) return true;
     const ids = [];
     if (typeof currentUser !== 'undefined' && currentUser) { ids.push(currentUser.email); ids.push(currentUser.name); }
     try { ids.push(localStorage.getItem('pl_sub_email')); } catch (e) {}
