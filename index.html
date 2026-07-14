@@ -926,6 +926,20 @@
       <p style="font-size:13px;color:var(--text2,#94a3b8)">Rund um die Uhr – die häufigsten Fragen sofort beantwortet</p>
     </div>
 
+    <!-- AUTORENBLOCK -->
+    <div style="border-left:3px solid var(--accent,#38bdf8);background:var(--card,rgba(255,255,255,.04));border-radius:0 12px 12px 0;padding:16px 18px;margin-bottom:22px">
+      <div style="font-size:10px;color:var(--text2,#94a3b8);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Wer hinter PLAN steckt</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:19px;color:var(--text,#e0f2fe);margin-bottom:4px">Patrick Schenkelberger</div>
+      <div style="font-size:12px;color:var(--accent,#38bdf8);font-weight:600;margin-bottom:12px">Fachpfleger Anästhesie &amp; Intensivmedizin · Praxisanleiter in NRW</div>
+      <div style="font-size:13.5px;color:var(--text2,#94a3b8);line-height:1.75">
+        Ich arbeite seit Jahren auf Station und begleite Auszubildende bis zum Examen. Ich sehe jeden Tag, woran sie hängen bleiben – im hektischen Schichtdienst genauso wie in der mündlichen Prüfung.<br><br>
+        Irgendwann hatte ich es satt, dieselben Erklärungen zwischen Tür und Angel zu wiederholen und zu sehen, wie gutes Wissen in Zettelchaos untergeht.<br><br>
+        <strong style="color:var(--text,#e0f2fe)">Also habe ich alles sortiert, was in der Prüfung wirklich zählt.</strong> Keine tausend Seiten Theorie. Das, was drankommt – und das, was du auf Station brauchst.<br><br>
+        Wenn dir etwas fehlt oder ein Fehler auffällt: schreib mir. Ich lese jede Nachricht selbst.
+      </div>
+      <div style="font-size:12px;color:var(--accent,#38bdf8);margin-top:14px">kontakt@plan-nrw.de</div>
+    </div>
+
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.04));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
       <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔑 Mein Zugangscode funktioniert nicht</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#94a3b8);line-height:1.6">Achte auf die exakte Schreibweise – Groß-/Kleinschreibung und Bindestriche genau wie erhalten. Aktualisiere zuerst die App (Menü → App aktualisieren) und versuche es erneut. Klappt es weiterhin nicht, schreib an kontakt@plan-nrw.de und nenne deinen Code.</div>
@@ -15786,7 +15800,8 @@ function showOnboarding() {
     : null;
 
   const baseSlides = [
-    { icon:'🎓', title:'Willkommen bei PLAN!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW – von einem Fachpfleger & Ausbilder entwickelt.' },
+    { icon:'🎓', title:'Willkommen bei PLAN!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW.' },
+    { icon:'👋', title:'Hi, ich bin Patrick.', text:'Fachpfleger für Anästhesie & Intensivmedizin. Praxisanleiter in NRW.<br><br>Ich begleite seit Jahren Azubis durch ihr Examen – und ich weiß, was Prüfer wirklich fragen.<br><br><strong style="color:#e0f2fe">Diese App ist alles, was ich sonst im Frühdienst zwischen Tür und Angel erkläre. Nur eben sortiert.</strong>' },
     { icon:'📝', title:QUIZ_FRAGEN.length+' Prüfungsfragen', text:'Übe mit realistischen Multiple-Choice-Fragen oder starte den Prüfungssimulator mit Zeitlimit und Note.' },
     { icon:'🃏', title:'Karteikarten & Spaced Repetition', text:'Lerne alle 100 Krankheitsbilder mit Karteikarten – das System zeigt dir schwierige Karten häufiger.' },
     { icon:'📊', title:'Scores & Taschenkarten', text:'29 Assessment-Skalen und 38 Taschenkarten im Kasack-Format – alles was du auf Station brauchst.' },
