@@ -12465,12 +12465,49 @@ function pruefungsreifeCardHTML() {
   if (!currentUser) return '';
   const pr = computePruefungsreife();
   const sub = pr.assessed === 0 ? 'Starte ein Quiz, um sie zu berechnen' : (pr.label + ' · ' + pr.assessed + '/' + pr.total + ' Themen');
-  return '<button onclick="showPruefungsreife()" style="width:100%;text-align:left;background:linear-gradient(135deg,' + pr.col + '1f,' + pr.col + '0a);border:1px solid ' + pr.col + '44;border-radius:14px;padding:13px 16px;margin-bottom:14px;cursor:pointer;font-family:inherit">'
+  const isLimited = !!(currentBereich && currentBereich.gratis);
+
+  // Schwächste Kategorie mit Daten (sonst erste offene) für den Direkt-Einstieg
+  const gap = (pr.luecken && pr.luecken[0]) ? pr.luecken[0] : null;
+  const offenFirst = (!gap && pr.offen && pr.offen[0]) ? pr.offen[0] : null;
+
+  let gapBlock = '';
+  if (gap) {
+    const gcol = gap.acc < 50 ? '#f87171' : (gap.acc < 75 ? '#fbbf24' : '#34d399');
+    gapBlock = '<div style="background:rgba(255,255,255,.04);border:1px solid ' + gcol + '33;border-radius:11px;padding:10px 12px;margin-bottom:10px">'
+      + '<div style="font-size:9px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Deine größte Lücke</div>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'
+      + '<span style="font-size:13px;font-weight:800;color:#e0f2fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + gap.label + '</span>'
+      + '<span style="font-size:15px;font-weight:800;color:' + gcol + ';flex-shrink:0">' + gap.acc + '%</span></div>'
+      + '<div style="background:rgba(255,255,255,.07);border-radius:20px;height:5px;overflow:hidden;margin-top:6px"><div style="background:' + gcol + ';height:100%;width:' + gap.acc + '%;border-radius:20px"></div></div>'
+      + '</div>';
+  } else if (offenFirst) {
+    gapBlock = '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:11px;padding:10px 12px;margin-bottom:10px">'
+      + '<div style="font-size:9px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Noch nicht getestet</div>'
+      + '<div style="font-size:13px;font-weight:800;color:#e0f2fe">' + offenFirst.label + '</div></div>';
+  }
+
+  const targetKat = gap ? gap.id : (offenFirst ? offenFirst.id : pr.weakest);
+  const ctaLabel = isLimited ? '🔓 Lücke schließen – Vollzugang' : '📌 Jetzt trainieren';
+  const ctaAction = isLimited ? 'goToStripe()' : ("startQuiz('" + targetKat + "')");
+  const ctaStyle = isLimited
+    ? 'background:linear-gradient(135deg,#635bff,#4338ca)'
+    : 'background:linear-gradient(135deg,#0369a1,#0284c7)';
+  const cta = (gap || offenFirst)
+    ? '<button onclick="event.stopPropagation();' + ctaAction + '" style="width:100%;' + ctaStyle + ';border:none;border-radius:10px;padding:11px;color:#fff;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">' + ctaLabel + '</button>'
+    : '';
+
+  return '<div style="background:linear-gradient(135deg,' + pr.col + '1f,' + pr.col + '0a);border:1px solid ' + pr.col + '44;border-radius:14px;padding:13px 16px;margin-bottom:14px">'
+    + '<div onclick="showPruefungsreife()" style="cursor:pointer">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
     + '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎯</span><span style="font-size:13px;font-weight:800;color:#e0f2fe">Prüfungsreife</span></div>'
     + '<span style="font-size:21px;font-weight:800;color:' + pr.col + '">' + pr.score + '%</span></div>'
-    + '<div style="background:rgba(255,255,255,.07);border-radius:20px;height:8px;overflow:hidden;margin-bottom:7px"><div style="background:' + pr.col + ';height:100%;width:' + pr.score + '%;border-radius:20px;transition:width .6s"></div></div>'
-    + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#7a9b8c"><span>' + sub + '</span><span>Details ›</span></div></button>';
+    + '<div style="background:rgba(255,255,255,.07);border-radius:20px;height:8px;overflow:hidden;margin-bottom:10px"><div style="background:' + pr.col + ';height:100%;width:' + pr.score + '%;border-radius:20px;transition:width .6s"></div></div>'
+    + '</div>'
+    + gapBlock
+    + cta
+    + '<div onclick="showPruefungsreife()" style="display:flex;justify-content:space-between;font-size:10px;color:#7a9b8c;cursor:pointer"><span>' + sub + '</span><span>Alle Themen ›</span></div>'
+    + '</div>';
 }
 
 function showPruefungsreife() {
