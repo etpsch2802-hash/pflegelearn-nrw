@@ -852,6 +852,7 @@
   <div class="section-label" style="display:none"></div>
 
   <!-- ── COACH-HERO: adaptiver naechster Schritt (per JS in #home-coach gefuellt) ── -->
+  <div id="home-countdown"></div>
   <div id="home-coach-label" style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:2px 2px 8px;font-weight:700">Dein nächster Schritt</div>
   <div id="home-coach" style="margin-bottom:4px"></div>
 
@@ -8013,6 +8014,7 @@ const BEREICH_CONFIG = {
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   gpa: {
     label: "Generalistische Pflege",
@@ -8023,6 +8025,7 @@ const BEREICH_CONFIG = {
     medizintechnik: false,
     medikamente: true,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   ata: {
     label: "ATA – Anästhesietechnische Assistenz",
@@ -8033,6 +8036,7 @@ const BEREICH_CONFIG = {
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   ota: {
     label: "OTA – Operationstechnische Assistenz",
@@ -8043,6 +8047,7 @@ const BEREICH_CONFIG = {
     medizintechnik: true,
     medikamente: false,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   anaesthesie: {
     label: "Fachpflege Anästhesie & Intensiv",
@@ -8053,6 +8058,7 @@ const BEREICH_CONFIG = {
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   intensiv: {
     label: "Fachpflege Intensivmedizin",
@@ -8063,6 +8069,7 @@ const BEREICH_CONFIG = {
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   pflegehelfer: {
     label: "Pflegefachassistenz",
@@ -8070,9 +8077,10 @@ const BEREICH_CONFIG = {
     farbe: "#34d399",
     ausbildungen: ["pflegehelfer"],
     quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","pflegeplanung","innere","chirurgie","psychologie","notfall"],
-    medizintechnik: false,
-    medikamente: false,
+    medizintechnik: true,
+    medikamente: true,
     ki_unbegrenzt: false,
+    simulator: true,
   },
   anerkennung: {
     label: "Anerkennungsschüler",
@@ -8083,6 +8091,7 @@ const BEREICH_CONFIG = {
     medizintechnik: false,
     medikamente: true,
     ki_unbegrenzt: true,
+    simulator: true,
   },
   demo: {
     label: "Demo-Version",
@@ -8090,9 +8099,10 @@ const BEREICH_CONFIG = {
     farbe: "#94a3b8",
     ausbildungen: ["gpa"],
     quiz_kats: ["ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","gpa","pflegeplanung","mobilitaet","praevention","rehabilitation","palliation","notfall"],
-    medizintechnik: false,
-    medikamente: false,
+    medizintechnik: true,
+    medikamente: true,
     ki_unbegrenzt: false,
+    simulator: true,
     ki_max: 3,
     quiz_max: 5,
   },
@@ -8102,12 +8112,13 @@ const BEREICH_CONFIG = {
     farbe: "#34d399",
     ausbildungen: ["gpa"],
     quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall"],
-    medizintechnik: false,
-    medikamente: false,
+    medizintechnik: true,      // NACHSCHLAGEN FREI – baut tägliche Gewohnheit auf
+    medikamente: true,         // NACHSCHLAGEN FREI – der Moment im Frühdienst
     ki_unbegrenzt: false,
     ki_max: 8,
     quiz_max: 20,
     faelle_max_pro_fach: 2,
+    simulator: false,          // THERAPIE: Prüfungssimulator mit Note = Premium
     gratis: true,
   },
   demo_kollege: {
@@ -8119,6 +8130,7 @@ const BEREICH_CONFIG = {
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: false,
+    simulator: true,
     ki_max: 10,
     quiz_max: 20,
   },
@@ -12481,6 +12493,40 @@ function computePruefungsreife() {
   return { score: score, label: label, col: col, assessed: assessed, total: total, perKat: perKat, luecken: luecken, offen: offen, weakest: weakest };
 }
 
+function renderCountdown() {
+  var el = document.getElementById('home-countdown');
+  if (!el || !currentUser) return;
+  var d = null;
+  try { d = localStorage.getItem('pl_examen_datum') || localStorage.getItem('pl_pruefungsdatum'); } catch(e){}
+
+  if (!d) {
+    el.innerHTML = '<button onclick="navGo(\'lernplan\')" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px dashed rgba(56,189,248,.35);border-radius:14px;padding:13px 16px;margin-bottom:14px;cursor:pointer;font-family:inherit">'
+      + '<div style="display:flex;align-items:center;gap:10px">'
+      + '<span style="font-size:20px">📅</span>'
+      + '<div style="flex:1"><div style="font-size:13px;font-weight:800;color:#e0f2fe">Wann ist deine Prüfung?</div>'
+      + '<div style="font-size:11px;color:#7a9b8c;margin-top:2px">Trag dein Datum ein – wir bauen deinen Plan darauf auf.</div></div>'
+      + '<span style="color:#38bdf8;font-size:16px">›</span></div></button>';
+    return;
+  }
+
+  var tage = Math.ceil((new Date(d) - new Date()) / 86400000);
+  if (tage < 0 || tage > 900) { el.innerHTML = ''; return; }
+
+  var col, txt, sub;
+  if (tage === 0)      { col = '#f87171'; txt = 'Heute ist dein Prüfungstag'; sub = 'Du schaffst das. Kopf hoch.'; }
+  else if (tage === 1) { col = '#f87171'; txt = 'Morgen ist es soweit';        sub = 'Letzte Wiederholung – dann ausruhen.'; }
+  else if (tage <= 14) { col = '#f87171'; txt = 'Noch ' + tage + ' Tage';      sub = 'Endspurt. Jetzt zählt jede Einheit.'; }
+  else if (tage <= 60) { col = '#fbbf24'; txt = 'Noch ' + tage + ' Tage';      sub = 'Die heiße Phase beginnt.'; }
+  else                 { col = '#34d399'; txt = 'Noch ' + tage + ' Tage';      sub = 'Genug Zeit – wenn du dranbleibst.'; }
+
+  el.innerHTML = '<div style="background:linear-gradient(135deg,' + col + '1a,' + col + '08);border:1px solid ' + col + '3a;border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px">'
+    + '<div style="font-size:24px;font-weight:900;color:' + col + ';line-height:1">' + (tage > 0 ? tage : '0') + '</div>'
+    + '<div style="flex:1;min-width:0">'
+    + '<div style="font-size:13px;font-weight:800;color:#e0f2fe">' + txt + ' bis zum Examen</div>'
+    + '<div style="font-size:11px;color:#7a9b8c;margin-top:1px">' + sub + '</div>'
+    + '</div></div>';
+}
+
 function pruefungsreifeCardHTML() {
   if (!currentUser) return '';
   const pr = computePruefungsreife();
@@ -15645,6 +15691,8 @@ function renderHomeStats() {
   var coachLbl = document.getElementById('home-coach-label');
   if (coachLbl) coachLbl.style.display = _coachHtml ? '' : 'none';
 
+  try { renderCountdown(); } catch(e) {}
+
   // home-stats: Pruefungsreife-Karte; renderEngagement stellt den Tagesziel-Ring davor
   el.innerHTML = pruefungsreifeCardHTML();
   try{ renderEngagement(); }catch(e){}
@@ -15858,6 +15906,8 @@ function showOnboarding() {
 let examState = null;
 
 function startExam() {
+  // Prüfungssimulator mit Note = Premium (Therapie, nicht Diagnose)
+  if (currentBereich && currentBereich.simulator === false) { showUpgradeModal(); return; }
   const allFragen = QUIZ_FRAGEN;
   const shuffled = [...allFragen].sort(() => Math.random() - 0.5).slice(0, 30);
   examState = {
