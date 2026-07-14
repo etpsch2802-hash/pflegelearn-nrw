@@ -4428,8 +4428,9 @@ function filterTokenListe() {
   });
 }
 
+var PL_PROTECTED_TOKENS = ['TEST-PFLEGE-2026-T001', 'GRATIS', 'NeleLily2916'];
 async function toggleToken(token) {
-  if (token === 'TEST-PFLEGE-2026-T001') { showCopyFeedback("Dieser Code ist geschuetzt 🔒"); return; }
+  if (PL_PROTECTED_TOKENS.indexOf(token) > -1) { showCopyFeedback("Geschuetzter Code – kann nicht gesperrt werden 🔒"); return; }
   let neu = null;
   if (localTokenDB[token]) {
     localTokenDB[token].aktiv = !localTokenDB[token].aktiv;
