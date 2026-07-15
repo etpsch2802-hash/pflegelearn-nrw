@@ -719,9 +719,7 @@
 
 <!-- NAV DROPDOWN MENU -->
 <div id="nav-dropdown" style="display:none;position:fixed;top:62px;right:10px;z-index:200;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:10px;min-width:210px;box-shadow:0 8px 32px rgba(0,0,0,.5);max-height:calc(100vh - 72px);max-height:calc(100dvh - 72px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain">
-  <!-- Aktualisierung: oben, Cyan, abgesetzt -->
-  <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#04121f;background:linear-gradient(135deg,#38bdf8,#0ea5e9);font-weight:700;justify-content:center;text-align:center">🔄 App aktualisieren</button>
-  <hr style="border-color:rgba(255,255,255,.12);margin:8px 0">
+  <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#4a7a9b;font-size:11px">🔄 App aktualisieren</button>
 
   <button onclick="toggleNavSec('lernen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_lernen">LERNEN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-lernen" style="display:none">
@@ -876,6 +874,7 @@
   <!-- Sprint UI "Lerncoach": persoenliche Begruessung + EIN adaptiver naechster Schritt statt Menue -->
   <div id="home-greeting" style="margin-top:6px"></div>
   <div class="section-label" style="display:none"></div>
+  <div style="font-size:11px;color:#7a9b8c;font-weight:600;margin:0 2px 12px;display:flex;align-items:center;gap:6px">🩺 Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
 
   <!-- ── HOME 3.0 HERO: Pruefungsreife-Ring (dominant, per JS in #home-hero) ── -->
   <div id="home-hero"></div>
@@ -891,13 +890,13 @@
   <!-- ── SCHNELLZUGRIFF ── -->
   <div id="lib-quick-title" style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:18px 2px 8px;font-weight:700">Schnellzugriff</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
-    <button class="ki-neon-btn" onclick="openKIChooser()" style="background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.16),rgba(8,20,34,.5));border:1px solid #22d3ee;border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
+    <button onclick="openKIChooser()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
       <span style="font-size:23px" id="ki-home-icon">💬</span>
-      <span style="font-size:12.5px;font-weight:700;color:#7ff0ff;line-height:1.25" data-i18n="home_ki_t">KI-Assistent &amp; Prüfung</span>
+      <span style="font-size:12.5px;font-weight:700;color:#cbd5e1;line-height:1.25" data-i18n="home_ki_t">KI-Assistent &amp; Prüfung</span>
     </button>
-    <button onclick="openCEHub()" style="background:linear-gradient(135deg,rgba(52,211,153,.16),rgba(16,185,129,.05));border:1px solid rgba(52,211,153,.45);border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
+    <button onclick="openCEHub()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;font-family:inherit;text-align:left">
       <span style="font-size:23px">🎯</span>
-      <span style="font-size:12.5px;font-weight:700;color:#6ee7b7;line-height:1.25" data-i18n="home_ce_t">Lernen nach Kompetenzbereichen</span>
+      <span style="font-size:12.5px;font-weight:700;color:#cbd5e1;line-height:1.25" data-i18n="home_ce_t">Lernen nach Kompetenzbereichen</span>
     </button>
   </div>
 
@@ -918,7 +917,7 @@
   <!-- Schul-Lizenz: Kachel für Azubi-Klassenbeitritt & Lehrer-Dashboard -->
   <button onclick="openSchuleChooser()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(56,189,248,.05));border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;color:#6ee7b7;font-size:12.5px;font-weight:700">🎓 Klasse beitreten &amp; Lehrer-Bereich</button>
 
-  <div class="footer-note" style="margin-top:8px;margin-bottom:0">💡 Entwickelt von einem Ausbilder & Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
+
 </div>
 
 <!-- MEDIKAMENTE -->
@@ -12595,6 +12594,7 @@ function renderCountdown() {
 
   var tage = Math.ceil((new Date(d) - new Date()) / 86400000);
   if (tage < 0 || tage > 900) { el.innerHTML = ''; return; }
+  el.innerHTML = ''; return; // Countdown lebt jetzt inline in der Begruessung (Dopplung entfernt)
 
   var col, txt, sub;
   if (tage === 0)      { col = '#f87171'; txt = 'Heute ist dein Prüfungstag'; sub = 'Du schaffst das. Kopf hoch.'; }
@@ -15943,7 +15943,7 @@ function _coachCard(o) {
   var prog = (o.prog != null)
     ? '<div style="height:7px;border-radius:20px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:13px"><div style="height:100%;width:' + o.prog + '%;background:' + a + ';opacity:.85"></div></div>'
     : '';
-  return '<div style="border-radius:18px;padding:18px 18px 16px;background:linear-gradient(150deg,' + a + '1f,rgba(8,20,34,.42));border:1.5px solid ' + a + '88;box-shadow:0 0 22px ' + a + '26">'
+  return '<div style="border-radius:16px;padding:18px 18px 16px;background:linear-gradient(150deg,' + a + '14,rgba(8,20,34,.42));border:1px solid ' + a + '33">'
     + '<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px"><span style="font-size:26px">' + o.emoji + '</span><span style="font-size:11px;letter-spacing:.5px;text-transform:uppercase;font-weight:800;color:' + a + '">' + o.kicker + '</span></div>'
     + '<div style="font-size:15px;line-height:1.45;font-weight:600;color:#eaf4fb;margin-bottom:14px">' + o.msg + '</div>'
     + prog
@@ -16040,23 +16040,31 @@ function renderHomeStats() {
       <button onclick="setUserName()" title="Name ändern" style="background:none;border:none;cursor:pointer;font-size:15px;opacity:.55;font-family:inherit;padding:2px">✏️</button>
     </div>`;
 
-  // Adaptive Coach-Karte (EIN naechster Schritt) im eigenen Container ueber den Statistiken
+  // ── HOME 4.0: Cold-Start vs. Warm ──────────────────────────────────────
+  var _assessed = 0;
+  try { _assessed = computePruefungsreife().assessed || 0; } catch(e){}
+  var _cold = (_assessed === 0);
+
+  // Coach-Karte: im Cold-Start = einziger Handlungsschritt; im Warm = aus (Hero ist Fokus)
   var _coachHtml = '';
-  try { _coachHtml = coachCardHTML(); } catch (e) {}
+  if (_cold) { try { _coachHtml = coachCardHTML(); } catch (e) {} }
   var coachEl = document.getElementById('home-coach');
   if (coachEl) coachEl.innerHTML = _coachHtml;
   var coachLbl = document.getElementById('home-coach-label');
-  if (coachLbl) coachLbl.style.display = _coachHtml ? '' : 'none';
+  if (coachLbl) coachLbl.style.display = 'none';
 
   try { renderCountdown(); } catch(e) {}
 
-  // HOME 3.0: Pruefungsreife-Ring dominant nach oben (#home-hero)
+  // Pruefungsreife-Hero: nur im Warm-Zustand (kein leerer Ring im Cold-Start)
   var heroEl = document.getElementById('home-hero');
-  if (heroEl) { try { heroEl.innerHTML = pruefungsreifeHeroHTML(); } catch(e) { heroEl.innerHTML = ''; } }
+  if (heroEl) {
+    if (_cold) { heroEl.innerHTML = ''; }
+    else { try { heroEl.innerHTML = pruefungsreifeHeroHTML(); } catch(e) { heroEl.innerHTML = ''; } }
+  }
 
-  // home-stats: nur noch Tagesziel-Ring / Streak (renderEngagement fuellt ihn)
+  // Streak/Tagesziel als Inline-Zeile: nur im Warm-Zustand
   el.innerHTML = '';
-  try{ renderEngagement(); }catch(e){}
+  if (!_cold) { try{ renderEngagement(); }catch(e){} }
 
   // Bibliothek (19+ Module, gruppiert & durchsuchbar)
   try{ renderHomeLibrary(); }catch(e){}
@@ -17670,14 +17678,12 @@ function renderEngagement(){
     var deg=Math.round(goalPct*3.6);
     var done=goalPct>=100;
     var html='';
-    html+='<div style="display:flex;align-items:center;gap:14px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:14px;padding:13px 15px">';
-    html+= '<div style="width:54px;height:54px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--accent) '+deg+'deg, var(--ring-track) '+deg+'deg);display:flex;align-items:center;justify-content:center">';
-    html+=   '<div style="width:42px;height:42px;border-radius:50%;background:var(--ring-hole);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--text)">'+Math.min(used,PL_DAILY_GOAL)+'/'+PL_DAILY_GOAL+'</div></div>';
-    html+= '<div style="flex:1">';
-    html+=   '<div style="font-size:13px;font-weight:800;color:var(--text)">'+(done?'Tagesziel erreicht \uD83C\uDF89':'Heutiges Tagesziel')+'</div>';
-    html+=   '<div style="font-size:11px;color:var(--text2);margin-top:2px">'+(done?('Stark! Komm morgen wieder.'):(Math.max(0,PL_DAILY_GOAL-used)+' Fragen bis zum Ziel'))+'</div>';
+    html+='<div style="display:flex;align-items:center;gap:12px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:12px;padding:11px 14px">';
+    if(streak>0){ html+='<div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span style="font-size:17px">\uD83D\uDD25</span><span style="font-size:13px;font-weight:800;color:#f59e0b">'+streak+'</span></div>'; }
+    html+= '<div style="flex:1;min-width:0">';
+    html+=   '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--text)">'+(done?'Tagesziel erreicht \uD83C\uDF89':'Heute')+'</span><span style="font-size:11px;font-weight:800;color:var(--accent)">'+Math.min(used,PL_DAILY_GOAL)+'/'+PL_DAILY_GOAL+'</span></div>';
+    html+=   '<div style="background:rgba(255,255,255,.08);border-radius:20px;height:5px;overflow:hidden;margin-top:6px"><div style="background:var(--accent);height:100%;width:'+goalPct+'%;border-radius:20px;transition:width .5s"></div></div>';
     html+= '</div>';
-    if(streak>0){ html+='<div style="text-align:center"><div style="font-size:20px">\uD83D\uDD25</div><div style="font-size:11px;font-weight:800;color:#f59e0b">'+streak+'</div></div>'; }
     html+='</div>';
     if(streak>0 && !studiedToday){
       html+='<div style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.35);border-radius:12px;padding:11px 13px;font-size:12px;color:#fdba74;line-height:1.4">\u26A0\uFE0F Deine <b>'+streak+'-Tage-Serie</b> ist in Gefahr \u2013 heute noch keine Frage. Schon 1 Quiz h\u00e4lt sie am Leben.</div>';
