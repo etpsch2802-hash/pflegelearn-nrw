@@ -739,6 +739,7 @@
     <button onclick="navGo('kinaesthetik')" class="nav-drop-btn"><span data-i18n="nav_kinaes">🤸 Kinästhetik</span></button>
     <button onclick="navGo('prophylaxen')" class="nav-drop-btn"><span data-i18n="nav_prophylaxen">🛡️ Prophylaxen</span></button>
     <button onclick="navGo('wundversorgung')" class="nav-drop-btn"><span data-i18n="nav_wund">🩹 Wundversorgung</span></button>
+    <button onclick="navGo('wissensdb')" class="nav-drop-btn"><span>📚 Wissensdatenbank</span></button>
   </div>
 
   <button onclick="toggleNavSec('medizin',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_medizin">MEDIZIN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
@@ -1087,6 +1088,18 @@
       <p>Körpersysteme · Aufbau · Funktion · Pflegebezug · Erklärbilder</p>
     </div>
     <div id="an-systeme" style="display:grid;grid-template-columns:1fr 1fr;gap:9px"></div>
+  </div>
+</div>
+
+<!-- WISSENSDATENBANK -->
+<div class="page" id="screen-wissensdb">
+  <div style="max-width:720px;margin:0 auto">
+    <div class="hero" style="margin-bottom:14px">
+      <div class="hero-icon">📚</div>
+      <h1>Wissens<span>datenbank</span></h1>
+      <p>Anatomie · Krankheitslehre · EKG · Notfall · Pharma · Pflege &middot; durchsuchbar</p>
+    </div>
+    <div id="wdb-container"></div>
   </div>
 </div>
 
@@ -12034,6 +12047,82 @@ function openAnatBild(id){
   ov.addEventListener('click',function(e){ if(e.target===ov){ closeAnatBild(); } });
 }
 
+/* ===== WISSENSDATENBANK (liest aus Supabase-Tabelle lerninhalte) ===== */
+var _wdbData = null;
+function _wdbEsc(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+async function loadWissensDB(force){
+  if (_wdbData && !force) return _wdbData;
+  if (!window.SB) return null;
+  try {
+    const { data, error } = await window.SB
+      .from('lerninhalte')
+      .select('kategorie,titel,slug,daten')
+      .eq('aktiv', true)
+      .order('kategorie', { ascending:true })
+      .order('titel', { ascending:true });
+    if (error) { console.warn('[wdb]', error); return null; }
+    _wdbData = data || [];
+    return _wdbData;
+  } catch(e){ console.warn('[wdb]', e); return null; }
+}
+async function renderWissensDB(){
+  const host = document.getElementById('wdb-container');
+  if (!host) return;
+  if (!window.SB){ host.innerHTML = '<div style="color:#94a3b8;font-size:13px;text-align:center;padding:24px">Die Wissensdatenbank benötigt eine Internetverbindung.</div>'; return; }
+  host.innerHTML = '<div style="color:#94a3b8;font-size:13px;text-align:center;padding:24px">Lädt…</div>';
+  const data = await loadWissensDB(false);
+  if (!data){ host.innerHTML = '<div style="color:#94a3b8;font-size:13px;text-align:center;padding:24px">Konnte nicht geladen werden. Bitte später erneut versuchen.</div>'; return; }
+  const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', physiologie:'Physiologie', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage' };
+  const order = ['definition','aufbau','funktion','physiologie','klinische_relevanz','merksatz','pruefungswissen','haeufige_pruefungsfrage'];
+  const groups = {};
+  data.forEach(function(e){ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
+  const cats = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b,'de'); });
+  var html = '';
+  html += '<input id="wdb-search" oninput="_wdbFilter()" placeholder="Suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:11px 13px;color:#e2e8f0;font-size:14px;font-family:inherit;margin-bottom:6px">';
+  html += '<div id="wdb-count" style="font-size:11px;color:#64748b;margin-bottom:6px">'+data.length+' Lerneinheiten in '+cats.length+' Kategorien</div>';
+  cats.forEach(function(cat){
+    var items = groups[cat];
+    html += '<div class="wdb-sec">';
+    html += '<div class="section-label" style="margin-top:12px">'+_wdbEsc(cat)+' <span style="color:#64748b;font-weight:400">('+items.length+')</span></div>';
+    items.forEach(function(e){
+      var d = e.daten || {};
+      var search = (String(e.titel||'')+' '+String(cat)+' '+String(d.definition||'')).toLowerCase();
+      var body = '';
+      order.forEach(function(k){ if (d[k]){ body += '<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:2px">'+labels[k]+'</div><div style="font-size:13px;color:#cbd5e1;line-height:1.5">'+_wdbEsc(d[k])+'</div></div>'; } });
+      if (Array.isArray(d.quizfragen) && d.quizfragen.length){
+        body += '<div style="margin-top:6px"><div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:4px">Quizfragen</div>';
+        d.quizfragen.forEach(function(q){ body += '<div style="font-size:13px;color:#cbd5e1;line-height:1.5;padding-left:14px;position:relative"><span style="position:absolute;left:0">•</span>'+_wdbEsc(q)+'</div>'; });
+        body += '</div>';
+      }
+      html += '<div class="wdb-card" data-search="'+_wdbEsc(search)+'" style="background:rgba(255,255,255,.03);border:1px solid rgba(56,189,248,.15);border-radius:12px;margin-bottom:8px;overflow:hidden">';
+      html += '<button onclick="_wdbToggle(this)" style="width:100%;text-align:left;background:none;border:none;padding:12px 14px;color:#e2e8f0;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>'+_wdbEsc(e.titel)+'</span><span class="wdb-caret" style="color:#64748b;transition:transform .2s">▾</span></button>';
+      html += '<div class="wdb-body" style="display:none;padding:0 14px 14px 14px">'+body+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  host.innerHTML = html;
+}
+function _wdbToggle(btn){
+  var card = btn.closest('.wdb-card'); if(!card) return;
+  var body = card.querySelector('.wdb-body'); var car = card.querySelector('.wdb-caret');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (car) car.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+function _wdbFilter(){
+  var inp = document.getElementById('wdb-search'); if(!inp) return;
+  var q = (inp.value||'').toLowerCase().trim();
+  document.querySelectorAll('.wdb-sec').forEach(function(sec){
+    var any = false;
+    sec.querySelectorAll('.wdb-card').forEach(function(c){
+      var hit = !q || (c.getAttribute('data-search')||'').indexOf(q) >= 0;
+      c.style.display = hit ? '' : 'none';
+      if (hit) any = true;
+    });
+    sec.style.display = any ? '' : 'none';
+  });
+}
 function navGo(screen) {
   document.getElementById('nav-dropdown').style.display = 'none';
   if (screen === 'admin' && !isAdmin()) { showScreen('home'); return; }
@@ -12047,6 +12136,8 @@ function navGo(screen) {
     showScreen('anatomie'); renderAnatomie();
   } else if (screen === 'faelle') {
     showScreen('faelle'); renderFaelle();
+  } else if (screen === 'wissensdb') {
+    showScreen('wissensdb'); renderWissensDB();
   } else {
     showScreen(screen);
   }
