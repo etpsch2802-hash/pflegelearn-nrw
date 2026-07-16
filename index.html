@@ -12134,41 +12134,74 @@ function startWdbQuiz(cat){
   data.forEach(function(e){
     if (cat && e.kategorie !== cat) return;
     var d = e.daten || {};
-    if (Array.isArray(d.quizfragen)){
+    var merk = (d.pruefungswissen||d.definition||''); var mks = (d.merksatz||'');
+    if (Array.isArray(d.mcq) && d.mcq.length){
+      d.mcq.forEach(function(m){
+        if (m && m.frage && Array.isArray(m.optionen) && m.optionen.length>=2){
+          var opts = m.optionen.slice();
+          var correctText = opts[(typeof m.richtig==='number'?m.richtig:0)];
+          _wdbShuffle(opts);
+          var ri = opts.indexOf(correctText);
+          cards.push({ type:'mcq', frage:m.frage, optionen:opts, richtig:(ri<0?0:ri), titel:e.titel, kat:e.kategorie, merk:merk, merksatz:mks });
+        }
+      });
+    } else if (Array.isArray(d.quizfragen)){
       d.quizfragen.forEach(function(q){
-        cards.push({ frage:q, titel:e.titel, kat:e.kategorie, merk:(d.pruefungswissen||d.definition||''), merksatz:(d.merksatz||'') });
+        cards.push({ type:'flash', frage:q, titel:e.titel, kat:e.kategorie, merk:merk, merksatz:mks });
       });
     }
   });
   if (!cards.length){ alert('Für diesen Bereich sind keine Quizfragen vorhanden.'); return; }
   _wdbShuffle(cards);
-  _wdbQuiz = { cards:cards, i:0, known:0, missed:[] };
+  _wdbQuiz = { cards:cards, i:0, known:0, missed:[], answered:false };
   _wdbRenderQuiz();
 }
 function _wdbRenderQuiz(){
   var ov = document.getElementById('wdb-quiz-overlay');
   if (!ov){ ov = document.createElement('div'); ov.id='wdb-quiz-overlay'; ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(6,14,26,.97);display:flex;align-items:center;justify-content:center;padding:18px'; document.body.appendChild(ov); }
-  var Q=_wdbQuiz;
+  var Q=_wdbQuiz; Q.answered=false;
   if (Q.i >= Q.cards.length){ _wdbQuizResult(); return; }
   var c = Q.cards[Q.i];
-  ov.innerHTML =
-    '<div style="max-width:560px;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:18px;padding:20px">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'+
-        '<span style="font-size:11px;color:#64748b">Frage '+(Q.i+1)+' / '+Q.cards.length+'</span>'+
-        '<button onclick="closeWdbQuiz()" style="background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1">✕</button>'+
-      '</div>'+
-      '<div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.7);text-transform:uppercase;margin-bottom:6px">'+_wdbEsc(c.kat)+' · '+_wdbEsc(c.titel)+'</div>'+
-      '<div style="font-size:17px;color:#f1f5f9;font-weight:600;line-height:1.4;margin-bottom:16px">'+_wdbEsc(c.frage)+'</div>'+
-      '<div id="wdb-quiz-answer" style="display:none">'+
-        '<div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">Merkwissen</div>'+
-        '<div style="font-size:14px;color:#cbd5e1;line-height:1.5;margin-bottom:8px">'+_wdbEsc(c.merk)+'</div>'+
-        (c.merksatz? '<div style="font-size:13px;color:#93c5fd;line-height:1.5;font-style:italic">💡 '+_wdbEsc(c.merksatz)+'</div>':'')+
-      '</div>'+
-      '<div id="wdb-quiz-actions" style="margin-top:16px">'+
-        '<button onclick="_wdbReveal()" style="width:100%;background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:12px;padding:13px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer">Antwort anzeigen</button>'+
-      '</div>'+
+  var head =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'+
+      '<span style="font-size:11px;color:#64748b">Frage '+(Q.i+1)+' / '+Q.cards.length+'</span>'+
+      '<button onclick="closeWdbQuiz()" style="background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1">✕</button>'+
+    '</div>'+
+    '<div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.7);text-transform:uppercase;margin-bottom:6px">'+_wdbEsc(c.kat)+' · '+_wdbEsc(c.titel)+'</div>'+
+    '<div style="font-size:17px;color:#f1f5f9;font-weight:600;line-height:1.4;margin-bottom:16px">'+_wdbEsc(c.frage)+'</div>';
+  var answerBox =
+    '<div id="wdb-quiz-answer" style="display:none">'+
+      '<div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">Merkwissen</div>'+
+      '<div style="font-size:14px;color:#cbd5e1;line-height:1.5;margin-bottom:8px">'+_wdbEsc(c.merk)+'</div>'+
+      (c.merksatz? '<div style="font-size:13px;color:#93c5fd;line-height:1.5;font-style:italic">💡 '+_wdbEsc(c.merksatz)+'</div>':'')+
     '</div>';
+  var mid = '';
+  if (c.type === 'mcq'){
+    var opts = c.optionen.map(function(o,idx){
+      return '<button class="wdb-opt" data-idx="'+idx+'" onclick="_wdbAnswer('+idx+')" style="display:block;width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:12px 14px;margin-bottom:8px;color:#e2e8f0;font-size:14px;font-family:inherit;cursor:pointer">'+_wdbEsc(o)+'</button>';
+    }).join('');
+    mid = '<div id="wdb-quiz-opts">'+opts+'</div>'+answerBox+'<div id="wdb-quiz-actions" style="margin-top:6px"></div>';
+  } else {
+    mid = answerBox+'<div id="wdb-quiz-actions" style="margin-top:16px"><button onclick="_wdbReveal()" style="width:100%;background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:12px;padding:13px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer">Antwort anzeigen</button></div>';
+  }
+  ov.innerHTML = '<div style="max-width:560px;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:18px;padding:20px">'+head+mid+'</div>';
 }
+function _wdbAnswer(idx){
+  var Q=_wdbQuiz; if (Q.answered) return; Q.answered=true;
+  var c=Q.cards[Q.i];
+  if (idx===c.richtig) Q.known++; else Q.missed.push(c);
+  var btns = document.querySelectorAll('#wdb-quiz-overlay .wdb-opt');
+  btns.forEach(function(b){
+    var bi=parseInt(b.getAttribute('data-idx'),10); b.disabled=true; b.style.cursor='default';
+    if (bi===c.richtig){ b.style.background='rgba(52,211,153,.2)'; b.style.borderColor='rgba(52,211,153,.6)'; b.style.color='#6ee7b7'; }
+    else if (bi===idx){ b.style.background='rgba(239,68,68,.2)'; b.style.borderColor='rgba(239,68,68,.6)'; b.style.color='#fca5a5'; }
+    else { b.style.opacity='.55'; }
+  });
+  var a=document.getElementById('wdb-quiz-answer'); if(a) a.style.display='block';
+  var act=document.getElementById('wdb-quiz-actions');
+  if(act) act.innerHTML='<button onclick="_wdbNext()" style="width:100%;background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:12px;padding:13px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">Weiter</button>';
+}
+function _wdbNext(){ _wdbQuiz.i++; _wdbRenderQuiz(); }
 function _wdbReveal(){
   var a=document.getElementById('wdb-quiz-answer'); if(a) a.style.display='block';
   var act=document.getElementById('wdb-quiz-actions');
