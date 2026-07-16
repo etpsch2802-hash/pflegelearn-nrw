@@ -12080,10 +12080,11 @@ async function renderWissensDB(){
   var html = '';
   html += '<input id="wdb-search" oninput="_wdbFilter()" placeholder="Suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:11px 13px;color:#e2e8f0;font-size:14px;font-family:inherit;margin-bottom:6px">';
   html += '<div id="wdb-count" style="font-size:11px;color:#64748b;margin-bottom:6px">'+data.length+' Lerneinheiten in '+cats.length+' Kategorien</div>';
+  html += '<button onclick="startWdbQuiz(null)" style="width:100%;background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:12px;padding:12px;color:#04121f;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px">🎮 Alle Fragen üben</button>';
   cats.forEach(function(cat){
     var items = groups[cat];
     html += '<div class="wdb-sec">';
-    html += '<div class="section-label" style="margin-top:12px">'+_wdbEsc(cat)+' <span style="color:#64748b;font-weight:400">('+items.length+')</span></div>';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px"><div class="section-label" style="margin:0">'+_wdbEsc(cat)+' <span style="color:#64748b;font-weight:400">('+items.length+')</span></div><button data-cat="'+_wdbEsc(cat)+'" onclick="startWdbQuizFromBtn(this)" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(56,189,248,.3);border-radius:9px;padding:5px 11px;color:#7dd3fc;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">▶ Üben</button></div>';
     items.forEach(function(e){
       var d = e.daten || {};
       var search = (String(e.titel||'')+' '+String(cat)+' '+String(d.definition||'')).toLowerCase();
@@ -12123,6 +12124,75 @@ function _wdbFilter(){
     sec.style.display = any ? '' : 'none';
   });
 }
+/* ===== WISSENSDATENBANK: Karteikarten-Selbsttest ===== */
+var _wdbQuiz = { cards:[], i:0, known:0, missed:[] };
+function _wdbShuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function startWdbQuizFromBtn(b){ if(b) startWdbQuiz(b.getAttribute('data-cat')); }
+function startWdbQuiz(cat){
+  var data = _wdbData || [];
+  var cards = [];
+  data.forEach(function(e){
+    if (cat && e.kategorie !== cat) return;
+    var d = e.daten || {};
+    if (Array.isArray(d.quizfragen)){
+      d.quizfragen.forEach(function(q){
+        cards.push({ frage:q, titel:e.titel, kat:e.kategorie, merk:(d.pruefungswissen||d.definition||''), merksatz:(d.merksatz||'') });
+      });
+    }
+  });
+  if (!cards.length){ alert('Für diesen Bereich sind keine Quizfragen vorhanden.'); return; }
+  _wdbShuffle(cards);
+  _wdbQuiz = { cards:cards, i:0, known:0, missed:[] };
+  _wdbRenderQuiz();
+}
+function _wdbRenderQuiz(){
+  var ov = document.getElementById('wdb-quiz-overlay');
+  if (!ov){ ov = document.createElement('div'); ov.id='wdb-quiz-overlay'; ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(6,14,26,.97);display:flex;align-items:center;justify-content:center;padding:18px'; document.body.appendChild(ov); }
+  var Q=_wdbQuiz;
+  if (Q.i >= Q.cards.length){ _wdbQuizResult(); return; }
+  var c = Q.cards[Q.i];
+  ov.innerHTML =
+    '<div style="max-width:560px;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:18px;padding:20px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'+
+        '<span style="font-size:11px;color:#64748b">Frage '+(Q.i+1)+' / '+Q.cards.length+'</span>'+
+        '<button onclick="closeWdbQuiz()" style="background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1">✕</button>'+
+      '</div>'+
+      '<div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.7);text-transform:uppercase;margin-bottom:6px">'+_wdbEsc(c.kat)+' · '+_wdbEsc(c.titel)+'</div>'+
+      '<div style="font-size:17px;color:#f1f5f9;font-weight:600;line-height:1.4;margin-bottom:16px">'+_wdbEsc(c.frage)+'</div>'+
+      '<div id="wdb-quiz-answer" style="display:none">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">Merkwissen</div>'+
+        '<div style="font-size:14px;color:#cbd5e1;line-height:1.5;margin-bottom:8px">'+_wdbEsc(c.merk)+'</div>'+
+        (c.merksatz? '<div style="font-size:13px;color:#93c5fd;line-height:1.5;font-style:italic">💡 '+_wdbEsc(c.merksatz)+'</div>':'')+
+      '</div>'+
+      '<div id="wdb-quiz-actions" style="margin-top:16px">'+
+        '<button onclick="_wdbReveal()" style="width:100%;background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:12px;padding:13px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer">Antwort anzeigen</button>'+
+      '</div>'+
+    '</div>';
+}
+function _wdbReveal(){
+  var a=document.getElementById('wdb-quiz-answer'); if(a) a.style.display='block';
+  var act=document.getElementById('wdb-quiz-actions');
+  if(act) act.innerHTML =
+    '<div style="display:flex;gap:10px">'+
+      '<button onclick="_wdbRate(false)" style="flex:1;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:12px;padding:13px;color:#fca5a5;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">Nochmal</button>'+
+      '<button onclick="_wdbRate(true)" style="flex:1;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:13px;color:#6ee7b7;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">Gewusst</button>'+
+    '</div>';
+}
+function _wdbRate(ok){ var Q=_wdbQuiz; if (ok) Q.known++; else Q.missed.push(Q.cards[Q.i]); Q.i++; _wdbRenderQuiz(); }
+function _wdbQuizResult(){
+  var ov=document.getElementById('wdb-quiz-overlay'); if(!ov) return;
+  var Q=_wdbQuiz; var total=Q.cards.length; var pct=total?Math.round(Q.known/total*100):0;
+  ov.innerHTML =
+    '<div style="max-width:480px;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.25);border-radius:18px;padding:24px;text-align:center">'+
+      '<div style="font-size:40px;margin-bottom:8px">'+(pct>=80?'🎉':(pct>=50?'👍':'💪'))+'</div>'+
+      '<div style="font-size:20px;color:#f1f5f9;font-weight:700;margin-bottom:6px">'+Q.known+' / '+total+' gewusst</div>'+
+      '<div style="font-size:13px;color:#94a3b8;margin-bottom:18px">'+pct+'% selbst als gewusst eingeschätzt</div>'+
+      (Q.missed.length? '<button onclick="_wdbRetryMissed()" style="width:100%;background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:12px;padding:13px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px">'+Q.missed.length+' verpasste nochmal üben</button>':'')+
+      '<button onclick="closeWdbQuiz()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:13px;color:#e2e8f0;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">Fertig</button>'+
+    '</div>';
+}
+function _wdbRetryMissed(){ var m=_wdbQuiz.missed.slice(); _wdbShuffle(m); _wdbQuiz={ cards:m, i:0, known:0, missed:[] }; _wdbRenderQuiz(); }
+function closeWdbQuiz(){ var ov=document.getElementById('wdb-quiz-overlay'); if(ov) ov.remove(); }
 function navGo(screen) {
   document.getElementById('nav-dropdown').style.display = 'none';
   if (screen === 'admin' && !isAdmin()) { showScreen('home'); return; }
