@@ -691,11 +691,10 @@
 
 <!-- UNTERE NAVIGATIONSLEISTE -->
 <nav class="bottom-nav" id="bottom-nav" aria-label="Hauptnavigation">
-  <button onclick="navGo('home')" id="bn-home"><span class="bn-ico">🏠</span>Start</button>
-  <button onclick="navGo('faelle')" id="bn-faelle"><span class="bn-ico">🩺</span>Fälle</button>
-  <button onclick="navGo('quizSelect')" id="bn-quiz"><span class="bn-ico">📝</span>Quiz</button>
-  <button onclick="showSearchOverlay()" id="bn-suche"><span class="bn-ico">🔍</span>Suche</button>
-  <button onclick="toggleNavMenu()" id="bn-menu"><span class="bn-ico">☰</span>Menü</button>
+  <button onclick="navGo('home')" id="bn-heute"><span class="bn-ico">🏠</span>Heute</button>
+  <button onclick="navGo('ueben')" id="bn-ueben"><span class="bn-ico">🎯</span>Üben</button>
+  <button onclick="navGo('wissenhub')" id="bn-wissen"><span class="bn-ico">📚</span>Wissen</button>
+  <button onclick="navGo('profil')" id="bn-profil"><span class="bn-ico">👤</span>Profil</button>
 </nav>
 
 <!-- INSTALL BUTTON -->
@@ -712,6 +711,7 @@
   </button>
   <div class="header-btns">
     <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none"><span data-i18n="btn_back">← Zurück</span></button>
+    <button class="hbtn" onclick="showSearchOverlay()" title="Suche" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8">🔍</button>
     <button class="hbtn" id="btn-darkmode" onclick="toggleDarkMode()" title="Hell/Dunkel" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8">🌙</button>
     <button class="hbtn" onclick="toggleNavMenu()" title="Menü" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#94a3b8" id="btn-hamburger">☰</button>
   </div>
@@ -919,6 +919,54 @@
   <button onclick="openSchuleChooser()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(56,189,248,.05));border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;color:#6ee7b7;font-size:12.5px;font-weight:700">🎓 Klasse beitreten &amp; Lehrer-Bereich</button>
 
 
+</div>
+
+<!-- ÜBEN HUB (PLAN 3.0) -->
+<div class="page" id="screen-ueben">
+  <div class="hero" style="margin-bottom:14px"><div class="hero-icon">🎯</div><h1>Üben<span> &amp; prüfen</span></h1><p>Alles zum aktiven Lernen an einem Ort</p></div>
+  <button onclick="openKIChooser()" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.14),rgba(56,189,248,.05));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:26px">🎤</span><span><span style="display:block;font-size:14px;font-weight:800;color:#e2e8f0">Mündliche KI-Prüfung</span><span style="display:block;font-size:11px;color:#9fb8cc">Prüfer oder Praxisanleiter – üben wie im Examen</span></span></button>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button onclick="navGo('quizSelect')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">📝</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Quiz</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Fragen nach Fachbereich</span></button>
+    <button onclick="startExam()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">📄</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prüfungssimulator</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Examen unter Zeit</span></button>
+    <button onclick="navGo('karteikarten')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🃏</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Karteikarten</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Spaced Repetition</span></button>
+    <button onclick="navGo('faelle')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🩺</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fallbeispiele</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Interaktive Fälle</span></button>
+    <button onclick="openCEHub()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🧭</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Lernen nach §53 PflBG</span></button>
+  </div>
+</div>
+
+<!-- WISSEN HUB (PLAN 3.0) -->
+<div class="page" id="screen-wissenhub">
+  <div class="hero" style="margin-bottom:14px"><div class="hero-icon">📚</div><h1>Wissen<span>sbibliothek</span></h1><p>Nachschlagen · verstehen · behalten</p></div>
+  <button onclick="showSearchOverlay()" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(var(--accent-rgb),.2);border-radius:12px;padding:13px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;color:#9fb8cc;font-size:13px"><span style="font-size:17px">🔍</span>Alle Inhalte durchsuchen …</button>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button onclick="navGo('wissensdb')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">📚</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Wissensdatenbank</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">285 Lerneinheiten · MCQ</span></button>
+    <button onclick="navGo('krankheitsbilder')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🏥</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Krankheitsbilder</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">100 Bilder, 10 Fächer</span></button>
+    <button onclick="navGo('anatomie')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🩻</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Anatomie</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Aufbau &amp; Physiologie</span></button>
+    <button onclick="navGo('taschenkarten')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">📇</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Taschenkarten</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Kompakt für die Kitteltasche</span></button>
+    <button onclick="navGo('prophylaxen')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🛡️</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prophylaxen</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Pflegerische Prävention</span></button>
+    <button onclick="navGo('notfallmanagement')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🚨</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Notfallmanagement</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Triage · ABCDE · Reanimation</span></button>
+    <button onclick="navGo('scores')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">📊</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Assessment-Scores</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Braden · NEWS · GCS …</span></button>
+    <button onclick="navGo('medikamente')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">💊</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medikamente</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Wirkung · NW · Pflege</span></button>
+    <button onclick="navGo('medizintechnik')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">⚙️</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medizintechnik</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Geräte &amp; Sicherheit</span></button>
+    <button onclick="navGo('wundversorgung')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🩹</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Wundversorgung</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Phasen &amp; Verbände</span></button>
+    <button onclick="navGo('atl')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">📋</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">ATL-Pflegeplanung</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Strukturiert planen</span></button>
+    <button onclick="navGo('merksaetze')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">💡</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Merksätze</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Eselsbrücken</span></button>
+    <button onclick="navGo('kinaesthetik')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🤸</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kinästhetik</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Bewegung &amp; Transfer</span></button>
+    <button onclick="navGo('bobath')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🧩</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Bobath</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Neurorehabilitation</span></button>
+  </div>
+</div>
+
+<!-- PROFIL HUB (PLAN 3.0) -->
+<div class="page" id="screen-profil">
+  <div class="hero" style="margin-bottom:14px"><div class="hero-icon">👤</div><h1>Mein<span> PLAN</span></h1><p>Konto · Zugang · Einstellungen</p></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button onclick="showScreen('support')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🩺</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Über mich &amp; Hilfe</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Der Autor · Support · FAQ</span></button>
+    <button onclick="showScreen('preise')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">💳</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Plan &amp; Preise</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Zugang verwalten</span></button>
+    <button onclick="openSchuleChooser()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🎓</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Klasse &amp; Lehrer</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Beitreten · Dashboard</span></button>
+    <button onclick="showScreen('ausbildungswege')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🧭</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Ausbildungswege</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">GPA · ATA · OTA · Fachpflege</span></button>
+    <button onclick="showThemePicker()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🎨</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Mein Theme</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Farbwelt wählen</span></button>
+    <button onclick="toggleDarkMode()" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><span style="font-size:24px">🌙</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Hell / Dunkel</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Ansicht umschalten</span></button>
+  </div>
 </div>
 
 <!-- MEDIKAMENTE -->
@@ -3351,7 +3399,15 @@ function showScreen(name) {
   // Untere Navigationsleiste: aktiven Punkt markieren
   try {
     document.querySelectorAll('.bottom-nav button').forEach(function(b){ b.classList.remove('bn-active'); });
-    var _bnMap = { home:'bn-home', faelle:'bn-faelle', quizSelect:'bn-quiz' };
+    var _bnMap = {
+      home:'bn-heute',
+      ueben:'bn-ueben', quizSelect:'bn-ueben', exam:'bn-ueben', karteikarten:'bn-ueben', faelle:'bn-ueben',
+      wissenhub:'bn-wissen', wissensdb:'bn-wissen', krankheitsbilder:'bn-wissen', anatomie:'bn-wissen',
+      taschenkarten:'bn-wissen', prophylaxen:'bn-wissen', notfallmanagement:'bn-wissen', scores:'bn-wissen',
+      medikamente:'bn-wissen', medizintechnik:'bn-wissen', wundversorgung:'bn-wissen', atl:'bn-wissen',
+      bobath:'bn-wissen', kinaesthetik:'bn-wissen', merksaetze:'bn-wissen',
+      profil:'bn-profil', preise:'bn-profil', ausbildungswege:'bn-profil', support:'bn-profil', admin:'bn-profil'
+    };
     var _bnId = _bnMap[name];
     if (_bnId) { var _bnEl = document.getElementById(_bnId); if (_bnEl) _bnEl.classList.add('bn-active'); }
   } catch (e) {}
