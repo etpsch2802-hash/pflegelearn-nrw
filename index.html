@@ -505,6 +505,22 @@
 
   /* ── TAG-MODUS: kräftigerer Kontrast (Farben/Schriften deutlich lesbarer) ── */
   body.light-mode { --text:#0f172a; --text2:#334155; --text3:#475569; --accent:#0284c7; --accent2:#0369a1; --ring-track:rgba(2,132,199,.18); --ring-hole:#ffffff; }
+  /* Tag-Modus: Inline-gestylte Karten (Hubs, Radar, Chooser) lesbar machen */
+  body.light-mode [style*="color:#e2e8f0"],
+  body.light-mode [style*="color:#e0f2fe"],
+  body.light-mode [style*="color:#f1f5f9"] { color:#0f172a !important; }
+  body.light-mode [style*="color:#a3bcd0"],
+  body.light-mode [style*="color:#b3c4d6"],
+  body.light-mode [style*="color:#9aabc0"],
+  body.light-mode [style*="color:#93b9d1"],
+  body.light-mode [style*="color:#a9cbe0"],
+  body.light-mode [style*="color:#9dbdd2"] { color:#475569 !important; }
+  body.light-mode [style*="color:#7dd3fc"],
+  body.light-mode [style*="color:#38bdf8"] { color:#0369a1 !important; }
+  body.light-mode [style*="background:rgba(255,255,255,.03)"],
+  body.light-mode [style*="background:rgba(255,255,255,.04)"],
+  body.light-mode [style*="background:rgba(255,255,255,.06)"] { background:#ffffff !important; border-color:rgba(2,132,199,.22) !important; box-shadow:0 1px 3px rgba(15,23,42,.06) !important; }
+  body.light-mode svg.ic { color:#0369a1; }
   body.light-mode .logo-sub, body.light-mode .ausb-sub, body.light-mode .bottom-card-sub,
   body.light-mode .mt-card-sub, body.light-mode .result-msg, body.light-mode .section-label,
   body.light-mode .modal-grid-val, body.light-mode .footer-note, body.light-mode .qs-count { color:#475569; }
