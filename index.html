@@ -933,6 +933,7 @@
 <!-- PROFIL HUB (PLAN 3.0) -->
 <div class="page" id="screen-profil">
   <div class="hero" style="margin-bottom:14px"><div class="hero-icon"><svg class="ic" viewBox="0 0 24 24" style="width:1em;height:1em"><use href="#i-user"/></svg></div><h1>Mein<span> PLAN</span></h1><p>Konto · Zugang · Einstellungen</p></div>
+  <div id="profil-radar" style="margin-bottom:16px"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     <button onclick="showScreen('support')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-lifebuoy"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Über mich &amp; Hilfe</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Der Autor · Support · FAQ</span></button>
     <button onclick="showScreen('preise')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-card"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Plan &amp; Preise</span><span style="font-size:10.5px;color:#7a94a8;line-height:1.3">Zugang verwalten</span></button>
@@ -3422,6 +3423,7 @@ function showScreen(name) {
   if (name === "merksaetze")    { renderMerksaetze(document.getElementById('merk-search') ? document.getElementById('merk-search').value : ''); }
   if (name === "exam")          { /* renderExam() wird von startExam() aufgerufen */ }
   if (name === "medNeu")        setTimeout(() => { renderMedNeu(); }, 50);
+  if (name === "profil")        { try{ renderSchwaechenRadar(); }catch(e){} }
 }
 
 // ─── MODAL ──────────────────────────────────────────────────────────────────
@@ -13155,6 +13157,36 @@ function renderHomeLibrary() {
   host.innerHTML = contentHtml + html;
   var cnt = document.getElementById('lib-count');
   if (cnt) cnt.textContent = (q ? shown + ' / ' + total : total + ' ' + plLibUI('ui_mods'));
+}
+
+function renderSchwaechenRadar(){
+  var host=document.getElementById('profil-radar'); if(!host) return;
+  if(!currentUser){ host.innerHTML=''; return; }
+  var pr=computePruefungsreife();
+  var head='<div style="display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,'+pr.col+'1a,'+pr.col+'08);border:1px solid '+pr.col+'3a;border-radius:16px;padding:14px 16px;margin-bottom:10px">'
+    +'<div style="font-size:29px;font-weight:800;color:'+pr.col+';line-height:1">'+pr.score+'%</div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800;color:#e2e8f0">Prüfungsreife: '+pr.label+'</div>'
+    +'<div style="font-size:11px;color:#7a94a8;margin-top:2px">'+pr.assessed+' von '+pr.total+' Themen mit Daten</div></div>'
+    +'<button onclick="showPruefungsreife()" style="background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:8px 11px;color:#7dd3fc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">Details ›</button></div>';
+  var body;
+  if(pr.assessed===0){
+    body='<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;text-align:center">'
+      +'<div style="font-size:13px;color:#cbd5e1;font-weight:600;margin-bottom:4px">Dein Radar ist noch leer</div>'
+      +'<div style="font-size:11px;color:#7a94a8;margin-bottom:12px">Beantworte ein paar Quizfragen, dann zeigt dir der Radar genau, wo du üben solltest.</div>'
+      +'<button onclick="navGo(\'quizSelect\')" style="background:linear-gradient(135deg,var(--accent),#38bdf8);border:none;border-radius:11px;padding:11px 16px;color:#04121f;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Jetzt starten</button></div>';
+  } else {
+    var rows=(pr.luecken||[]).map(function(k){
+      var bc = k.acc>=75?'#34d399':k.acc>=50?'#fbbf24':'#f87171';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+plLibEsc(k.label)+'</div>'
+        +'<div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:5px;overflow:hidden"><div style="height:100%;width:'+k.acc+'%;background:'+bc+'"></div></div></div>'
+        +'<div style="font-size:12px;font-weight:800;color:'+bc+';width:34px;text-align:right">'+k.acc+'%</div>'
+        +'<button onclick="startQuiz(\''+k.id+'\')" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(56,189,248,.3);border-radius:9px;padding:6px 10px;color:#7dd3fc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">Üben ›</button></div>';
+    }).join('');
+    body='<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;margin:2px 2px 4px;font-weight:700">Deine größten Lücken</div>'
+      +'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:2px 14px">'+rows+'</div>';
+  }
+  host.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin:2px 2px 8px"><svg class="ic" viewBox="0 0 24 24" style="width:13px;height:13px;color:#4a7a9b"><use href="#i-target"/></svg><span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a9b;font-weight:700">Schwächen-Radar</span></div>'+head+body;
 }
 
 function showPruefungsreife() {
