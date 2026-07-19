@@ -625,9 +625,9 @@
   <div style="width:100%;max-width:340px;margin:16px auto 2px">
     <div style="font-size:12px;color:#9dbdd2;text-align:center;margin-bottom:9px;font-weight:700;letter-spacing:.3px">Ich bin …</div>
     <div style="display:flex;gap:8px">
-      <button type="button" id="role-azubi" onclick="plPickRole('azubi')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px">🎓</span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Auszubildende</span></button>
-      <button type="button" id="role-examiniert" onclick="plPickRole('examiniert')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px">🩺</span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Examinierte</span></button>
-      <button type="button" id="role-lehrkraft" onclick="plPickRole('lehrkraft')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px">📋</span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Lehrkraft</span></button>
+      <button type="button" id="role-azubi" onclick="plPickRole('azubi')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg></span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Auszubildende</span></button>
+      <button type="button" id="role-examiniert" onclick="plPickRole('examiniert')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg></span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Examinierte</span></button>
+      <button type="button" id="role-lehrkraft" onclick="plPickRole('lehrkraft')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg></span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Lehrkraft</span></button>
     </div>
   </div>
   <script>
@@ -646,23 +646,23 @@
 
   <!-- HERO: 21 Tage Gratis-Trial (Vollzugang) -->
   <button onclick="showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
-    🎁 21 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
+    <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> 21 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
   </button>
 
   <!-- Sekundär: Gratis schnuppern -->
   <button onclick="showGratisStart()" style="background:none;border:none;color:#7fa6c2;font-size:13px;margin-top:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Lieber erst schnuppern? Gratis starten (eingeschränkt)</button>
 
   <!-- Vertrauen -->
-  <div style="width:100%;max-width:340px;margin:14px auto 0;text-align:center;font-size:11px;color:#9dbdd2;line-height:1.7">👨‍⚕️ Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
+  <div style="width:100%;max-width:340px;margin:14px auto 0;text-align:center;font-size:11px;color:#9dbdd2;line-height:1.7"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cross"/></svg> Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
   <div id="pl-socialproof" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
 
   <!-- Login einklappbar (wiederkehrende Nutzer) -->
-  <button onclick="toggleLoginBox()" id="login-toggle" style="width:100%;max-width:340px;margin:20px auto 0;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:10px;padding:11px;color:#9fc3da;font-size:13px;font-weight:700;cursor:pointer">🔑 Schon einen Zugangscode? Anmelden</button>
+  <button onclick="toggleLoginBox()" id="login-toggle" style="width:100%;max-width:340px;margin:20px auto 0;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:10px;padding:11px;color:#9fc3da;font-size:13px;font-weight:700;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon einen Zugangscode? Anmelden</button>
   <div id="login-collapse" style="display:none;width:100%;max-width:340px;margin:10px auto 0">
   <div class="pw-box">
-    <div class="pw-label" style="margin-bottom:6px">👤 Dein Name</div>
+    <div class="pw-label" style="margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Dein Name</div>
     <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" data-i18n-ph="ph_name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()">
-    <div class="pw-label">🔑 Persönlicher Zugangscode</div>
+    <div class="pw-label"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Persönlicher Zugangscode</div>
     <input class="pw-input" id="pw-input" type="text" placeholder="Dein Passwort" data-i18n-ph="ph_pw" onkeydown="if(event.key==='Enter')checkPW()">
     <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;font-size:12px;color:#b3c4d6;font-family:'DM Sans',sans-serif">
       <input type="checkbox" id="remember-me" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer">
@@ -673,7 +673,7 @@
   </div>
   <div style="margin-top:12px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
     <div style="font-size:11px;color:#8ab4d0;line-height:1.7">
-      <span data-i18n="no_code">🔑 Noch kein Zugangscode?</span><br>
+      <span data-i18n="no_code"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Noch kein Zugangscode?</span><br>
       <span style="color:#38bdf8">kontakt@plan-nrw.de</span><br>
       Codes sind personalisiert & nicht übertragbar.
     </div>
@@ -691,7 +691,7 @@
   </div>
   <div class="pw-copyright"><span data-i18n="copyright">© PLAN NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.</span></div>
   <div style="display:flex;justify-content:center;margin:12px auto 0;max-width:320px">
-    <button type="button" onclick="showLangSoon()" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:7px 14px;color:#a9cbe0;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">🌍 <span>Sprachen / Languages</span></button>
+    <button type="button" onclick="showLangSoon()" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:7px 14px;color:#a9cbe0;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-globe"/></svg> <span>Sprachen / Languages</span></button>
   </div>
 <!-- Debug-Reload entfernt (Storage-Clear-Risiko fuer Endnutzer) -->
 </div>
@@ -700,16 +700,16 @@
 <!-- LOGOUT MODAL -->
 <div id="logout-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px">
   <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(248,113,113,.3);border-radius:16px;padding:24px;width:100%;max-width:300px;text-align:center">
-    <div style="font-size:36px;margin-bottom:10px">👤</div>
+    <div style="font-size:36px;margin-bottom:10px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg></div>
     <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe;margin-bottom:4px">Benutzer</div>
     <div id="logout-username" style="font-size:12px;color:var(--accent);margin-bottom:4px"></div>
     <div id="logout-bereich" style="font-size:11px;color:#8ab4d0;margin-bottom:20px"></div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <button onclick="switchUser()" style="background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:12px;color:var(--accent);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">
-        🔄 Benutzer wechseln
+        <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> Benutzer wechseln
       </button>
       <button onclick="logoutConfirm()" style="background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);border-radius:10px;padding:12px;color:#f87171;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">
-        🚪 Abmelden
+        <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-door"/></svg> Abmelden
       </button>
       <button onclick="hideLogoutMenu()" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;color:#b3c4d6;font-size:13px;font-family:inherit;cursor:pointer">
         Abbrechen
@@ -723,7 +723,7 @@
 <!-- NAMENS-EINGABE (In-App, PLAN-Design) -->
 <div id="name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px">
   <div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:16px;padding:24px;width:100%;max-width:320px">
-    <div style="font-size:32px;text-align:center;margin-bottom:8px">👋</div>
+    <div style="font-size:32px;text-align:center;margin-bottom:8px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hand"/></svg></div>
     <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe;text-align:center;margin-bottom:4px">Dein Name</div>
     <div style="font-size:12px;color:#8ab4d0;text-align:center;margin-bottom:16px">Für die persönliche Begrüßung auf der Startseite</div>
     <input id="name-input" type="text" maxlength="30" placeholder="Vorname" onkeydown="if(event.key==='Enter')saveUserName()" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.12);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:12px 14px;color:#e0f2fe;font-size:15px;font-family:inherit;margin-bottom:16px">
@@ -734,7 +734,7 @@
   </div>
 </div>
 
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.2 12 3l9 7.2"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2Z"/><path d="M12 6.5v14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-3.6 4-5.5 7.5-5.5s6.7 1.9 7.5 5.5"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="M14 6l4 4"/></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4"/><path d="M9 12h6"/><path d="M9 16h5"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="M3 13l9 5 9-5"/></symbol><symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5 7 4-15L18 12h3"/></symbol><symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3 5.3-2.2Z"/></symbol><symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol><symbol id="i-hospital" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M12 7v6M9 10h6"/><path d="M9.5 21v-3h5v3"/></symbol><symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M4 12h16"/></symbol><symbol id="i-idcard" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M13 10h5M13 14h5M5 15.5c.7-1.6 4.3-1.6 5 0"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-3Z"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.5 20h19L12 4Z"/><path d="M12 10.5v4.5"/><path d="M12 18h.01"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></symbol><symbol id="i-pill" viewBox="0 0 24 24"><path d="M10.5 3.5a5 5 0 0 1 7 7l-7 7a5 5 0 0 1-7-7l7-7Z"/><path d="M7 7l10 10"/></symbol><symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.2 2.2M16.8 16.8 19 19M19 5l-2.2 2.2M7.2 16.8 5 19"/></symbol><symbol id="i-bandage" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="8" rx="4" transform="rotate(45 12 12)"/><path d="M12 9.5v5M9.5 12h5"/></symbol><symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 9h6M9 13h6M9 17h4"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3Z"/></symbol><symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="M12 3 9.5 5.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5"/></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M10 4.5a1.5 1.5 0 0 1 4 0V6h2a1 1 0 0 1 1 1v2h1.5a1.5 1.5 0 0 1 0 4H17v3a1 1 0 0 1-1 1h-3v-1.5a1.5 1.5 0 0 0-4 0V17H6a1 1 0 0 1-1-1v-3H3.5a1.5 1.5 0 0 1 0-4H5V7a1 1 0 0 1 1-1h4V4.5Z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></symbol><symbol id="i-lifebuoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5 5l4.2 4.2M14.8 14.8 19 19M19 5l-4.2 4.2M9.2 14.8 5 19"/></symbol><symbol id="i-card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></symbol><symbol id="i-cap" viewBox="0 0 24 24"><path d="M12 4 2.5 9l9.5 5 9.5-5L12 4Z"/><path d="M6 11.2V16c0 1.3 3 3 6 3s6-1.7 6-3v-4.8"/></symbol><symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-1.9 0-1.4 1-2.1 2.2-2.1H18a3 3 0 0 0 3-3c0-4.9-4-8-9-8Z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></symbol><symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4Z"/><path d="M16 9.2a4 4 0 0 1 0 5.6"/><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/></symbol><symbol id="i-mic2" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14A8 8 0 0 1 10 4a7 7 0 1 0 10 10Z"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.2 12 3l9 7.2"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2Z"/><path d="M12 6.5v14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-3.6 4-5.5 7.5-5.5s6.7 1.9 7.5 5.5"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="M14 6l4 4"/></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4"/><path d="M9 12h6"/><path d="M9 16h5"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="M3 13l9 5 9-5"/></symbol><symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5 7 4-15L18 12h3"/></symbol><symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3 5.3-2.2Z"/></symbol><symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol><symbol id="i-hospital" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M12 7v6M9 10h6"/><path d="M9.5 21v-3h5v3"/></symbol><symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M4 12h16"/></symbol><symbol id="i-idcard" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M13 10h5M13 14h5M5 15.5c.7-1.6 4.3-1.6 5 0"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-3Z"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.5 20h19L12 4Z"/><path d="M12 10.5v4.5"/><path d="M12 18h.01"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></symbol><symbol id="i-pill" viewBox="0 0 24 24"><path d="M10.5 3.5a5 5 0 0 1 7 7l-7 7a5 5 0 0 1-7-7l7-7Z"/><path d="M7 7l10 10"/></symbol><symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.2 2.2M16.8 16.8 19 19M19 5l-2.2 2.2M7.2 16.8 5 19"/></symbol><symbol id="i-bandage" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="8" rx="4" transform="rotate(45 12 12)"/><path d="M12 9.5v5M9.5 12h5"/></symbol><symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 9h6M9 13h6M9 17h4"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3Z"/></symbol><symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="M12 3 9.5 5.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5"/></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M10 4.5a1.5 1.5 0 0 1 4 0V6h2a1 1 0 0 1 1 1v2h1.5a1.5 1.5 0 0 1 0 4H17v3a1 1 0 0 1-1 1h-3v-1.5a1.5 1.5 0 0 0-4 0V17H6a1 1 0 0 1-1-1v-3H3.5a1.5 1.5 0 0 1 0-4H5V7a1 1 0 0 1 1-1h4V4.5Z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></symbol><symbol id="i-lifebuoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5 5l4.2 4.2M14.8 14.8 19 19M19 5l-4.2 4.2M9.2 14.8 5 19"/></symbol><symbol id="i-card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></symbol><symbol id="i-cap" viewBox="0 0 24 24"><path d="M12 4 2.5 9l9.5 5 9.5-5L12 4Z"/><path d="M6 11.2V16c0 1.3 3 3 6 3s6-1.7 6-3v-4.8"/></symbol><symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-1.9 0-1.4 1-2.1 2.2-2.1H18a3 3 0 0 0 3-3c0-4.9-4-8-9-8Z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h9"/><path d="M17 12v3"/><path d="M20 12v2.5"/></symbol><symbol id="i-stetho" viewBox="0 0 24 24"><path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M6 3H4.5M14 3h1.5"/><path d="M10 12v3a4 4 0 0 0 8 0v-1"/><circle cx="18" cy="10.5" r="2"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-13.7-5.3L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 13.7 5.3L20 16"/><path d="M20 20v-4h-4"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17"/><path d="M8 3v4M16 3v4"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-gift" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8"/><path d="M12 8v13"/><path d="M12 8S10.5 4 8.5 4a2 2 0 0 0 0 4Zm0 0s1.5-4 3.5-4a2 2 0 0 1 0 4Z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></symbol><symbol id="i-robot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3"/><circle cx="9" cy="14" r="1.4"/><circle cx="15" cy="14" r="1.4"/><path d="M12 4v4"/><circle cx="12" cy="3" r="1.2"/><path d="M2.5 13v3M21.5 13v3"/></symbol><symbol id="i-school" viewBox="0 0 24 24"><path d="M12 4 2.5 9l9.5 4.5L21.5 9 12 4Z"/><path d="M6 11v5c0 1.4 2.7 3 6 3s6-1.6 6-3v-5"/><path d="M21.5 9v5"/></symbol><symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21Z"/><path d="M9 8h6M9 12h6M9 16h4"/></symbol><symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.5 3v6.2L4.6 18a2 2 0 0 0 1.8 3h11.2a2 2 0 0 0 1.8-3l-4.9-8.8V3"/><path d="M8 3h8"/><path d="M7.2 14h9.6"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 5.5h3"/><path d="M11 18.5h2"/></symbol><symbol id="i-cross" viewBox="0 0 24 24"><path d="M9.5 3h5v6.5H21v5h-6.5V21h-5v-6.5H3v-5h6.5Z"/></symbol><symbol id="i-door" viewBox="0 0 24 24"><path d="M5 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17"/><path d="M3.5 21h17"/><circle cx="13" cy="12.5" r="1"/></symbol><symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M18.5 16l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M3.5 12 21 4l-8 17.5-2-7.5Z"/><path d="M11 14 21 4"/></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5 4.5 13.5h6L9.5 21.5l9-11h-6Z"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7.5 4h9v5.5a4.5 4.5 0 0 1-9 0Z"/><path d="M7.5 5.5H5a2.5 2.5 0 0 0 2.5 5"/><path d="M16.5 5.5H19a2.5 2.5 0 0 1-2.5 5"/><path d="M12 14v3.5"/><path d="M8.5 21h7"/><path d="M9.5 17.5h5"/></symbol><symbol id="i-hand" viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 11V6.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7c-3 0-4.5-1.5-6-4l-2-3.5a1.6 1.6 0 0 1 2.6-1.8L9 15"/></symbol><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4Z"/><path d="M16 10l4 4M20 10l-4 4"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-5 4v-14a1 1 0 0 1 1-1Z"/><path d="M8 9.5h8M8 13h5"/></symbol><symbol id="i-cookie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="9.5" r="1"/><circle cx="14.5" cy="8.5" r="1"/><circle cx="15" cy="14.5" r="1"/><circle cx="9.5" cy="15" r="1"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M20 5.5a5 5 0 0 1-6.6 6.6L6 19.5a2.1 2.1 0 0 1-3-3l7.4-7.4A5 5 0 0 1 17 2.5l-3 3 1.5 3 3-1.5Z"/></symbol><symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 2.5c3 2 5 5.5 5 9.5l-2.5 3h-5L7 12c0-4 2-7.5 5-9.5Z"/><circle cx="12" cy="10" r="1.8"/><path d="M9.5 15 7 21l3.5-2M14.5 15 17 21l-3.5-2"/></symbol><symbol id="i-bug" viewBox="0 0 24 24"><rect x="7.5" y="7.5" width="9" height="12" rx="4.5"/><path d="M9 5.5 10.5 8M15 5.5 13.5 8"/><path d="M4 11h3.5M16.5 11H20M4 15.5h3.5M16.5 15.5H20"/><path d="M12 8v11"/></symbol><symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5Z"/></symbol><symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6 18.4 18.4"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8Z"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol><symbol id="i-euro" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5a4 4 0 1 0 0 7"/><path d="M7.5 11h6M7.5 13.5h6"/></symbol><symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5Z"/><path d="M8 3v6h7V3"/><rect x="8" y="13" width="8" height="6"/></symbol><symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4Z"/><path d="M16 9.2a4 4 0 0 1 0 5.6"/><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/></symbol><symbol id="i-mic2" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14A8 8 0 0 1 10 4a7 7 0 1 0 10 10Z"/></symbol></svg>
 <!-- UNTERE NAVIGATIONSLEISTE -->
 <nav class="bottom-nav" id="bottom-nav" aria-label="Hauptnavigation">
   <button onclick="navGo('home')" id="bn-heute"><svg class="bn-ico ic" viewBox="0 0 24 24"><use href="#i-home"/></svg>Heute</button>
@@ -744,10 +744,10 @@
 </nav>
 
 <!-- KI-SCHNELLZUGRIFF: schwebender Button, auf allen App-Screens auffindbar -->
-<button id="ki-fab" onclick="openKIChooser()" aria-label="KI-Assistent öffnen" style="display:none;position:fixed;right:14px;bottom:78px;z-index:900;align-items:center;gap:6px;background:linear-gradient(135deg,#22d3ee,#0891b2);border:none;border-radius:30px;padding:11px 16px;color:#04121f;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(34,211,238,.45)">🤖&nbsp;KI-Hilfe</button>
+<button id="ki-fab" onclick="openKIChooser()" aria-label="KI-Assistent öffnen" style="display:none;position:fixed;right:14px;bottom:78px;z-index:900;align-items:center;gap:6px;background:linear-gradient(135deg,#22d3ee,#0891b2);border:none;border-radius:30px;padding:11px 16px;color:#04121f;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(34,211,238,.45)"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-robot"/></svg>&nbsp;KI-Hilfe</button>
 
 <!-- INSTALL BUTTON -->
-<button class="install-btn" id="install-btn" onclick="installApp()">📲 Als App installieren</button>
+<button class="install-btn" id="install-btn" onclick="installApp()"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> Als App installieren</button>
 
 <!-- HEADER -->
 <header class="header">
@@ -760,81 +760,81 @@
   </button>
   <div class="header-btns">
     <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none"><span data-i18n="btn_back">← Zurück</span></button>
-    <button class="hbtn" onclick="showSearchOverlay()" title="Suche" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6">🔍</button>
-    <button class="hbtn" id="btn-darkmode" onclick="toggleDarkMode()" title="Hell/Dunkel" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6">🌙</button>
-    <button class="hbtn" onclick="toggleNavMenu()" title="Menü" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6" id="btn-hamburger">☰</button>
+    <button class="hbtn" onclick="showSearchOverlay()" title="Suche" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg></button>
+    <button class="hbtn" id="btn-darkmode" onclick="toggleDarkMode()" title="Hell/Dunkel" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-moon"/></svg></button>
+    <button class="hbtn" onclick="toggleNavMenu()" title="Menü" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6" id="btn-hamburger"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-menu"/></svg></button>
   </div>
 </header>
 
 <!-- NAV DROPDOWN MENU -->
 <div id="nav-dropdown" style="display:none;position:fixed;top:62px;right:10px;z-index:200;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:10px;min-width:210px;box-shadow:0 8px 32px rgba(0,0,0,.5);max-height:calc(100vh - 72px);max-height:calc(100dvh - 72px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain">
-  <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px">🔄 App aktualisieren</button>
+  <button onclick="location.reload(true)" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> App aktualisieren</button>
 
   <button onclick="toggleNavSec('lernen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_lernen">LERNEN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-lernen" style="display:none">
-    <button onclick="navGo('faelle')" class="nav-drop-btn"><span data-i18n="nav_faelle">🩺 Fallbeispiele</span></button>
+    <button onclick="navGo('faelle')" class="nav-drop-btn"><span data-i18n="nav_faelle"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg> Fallbeispiele</span></button>
     <button onclick="navGo('karteikarten')" class="nav-drop-btn"><span data-i18n="nav_karteikarten">🃏 Karteikarten</span></button>
-    <button onclick="navGo('lernplan')" class="nav-drop-btn"><span data-i18n="nav_lernplan">📅 Lernplan</span></button>
-    <button onclick="startExam()" class="nav-drop-btn"><span data-i18n="nav_pruefung">📄 Prüfungssimulator</span></button>
-    <button onclick="navGo('quizSelect')" class="nav-drop-btn"><span data-i18n="nav_quiz">📝 Quiz</span></button>
+    <button onclick="navGo('lernplan')" class="nav-drop-btn"><span data-i18n="nav_lernplan"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-calendar"/></svg> Lernplan</span></button>
+    <button onclick="startExam()" class="nav-drop-btn"><span data-i18n="nav_pruefung"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-file"/></svg> Prüfungssimulator</span></button>
+    <button onclick="navGo('quizSelect')" class="nav-drop-btn"><span data-i18n="nav_quiz"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-pencil"/></svg> Quiz</span></button>
   </div>
 
   <button onclick="toggleNavSec('wissen',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_wissen">WISSEN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-wissen" style="display:none">
-    <button onclick="navGo('atl')" class="nav-drop-btn"><span data-i18n="nav_atl">📋 ATL Pflegeplanung</span></button>
-    <button onclick="navGo('bobath')" class="nav-drop-btn"><span data-i18n="nav_bobath">🧩 Bobath</span></button>
-    <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn"><span data-i18n="nav_krankheit">🏥 Krankheitsbilder</span></button>
-    <button onclick="navGo('anatomie')" class="nav-drop-btn"><span data-i18n="nav_anatomie">🩻 Anatomie</span></button>
-    <button onclick="navGo('kinaesthetik')" class="nav-drop-btn"><span data-i18n="nav_kinaes">🤸 Kinästhetik</span></button>
-    <button onclick="navGo('prophylaxen')" class="nav-drop-btn"><span data-i18n="nav_prophylaxen">🛡️ Prophylaxen</span></button>
-    <button onclick="navGo('wundversorgung')" class="nav-drop-btn"><span data-i18n="nav_wund">🩹 Wundversorgung</span></button>
-    <button onclick="navGo('wissensdb')" class="nav-drop-btn"><span>📚 Wissensdatenbank</span></button>
+    <button onclick="navGo('atl')" class="nav-drop-btn"><span data-i18n="nav_atl"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> ATL Pflegeplanung</span></button>
+    <button onclick="navGo('bobath')" class="nav-drop-btn"><span data-i18n="nav_bobath"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-puzzle"/></svg> Bobath</span></button>
+    <button onclick="navGo('krankheitsbilder')" class="nav-drop-btn"><span data-i18n="nav_krankheit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hospital"/></svg> Krankheitsbilder</span></button>
+    <button onclick="navGo('anatomie')" class="nav-drop-btn"><span data-i18n="nav_anatomie"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-scan"/></svg> Anatomie</span></button>
+    <button onclick="navGo('kinaesthetik')" class="nav-drop-btn"><span data-i18n="nav_kinaes"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-move"/></svg> Kinästhetik</span></button>
+    <button onclick="navGo('prophylaxen')" class="nav-drop-btn"><span data-i18n="nav_prophylaxen"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-shield"/></svg> Prophylaxen</span></button>
+    <button onclick="navGo('wundversorgung')" class="nav-drop-btn"><span data-i18n="nav_wund"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-bandage"/></svg> Wundversorgung</span></button>
+    <button onclick="navGo('wissensdb')" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-book"/></svg> Wissensdatenbank</span></button>
   </div>
 
   <button onclick="toggleNavSec('medizin',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_medizin">MEDIZIN</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-medizin" style="display:none">
-    <button onclick="navGo('notfallmanagement')" class="nav-drop-btn"><span data-i18n="nav_notfall">🚨 Notfallmanagement</span></button>
-    <button onclick="navGo('scores')" class="nav-drop-btn"><span data-i18n="nav_scores">📊 Assessment-Scores</span></button>
-    <button onclick="navGo('medikamente')" class="nav-drop-btn"><span data-i18n="nav_medi">💊 Medikamente · Fachbereich</span></button>
-    <button onclick="navGo('medizintechnik')" class="nav-drop-btn"><span data-i18n="nav_technik">⚙️ Medizintechnik</span></button>
+    <button onclick="navGo('notfallmanagement')" class="nav-drop-btn"><span data-i18n="nav_notfall"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-alert"/></svg> Notfallmanagement</span></button>
+    <button onclick="navGo('scores')" class="nav-drop-btn"><span data-i18n="nav_scores"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chart"/></svg> Assessment-Scores</span></button>
+    <button onclick="navGo('medikamente')" class="nav-drop-btn"><span data-i18n="nav_medi"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-pill"/></svg> Medikamente · Fachbereich</span></button>
+    <button onclick="navGo('medizintechnik')" class="nav-drop-btn"><span data-i18n="nav_technik"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cog"/></svg> Medizintechnik</span></button>
   </div>
 
   <button onclick="toggleNavSec('sonstiges',this)" class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(var(--accent-rgb),.7)"><span data-i18n="nav_sonstiges">SONSTIGES</span><span class="nav-caret" style="transition:transform .2s;font-size:11px">▸</span></button>
   <div class="nav-sec-body" id="navsec-sonstiges" style="display:none">
-    <button onclick="navGo('home')" class="nav-drop-btn"><span data-i18n="nav_home">🏠 Startseite</span></button>
-    <button onclick="navGo('taschenkarten')" class="nav-drop-btn"><span data-i18n="nav_taschen">📇 Taschenkarten</span></button>
-    <button onclick="navGo('preise')" class="nav-drop-btn"><span data-i18n="nav_preise">💳 Plan &amp; Preise</span></button>
-    <button onclick="document.getElementById('nav-dropdown').style.display='none';showKlasseBeitreten()" class="nav-drop-btn"><span>🎓 Klasse beitreten</span></button>
-    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLehrer()" class="nav-drop-btn"><span>👩‍🏫 Lehrer-Bereich</span></button>
-    <button onclick="showThemePicker()" class="nav-drop-btn"><span data-i18n="nav_theme">🎨 Mein Theme</span></button>
-    <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn">✨ Effekte: Aus</button>
-    <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn">🔊 Sound: An</button>
+    <button onclick="navGo('home')" class="nav-drop-btn"><span data-i18n="nav_home"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-home"/></svg> Startseite</span></button>
+    <button onclick="navGo('taschenkarten')" class="nav-drop-btn"><span data-i18n="nav_taschen"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-idcard"/></svg> Taschenkarten</span></button>
+    <button onclick="navGo('preise')" class="nav-drop-btn"><span data-i18n="nav_preise"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-card"/></svg> Plan &amp; Preise</span></button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showKlasseBeitreten()" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg> Klasse beitreten</span></button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLehrer()" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-school"/></svg> Lehrer-Bereich</span></button>
+    <button onclick="showThemePicker()" class="nav-drop-btn"><span data-i18n="nav_theme"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-palette"/></svg> Mein Theme</span></button>
+    <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Effekte: Aus</button>
+    <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-speaker"/></svg> Sound: An</button>
     <div class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;cursor:default">
-      <span>🔍 Zoom</span>
+      <span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg> Zoom</span>
       <span style="display:flex;gap:8px;align-items:center">
         <button onclick="setAppZoom(-1)" style="background:rgba(var(--accent-rgb),.15);border:none;border-radius:7px;width:30px;height:28px;color:#ddf0fb;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">−</button>
         <span id="app-zoom-val" style="min-width:42px;text-align:center;font-size:12px;color:#ddf0fb">100%</span>
         <button onclick="setAppZoom(1)" style="background:rgba(var(--accent-rgb),.15);border:none;border-radius:7px;width:30px;height:28px;color:#ddf0fb;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">+</button>
       </span>
     </div>
-    <button onclick="navGo('support')" class="nav-drop-btn" style="color:#38bdf8"><span data-i18n="nav_support">🛟 Hilfe & Support</span></button>
-    <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399"><span data-i18n="nav_feedback">💬 Feedback / Fehler melden</span></button>
+    <button onclick="navGo('support')" class="nav-drop-btn" style="color:#38bdf8"><span data-i18n="nav_support"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lifebuoy"/></svg> Hilfe & Support</span></button>
+    <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399"><span data-i18n="nav_feedback"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chat"/></svg> Feedback / Fehler melden</span></button>
   </div>
 
   <hr style="border-color:rgba(255,255,255,.13);margin:6px 0">
   
   <!-- SPRACHAUSWAHL NAV -->
   <div style="padding:8px 6px;border-top:1px solid rgba(255,255,255,.13);margin-top:4px">
-    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLangSoon()" class="nav-drop-btn">🌍 Sprachen / Languages</button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLangSoon()" class="nav-drop-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-globe"/></svg> Sprachen / Languages</button>
   </div>
-<button onclick="showImpressum()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_impressum">📄 Impressum</span></button>
-  <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_datenschutz">🔒 Datenschutz</span></button>
-  <button onclick="showAGB()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_agb">📑 AGB & Widerruf</span></button>
-  <button onclick="showKuendigung()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px">🧾 Abo kündigen</button>
-  <button onclick="plOpenConsent()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px">🍪 Cookie-Einstellungen</button>
+<button onclick="showImpressum()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_impressum"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-file"/></svg> Impressum</span></button>
+  <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_datenschutz"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lock"/></svg> Datenschutz</span></button>
+  <button onclick="showAGB()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_agb"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-layers"/></svg> AGB & Widerruf</span></button>
+  <button onclick="showKuendigung()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-receipt"/></svg> Abo kündigen</button>
+  <button onclick="plOpenConsent()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cookie"/></svg> Cookie-Einstellungen</button>
     <hr style="border-color:rgba(248,113,113,.15);margin:6px 0">
-  <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700">🚪 <span data-i18n="btn_logout">Abmelden</span></button>
-  <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.17);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8">🔧 Admin Panel</button></div>
+  <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-door"/></svg> <span data-i18n="btn_logout">Abmelden</span></button>
+  <div id="nav-admin-btn" style="display:none"><hr style="border-color:rgba(255,255,255,.17);margin:6px 0"><button onclick="navGo('admin')" class="nav-drop-btn" style="color:#38bdf8"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-wrench"/></svg> Admin Panel</button></div>
 </div>
 
 <!-- SEARCH OVERLAY -->
@@ -864,15 +864,15 @@
 
   <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:14px;padding:14px;margin-bottom:20px">
     <div style="display:flex;flex-direction:column;gap:6px">
-      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ <span class="pl-fragen-count">1075</span> prüfungsnahe Fragen – jede mit sofortiger Erklärung</div>
-      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ Lernen wie im echten Examen – Original-Prüfungsstil</div>
-      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center">✅ KI-Tutor, Prüfungssimulation & Karteikarten inklusive</div>
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg> <span class="pl-fragen-count">1075</span> prüfungsnahe Fragen – jede mit sofortiger Erklärung</div>
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg> Lernen wie im echten Examen – Original-Prüfungsstil</div>
+      <div style="font-size:12px;color:#34d399;display:flex;gap:8px;align-items:center"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg> KI-Tutor, Prüfungssimulation & Karteikarten inklusive</div>
       <div style="font-size:12px;color:#fbbf24;display:flex;gap:8px;align-items:center">⏳ Nach 21 Tagen endet der Test – Weiternutzung nur mit kostenpflichtiger Freischaltung</div>
     </div>
   </div>
 
   <div style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:16px;padding:20px">
-    <div style="font-size:11px;color:#8ab4d0;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">👤 Deine Daten</div>
+    <div style="font-size:11px;color:#8ab4d0;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Deine Daten</div>
 
     <div style="margin-bottom:12px">
       <div style="font-size:11px;color:#8ab4d0;margin-bottom:6px">Vor- und Nachname *</div>
@@ -901,7 +901,7 @@
     </div>
 
     <button onclick="submitRegistrierung()" id="reg-btn" style="width:100%;background:linear-gradient(135deg,#0369a1,var(--accent));border:none;border-radius:12px;padding:15px;color:white;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 8px 24px rgba(3,105,161,.35)">
-      🚀 Kostenlos registrieren
+      <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-rocket"/></svg> Kostenlos registrieren
     </button>
 
     <div style="font-size:11px;color:#8ab4d0;text-align:center;margin-top:12px;line-height:1.6">
@@ -916,7 +916,7 @@
     </button>
   </div>
   <div style="text-align:center;margin-top:10px">
-    <button onclick="showTester()" style="background:none;border:none;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">🧪 Tester werden – 6 Monate gratis</button>
+    <button onclick="showTester()" style="background:none;border:none;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-flask"/></svg> Tester werden – 6 Monate gratis</button>
   </div>
 </div>
 
@@ -924,7 +924,7 @@
   <!-- Sprint UI "Lerncoach": persoenliche Begruessung + EIN adaptiver naechster Schritt statt Menue -->
   <div id="home-greeting" style="margin-top:6px"></div>
   <div class="section-label" style="display:none"></div>
-  <div style="font-size:11px;color:#a8c4b6;font-weight:600;margin:0 2px 12px;display:flex;align-items:center;gap:6px">🩺 Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
+  <div style="font-size:11px;color:#a8c4b6;font-weight:600;margin:0 2px 12px;display:flex;align-items:center;gap:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg> Entwickelt von einem Ausbilder &amp; Fachpfleger für Anästhesie und Intensivmedizin NRW</div>
 
   <!-- ── PERSONA-BANNER: rollenspezifischer Einstieg (Azubi / Examiniert / Lehrkraft), per JS gefuellt ── -->
   <div id="home-persona"></div>
@@ -1005,23 +1005,23 @@
 <!-- MEDIKAMENTE -->
 <div class="page" id="screen-medikamente">
   <div class="hero" style="margin-bottom:14px">
-    <div class="hero-icon">💊</div>
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-pill"/></svg></div>
     <h1>Medikamente<span> nach Fachbereich</span></h1>
     <p>Wirkung · Nebenwirkungen · Kontraindikationen · KI-Assistent</p>
   </div>
   <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
-    <button onclick="showMedKat('anaesthesie')" id="medkat-anaesthesie" style="border-radius:20px;border:1px solid #f97316;padding:6px 13px;font-size:11px;font-weight:600;background:#f9731620;color:#f97316;font-family:inherit">😴 Anästhesie</button>
-    <button onclick="showMedKat('intensiv')" id="medkat-intensiv" style="border-radius:20px;border:1px solid #22d3ee;padding:6px 13px;font-size:11px;font-weight:600;background:#22d3ee20;color:#22d3ee;font-family:inherit">🏥 Intensiv</button>
-    <button onclick="showMedKat('notfall')" id="medkat-notfall" style="border-radius:20px;border:1px solid #f87171;padding:6px 13px;font-size:11px;font-weight:600;background:#f8717120;color:#f87171;font-family:inherit">🚨 Notfall</button>
-    <button onclick="showMedKat('pflege')" id="medkat-pflege" style="border-radius:20px;border:1px solid #34d399;padding:6px 13px;font-size:11px;font-weight:600;background:#34d39920;color:#34d399;font-family:inherit">🩺 Allg. Pflege</button>
+    <button onclick="showMedKat('anaesthesie')" id="medkat-anaesthesie" style="border-radius:20px;border:1px solid #f97316;padding:6px 13px;font-size:11px;font-weight:600;background:#f9731620;color:#f97316;font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-moon"/></svg> Anästhesie</button>
+    <button onclick="showMedKat('intensiv')" id="medkat-intensiv" style="border-radius:20px;border:1px solid #22d3ee;padding:6px 13px;font-size:11px;font-weight:600;background:#22d3ee20;color:#22d3ee;font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hospital"/></svg> Intensiv</button>
+    <button onclick="showMedKat('notfall')" id="medkat-notfall" style="border-radius:20px;border:1px solid #f87171;padding:6px 13px;font-size:11px;font-weight:600;background:#f8717120;color:#f87171;font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-alert"/></svg> Notfall</button>
+    <button onclick="showMedKat('pflege')" id="medkat-pflege" style="border-radius:20px;border:1px solid #34d399;padding:6px 13px;font-size:11px;font-weight:600;background:#34d39920;color:#34d399;font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg> Allg. Pflege</button>
   </div>
   <div id="med-list"></div>
   <div style="margin-top:14px;background:rgba(248,113,133,.07);border:1px solid rgba(248,113,133,.2);border-radius:11px;padding:14px">
-    <div style="font-size:11px;font-weight:700;color:#fb7185;margin-bottom:8px">🤖 Medikamenten-KI – Frag mich!</div>
+    <div style="font-size:11px;font-weight:700;color:#fb7185;margin-bottom:8px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-robot"/></svg> Medikamenten-KI – Frag mich!</div>
     <div style="font-size:11px;color:var(--text3);margin-bottom:9px">Gib einen Wirkstoff oder Handelsnamen ein und ich erkläre Wirkung, Nebenwirkungen, Kontraindikationen und Pflegehinweise.</div>
     <div style="display:flex;gap:7px">
       <input id="med-ki-input" type="text" placeholder="z.B. Propofol, Noradrenalin, Heparin..." style="flex:1;background:rgba(255,255,255,.12);border:1px solid rgba(248,113,133,.2);border-radius:9px;padding:10px 13px;color:var(--text);font-size:13px;outline:none;font-family:inherit">
-      <button onclick="askMedKI()" style="background:linear-gradient(135deg,#fb7185,#f43f5e);border:none;border-radius:9px;padding:0 14px;color:white;font-size:15px">➤</button>
+      <button onclick="askMedKI()" style="background:linear-gradient(135deg,#fb7185,#f43f5e);border:none;border-radius:9px;padding:0 14px;color:white;font-size:15px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-send"/></svg></button>
     </div>
     <div id="med-ki-result" style="margin-top:10px;font-size:12px;line-height:1.7;color:#bae6fd;display:none"></div>
   </div>
@@ -1032,7 +1032,7 @@
 <div class="page" id="screen-support">
   <div style="max-width:680px;margin:0 auto;padding:0 4px">
     <div style="text-align:center;margin-bottom:18px">
-      <div style="font-size:40px">🛟</div>
+      <div style="font-size:40px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lifebuoy"/></svg></div>
       <h1 style="font-family:'DM Serif Display',serif;font-size:26px;margin:6px 0 2px;color:var(--text,#e0f2fe)">Hilfe & <span style="color:var(--accent)">Support</span></h1>
       <p style="font-size:13px;color:var(--text2,#b3c4d6)">Rund um die Uhr – die häufigsten Fragen sofort beantwortet</p>
     </div>
@@ -1052,7 +1052,7 @@
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔑 Mein Zugangscode funktioniert nicht</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Mein Zugangscode funktioniert nicht</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Achte auf die exakte Schreibweise – Groß-/Kleinschreibung und Bindestriche genau wie erhalten. Aktualisiere zuerst die App (Menü → App aktualisieren) und versuche es erneut. Klappt es weiterhin nicht, schreib an kontakt@plan-nrw.de und nenne deinen Code.</div>
     </div>
 
@@ -1062,49 +1062,49 @@
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🎁 Testphase & Preise</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Testphase & Preise</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Alle aktuellen Konditionen findest du unter „Plan & Preise" (Menü). Dort siehst du die verfügbaren Laufzeiten und Preise immer auf dem neuesten Stand.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>💳 Zahlung & Rechnung</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-card"/></svg> Zahlung & Rechnung</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Die Zahlung läuft sicher über Stripe (u. a. Karte, PayPal, Klarna, Apple/Google Pay). Eine Bestätigung erhältst du per E-Mail. Bei Problemen mit einer Zahlung: kontakt@plan-nrw.de.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🧾 Kündigung</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
-      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Jederzeit kündbar über den Button „🧾 Abo kündigen" (Menü). Nach Ende des bezahlten Zeitraums endet der Zugang automatisch – es wird nichts weiter abgebucht. Du kannst den Zugang jederzeit wieder aktivieren.</div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-receipt"/></svg> Kündigung</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Jederzeit kündbar über den Button „<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-receipt"/></svg> Abo kündigen" (Menü). Nach Ende des bezahlten Zeitraums endet der Zugang automatisch – es wird nichts weiter abgebucht. Du kannst den Zugang jederzeit wieder aktivieren.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔄 App lädt nicht / alte Version</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> App lädt nicht / alte Version</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Tippe auf Menü → „App aktualisieren". Schließe die App danach komplett und öffne sie neu. Das behebt fast alle Anzeige- und Ladeprobleme.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🐞 Fehler im Inhalt gefunden</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-bug"/></svg> Fehler im Inhalt gefunden</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Danke dir! Melde ihn über Menü → „Feedback / Fehler melden" oder an kontakt@plan-nrw.de – am besten mit kurzem Hinweis, wo der Fehler steht.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>📲 App aufs Handy installieren</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> App aufs Handy installieren</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Öffne die App im Browser und wähle „Zum Startbildschirm hinzufügen". Danach startest du PLAN wie eine normale App.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🖥️ Auf mehreren Geräten lernen</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-monitor"/></svg> Auf mehreren Geräten lernen</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Ja. Melde dich auf jedem Gerät mit demselben Zugang an – dein Fortschritt wird synchronisiert.</div>
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span>🔒 Datenschutz & meine Daten</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lock"/></svg> Datenschutz & meine Daten</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Details findest du unter „Datenschutz" (Menü). Bei Fragen zu deinen Daten: kontakt@plan-nrw.de.</div>
     </div>
 
-    <a href="mailto:kontakt@plan-nrw.de?subject=Support-Anfrage%20PLAN%20NRW" style="display:block;text-align:center;background:rgba(var(--accent-rgb),.14);border:1px solid rgba(var(--accent-rgb),.4);color:var(--accent);font-weight:700;border-radius:14px;padding:14px;margin:16px 0;text-decoration:none">✉️ Direkt schreiben: kontakt@plan-nrw.de</a>
+    <a href="mailto:kontakt@plan-nrw.de?subject=Support-Anfrage%20PLAN%20NRW" style="display:block;text-align:center;background:rgba(var(--accent-rgb),.14);border:1px solid rgba(var(--accent-rgb),.4);color:var(--accent);font-weight:700;border-radius:14px;padding:14px;margin:16px 0;text-decoration:none"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-mail"/></svg> Direkt schreiben: kontakt@plan-nrw.de</a>
 
     <div style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:16px;padding:16px;margin-top:8px">
-      <div style="font-weight:700;color:var(--accent);margin-bottom:4px">🤖 Freie Frage an den Support</div>
+      <div style="font-weight:700;color:var(--accent);margin-bottom:4px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-robot"/></svg> Freie Frage an den Support</div>
       <div style="font-size:12px;color:var(--text2,#b3c4d6);margin-bottom:10px">Nur zu App, Konto & Zahlung. Fachfragen (Pflege/Medizin) beantwortet der KI-Assistent auf der Startseite.</div>
       <div id="support-chat" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
       <div style="display:flex;gap:8px">
@@ -1118,7 +1118,7 @@
 <div class="page" id="screen-merksaetze">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:12px">
-      <div class="hero-icon">💡</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-bulb"/></svg></div>
       <h1 data-i18n="merk_hero">Merk<span>sätze</span></h1>
       <p data-i18n="merk_sub">Suche z. B. „Myokardinfarkt" und sieh die Eselsbrücke</p>
     </div>
@@ -1135,7 +1135,7 @@
 <div class="page" id="screen-ausbildungswege">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
-      <div class="hero-icon">🎓</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg></div>
       <h1>Ausbildungs<span>wege</span></h1>
       <p>7 Wege der generalistischen Pflegeausbildung NRW</p>
     </div>
@@ -1146,7 +1146,7 @@
 <div class="page" id="screen-krankheitsbilder">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
-      <div class="hero-icon">🏥</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hospital"/></svg></div>
       <h1>Krankheits<span>bilder</span></h1>
       <p>Pflegeplanung · Symptome · Diagnostik · Therapie · Prüfungsfragen</p>
     </div>
@@ -1164,7 +1164,7 @@
 <div class="page" id="screen-anatomie">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
-      <div class="hero-icon">🩻</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-scan"/></svg></div>
       <h1>Anato<span>mie</span></h1>
       <p>Körpersysteme · Aufbau · Funktion · Pflegebezug · Erklärbilder</p>
     </div>
@@ -1176,7 +1176,7 @@
 <div class="page" id="screen-wissensdb">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
-      <div class="hero-icon">📚</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-book"/></svg></div>
       <h1>Wissens<span>datenbank</span></h1>
       <p>Anatomie · Krankheitslehre · EKG · Notfall · Pharma · Pflege &middot; durchsuchbar</p>
     </div>
@@ -1193,11 +1193,11 @@
 <div class="page" id="screen-notfallmanagement">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:14px">
-      <div class="hero-icon">🚨</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-alert"/></svg></div>
       <h1>Notfall<span>management</span></h1>
       <p>Manchester Triage · ABCDE-Schema · Reanimation (ERC 2021)</p>
     </div>
-    <button onclick="startABCDE()" style="width:100%;background:linear-gradient(135deg,#ef4444,#f97316);border:none;border-radius:14px;padding:15px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:14px;box-shadow:0 6px 20px rgba(239,68,68,.3)">🎯 ABCDE-Notfall-Simulator starten</button>
+    <button onclick="startABCDE()" style="width:100%;background:linear-gradient(135deg,#ef4444,#f97316);border:none;border-radius:14px;padding:15px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:14px;box-shadow:0 6px 20px rgba(239,68,68,.3)"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-target"/></svg> ABCDE-Notfall-Simulator starten</button>
 
     <!-- MANCHESTER TRIAGE -->
     <div class="section-label">Manchester-Triage-System (MTS)</div>
@@ -1207,23 +1207,23 @@
       </p>
 
       <div style="border-left:5px solid #ef4444;background:rgba(239,68,68,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#fca5a5;font-size:14px">🔴 Rot · Sofort · 0 min</div>
+        <div style="font-weight:700;color:#fca5a5;font-size:14px"><span style="display:inline-block;width:.72em;height:.72em;border-radius:50%;background:#f87171;vertical-align:-.02em;margin-right:.15em"></span> Rot · Sofort · 0 min</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Lebensbedrohlich: Kreislaufstillstand, Schock, nicht ansprechbar, verlegte Atemwege, schwerste Atemnot.</div>
       </div>
       <div style="border-left:5px solid #f97316;background:rgba(249,115,22,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#fdba74;font-size:14px">🟠 Orange · Sehr dringend · 10 min</div>
+        <div style="font-weight:700;color:#fdba74;font-size:14px"><span style="display:inline-block;width:.72em;height:.72em;border-radius:50%;background:#fb923c;vertical-align:-.02em;margin-right:.15em"></span> Orange · Sehr dringend · 10 min</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Starke Schmerzen, Bewusstseinstrübung, aktive große Blutung, kritische Vitalwerte.</div>
       </div>
       <div style="border-left:5px solid #eab308;background:rgba(234,179,8,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#fde047;font-size:14px">🟡 Gelb · Dringend · 30 min</div>
+        <div style="font-weight:700;color:#fde047;font-size:14px"><span style="display:inline-block;width:.72em;height:.72em;border-radius:50%;background:#fde047;vertical-align:-.02em;margin-right:.15em"></span> Gelb · Dringend · 30 min</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Mäßige Schmerzen, anhaltendes Erbrechen, Fieber mit Risikozeichen.</div>
       </div>
       <div style="border-left:5px solid #22c55e;background:rgba(34,197,94,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#86efac;font-size:14px">🟢 Grün · Normal · 90 min</div>
+        <div style="font-weight:700;color:#86efac;font-size:14px"><span style="display:inline-block;width:.72em;height:.72em;border-radius:50%;background:#86efac;vertical-align:-.02em;margin-right:.15em"></span> Grün · Normal · 90 min</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Leichte Schmerzen, kleinere Verletzungen, stabiler Zustand.</div>
       </div>
       <div style="border-left:5px solid #3b82f6;background:rgba(59,130,246,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#93c5fd;font-size:14px">🔵 Blau · Nicht dringend · 120 min</div>
+        <div style="font-weight:700;color:#93c5fd;font-size:14px"><span style="display:inline-block;width:.72em;height:.72em;border-radius:50%;background:#93c5fd;vertical-align:-.02em;margin-right:.15em"></span> Blau · Nicht dringend · 120 min</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Chronische oder leichte Beschwerden ohne akute Warnzeichen.</div>
       </div>
     </div>
@@ -1260,11 +1260,11 @@
     <div style="background:rgba(255,255,255,.085);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:14px;margin-bottom:14px">
       <p style="font-size:12px;color:#7fa6c4;margin:0 0 10px">Erweiterte Maßnahmen während der Reanimation – der Rhythmus entscheidet das Vorgehen.</p>
       <div style="border-left:5px solid #f43f5e;background:rgba(244,63,94,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#fda4af;font-size:13px">⚡ Defibrillierbar: Kammerflimmern / pulslose VT</div>
+        <div style="font-weight:700;color:#fda4af;font-size:13px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-bolt"/></svg> Defibrillierbar: Kammerflimmern / pulslose VT</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Sofort defibrillieren → 2 min CPR. Adrenalin 1 mg nach dem 3. Schock, dann alle 3–5 min. Amiodaron 300 mg nach dem 3. Schock (150 mg nach dem 5.).</div>
       </div>
       <div style="border-left:5px solid #60a5fa;background:rgba(96,165,250,.08);border-radius:8px;padding:10px 12px;margin:8px 0">
-        <div style="font-weight:700;color:#93c5fd;font-size:13px">🚫 Nicht defibrillierbar: Asystolie / PEA</div>
+        <div style="font-weight:700;color:#93c5fd;font-size:13px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-ban"/></svg> Nicht defibrillierbar: Asystolie / PEA</div>
         <div style="font-size:12px;color:#cfe6f5;margin-top:3px">Keine Defibrillation. Adrenalin 1 mg so früh wie möglich, dann alle 3–5 min. 2-min-CPR-Zyklen.</div>
       </div>
       <div style="font-size:13px;color:#cfe6f5;line-height:1.7;margin-top:8px">
@@ -1288,7 +1288,7 @@
 <!-- FALLBEISPIELE -->
 <div class="page" id="screen-faelle">
   <div style="max-width:720px;margin:0 auto">
-    <div class="hero" style="margin-bottom:10px"><div class="hero-icon">🩺</div><h1>Fall<span>beispiele</span></h1><p>Interaktive Fälle – deine Entscheidungen bestimmen den Verlauf</p></div>
+    <div class="hero" style="margin-bottom:10px"><div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg></div><h1>Fall<span>beispiele</span></h1><p>Interaktive Fälle – deine Entscheidungen bestimmen den Verlauf</p></div>
     <div id="faelle-faecher" style="text-align:center;margin-bottom:8px"></div>
     <div id="faelle-liste"></div>
   </div>
@@ -1299,7 +1299,7 @@
 <!-- MEDIZINTECHNIK -->
 <div class="page" id="screen-medizintechnik">
   <div class="hero" style="margin-bottom:16px">
-    <div class="hero-icon">⚙️</div>
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cog"/></svg></div>
     <h1>Medizin<span>technik</span></h1>
     <p>Gerätebedienung · Alarme · Technische Grundlagen · KI-Assistent</p>
   </div>
@@ -1325,13 +1325,13 @@
   <div class="chat-input-row">
     <input class="chat-input" id="chat-input" type="text" placeholder="Frage stellen…" onkeydown="if(event.key==='Enter')sendMsg()">
     <button id="mic-btn" onclick="plMicToggle('chat-input')" title="Antwort diktieren" aria-label="Antwort diktieren" style="background:rgba(255,255,255,.13);border:1px solid rgba(56,189,248,.28);border-radius:10px;padding:0 11px;color:#7dd3fc;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><use href="#i-mic2"/></svg></button>
-    <button class="send-btn" id="send-btn" onclick="sendMsg()">➤</button>
+    <button class="send-btn" id="send-btn" onclick="sendMsg()"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-send"/></svg></button>
   </div>
 </div>
 
 <!-- QUIZ SELECT -->
 <div class="page" id="screen-quizSelect">
-  <h2 style="font-size:18px;color:var(--accent);margin-bottom:4px">📝 Prüfungs-Quiz</h2>
+  <h2 style="font-size:18px;color:var(--accent);margin-bottom:4px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-pencil"/></svg> Prüfungs-Quiz</h2>
   <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Wähle einen der 7 Bereiche oder alle Fragen zusammen</p>
   <div class="quiz-select-list" id="quiz-select-list"></div>
 </div>
@@ -1445,7 +1445,7 @@
     <div style="font-size:13.5px;color:#e0f2fe;font-weight:700;margin-bottom:3px;line-height:1.3">Alles, was du zum Bestehen brauchst &ndash; bis zum Pr&uuml;fungstag.</div>
     <div style="font-size:11px;color:#b3c4d6;margin-bottom:12px"><span class="pl-fragen-count">1075</span> Fragen &middot; KI-Pr&uuml;fungssimulation &middot; 11 CE &middot; alle 7 Ausbildungswege &middot; alle Updates</div>
 
-    <div style="font-size:11px;color:#c4b5fd;background:rgba(99,91,255,.12);border:1px solid rgba(99,91,255,.32);border-radius:9px;padding:8px 11px;margin-bottom:12px;text-align:center">⭐ Unsere Empfehlung: <b>3&nbsp;Monate</b> &ndash; der beste Mix aus Preis und Vorbereitungszeit bis zum Examen.</div>
+    <div style="font-size:11px;color:#c4b5fd;background:rgba(99,91,255,.12);border:1px solid rgba(99,91,255,.32);border-radius:9px;padding:8px 11px;margin-bottom:12px;text-align:center"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-star"/></svg> Unsere Empfehlung: <b>3&nbsp;Monate</b> &ndash; der beste Mix aus Preis und Vorbereitungszeit bis zum Examen.</div>
 
     <button onclick="kaufPlan('1m')" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;color:#cbd5e1;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left">
       <span><span style="font-size:14px;font-weight:800">1 Monat</span><br><span style="font-size:11px;opacity:.7">9,99 &euro;/Mon.</span></span>
@@ -1475,10 +1475,10 @@
     <div style="font-size:11px;color:#b3c4d6;line-height:1.6;margin-top:3px">Weniger als eine Nachhilfestunde (30&nbsp;&euro;) oder ein Fachbuch (40&nbsp;&euro;) &ndash; und eine nicht bestandene Pr&uuml;fung kostet dich ein halbes Jahr.</div>
   </div>
   <div style="background:rgba(52,211,153,.09);border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:12px 14px;margin:0 0 12px;display:flex;gap:11px;align-items:center">
-    <div style="font-size:24px">✅</div>
+    <div style="font-size:24px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
     <div><div style="font-size:13px;font-weight:800;color:#6ee7b7">14 Tage Geld-zur&uuml;ck-Garantie</div><div style="font-size:11px;color:#9fc3da;margin-top:2px;line-height:1.5">Nicht &uuml;berzeugt? Schreib uns innerhalb von 14&nbsp;Tagen &ndash; du bekommst dein Geld zur&uuml;ck, ohne Wenn und Aber.</div></div>
   </div>
-  <div style="text-align:center;font-size:11px;color:#9dbdd2;line-height:1.9;margin:0 0 14px">🔒 Sichere Zahlung &uuml;ber Stripe · SSL-verschl&uuml;sselt · ⚡ sofort freigeschaltet<br>💳 Karte · PayPal · Klarna · Apple&nbsp;Pay · Google&nbsp;Pay<br>👨‍⚕️ Von Ausbilder &amp; Fachpfleger (An&auml;sthesie/Intensiv) entwickelt<br><span style="color:#7fa6c2">1&#8239;Monat = Abo (mtl. k&uuml;ndbar) &middot; ab 3&#8239;Monate Einmalzahlung</span></div>
+  <div style="text-align:center;font-size:11px;color:#9dbdd2;line-height:1.9;margin:0 0 14px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lock"/></svg> Sichere Zahlung &uuml;ber Stripe · SSL-verschl&uuml;sselt · <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-bolt"/></svg> sofort freigeschaltet<br><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-card"/></svg> Karte · PayPal · Klarna · Apple&nbsp;Pay · Google&nbsp;Pay<br><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cross"/></svg> Von Ausbilder &amp; Fachpfleger (An&auml;sthesie/Intensiv) entwickelt<br><span style="color:#7fa6c2">1&#8239;Monat = Abo (mtl. k&uuml;ndbar) &middot; ab 3&#8239;Monate Einmalzahlung</span></div>
 
   <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;margin-bottom:14px">
     <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#b3c4d6;margin-bottom:10px">H&auml;ufige Fragen</div>
@@ -1503,7 +1503,7 @@
 <!-- TESTER-PROGRAMM -->
 <div class="page" id="screen-tester">
   <div class="hero" style="margin-bottom:16px">
-    <div class="hero-icon">🧪</div>
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-flask"/></svg></div>
     <h1>Werde <span>Tester</span></h1>
     <p>Hilf, PLAN offiziell in den Play Store zu bringen &ndash; und lerne 6&nbsp;Monate gratis.</p>
   </div>
@@ -1529,7 +1529,7 @@
     <div style="font-size:11px;color:#8ab4d0;margin-bottom:6px">Deine Gmail-Adresse (für die Test-Einladung)</div>
     <input id="tester-email" type="email" placeholder="deine@gmail.com" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box">
     <div style="font-size:11px;color:#9dbdd2;margin:6px 0 16px;line-height:1.5">Für den geschlossenen Google-Play-Test wird eine Google-/Gmail-Adresse benötigt (mit ihr trittst du dem Test bei).</div>
-    <button id="tester-btn" onclick="submitTester()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">🧪 Als Tester registrieren</button>
+    <button id="tester-btn" onclick="submitTester()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:12px;padding:15px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-flask"/></svg> Als Tester registrieren</button>
     <div id="tester-msg" style="font-size:12px;margin-top:12px;text-align:center;line-height:1.5"></div>
   </div>
 
@@ -1541,7 +1541,7 @@
 <!-- KLASSE BEITRETEN (Schul-Lizenz) -->
 <div class="page" id="screen-klasse-beitreten">
   <div class="hero" style="margin-bottom:16px">
-    <div class="hero-icon">🎓</div>
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg></div>
     <h1>Klasse <span>beitreten</span></h1>
     <p>Gib den Code deiner Lehrkraft ein und schalte deinen Vollzugang für die Kurslaufzeit frei.</p>
   </div>
@@ -1563,7 +1563,7 @@
 <!-- LEHRER-BEREICH (Schul-Lizenz, Pilot) -->
 <div class="page" id="screen-lehrer">
   <div class="hero" style="margin-bottom:16px">
-    <div class="hero-icon">👩‍🏫</div>
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-school"/></svg></div>
     <h1>Lehrer<span>-Bereich</span></h1>
     <p>Lege Klassen an, verteile Aufgaben &amp; Fallbeispiele und behalte den Fortschritt im Blick.</p>
   </div>
@@ -1580,7 +1580,7 @@
       <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#34d399;margin-bottom:8px">Neue Klasse</div>
       <input id="lk-name" type="text" placeholder="Klassenname (z. B. Kurs GKP 24a)" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:11px 13px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:9px">
       <input id="lk-schule" type="text" placeholder="Schule (optional)" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:11px 13px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:11px">
-      <button id="lk-btn" onclick="plKlasseCreate()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04231a;font-weight:800;font-family:inherit;cursor:pointer">➕ Klasse anlegen</button>
+      <button id="lk-btn" onclick="plKlasseCreate()" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:13px;color:#04231a;font-weight:800;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Klasse anlegen</button>
       <div id="lk-msg" style="font-size:12px;margin-top:10px;text-align:center;line-height:1.5"></div>
     </div>
     <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;margin:0 2px 10px">Meine Klassen</div>
@@ -1599,45 +1599,45 @@
 <div class="page" id="screen-admin">
   <div style="max-width:700px;margin:0 auto">
     <div class="hero" style="margin-bottom:16px">
-      <div class="hero-icon">⚙️</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cog"/></svg></div>
       <h1>Admin <span>Panel</span></h1>
       <p>Token-Generator · Nutzerverwaltung · Statistiken</p>
     </div>
 
     <!-- TABS -->
     <div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap">
-      <button onclick="adminTab('generator')" id="atab-generator" style="border-radius:20px;border:1px solid var(--accent);padding:6px 14px;font-size:11px;font-weight:700;background:var(--accent);color:white;font-family:inherit">🔑 Token Generator</button>
-      <button onclick="adminTab('liste')" id="atab-liste" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit">📋 Token Liste</button>
-      <button onclick="adminTab('stats')" id="atab-stats" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit">📊 Statistiken</button>
-      <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit">📱 WhatsApp Vorlage</button>
+      <button onclick="adminTab('generator')" id="atab-generator" style="border-radius:20px;border:1px solid var(--accent);padding:6px 14px;font-size:11px;font-weight:700;background:var(--accent);color:white;font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Token Generator</button>
+      <button onclick="adminTab('liste')" id="atab-liste" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Token Liste</button>
+      <button onclick="adminTab('stats')" id="atab-stats" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chart"/></svg> Statistiken</button>
+      <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Vorlage</button>
     </div>
 
     <!-- TAB: TOKEN GENERATOR -->
     <div id="admin-generator" class="admin-tab-content" style="display:block">
       <div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:18px;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase">🔑 Neuen Token erstellen</div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Neuen Token erstellen</div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
           <div>
-            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">👤 Name des Nutzers</div>
+            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Name des Nutzers</div>
             <input id="gen-name" type="text" placeholder="z.B. Lisa Müller" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit">
           </div>
           <div>
-            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">🎓 Ausbildungsbereich</div>
+            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg> Ausbildungsbereich</div>
             <select id="gen-bereich" style="width:100%;background:#0b1c2e;border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit">
               <option value="alle">👑 Vollzugang (Admin/Schule)</option>
-              <option value="gpa">🎓 Generalistische Pflege (GPA)</option>
+              <option value="gpa"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg> Generalistische Pflege (GPA)</option>
               <option value="ata">💉 ATA – Anästhesietechn. Assistenz</option>
               <option value="ota">🔬 OTA – Operationstechn. Assistenz</option>
-              <option value="anaesthesie">😴 Fachpflege Anästhesie</option>
-              <option value="intensiv">🏥 Fachpflege Intensivmedizin</option>
+              <option value="anaesthesie"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-moon"/></svg> Fachpflege Anästhesie</option>
+              <option value="intensiv"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hospital"/></svg> Fachpflege Intensivmedizin</option>
               <option value="pflegehelfer">🤝 Pflegefachassistenz</option>
-              <option value="anerkennung">🌍 Anerkennungsschüler</option>
-              <option value="demo">🔒 Demo-Version (kostenlos)</option>
+              <option value="anerkennung"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-globe"/></svg> Anerkennungsschüler</option>
+              <option value="demo"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lock"/></svg> Demo-Version (kostenlos)</option>
             </select>
           </div>
           <div>
-            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">📅 Laufzeit</div>
+            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-calendar"/></svg> Laufzeit</div>
             <select id="gen-laufzeit" style="width:100%;background:#0b1c2e;border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit">
               <option value="1">1 Monat (9,99€)</option>
               <option value="3">3 Monate (24,99€)</option>
@@ -1647,33 +1647,33 @@
             </select>
           </div>
           <div>
-            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">💰 Preis (optional)</div>
+            <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-euro"/></svg> Preis (optional)</div>
             <input id="gen-preis" type="text" placeholder="z.B. 9,99€" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit">
           </div>
         </div>
 
         <button onclick="genToken()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:10px;padding:14px;color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px">
-          ✨ Token generieren
+          <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Token generieren
         </button>
 
         <!-- Ergebnis -->
         <div id="gen-result" style="display:none;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:16px">
-          <div style="font-size:11px;color:#34d399;margin-bottom:8px;font-weight:700;letter-spacing:1px">✅ TOKEN GENERIERT</div>
+          <div style="font-size:11px;color:#34d399;margin-bottom:8px;font-weight:700;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg> TOKEN GENERIERT</div>
           <div id="gen-token-display" style="font-size:16px;font-weight:700;color:#e0f2fe;letter-spacing:2px;margin-bottom:8px;word-break:break-all"></div>
           <div id="gen-token-info" style="font-size:11px;color:#8ab4d0;line-height:1.7;margin-bottom:12px"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button onclick="copyToken()" style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);border-radius:8px;padding:8px 14px;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">📋 Token kopieren</button>
-            <button onclick="copyWhatsApp()" style="background:rgba(37,211,102,.2);border:1px solid rgba(37,211,102,.4);border-radius:8px;padding:8px 14px;color:#25d366;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">📱 WhatsApp-Text kopieren</button>
-            <button onclick="addToLocalDB()" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:8px;padding:8px 14px;color:var(--accent);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">💾 Speichern &amp; aktivieren</button>
+            <button onclick="copyToken()" style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);border-radius:8px;padding:8px 14px;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Token kopieren</button>
+            <button onclick="copyWhatsApp()" style="background:rgba(37,211,102,.2);border:1px solid rgba(37,211,102,.4);border-radius:8px;padding:8px 14px;color:#25d366;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp-Text kopieren</button>
+            <button onclick="addToLocalDB()" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:8px;padding:8px 14px;color:var(--accent);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-save"/></svg> Speichern &amp; aktivieren</button>
           </div>
         </div>
       </div>
 
       <!-- DB Eintrag Code -->
       <div id="gen-code-block" style="display:none;background:rgba(0,0,0,.4);border:1px solid rgba(100,180,220,.15);border-radius:11px;padding:14px">
-        <div style="font-size:11px;color:#8ab4d0;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">🛟 Fallback-Code (optional)</div><div style="font-size:11px;color:#9aabc0;line-height:1.6;margin-bottom:8px">Nicht nötig. Tokens liegen seit dem Supabase-Umbau in der Tabelle <code style="color:#7dd3f7">tokens</code> und sind nach „Speichern &amp; aktivieren“ sofort gültig. Nur einfügen, wenn der Code auch bei ausgefallenem Supabase funktionieren muss.</div>
+        <div style="font-size:11px;color:#8ab4d0;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lifebuoy"/></svg> Fallback-Code (optional)</div><div style="font-size:11px;color:#9aabc0;line-height:1.6;margin-bottom:8px">Nicht nötig. Tokens liegen seit dem Supabase-Umbau in der Tabelle <code style="color:#7dd3f7">tokens</code> und sind nach „Speichern &amp; aktivieren“ sofort gültig. Nur einfügen, wenn der Code auch bei ausgefallenem Supabase funktionieren muss.</div>
         <pre id="gen-code" style="font-size:11px;color:#34d399;white-space:pre-wrap;word-break:break-all;margin:0;line-height:1.7"></pre>
-        <button onclick="copyCode()" style="margin-top:10px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:7px 13px;color:#34d399;font-size:11px;font-family:inherit;cursor:pointer">📋 Code kopieren</button>
+        <button onclick="copyCode()" style="margin-top:10px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:7px 13px;color:#34d399;font-size:11px;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Code kopieren</button>
       </div>
     </div>
 
@@ -1681,7 +1681,7 @@
     <div id="admin-liste" class="admin-tab-content" style="display:none">
       <div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:16px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase">📋 Alle Tokens</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Alle Tokens</div>
           <input id="token-search" oninput="filterTokenListe()" type="text" placeholder="Suchen..." style="background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:8px;padding:6px 12px;color:#ddf0fb;font-size:12px;outline:none;font-family:inherit;width:140px">
         </div>
         <div id="token-liste" style="display:flex;flex-direction:column;gap:7px"></div>
@@ -1697,13 +1697,13 @@
     <!-- TAB: WHATSAPP VORLAGE -->
     <div id="admin-nachricht" class="admin-tab-content" style="display:none">
       <div style="background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.25);border-radius:14px;padding:16px;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:700;color:#25d366;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">📱 WhatsApp Nachrichtenvorlagen</div>
+        <div style="font-size:12px;font-weight:700;color:#25d366;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Nachrichtenvorlagen</div>
 
         ${["Einzellizenz","Schullizenz","Demo / Kostenlos testen","Verlängerung"].map((t,i) => `
         <div style="margin-bottom:14px">
-          <div style="font-size:11px;color:#8ab4d0;margin-bottom:6px">${["👤","🏫","🎁","🔄"][i]} ${t}</div>
+          <div style="font-size:11px;color:#8ab4d0;margin-bottom:6px">${["<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>","<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-school"/></svg>","<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg>","<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>"][i]} ${t}</div>
           <div id="wa-vorlage-${i}" style="background:rgba(0,0,0,.3);border-radius:9px;padding:12px;font-size:12px;color:#b3c4d6;line-height:1.8;white-space:pre-wrap"></div>
-          <button onclick="copyVorlage(${i})" style="margin-top:6px;background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);border-radius:7px;padding:6px 12px;color:#25d366;font-size:11px;font-family:inherit;cursor:pointer">📋 Kopieren</button>
+          <button onclick="copyVorlage(${i})" style="margin-top:6px;background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);border-radius:7px;padding:6px 12px;color:#25d366;font-size:11px;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Kopieren</button>
         </div>`).join("")}
       </div>
     </div>
@@ -1731,7 +1731,7 @@
 <!-- RESULT -->
 <div class="page" id="screen-result">
   <div class="result-wrap">
-    <div class="result-emoji" id="result-emoji">🏆</div>
+    <div class="result-emoji" id="result-emoji"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-trophy"/></svg></div>
     <h2 class="result-score" id="result-score">0 / 0 richtig</h2>
     <div class="result-box">
       <div class="result-pct" id="result-pct">0%</div>
@@ -1740,13 +1740,13 @@
     <!-- Lernnachweis Button -->
     <div id="lernnachweis-btn-wrap" style="display:none;margin-bottom:12px">
       <button onclick="generateLernnachweis()" style="width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:11px;padding:13px;color:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">
-        🏆 Lernnachweis als PDF herunterladen
+        <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Lernnachweis als PDF herunterladen
       </button>
     </div>
     <div class="result-btns">
-      <button class="result-btn" id="retry-btn" onclick="retryQuiz()" style="border:none;color:white">🔄 Nochmal</button>
-      <button class="result-btn" onclick="showScreen('quizSelect')" style="background:rgba(255,255,255,.10);border-color:rgba(100,180,220,.16);color:var(--accent2)">📋 Andere Kategorie</button>
-      <button class="result-btn" onclick="showScreen('home')" style="background:rgba(255,255,255,.07);border-color:rgba(100,180,220,.1);color:var(--text3)">🏠 Startseite</button>
+      <button class="result-btn" id="retry-btn" onclick="retryQuiz()" style="border:none;color:white"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> Nochmal</button>
+      <button class="result-btn" onclick="showScreen('quizSelect')" style="background:rgba(255,255,255,.10);border-color:rgba(100,180,220,.16);color:var(--accent2)"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Andere Kategorie</button>
+      <button class="result-btn" onclick="showScreen('home')" style="background:rgba(255,255,255,.07);border-color:rgba(100,180,220,.1);color:var(--text3)"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-home"/></svg> Startseite</button>
     </div>
   </div>
 </div>
@@ -1758,7 +1758,7 @@
 <div class="page" id="screen-ce">
   <div style="max-width:720px;margin:0 auto">
     <div class="hero" style="margin-bottom:10px">
-      <div class="hero-icon">🎯</div>
+      <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-target"/></svg></div>
       <h1>Kompetenz<span>bereiche</span></h1>
       <p>Lernen entlang der 11 Curricularen Einheiten (CE)</p>
     </div>
@@ -1770,21 +1770,21 @@
 <!-- LERNPLAN -->
 <div class="page" id="screen-lernplan">
   <div class="hero" style="margin-bottom:14px">
-    <div class="hero-icon">📅</div>
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-calendar"/></svg></div>
     <h1>Mein <span>Lernplan</span></h1>
     <p>Gib dein Prüfungsdatum ein – ich erstelle deinen persönlichen Plan</p>
   </div>
   <div style="background:rgba(255,255,255,.085);border:1px solid rgba(var(--accent-rgb),.2);border-radius:16px;padding:20px;margin-bottom:14px">
-    <div style="font-size:11px;color:#8ab4d0;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">📅 Mein Prüfungsdatum</div>
+    <div style="font-size:11px;color:#8ab4d0;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-calendar"/></svg> Mein Prüfungsdatum</div>
     <input type="date" id="pruefungs-datum" style="width:100%;background:#0b1c2e;border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:12px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:12px">
-    <div style="font-size:11px;color:#8ab4d0;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">📚 Lernzeit pro Tag</div>
+    <div style="font-size:11px;color:#8ab4d0;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-book"/></svg> Lernzeit pro Tag</div>
     <select id="lernzeit-select" style="width:100%;background:#0b1c2e;border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:12px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit;margin-bottom:14px">
       <option value="15">15 Minuten (wenig Zeit)</option>
       <option value="30" selected>30 Minuten (normal)</option>
       <option value="60">60 Minuten (intensiv)</option>
       <option value="90">90 Minuten (Vollgas)</option>
     </select>
-    <button onclick="generateLernplan()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:14px;color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">📅 Lernplan erstellen</button>
+    <button onclick="generateLernplan()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:14px;color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-calendar"/></svg> Lernplan erstellen</button>
   </div>
   <div id="lernplan-output" style="display:none"></div>
 </div>
