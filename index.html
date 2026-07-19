@@ -359,6 +359,8 @@
   .ic{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
   /* Nachtmodus: fest kodierte, zu dunkle Sekundaer-Blaugraut-Texte deutlich aufhellen (nur Dunkelmodus; Tag-Modus bleibt unberuehrt) */
   body:not(.light-mode) [style*="color:#a3bcd0"], body:not(.light-mode) [style*="color:#9fb8cc"], body:not(.light-mode) [style*="color:#9fb3c8"], body:not(.light-mode) [style*="color:#8ab4d0"], body:not(.light-mode) [style*="color:#a8c4b6"], body:not(.light-mode) [style*="color:#9fc3da"], body:not(.light-mode) [style*="color:#6f97b4"], body:not(.light-mode) [style*="color:#9fc4dc"], body:not(.light-mode) [style*="color:#8ab0c8"] { color:#dbe8f5 !important; }
+  /* Nachtmodus: Kachel-/Inhalts-Icons erben sonst die dunkle Default-Button-Farbe -> auf helle Textfarbe zwingen (Nav-Icons ausserhalb .page bleiben unberuehrt) */
+  body:not(.light-mode) .page svg.ic { color: var(--text); }
   body.light-mode .bottom-nav { background:rgba(255,255,255,.97); border-color:rgba(30,64,128,.12); }
   body.light-mode .bottom-nav button { color:#475569; }
   .install-btn.visible { display:flex; }
@@ -16438,7 +16440,7 @@ function renderHomeStats() {
     examiniert: { label:'Examinierte Fachkräfte', icon:'🩺', accent:'#2dd4bf', accent2:'#0d9488',
                   hero:'Dein Wissen im Dienst',
                   sub:'Schnell nachschlagen, auffrischen und für die Fachweiterbildung lernen – Anästhesie, Intensiv, OP.',
-                  ctas:[ ['Schnell nachschlagen',"navGo('wissensdb')"], ['Fachweiterbildung',"showScreen('ausbildungswege')"] ] },
+                  ctas:[ ['Schnell nachschlagen',"showSearchOverlay()"], ['Fachweiterbildung',"showScreen('ausbildungswege')"] ] },
     lehrkraft:  { label:'Lehrer & Dozenten', icon:'📋', accent:'#a78bfa', accent2:'#7c3aed',
                   hero:'Deine Klasse im Blick',
                   sub:'Klassen anlegen, Aufgaben verteilen und Fallbeispiele für den Unterricht nutzen.',
@@ -16446,11 +16448,15 @@ function renderHomeStats() {
   };
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function get(){ try{ var p=localStorage.getItem('pl_persona'); return PC[p]?p:''; }catch(e){ return ''; } }
+  var THEME_MAP = { azubi:'sky', examiniert:'teal', lehrkraft:'violet' };
   window.setPersona = function(id){
     if(!PC[id]) return;
     try{ localStorage.setItem('pl_persona', id); }catch(e){}
+    // Rollenfarbe uebers vorhandene Theme-System setzen (persistiert als pl_theme; Theme-Picker bleibt Override)
+    try{ if(typeof applyTheme==='function') applyTheme(THEME_MAP[id]||'sky'); }catch(e){}
     var ov=document.getElementById('persona-modal'); if(ov) ov.remove();
     try{ renderPersonaBanner(); }catch(e){}
+    try{ if(typeof renderHomeStats==='function') renderHomeStats(); }catch(e){}
     try{ if(typeof toast==='function') toast('Bereich: '+PC[id].label); }catch(e){}
   };
   window.openPersonaChooser = function(){
