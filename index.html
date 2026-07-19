@@ -620,6 +620,30 @@
   <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
   <div class="pw-subtitle" style="margin-top:8px"><span data-i18n="login_subtitle">Prüfungs-Portal NRW</span></div>
   <div style="text-align:center;color:var(--accent);font-weight:600;font-size:13px;margin-top:6px">Damit du immer einen PLAN hast.</div>
+
+  <!-- ROLLEN-AUSWAHL: gleich beim Start klar, fuer wen die App ist -->
+  <div style="width:100%;max-width:340px;margin:16px auto 2px">
+    <div style="font-size:12px;color:#9dbdd2;text-align:center;margin-bottom:9px;font-weight:700;letter-spacing:.3px">Ich bin …</div>
+    <div style="display:flex;gap:8px">
+      <button type="button" id="role-azubi" onclick="plPickRole('azubi')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px">🎓</span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Auszubildende</span></button>
+      <button type="button" id="role-examiniert" onclick="plPickRole('examiniert')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px">🩺</span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Examinierte</span></button>
+      <button type="button" id="role-lehrkraft" onclick="plPickRole('lehrkraft')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px">📋</span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Lehrkraft</span></button>
+    </div>
+  </div>
+  <script>
+  window.plHiliteRole = function(id){ try{
+    var map={azubi:'#38bdf8',examiniert:'#2dd4bf',lehrkraft:'#a78bfa'};
+    ['azubi','examiniert','lehrkraft'].forEach(function(r){
+      var b=document.getElementById('role-'+r); if(!b) return; var on=(r===id);
+      b.style.border='1.5px solid '+(on?map[r]:'rgba(255,255,255,.16)');
+      b.style.background=on?(map[r]+'22'):'rgba(255,255,255,.04)';
+      b.style.color=on?'#ffffff':'#cfe6f5';
+    });
+  }catch(e){} };
+  window.plPickRole = function(id){ try{ if(typeof setPersona==='function') setPersona(id); }catch(e){} plHiliteRole(id); };
+  try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s) plHiliteRole(s); }); }catch(e){}
+  </script>
+
   <!-- HERO: 21 Tage Gratis-Trial (Vollzugang) -->
   <button onclick="showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
     🎁 21 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
@@ -17316,6 +17340,20 @@ function plStartAufgabenFall(id){ try{ if(typeof startFall==='function'){ startF
 
 // ── Lehrkraft: Dashboard ──
 function showLehrer(){
+  // Lehrer-Bereich nur fuer die Rolle Lehrkraft (Azubi/Examinierte werden geblockt)
+  try{
+    var _p=localStorage.getItem('pl_persona')||'';
+    if(_p==='azubi'||_p==='examiniert'){
+      plOverlay('<div style="text-align:center">'
+        +'<div style="font-size:34px">👩‍🏫</div>'
+        +'<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin:6px 0 4px">Nur für Lehrkräfte</div>'
+        +'<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-bottom:16px">Der Lehrer-Bereich (Klassen anlegen, Aufgaben verteilen) ist Lehrkräften vorbehalten. Wenn du unterrichtest, wechsle deinen Bereich zu „Lehrkraft".</div>'
+        +'<button onclick="this.closest(\'[style*=fixed]\').remove();if(typeof setPersona===\'function\')setPersona(\'lehrkraft\');setTimeout(showLehrer,80)" style="width:100%;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:11px;padding:13px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">Zu Lehrkraft wechseln</button>'
+        +'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;background:none;border:none;color:#8ab4d0;font-size:12px;font-family:inherit;cursor:pointer;padding:6px">Schließen</button>'
+        +'</div>');
+      return;
+    }
+  }catch(e){}
   try{ showScreen('lehrer'); }catch(e){}
   var le=''; try{ le=localStorage.getItem('pl_lehrer_email')||''; }catch(e){}
   var gate=document.getElementById('lehrer-gate'); var main=document.getElementById('lehrer-main');
@@ -17474,13 +17512,15 @@ function plAufgabeDelete(aufgabeId, btn){
 // Startseiten-Kachel: Chooser für Azubi (Klasse beitreten) bzw. Lehrkraft (Dashboard)
 function openSchuleChooser(){
   var kn=''; try{ kn=localStorage.getItem('pl_klasse_name')||''; }catch(e){}
+  var _p=''; try{ _p=localStorage.getItem('pl_persona')||''; }catch(e){}
+  var _isAzubiRole=(_p==='azubi'||_p==='examiniert');
   var html='<div style="text-align:center">'
     +'<div style="font-size:34px">🎓</div>'
     +'<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin:6px 0 4px">Schule &amp; Klasse</div>'
     +'<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-bottom:16px">Lernt eure Klasse mit PLAN? Tritt mit dem Code deiner Lehrkraft bei – oder verwalte als Lehrkraft deine Klassen und verteile Aufgaben.</div>'
     +(kn ? '<button onclick="this.closest(\'[style*=fixed]\').remove();showMeineAufgaben()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:13px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">📋 Meine Aufgaben (Klasse '+plEsc(kn)+')</button>' : '')
     +'<button onclick="this.closest(\'[style*=fixed]\').remove();showKlasseBeitreten()" style="width:100%;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;border-radius:11px;padding:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">🎓 Ich bin Azubi – Klasse beitreten</button>'
-    +'<button onclick="this.closest(\'[style*=fixed]\').remove();showLehrer()" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:11px;padding:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">👩‍🏫 Ich bin Lehrkraft – Lehrer-Bereich</button>'
+    +(_isAzubiRole ? '' : '<button onclick="this.closest(\'[style*=fixed]\').remove();showLehrer()" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:11px;padding:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">👩‍🏫 Ich bin Lehrkraft – Lehrer-Bereich</button>')
     +'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;background:none;border:none;color:#8ab4d0;font-size:12px;font-family:inherit;cursor:pointer;padding:6px">Schließen</button>'
     +'</div>';
   plOverlay(html);
