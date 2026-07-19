@@ -929,6 +929,13 @@
   <!-- ── PERSONA-BANNER: rollenspezifischer Einstieg (Azubi / Examiniert / Lehrkraft), per JS gefuellt ── -->
   <div id="home-persona"></div>
 
+  <!-- ── SUCHE: prominenter Einstieg (Feedback: "finde mich nicht zurecht") ── -->
+  <button onclick="showSearchOverlay()" aria-label="Inhalte durchsuchen" style="width:100%;background:rgba(255,255,255,.085);border:1px solid rgba(var(--accent-rgb),.35);border-radius:14px;padding:13px 15px;margin:0 0 14px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;text-align:left">
+    <svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;color:#7dd3fc"><use href="#i-search"/></svg>
+    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;color:#c3d4e4;font-weight:600">Thema suchen</span><span style="display:block;font-size:11px;color:#93b9d1;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">z.\u00a0B. TEE, Sepsis, Braden, Herzinsuffizienz</span></span>
+    <span style="color:#7dd3fc;font-size:17px">\u203a</span>
+  </button>
+
   <!-- ── HOME 3.0 HERO: Pruefungsreife-Ring (dominant, per JS in #home-hero) ── -->
   <div id="home-hero"></div>
 
