@@ -640,7 +640,68 @@
       b.style.color=on?'#ffffff':'#cfe6f5';
     });
   }catch(e){} };
-  window.plPickRole = function(id){ try{ if(typeof setPersona==='function') setPersona(id); }catch(e){} plHiliteRole(id); };
+  // Voller Zugriff aufs Rollen-/Lehrer-Gating: Admin ODER Play-Store-Tester (TEST-/PROBE-Token bzw. Tester-Grant)
+  window.plIstTesterOderAdmin = function(){
+    try{ if(typeof isAdmin==='function' && isAdmin()) return true; }catch(e){}
+    try{ var t=(localStorage.getItem('pl_token')||'').toUpperCase(); if(t.indexOf('TEST-')===0||t.indexOf('PROBE-')===0) return true; }catch(e){}
+    try{ if((localStorage.getItem('pl_paid_plan')||'')==='tester') return true; }catch(e){}
+    return false;
+  };
+  window.plPickRole = function(id){
+    if(id==='lehrkraft'){ plBecomeLehrkraft(); return; }   // Lehrkraft nur per Zugangstoken
+    try{ if(typeof setPersona==='function') setPersona(id); }catch(e){}
+    plHiliteRole(id);
+  };
+  // Lehrer-/Schulbereich ist tokengeschuetzt: nur mit gueltigem Zugangstoken (von PLAN vergeben)
+  window.plBecomeLehrkraft = function(){
+    // Admin darf ohne Token in jede Rolle wechseln (Testen)
+    try{ if(typeof plIstTesterOderAdmin==='function' && plIstTesterOderAdmin()){ if(typeof setPersona==='function') setPersona('lehrkraft'); try{ plHiliteRole('lehrkraft'); }catch(e){} return; } }catch(e){}
+    var html='<div style="text-align:center">'
+      +'<div style="font-size:34px">👩‍🏫</div>'
+      +'<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin:6px 0 4px">Lehrer-Zugang</div>'
+      +'<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-bottom:14px">Der Lehrer-/Schulbereich ist mit einem Zugangstoken geschützt, den du von PLAN erhältst.</div>'
+      +'<input id="lehrer-token-inp" type="text" autocapitalize="characters" placeholder="Lehrer-Zugangstoken" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(167,139,250,.45);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px" onkeydown="if(event.key===\'Enter\')plLehrerTokenSubmit()">'
+      +'<div id="lehrer-token-msg" style="font-size:12px;color:#fbbf24;min-height:16px;margin-bottom:8px"></div>'
+      +'<button onclick="plLehrerTokenSubmit()" style="width:100%;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:11px;padding:13px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">Zugang prüfen →</button>'
+      +'<div style="font-size:11px;color:#8ab4d0;line-height:1.5;margin-bottom:8px">Noch kein Lehrer-Zugang? kontakt@plan-nrw.de</div>'
+      +'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;background:none;border:none;color:#8ab4d0;font-size:12px;font-family:inherit;cursor:pointer;padding:6px">Abbrechen</button>'
+      +'</div>';
+    try{ if(typeof plOverlay==='function') plOverlay(html); }catch(e){}
+    setTimeout(function(){ try{ document.getElementById('lehrer-token-inp').focus(); }catch(e){} }, 60);
+  };
+  window.plLehrerTokenSubmit = async function(){
+    var inp=document.getElementById('lehrer-token-inp'); var msg=document.getElementById('lehrer-token-msg');
+    var code=((inp&&inp.value)||'').trim();
+    if(!code){ if(msg)msg.textContent='Bitte Token eingeben.'; return; }
+    var tok=null; try{ if(typeof plLookupToken==='function') tok=await plLookupToken(code); }catch(e){}
+    var isLehrer = code.toUpperCase().indexOf('LEHRER-')===0 || (tok&&tok.lehrer===true) || (tok&&tok.bereich==='schule');
+    if(!tok || tok.aktiv===false){ if(msg)msg.textContent='❌ Unbekannter oder gesperrter Token.'; return; }
+    if(!isLehrer){ if(msg)msg.textContent='Dieser Token ist kein Lehrer-Zugang.'; return; }
+    try{ if(tok.ablauf && new Date(tok.ablauf) < new Date(new Date().toDateString())){ if(msg)msg.textContent='Zugang abgelaufen.'; return; } }catch(e){}
+    // Rolle setzen und ueber den bestehenden Login-Pfad mit dem Token einloggen
+    try{ localStorage.setItem('pl_persona','lehrkraft'); }catch(e){}
+    try{ localStorage.setItem('pl_lehrer_token', code); }catch(e){}
+    try{ if(typeof applyTheme==='function') applyTheme('violet'); }catch(e){}
+    try{ var e1=document.getElementById('pw-name'); if(e1&&!e1.value) e1.value=(tok.name||'Lehrkraft'); var e2=document.getElementById('pw-input'); if(e2) e2.value=code; }catch(e){}
+    var ov=inp&&inp.closest('[style*=fixed]'); if(ov)ov.remove();
+    try{ plHiliteRole('lehrkraft'); }catch(e){}
+    try{ if(typeof checkPW==='function'){ await checkPW(); } }catch(e){}
+    try{ if(typeof renderPersonaBanner==='function') renderPersonaBanner(); }catch(e){}
+  };
+  // Rolle ist nach der Auswahl fest: nur Anzeige, kein Wechsel (Wechsel nur ueber Neu-Anmeldung)
+  window.plShowMyRole = function(){
+    var LB={azubi:'🎓 Auszubildende:r', examiniert:'🩺 Examinierte Fachkraft', lehrkraft:'👩‍🏫 Lehrkraft'};
+    var s=''; try{ s=localStorage.getItem('pl_persona')||''; }catch(e){}
+    if(!s){ if(typeof openPersonaChooser==='function') openPersonaChooser(); return; }
+    var html='<div style="text-align:center">'
+      +'<div style="font-size:30px">'+ (s==='lehrkraft'?'👩‍🏫':(s==='examiniert'?'🩺':'🎓')) +'</div>'
+      +'<div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe;margin:6px 0 4px">Dein Bereich</div>'
+      +'<div style="font-size:14px;font-weight:800;color:var(--accent);margin-bottom:10px">'+(LB[s]||s)+'</div>'
+      +'<div style="font-size:12px;color:#9fc3da;line-height:1.5;margin-bottom:14px">Dein Bereich ist nach der Anmeldung fest. Zum Wechseln melde dich bitte neu an (Profil → Benutzer wechseln).</div>'
+      +'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);border-radius:11px;padding:12px;color:#e2e8f0;font-weight:700;font-family:inherit;cursor:pointer">Schließen</button>'
+      +'</div>';
+    try{ if(typeof plOverlay==='function') plOverlay(html); }catch(e){}
+  };
   try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s) plHiliteRole(s); }); }catch(e){}
   </script>
 
@@ -8066,6 +8127,9 @@ const TOKEN_DB = {
   "PROBE-2026-P007":      { name:"Probe 7",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
   "PROBE-2026-P008":      { name:"Probe 8",  bereich:"alle", ablauf:"2026-06-25", aktiv:true },
   "ADMIN-2026-ZC22-NAZ":  { name:"Selin Naz", bereich:"alle", ablauf:"2026-06-30", aktiv:true },
+  // ── Lehrer-Zugaenge (Schul-/Lehrerbereich): Code beginnt mit "LEHRER-" ODER Feld lehrer:true ──
+  // Neue Lehrkraefte hier ergaenzen (oder per Supabase-Token mit lehrer:true). Demo unten kann entfernt werden.
+  "LEHRER-DEMO-2026":     { name:"Lehrkraft (Demo)", bereich:"alle", ablauf:"2099-12-31", aktiv:true, lehrer:true },
 };
 
 // Bereichs-Konfiguration: Was darf welcher Bereich sehen?
@@ -12907,6 +12971,8 @@ function computePruefungsreife() {
 function renderCountdown() {
   var el = document.getElementById('home-countdown');
   if (!el || !currentUser) return;
+  // Examens-Countdown ist nur fuer Auszubildende relevant (Examinierte/Lehrkraefte bereiten kein Examen vor)
+  try { var _pp = localStorage.getItem('pl_persona')||''; if (_pp==='examiniert' || _pp==='lehrkraft') { el.innerHTML=''; return; } } catch(e){}
   var d = null;
   try { d = localStorage.getItem('pl_examen_datum') || localStorage.getItem('pl_pruefungsdatum'); } catch(e){}
 
@@ -16486,9 +16552,12 @@ function renderHomeStats() {
   window.openPersonaChooser = function(){
     if(document.getElementById('persona-modal')) return;
     var cur=get();
+    var _adm=false; try{ _adm=(typeof plIstTesterOderAdmin==='function' && plIstTesterOderAdmin()); }catch(e){}
+    if(cur && !_adm){ if(typeof plShowMyRole==='function') plShowMyRole(); return; }   // Rolle gesetzt + kein Admin -> nur Anzeige, kein Wechsel
     var cards=Object.keys(PC).map(function(id){
       var p=PC[id]; var active = id===cur;
-      return '<button onclick="setPersona(\''+id+'\')" style="width:100%;text-align:left;background:linear-gradient(135deg,'+p.accent+'22,'+p.accent+'0d);border:1.5px solid '+(active?p.accent:'rgba(255,255,255,.14)')+';border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;margin-bottom:10px">'
+      var oc = (id==='lehrkraft') ? "var e=document.getElementById('persona-modal');if(e)e.remove();plBecomeLehrkraft()" : "setPersona('"+id+"')";
+      return '<button onclick="'+oc+'" style="width:100%;text-align:left;background:linear-gradient(135deg,'+p.accent+'22,'+p.accent+'0d);border:1.5px solid '+(active?p.accent:'rgba(255,255,255,.14)')+';border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;margin-bottom:10px">'
         + '<span style="font-size:24px">'+p.icon+'</span>'
         + '<span style="flex:1"><span style="display:block;font-size:14px;font-weight:800;color:#e6eef7">'+esc(p.label)+'</span>'
         + '<span style="display:block;font-size:11.5px;color:#9fb8cc;line-height:1.35;margin-top:2px">'+esc(p.sub)+'</span></span>'
@@ -16500,7 +16569,7 @@ function renderHomeStats() {
     ov.style.cssText='position:fixed;inset:0;z-index:1300;background:rgba(3,9,18,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:22px;';
     ov.innerHTML='<div style="max-width:380px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
       + '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e6eef7;text-align:center;margin-bottom:4px">Wofür nutzt du PLAN?</div>'
-      + '<div style="font-size:12px;color:#9fb8cc;text-align:center;margin-bottom:16px">Wähle deinen Bereich – jederzeit im Profil änderbar.</div>'
+      + '<div style="font-size:12px;color:#9fb8cc;text-align:center;margin-bottom:16px">Wähle deinen Bereich. Diese Wahl bleibt bestehen.</div>'
       + cards
       + '<button onclick="var e=document.getElementById(\'persona-modal\');if(e)e.remove();" style="width:100%;background:none;border:none;color:#6b8ba3;font-size:12px;font-family:inherit;cursor:pointer;padding:6px;margin-top:2px">Später</button>'
       + '</div>';
@@ -16515,6 +16584,7 @@ function renderHomeStats() {
       return;
     }
     var p=PC[id];
+    var _adm=false; try{ _adm=(typeof plIstTesterOderAdmin==='function' && plIstTesterOderAdmin()); }catch(e){}
     var ctas=p.ctas.map(function(c){
       return '<button onclick="'+c[1]+'" style="background:rgba(255,255,255,.92);border:none;border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12px;font-weight:800;color:#04121f;cursor:pointer">'+esc(c[0])+'</button>';
     }).join('');
@@ -16523,7 +16593,7 @@ function renderHomeStats() {
       + '<div style="font-size:18px;font-weight:900;color:#04121f;line-height:1.15;margin-bottom:3px">'+esc(p.hero)+'</div>'
       + '<div style="font-size:12px;color:#04121f;opacity:.85;line-height:1.4;margin-bottom:11px">'+esc(p.sub)+'</div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+ctas
-      + '<button onclick="openPersonaChooser()" style="margin-left:auto;background:none;border:none;color:#04121f;opacity:.72;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:underline">wechseln</button>'
+      + (_adm ? '<button onclick="openPersonaChooser()" style="margin-left:auto;background:none;border:none;color:#04121f;opacity:.72;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:underline">wechseln (Admin)</button>' : '')
       + '</div></div>';
   };
   try{ if(document.readyState!=='loading') renderPersonaBanner(); else document.addEventListener('DOMContentLoaded', renderPersonaBanner); }catch(e){}
@@ -17343,12 +17413,12 @@ function showLehrer(){
   // Lehrer-Bereich nur fuer die Rolle Lehrkraft (Azubi/Examinierte werden geblockt)
   try{
     var _p=localStorage.getItem('pl_persona')||'';
-    if(_p==='azubi'||_p==='examiniert'){
+    if((_p==='azubi'||_p==='examiniert') && !(typeof plIstTesterOderAdmin==='function' && plIstTesterOderAdmin())){
       plOverlay('<div style="text-align:center">'
         +'<div style="font-size:34px">👩‍🏫</div>'
         +'<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin:6px 0 4px">Nur für Lehrkräfte</div>'
         +'<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-bottom:16px">Der Lehrer-Bereich (Klassen anlegen, Aufgaben verteilen) ist Lehrkräften vorbehalten. Wenn du unterrichtest, wechsle deinen Bereich zu „Lehrkraft".</div>'
-        +'<button onclick="this.closest(\'[style*=fixed]\').remove();if(typeof setPersona===\'function\')setPersona(\'lehrkraft\');setTimeout(showLehrer,80)" style="width:100%;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:11px;padding:13px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">Zu Lehrkraft wechseln</button>'
+        +'<button onclick="this.closest(\'[style*=fixed]\').remove();plBecomeLehrkraft()" style="width:100%;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:11px;padding:13px;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px">Zu Lehrkraft wechseln</button>'
         +'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;background:none;border:none;color:#8ab4d0;font-size:12px;font-family:inherit;cursor:pointer;padding:6px">Schließen</button>'
         +'</div>');
       return;
@@ -17513,7 +17583,7 @@ function plAufgabeDelete(aufgabeId, btn){
 function openSchuleChooser(){
   var kn=''; try{ kn=localStorage.getItem('pl_klasse_name')||''; }catch(e){}
   var _p=''; try{ _p=localStorage.getItem('pl_persona')||''; }catch(e){}
-  var _isAzubiRole=(_p==='azubi'||_p==='examiniert');
+  var _isAzubiRole=(_p==='azubi'||_p==='examiniert') && !(typeof plIstTesterOderAdmin==='function' && plIstTesterOderAdmin());
   var html='<div style="text-align:center">'
     +'<div style="font-size:34px">🎓</div>'
     +'<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin:6px 0 4px">Schule &amp; Klasse</div>'
@@ -19758,6 +19828,7 @@ if (_savedLang !== 'de') {
     try{ if(typeof renderHomeStats==='function') renderHomeStats(); }catch(e){}
   }
   function zeige(){
+    try{ var _pp=localStorage.getItem('pl_persona')||''; if(_pp==='examiniert'||_pp==='lehrkraft') return; }catch(e){}  // kein Examens-Popup fuer Examinierte/Lehrkraefte
     if(document.getElementById('examdate-prompt')) return;
     try{ localStorage.setItem(PROMPTED,'1'); }catch(e){}   // nur einmal anbieten
     var min=new Date().toISOString().split('T')[0];
