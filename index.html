@@ -16476,8 +16476,11 @@ function renderHomeStats() {
   window.setPersona = function(id){
     if(!PC[id]) return;
     try{ localStorage.setItem('pl_persona', id); }catch(e){}
-    // Rollenfarbe uebers vorhandene Theme-System setzen (persistiert als pl_theme; Theme-Picker bleibt Override)
-    try{ if(typeof applyTheme==='function') applyTheme(THEME_MAP[id]||'sky'); }catch(e){}
+    // Rollenfarbe nur als Startvorschlag: eine bereits bewusst gewaehlte Themefarbe bleibt erhalten
+    try{
+      var _hasTheme=false; try{ _hasTheme = !!localStorage.getItem('pl_theme'); }catch(e){}
+      if(!_hasTheme && typeof applyTheme==='function') applyTheme(THEME_MAP[id]||'sky');
+    }catch(e){}
     var ov=document.getElementById('persona-modal'); if(ov) ov.remove();
     try{ renderPersonaBanner(); }catch(e){}
     try{ if(typeof renderHomeStats==='function') renderHomeStats(); }catch(e){}
