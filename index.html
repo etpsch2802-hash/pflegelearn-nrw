@@ -970,7 +970,7 @@
   <div class="hero" style="margin-bottom:14px"><div class="hero-icon"><svg class="ic" viewBox="0 0 24 24" style="width:1em;height:1em"><use href="#i-book"/></svg></div><h1>Wissen<span>sbibliothek</span></h1><p>Nachschlagen · verstehen · behalten</p></div>
   <button onclick="showSearchOverlay()" style="width:100%;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:12px;padding:13px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;color:#9fb8cc;font-size:13px"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><use href="#i-search"/></svg>Alle Inhalte durchsuchen …</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <button onclick="navGo('wissensdb')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-database"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Wissensdatenbank</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3"><span class="pl-lern-count">420</span> Lerneinheiten · MCQ</span></button>
+    <button onclick="navGo('wissensdb')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-database"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Wissensdatenbank</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3"><span class="pl-lern-count">420</span> Lerneinheiten · MCQ</span></button><button onclick="navGo('grafiken')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-chart"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Grafiken &amp; Kurven</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">EKG, Beatmung, Physiologie</span></button>
     <button onclick="navGo('krankheitsbilder')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-hospital"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Krankheitsbilder</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">100 Bilder, 10 Fächer</span></button>
     <button onclick="navGo('anatomie')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-scan"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Anatomie</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Aufbau &amp; Physiologie</span></button>
     <button onclick="navGo('taschenkarten')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-idcard"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Taschenkarten</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Kompakt für die Kitteltasche</span></button>
@@ -1000,6 +1000,12 @@
     <button onclick="showThemePicker()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-palette"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Mein Theme</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Farbwelt wählen</span></button>
     <button onclick="toggleDarkMode()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-moon"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Hell / Dunkel</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Ansicht umschalten</span></button>
   </div>
+</div>
+
+<!-- GRAFIKEN & KURVEN -->
+<div class="page" id="screen-grafiken">
+  <div class="hero" style="margin-bottom:14px"><div class="hero-icon"><svg class="ic" viewBox="0 0 24 24" style="width:1em;height:1em"><use href="#i-chart"/></svg></div><h1>Grafiken<span> &amp; Kurven</span></h1><p>EKG, Beatmung und Physiologie auf einen Blick</p></div>
+  <div id="grafik-galerie"></div>
 </div>
 
 <!-- MEDIKAMENTE -->
@@ -3465,7 +3471,7 @@ function showScreen(name) {
       ueben:'bn-ueben', quizSelect:'bn-ueben', exam:'bn-ueben', karteikarten:'bn-ueben', faelle:'bn-ueben',
       wissenhub:'bn-wissen', wissensdb:'bn-wissen', krankheitsbilder:'bn-wissen', anatomie:'bn-wissen',
       taschenkarten:'bn-wissen', prophylaxen:'bn-wissen', notfallmanagement:'bn-wissen', scores:'bn-wissen',
-      medikamente:'bn-wissen', medNeu:'bn-wissen', medizintechnik:'bn-wissen', wundversorgung:'bn-wissen', atl:'bn-wissen',
+      medikamente:'bn-wissen', medNeu:'bn-wissen', grafiken:'bn-wissen', medizintechnik:'bn-wissen', wundversorgung:'bn-wissen', atl:'bn-wissen',
       bobath:'bn-wissen', kinaesthetik:'bn-wissen', merksaetze:'bn-wissen',
       profil:'bn-profil', preise:'bn-profil', ausbildungswege:'bn-profil', support:'bn-profil', admin:'bn-profil'
     };
@@ -3512,6 +3518,7 @@ function showScreen(name) {
   if (name === "exam")          { /* renderExam() wird von startExam() aufgerufen */ }
   if (name === "medNeu")        setTimeout(() => { renderMedNeu(); }, 50);
   try{ stopSpeak(); plMicStop(); }catch(e){}
+  if (name === "grafiken")      { try{ renderGrafikGalerie(); }catch(e){} }
   if (name === "profil")        { try{ renderSchwaechenRadar(); }catch(e){} }
 }
 
@@ -12423,6 +12430,37 @@ function _wdbApplyPending(){
     setTimeout(function(){ card.style.boxShadow=''; },2200);
   },120);
 }
+var PL_GRAFIK_TITEL = {
+  'ekg-sinus':'EKG: Sinusrhythmus',
+  'ekg-vhf':'EKG: Vorhofflimmern',
+  'ekg-kammerflimmern':'EKG: Kammerflimmern',
+  'ekg-asystolie':'EKG: Asystolie',
+  'ekg-av-block-3':'EKG: AV-Block III',
+  'ekg-stemi':'EKG: STEMI mit ST-Hebung',
+  'reizleitung':'Reizleitungssystem des Herzens',
+  'herzzyklus':'Herzzyklus: Druckkurven',
+  'o2-bindungskurve':'Sauerstoffbindungskurve',
+  'saeure-basen':'Säure-Basen-Störungen',
+  'beatmung-druckkurve':'Beatmung: Druckkurve',
+  'beatmung-pv-loop':'Beatmung: Druck-Volumen-Loop',
+  'beatmung-flow-airtrapping':'Beatmung: Air Trapping',
+  'beatmungsmodi':'Beatmung: Modi im Vergleich',
+  'kapnografie':'Kapnografie (etCO2)'
+};
+function renderGrafikGalerie(){
+  var host = document.getElementById('grafik-galerie');
+  if (!host) return;
+  var html = '';
+  PL_GRAFIK.list.forEach(function(id){
+    var t = PL_GRAFIK_TITEL[id] || id;
+    html += '<div style="margin-bottom:18px">'
+          + '<div style="font-size:13px;font-weight:800;color:#e2e8f0;margin-bottom:4px">'+t+'</div>'
+          + PL_GRAFIK.render(id)
+          + '</div>';
+  });
+  host.innerHTML = html || '<div style="color:#a3bcd0;font-size:13px;text-align:center;padding:20px">Keine Grafiken verfügbar.</div>';
+}
+
 async function renderWissensDB(){
   const host = document.getElementById('wdb-container');
   if (!host) return;
