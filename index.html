@@ -12252,7 +12252,17 @@ async function renderWissensDB(){
       var d = e.daten || {};
       var search = (String(e.titel||'')+' '+String(cat)+' '+String(d.definition||'')).toLowerCase();
       var body = '';
-      order.forEach(function(k){ if (d[k]){ body += '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:2px">'+labels[k]+'</div><div style="font-size:13px;color:#cbd5e1;line-height:1.5">'+_wdbEsc(d[k])+'</div></div>'; } });
+      function _wdbFeld(k, lab){
+        if (!d[k] || typeof d[k] !== 'string') return '';
+        return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:2px">'+lab+'</div><div style="font-size:13px;color:#cbd5e1;line-height:1.5">'+_wdbEsc(d[k])+'</div></div>';
+      }
+      order.forEach(function(k){ body += _wdbFeld(k, labels[k]||k); });
+      // Zusatzfelder, die nicht in der festen Reihenfolge stehen, trotzdem anzeigen
+      Object.keys(d).forEach(function(k){
+        if (order.indexOf(k) !== -1 || k === 'quizfragen' || k === 'mcq') return;
+        var lab = labels[k] || (k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g,' '));
+        body += _wdbFeld(k, lab);
+      });
       if (Array.isArray(d.quizfragen) && d.quizfragen.length){
         body += '<div style="margin-top:6px"><div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:4px">Quizfragen</div>';
         d.quizfragen.forEach(function(q){ body += '<div style="font-size:13px;color:#cbd5e1;line-height:1.5;padding-left:14px;position:relative"><span style="position:absolute;left:0">•</span>'+_wdbEsc(q)+'</div>'; });
