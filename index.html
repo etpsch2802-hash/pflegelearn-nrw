@@ -12320,6 +12320,68 @@ var PL_GRAFIK = (function(){
       + label(30,28,'etCO2 35–45 mmHg','#6ee7b7'), 470, 185,
       'Normale Kapnografiekurve mit Plateau. Plötzlicher Abfall auf null bedeutet Diskonnektion, Tubusfehllage oder Kreislaufstillstand.');
   };
+
+  G['herzzyklus'] = function(){
+    var lv='M30 200 L70 200 L95 60 L200 55 L230 195 L300 200 L340 200';
+    var ao='M30 130 L95 128 L110 70 L200 60 L235 95 L270 118 L340 128';
+    var la='M30 205 L80 198 L120 208 L200 200 L260 190 L300 206 L340 200';
+    return wrap(
+      line('M25 215 H350','#94a3b8',1.2)+line('M30 225 V35','#94a3b8',1.2)
+      + '<rect x="95" y="35" width="135" height="180" fill="rgba(56,189,248,.07)"/>'
+      + line(lv,'#38bdf8',2) + line(ao,'#f87171',1.8) + line(la,'#34d399',1.6)
+      + label(120,30,'Systole','#7dd3fc') + label(250,30,'Diastole','#93b9d1')
+      + label(255,75,'Aorta','#fca5a5') + label(255,150,'Kammer','#7dd3fc') + label(120,205,'Vorhof','#6ee7b7')
+      , 370, 235,
+      'Herzzyklus: Übersteigt der Kammerdruck den Aortendruck, öffnet die Taschenklappe und Blut wird ausgeworfen. Fällt er darunter, schließt sie – die Diastole beginnt und die Kammer füllt sich erneut.');
+  };
+  G['o2-bindungskurve'] = function(){
+    var norm='M40 200 C70 195 95 170 120 120 C145 70 180 48 260 42 C310 40 350 40 380 40';
+    var re='M40 205 C80 202 110 185 145 140 C175 95 210 62 280 50 C325 44 355 42 380 41';
+    var li='M40 195 C62 185 82 150 100 100 C120 56 155 42 230 38 C300 36 350 37 380 37';
+    return wrap(
+      line('M35 210 H390','#94a3b8',1.2)+line('M40 220 V30','#94a3b8',1.2)
+      + line(li,'rgba(52,211,153,.9)',1.8) + line(norm,'#38bdf8',2.4) + line(re,'rgba(248,113,113,.9)',1.8)
+      + label(250,225,'pO2 (mmHg)') + '<text x="14" y="140" fill="#93b9d1" font-size="11" transform="rotate(-90 14 140)">SpO2 (%)</text>'
+      + label(60,50,'Linksverschiebung','#6ee7b7') + label(250,205,'Rechtsverschiebung','#fca5a5')
+      , 410, 235,
+      'S-förmige Kurve: Im steilen Teil gibt schon ein kleiner pO2-Abfall viel Sauerstoff ab. Rechtsverschiebung durch Fieber, Azidose und CO2 bedeutet leichtere Abgabe ans Gewebe, Linksverschiebung festere Bindung.');
+  };
+  G['beatmungsmodi'] = function(){
+    var pcP='M30 120 L60 45 L150 45 L150 105 L200 105 L230 45 L320 45 L320 105 L370 105';
+    var vcP='M30 260 L60 250 L150 190 L150 245 L200 245 L230 235 L320 175 L320 245 L370 245';
+    return wrap(
+      line('M25 130 H380','#94a3b8',1)+line('M25 270 H380','#94a3b8',1)
+      + line(pcP,'#38bdf8',2) + line(vcP,'#fbbf24',2)
+      + label(30,25,'Druckkontrolliert: Druck bleibt konstant, Volumen variiert','#7dd3fc')
+      + label(30,165,'Volumenkontrolliert: Volumen garantiert, Druck steigt an','#fcd34d')
+      , 400, 285,
+      'Druckkontrolliert begrenzt den Druck und schützt die Lunge, das Volumen schwankt mit der Dehnbarkeit. Volumenkontrolliert garantiert das Volumen, der Druck kann gefährlich ansteigen.');
+  };
+  G['saeure-basen'] = function(){
+    function q(x,y,w,h,col,t1,t2,t3){
+      return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+col+'" stroke="rgba(255,255,255,.18)" rx="6"/>'
+        + label(x+12,y+24,t1,'#e2e8f0') + label(x+12,y+42,t2) + label(x+12,y+60,t3);
+    }
+    return wrap(
+      q(30,30,200,90,'rgba(248,113,113,.14)','Respiratorische Azidose','pH ↓  pCO2 ↑','COPD, Hypoventilation')
+      + q(240,30,200,90,'rgba(56,189,248,.14)','Respiratorische Alkalose','pH ↑  pCO2 ↓','Hyperventilation')
+      + q(30,130,200,90,'rgba(251,191,36,.14)','Metabolische Azidose','pH ↓  HCO3 ↓','Sepsis, Ketoazidose, Niere')
+      + q(240,130,200,90,'rgba(52,211,153,.14)','Metabolische Alkalose','pH ↑  HCO3 ↑','Erbrechen, Diuretika')
+      , 470, 235,
+      'Merkregel: Zeigen pH und pCO2 in entgegengesetzte Richtungen, ist die Ursache respiratorisch. Zeigen pH und Bikarbonat in dieselbe Richtung, ist sie metabolisch.');
+  };
+  G['reizleitung'] = function(){
+    return wrap(
+      '<path d="M170 30 C90 40 55 110 70 180 C82 240 130 275 175 285 C220 275 268 240 280 180 C295 110 260 40 180 30 Z" fill="rgba(56,189,248,.06)" stroke="rgba(148,163,184,.5)" stroke-width="1.5"/>'
+      + '<circle cx="120" cy="72" r="7" fill="#38bdf8"/>' + label(132,70,'Sinusknoten 60–100/min','#7dd3fc')
+      + '<circle cx="163" cy="132" r="6" fill="#7dd3fc"/>' + label(176,130,'AV-Knoten 40–60/min')
+      + line('M163 138 L163 175','#7dd3fc',2) + label(176,168,'His-Bündel')
+      + line('M163 175 L118 235','#7dd3fc',2) + line('M163 175 L212 235','#7dd3fc',2)
+      + label(60,250,'Tawara-Schenkel') + label(196,262,'Purkinje 20–40/min')
+      + line('M126 76 C140 100 150 115 160 128','rgba(56,189,248,.6)',1.5)
+      , 380, 300,
+      'Erregung entsteht im Sinusknoten und läuft über den AV-Knoten, das His-Bündel und die Tawara-Schenkel zu den Purkinje-Fasern. Jede Ebene kann bei Ausfall einspringen, aber mit langsamerer Frequenz.');
+  };
   return {
     has: function(id){ return !!G[id]; },
     render: function(id){ try { return G[id] ? G[id]() : ''; } catch(e){ return ''; } },
