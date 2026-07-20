@@ -12236,7 +12236,7 @@ async function renderWissensDB(){
   const data = await loadWissensDB(false);
   if (!data){ host.innerHTML = '<div style="color:#b3c4d6;font-size:13px;text-align:center;padding:24px">Konnte nicht geladen werden. Bitte später erneut versuchen.</div>'; return; }
   const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', physiologie:'Physiologie', indikation:'Indikation', kontraindikation:'Kontraindikationen', material:'Material', vorbereitung:'Vorbereitung', durchfuehrung:'Durchführung', nachsorge:'Nachsorge', komplikationen:'Komplikationen', pflegeschwerpunkt:'Pflegeschwerpunkt', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage' };
-  const order = ['definition','indikation','kontraindikation','material','vorbereitung','durchfuehrung','nachsorge','komplikationen','pflegeschwerpunkt','aufbau','funktion','physiologie','klinische_relevanz','merksatz','pruefungswissen','haeufige_pruefungsfrage'];
+  const order = ['definition','funktion','aufbau','physiologie','indikation','kontraindikation','material','vorbereitung','durchfuehrung','nachsorge','komplikationen','pflegeschwerpunkt','klinische_relevanz','merksatz','pruefungswissen','haeufige_pruefungsfrage'];
   const groups = {};
   data.forEach(function(e){ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
   const cats = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b,'de'); });
