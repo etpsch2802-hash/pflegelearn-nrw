@@ -932,8 +932,8 @@
   <!-- ── SUCHE: prominenter Einstieg (Feedback: "finde mich nicht zurecht") ── -->
   <button onclick="showSearchOverlay()" aria-label="Inhalte durchsuchen" style="width:100%;background:rgba(255,255,255,.085);border:1px solid rgba(var(--accent-rgb),.35);border-radius:14px;padding:13px 15px;margin:0 0 14px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;text-align:left">
     <svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;color:#7dd3fc"><use href="#i-search"/></svg>
-    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;color:#c3d4e4;font-weight:600">Thema suchen</span><span style="display:block;font-size:11px;color:#93b9d1;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">z.\u00a0B. TEE, Sepsis, Braden, Herzinsuffizienz</span></span>
-    <span style="color:#7dd3fc;font-size:17px">\u203a</span>
+    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;color:#c3d4e4;font-weight:600">Thema suchen</span><span style="display:block;font-size:11px;color:#93b9d1;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">z. B. TEE, Sepsis, Braden, Herzinsuffizienz</span></span>
+    <span style="color:#7dd3fc;font-size:17px">›</span>
   </button>
 
   <!-- ── HOME 3.0 HERO: Pruefungsreife-Ring (dominant, per JS in #home-hero) ── -->
@@ -12205,6 +12205,25 @@ async function loadWissensDB(force){
     return _wdbData;
   } catch(e){ console.warn('[wdb]', e); return null; }
 }
+var _wdbPending = null;
+function plOpenWdbEntry(slug){
+  _wdbPending = slug || null;
+  navGo('wissensdb');
+}
+function _wdbApplyPending(){
+  if (!_wdbPending) return;
+  var slug=_wdbPending; _wdbPending=null;
+  setTimeout(function(){
+    var card=document.querySelector('.wdb-card[data-slug="'+slug+'"]');
+    if(!card) return;
+    var btn=card.querySelector('button');
+    var body=card.querySelector('.wdb-body');
+    if(btn && body && body.style.display!=='block') btn.click();
+    card.scrollIntoView({behavior:'smooth',block:'center'});
+    card.style.boxShadow='0 0 0 2px rgba(56,189,248,.55)';
+    setTimeout(function(){ card.style.boxShadow=''; },2200);
+  },120);
+}
 async function renderWissensDB(){
   const host = document.getElementById('wdb-container');
   if (!host) return;
@@ -12235,7 +12254,7 @@ async function renderWissensDB(){
         d.quizfragen.forEach(function(q){ body += '<div style="font-size:13px;color:#cbd5e1;line-height:1.5;padding-left:14px;position:relative"><span style="position:absolute;left:0">•</span>'+_wdbEsc(q)+'</div>'; });
         body += '</div>';
       }
-      html += '<div class="wdb-card" data-search="'+_wdbEsc(search)+'" style="background:rgba(255,255,255,.085);border:1px solid rgba(56,189,248,.15);border-radius:12px;margin-bottom:8px;overflow:hidden">';
+      html += '<div class="wdb-card" data-slug="'+_wdbEsc(e.slug||'')+'" data-search="'+_wdbEsc(search)+'" style="background:rgba(255,255,255,.085);border:1px solid rgba(56,189,248,.15);border-radius:12px;margin-bottom:8px;overflow:hidden">';
       html += '<button onclick="_wdbToggle(this)" style="width:100%;text-align:left;background:none;border:none;padding:12px 14px;color:#e2e8f0;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>'+_wdbEsc(e.titel)+'</span><span class="wdb-caret" style="color:#9aabc0;transition:transform .2s">▾</span></button>';
       html += '<div style="padding:0 14px 10px 14px">' + plSpeakBtn("plSpeakFrom(this,'.wdb-card')", "Eintrag vorlesen") + '</div>';
       html += '<div class="wdb-body" style="display:none;padding:0 14px 14px 14px">'+body+'</div>';
@@ -12244,6 +12263,7 @@ async function renderWissensDB(){
     html += '</div>';
   });
   host.innerHTML = html;
+  _wdbApplyPending();
 }
 function _wdbToggle(btn){
   var card = btn.closest('.wdb-card'); if(!card) return;
@@ -12400,6 +12420,16 @@ document.addEventListener('click', function(e) {
 function plBuildSearchHits(q) {
   function hit(t){ return String(t==null?'':t).toLowerCase().includes(q); }
   const hits = [];
+
+  // Wissensdatenbank (Supabase)
+  (Array.isArray(_wdbData) ? _wdbData : []).forEach(function(e){
+    var d = e.daten || {};
+    var blob = [e.titel, e.kategorie, d.definition, d.pruefungswissen, d.merksatz, d.aufbau, d.klinische_relevanz].join(' ');
+    if (hit(blob)) {
+      hits.push({type:'Wissensdatenbank', icon:'<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-database"/></svg>', color:'#38bdf8',
+                 title:e.titel, sub:e.kategorie, action:"plOpenWdbEntry('"+String(e.slug||'').replace(/'/g,"\\'")+"')"});
+    }
+  });
 
   // Bereich: Notfallmanagement (Manchester Triage / ABCDE / Reanimation)
   if (['notfall','notfallmanagement','manchester','triage','mts','abcde','reanimation','bls','wiederbelebung','dringlichkeit','ersteinschätzung','ersteinschaetzung'].some(function(t){ return t.includes(q) || q.includes(t); })) {
@@ -12571,6 +12601,14 @@ function openMerksatzSearch(term) {
 
 // ─── SEARCH ────────────────────────────────────────────────────
 function showSearchOverlay() {
+  try {
+    if (!Array.isArray(_wdbData) || !_wdbData.length) {
+      loadWissensDB().then(function(){
+        var inp=document.getElementById('search-input');
+        if (inp && inp.value.trim().length>=2) doSearch();
+      });
+    }
+  } catch(e){}
   const o = document.getElementById('search-overlay');
   if (!o) return;
   o.style.display = 'block';
@@ -13046,7 +13084,7 @@ function pruefungsreifeHeroHTML() {
     + '</div>'
     + gapBlock
     + cta
-    + '<button class="pr-more" onclick="showPruefungsreife()">Alle Themen im Detail \u203a</button>'
+    + '<button class="pr-more" onclick="showPruefungsreife()">Alle Themen im Detail ›</button>'
     + '</div>';
 }
 
@@ -13218,7 +13256,7 @@ function renderHomeLibrary() {
           return '<button class="lib-row" onclick="' + h.action + '">'
             + '<span class="lib-ico">' + (h.icon || '📌') + '</span>'
             + '<span class="lib-txt"><span class="lib-t">' + plLibEsc(h.title) + '</span><span class="lib-s">' + plLibEsc(h.type) + (h.sub ? ' · ' + plLibEsc(h.sub) : '') + '</span></span>'
-            + '<span class="lib-chev">\u203a</span>'
+            + '<span class="lib-chev">›</span>'
             + '</button>';
         }).join('')
       + '</div>';
@@ -13256,7 +13294,7 @@ function renderHomeLibrary() {
         + '<span class="lib-ico">' + it.ic + '</span>'
         + '<span class="lib-txt"><span class="lib-t">' + tt + '</span><span class="lib-s">' + ss + '</span></span>'
         + (lock ? '<span class="lib-lock">PRO</span>' : '')
-        + '<span class="lib-chev">\u203a</span>'
+        + '<span class="lib-chev">›</span>'
         + '</button>';
     });
     html += '</div>';
@@ -15257,12 +15295,12 @@ function openMedChooser(){
       +'<svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px;color:#7dd3fc"><use href="#i-pill"/></svg>'
       +'<span style="flex:1"><span style="display:block;font-size:13.5px;font-weight:700;color:#e2e8f0">Nach Fachbereich</span>'
       +'<span style="display:block;font-size:11px;color:#a3bcd0;margin-top:2px">An\u00e4sthesie \u00b7 Intensiv \u00b7 Notfall \u00b7 25 Wirkstoffe</span></span>'
-      +'<span style="color:#38bdf8;font-size:16px">\u203a</span></button>'
+      +'<span style="color:#38bdf8;font-size:16px">›</span></button>'
     +'<button onclick="this.closest(\'[data-med-chooser]\').remove();showScreen(\'medNeu\')" style="width:100%;text-align:left;background:rgba(255,255,255,.10);border:1px solid rgba(56,189,248,.22);border-radius:14px;padding:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
       +'<svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px;color:#7dd3fc"><use href="#i-pulse"/></svg>'
       +'<span style="flex:1"><span style="display:block;font-size:13.5px;font-weight:700;color:#e2e8f0">Nach Organsystem</span>'
       +'<span style="display:block;font-size:11px;color:#a3bcd0;margin-top:2px">Herz \u00b7 Schmerz \u00b7 Neuro \u00b7 Diabetes \u00b7 mit Pflege-Hinweis</span></span>'
-      +'<span style="color:#38bdf8;font-size:16px">\u203a</span></button></div>';
+      +'<span style="color:#38bdf8;font-size:16px">›</span></button></div>';
   document.body.appendChild(ov);
   ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
 }
@@ -18330,7 +18368,7 @@ function showPlanPicker(src){
     </button>
     <div style="text-align:center;font-size:11px;color:#e0f2fe;font-weight:700;margin-top:8px">Schon ab 0,22 &euro; pro Tag &ndash; g&uuml;nstiger als ein Fachbuch.</div>
     <div style="text-align:center;font-size:11px;color:#6ee7b7;font-weight:700;margin-top:7px">✅ 14 Tage Geld-zur&uuml;ck-Garantie</div>
-    <div style="text-align:center;font-size:11px;color:#9dbdd2;margin-top:6px;line-height:1.7">\ud83d\udd12 Sichere Zahlung \u00fcber Stripe \u00b7 \ud83d\udcb3 Karte \u00b7 PayPal \u00b7 Klarna \u00b7 Apple\u00a0Pay<br>1 Monat = Abo (monatlich k\u00fcndbar) \u00b7 ab 3 Monate Einmalzahlung, kein Auto-Abo</div>
+    <div style="text-align:center;font-size:11px;color:#9dbdd2;margin-top:6px;line-height:1.7">\ud83d\udd12 Sichere Zahlung \u00fcber Stripe \u00b7 \ud83d\udcb3 Karte \u00b7 PayPal \u00b7 Klarna \u00b7 Apple Pay<br>1 Monat = Abo (monatlich k\u00fcndbar) \u00b7 ab 3 Monate Einmalzahlung, kein Auto-Abo</div>
     <button onclick="document.getElementById('plan-picker').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:12px;margin-top:8px;cursor:pointer">Vielleicht sp\u00e4ter</button>
   </div>`;
   document.body.appendChild(ov);
