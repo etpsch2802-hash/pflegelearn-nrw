@@ -12629,8 +12629,67 @@ document.addEventListener('click', function(e) {
 });
 
 // ─── GLOBAL CONTENT-SEARCH (geteilt: Overlay-Suche + Home-Bibliothek) ──────────
+var PL_SYNONYME = {
+  'ekg':['ekg','elektrokardio','sinusrhythmus','p-welle','qrs','st-strecke','herzrhythmus','vorhofflimmern'],
+  'rr':['rr','blutdruck','hyperton','hypoton'],
+  'hf':['hf','herzfrequenz','puls'],
+  'af':['af','atemfrequenz','atmung'],
+  'bga':['bga','blutgas','ph','pco2','po2','base excess','bikarbonat'],
+  'zvd':['zvd','zentraler venendruck','vorlast'],
+  'zvk':['zvk','zentralvenoes','zentraler venenkatheter'],
+  'pvk':['pvk','venenverweil','peripherer zugang','venenkanuele'],
+  'tee':['tee','transoesophageal','schluckecho'],
+  'tte':['tte','transthorakal','echokardio'],
+  'copd':['copd','chronisch obstruktiv','emphysem'],
+  'khk':['khk','koronare herzkrankheit','angina pectoris'],
+  'acs':['acs','akutes koronarsyndrom','stemi','nstemi','herzinfarkt'],
+  'vhf':['vhf','vorhofflimmern'],
+  'niv':['niv','nichtinvasive beatmung','cpap','bipap'],
+  'hfnc':['hfnc','high-flow','high flow','optiflow'],
+  'ards':['ards','lungenversagen','bauchlagerung','horovitz'],
+  'peep':['peep','endexspiratorisch'],
+  'fem':['fem','freiheitsentziehend','fixierung','bettgitter'],
+  'peg':['peg','gastrostomie','ernaehrungssonde'],
+  'pav':['pavk','pav','verschlusskrankheit'],
+  'mrsa':['mrsa','multiresistent','staphylococcus'],
+  'mrgn':['mrgn','multiresistent','gramnegativ'],
+  'gcs':['gcs','glasgow','bewusstsein'],
+  'sbar':['sbar','uebergabe','isbar'],
+  'atl':['atl','aktivitaeten des taeglichen lebens','pflegeplanung'],
+  'sis':['sis','strukturierte informationssammlung'],
+  'ce':['ce','kompetenzbereich','curriculare einheit'],
+  'zns':['zns','zentrales nervensystem','gehirn','rueckenmark'],
+  'hzv':['hzv','herzzeitvolumen','herzminutenvolumen'],
+  'map':['map','mitteldruck','mittlerer arterieller'],
+  'ivc':['ivc','hohlvene'],
+  'tvt':['tvt','thrombose','beinvenenthrombose'],
+  'le':['lungenembolie','embolie'],
+  'ku':['koerperpflege','ganzkoerperwaschung'],
+  'rsi':['rsi','rapid sequence','notfallintubation'],
+  'tof':['tof','train of four','relaxometrie'],
+  'ppsb':['ppsb','gerinnungsfaktoren','prothrombin'],
+  'txa':['txa','tranexam'],
+  'kbr':['kreislauf'],
+  'sm':['schrittmacher','sinusknoten'],
+  'icd':['icd','defibrillator'],
+  'mh':['maligne hyperthermie','succinylcholin']
+};
 function plBuildSearchHits(q) {
-  function hit(t){ return String(t==null?'':t).toLowerCase().includes(q); }
+  var _terms = [q];
+  try {
+    var syn = PL_SYNONYME[q];
+    if (syn) _terms = syn;
+    else {
+      Object.keys(PL_SYNONYME).forEach(function(k){
+        if (k.indexOf(q) === 0 && q.length >= 2) _terms = _terms.concat(PL_SYNONYME[k]);
+      });
+    }
+  } catch(e){}
+  function hit(t){
+    var v = String(t==null?'':t).toLowerCase();
+    for (var i=0;i<_terms.length;i++){ if (v.indexOf(_terms[i]) >= 0) return true; }
+    return false;
+  }
   const hits = [];
 
   // Wissensdatenbank (Supabase)
@@ -12836,10 +12895,18 @@ function doSearch() {
   const res = document.getElementById('search-results');
   if (q.length < 2) { res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Mind. 2 Zeichen eingeben…</div>'; return; }
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  // Wissensdatenbank nachladen, sobald sie fehlt - unabhaengig davon, ob es andere Treffer gibt
+  if (!Array.isArray(_wdbData) || !_wdbData.length) {
+    if (!window._wdbLoading) {
+      window._wdbLoading = true;
+      try{ loadWissensDB().then(function(){ window._wdbLoading = false; doSearch(); })
+                          .catch(function(){ window._wdbLoading = false; }); }
+      catch(e){ window._wdbLoading = false; }
+    }
+  }
   const hits = plBuildSearchHits(q);
   if (!hits.length && (!Array.isArray(_wdbData) || !_wdbData.length)) {
     res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Wissensdatenbank wird geladen …</div>';
-    try{ loadWissensDB().then(function(){ doSearch(); }); }catch(e){}
     return;
   }
   if (!hits.length) {
