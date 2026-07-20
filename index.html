@@ -3085,6 +3085,10 @@ const QUIZ_FRAGEN = [
 function plSyncFragenCount(){ try{ var n=QUIZ_FRAGEN.length; document.querySelectorAll('.pl-fragen-count').forEach(function(el){ el.textContent=n; }); }catch(e){} }
 try{ plSyncFragenCount(); }catch(e){}
 try{ document.addEventListener('DOMContentLoaded', plSyncFragenCount); }catch(e){}
+/* Wissensdatenbank fuer die Suche vorladen, damit Treffer sofort verfuegbar sind */
+try{ document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){ try{ if(typeof loadWissensDB==='function') loadWissensDB(); }catch(e){} }, 1500);
+}); }catch(e){}
 
 // Antwortoptionen je Frage einmalig mischen, damit die richtige Loesung nicht
 // immer an derselben Position (frueher fast immer B) steht. k wird mitgefuehrt.
@@ -12424,7 +12428,7 @@ function plBuildSearchHits(q) {
   // Wissensdatenbank (Supabase)
   (Array.isArray(_wdbData) ? _wdbData : []).forEach(function(e){
     var d = e.daten || {};
-    var blob = [e.titel, e.kategorie, d.definition, d.pruefungswissen, d.merksatz, d.aufbau, d.klinische_relevanz].join(' ');
+    var blob = [e.titel, e.kategorie, e.slug, d.definition, d.pruefungswissen, d.merksatz, d.aufbau, d.funktion, d.indikation, d.durchfuehrung, d.nachsorge, d.komplikationen, d.pflegeschwerpunkt, d.klinische_relevanz].join(' ');
     if (hit(blob)) {
       hits.push({type:'Wissensdatenbank', icon:'<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-database"/></svg>', color:'#38bdf8',
                  title:e.titel, sub:e.kategorie, action:"plOpenWdbEntry('"+String(e.slug||'').replace(/'/g,"\\'")+"')"});
@@ -12625,6 +12629,11 @@ function doSearch() {
   if (q.length < 2) { res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Mind. 2 Zeichen eingeben…</div>'; return; }
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
   const hits = plBuildSearchHits(q);
+  if (!hits.length && (!Array.isArray(_wdbData) || !_wdbData.length)) {
+    res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Wissensdatenbank wird geladen …</div>';
+    try{ loadWissensDB().then(function(){ doSearch(); }); }catch(e){}
+    return;
+  }
   if (!hits.length) {
     res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + esc(q) + '</strong></div>';
     return;
