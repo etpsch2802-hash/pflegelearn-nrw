@@ -5,7 +5,7 @@
 **Wer:** Patrick (Technik/Produkt) · Jessica Schenkelberger (Fachlichkeit, Krankenschwester ITS, seit 23 Jahren)
 **Regel:** Jede Achse wird vollständig durchlaufen. Kein Überspringen, weil „gerade nicht das Thema".
 
-Letzter vollständiger Durchlauf: **21.07.2026**
+Letzter vollständiger Durchlauf: **21.07.2026** · letzte Umsetzung: 21.07.2026
 Letzte fachliche Kontrolle: **Jessica Schenkelberger, 21.07.2026**
 
 ---
@@ -16,7 +16,7 @@ Verantwortlich: Jessica Schenkelberger
 
 | # | Prüfpunkt | Intervall | Status 21.07.2026 |
 |---|---|---|---|
-| 1.1 | ERC/GRC-Reanimationsleitlinien: aktuelle Fassung im Code? | jährlich + bei Neuerscheinung | ⚠️ Inhalte fachlich bestätigt (Jessica, 21.07.2026). Leitlinienfassung im Code weiterhin ERC 2021; Abgleich mit ERC/GRC 2025 offen — 16 Fundstellen, siehe Anhang A |
+| 1.1 | ERC/GRC-Reanimationsleitlinien: aktuelle Fassung im Code? | jährlich + bei Neuerscheinung | ⚠️ Umgestellt auf ERC/GRC 2025 am 21.07.2026 (0 Fundstellen „ERC 2021" verbleibend). **Gegenprüfung Jessica offen** für 2 Punkte, siehe Anhang A |
 | 1.2 | DNQP-Expertenstandards: inhaltlich korrekt? | jährlich | ✅ Jessica, 21.07.2026 · Ausgabenbezeichnung noch nicht im Code hinterlegt (→ 1.8) |
 | 1.3 | Medikamentenmodul: Angaben fachlich geprüft? | halbjährlich | ✅ Jessica, 21.07.2026 · Quellenangabe fehlt noch im Code (→ 1.8) |
 | 1.4 | Notfall- und ITS-Inhalte fachlich freigegeben? | halbjährlich | ✅ Jessica, 21.07.2026 |
@@ -37,14 +37,14 @@ Maßstab: BITV 2.0 / EN 301 549 (Voraussetzung für Vergabe an öffentliche Bild
 
 | # | Prüfpunkt | Sollwert | Status 21.07.2026 |
 |---|---|---|---|
-| 2.1 | `:focus-visible`-Regeln im CSS | > 0 | ❌ **0** |
+| 2.1 | `:focus-visible`-Regeln im CSS | > 0 | ✅ 6 (21.07.2026) |
 | 2.2 | `role`-Attribute an interaktiven Bereichen | > 0 | ❌ **0** |
 | 2.3 | `aria-label` an Icon-Buttons ohne Text | vollständig | ❌ 5 von ~380 |
 | 2.4 | Alle `<img>` mit `alt` | 100 % | ⚠️ 7 von 8 |
-| 2.5 | Vollständige Bedienbarkeit per Tastatur | ja | ❌ nicht gegeben |
+| 2.5 | Vollständige Bedienbarkeit per Tastatur | ja | ⚠️ Fokus sichtbar; 378 `onclick` auf nicht-fokussierbaren Elementen weiterhin offen |
 | 2.6 | Kontrast Text/Hintergrund ≥ 4.5:1 | 100 % | ⬜ ungeprüft |
 | 2.7 | Nutzbar bei Browser-Zoom 200 % | ja | ⬜ ungeprüft |
-| 2.8 | `prefers-reduced-motion` respektiert | ja | ⚠️ 2 Regeln, unvollständig |
+| 2.8 | `prefers-reduced-motion` respektiert | ja | ✅ globaler Reduce-Block (21.07.2026) |
 | 2.9 | Formularfelder mit zugeordnetem `<label>` | 100 % | ⬜ ungeprüft |
 | 2.10 | `lang` korrekt bei i18n-Wechsel | ja | ⬜ ungeprüft |
 
@@ -61,17 +61,17 @@ grep -c "aria-label" index.html  # Soll: steigend
 
 | # | Prüfpunkt | Sollwert | Status 21.07.2026 |
 |---|---|---|---|
-| 3.1 | `push_subs` enthält Einträge | > 0 | ❌ **leer** – Retention-Motor ohne Zündung |
-| 3.2 | Reminder-Workflow versendet tatsächlich | ja | ❌ keine Empfänger |
-| 3.3 | E-Mail beim Trial verpflichtend | ja | ❌ optional |
+| 3.1 | `push_subs` enthält Einträge | > 0 | ✅ 2 Einträge (21.07.2026). Frühere Diagnose „leer wegen fehlender Grants" war falsch: RLS, Grants und PK waren korrekt. Ursache war der zu enge Client-Funnel — behoben |
+| 3.2 | Reminder-Workflow versendet tatsächlich | ja | ⚠️ `service_role` hat jetzt INSERT/UPDATE; Versand mit echten Empfängern noch nicht verifiziert |
+| 3.3 | E-Mail beim Trial verpflichtend | ja | ✅ 21.07.2026 – Pflichtfeld + Format-Validierung |
 | 3.4 | Trial serverseitig gebunden (nicht nur `localStorage`) | ja | ❌ in Inkognito umgehbar |
-| 3.5 | Fortschritt geräteübergreifend gesichert | ja | ❌ Konto optional |
+| 3.5 | Fortschritt geräteübergreifend gesichert | ja | ⚠️ Konto weiterhin optional, aber Prompt jetzt bis zu 3× im 7-Tage-Abstand statt einmalig |
 | 3.6 | Laufzeiten ab 3 Monaten als verlängerndes Abo | ja | ❌ Einmalzahlung |
 | 3.7 | Täglicher Wiederkehr-Anlass (Frage des Tages o. ä.) | ja | ❌ fehlt |
 | 3.8 | Sozialer Mechanismus (Klasse / Rangliste / Empfehlung) | ja | ❌ fehlt vollständig |
 | 3.9 | Anschlussangebot nach dem Examen | ja | ❌ fehlt |
 | 3.10 | GA4-Funnel: `sign_up` → `begin_checkout` → `purchase` | ja | ✅ |
-| 3.11 | Marketing-Zahlen im HTML = Ist-Bestand | ja | ❌ „2.000+" / „1075" hartkodiert im First Paint |
+| 3.11 | Marketing-Zahlen im HTML = Ist-Bestand | ja | ✅ 21.07.2026 – Fallback auf 1.214 (= `QUIZ_FRAGEN.length`), Supabase hebt danach auf Gesamtwert |
 | 3.12 | Testimonials mit dokumentierter Einwilligung | ja | ⚠️ mündlich zugesagt, nicht dokumentiert |
 
 ---
@@ -113,26 +113,28 @@ grep -c 'onclick=' index.html
 
 ---
 
-## Anhang A — Arbeitsliste ERC 2021 → ERC/GRC 2025
+## Anhang A — ERC/GRC 2025: erledigt am 21.07.2026
 
-Stand: `index.html` @ `5bffbcc`. 16 Fundstellen.
+Umgestellt in `index.html` (Commit `3cd332e`). Verbleibende Treffer für „ERC 2021": **0**.
 
-**Inhaltlich zu prüfen (Priorität):**
+**Inhaltliche Änderungen (nicht nur Umbenennung):**
 
-| Zeile | Inhalt |
-|---|---|
-| 7878 | Zieltemperaturmanagement (TTM) — in ERC 2025 geändert: kein gezieltes Temperaturmanagement mehr, stattdessen Temperaturkontrolle. **Einziger Punkt mit materieller Änderung.** |
-| 7873–7877 | Medikamente / Post-ROSC-Versorgung — gegen ERC 2025 ALS-Kapitel abgleichen |
-| 1265–1284 | ACLS/ALS-Algorithmus — Vektorwechsel bei persistierendem Kammerflimmern ergänzen |
-| 1251–1262 | BLS — Zahlen unverändert gültig; telefonassistierte Reanimation ggf. ergänzen |
+| Was | Alt | Neu |
+|---|---|---|
+| Temperaturmanagement | „Zieltemperaturmanagement (TTM)" | „Temperaturkontrolle nach ROSC" — gezieltes TTM wird in ERC 2025 **nicht mehr empfohlen**, Ziel ist Fiebervermeidung |
+| ROSC-Exposition | „Temperatur 36–37,5 °C (kein Abkühlen mehr)" | Temperaturkontrolle, Fieber vermeiden |
+| Defibrillation | — | **Neu:** Vektorwechsel bei anhaltendem Kammerflimmern nach 3 Schocks erwägen |
+| Defibrillation | — | **Neu:** Double-Sequence-Defibrillation nicht routinemäßig |
+| Überlebenskette | 5 Glieder | 4 Glieder; Telefonreanimation durch die Leitstelle früher eingebunden |
 
-**Reine Bezeichnungsänderung (Zahlen bleiben gültig):**
+**Noch durch Jessica gegen das GRC-Dokument zu prüfen:**
 
-Zeilen 1204, 1251, 1265, 1284, 2184, 2185, 2186, 2564, 7833, 7834, 7857, 7858, 17290, 17291
+1. **Zusammensetzung der viergliedrigen Überlebenskette** — die Umstellung von 5 auf 4 Glieder ist belegt, die genaue Formulierung der vier Glieder habe ich aus der Standardstruktur abgeleitet, nicht aus dem Originaldokument.
+2. **Kinderreanimation** — ERC 2025 stellt klar, dass Kinder im Zweifelsfall wie Erwachsene reanimiert werden sollen. Der Kinder-Abschnitt (15:2, 5 initiale Beatmungen) ist unverändert und sollte auf diese Ergänzung geprüft werden.
 
-Quelle für den Abgleich: German Resuscitation Council, „Reanimation 2025 – Leitlinien kompakt" (22.10.2025).
+Quelle für den Abgleich: German Resuscitation Council, ERC-Leitlinien 2025, deutsche Übersetzung (veröffentlicht 22.10.2025).
 
-Nach Abschluss: 1.1 auf ✅ setzen, Datum und Name eintragen.
+Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 
 ---
 
@@ -142,3 +144,7 @@ Nach Abschluss: 1.1 auf ✅ setzen, Datum und Name eintragen.
 |---|---|---|
 | 21.07.2026 | Erstaufnahme | Vollständiges Premium-Audit; vier Achsen definiert, Ausgangsstand dokumentiert |
 | 21.07.2026 | Achse 1 | Fachliche Kontrolle durch Jessica Schenkelberger: 1.2–1.7 freigegeben. 1.1 inhaltlich bestätigt, Leitlinienfassung offen (Anhang A). 1.8–1.10 sind Code-Zustände, durch Kontrolle nicht auflösbar. |
+| 21.07.2026 | Achse 2 | Globale `:focus-visible`-Styles und `prefers-reduced-motion`-Block ergänzt (2.1, 2.8 erfüllt). Commit `13a561f`. |
+| 21.07.2026 | Achse 3 | Trial-E-Mail als Pflichtfeld (3.3). Push- und Konto-Prompt mit Wiedervorlage statt einmalig (3.1, 3.5). Marketing-Zahlen korrigiert (3.11). Commits `13a561f`, `9ea62ae`, `3cd332e`. |
+| 21.07.2026 | Supabase | Migration `fix_klassen_policies_and_push_service_role`: `klassen`, `klassen_mitglieder`, `aufgaben` hatten RLS aktiv bei **0 Policies** → Lehrer-/Klassenbereich war vollständig gesperrt. Policies und Grants ergänzt, `push_subs` von 13 auf 4 Policies konsolidiert. |
+| 21.07.2026 | Achse 1 | ERC/GRC-2025-Umstellung umgesetzt, Commit `3cd332e`. Zwei Punkte zur Gegenprüfung offen (Anhang A). |
