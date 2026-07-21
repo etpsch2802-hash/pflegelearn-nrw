@@ -12437,7 +12437,7 @@ async function loadWissensDB(force){
   try {
     const { data, error } = await window.SB
       .from('lerninhalte')
-      .select('kategorie,titel,slug,daten')
+      .select('kategorie,titel,slug,daten,quelle,stand,geprueft_von,geprueft_am')
       .eq('aktiv', true)
       .order('kategorie', { ascending:true })
       .order('titel', { ascending:true });
@@ -12496,6 +12496,14 @@ function renderGrafikGalerie(){
   host.innerHTML = html || '<div style="color:#a3bcd0;font-size:13px;text-align:center;padding:20px">Keine Grafiken verfügbar.</div>';
 }
 
+function _plDatumDE(d){
+  try{
+    if(!d) return '';
+    var s=String(d).substring(0,10).split('-');
+    if(s.length===3) return s[2]+'.'+s[1]+'.'+s[0];
+    return String(d);
+  }catch(e){ return String(d||''); }
+}
 async function renderWissensDB(){
   const host = document.getElementById('wdb-container');
   if (!host) return;
@@ -12538,6 +12546,16 @@ async function renderWissensDB(){
         body += '<div style="margin-top:6px"><div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:4px">Quizfragen</div>';
         d.quizfragen.forEach(function(q){ body += '<div style="font-size:13px;color:#cbd5e1;line-height:1.5;padding-left:14px;position:relative"><span style="position:absolute;left:0">•</span>'+_wdbEsc(q)+'</div>'; });
         body += '</div>';
+      }
+      // Achse 1.8: Quelle, Stand und fachliche Freigabe sichtbar am Inhalt
+      var _q = [];
+      if (e.quelle)       _q.push('Quelle: ' + _wdbEsc(e.quelle));
+      if (e.stand)        _q.push('Stand: ' + _wdbEsc(_plDatumDE(e.stand)));
+      if (e.geprueft_von) _q.push('Fachlich gepr\u00fcft: ' + _wdbEsc(e.geprueft_von) + (e.geprueft_am ? ', ' + _wdbEsc(_plDatumDE(e.geprueft_am)) : ''));
+      if (_q.length){
+        body += '<div style="margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.10);font-size:10.5px;color:#8ba6bd;line-height:1.6">'
+              + '<svg class="ic" viewBox="0 0 24 24" style="width:11px;height:11px;vertical-align:-.1em;margin-right:4px;color:#5eead4"><use href="#i-check"/></svg>'
+              + _q.join(' \u00b7 ') + '</div>';
       }
       html += '<div class="wdb-card" data-slug="'+_wdbEsc(e.slug||'')+'" data-search="'+_wdbEsc(search)+'" style="background:rgba(255,255,255,.085);border:1px solid rgba(56,189,248,.15);border-radius:12px;margin-bottom:8px;overflow:hidden">';
       html += '<button onclick="_wdbToggle(this)" style="width:100%;text-align:left;background:none;border:none;padding:12px 14px;color:#e2e8f0;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>'+_wdbEsc(e.titel)+'</span><span class="wdb-caret" style="color:#9aabc0;transition:transform .2s">▾</span></button>';
