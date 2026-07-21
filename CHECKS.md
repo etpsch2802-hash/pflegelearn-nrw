@@ -76,6 +76,7 @@ grep -c "aria-label" index.html  # Soll: steigend
 | 3.12 | Testimonials mit dokumentierter Einwilligung | ja | ⚠️ mündlich zugesagt, nicht dokumentiert |
 | 3.13 | **Jede Preiskachel führt auf den Checkout mit dem angezeigten Betrag** | ja | ✅ 21.07.2026 verifiziert. Vorher **spiegelverkehrt** – „1 Monat 9,99 €" führte auf den 79,99-€-Checkout |
 | 3.14 | Rückleitungs-Parameter `p=` je Zahlungslink passend zur Laufzeit | ja | ✅ 21.07.2026 alle vier geprüft |
+| 3.15 | **`<meta description>` und JSON-LD im `<head>` stimmen mit `plZahl()` überein** | ja | ⚠️ Muss **von Hand** gepflegt werden – Suchmaschinen führen kein JavaScript aus, `pl-z-*`-Spans greifen dort nicht. Stand 21.07.2026: 2000 Fragen, 159 Krankheitsbilder, 429 Lerneinheiten |
 
 ---
 
@@ -165,3 +166,4 @@ Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 | 21.07.2026 | Achse 2 | `lang` bei Sprachwechsel, `role` auf Navigation, 38 `aria-label`. Erster Regex-Versuch hat JS-Strings zerlegt und wurde verworfen — `node --check` hat es gefangen. Commit `30a570e`. |
 | 21.07.2026 | Kurs | Beitrittspfad geprüft: **kein Fehler gefunden.** Frühere Diagnose „RLS sperrt den Lehrerbereich" war falsch — `/api/klasse` nutzt `service_role` und umgeht RLS. 0 Mitglieder heißt: noch nie getestet. Fehlermeldungen im Client sauber getrennt, Commit `9963182`. |
 | 21.07.2026 | Achse 3.9 | Anschluss nach dem Examen gebaut. Commit `0bc67bf`. |
+| 21.07.2026 | Wartbarkeit | `plZahl()` / `plSyncZahlen()`: elf Kennzahlen werden aus den Datenstrukturen gezählt statt hartkodiert. Commit `a1432ca`. Neuer Prüfpunkt 3.15 für `<head>`, der nicht dynamisch werden kann. |
