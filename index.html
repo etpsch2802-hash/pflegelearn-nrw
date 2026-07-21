@@ -8865,9 +8865,9 @@ function showTesterInfo() {
         <div style="display:flex;flex-direction:column;gap:8px">
           ${[
             ['📝','Prüfungs-Quiz',QUIZ_FRAGEN.length+' Fragen · 7 Ausbildungswege · Multiple Choice mit Erklärungen'],
-            ['🏥','Krankheitsbilder','159 Krankheitsbilder mit vollständiger Pflegeplanung'],
+            ['🏥','Krankheitsbilder',plZahl('krankheitsbilder')+' Krankheitsbilder mit vollständiger Pflegeplanung'],
             ['📋','ATL-Pflegeplanung','10 ATLs komplett – Problem, Ziel, Maßnahmen'],
-            ['🛡️','Prophylaxen','16 Prophylaxen inkl. Händedesinfektion, Handschuhe, Hygiene'],
+            ['🛡️','Prophylaxen',plZahl('prophylaxen')+' Prophylaxen inkl. Händedesinfektion, Handschuhe, Hygiene'],
             ['🩹','Wundversorgung','Wundstatus, Auflagen, Dokumentation nach DNQP'],
             ['🤸','Kinästhetik & Bobath','Transfers, Lagerung, Selbstschutz'],
             ['💊','Medikamente & Technik','Anästhesie, Intensiv, Notfall'],
@@ -17182,8 +17182,8 @@ function showOnboarding() {
     { icon:'🎓', title:'Willkommen bei PLAN!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW.' },
     { icon:'👋', title:'Hi, ich bin Patrick.', text:'Fachpfleger für Anästhesie & Intensivmedizin. Praxisanleiter in NRW.<br><br>Ich begleite seit Jahren Azubis durch ihr Examen – und ich weiß, was Prüfer wirklich fragen.<br><br><strong style="color:#e0f2fe">Diese App ist alles, was ich sonst im Frühdienst zwischen Tür und Angel erkläre. Nur eben sortiert.</strong>' },
     { icon:'📝', title:QUIZ_FRAGEN.length+' Prüfungsfragen', text:'Übe mit realistischen Multiple-Choice-Fragen oder starte den Prüfungssimulator mit Zeitlimit und Note.' },
-    { icon:'🃏', title:'Karteikarten & Spaced Repetition', text:'Lerne alle 159 Krankheitsbilder mit Karteikarten – das System zeigt dir schwierige Karten häufiger.' },
-    { icon:'📊', title:'Scores & Taschenkarten', text:'29 Assessment-Skalen und 40 Taschenkarten im Kasack-Format – alles was du auf Station brauchst.' },
+    { icon:'🃏', title:'Karteikarten & Spaced Repetition', text:'Lerne alle '+plZahl('krankheitsbilder')+' Krankheitsbilder mit Karteikarten – das System zeigt dir schwierige Karten häufiger.' },
+    { icon:'📊', title:'Scores & Taschenkarten', text:plZahl('scores')+' Assessment-Skalen und '+plZahl('taschenkarten')+' Taschenkarten im Kasack-Format – alles was du auf Station brauchst.' },
     { icon:'🔥', title:'Täglich lernen, Streak aufbauen!', text:'Dein Lernfortschritt und Streak werden gespeichert. Los geht\'s – deine Prüfung wartet!' },
   ];
 
@@ -18060,7 +18060,7 @@ function startAusbChat(id) {
     d.innerHTML = `
       <div style="margin-bottom:16px">
         <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">🛡️ Prophylaxen</div>
-        <div style="font-size:11px;color:#8ab4d0">16 Prophylaxen mit Risikofaktoren, Skalen & Maßnahmen</div>
+        <div style="font-size:11px;color:#8ab4d0"><span class="pl-z-prophylaxen">16</span> Prophylaxen mit Risikofaktoren, Skalen & Maßnahmen</div>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">
         <button onclick="renderProphylaxen()" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:11px;font-weight:700;font-family:inherit">Alle</button>
@@ -18129,7 +18129,7 @@ function startAusbChat(id) {
     d.innerHTML = `
       <div style="margin-bottom:14px">
         <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">🃏 Karteikarten</div>
-        <div style="font-size:11px;color:#8ab4d0">159 Krankheitsbilder · Spaced Repetition · SM-2 Algorithmus</div>
+        <div style="font-size:11px;color:#8ab4d0"><span class="pl-z-krankheitsbilder">159</span> Krankheitsbilder · Spaced Repetition · SM-2 Algorithmus</div>
       </div>
       <div id="sr-content"></div>`;
     document.body.appendChild(d);
@@ -18155,7 +18155,7 @@ function startAusbChat(id) {
     d.innerHTML = `
       <div style="margin-bottom:14px">
         <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">📊 Assessment-Scores</div>
-        <div style="font-size:11px;color:#8ab4d0">29 Skalen · Pflegestandard NRW · Mit Auswertung & Pflegehinweisen</div>
+        <div style="font-size:11px;color:#8ab4d0"><span class="pl-z-scores">29</span> Skalen · Pflegestandard NRW · Mit Auswertung & Pflegehinweisen</div>
       </div>
       <div id="scores-tabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
       <div id="scores-content"></div>`;
@@ -18711,6 +18711,42 @@ function submitTestimonial(){
   }
 }
 
+
+/* ── Zentrale Kennzahlen ────────────────────────────────────────────────
+   Dieselben Zahlen standen an acht Stellen fest im Code und sind am 21.07.2026
+   dreimal an verschiedenen Orten auseinandergelaufen. Ab jetzt gilt: gezaehlt,
+   nicht getippt. Ausnahme: <meta> und JSON-LD im <head> bleiben statisch, weil
+   Suchmaschinen kein JavaScript ausfuehren - eigener Punkt in CHECKS.md. */
+function plZahl(key){
+  function n(f){ try{ var v=f(); return (typeof v==='number' && isFinite(v)) ? v : 0; }catch(e){ return 0; } }
+  switch(key){
+    case 'quiz':            return n(function(){ return QUIZ_FRAGEN.length; });
+    case 'lerneinheiten':   return n(function(){ return (window.PL_WDB_STATS && PL_WDB_STATS.eintraege) || 429; });
+    case 'wdbfragen':       return n(function(){ return (window.PL_WDB_STATS && PL_WDB_STATS.mcq) || 858; });
+    case 'fragen':          return plZahl('quiz') + plZahl('wdbfragen');
+    case 'fragenGerundet':  return Math.floor(plZahl('fragen')/100)*100;
+    case 'krankheitsbilder':return n(function(){
+                              var c=0; for(var f in KRANKHEITSBILDER){ var g=KRANKHEITSBILDER[f];
+                                c += Array.isArray(g) ? g.length : Object.keys(g||{}).length; } return c; });
+    case 'faelle':          return n(function(){ return FAELLE.length; });
+    case 'taschenkarten':   return n(function(){ return TASCHENKARTEN.length; });
+    case 'scores':          return n(function(){ return SCORES.length; });
+    case 'prophylaxen':     return n(function(){ return PROPHYLAXEN.length; });
+    case 'geraete':         return n(function(){ return GERAETE.length; });
+    default: return 0;
+  }
+}
+function plSyncZahlen(){
+  try{
+    document.querySelectorAll('[class*="pl-z-"]').forEach(function(el){
+      var m = String(el.className).match(/pl-z-([a-zA-Z]+)/);
+      if(!m) return;
+      var v = plZahl(m[1]);
+      if(v > 0) el.textContent = v.toLocaleString('de-DE');
+    });
+  }catch(e){}
+}
+window.addEventListener('load', function(){ setTimeout(plSyncZahlen, 800); });
 
 /* ── Nach dem Examen · CHECKS.md Achse 3.9 ──
    Bisher lief der Countdown auf null und danach war der Nutzer weg. Jetzt wird der
