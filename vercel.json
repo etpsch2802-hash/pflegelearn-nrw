@@ -2,7 +2,10 @@
   "version": 2,
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|webmanifest|woff|woff2|ttf))", "dest": "/$1" },
+    { "src": "/wissen/kategorie/(.*)", "dest": "/api/wissen?kategorie=$1" },
+    { "src": "/wissen/(.+)", "dest": "/api/wissen?slug=$1" },
+    { "src": "/wissen/?$", "dest": "/api/wissen" },
+    { "src": "/(.*\\.(js|css|html|xml|txt|png|jpg|jpeg|gif|svg|ico|json|webmanifest|woff|woff2|ttf))", "dest": "/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
