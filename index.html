@@ -646,7 +646,7 @@
   <div style="text-align:center;color:var(--accent);font-weight:600;font-size:13px;margin-top:6px">Damit du immer einen PLAN hast.</div>
 
   <!-- ROLLEN-AUSWAHL: gleich beim Start klar, fuer wen die App ist -->
-  <div style="width:100%;max-width:340px;margin:16px auto 2px">
+  <div style="width:100%;max-width:340px;margin:16px auto 20px">
     <div style="font-size:12px;color:#9dbdd2;text-align:center;margin-bottom:9px;font-weight:700;letter-spacing:.3px">Ich bin …</div>
     <div style="display:flex;gap:8px">
       <button type="button" id="role-azubi" onclick="plPickRole('azubi')" style="flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.16);border-radius:13px;padding:12px 4px;color:#cfe6f5;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:22px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg></span><span style="font-size:11px;font-weight:800;line-height:1.15;text-align:center">Auszubildende</span></button>
@@ -703,11 +703,21 @@
     </div>
   </div>
   </div>
+  <!-- Oeffentliche Wissensdatenbank. Echter Anker mit href, damit die Seite
+       ohne JavaScript erreichbar und fuer Suchmaschinen crawlbar ist. -->
+  <a href="/wissen" style="display:block;width:100%;max-width:340px;margin:18px auto 4px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.28);border-radius:14px;padding:14px 16px;text-decoration:none">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px">
+      <svg class="ic" style="width:1.05em;height:1.05em;color:#38bdf8;flex:none" viewBox="0 0 24 24"><use href="#i-book"/></svg>
+      <span style="font-size:14px;font-weight:800;color:#e8f3fb;line-height:1.3">Wissensdatenbank &ndash; frei lesbar</span>
+    </div>
+    <div style="font-size:11.5px;color:#9fc3da;line-height:1.55">429 Lerneinheiten mit Definition, Pr&uuml;fungswissen und Merks&auml;tzen. Ohne Anmeldung, fachlich gepr&uuml;ft. <span style="color:#7dd3fc;font-weight:700;white-space:nowrap">Reinlesen &rarr;</span></div>
+  </a>
+
   <!-- Rechtliche Links: Login-Screen -->
   <div style="display:flex;gap:16px;justify-content:center;margin-top:14px;margin-bottom:4px">
-    <a href="#impressum" onclick="showImpressum()" style="font-size:11px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Impressum</a>
+    <a href="/impressum.html" onclick="showImpressum();return false;" style="font-size:11px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Impressum</a>
     <span style="font-size:11px;color:rgba(var(--accent-rgb),.2)">|</span>
-    <a href="#datenschutz" onclick="showDatenschutz()" style="font-size:11px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Datenschutz</a>
+    <a href="/datenschutz.html" onclick="showDatenschutz();return false;" style="font-size:11px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">Datenschutz</a>
     <span style="font-size:11px;color:rgba(var(--accent-rgb),.2)">|</span>
     <a href="#agb" onclick="showAGB()" style="font-size:11px;color:rgba(var(--accent-rgb),.5);text-decoration:none;font-family:'DM Sans',sans-serif">AGB</a>
     <span style="font-size:11px;color:rgba(var(--accent-rgb),.2)">|</span>
@@ -718,18 +728,6 @@
     <button type="button" onclick="showLangSoon()" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:7px 14px;color:#a9cbe0;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-globe"/></svg> <span>Sprachen / Languages</span></button>
   </div>
 <!-- Debug-Reload entfernt (Storage-Clear-Risiko fuer Endnutzer) -->
-
-  <!-- Oeffentliche Wissensdatenbank + Pflichtangaben. Echte <a href>, damit sie
-       ohne JavaScript erreichbar und fuer Suchmaschinen crawlbar sind. -->
-  <div style="width:100%;max-width:340px;margin:22px auto 8px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);text-align:center">
-    <a href="/wissen" style="display:block;color:#9fc3da;font-size:12.5px;font-weight:700;text-decoration:none;line-height:1.5;margin-bottom:3px">Wissensdatenbank Pflege &ndash; 429 Lerneinheiten zum Nachlesen</a>
-    <div style="font-size:11px;color:#6f8ba3;line-height:1.5;margin-bottom:9px">Definition, Pr&uuml;fungswissen und Merks&auml;tze &middot; frei zug&auml;nglich, ohne Anmeldung</div>
-    <div style="font-size:11px;color:#6f8ba3;line-height:1.8">
-      <a href="/impressum.html" style="color:#8ba6bd;text-decoration:none">Impressum</a>
-      <span style="opacity:.5;margin:0 6px">&middot;</span>
-      <a href="/datenschutz.html" style="color:#8ba6bd;text-decoration:none">Datenschutz</a>
-    </div>
-  </div>
 </div>
 
 <!-- WATERMARK -->
