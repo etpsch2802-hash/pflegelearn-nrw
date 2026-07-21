@@ -4261,7 +4261,8 @@ function pickAnswer(i) {
   recordKatAnswer(q.kat, i === q.k);
   if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
   const expEl = document.getElementById("explanation");
-  expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`;
+  expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`
+    + '<button type="button" onclick="plMeldeFrage(this)" data-frage="' + plFfEsc(q.frage) + '" data-kat="' + plFfEsc(q.kat||'') + '" style="margin-top:10px;background:none;border:none;padding:2px 0;color:#8ba6bd;font-size:11px;font-family:inherit;cursor:pointer;text-decoration:underline">Fehler in dieser Frage melden</button>';
   expEl.style.display = "block";
   const nextBtn = document.getElementById("next-btn");
   nextBtn.style.display = "block";
@@ -14030,6 +14031,24 @@ function _examShuffle(a) {
   return a;
 }
 
+/* Gewichtung je Kategorie fuer adaptives Ueben.
+   Bisher zog die Auswahl gleichverteilt nach Kategorie - der Schwaechen-Radar zeigte
+   Luecken an, das Quiz nutzte sie nicht. Jetzt: nie geuebt > schwach > mittel > stark.
+   Starke Kategorien behalten Gewicht 0.15, damit Wiederholung nicht ganz wegfaellt. */
+function _examKatWeights(rel){
+  var ks = {}; try{ if (typeof getKatStats === 'function') ks = getKatStats() || {}; }catch(e){}
+  var w = {};
+  rel.forEach(function(k){
+    var d = ks[k] || { c:0, t:0 };
+    var t = d.t || 0, c = d.c || 0;
+    if (t === 0){ w[k] = 1.0; return; }
+    var acc = c / t;
+    var basis = Math.max(0.15, 1 - acc);
+    var unsicher = 1 + (1 - Math.min(1, t / 8)) * 0.5;
+    w[k] = basis * unsicher;
+  });
+  return w;
+}
 function _examPickQuestions(count) {
   const rel = _prRelevantKats();
   const byKat = {};
@@ -14037,7 +14056,13 @@ function _examPickQuestions(count) {
   QUIZ_FRAGEN.forEach(function(q){ if (q && byKat[q.kat]) byKat[q.kat].push(q); });
   rel.forEach(function(k){ byKat[k] = _examShuffle(byKat[k]); });
   const cursor = {}; rel.forEach(function(k){ cursor[k] = 0; });
-  const order = _examShuffle(rel.slice());
+  const _w = _examKatWeights(rel);
+  var order = [];
+  rel.forEach(function(k){
+    var n = Math.max(1, Math.round((_w[k] || 0.15) * 6));
+    for (var i = 0; i < n; i++) order.push(k);
+  });
+  order = _examShuffle(order);
   const picked = [];
   let added = true;
   while (picked.length < count && added) {
@@ -18301,6 +18326,59 @@ function kaufPlan(plan, src) {
   }catch(e){}
   window.location.href = _url;
 }
+/* ── Fehlermeldung zu Fragen · CHECKS.md Achse 1.9 ── */
+function plFfEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function plMeldeFrage(btn){
+  if(!btn) return;
+  var frage = btn.getAttribute('data-frage') || '';
+  var kat   = btn.getAttribute('data-kat') || '';
+  if(document.getElementById('ff-modal')) return;
+  var gruende = ['Antwort ist falsch','Erklärung ist unklar oder falsch','Veraltet / nicht mehr Leitlinie','Rechtschreibung oder Formulierung','Etwas anderes'];
+  var ov=document.createElement('div');
+  ov.id='ff-modal';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px';
+  var opts='';
+  gruende.forEach(function(g,i){
+    opts+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#dbe9f4;padding:7px 0;cursor:pointer">'
+        + '<input type="radio" name="ff-grund" value="'+plFfEsc(g)+'"'+(i===0?' checked':'')+'> '+plFfEsc(g)+'</label>';
+  });
+  ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(56,189,248,.3);border-radius:18px;padding:22px 20px;max-width:380px;width:100%;max-height:86vh;overflow:auto">'
+    +'<div style="font-size:17px;font-weight:900;color:#fff;margin-bottom:4px">Fehler melden</div>'
+    +'<div style="font-size:11.5px;color:#9fc3da;line-height:1.5;margin-bottom:12px">Danke, dass du mitliest. Jede Meldung wird fachlich geprüft.</div>'
+    +'<div style="background:rgba(255,255,255,.06);border-radius:10px;padding:9px 11px;font-size:12px;color:#c3d9e8;line-height:1.45;margin-bottom:12px;max-height:90px;overflow:auto">'+plFfEsc(frage)+'</div>'
+    +opts
+    +'<textarea id="ff-kommentar" rows="3" placeholder="Was stimmt nicht? (optional)" style="width:100%;margin-top:10px;background:rgba(2,12,24,.6);border:1px solid rgba(56,189,248,.28);border-radius:10px;padding:10px;color:#fff;font-size:13px;font-family:inherit;box-sizing:border-box;resize:vertical"></textarea>'
+    +'<div id="ff-msg" style="font-size:11.5px;color:#8ab4d0;margin-top:8px;min-height:16px"></div>'
+    +'<button id="ff-send" type="button" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:12px;color:#04221a;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer">Meldung senden</button>'
+    +'<button type="button" onclick="document.getElementById(\'ff-modal\').remove()" style="width:100%;background:none;border:none;color:#6f93ab;font-size:12px;margin-top:8px;cursor:pointer;font-family:inherit">Abbrechen</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  document.getElementById('ff-send').addEventListener('click', function(){
+    var b=this, msg=document.getElementById('ff-msg');
+    var g=document.querySelector('input[name="ff-grund"]:checked');
+    var k=document.getElementById('ff-kommentar');
+    b.disabled=true; b.textContent='Wird gesendet…';
+    var nutzer=''; try{ nutzer=(currentUser&&currentUser.name)||localStorage.getItem('pl_user')||''; }catch(e){}
+    var payload={ quelle:'quiz', kategorie:kat, frage:frage,
+                  grund:(g?g.value:''), kommentar:(k?k.value.trim():''), nutzer:nutzer };
+    if(!window.SB){ msg.style.color='#fb7185'; msg.textContent='Keine Verbindung – bitte später erneut.'; b.disabled=false; b.textContent='Meldung senden'; return; }
+    window.SB.from('fragen_feedback').insert(payload).then(function(res){
+      if(res && res.error){ msg.style.color='#fb7185'; msg.textContent='Konnte nicht gesendet werden.'; b.disabled=false; b.textContent='Meldung senden'; return; }
+      try{ if(typeof gaEvent==='function') gaEvent('frage_gemeldet',{ kategorie:kat }); }catch(e){}
+      ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(52,211,153,.35);border-radius:18px;padding:26px 20px;max-width:340px;width:100%;text-align:center">'
+        +'<div style="font-size:34px;margin-bottom:6px">✓</div>'
+        +'<div style="font-size:16px;font-weight:900;color:#fff;margin-bottom:6px">Danke!</div>'
+        +'<div style="font-size:12.5px;color:#9fc3da;line-height:1.55;margin-bottom:14px">Deine Meldung liegt jetzt bei uns. Wir prüfen sie fachlich und korrigieren, wenn nötig.</div>'
+        +'<button type="button" onclick="document.getElementById(\'ff-modal\').remove()" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:11px;color:#e0f2fe;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">Schließen</button>'
+        +'</div>';
+    }).catch(function(){
+      msg.style.color='#fb7185'; msg.textContent='Konnte nicht gesendet werden.';
+      b.disabled=false; b.textContent='Meldung senden';
+    });
+  });
+}
+
 /* ── Lerngruppe: Gruppencode ── */
 function plGruppencodeSet(){
   var el=document.getElementById('gruppencode-input');
