@@ -968,6 +968,9 @@
   <div id="home-coach-label" style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;margin:2px 2px 8px;font-weight:700">Dein nächster Schritt</div>
   <div id="home-coach" style="margin-bottom:4px"></div>
 
+  <!-- Nach dem Examen: Uebergang statt Ende (CHECKS.md Achse 3.9) -->
+  <div id="home-nachexamen" style="margin-top:12px"></div>
+
   <!-- Frage des Tages: taeglicher Wiederkehr-Anlass (CHECKS.md Achse 3.7) -->
   <div id="home-fdt" style="margin-top:12px"></div>
 
@@ -18709,6 +18712,83 @@ function submitTestimonial(){
 }
 
 
+/* ── Nach dem Examen · CHECKS.md Achse 3.9 ──
+   Bisher lief der Countdown auf null und danach war der Nutzer weg. Jetzt wird der
+   Moment zum Uebergang: gratulieren, Ergebnis erfragen, Anschluss anbieten. */
+function plExamVorbei(){
+  try{
+    var d = localStorage.getItem('pl_examen_datum') || localStorage.getItem('pl_pruefungsdatum');
+    if(!d) return 0;
+    var t = Math.ceil((new Date(d) - new Date()) / 86400000);
+    if(isNaN(t) || t > 0) return 0;
+    return Math.abs(t);
+  }catch(e){ return 0; }
+}
+function renderNachExamen(){
+  var host=document.getElementById('home-nachexamen');
+  if(!host) return;
+  var tage = plExamVorbei();
+  if(!tage){ host.innerHTML=''; return; }
+  if(tage > 90){ host.innerHTML=''; return; }   // nach 3 Monaten nicht mehr zeigen
+  var st=''; try{ st=localStorage.getItem('pl_examen_ergebnis')||''; }catch(e){}
+  var box='background:linear-gradient(160deg,rgba(52,211,153,.10),rgba(255,255,255,.05));border:1px solid rgba(52,211,153,.30);border-radius:16px;padding:16px 15px;margin-bottom:12px';
+
+  if(!st){
+    host.innerHTML='<div style="'+box+'">'
+      +'<div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:5px">Dein Examen liegt hinter dir</div>'
+      +'<div style="font-size:12.5px;color:#c3d9e8;line-height:1.6;margin-bottom:12px">Egal wie es gelaufen ist \u2013 du hast drei Jahre durchgezogen. Wie ist es ausgegangen?</div>'
+      +'<button type="button" onclick="plExamErgebnis(\'bestanden\')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:12px;color:#04231a;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;margin-bottom:7px">Bestanden</button>'
+      +'<button type="button" onclick="plExamErgebnis(\'nochmal\')" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:11px;color:#e0f2fe;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Ich gehe nochmal ran</button>'
+      +'</div>';
+    return;
+  }
+
+  if(st==='nochmal'){
+    host.innerHTML='<div style="'+box.replace('52,211,153','251,191,36')+'">'
+      +'<div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:5px">Zweiter Anlauf</div>'
+      +'<div style="font-size:12.5px;color:#c3d9e8;line-height:1.6;margin-bottom:12px">Das schaffen die meisten. Dein Schw\u00e4chen-Radar wei\u00df noch genau, wo es geklemmt hat \u2013 dort setzen wir an.</div>'
+      +'<button type="button" onclick="navGo(\'profil\')" style="width:100%;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;border-radius:11px;padding:12px;color:#3a2a05;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;margin-bottom:7px">Schw\u00e4chen ansehen</button>'
+      +'<button type="button" onclick="plExamNeuesDatum()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:11px;color:#e0f2fe;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Neuen Pr\u00fcfungstermin eintragen</button>'
+      +'</div>';
+    return;
+  }
+
+  host.innerHTML='<div style="'+box+'">'
+    +'<div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:5px">Gl\u00fcckwunsch, Pflegefachkraft.</div>'
+    +'<div style="font-size:12.5px;color:#c3d9e8;line-height:1.6;margin-bottom:12px">Der Anfang auf Station ist der eigentliche Sprung. Notfall, Medikamente, Scores und die Taschenkarten bleiben f\u00fcr dich offen \u2013 genau das, was im ersten Jahr st\u00e4ndig gebraucht wird.</div>'
+    +'<button type="button" onclick="navGo(\'wissenhub\')" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:12px;color:#04231a;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;margin-bottom:7px">Nachschlagewerk \u00f6ffnen</button>'
+    +'<button type="button" onclick="plExamTeilen()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:11px;color:#e0f2fe;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Bestanden \u2013 teilen</button>'
+    +'</div>';
+}
+function plExamErgebnis(v){
+  try{ localStorage.setItem('pl_examen_ergebnis', v); }catch(e){}
+  try{ if(typeof gaEvent==='function') gaEvent('examen_ergebnis',{ ergebnis:v }); }catch(e){}
+  if(v==='bestanden'){ try{ plCelebrate('Bestanden! Gl\u00fcckwunsch!','\ud83c\udf93'); }catch(e){} }
+  renderNachExamen();
+}
+function plExamNeuesDatum(){
+  var v=prompt('Neuer Pr\u00fcfungstermin (TT.MM.JJJJ):','');
+  if(!v) return;
+  var m=String(v).trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if(!m){ alert('Bitte im Format TT.MM.JJJJ eingeben.'); return; }
+  var iso=m[3]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[1]).slice(-2);
+  try{
+    localStorage.setItem('pl_examen_datum', iso);
+    localStorage.setItem('pl_pruefungsdatum', iso);
+    localStorage.removeItem('pl_examen_ergebnis');
+  }catch(e){}
+  renderNachExamen();
+  try{ if(typeof renderEngagement==='function') renderEngagement(); }catch(e){}
+}
+function plExamTeilen(){
+  var txt='Examen bestanden. Vorbereitet mit PLAN \u2013 plan-nrw.de';
+  try{
+    if(navigator.share){ navigator.share({ title:'Examen bestanden', text:txt }); }
+    else if(navigator.clipboard){ navigator.clipboard.writeText(txt); alert('Text kopiert.'); }
+    if(typeof gaEvent==='function') gaEvent('share',{ method:'examen_bestanden' });
+  }catch(e){}
+}
+
 /* ── Frage des Tages · CHECKS.md Achse 3.7 ──
    Deterministisch aus dem Datum: alle Nutzer bekommen am selben Tag dieselbe Frage.
    Nicht hinter der Paywall - das ist der taegliche Wiederkehr-Anlass, nicht ein Premium-Feature. */
@@ -18925,6 +19005,7 @@ function plDailyGoalDone(){
 }
 
 function renderEngagement(){
+  try{ renderNachExamen(); }catch(e){}
   try{ renderFrageDesTages(); }catch(e){}
   try{
     var host=document.getElementById('home-stats');
@@ -19484,7 +19565,7 @@ function showSuccessToast() {
 // Social Proof (Live-Zahlen + Testimonials)
 window.addEventListener('load', () => { setTimeout(function(){ try{ renderSocialProof(); }catch(e){} }, 700); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeSaveProgressPrompt(); }catch(e){} }, 2500); });
-window.addEventListener('load', () => { setTimeout(function(){ try{ renderFrageDesTages(); }catch(e){} }, 900); });
+window.addEventListener('load', () => { setTimeout(function(){ try{ renderNachExamen(); }catch(e){} try{ renderFrageDesTages(); }catch(e){} }, 900); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeOfferReminders(); }catch(e){} }, 4200); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ plResyncPush(); }catch(e){} }, 3000); });
 // Sound-Toggle Label beim Laden setzen
