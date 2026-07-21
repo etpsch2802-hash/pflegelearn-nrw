@@ -2,4 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://plan-nrw.de/sitemap.xml
-Sitemap: https://plan-nrw.de/api/sitemap
