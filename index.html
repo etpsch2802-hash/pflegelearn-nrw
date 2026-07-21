@@ -881,7 +881,7 @@
 <!-- REGISTRIERUNG SCREEN -->
 <div class="page" id="screen-registrierung">
   <div class="hero" style="margin-bottom:20px">
-    <img src="icon-192.png" style="width:72px;height:72px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(var(--accent-rgb),.5))">
+    <img src="icon-192.png" alt="PLAN NRW Logo" style="width:72px;height:72px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(var(--accent-rgb),.5))">
     <h1>21 Tage <span>kostenlos</span></h1>
     <p>Vollzugang · Keine Kreditkarte · Sofort starten</p>
   </div>
@@ -967,6 +967,9 @@
   <div id="home-countdown"></div>
   <div id="home-coach-label" style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;margin:2px 2px 8px;font-weight:700">Dein nächster Schritt</div>
   <div id="home-coach" style="margin-bottom:4px"></div>
+
+  <!-- Frage des Tages: taeglicher Wiederkehr-Anlass (CHECKS.md Achse 3.7) -->
+  <div id="home-fdt" style="margin-top:12px"></div>
 
   <!-- Status/Fortschritt: Tagesziel-Ring + Pruefungsreife (dynamisch gefuellt) -->
   <div id="home-stats" style="margin-top:12px"></div>
@@ -8805,7 +8808,7 @@ function showTesterInfo() {
 
       <!-- HEADER -->
       <div style="text-align:center;margin-bottom:20px">
-        <img src="icon-192.png" style="width:64px;height:64px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(var(--accent-rgb),.5))">
+        <img src="icon-192.png" alt="PLAN NRW Logo" style="width:64px;height:64px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 16px rgba(var(--accent-rgb),.5))">
         <div style="font-size:20px;font-weight:900;color:#e0f2fe;font-family:'DM Sans',sans-serif">Willkommen zur Testphase! 🎉</div>
         <div style="font-size:12px;color:#8ab4d0;margin-top:4px">PLAN · Beta v1.0</div>
       </div>
@@ -18406,6 +18409,79 @@ function submitTestimonial(){
   }
 }
 
+
+/* ── Frage des Tages · CHECKS.md Achse 3.7 ──
+   Deterministisch aus dem Datum: alle Nutzer bekommen am selben Tag dieselbe Frage.
+   Nicht hinter der Paywall - das ist der taegliche Wiederkehr-Anlass, nicht ein Premium-Feature. */
+function _fdtEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _fdtIndex(){
+  var d=_plDay(); var h=0;
+  for(var i=0;i<d.length;i++){ h=((h<<5)-h)+d.charCodeAt(i); h|=0; }
+  h=Math.abs(h)*2654435761 % 2147483647;
+  return Math.abs(h) % (QUIZ_FRAGEN.length||1);
+}
+function _fdtState(){
+  try{ return JSON.parse(localStorage.getItem('pl_fdt_'+_plDay())||'null'); }catch(e){ return null; }
+}
+function renderFrageDesTages(){
+  var host=document.getElementById('home-fdt');
+  if(!host) return;
+  if(!(typeof QUIZ_FRAGEN!=='undefined' && QUIZ_FRAGEN.length)){ host.innerHTML=''; return; }
+  var q=QUIZ_FRAGEN[_fdtIndex()];
+  if(!q || !q.opt){ host.innerHTML=''; return; }
+  var st=_fdtState();
+  var head='<div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">'
+    +'<svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px;color:#fbbf24"><use href="#i-star"/></svg>'
+    +'<span style="font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24;font-weight:800">Frage des Tages</span>'
+    +'</div>';
+  var box='background:linear-gradient(160deg,rgba(251,191,36,.09),rgba(255,255,255,.05));border:1px solid rgba(251,191,36,.28);border-radius:16px;padding:15px 14px';
+
+  if(!st){
+    var opts='';
+    for(var i=0;i<q.opt.length;i++){
+      opts+='<button type="button" onclick="fdtAnswer('+i+')" style="width:100%;text-align:left;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:11px 12px;margin-bottom:7px;color:#e6f2fa;font-size:13.5px;line-height:1.45;cursor:pointer">'+_fdtEsc(q.opt[i])+'</button>';
+    }
+    host.innerHTML='<div style="'+box+'">'+head
+      +'<div style="font-size:14.5px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:11px">'+_fdtEsc(q.frage)+'</div>'
+      +opts
+      +'<div style="font-size:11px;color:#b9924a;margin-top:2px">Jeden Tag eine neue \u2013 z\u00e4hlt auf deine Serie.</div>'
+      +'</div>';
+    return;
+  }
+
+  var ok=!!st.ok;
+  var farbe = ok ? '#34d399' : '#f87171';
+  host.innerHTML='<div style="'+box+'">'+head
+    +'<div style="font-size:14.5px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:9px">'+_fdtEsc(q.frage)+'</div>'
+    +'<div style="background:rgba(255,255,255,.07);border-left:4px solid '+farbe+';border-radius:9px;padding:10px 12px;margin-bottom:9px">'
+      +'<div style="font-size:12px;font-weight:800;color:'+farbe+';margin-bottom:3px">'+(ok?'Richtig':'Leider falsch')+'</div>'
+      +'<div style="font-size:13px;color:#e6f2fa;line-height:1.5">'+_fdtEsc(q.opt[q.k])+'</div>'
+    +'</div>'
+    +(q.erkl?'<div style="font-size:12.5px;color:#c3d9e8;line-height:1.55;margin-bottom:10px">'+_fdtEsc(q.erkl)+'</div>':'')
+    +'<button type="button" onclick="fdtShare()" style="width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(251,191,36,.35);border-radius:11px;padding:10px;color:#fbbf24;font-size:13px;font-weight:800;cursor:pointer">Frage teilen</button>'
+    +'<div style="font-size:11px;color:#b9924a;margin-top:8px;text-align:center">Morgen wartet die n\u00e4chste.</div>'
+    +'</div>';
+}
+function fdtAnswer(i){
+  if(_fdtState()) return;
+  var q=QUIZ_FRAGEN[_fdtIndex()]; if(!q) return;
+  var ok=(i===q.k);
+  try{ localStorage.setItem('pl_fdt_'+_plDay(), JSON.stringify({ok:ok,i:i})); }catch(e){}
+  try{ if(typeof recordQuizAnswer==='function') recordQuizAnswer(ok); }catch(e){}
+  try{ if(typeof gaEvent==='function') gaEvent('fdt_answer',{richtig:ok?1:0}); }catch(e){}
+  renderFrageDesTages();
+  if(ok){ try{ plCelebrate('Frage des Tages geknackt!','\u2b50'); }catch(e){} }
+}
+function fdtShare(){
+  var q=QUIZ_FRAGEN[_fdtIndex()]; if(!q) return;
+  var txt='Frage des Tages bei PLAN:\n\n'+q.frage+'\n\nWei\u00dft du es? plan-nrw.de';
+  try{
+    if(navigator.share){ navigator.share({title:'PLAN \u2013 Frage des Tages', text:txt}); }
+    else if(navigator.clipboard){ navigator.clipboard.writeText(txt); alert('Frage kopiert \u2013 einfach einf\u00fcgen und teilen.'); }
+  }catch(e){}
+  try{ if(typeof gaEvent==='function') gaEvent('share',{method:'fdt'}); }catch(e){}
+}
+
 function maybeSaveProgressPrompt(){
   try{
     var ps=document.getElementById('pw-screen');
@@ -18550,6 +18626,7 @@ function plDailyGoalDone(){
 }
 
 function renderEngagement(){
+  try{ renderFrageDesTages(); }catch(e){}
   try{
     var host=document.getElementById('home-stats');
     if(!host) return;
@@ -19108,6 +19185,7 @@ function showSuccessToast() {
 // Social Proof (Live-Zahlen + Testimonials)
 window.addEventListener('load', () => { setTimeout(function(){ try{ renderSocialProof(); }catch(e){} }, 700); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeSaveProgressPrompt(); }catch(e){} }, 2500); });
+window.addEventListener('load', () => { setTimeout(function(){ try{ renderFrageDesTages(); }catch(e){} }, 900); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ maybeOfferReminders(); }catch(e){} }, 4200); });
 window.addEventListener('load', () => { setTimeout(function(){ try{ plResyncPush(); }catch(e){} }, 3000); });
 // Sound-Toggle Label beim Laden setzen
