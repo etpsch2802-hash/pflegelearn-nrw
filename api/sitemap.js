@@ -8,7 +8,7 @@ const SB_KEY = 'sb_publishable_37Wquc-WmPgV82HqtvWEFg_tjolOcMl';
 const SITE = 'https://plan-nrw.de';
 
 // Muss zu api/wissen.js passen.
-const CLEAN_URLS = false;
+const CLEAN_URLS = true;
 
 function katSlug(k) {
   return String(k || 'sonstiges').toLowerCase()
