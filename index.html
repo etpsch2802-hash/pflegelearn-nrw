@@ -17754,14 +17754,21 @@ function plKlassePruef(){
   var pv=document.getElementById('kb-preview');
   if(!pv) return;
   if(code.length<4){ pv.style.display='none'; return; }
-  fetch('/api/klasse?code='+encodeURIComponent(code)).then(function(r){return r.json();}).then(function(d){
+  fetch('/api/klasse?code='+encodeURIComponent(code)).then(function(r){
+    if(r.status>=500){ throw new Error('server'); }
+    return r.json();
+  }).then(function(d){
+    if(d && d.error){ pv.style.display='block'; pv.innerHTML='<span style="color:#fb7185">Technisches Problem – der Code lässt sich gerade nicht prüfen.</span>'; return; }
     if(d && d.found){
       pv.style.display='block';
       pv.innerHTML = d.aktiv
         ? ('<b style="color:#34d399">'+plEsc(d.name)+'</b>'+(d.schule?(' · '+plEsc(d.schule)):'')+'<br><span style="color:#9fc3da">Zugang bis '+plEsc(d.lizenz_bis)+' · noch '+d.remaining+' Plätze frei</span>')
         : '<span style="color:#fb7185">Dieser Kurs ist abgelaufen.</span>';
     } else { pv.style.display='block'; pv.innerHTML='<span style="color:#fbbf24">Kein Kurs mit diesem Code gefunden.</span>'; }
-  }).catch(function(){});
+  }).catch(function(){
+    pv.style.display='block';
+    pv.innerHTML='<span style="color:#fb7185">Der Code lässt sich gerade nicht prüfen – du kannst den Beitritt trotzdem versuchen.</span>';
+  });
 }
 function plKlasseBeitreten(){
   var code=(document.getElementById('kb-code').value||'').trim().toUpperCase();
@@ -17772,12 +17779,28 @@ function plKlasseBeitreten(){
   if(!name){ warn('Bitte gib deinen Vornamen ein.'); return; }
   var b=document.getElementById('kb-btn'); if(b){ b.disabled=true; b.textContent='Wird geprüft…'; }
   fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join',code:code,name:name,email:plKlUserEmail()})})
-    .then(function(r){return r.json();}).then(function(d){
-      if(d && d.ok){ try{ localStorage.setItem('pl_klasse_code',code); }catch(e){} plKlasseGrant(d,name); return; }
+    .then(function(r){ return r.json().then(function(j){ return { status:r.status, body:j }; }); })
+    .then(function(res){
+      var d = res.body || {};
+      if(d.ok){ try{ localStorage.setItem('pl_klasse_code',code); }catch(e){} plKlasseGrant(d,name); return; }
       if(b){ b.disabled=false; b.textContent='Kurs beitreten'; }
-      var reason=d&&d.reason;
-      warn(reason==='full'?'Dieser Kurs ist leider voll.':reason==='expired'?'Dieser Kurs ist abgelaufen.':'Kein Kurs mit diesem Code gefunden.');
-    }).catch(function(){ if(b){ b.disabled=false; b.textContent='Kurs beitreten'; } warn('Hat nicht geklappt – bitte später erneut versuchen.'); });
+      // Technischen Fehler klar von "Code unbekannt" trennen - sonst sucht der Nutzer
+      // den Fehler bei sich, obwohl der Server nicht antwortet.
+      if(res.status >= 500 || d.error){
+        if(msg){ msg.style.color='#fb7185'; }
+        warn('Technisches Problem auf unserer Seite. Der Code ist wahrscheinlich in Ordnung – bitte in ein paar Minuten erneut versuchen.');
+        try{ if(typeof gaEvent==='function') gaEvent('kurs_beitritt_fehler',{ art:(d.error||('http'+res.status)) }); }catch(e){}
+        return;
+      }
+      var reason=d.reason;
+      warn(reason==='full'    ? 'Dieser Kurs ist leider voll. Frag deine Lehrkraft nach einem freien Platz.'
+         : reason==='expired' ? 'Dieser Kurs ist abgelaufen. Deine Lehrkraft kann ihn verlängern.'
+         : 'Kein Kurs mit diesem Code gefunden. Prüfe die Schreibweise – der Code hat 6 Zeichen.');
+    }).catch(function(){
+      if(b){ b.disabled=false; b.textContent='Kurs beitreten'; }
+      if(msg){ msg.style.color='#fb7185'; }
+      warn('Keine Verbindung. Prüfe dein Netz und versuche es erneut.');
+    });
 }
 function plKlasseGrant(d,name){
   try{
