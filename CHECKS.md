@@ -23,8 +23,9 @@ Verantwortlich: Jessica Schenkelberger
 | 1.5 | S3-Leitlinien-Verweise inhaltlich korrekt? | jährlich | ✅ Jessica, 21.07.2026 · Versionsangabe fehlt noch im Code (→ 1.8) |
 | 1.6 | Manchester Triage: aktuelle Fassung? | jährlich | ✅ Jessica, 21.07.2026 |
 | 1.7 | PflBG / PflAPrV: Rechtsstand geprüft? | jährlich | ✅ Jessica, 21.07.2026 |
-| 1.8 | Jeder Inhalt trägt `quelle`, `stand`, `geprueft_von`, `geprueft_am`? | laufend | ❌ Felder existieren im Datenmodell nicht — Freigaben oben sind derzeit nur hier dokumentiert, nicht im Produkt |
+| 1.8 | Jeder Inhalt trägt `quelle`, `stand`, `geprueft_von`, `geprueft_am`? | laufend | ❌ Felder existieren im Datenmodell nicht. Inhalte sind vollständig geprüft (Jessica, 21.07.2026), die Freigabe ist aber nur hier dokumentiert, nicht im Produkt nachweisbar |
 | 1.9 | Nutzer-Fehlermeldungen gesichtet und abgearbeitet? | monatlich | ❌ Meldeweg nicht gebaut |
+| 1.9b | Alle Quizfragen fachlich kontrolliert? | halbjährlich | ✅ Jessica Schenkelberger, 21.07.2026 – vollständig, inkl. der 858 MCQ aus `lerninhalte` |
 | 1.10 | Fragenverteilung je Kategorie ≥ 40 bei beworbenen Ausbildungswegen? | quartalsweise | ❌ ATA/OTA/ITS teilweise nur 6–12 Fragen |
 
 **Abbruchkriterium:** Steht ein Notfall- oder Medikamenteninhalt ohne Freigabe im Produkt, wird kein neues Feature gepusht.
@@ -71,8 +72,10 @@ grep -c "aria-label" index.html  # Soll: steigend
 | 3.8 | Sozialer Mechanismus (Klasse / Rangliste / Empfehlung) | ja | ❌ fehlt. Klassen-Tabellen seit 21.07.2026 erstmals technisch nutzbar, aber `klassen_mitglieder` hat 0 Zeilen – Beitrittspfad noch nie erfolgreich durchlaufen |
 | 3.9 | Anschlussangebot nach dem Examen | ja | ❌ fehlt |
 | 3.10 | GA4-Funnel: `sign_up` → `begin_checkout` → `purchase` | ja | ✅ |
-| 3.11 | Marketing-Zahlen im HTML = Ist-Bestand | ja | ✅ 21.07.2026 – Fallback auf 1.214 (= `QUIZ_FRAGEN.length`), Supabase hebt danach auf Gesamtwert |
+| 3.11 | Marketing-Zahlen im HTML = Ist-Bestand | ja | ✅ 21.07.2026 – „2.000+" ist belegt: 1.214 `QUIZ_FRAGEN` + 858 MCQ aus `lerninhalte` = **2.072** |
 | 3.12 | Testimonials mit dokumentierter Einwilligung | ja | ⚠️ mündlich zugesagt, nicht dokumentiert |
+| 3.13 | **Jede Preiskachel führt auf den Checkout mit dem angezeigten Betrag** | ja | ✅ 21.07.2026 verifiziert. Vorher **spiegelverkehrt** – „1 Monat 9,99 €" führte auf den 79,99-€-Checkout |
+| 3.14 | Rückleitungs-Parameter `p=` je Zahlungslink passend zur Laufzeit | ja | ✅ 21.07.2026 alle vier geprüft |
 
 ---
 
@@ -149,3 +152,6 @@ Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 | 21.07.2026 | Supabase | Migration `fix_klassen_policies_and_push_service_role`: `klassen`, `klassen_mitglieder`, `aufgaben` hatten RLS aktiv bei **0 Policies** → Lehrer-/Klassenbereich war vollständig gesperrt. Policies und Grants ergänzt, `push_subs` von 13 auf 4 Policies konsolidiert. |
 | 21.07.2026 | Achse 1 | ERC/GRC-2025-Umstellung umgesetzt, Commit `3cd332e`. Zwei Punkte zur Gegenprüfung offen (Anhang A). |
 | 21.07.2026 | Achse 3 | Frage des Tages gebaut (3.7 erfüllt), alt-Texte vervollständigt (2.4). Commit `2727703`. |
+| 21.07.2026 | **Zahlung** | **Kritischer Fund:** `PL_PLANS` war spiegelverkehrt – „1 Monat 9,99 €" führte seit 19.06. auf den 79,99-€-Checkout, „12 Monate" auf ein 9,99-€-Monatsabo. Korrigiert, Commit `3a4a89d`. Neue Prüfpunkte 3.13/3.14 aufgenommen. |
+| 21.07.2026 | Achse 1 | Jessica: alle Quizfragen inkl. der 858 MCQ aus `lerninhalte` kontrolliert (1.9b). |
+| 21.07.2026 | Achse 3 | Rückgängig: „2.000+ Fragen" ist belegt (2.072). Fallback wieder auf 2.000, Commit `c95b0b2`. |
