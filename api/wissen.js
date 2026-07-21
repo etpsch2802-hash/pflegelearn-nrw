@@ -19,7 +19,7 @@ const SB_KEY = 'sb_publishable_37Wquc-WmPgV82HqtvWEFg_tjolOcMl';
 const SITE = 'https://plan-nrw.de';
 
 // Auf true stellen, sobald die Rewrites in vercel.json stehen.
-const CLEAN_URLS = false;
+const CLEAN_URLS = true;
 
 /* ---------- Helfer ---------- */
 
