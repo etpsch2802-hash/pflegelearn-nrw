@@ -40,7 +40,7 @@ Maßstab: BITV 2.0 / EN 301 549 (Voraussetzung für Vergabe an öffentliche Bild
 | 2.1 | `:focus-visible`-Regeln im CSS | > 0 | ✅ 6 (21.07.2026) |
 | 2.2 | `role`-Attribute an interaktiven Bereichen | > 0 | ❌ **0** |
 | 2.3 | `aria-label` an Icon-Buttons ohne Text | vollständig | ❌ 5 von ~380 |
-| 2.4 | Alle `<img>` mit `alt` | 100 % | ⚠️ 7 von 8 |
+| 2.4 | Alle `<img>` mit `alt` | 100 % | ✅ 8 von 8 (21.07.2026) |
 | 2.5 | Vollständige Bedienbarkeit per Tastatur | ja | ⚠️ Fokus sichtbar; 378 `onclick` auf nicht-fokussierbaren Elementen weiterhin offen |
 | 2.6 | Kontrast Text/Hintergrund ≥ 4.5:1 | 100 % | ⬜ ungeprüft |
 | 2.7 | Nutzbar bei Browser-Zoom 200 % | ja | ⬜ ungeprüft |
@@ -66,9 +66,9 @@ grep -c "aria-label" index.html  # Soll: steigend
 | 3.3 | E-Mail beim Trial verpflichtend | ja | ✅ 21.07.2026 – Pflichtfeld + Format-Validierung |
 | 3.4 | Trial serverseitig gebunden (nicht nur `localStorage`) | ja | ❌ in Inkognito umgehbar |
 | 3.5 | Fortschritt geräteübergreifend gesichert | ja | ⚠️ Konto weiterhin optional, aber Prompt jetzt bis zu 3× im 7-Tage-Abstand statt einmalig |
-| 3.6 | Laufzeiten ab 3 Monaten als verlängerndes Abo | ja | ❌ Einmalzahlung |
-| 3.7 | Täglicher Wiederkehr-Anlass (Frage des Tages o. ä.) | ja | ❌ fehlt |
-| 3.8 | Sozialer Mechanismus (Klasse / Rangliste / Empfehlung) | ja | ❌ fehlt vollständig |
+| 3.6 | Laufzeiten ab 3 Monaten als verlängerndes Abo | ja | ❌ Einmalzahlung. **Blockiert:** Stripe-Buttons stehen auf der No-Touch-Liste, Umstellung nur mit ausdrücklicher Freigabe |
+| 3.7 | Täglicher Wiederkehr-Anlass (Frage des Tages o. ä.) | ja | ✅ 21.07.2026 – Frage des Tages auf dem Home-Screen, deterministisch aus dem Datum, zählt auf Serie und Tagesziel, teilbar |
+| 3.8 | Sozialer Mechanismus (Klasse / Rangliste / Empfehlung) | ja | ❌ fehlt. Klassen-Tabellen seit 21.07.2026 erstmals technisch nutzbar, aber `klassen_mitglieder` hat 0 Zeilen – Beitrittspfad noch nie erfolgreich durchlaufen |
 | 3.9 | Anschlussangebot nach dem Examen | ja | ❌ fehlt |
 | 3.10 | GA4-Funnel: `sign_up` → `begin_checkout` → `purchase` | ja | ✅ |
 | 3.11 | Marketing-Zahlen im HTML = Ist-Bestand | ja | ✅ 21.07.2026 – Fallback auf 1.214 (= `QUIZ_FRAGEN.length`), Supabase hebt danach auf Gesamtwert |
@@ -148,3 +148,4 @@ Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 | 21.07.2026 | Achse 3 | Trial-E-Mail als Pflichtfeld (3.3). Push- und Konto-Prompt mit Wiedervorlage statt einmalig (3.1, 3.5). Marketing-Zahlen korrigiert (3.11). Commits `13a561f`, `9ea62ae`, `3cd332e`. |
 | 21.07.2026 | Supabase | Migration `fix_klassen_policies_and_push_service_role`: `klassen`, `klassen_mitglieder`, `aufgaben` hatten RLS aktiv bei **0 Policies** → Lehrer-/Klassenbereich war vollständig gesperrt. Policies und Grants ergänzt, `push_subs` von 13 auf 4 Policies konsolidiert. |
 | 21.07.2026 | Achse 1 | ERC/GRC-2025-Umstellung umgesetzt, Commit `3cd332e`. Zwei Punkte zur Gegenprüfung offen (Anhang A). |
+| 21.07.2026 | Achse 3 | Frage des Tages gebaut (3.7 erfüllt), alt-Texte vervollständigt (2.4). Commit `2727703`. |
