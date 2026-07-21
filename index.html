@@ -18223,10 +18223,12 @@ function showDatenschutz() {
 
 // ─── STRIPE WEITERLEITUNG ───────────────────────────────────────────────────
 const STRIPE_PLANS = {
-  '1m':  { url:'https://buy.stripe.com/00wfZh3GL38A5gr3XK6sw05', preis:'9,99 \u20ac',  pm:'9,99 \u20ac/Mon.' },
-  '3m':  { url:'https://buy.stripe.com/eVqaEXelpaB2eR179W6sw06', preis:'24,99 \u20ac', pm:'8,33 \u20ac/Mon.' },
-  '6m':  { url:'https://buy.stripe.com/6oU8wPa59aB2bEPgKw6sw07', preis:'44,99 \u20ac', pm:'7,50 \u20ac/Mon.' },
-  '12m': { url:'https://buy.stripe.com/00wfZh6SXaB238j79W6sw08', preis:'79,99 \u20ac', pm:'6,67 \u20ac/Mon.' }
+  // 21.07.2026 KORREKTUR: Zuordnung war exakt spiegelverkehrt - '1m' zeigte auf den 79,99-EUR-Link.
+  // Reihenfolge gegen die Stripe-Zahlungslinks verifiziert, nicht gegen die URL-Endung raten.
+  '1m':  { url:'https://buy.stripe.com/00wfZh6SXaB238j79W6sw08', preis:'9,99 \u20ac',  pm:'9,99 \u20ac/Mon.' },
+  '3m':  { url:'https://buy.stripe.com/6oU8wPa59aB2bEPgKw6sw07', preis:'24,99 \u20ac', pm:'8,33 \u20ac/Mon.' },
+  '6m':  { url:'https://buy.stripe.com/eVqaEXelpaB2eR179W6sw06', preis:'44,99 \u20ac', pm:'7,50 \u20ac/Mon.' },
+  '12m': { url:'https://buy.stripe.com/00wfZh3GL38A5gr3XK6sw05', preis:'79,99 \u20ac', pm:'6,67 \u20ac/Mon.' }
 };
 // Trial 2.0: Numerische Preise fuer GA-Ecommerce (begin_checkout/value)
 const _PLAN_WERT = { '1m': 9.99, '3m': 24.99, '6m': 44.99, '12m': 79.99 };
