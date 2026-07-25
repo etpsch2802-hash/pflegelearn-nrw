@@ -171,3 +171,25 @@ Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 | 25.07.2026 | Achse 1 | Anhang A abgeschlossen: Überlebenskette und Kinderreanimation gegen GRC 2025 durch Jessica geprüft und bestätigt. 1.1 auf ✅. |
 | 25.07.2026 | Wartbarkeit | Sprint 3 File-Split: QUIZ_FRAGEN, KATS, PL_GRAFIK nach `/data/*.js` ausgelagert. index.html 2,57 → 1,94 MB. Commit `8236d93`. |
 | 21.07.2026 | Inhalte | +194 Quizfragen (an_/ata_/its_/ota_), 1.214 → 1.408. Aus 330 eingereichten Fragen: Dubletten entfernt, widersprüchliche etCO₂-Frage und herstellerabhängige Indikatorfarben-Frage verworfen, Kocher-Klemme auf Péan/Overholt korrigiert, schwache Distraktoren ersetzt, Optionsreihenfolge gemischt. Fachlich kontrolliert durch Jessica Schenkelberger, 21.07.2026. Commit `14fdd99`. |
+
+---
+
+## ⚠️ WICHTIGER BEFUND 26.07.2026 — Zwei getrennte Arbeitsweisen auf demselben Repo
+
+**Vor jeder weiteren Aenderung lesen.**
+
+Es existieren aktuell **zwei parallele, nicht synchronisierte Workflows** auf `etpsch2802-hash/pflegelearn-nrw`:
+
+1. **Diese Unterhaltung (claude.ai, Chat-Interface):** Arbeitet direkt auf `main`, ein Commit pro Aenderung, ueber die GitHub-Contents-API.
+2. **Ein separater Claude-Code-Workflow (CLI, `.mcp.json`, `CLAUDE.md`):** Arbeitet auf Feature-Branches (`claude/*`) mit Pull Requests (u. a. `claude/claude-md-docs-mnojj8`, **PR #85 aktuell offen**: „Lehrer-Token-Gate, Rollen-Lock"). Beschreibt in `CLAUDE.md` einen Stand, der auf `main` **nicht** existiert: Sprint-3-Datei-Split (`data/kats.js`, `data/grafiken.js`, `data/quiz-fragen.js`), 1.420 statt 1.214 Quizfragen, 59 statt urspruenglich weniger Kategorien.
+
+**Verifiziert am 26.07.2026, direkt per GitHub-API (nicht aus einer Zusammenfassung uebernommen):**
+- `main`-`index.html` enthaelt **weiterhin genau 1.214 Fragen inline**, keinen Duplikat-Deklarationskonflikt — die `data/*.js`-Dateien liegen zwar im Repo, werden aber von `index.html` **nicht eingebunden** (kein `<script src="/data/...">`). **Kein Live-Bug, nur ungenutzte Dateien.**
+- Die in diesem CHECKS.md weiter oben protokollierten Eintraege „+194 Fragen (Commit `14fdd99`)", „+12 Psychiatrie (Commit `c2f35d3`)" und „Sprint 3 File-Split (Commit `8236d93`)" **sind nicht Teil von `main`** — vermutlich auf einem `claude/*`-Branch oder in einem noch offenen PR. Diese Zeilen im CHECKS.md oben sind also mit Vorsicht zu lesen: sie beschreiben einen Stand, der (Stand jetzt) nicht live ist.
+
+**Was das bedeutet:**
+- **`main` = das, was tatsaechlich auf `plan-nrw.de` laeuft.** Alles, was heute Abend in dieser Unterhaltung gebaut wurde (ERC 2025, Achse-1-Quellen, Zahlungs-Fix, Frage des Tages, A11y, Fehlermeldekanal, Nach-Examen-Screen), ist live.
+- Der `claude/*`-Branch-Workflow hat parallel weitergearbeitet (Rollen-/Persona-System, Lehrer-Gating, Content-Ausbau) — das ist **nicht** in `main` und daher **nicht live**, bis es gemerged wird.
+- Solange niemand entscheidet, welcher Workflow fuehrend ist bzw. bis PR #85 bewusst gemerged oder verworfen wird, **wachsen beide Staende weiter auseinander**. Jeder direkte `main`-Push (auch von mir) macht einen spaeteren Merge des `claude/*`-Branches potenziell konfliktreicher.
+
+**Empfehlung:** Vor dem naechsten groesseren Feature entscheiden: (a) einen Workflow stilllegen, oder (b) PR #85 pruefen und bewusst mergen/schliessen, damit `main` wieder der alleinige Wahrheitsstand ist. Bis dahin: neue Aenderungen an `index.html` moeglichst klein und isoliert halten.
