@@ -16,7 +16,7 @@ Verantwortlich: Jessica Schenkelberger
 
 | # | Prüfpunkt | Intervall | Status 21.07.2026 |
 |---|---|---|---|
-| 1.1 | ERC/GRC-Reanimationsleitlinien: aktuelle Fassung im Code? | jährlich + bei Neuerscheinung | ⚠️ Umgestellt auf ERC/GRC 2025 am 21.07.2026 (0 Fundstellen „ERC 2021" verbleibend). **Gegenprüfung Jessica offen** für 2 Punkte, siehe Anhang A |
+| 1.1 | ERC/GRC-Reanimationsleitlinien: aktuelle Fassung im Code? | jährlich + bei Neuerscheinung | ✅ Umgestellt auf ERC/GRC 2025 am 21.07.2026 (0 Fundstellen „ERC 2021" verbleibend). Gegenprüfung der 2 Punkte (Überlebenskette, Kinderreanimation) durch Jessica Schenkelberger am 25.07.2026 abgeschlossen, siehe Anhang A |
 | 1.2 | DNQP-Expertenstandards: inhaltlich korrekt? | jährlich | ✅ Jessica, 21.07.2026 · Ausgabenbezeichnung noch nicht im Code hinterlegt (→ 1.8) |
 | 1.3 | Medikamentenmodul: Angaben fachlich geprüft? | halbjährlich | ✅ Jessica, 21.07.2026 · Quellenangabe fehlt noch im Code (→ 1.8) |
 | 1.4 | Notfall- und ITS-Inhalte fachlich freigegeben? | halbjährlich | ✅ Jessica, 21.07.2026 |
@@ -25,7 +25,7 @@ Verantwortlich: Jessica Schenkelberger
 | 1.7 | PflBG / PflAPrV: Rechtsstand geprüft? | jährlich | ✅ Jessica, 21.07.2026 |
 | 1.8 | Jeder Inhalt trägt `quelle`, `stand`, `geprueft_von`, `geprueft_am`? | laufend | ❌ Felder existieren im Datenmodell nicht. Inhalte sind vollständig geprüft (Jessica, 21.07.2026), die Freigabe ist aber nur hier dokumentiert, nicht im Produkt nachweisbar |
 | 1.9 | Nutzer-Fehlermeldungen gesichtet und abgearbeitet? | monatlich | ✅ 21.07.2026 – Melde-Button an jeder Quizfrage, Tabelle `fragen_feedback`, Admin-Liste mit Status, Push aufs Gerät alle 15 Minuten |
-| 1.9b | Alle Quizfragen fachlich kontrolliert? | halbjährlich | ✅ Jessica Schenkelberger, 21.07.2026 – vollständig: 1.408 Quizfragen (inkl. der 194 neuen Fragen zu Anästhesie, ATA, ITS und OTA) sowie die 858 MCQ aus `lerninhalte`. Gesamtbestand 2.266 |
+| 1.9b | Alle Quizfragen fachlich kontrolliert? | halbjährlich | ✅ Jessica Schenkelberger, 25.07.2026 – vollständig: 1.420 Quizfragen (inkl. der 12 neuen Psychiatrie/Psychologie-MCQs vom 25.07.) sowie die 858 MCQ aus `lerninhalte`. Gesamtbestand 2.278 |
 | 1.10 | Fragenverteilung je Kategorie ≥ 40 bei beworbenen Ausbildungswegen? | quartalsweise | ❌ ATA/OTA/ITS teilweise nur 6–12 Fragen |
 
 **Abbruchkriterium:** Steht ein Notfall- oder Medikamenteninhalt ohne Freigabe im Produkt, wird kein neues Feature gepusht.
@@ -167,4 +167,7 @@ Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 | 21.07.2026 | Kurs | Beitrittspfad geprüft: **kein Fehler gefunden.** Frühere Diagnose „RLS sperrt den Lehrerbereich" war falsch — `/api/klasse` nutzt `service_role` und umgeht RLS. 0 Mitglieder heißt: noch nie getestet. Fehlermeldungen im Client sauber getrennt, Commit `9963182`. |
 | 21.07.2026 | Achse 3.9 | Anschluss nach dem Examen gebaut. Commit `0bc67bf`. |
 | 21.07.2026 | Wartbarkeit | `plZahl()` / `plSyncZahlen()`: elf Kennzahlen werden aus den Datenstrukturen gezählt statt hartkodiert. Commit `a1432ca`. Neuer Prüfpunkt 3.15 für `<head>`, der nicht dynamisch werden kann. |
+| 25.07.2026 | Inhalte | +12 Quizfragen Psychiatrie/Psychologie (bio-psycho-sozial, Krisenintervention u. a.), 1.408 → 1.420. Fachlich freigegeben durch Jessica Schenkelberger, 25.07.2026. Commit `c2f35d3`. |
+| 25.07.2026 | Achse 1 | Anhang A abgeschlossen: Überlebenskette und Kinderreanimation gegen GRC 2025 durch Jessica geprüft und bestätigt. 1.1 auf ✅. |
+| 25.07.2026 | Wartbarkeit | Sprint 3 File-Split: QUIZ_FRAGEN, KATS, PL_GRAFIK nach `/data/*.js` ausgelagert. index.html 2,57 → 1,94 MB. Commit `8236d93`. |
 | 21.07.2026 | Inhalte | +194 Quizfragen (an_/ata_/its_/ota_), 1.214 → 1.408. Aus 330 eingereichten Fragen: Dubletten entfernt, widersprüchliche etCO₂-Frage und herstellerabhängige Indikatorfarben-Frage verworfen, Kocher-Klemme auf Péan/Overholt korrigiert, schwache Distraktoren ersetzt, Optionsreihenfolge gemischt. Fachlich kontrolliert durch Jessica Schenkelberger, 21.07.2026. Commit `14fdd99`. |
