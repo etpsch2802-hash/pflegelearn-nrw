@@ -17726,6 +17726,47 @@ try{ if(location.hash==='#tester'){ window.addEventListener('load', function(){ 
 var _plKlassen = [];
 function plEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function plKlUserEmail(){ try{ return localStorage.getItem('pl_user_email')||localStorage.getItem('pl_sub_email')||localStorage.getItem('pl_trial_email')||''; }catch(e){ return ''; } }
+/* Achse 2.2: automatisches role="dialog" + aria-modal fuer alle Vollbild-Overlays.
+   Statt ~49 Aufrufstellen einzeln zu patchen (fehleranfaellig), ein einziger, bewusst
+   BILLIGER Mechanismus: nur Inline-Style-Werte lesen (kein getComputedStyle, kein
+   Reflow), nur direkte Kinder von <body> beobachten (kein subtree:true), da alle
+   Overlays im Code per document.body.appendChild(...) angehaengt werden. Damit bleibt
+   das auf einer haeufig neu rendernden Single-Page-App kosteng√ºnstig. */
+(function(){
+  function istOverlay(el){
+    if (!(el instanceof HTMLElement) || !el.style) return false;
+    return el.style.position === 'fixed'
+        && (el.style.inset === '0px' || el.style.top === '0px');
+  }
+  function nachruesten(el){
+    if (!el.hasAttribute('role')) el.setAttribute('role', 'dialog');
+    if (!el.hasAttribute('aria-modal')) el.setAttribute('aria-modal', 'true');
+  }
+  function initialScan(){
+    try{
+      var kids = document.body ? document.body.children : [];
+      for (var i=0;i<kids.length;i++){ if (istOverlay(kids[i])) nachruesten(kids[i]); }
+    }catch(e){}
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialScan);
+  } else {
+    initialScan();
+  }
+  try{
+    var mo = new MutationObserver(function(mutations){
+      for (var i=0;i<mutations.length;i++){
+        var added = mutations[i].addedNodes;
+        for (var j=0;j<added.length;j++){ if (istOverlay(added[j])) nachruesten(added[j]); }
+      }
+    });
+    if (document.body) mo.observe(document.body, { childList:true });
+    else document.addEventListener('DOMContentLoaded', function(){
+      mo.observe(document.body, { childList:true });
+    });
+  }catch(e){}
+})();
+
 function plOverlay(inner){
   var ov=document.createElement('div');
   ov.className='pl-ov';
