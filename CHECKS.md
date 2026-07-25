@@ -39,11 +39,11 @@ Maßstab: BITV 2.0 / EN 301 549 (Voraussetzung für Vergabe an öffentliche Bild
 | # | Prüfpunkt | Sollwert | Status 21.07.2026 |
 |---|---|---|---|
 | 2.1 | `:focus-visible`-Regeln im CSS | > 0 | ✅ 6 (21.07.2026) |
-| 2.2 | `role`-Attribute an interaktiven Bereichen | > 0 | ⚠️ 2 (Navigation). Overlays ohne `role="dialog"` offen |
+| 2.2 | `role`-Attribute an interaktiven Bereichen | > 0 | ✅ 26.07.2026 – MutationObserver setzt `role="dialog"` + `aria-modal="true"` automatisch auf jedes Vollbild-Overlay (bestehend und künftig), kostengünstig ohne `getComputedStyle`/`subtree`. Commit `546083a` |
 | 2.3 | `aria-label` an Icon-Buttons ohne Text | vollständig | ⚠️ 38 gesamt (21.07.2026). Statisches HTML erledigt; ~60 dynamisch erzeugte Buttons in JS-Templates offen |
 | 2.4 | Alle `<img>` mit `alt` | 100 % | ✅ 8 von 8 (21.07.2026) |
 | 2.5 | Vollständige Bedienbarkeit per Tastatur | ja | ⚠️ Fokus sichtbar; 378 `onclick` auf nicht-fokussierbaren Elementen weiterhin offen |
-| 2.6 | Kontrast Text/Hintergrund ≥ 4.5:1 | 100 % | ⬜ ungeprüft |
+| 2.6 | Kontrast Text/Hintergrund ≥ 4.5:1 | 100 % | ✅ 26.07.2026 – alle Text/Hintergrund-Paare aus `:root` berechnet (WCAG-Formel): 7,84:1 bis 15,63:1. Deutlich über AA (4.5:1), meist über AAA (7:1) |
 | 2.7 | Nutzbar bei Browser-Zoom 200 % | ja | ⬜ ungeprüft |
 | 2.8 | `prefers-reduced-motion` respektiert | ja | ✅ globaler Reduce-Block (21.07.2026) |
 | 2.9 | Formularfelder mit zugeordnetem `<label>` | 100 % | ⚠️ 20 Felder per `aria-label` aus dem Placeholder versorgt; dynamische Felder offen |
@@ -170,6 +170,7 @@ Nach Jessicas Bestätigung: 1.1 auf ✅ setzen.
 | 25.07.2026 | Inhalte | +12 Quizfragen Psychiatrie/Psychologie (bio-psycho-sozial, Krisenintervention u. a.), 1.408 → 1.420. Fachlich freigegeben durch Jessica Schenkelberger, 25.07.2026. Commit `c2f35d3`. |
 | 25.07.2026 | Achse 1 | Anhang A abgeschlossen: Überlebenskette und Kinderreanimation gegen GRC 2025 durch Jessica geprüft und bestätigt. 1.1 auf ✅. |
 | 25.07.2026 | Wartbarkeit | Sprint 3 File-Split: QUIZ_FRAGEN, KATS, PL_GRAFIK nach `/data/*.js` ausgelagert. index.html 2,57 → 1,94 MB. Commit `8236d93`. |
+| 26.07.2026 | Achse 2 | `role="dialog"`/`aria-modal` automatisiert für alle Overlays (2.2), Kontrastwerte berechnet und dokumentiert (2.6). 2.3 (aria-label an ~60 dynamischen Buttons) und 2.5 (Tastaturfokus auf `onclick`-Elementen) bewusst für eine begleitete Sitzung zurückgestellt – Massenänderung an vielen Stellen ohne Aufsicht zu riskant. |
 | 21.07.2026 | Inhalte | +194 Quizfragen (an_/ata_/its_/ota_), 1.214 → 1.408. Aus 330 eingereichten Fragen: Dubletten entfernt, widersprüchliche etCO₂-Frage und herstellerabhängige Indikatorfarben-Frage verworfen, Kocher-Klemme auf Péan/Overholt korrigiert, schwache Distraktoren ersetzt, Optionsreihenfolge gemischt. Fachlich kontrolliert durch Jessica Schenkelberger, 21.07.2026. Commit `14fdd99`. |
 
 ---
