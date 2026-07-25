@@ -19,13 +19,28 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+  // GET -> Diagnose: welche Env-Variablen sind vorhanden? (nur Ja/Nein, nie die Werte)
+  if (req.method === 'GET') {
+    res.status(200).json({
+      diag: true,
+      has_SUPABASE_URL: !!process.env.SUPABASE_URL,
+      has_SUPABASE_SERVICE_ROLE: !!process.env.SUPABASE_SERVICE_ROLE,
+      has_ADMIN_API_SECRET: !!process.env.ADMIN_API_SECRET,
+      url_prefix: (process.env.SUPABASE_URL || '').slice(0, 12)
+    });
+    return;
+  }
   if (req.method !== 'POST') { res.status(405).json({ error: 'method' }); return; }
 
   const SB_URL = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
   const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE;
   const ADMIN_SECRET = process.env.ADMIN_API_SECRET;
   if (!SB_URL || !SB_SERVICE || !ADMIN_SECRET) {
-    res.status(500).json({ error: 'config', detail: 'Env fehlt (SUPABASE_URL / SUPABASE_SERVICE_ROLE / ADMIN_API_SECRET)' });
+    const fehlt = [];
+    if (!SB_URL) fehlt.push('SUPABASE_URL');
+    if (!SB_SERVICE) fehlt.push('SUPABASE_SERVICE_ROLE');
+    if (!ADMIN_SECRET) fehlt.push('ADMIN_API_SECRET');
+    res.status(500).json({ error: 'config', fehlt: fehlt });
     return;
   }
 
