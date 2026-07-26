@@ -1662,6 +1662,7 @@
       <button onclick="adminTab('stats')" id="atab-stats" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chart"/></svg> Statistiken</button>
       <button onclick="adminTab('meldungen')" id="atab-meldungen" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:12px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:#38bdf8;font-family:inherit;cursor:pointer">Meldungen<span id="atab-meldungen-badge" style="display:none;margin-left:6px;background:#dc2626;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:1px 6px;font-size:10px;font-weight:900">0</span></button>
       <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Vorlage</button>
+      <button onclick="adminTab('nutzer')" id="atab-nutzer" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Nutzer</button>
     </div>
 
     <!-- TAB: TOKEN GENERATOR -->
@@ -1776,6 +1777,18 @@
           <div id="wa-vorlage-${i}" style="background:rgba(0,0,0,.3);border-radius:9px;padding:12px;font-size:12px;color:#b3c4d6;line-height:1.8;white-space:pre-wrap"></div>
           <button onclick="copyVorlage(${i})" style="margin-top:6px;background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);border-radius:7px;padding:6px 12px;color:#25d366;font-size:11px;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Kopieren</button>
         </div>`).join("")}
+      </div>
+    </div>
+
+    <!-- TAB: NUTZER -->
+    <div id="admin-nutzer" class="admin-tab-content" style="display:none">
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:14px;font-weight:700;color:#e8f3fb">Registrierte Nutzer</div>
+          <button onclick="ladeNutzer()" id="btn-nutzer-laden" style="border-radius:20px;border:1px solid var(--accent);padding:6px 14px;font-size:12px;font-weight:700;background:var(--accent);color:#fff;font-family:inherit;cursor:pointer">Laden</button>
+        </div>
+        <div id="nutzer-summary" style="font-size:12px;color:#9fc3da;margin-bottom:10px"></div>
+        <div id="nutzer-liste" style="font-size:13px;color:#cbd5e1"></div>
       </div>
     </div>
 
@@ -17069,6 +17082,37 @@ function isAdmin() {
     return ids.some(function(x){ return x && ADMIN_EMAILS.indexOf(String(x).trim().toLowerCase()) > -1; });
   } catch (e) { return false; }
 }
+// ── Admin: registrierte Nutzer laden ──
+var _adminSecret = null;
+async function ladeNutzer(){
+  var sum=document.getElementById('nutzer-summary');
+  var list=document.getElementById('nutzer-liste');
+  if(!sum||!list) return;
+  if(!_adminSecret){
+    _adminSecret = prompt('Admin-Passwort eingeben:') || '';
+    if(!_adminSecret){ return; }
+  }
+  sum.textContent='Lade…'; list.innerHTML='';
+  try{
+    var r=await fetch('/api/admin-users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:_adminSecret})});
+    if(r.status===401){ _adminSecret=null; sum.textContent='Falsches Passwort.'; return; }
+    if(!r.ok){ sum.textContent='Fehler ('+r.status+').'; return; }
+    var d=await r.json();
+    sum.innerHTML='<b>'+d.count+'</b> Nutzer · <b>'+d.newsletter_count+'</b> mit Newsletter-Einwilligung';
+    if(!d.users.length){ list.textContent='Noch keine registrierten Nutzer.'; return; }
+    var rows=d.users.map(function(u){
+      var dat=u.created_at?String(u.created_at).substring(0,10):'';
+      var nl=u.newsletter?'<span style="color:#6ee7b7">\u2713 Newsletter</span>':'<span style="color:#7e97ac">\u2014</span>';
+      var cf=u.confirmed?'':' <span style="color:#f59e0b;font-size:11px">(unbest\u00e4tigt)</span>';
+      return '<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)">'+
+        '<div style="min-width:0"><div style="color:#e8f3fb;word-break:break-all">'+ (u.email||'\u2014') + cf +'</div>'+
+        '<div style="font-size:11px;color:#7e97ac">seit '+dat+'</div></div>'+
+        '<div style="font-size:12px;white-space:nowrap">'+nl+'</div></div>';
+    }).join('');
+    list.innerHTML=rows;
+  }catch(e){ sum.textContent='Netzwerkfehler.'; }
+}
+
 // ── Support-Screen: FAQ + beschränkte KI-Frage ──
 function toggleFaq(head) {
   const ans = head.parentNode.querySelector('.faq-answer');
@@ -19713,9 +19757,11 @@ window.addEventListener('load', () => {
   document.addEventListener('visibilitychange',function(){ if(document.hidden) push(); });
 
   function redirectUrl(){ return location.origin+location.pathname; }
-  async function sendMagicLink(email){
+  async function sendMagicLink(email, newsletter){
     setStatus('Sende Link…');
-    var r=await SB.auth.signInWithOtp({email:email,options:{emailRedirectTo:redirectUrl()}});
+    var data = { newsletter: !!newsletter };
+    if (newsletter) { data.newsletter_am = new Date().toISOString(); }
+    var r=await SB.auth.signInWithOtp({email:email,options:{emailRedirectTo:redirectUrl(),data:data}});
     setStatus(r.error?('Fehler: '+r.error.message):'Link gesendet — E-Mail (auch Spam) prüfen');
   }
   async function signOut(){ await SB.auth.signOut(); session=null; renderAccount(); setStatus('Abgemeldet'); }
@@ -19746,11 +19792,12 @@ window.addEventListener('load', () => {
       body.querySelector('#pl-cloud-out').onclick=signOut;
     } else {
       body.innerHTML='<input id="pl-cloud-mail" type="email" inputmode="email" placeholder="deine@email.de" style="width:100%;background:#081420;border:1px solid rgba(34,211,238,.25);border-radius:10px;padding:12px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">'+
-        '<button id="pl-cloud-send" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.25),rgba(8,20,34,.5));border:1.5px solid #22d3ee;color:#ddf0fb;border-radius:10px;padding:12px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Magic-Link senden</button>';
+        '<label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#9fc3da;line-height:1.5;margin-bottom:12px;cursor:pointer">'+'<input id="pl-cloud-news" type="checkbox" style="margin-top:2px;flex:none;accent-color:#22d3ee">'+'<span>Ja, ich m\u00f6chte per E-Mail \u00fcber neue Funktionen, Updates und Lerntipps von PLAN informiert werden. Widerruf jederzeit \u00fcber den Abmeldelink in jeder E-Mail.</span>'+'</label>'+'<button id="pl-cloud-send" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.25),rgba(8,20,34,.5));border:1.5px solid #22d3ee;color:#ddf0fb;border-radius:10px;padding:12px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Magic-Link senden</button>';
       body.querySelector('#pl-cloud-send').onclick=function(){
         var m=body.querySelector('#pl-cloud-mail').value.trim();
         if(!m||m.indexOf('@')<1){ setStatus('Bitte g\u00fcltige E-Mail eingeben'); return; }
-        sendMagicLink(m);
+        var nl=body.querySelector('#pl-cloud-news'); var wantNews=!!(nl&&nl.checked);
+        sendMagicLink(m, wantNews);
       };
     }
   }
