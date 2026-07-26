@@ -491,6 +491,10 @@
   body.light-mode #sr-card [style*="color:#e0f2fe"] { color:#eaf3fb !important; }
   body.light-mode #sr-card [style*="color:#b3c4d6"] { color:#cbd5e1 !important; }
   body.light-mode #sr-card [style*="color:#34d399"] { color:#34d399 !important; }
+  /* Frage des Tages: durchsichtige Weiss-Flaechen sind auf hellem Grund unsichtbar -
+     analog zum #sr-card-Muster auf #home-fdt begrenzt, damit nichts anderes betroffen ist. */
+  body.light-mode #home-fdt [style*="background:rgba(255,255,255,.07)"] { background:rgba(2,132,199,.07) !important; border-color:rgba(2,132,199,.18) !important; }
+  body.light-mode #home-fdt [style*="background:rgba(255,255,255,.09)"] { background:rgba(2,132,199,.09) !important; }
   /* KI-Neon-Button (Home) ist bewusst dunkel -> Text hell halten (hoehere Spezifitaet schlaegt die generischen .page-Aufhell-Regeln) */
   body.light-mode .page .ki-neon-btn [data-i18n="home_ki_t"], body.light-mode .page .ki-neon-btn [style*="color:#7ff0ff"] { color:#7ff0ff !important; }
   body.light-mode .page .ki-neon-btn [data-i18n="home_ki_s"] { color:#9ec7d8 !important; }
@@ -18895,12 +18899,12 @@ function renderFrageDesTages(){
   if(!st){
     var opts='';
     for(var i=0;i<q.opt.length;i++){
-      opts+='<button type="button" onclick="fdtAnswer('+i+')" style="width:100%;text-align:left;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:11px 12px;margin-bottom:7px;color:#e6f2fa;font-size:13.5px;line-height:1.45;cursor:pointer">'+_fdtEsc(q.opt[i])+'</button>';
+      opts+='<button type="button" onclick="fdtAnswer('+i+')" style="width:100%;text-align:left;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:11px 12px;margin-bottom:7px;color:var(--text);font-size:13.5px;line-height:1.45;cursor:pointer">'+_fdtEsc(q.opt[i])+'</button>';
     }
     host.innerHTML='<div style="'+box+'">'+head
-      +'<div style="font-size:14.5px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:11px">'+_fdtEsc(q.frage)+'</div>'
+      +'<div style="font-size:14.5px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:11px">'+_fdtEsc(q.frage)+'</div>'
       +opts
-      +'<div style="font-size:11px;color:#b9924a;margin-top:2px">Jeden Tag eine neue \u2013 z\u00e4hlt auf deine Serie.</div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:2px">Jeden Tag eine neue \u2013 z\u00e4hlt auf deine Serie.</div>'
       +'</div>';
     return;
   }
@@ -18908,14 +18912,14 @@ function renderFrageDesTages(){
   var ok=!!st.ok;
   var farbe = ok ? '#34d399' : '#f87171';
   host.innerHTML='<div style="'+box+'">'+head
-    +'<div style="font-size:14.5px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:9px">'+_fdtEsc(q.frage)+'</div>'
+    +'<div style="font-size:14.5px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:9px">'+_fdtEsc(q.frage)+'</div>'
     +'<div style="background:rgba(255,255,255,.07);border-left:4px solid '+farbe+';border-radius:9px;padding:10px 12px;margin-bottom:9px">'
       +'<div style="font-size:12px;font-weight:800;color:'+farbe+';margin-bottom:3px">'+(ok?'Richtig':'Leider falsch')+'</div>'
-      +'<div style="font-size:13px;color:#e6f2fa;line-height:1.5">'+_fdtEsc(q.opt[q.k])+'</div>'
+      +'<div style="font-size:13px;color:var(--text);line-height:1.5">'+_fdtEsc(q.opt[q.k])+'</div>'
     +'</div>'
-    +(q.erkl?'<div style="font-size:12.5px;color:#c3d9e8;line-height:1.55;margin-bottom:10px">'+_fdtEsc(q.erkl)+'</div>':'')
+    +(q.erkl?'<div style="font-size:12.5px;color:var(--text3);line-height:1.55;margin-bottom:10px">'+_fdtEsc(q.erkl)+'</div>':'')
     +'<button type="button" onclick="fdtShare()" style="width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(251,191,36,.35);border-radius:11px;padding:10px;color:#fbbf24;font-size:13px;font-weight:800;cursor:pointer">Frage teilen</button>'
-    +'<div style="font-size:11px;color:#b9924a;margin-top:8px;text-align:center">Morgen wartet die n\u00e4chste.</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center">Morgen wartet die n\u00e4chste.</div>'
     +'</div>';
 }
 function fdtAnswer(i){
