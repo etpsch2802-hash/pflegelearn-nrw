@@ -1863,7 +1863,7 @@
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const AUSBILDUNGEN = [
-  { id:"pflegehelfer", nr:"01", title:"Pflegefachassistenz", subtitle:"1-jährige Ausbildung · NRW", icon:"🤝", color:"#34d399",
+  { id:"pflegehelfer", nr:"01", title:"Pflegefachassistenz", subtitle:"1-jährige Ausbildung · NRW", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hand\"/></svg>", color:"#34d399",
     dauer:"1 Jahr (Vollzeit)", stunden:"700h Theorie + 950h Praxis", abschluss:"Staatl. anerk. Pflegefachassistent/in",
     rechtsgrundlage:"PflfachassAPrV NRW (seit 01.01.2021)", zugang:"Hauptschulabschluss Kl. 9 (auch ohne Abschluss bei Eignungsnachweis)",
     beschreibung:"Löst Altenpflegehilfe & Krankenpflegeassistenz ab. Einstieg in 3-jährige GPA-Ausbildung mit bis zu 1 Jahr Verkürzung möglich.",
@@ -1872,7 +1872,7 @@ const AUSBILDUNGEN = [
     besonderheit:"Ausbildungsvergütung! Einstieg auch ohne Schulabschluss möglich.",
     weiterfuehrend:"→ 3-jährige GPA mit Verkürzung um bis zu 1 Jahr" },
 
-  { id:"anerkennung", nr:"02", title:"Anerkennungsschüler", subtitle:"Ausländische Pflegekräfte · NRW", icon:"🌍", color:"#60a5fa",
+  { id:"anerkennung", nr:"02", title:"Anerkennungsschüler", subtitle:"Ausländische Pflegekräfte · NRW", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-globe\"/></svg>", color:"#60a5fa",
     dauer:"3–18 Monate (je nach Defizitbescheid)", stunden:"Individuell nach Defizitbescheid", abschluss:"Berufsurkunde Pflegefachmann/Pflegefachfrau DE",
     rechtsgrundlage:"PflBG §66a + PflAPrV §44 · Pflegekammer NRW ab 01.01.2024",
     zugang:"Ausländische Pflegeausbildung (mind. 3 J.) + Defizitbescheid + B2 Deutsch",
@@ -1882,7 +1882,7 @@ const AUSBILDUNGEN = [
     besonderheit:"EU/EWR/CH: Anpassungslehrgang ODER Eignungsprüfung · Drittstaaten: Anpassungslehrgang ODER Kenntnisprüfung",
     weiterfuehrend:"→ Volle Berufsurkunde · Anrechnung Fachkraftschlüssel" },
 
-  { id:"gpa", nr:"03", title:"Generalistische Pflegeausbildung", subtitle:"3-jährige Ausbildung · NRW · PflBG", icon:"🎓", color:"#a78bfa",
+  { id:"gpa", nr:"03", title:"Generalistische Pflegeausbildung", subtitle:"3-jährige Ausbildung · NRW · PflBG", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-cap\"/></svg>", color:"#a78bfa",
     dauer:"3 Jahre (Vollzeit)", stunden:"2.100h Theorie + 2.500h Praxis", abschluss:"Pflegefachmann / Pflegefachfrau (EU-weit)",
     rechtsgrundlage:"Pflegeberufegesetz (PflBG) + PflAPrV seit 01.01.2020",
     zugang:"Mittlerer Schulabschluss ODER Hauptschulabschluss + Berufsausbildung",
@@ -1892,7 +1892,7 @@ const AUSBILDUNGEN = [
     besonderheit:"Ausbildungsvergütung. Vertiefungseinsatz wählbar z.B. Anästhesie, Intensiv, Pädiatrie.",
     weiterfuehrend:"→ Fachweiterbildung, ATA/OTA, Studium, Leitungspositionen" },
 
-  { id:"anaesthesie", nr:"04", title:"Fachpflege Anästhesie", subtitle:"Fachweiterbildung · 2 Jahre", icon:"😴", color:"#f97316",
+  { id:"anaesthesie", nr:"04", title:"Fachpflege Anästhesie", subtitle:"Fachweiterbildung · 2 Jahre", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-moon\"/></svg>", color:"#f97316",
     dauer:"2 Jahre berufsbegleitend", stunden:"720h Theorie + Praxiseinsätze", abschluss:"Fachkrankenpfleger/in Anästhesie & Intensivpflege",
     rechtsgrundlage:"DKG-Empfehlung · Pflegekammer NRW ab 01.01.2024 zuständig",
     zugang:"Pflegefachkraft-Abschluss + mind. 2 Jahre Berufserfahrung",
@@ -1902,7 +1902,7 @@ const AUSBILDUNGEN = [
     besonderheit:"Pflegekammer NRW ist seit 2024 für Fachweiterbildungs-Anerkennung zuständig.",
     weiterfuehrend:"→ Stationsleitung, Lehrfunktionen, Studium Pflegepädagogik" },
 
-  { id:"ata", nr:"05", title:"ATA – Anästhesietechn. Assistenz", subtitle:"3-jährige Ausbildung · ATA-OTA-G", icon:"💉", color:"#fb7185",
+  { id:"ata", nr:"05", title:"ATA – Anästhesietechn. Assistenz", subtitle:"3-jährige Ausbildung · ATA-OTA-G", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>", color:"#fb7185",
     dauer:"3 Jahre Vollzeit | max. 5 Jahre Teilzeit", stunden:"2.100h Theorie + 2.500h Praxis", abschluss:"Anästhesietechnische/r Assistent/in",
     rechtsgrundlage:"ATA-OTA-G (14.12.2019) + ATA-OTA-APrV · seit 01.01.2022",
     zugang:"Realschulabschluss ODER Hauptschulabschluss + 2-jährige Ausbildung",
@@ -1912,7 +1912,7 @@ const AUSBILDUNGEN = [
     besonderheit:"Staatlich erst seit 2022! Kein Pflegeexamen als Voraussetzung nötig.",
     weiterfuehrend:"→ Weiterbildung, Praxisanleitung, Studium Medizinpädagogik" },
 
-  { id:"intensiv", nr:"06", title:"Fachpflege Intensivmedizin", subtitle:"Fachweiterbildung · 2 Jahre", icon:"🏥", color:"#22d3ee",
+  { id:"intensiv", nr:"06", title:"Fachpflege Intensivmedizin", subtitle:"Fachweiterbildung · 2 Jahre", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hospital\"/></svg>", color:"#22d3ee",
     dauer:"2 Jahre berufsbegleitend", stunden:"720h Theorie + Praxiseinsätze ICU", abschluss:"Fachkrankenpfleger/in Anästhesie & Intensivpflege",
     rechtsgrundlage:"DKG-Empfehlung · Pflegekammer NRW ab 01.01.2024 zuständig",
     zugang:"Pflegefachkraft-Abschluss + mind. 2 Jahre Berufserfahrung",
@@ -1922,7 +1922,7 @@ const AUSBILDUNGEN = [
     besonderheit:"Oft kombiniert mit Anästhesiepflege als 'Doppelweiterbildung'.",
     weiterfuehrend:"→ ICU-Leitung, Advanced Practice Nurse (APN)" },
 
-  { id:"ota", nr:"07", title:"OTA – Operationstechn. Assistenz", subtitle:"3-jährige Ausbildung · ATA-OTA-G", icon:"🔬", color:"#facc15",
+  { id:"ota", nr:"07", title:"OTA – Operationstechn. Assistenz", subtitle:"3-jährige Ausbildung · ATA-OTA-G", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>", color:"#facc15",
     dauer:"3 Jahre Vollzeit | max. 5 Jahre Teilzeit", stunden:"2.100h Theorie + 2.500h Praxis", abschluss:"Operationstechnische/r Assistent/in",
     rechtsgrundlage:"ATA-OTA-G (14.12.2019) + ATA-OTA-APrV · seit 01.01.2022",
     zugang:"Realschulabschluss ODER Hauptschulabschluss + 2-jährige Ausbildung",
@@ -3203,75 +3203,75 @@ try{ document.addEventListener('DOMContentLoaded', function(){
 
 
 const KATS = [
-  {id:"alle",label:"Alle Fragen",icon:"📚",color:"#b3c4d6"},
-  {id:"pflegehelfer",label:"Pflegefachassistenz",icon:"🤝",color:"#34d399"},
-  {id:"anerkennung",label:"Anerkennungsschüler",icon:"🌍",color:"#60a5fa"},
-  {id:"gpa",label:"Generalistische GPA",icon:"🎓",color:"#a78bfa"},
-  {id:"ana_herz",label:"Herz & Kreislauf",icon:"🫀",color:"#f43f5e"},
+  {id:"alle",label:"Alle Fragen",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-book\"/></svg>",color:"#b3c4d6"},
+  {id:"pflegehelfer",label:"Pflegefachassistenz",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hand\"/></svg>",color:"#34d399"},
+  {id:"anerkennung",label:"Anerkennungsschüler",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-globe\"/></svg>",color:"#60a5fa"},
+  {id:"gpa",label:"Generalistische GPA",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-cap\"/></svg>",color:"#a78bfa"},
+  {id:"ana_herz",label:"Herz & Kreislauf",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pulse\"/></svg>",color:"#f43f5e"},
   {id:"ana_atmung",label:"Atmung & Lunge",icon:"🫁",color:"#38bdf8"},
   {id:"ana_blut",label:"Blut & Immunsystem",icon:"🩸",color:"#ef4444"},
-  {id:"ana_nerven",label:"Nervensystem",icon:"🧠",color:"#a78bfa"},
-  {id:"ana_hormone",label:"Hormone & Stoffwechsel",icon:"⚗️",color:"#f59e0b"},
+  {id:"ana_nerven",label:"Nervensystem",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>",color:"#a78bfa"},
+  {id:"ana_hormone",label:"Hormone & Stoffwechsel",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>",color:"#f59e0b"},
   {id:"ana_niere",label:"Niere & Harnwege",icon:"💧",color:"#06b6d4"},
   {id:"ana_verdauung",label:"Verdauung",icon:"🍽️",color:"#f97316"},
   {id:"ana_bewegung",label:"Bewegungsapparat",icon:"🦴",color:"#84cc16"},
   {id:"ana_sinne",label:"Sinne & Haut",icon:"👁️",color:"#ec4899"},
-  {id:"ana_grundlagen",label:"Zelle & Grundlagen",icon:"🔬",color:"#2dd4bf"},
-  {id:"pflegeplanung",label:"Pflegeplanung & -prozess",icon:"📋",color:"#e879f9"},
-  {id:"psychiatrie",label:"Psychiatrie",icon:"🧠",color:"#818cf8"},
+  {id:"ana_grundlagen",label:"Zelle & Grundlagen",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>",color:"#2dd4bf"},
+  {id:"pflegeplanung",label:"Pflegeplanung & -prozess",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-clipboard\"/></svg>",color:"#e879f9"},
+  {id:"psychiatrie",label:"Psychiatrie",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>",color:"#818cf8"},
   {id:"paediatrie",label:"Pädiatrie",icon:"👶",color:"#f472b6"},
   {id:"altenpflege",label:"Altenpflege",icon:"👴",color:"#fb923c"},
-  {id:"innere",label:"Innere Medizin",icon:"🫀",color:"#f43f5e"},
+  {id:"innere",label:"Innere Medizin",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pulse\"/></svg>",color:"#f43f5e"},
   {id:"chirurgie",label:"Chirurgie & Orthopädie",icon:"🦴",color:"#f97316"},
-  {id:"psychologie",label:"Psychologie",icon:"🧠",color:"#818cf8"},
-  {id:"an_medikamente",label:"Anästhetika & Medikamente",icon:"💉",color:"#f59e0b"},
+  {id:"psychologie",label:"Psychologie",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>",color:"#818cf8"},
+  {id:"an_medikamente",label:"Anästhetika & Medikamente",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>",color:"#f59e0b"},
   {id:"an_atemweg",label:"Atemweg & Intubation",icon:"🫁",color:"#38bdf8"},
   {id:"an_regional",label:"Regionalanästhesie",icon:"🦵",color:"#a78bfa"},
-  {id:"an_monitoring",label:"Monitoring & Geräte",icon:"📈",color:"#f43f5e"},
-  {id:"an_grundlagen",label:"Grundlagen & Verfahren",icon:"📖",color:"#14b8a6"},
-  {id:"an_notfall",label:"Komplikationen & Notfall",icon:"🚨",color:"#ef4444"},
+  {id:"an_monitoring",label:"Monitoring & Geräte",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-chart\"/></svg>",color:"#f43f5e"},
+  {id:"an_grundlagen",label:"Grundlagen & Verfahren",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-book\"/></svg>",color:"#14b8a6"},
+  {id:"an_notfall",label:"Komplikationen & Notfall",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>",color:"#ef4444"},
   {id:"an_awr",label:"Aufwachraum & Postop",icon:"🛏️",color:"#84cc16"},
   {id:"ata_atemweg",label:"Atemwegsmanagement",icon:"🫁",color:"#38bdf8"},
   {id:"ata_narkose",label:"Narkoseverfahren",icon:"💤",color:"#a78bfa"},
-  {id:"ata_monitoring",label:"Monitoring & Geräte",icon:"📈",color:"#f43f5e"},
-  {id:"ata_medikamente",label:"Medikamente & Notfall",icon:"💉",color:"#f59e0b"},
+  {id:"ata_monitoring",label:"Monitoring & Geräte",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-chart\"/></svg>",color:"#f43f5e"},
+  {id:"ata_medikamente",label:"Medikamente & Notfall",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>",color:"#f59e0b"},
   {id:"ata_periop",label:"Peri-/Postop & Aufwachraum",icon:"🛏️",color:"#14b8a6"},
   {id:"ata_sicherheit",label:"Hygiene, Sicherheit & Doku",icon:"🧼",color:"#84cc16"},
-  {id:"ata_beruf",label:"Beruf & Ausbildung",icon:"🎓",color:"#fb7185"},
+  {id:"ata_beruf",label:"Beruf & Ausbildung",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-cap\"/></svg>",color:"#fb7185"},
   {id:"its_beatmung",label:"Beatmung & Atemweg",icon:"🫁",color:"#38bdf8"},
-  {id:"its_haemo",label:"Hämodynamik & Monitoring",icon:"📈",color:"#f43f5e"},
-  {id:"its_sepsis",label:"Sepsis & Schock",icon:"🦠",color:"#ef4444"},
-  {id:"its_neuro",label:"Sedierung, Delir & Neuro",icon:"😴",color:"#a78bfa"},
+  {id:"its_haemo",label:"Hämodynamik & Monitoring",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-chart\"/></svg>",color:"#f43f5e"},
+  {id:"its_sepsis",label:"Sepsis & Schock",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bug\"/></svg>",color:"#ef4444"},
+  {id:"its_neuro",label:"Sedierung, Delir & Neuro",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-moon\"/></svg>",color:"#a78bfa"},
   {id:"its_organersatz",label:"Organersatz (ECMO/Dialyse)",icon:"🩸",color:"#06b6d4"},
-  {id:"its_medikamente",label:"Notfall- & ICU-Medikamente",icon:"💉",color:"#f59e0b"},
-  {id:"its_elyt",label:"Elektrolyte & BGA",icon:"⚗️",color:"#14b8a6"},
-  {id:"its_pflege",label:"Intensivpflege & Sicherheit",icon:"🛡️",color:"#84cc16"},
+  {id:"its_medikamente",label:"Notfall- & ICU-Medikamente",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>",color:"#f59e0b"},
+  {id:"its_elyt",label:"Elektrolyte & BGA",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>",color:"#14b8a6"},
+  {id:"its_pflege",label:"Intensivpflege & Sicherheit",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-shield\"/></svg>",color:"#84cc16"},
   {id:"ota_steril",label:"Sterilität & Asepsis",icon:"🧤",color:"#38bdf8"},
-  {id:"ota_aufbereitung",label:"Aufbereitung & CSSD",icon:"♻️",color:"#14b8a6"},
-  {id:"ota_instrumente",label:"Instrumente & Instrumentieren",icon:"🔧",color:"#facc15"},
-  {id:"ota_op_technik",label:"OP-Technik & Elektrochirurgie",icon:"⚡",color:"#f59e0b"},
+  {id:"ota_aufbereitung",label:"Aufbereitung & CSSD",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-refresh\"/></svg>",color:"#14b8a6"},
+  {id:"ota_instrumente",label:"Instrumente & Instrumentieren",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-wrench\"/></svg>",color:"#facc15"},
+  {id:"ota_op_technik",label:"OP-Technik & Elektrochirurgie",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bolt\"/></svg>",color:"#f59e0b"},
   {id:"ota_naht",label:"Naht, Wunde & Drainage",icon:"🪡",color:"#a78bfa"},
   {id:"ota_lagerung",label:"Lagerung & Perioperativ",icon:"🛏️",color:"#84cc16"},
-  {id:"ota_sicherheit",label:"Patientensicherheit & Doku",icon:"✅",color:"#f43f5e"},
-  {id:"notfall",label:"Notfallmanagement",icon:"🚨",color:"#ef4444"},
-  {id:"praevention",label:"Prävention & Gesundheit",icon:"🛡️",color:"#4ade80"},
+  {id:"ota_sicherheit",label:"Patientensicherheit & Doku",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-check\"/></svg>",color:"#f43f5e"},
+  {id:"notfall",label:"Notfallmanagement",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>",color:"#ef4444"},
+  {id:"praevention",label:"Prävention & Gesundheit",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-shield\"/></svg>",color:"#4ade80"},
   {id:"rehabilitation",label:"Rehabilitation",icon:"🦽",color:"#14b8a6"},
   {id:"palliation",label:"Palliativpflege",icon:"🕊️",color:"#c084fc"},
-  {id:"mobilitaet",label:"Mobilität",icon:"🚶",color:"#38bdf8"},
+  {id:"mobilitaet",label:"Mobilität",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-move\"/></svg>",color:"#38bdf8"},
 ];
 // ─── CURRICULARE EINHEITEN (CE) — generalistische Pflegeausbildung, Rahmenplan §53 PflBG ───
 const CE_LISTE = [
   {id:"ce01", nr:"CE 01", icon:"🚀", titel:"Ausbildungsstart – Pflegefachfrau/-mann werden", kurz:"Rolle, Pflegeteam, Berufswunsch, erste Orientierung", gruppe:"einsatz"},
   {id:"ce02", nr:"CE 02", icon:"🛏️", titel:"Bewegung und Selbstversorgung unterstützen", kurz:"Mobilität, Körperpflege, Prophylaxen, ATL", gruppe:"handlung"},
   {id:"ce03", nr:"CE 03", icon:"💬", titel:"Erste Pflegeerfahrungen reflektieren – kommunizieren", kurz:"Kommunikation, Beziehungsgestaltung, Reflexion", gruppe:"einsatz"},
-  {id:"ce04", nr:"CE 04", icon:"🛡️", titel:"Gesundheit fördern und präventiv handeln", kurz:"Prävention, Gesundheitsförderung, Beratung", gruppe:"handlung"},
-  {id:"ce05", nr:"CE 05", icon:"🏥", titel:"In kurativen Prozessen unterstützen & Patientensicherheit", kurz:"Akutpflege, Innere, Chirurgie, Sicherheit", gruppe:"handlung"},
-  {id:"ce06", nr:"CE 06", icon:"🚨", titel:"In Akutsituationen sicher handeln", kurz:"Notfall, Intensiv, akute Verschlechterung", gruppe:"handlung"},
-  {id:"ce07", nr:"CE 07", icon:"♻️", titel:"Rehabilitatives Pflegehandeln im interprof. Team", kurz:"Rehabilitation, Teilhabe, Zusammenarbeit", gruppe:"handlung"},
+  {id:"ce04", nr:"CE 04", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-shield\"/></svg>", titel:"Gesundheit fördern und präventiv handeln", kurz:"Prävention, Gesundheitsförderung, Beratung", gruppe:"handlung"},
+  {id:"ce05", nr:"CE 05", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hospital\"/></svg>", titel:"In kurativen Prozessen unterstützen & Patientensicherheit", kurz:"Akutpflege, Innere, Chirurgie, Sicherheit", gruppe:"handlung"},
+  {id:"ce06", nr:"CE 06", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>", titel:"In Akutsituationen sicher handeln", kurz:"Notfall, Intensiv, akute Verschlechterung", gruppe:"handlung"},
+  {id:"ce07", nr:"CE 07", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-refresh\"/></svg>", titel:"Rehabilitatives Pflegehandeln im interprof. Team", kurz:"Rehabilitation, Teilhabe, Zusammenarbeit", gruppe:"handlung"},
   {id:"ce08", nr:"CE 08", icon:"🕊️", titel:"Kritische Lebenssituationen & letzte Lebensphase", kurz:"Palliation, Sterbebegleitung, Trauer", gruppe:"handlung"},
   {id:"ce09", nr:"CE 09", icon:"🌱", titel:"Lebensgestaltung lebensweltorientiert unterstützen", kurz:"Sozialpflege, Alltag, Lebenswelt, Altenpflege", gruppe:"handlung"},
   {id:"ce10", nr:"CE 10", icon:"👶", titel:"Entwicklung & Gesundheit in Kindheit und Jugend", kurz:"Pädiatrie, Pflichteinsatz Kinder/Jugendliche", gruppe:"einsatz"},
-  {id:"ce11", nr:"CE 11", icon:"🧠", titel:"Psychische Gesundheitsprobleme & kognitive Beeinträchtigung", kurz:"Psychiatrie, Pflichteinsatz, personenzentriert", gruppe:"einsatz"},
+  {id:"ce11", nr:"CE 11", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>", titel:"Psychische Gesundheitsprobleme & kognitive Beeinträchtigung", kurz:"Psychiatrie, Pflichteinsatz, personenzentriert", gruppe:"einsatz"},
 ];
 // Bestehende Quiz-Kategorien -> CE (nur Pflege-Wege; OTA/ATA/GPA/Pflegehelfer/Anerkennung behalten eigene Struktur)
 const KAT_ZU_CE = {
@@ -3384,7 +3384,7 @@ function renderAusbList() {
 
 let quizNiveau = "alle";
 const QUIZ_NIVEAUS = [
-  {id:"alle",label:"Alle",icon:"📚",color:"#38bdf8"},
+  {id:"alle",label:"Alle",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-book\"/></svg>",color:"#38bdf8"},
   {id:"leicht",label:"Anfänger",icon:"🌱",color:"#34d399"},
   {id:"mittel",label:"Fortgeschritten",icon:"🔥",color:"#f59e0b"},
   {id:"schwer",label:"Experte",icon:"💎",color:"#a78bfa"}
@@ -7802,7 +7802,7 @@ const GERAETE = [
     ]
   },
   {
-    id:"perfusor_fresenius", icon:"💉", name:"Fresenius Perfusor", sub:"Agilia · Base · Twin", color:"#34d399",
+    id:"perfusor_fresenius", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>", name:"Fresenius Perfusor", sub:"Agilia · Base · Twin", color:"#34d399",
     beschreibung:"Fresenius Kabi Perfusoren (Agilia-System, Base, Twin) bieten Smart-Pump-Technologie mit Dosislimitierung und Medikamentenbibliothek für mehr Sicherheit.",
     tabs:[
       { id:"bedienung", label:"Bedienung", content:[
@@ -7921,7 +7921,7 @@ const GERAETE = [
     ]
   },
   {
-    id:"acls", icon:"⚡", name:"ACLS – Advanced Cardiac Life Support", sub:"ALS · ERC 2025 · Medikamente", color:"#a78bfa",
+    id:"acls", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bolt\"/></svg>", name:"ACLS – Advanced Cardiac Life Support", sub:"ALS · ERC 2025 · Medikamente", color:"#a78bfa",
     beschreibung:"Advanced Cardiac Life Support (ACLS/ALS) nach ERC/GRC 2025: Erweiterte Reanimationsmaßnahmen durch medizinisches Fachpersonal. Strukturierter Algorithmus für defibrillierbbare und nicht-defibrillierbare Rhythmen.",
     tabs:[
       { id:"algorithmus", label:"ALS-Algorithmus", content:[
@@ -9737,7 +9737,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Darmischämie/Peritonitis, Sepsis.", fazit:"Forcierte Reposition und Abwarten sind bei Inkarzeration gefährlich." }
   } }
 ,
-{ id:"int_sepsis", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🦠", farbe:"#84cc16", titel:"Septischer Schock", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"int_sepsis", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bug\"/></svg>", farbe:"#84cc16", titel:"Septischer Schock", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Frau N., 76 J., Dauerkatheter: Fieber 39,4 °C, Schüttelfrost, RR 85/50, Puls 124, verwirrt, Laktat erhöht, warme Peripherie.",
   start:"n1",
   nodes:{
@@ -9797,7 +9797,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hypoxischer Kreislaufstillstand.", fazit:"Blindes Extubieren/Sedieren und Druck-Erhöhen bei Pneu sind gefährlich." }
   } },
 
-{ id:"int_hyperk", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"⚡", farbe:"#eab308", titel:"Gefährliches Kalium", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"int_hyperk", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bolt\"/></svg>", farbe:"#eab308", titel:"Gefährliches Kalium", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr W., 64 J., oligurisches akutes Nierenversagen: Schwäche, Parästhesien; Kalium 6,9 mmol/l; EKG mit hohen spitzen T-Wellen und verbreitertem QRS.",
   start:"n1",
   nodes:{
@@ -9853,7 +9853,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Arrhythmie bzw. persistierende Ketoazidose.", fazit:"Insulin ohne K⁺-Beachtung oder ein vorzeitiger Insulinstopp sind gefährlich." }
   } },
 
-{ id:"int_delir", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🧠", farbe:"#818cf8", titel:"Nächtliche Unruhe (Intensiv)", schwere:"akut", grad:"Fortgeschritten", jahr:3,
+{ id:"int_delir", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>", farbe:"#818cf8", titel:"Nächtliche Unruhe (Intensiv)", schwere:"akut", grad:"Fortgeschritten", jahr:3,
   vignette:"Herr S., 79 J., 2. Tag nach großer OP auf Intensiv: nachts plötzlich agitiert, desorientiert, zieht an Zugängen, fluktuierende Aufmerksamkeit.",
   start:"n1",
   nodes:{
@@ -9881,7 +9881,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation / Atemdepression.", fazit:"Pauschale Fixierung/Benzodiazepine sind beim Delir kontraproduktiv." }
   } },
 
-{ id:"int_anaphylaxie", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"💉", farbe:"#f43f5e", titel:"Reaktion auf Medikament", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"int_anaphylaxie", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>", farbe:"#f43f5e", titel:"Reaktion auf Medikament", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Patient erhält ein i.v.-Antibiotikum; innerhalb von Minuten Urtikaria, Atemnot mit Stridor, RR 80/40, Tachykardie, Angst.",
   start:"n1",
   nodes:{
@@ -10234,7 +10234,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Refraktäre Kardiotoxizität.", fazit:"Abwarten, Mehrgabe oder Lipid-Verzicht sind bei LAST tödlich." }
   } },
 
-{ id:"anae_aufwachraum", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"😴", farbe:"#38bdf8", titel:"Flache Atmung im Aufwachraum", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"anae_aufwachraum", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-moon\"/></svg>", farbe:"#38bdf8", titel:"Flache Atmung im Aufwachraum", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Im Aufwachraum nach Allgemeinanästhesie: Patient zunehmend somnolent, flache langsame Atmung (AF 6), SpO₂ 88 %, enge Pupillen; intraoperativ Opioide.",
   start:"n1",
   nodes:{
@@ -10262,7 +10262,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Atemstillstand/respiratorische Erschöpfung.", fazit:"Abwarten bei klarer Atemdepression und das Übersehen der Restrelaxierung sind gefährlich." }
   } },
 
-{ id:"anae_spinal", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"💉", farbe:"#22c55e", titel:"Kreislauf nach Spinalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"anae_spinal", fach:"anaesthesie", fachLabel:"Anästhesie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>", farbe:"#22c55e", titel:"Kreislauf nach Spinalanästhesie", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Kurz nach Spinalanästhesie: RR fällt auf 80/45, Bradykardie 48/min, Übelkeit/Schwindel; die sensible Blockade steigt höher als erwartet.",
   start:"n1",
   nodes:{
@@ -10330,7 +10330,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Hochgefährliche Situation.", fazit:"Bagatellisieren, Alleinlassen, Ausweichen und Geheimhaltung gefährden suizidale Patienten." }
   } },
 
-{ id:"psy_erregung", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"🛡️", farbe:"#f59e0b", titel:"Angespannter, gereizter Patient", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"psy_erregung", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-shield\"/></svg>", farbe:"#f59e0b", titel:"Angespannter, gereizter Patient", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein akut psychotischer Patient ist zunehmend angespannt, läuft auf und ab, spricht laut, fühlt sich bedroht und reagiert gereizt auf Ansprache. Andere Patienten werden unruhig.",
   start:"n1",
   nodes:{
@@ -10364,7 +10364,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eskalation und Gefährdung.", fazit:"Konfrontation, vorschneller Zwang und Alleingänge sind gefährlich und rechtlich unzulässig." }
   } },
 
-{ id:"psy_manie", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"⚡", farbe:"#eab308", titel:"Getriebene, rastlose Patientin", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
+{ id:"psy_manie", fach:"psychiatrie", fachLabel:"Psychiatrie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bolt\"/></svg>", farbe:"#eab308", titel:"Getriebene, rastlose Patientin", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
   vignette:"Eine Patientin in manischer Episode ist getrieben, redet ununterbrochen, schläft kaum, hat überschießende Pläne, kaum Krankheitseinsicht, gibt viel Geld aus, überschätzt sich und reagiert gereizt auf Grenzen.",
   start:"n1",
   nodes:{
@@ -10528,7 +10528,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Hautstelle bleibt gefährdet – mit konsequenter Entlastung lässt sich Schlimmeres vermeiden.", fazit:"Merke: gefährdete Haut nie massieren, früh und konsequent durch Lagewechsel/Bewegung entlasten, beobachten und dokumentieren." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es ist ein Dekubitus entstanden, der nun aufwendig behandelt werden muss.", fazit:"Merke: Rötungen bei Bettlägerigkeit sind ein Alarmzeichen – Fingertest, keine Massage, sofort Druck entlasten und melden." } }
 },
-{ id:"grd_sturz", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"🚶", farbe:"#34d399", titel:"Sicher auf den Beinen", schwere:"Grundlagen", jahr:1,
+{ id:"grd_sturz", fach:"grundlagen", fachLabel:"Pflegegrundlagen", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-move\"/></svg>", farbe:"#34d399", titel:"Sicher auf den Beinen", schwere:"Grundlagen", jahr:1,
   vignette:"Herr Berg (78) ist nach einem Infekt geschwächt, etwas unsicher beim Gehen und möchte nachts allein zur Toilette. Der Boden ist teils mit Kabeln und einem Teppich belegt.",
   start:"n1",
   nodes:{
@@ -10719,7 +10719,7 @@ const FAELLE = [
 }
 
 ,
-{ id:"neu_apoplex", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#6366f1", titel:"Plötzliche Halbseitensymptomatik", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"neu_apoplex", fach:"neurologie", fachLabel:"Neurologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>", farbe:"#6366f1", titel:"Plötzliche Halbseitensymptomatik", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient zeigt plötzlich eine hängende Mundpartie, einseitige Armschwäche und verwaschene Sprache. Symptombeginn vor ca. 40 Minuten.",
   start:"n1",
   nodes:{
@@ -10752,7 +10752,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Es wurde reagiert – schneller und konsequenter wäre besser gewesen.", fazit:"Merke: Zeit ist Hirn – sofort alarmieren, nüchtern lassen, Blutdruck nicht vorschnell senken, engmaschig überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Verzögerung/Fehler hat sich der Zustand verschlechtert.", fazit:"Merke: kein Abwarten, keine orale Gabe vor Schluck-Screening, Blutdruck nach AO – beim Schlaganfall zählt jede Minute." } }
 },
-{ id:"neu_status", fach:"neurologie", fachLabel:"Neurologie", icon:"⚡", farbe:"#8b5cf6", titel:"Anhaltender Krampfanfall", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"neu_status", fach:"neurologie", fachLabel:"Neurologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bolt\"/></svg>", farbe:"#8b5cf6", titel:"Anhaltender Krampfanfall", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient krampft generalisiert tonisch-klonisch; der Anfall dauert bereits über 5 Minuten an und sistiert nicht.",
   start:"n1",
   nodes:{
@@ -10785,7 +10785,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende stabil – konsequenter wäre sicherer gewesen.", fazit:"Merke: nicht festhalten, nicht abwarten, Benzodiazepin nach Schema, danach Atmung/Vigilanz überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Durch Abwarten oder Übermedikation ist eine bedrohliche Situation entstanden.", fazit:"Merke: Umgebung sichern (nicht festhalten), Status durchbrechen nach Schema, Atemdepression beachten." } }
 },
-{ id:"neu_sab", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#ef4444", titel:"Vernichtungskopfschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"neu_sab", fach:"neurologie", fachLabel:"Neurologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>", farbe:"#ef4444", titel:"Vernichtungskopfschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient klagt über einen plötzlichen, noch nie erlebten 'Vernichtungskopfschmerz' (Donnerschlag), dazu Übelkeit, Nackensteife und Lichtscheu.",
   start:"n1",
   nodes:{
@@ -10814,7 +10814,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Es wurde reagiert – konsequente Ruhe und Überwachung wären besser gewesen.", fazit:"Merke: Donnerschlagkopfschmerz ernst nehmen, reizarm/ruhig, Blutdruck nach AO, engmaschig überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Blutung wurde verkannt oder verschlimmert.", fazit:"Merke: nie als Migräne abtun, keine Anstrengung/Reize, sofort CT und Ruhe." } }
 },
-{ id:"neu_hirndruck", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#f97316", titel:"Eintrübung mit weiter Pupille", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"neu_hirndruck", fach:"neurologie", fachLabel:"Neurologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>", farbe:"#f97316", titel:"Eintrübung mit weiter Pupille", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein Patient mit bekannter intrakranieller Raumforderung wird zunehmend somnolent, klagt über Kopfschmerz und Erbrechen; eine Pupille wird weiter, der Blutdruck steigt, der Puls wird langsam.",
   start:"n1",
   nodes:{
@@ -10931,7 +10931,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – schneller und konsequenter wäre besser gewesen.", fazit:"Merke: Fieber bei Neutropenie ist ein Notfall – Blutkulturen, dann zügig Antibiose nach AO, Sepsis im Blick, Schutzisolation." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Aus der verschleppten Infektion entwickelt sich ein septischer Schock.", fazit:"Merke: nie abwarten oder die Antibiose bis zum Kulturergebnis verzögern – kalkuliert nach AO, strenge Hygiene." } }
 },
-{ id:"onk_tls", fach:"onkologie", fachLabel:"Onkologie", icon:"⚗️", farbe:"#f59e0b", titel:"Entgleisung nach Chemo-Start", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"onk_tls", fach:"onkologie", fachLabel:"Onkologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>", farbe:"#f59e0b", titel:"Entgleisung nach Chemo-Start", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Kurz nach Beginn einer Chemotherapie (großer, rasch wachsender Tumor) wird der Patient zunehmend unwohl; im Labor stark erhöhtes Kalium, Phosphat und Harnsäure, erniedrigtes Kalzium, die Urinausscheidung sinkt.",
   start:"n1",
   nodes:{
@@ -10989,7 +10989,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende stabil – konsequente Lagerung/Überwachung wären besser gewesen.", fazit:"Merke: Oberkörper hoch, O₂, nicht am gestauten Arm punktieren, Atmung engmaschig überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die Stauung und Atemnot verschlechtern sich deutlich.", fazit:"Merke: nie flach lagern, nicht am gestauten Arm arbeiten – Oberkörper hoch, O₂, ursächliche Therapie nach AO." } }
 },
-{ id:"onk_hyperkalz", fach:"onkologie", fachLabel:"Onkologie", icon:"⚗️", farbe:"#14b8a6", titel:"Verwirrt und exsikkiert", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
+{ id:"onk_hyperkalz", fach:"onkologie", fachLabel:"Onkologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>", farbe:"#14b8a6", titel:"Verwirrt und exsikkiert", schwere:"subakut", grad:"Fortgeschritten", jahr:2,
   vignette:"Eine Patientin mit fortgeschrittenem Tumor wird zunehmend müde, verwirrt, klagt über Übelkeit, Verstopfung und starken Durst; sie hat viel Urin ausgeschieden und wirkt exsikkiert. Das Kalzium ist deutlich erhöht.",
   start:"n1",
   nodes:{
@@ -11018,7 +11018,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Am Ende behandelt – früheres und konsequenteres Handeln wäre besser gewesen.", fazit:"Merke: Rehydrierung als Basis, EKG/Bilanz, Sturzschutz bei Verwirrtheit, dann kalziumsenkend nach AO." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Die unbehandelte Hyperkalzämie führt zu Bewusstseinsstörung oder Sturzverletzung.", fazit:"Merke: Verwirrtheit nicht einfach 'dem Tumor' zuschreiben, nicht restriktiv – rehydrieren, schützen, melden." } }
 },
-{ id:"onk_paravasat", fach:"onkologie", fachLabel:"Onkologie", icon:"💉", farbe:"#f97316", titel:"Brennen an der Infusionsstelle", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+{ id:"onk_paravasat", fach:"onkologie", fachLabel:"Onkologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pill\"/></svg>", farbe:"#f97316", titel:"Brennen an der Infusionsstelle", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Während einer laufenden Chemotherapie über einen peripheren Zugang klagt der Patient über Brennen und Schmerz an der Einstichstelle; dort zeigen sich Schwellung und Rötung, der Rücklauf ist fraglich.",
   start:"n1",
   nodes:{
@@ -11086,7 +11086,7 @@ const FAELLE = [
 }
 
 ,
-{ id:"uro_hodentorsion", fach:"urologie", fachLabel:"Urologie", icon:"🚨", farbe:"#ef4444", titel:"Akuter Hodenschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"uro_hodentorsion", fach:"urologie", fachLabel:"Urologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>", farbe:"#ef4444", titel:"Akuter Hodenschmerz", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Ein 16-jähriger Patient kommt mit plötzlich einsetzendem, heftigem einseitigem Hodenschmerz, Übelkeit und geschwollenem, hochstehendem Hoden. Beginn vor gut einer Stunde.",
   start:"n1",
   nodes:{
@@ -11185,7 +11185,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Kolik klingt ab – konsequenteres Vorgehen wäre besser gewesen.", fazit:"Merke: Analgesie nach AO, Urin beobachten, Temperatur im Blick (Urosepsis), Verlauf überwachen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Komplikation (z. B. Urosepsis) wird übersehen.", fazit:"Merke: Kolik nie abtun, Schmerz behandeln, Fieber bei Harnstau ist ein Alarmzeichen – sofort melden." } }
 },
-{ id:"uro_katheter", fach:"urologie", fachLabel:"Urologie", icon:"🔧", farbe:"#14b8a6", titel:"Katheter läuft nicht", schwere:"akut", grad:"Fortgeschritten", jahr:2,
+{ id:"uro_katheter", fach:"urologie", fachLabel:"Urologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-wrench\"/></svg>", farbe:"#14b8a6", titel:"Katheter läuft nicht", schwere:"akut", grad:"Fortgeschritten", jahr:2,
   vignette:"Bei einer Patientin mit Dauerkatheter kommt seit Stunden kaum noch Urin; sie klagt über Unterbauchdruck und Unruhe, der Unterbauch ist prall.",
   start:"n1",
   nodes:{
@@ -11251,7 +11251,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Lage stabilisiert sich – engmaschigeres Vorgehen wäre sicherer gewesen.", fazit:"Merke: Dauerspülung nach AO, Kreislauf engmaschig, Spülung nicht vorzeitig stoppen, Bilanz führen." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zum Schock oder zur erneuten Tamponade.", fazit:"Merke: bei Blasentamponade Kreislauf sichern und nach AO spülen – nicht abwarten, Kreislauf nicht ignorieren, Spülung nicht zu früh beenden." } }
 },
-{ id:"uro_tursyndrom", fach:"urologie", fachLabel:"Urologie", icon:"⚗️", farbe:"#8b5cf6", titel:"Verwirrt nach Prostata-OP", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"uro_tursyndrom", fach:"urologie", fachLabel:"Urologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-flask\"/></svg>", farbe:"#8b5cf6", titel:"Verwirrt nach Prostata-OP", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Nach einer transurethralen Prostataresektion (TUR-P) mit Spülung wird der Patient zunehmend verwirrt, klagt über Übelkeit und Kopfschmerz; Blutdruck und Puls verändern sich, er wirkt unruhig.",
   start:"n1",
   nodes:{
@@ -11351,7 +11351,7 @@ const FAELLE = [
     end_mittel:{ ende:true, ergebnis:"mittel", text:"Die Situation wird beherrscht – konsequenteres Vorgehen wäre sicherer gewesen.", fazit:"Merke: reizarm, RR engmaschig, Magnesium nach AO, bei Krampf nur sichern (nichts in den Mund)." },
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Es kommt zum unkontrollierten Krampf mit Gefahr für Mutter und Kind.", fazit:"Merke: Warnzeichen nie abtun, keine Reize, nicht allein lassen, nichts in den Mund – Arzt und Therapie nach AO." } }
 },
-{ id:"gyn_eug", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"🚨", farbe:"#ef4444", titel:"Akuter Unterbauchschmerz in der Frühschwangerschaft", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
+{ id:"gyn_eug", fach:"gynaekologie", fachLabel:"Gynäkologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>", farbe:"#ef4444", titel:"Akuter Unterbauchschmerz in der Frühschwangerschaft", schwere:"akut · hoch", grad:"Fortgeschritten", jahr:3,
   vignette:"Eine Frau in der Frühschwangerschaft bekommt plötzlich heftige einseitige Unterbauchschmerzen, ist blass, schwindelig, hat einen schnellen Puls und niedrigen Blutdruck; dazu etwas vaginale Blutung.",
   start:"n1",
   nodes:{
@@ -11969,7 +11969,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Ein Warnzeichen wurde zu spät erkannt.", fazit:"Bei Kindern Auffälligkeiten sofort melden – der Zustand kann rasch kippen." }
   }
 },
-{ id:"neuro_sturz_1lj", fach:"neurologie", fachLabel:"Neurologie", icon:"🧠", farbe:"#6366f1", titel:"Sturzgefahr nach Schlaganfall", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+{ id:"neuro_sturz_1lj", fach:"neurologie", fachLabel:"Neurologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>", farbe:"#6366f1", titel:"Sturzgefahr nach Schlaganfall", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
   vignette:"Herr B., 68 J., nach Schlaganfall halbseitig geschwächt, möchte allein zur Toilette aufstehen. Du bist im Zimmer.",
   start:"n1",
   nodes:{
@@ -12050,7 +12050,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Nachblutung wurde zu spät erkannt.", fazit:"Häufiges Schlucken nach Mandel-OP ist ein Alarmzeichen." }
   }
 },
-{ id:"uro_katheter_1lj", fach:"urologie", fachLabel:"Urologie", icon:"🚨", farbe:"#ef4444", titel:"Der Blasenkatheter", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
+{ id:"uro_katheter_1lj", fach:"urologie", fachLabel:"Urologie", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>", farbe:"#ef4444", titel:"Der Blasenkatheter", schwere:"Routine · niedrig", grad:"Einsteiger", jahr:1,
   vignette:"Herr T., 70 J., hat einen transurethralen Dauerkatheter. Du übernimmst Pflege und Beobachtung.",
   start:"n1",
   nodes:{
@@ -12185,7 +12185,7 @@ const FAELLE = [
     end_schlecht:{ ende:true, ergebnis:"schlecht", text:"Eine Sicherheitslücke wäre fast übersehen worden.", fazit:"OP-Vorbereitung ist Patientensicherheit – keine Abkürzungen." }
   }
 },
-{ id:"intensiv_grundpflege_1lj", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"🦠", farbe:"#84cc16", titel:"Grundpflege beim beatmeten Patienten", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
+{ id:"intensiv_grundpflege_1lj", fach:"intensiv", fachLabel:"Intensivmedizin", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bug\"/></svg>", farbe:"#84cc16", titel:"Grundpflege beim beatmeten Patienten", schwere:"Routine · mittel", grad:"Einsteiger", jahr:1,
   vignette:"Herr K. liegt beatmet und bewusstlos auf der Intensivstation. Du unterstützt unter Anleitung bei der Grundpflege.",
   start:"n1",
   nodes:{
@@ -14590,7 +14590,7 @@ const PROPHYLAXEN = [
     handschuhtypen:["Untersuchungshandschuhe (Nitril/Latex): nicht-steril, allgemeiner Schutz","Sterile OP-Handschuhe: aseptische Eingriffe, sterile Katheterisierung","Haushaltshandschuhe: Reinigung und Flächendesinfektion","Chemikalienschutzhandschuhe: Desinfektionsmittelkonzentrate"],
     expertenstandard:"TRBA 250 (Biologische Arbeitsstoffe im Gesundheitswesen) · KRINKO 2016" },
 
-  { id:"krankenhausgiene", name:"Allgemeine Krankenhaushygiene", icon:"🏥",
+  { id:"krankenhausgiene", name:"Allgemeine Krankenhaushygiene", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hospital\"/></svg>",
     definition:"Krankenhaushygiene umfasst alle Maßnahmen zur Verhütung nosokomialer Infektionen. Ca. 400.000–600.000 nosokomiale Infektionen jährlich in Deutschland, ca. 10.000–15.000 Todesfälle.",
     massnahmen:["Flächendesinfektion: täglich patientennahe Flächen (Bettgitter, Nachttisch, Klingel), nach Entlassung Schlussdesinfektion","Wischdesinfektion: von rein nach unrein · von oben nach unten · Einwirkzeit beachten","Abfall: Gruppe A (Hausmüll) · Gruppe B (infektiös) · Gruppe C (Zytostatika) · Sharpsafe für Nadeln","Kanülen NIEMALS recappen – Nadelstichverletzungsgefahr!","Infektionswäsche: roter Sack, direkt verschließen, nicht ausschütteln","PSA anlegen: Kittel → Maske → Brille → Handschuhe","PSA ablegen: Handschuhe → Kittel → Brille → Maske → Händedesinfektion"],
     isolationen:["MRSA: Einzelzimmer, Kittel + Handschuhe + FFP2","VRE: Einzelzimmer, Kittel + Handschuhe","Norovirus/C. difficile: Einzelzimmer, Händewaschen (kein Alkohol!), Kittel + Handschuhe","Tröpfchen (Influenza, COVID): chirurgischer MNS oder FFP2","Aerogen (TBC): Einzelzimmer mit Unterdruck, FFP3"],
@@ -14772,12 +14772,12 @@ const BOBATH = {
 // ─── PFLEGEPLANUNGEN ATL ──────────────────────────────────────
 const PFLEGEPLANUNGEN_ATL = [
   {atl:"Kommunizieren", icon:"💬", problem:"P: Patient kann sich aufgrund einer Aphasie nach Schlaganfall verbal nicht verständigen", aet:"Ä: Schlaganfall links mit Broca-Aphasie", ziel:"Z: Patient kommuniziert innerhalb von 2 Wochen Grundbedürfnisse mit Bildtafeln / Gesten", massnahmen:["Bildtafeln und Kommunikationshelfer bereitstellen","Einfache Ja/Nein-Fragen stellen","Geduld, kein Druck","Logopädie einbeziehen","Angehörige in Kommunikation einweisen"], ressourcen:["Kann Augen gezielt bewegen","Versteht einfache Anweisungen"]},
-  {atl:"Sich bewegen", icon:"🚶", problem:"P: Patient ist aufgrund der Hemiparese rechts in seiner Mobilität eingeschränkt und sturzgefährdet", aet:"Ä: Hemiparese rechts nach Schlaganfall", ziel:"Z: Patient steht innerhalb von 5 Tagen mit Unterstützung einer Pflegeperson sicher auf", massnahmen:["Bobath-Konzept anwenden","Physiotherapie 2× täglich","Rutschfeste Schuhe","Rufanlage in Reichweite","Bett auf niedrigste Position","Sturzprotokoll"], ressourcen:["Linke Seite voll funktionsfähig","Guter Wille zur Mitarbeit"]},
+  {atl:"Sich bewegen", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-move\"/></svg>", problem:"P: Patient ist aufgrund der Hemiparese rechts in seiner Mobilität eingeschränkt und sturzgefährdet", aet:"Ä: Hemiparese rechts nach Schlaganfall", ziel:"Z: Patient steht innerhalb von 5 Tagen mit Unterstützung einer Pflegeperson sicher auf", massnahmen:["Bobath-Konzept anwenden","Physiotherapie 2× täglich","Rutschfeste Schuhe","Rufanlage in Reichweite","Bett auf niedrigste Position","Sturzprotokoll"], ressourcen:["Linke Seite voll funktionsfähig","Guter Wille zur Mitarbeit"]},
   {atl:"Vitale Funktionen aufrechterhalten", icon:"❤️", problem:"P: Patient zeigt Zeichen der Herzinsuffizienz mit Gewichtszunahme 3 kg in 2 Tagen", aet:"Ä: Dekompensierte Herzinsuffizienz NYHA III", ziel:"Z: Patient nimmt innerhalb von 3 Tagen durch Diuretikatherapie mind. 2 kg ab", massnahmen:["Gewicht täglich, gleiche Bedingungen","Flüssigkeitsbilanz exakt führen","Diuretika pünktlich (Furosemid)","Elektrolyte kontrollieren (Kaliummangel!)","RR und Puls 4× täglich","Ödeme täglich messen"], ressourcen:["Patient kooperativ","Versteht Wichtigkeit der Gewichtskontrolle"]},
   {atl:"Sich sauber halten und kleiden", icon:"🚿", problem:"P: Patient kann aufgrund starker Schwäche die Körperpflege nicht selbstständig durchführen", aet:"Ä: Allgemeine Schwäche bei COPD GOLD IV", ziel:"Z: Patient führt innerhalb von 7 Tagen die Gesichtspflege selbstständig durch", massnahmen:["Körperpflege assistierend unterstützen (nicht übernehmen!)","Pausen einplanen (Belastungsdyspnoe)","Kinästhetik anwenden","Sitzbad statt Dusche","Ressourcen aktivieren"], ressourcen:["Möchte selbstständig bleiben","Gute Handfunktion"]},
   {atl:"Essen und trinken", icon:"🍽️", problem:"P: Patient hat nach Schlaganfall eine Schluckstörung und Aspirationsgefahr", aet:"Ä: Dysphagie bei Hirnstammbeteiligung", ziel:"Z: Patient nimmt angedickte Kost ohne Aspirationszeichen zu sich", massnahmen:["Schlucktest vor jeder Mahlzeit","90° Oberkörperhochlagerung beim Essen","Angedickte Flüssigkeiten (ThickenUp)","Kleine Bissen, langsames Essen","30 min nach Essen aufrecht bleiben","Logopädie","Aspirationszeichen beobachten: Husten, feuchte Stimme"], ressourcen:["Schluckreflex auslösbar","Kooperativ"]},
   {atl:"Ausscheiden", icon:"🚽", problem:"P: Patient leidet unter funktioneller Harninkontinenz aufgrund eingeschränkter Mobilität", aet:"Ä: Eingeschränkte Mobilität, Weg zur Toilette zu weit", ziel:"Z: Patient ist innerhalb von 7 Tagen tagsüber kontinent durch Toilettentraining", massnahmen:["Toilettentraining: alle 2h anbieten","Urinflasche / Bettpfanne in Reichweite","Harninkontinenzmaterial als Übergangslösung","Blasentagebuch führen","Weg zur Toilette optimieren"], ressourcen:["Spürt Harndrang","Möchte kontinent sein"]},
-  {atl:"Schlafen und ruhen", icon:"😴", problem:"P: Patient schläft aufgrund von Schmerzen und nächtlicher Dyspnoe weniger als 4h durch", aet:"Ä: Chronische Schmerzen + nächtliche Dyspnoe bei Herzinsuffizienz", ziel:"Z: Patient schläft innerhalb von 5 Tagen mindestens 6h durch", massnahmen:["Schmerzassessment abends (NRS)","Schmerzmedikation vor dem Schlafen","Oberkörperhochlagerung 30–45°","Ruhige Atmosphäre, Geräuschminimierung","Schlafrituale beibehalten","Keine stimulierenden Getränke ab 14h"], ressourcen:["Kennt eigene Einschlafrituale","Akzeptiert Lagerungshilfen"]},
+  {atl:"Schlafen und ruhen", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-moon\"/></svg>", problem:"P: Patient schläft aufgrund von Schmerzen und nächtlicher Dyspnoe weniger als 4h durch", aet:"Ä: Chronische Schmerzen + nächtliche Dyspnoe bei Herzinsuffizienz", ziel:"Z: Patient schläft innerhalb von 5 Tagen mindestens 6h durch", massnahmen:["Schmerzassessment abends (NRS)","Schmerzmedikation vor dem Schlafen","Oberkörperhochlagerung 30–45°","Ruhige Atmosphäre, Geräuschminimierung","Schlafrituale beibehalten","Keine stimulierenden Getränke ab 14h"], ressourcen:["Kennt eigene Einschlafrituale","Akzeptiert Lagerungshilfen"]},
   {atl:"Sich beschäftigen", icon:"🎯", problem:"P: Patient wirkt antriebslos und zieht sich sozial zurück seit Erkrankung", aet:"Ä: Reaktive Depression nach Schlaganfall", ziel:"Z: Patient nimmt innerhalb von 2 Wochen an einer Gruppenaktivität teil", massnahmen:["Interessen und Hobbys erfragen (Biografie)","Ergotherapie einbeziehen","Aktivierungsangebote anbieten","Psychologische Begleitung","Angehörige in Besuche einbeziehen"], ressourcen:["War früher gesellig","Interessiert sich für Bücher"]},
   {atl:"Sinn finden / existenzielle Erfahrungen", icon:"🙏", problem:"P: Patient äußert Hoffnungslosigkeit nach Diagnose terminales Karzinom", aet:"Ä: Terminale Krebserkrankung, unverarbeitete Trauer", ziel:"Z: Patient benennt innerhalb einer Woche mind. eine Ressource, die ihm Halt gibt", massnahmen:["Aktives Zuhören, Raum für Gefühle","Nicht beruhigen oder rationalisieren","Seelsorger anbieten","Palliativteam einbeziehen","Letzte Wünsche erfragen und dokumentieren"], ressourcen:["Familiäre Bindungen stark","Gläubig"]},
   {atl:"Soziale Bereiche sichern", icon:"👥", problem:"P: Patient hat Angst, nach Klinikaufenthalt nicht mehr allein wohnen zu können", aet:"Ä: Funktionseinschränkung nach Hüft-TEP, soziale Isolation", ziel:"Z: Patient kennt bis zur Entlassung alle ihm zustehenden Unterstützungsangebote", massnahmen:["Sozialdienst einbeziehen","Pflegegrad beantragen (MDK)","Häusliche Pflegedienste vorstellen","Hilfsmittel verordnen (Rollator, Badewannensitz)","Entlassungsmanagement strukturiert"], ressourcen:["Tochter wohnt in der Nähe","Finanziell abgesichert"]},
@@ -15098,7 +15098,7 @@ const TASCHENKARTEN = [
   }
 
 ,
-  { id:"mts", titel:"Manchester Triage (MTS)", icon:"🚨", farbe:"#ef4444",
+  { id:"mts", titel:"Manchester Triage (MTS)", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-alert\"/></svg>", farbe:"#ef4444",
     vorderseite:[
       { label:"5 Dringlichkeitsstufen", punkte:["Rot · sofort · 0 min","Orange · sehr dringend · 10 min","Gelb · dringend · 30 min","Grün · normal · 90 min","Blau · nicht dringend · 120 min"] },
       { label:"Prinzip", punkte:["Präsentationsdiagramme + Indikatoren","Höchste zutreffende Stufe zählt","Legt Wartezeit fest, nicht Reihenfolge"] },
