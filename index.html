@@ -19751,7 +19751,11 @@ window.addEventListener('load', () => {
   }
 
   SB.auth.getSession().then(function(res){ session=res.data.session; renderAccount(); if(session) pull(); });
-  SB.auth.onAuthStateChange(function(_e,s){ session=s; renderAccount(); if(session) pull(); });
+  SB.auth.onAuthStateChange(function(_e,s){ session=s; renderAccount(); if(session) pull();
+    if(_e==='SIGNED_IN' && s && s.user && s.user.email){
+      try{ fetch('/api/welcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:s.user.email})}); }catch(e){}
+    }
+  });
   setInterval(push,15000);
   window.addEventListener('pagehide',push);
   document.addEventListener('visibilitychange',function(){ if(document.hidden) push(); });
@@ -19791,7 +19795,8 @@ window.addEventListener('load', () => {
       body.querySelector('#pl-cloud-sync').onclick=function(){ pull(); };
       body.querySelector('#pl-cloud-out').onclick=signOut;
     } else {
-      body.innerHTML='<input id="pl-cloud-mail" type="email" inputmode="email" placeholder="deine@email.de" style="width:100%;background:#081420;border:1px solid rgba(34,211,238,.25);border-radius:10px;padding:12px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">'+
+      body.innerHTML='<div style="background:rgba(56,189,248,.09);border:1px solid rgba(56,189,248,.28);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:12.5px;color:#cbe6f5;line-height:1.55"><b style="color:#7dd3fc">Fortschritt sichern</b><br>Melde dich mit deiner E-Mail an, damit dein Lernstand gespeichert wird und auf jedem Ger&auml;t verf&uuml;gbar ist. Ohne Anmeldung bleibt er nur auf diesem Ger&auml;t.</div>'+
+        '<input id="pl-cloud-mail" type="email" inputmode="email" placeholder="deine@email.de" style="width:100%;background:#081420;border:1px solid rgba(34,211,238,.25);border-radius:10px;padding:12px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">'+
         '<label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#9fc3da;line-height:1.5;margin-bottom:12px;cursor:pointer">'+'<input id="pl-cloud-news" type="checkbox" style="margin-top:2px;flex:none;accent-color:#22d3ee">'+'<span>Ja, ich m\u00f6chte per E-Mail \u00fcber neue Funktionen, Updates und Lerntipps von PLAN informiert werden. Widerruf jederzeit \u00fcber den Abmeldelink in jeder E-Mail.</span>'+'</label>'+'<button id="pl-cloud-send" style="width:100%;background:radial-gradient(circle at 0% 50%,rgba(34,211,238,.25),rgba(8,20,34,.5));border:1.5px solid #22d3ee;color:#ddf0fb;border-radius:10px;padding:12px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Magic-Link senden</button>';
       body.querySelector('#pl-cloud-send').onclick=function(){
         var m=body.querySelector('#pl-cloud-mail').value.trim();
