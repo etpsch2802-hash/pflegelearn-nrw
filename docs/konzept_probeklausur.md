@@ -1,6 +1,6 @@
 # Konzept: Probeklausur / Examens-Simulation
 
-Stand 26.07.2026 · Status: **Planung, noch nicht gebaut**
+Stand 26.07.2026 · Status: **Rahmen entschieden, Umsetzung als Nächstes (Prototyp Schritt 1)**
 
 Zeitbegrenzte Prüfung, die die schriftliche Abschlussprüfung nach PflBG 2020
 nachbildet. Fragen gemischt aus dem vorhandenen Bestand (1.420) und neuen,
@@ -136,11 +136,19 @@ Schritt 1 ist in sich nutzbar und kostet wenig — ein guter erster Meilenstein.
 
 ---
 
-## 8. Offene Fragen an Patrick
+## 8. Entschiedene Rahmenbedingungen (Patrick, 26.07.2026)
 
-- Bestehensgrenze: 50 %? Oder anlehnen an die konkrete NRW-Prüfungsordnung?
-- Soll „bestanden/nicht bestanden" angezeigt werden, oder nur die Prozentzahl?
-  (Manche Azubis demotiviert ein „nicht bestanden" in der Übung.)
-- Timer bei Tab-Wechsel pausieren (nutzerfreundlich) oder weiterlaufen lassen
-  (prüfungsnah)? Vorschlag: weiterlaufen, mit Hinweis vorab.
-- Probeklausur gratis für alle, oder Premium-Feature? (Starkes Verkaufsargument.)
+- **Bestehensgrenze: 50 %**, angelehnt an die NRW-Prüfungsordnung (jede
+  Aufsichtsarbeit mind. „ausreichend").
+- **Keine harten Stempel.** Statt „NICHT BESTANDEN" immer Prozentzahl + eine
+  ermutigende Einordnung und der nächste Schritt. Beispiele:
+  - ab 50 %: „68 % – über der Bestehensgrenze, stark! Deine schwächsten Themen: …"
+  - unter 50 %: „42 % – noch unter 50 %, aber hier sind genau deine Lücken: …"
+  Ergebnis ehrlich, nie als Urteil. (Wellbeing: keine Demotivation kurz vorm Examen.)
+- **Timer läuft bei Tab-Wechsel weiter** (prüfungsnah), mit klarem Hinweis vor
+  dem Start: „Der Timer läuft durch, auch wenn du die App verlässt – wie in der
+  echten Prüfung."
+- **Monetarisierung: erste Probeklausur gratis, weitere Premium.** Jede Nutzerin
+  spürt das Feature einmal voll; wer regelmäßig üben will, löst dafür das Abo.
+  Stärkstes Verkaufsargument, weil die Zahlungsbereitschaft kurz vorm Examen
+  am höchsten ist.
