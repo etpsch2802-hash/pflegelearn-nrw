@@ -641,6 +641,7 @@
   }
 </style>
   <script src="/data/quiz-fragen.js"></script>
+  <script src="/data/klausur-faelle.js"></script>
 </head>
 <body>
 
@@ -15974,34 +15975,66 @@ async function ladeNutzer(){
 var _klausur = null;  // {fragen:[], antworten:[], markiert:Set, idx, startMs, dauerSek, timerId, restSek}
 
 function klausurLabel(katId){
+  if(katId==='fall') return 'Fallsituationen';
   try{ if(typeof KATS!=='undefined'){ var k=KATS.find(function(x){return x.id===katId;}); if(k&&k.label) return k.label; } }catch(e){}
   return katId||'Sonstiges';
 }
 
-// Fragen gleichmaessig ueber Kategorien ziehen
+// Fragen gleichmaessig ueber Kategorien ziehen + Fallbloecke einmischen (~30%)
 function klausurBaue(anzahl){
-  var pool = QUIZ_FRAGEN.slice();
-  // nach Kategorie gruppieren
+  var out=[];
+  // 1) Fallbloecke: ca. 30% der Fragen sollen aus Faellen kommen
+  var fallFragenZiel=Math.round(anzahl*0.3);
+  if(typeof KLAUSUR_FAELLE!=='undefined' && KLAUSUR_FAELLE.length && fallFragenZiel>0){
+    var faelle=KLAUSUR_FAELLE.slice(); shuffleArr(faelle);
+    var geladen=0;
+    for(var fi=0; fi<faelle.length && geladen<fallFragenZiel; fi++){
+      var f=faelle[fi];
+      // ganzen Fall aufnehmen (alle zugehoerigen Fragen bleiben zusammen)
+      f.fragen.forEach(function(q){
+        var opts=q.opt.map(function(t,i){return {t:t,correct:i===q.k};});
+        shuffleArr(opts);
+        out.push({ kat:'fall', fallTitel:f.titel, fallText:f.fall, fallKontext:f.kontext,
+                   frage:q.frage, erkl:q.erkl,
+                   opt:opts.map(function(o){return o.t;}),
+                   k:opts.findIndex(function(o){return o.correct;}) });
+      });
+      geladen+=f.fragen.length;
+    }
+  }
+  // 2) Rest mit Streufragen aus QUIZ_FRAGEN auffuellen, gleichmaessig ueber Kategorien
+  var rest=anzahl-out.length; if(rest<0) rest=0;
   var byKat={};
-  pool.forEach(function(q){ (byKat[q.kat]=byKat[q.kat]||[]).push(q); });
+  QUIZ_FRAGEN.forEach(function(q){ (byKat[q.kat]=byKat[q.kat]||[]).push(q); });
   var kats=Object.keys(byKat);
-  // jede Kategorie intern mischen
   kats.forEach(function(k){ shuffleArr(byKat[k]); });
   shuffleArr(kats);
-  // Round-Robin: reihum aus jeder Kategorie eine Frage, bis anzahl erreicht
-  var out=[], ki=0, guard=0;
-  while(out.length<anzahl && guard<anzahl*40){
+  var streu=[], ki=0, guard=0;
+  while(streu.length<rest && guard<rest*40+40){
     var k=kats[ki%kats.length];
-    if(byKat[k] && byKat[k].length){ out.push(byKat[k].shift()); }
+    if(byKat[k] && byKat[k].length){ streu.push(byKat[k].shift()); }
     ki++; guard++;
   }
-  // Antwort-Optionen pro Frage mischen, korrekten Index mitfuehren
-  return out.map(function(q){
+  streu.forEach(function(q){
     var opts=q.opt.map(function(t,i){return {t:t,correct:i===q.k};});
     shuffleArr(opts);
-    return { kat:q.kat, frage:q.frage, erkl:q.erkl, opt:opts.map(function(o){return o.t;}),
-             k:opts.findIndex(function(o){return o.correct;}) };
+    out.push({ kat:q.kat, frage:q.frage, erkl:q.erkl, opt:opts.map(function(o){return o.t;}),
+               k:opts.findIndex(function(o){return o.correct;}) });
   });
+  // 3) Gesamtreihenfolge mischen, ABER Fallfragen desselben Falls zusammenhalten:
+  // einfacher Ansatz - Faelle als Bloecke, Streufragen dazwischen gemischt.
+  // Wir mischen auf Block-Ebene: jeder Fall = 1 Block, jede Streufrage = 1 Block.
+  var bloecke=[], i=0;
+  while(i<out.length){
+    if(out[i].kat==='fall'){
+      var t=out[i].fallTitel, blk=[];
+      while(i<out.length && out[i].kat==='fall' && out[i].fallTitel===t){ blk.push(out[i]); i++; }
+      bloecke.push(blk);
+    } else { bloecke.push([out[i]]); i++; }
+  }
+  shuffleArr(bloecke);
+  var flat=[]; bloecke.forEach(function(b){ b.forEach(function(x){ flat.push(x); }); });
+  return flat.slice(0,anzahl);
 }
 
 function shuffleArr(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
@@ -16043,7 +16076,14 @@ function klausurRender(){
   var f=K.fragen[K.idx];
   document.getElementById('klausur-progress').textContent='Frage '+(K.idx+1)+'/'+K.fragen.length;
   document.getElementById('klausur-bar').style.width=Math.round((K.idx+1)/K.fragen.length*100)+'%';
-  document.getElementById('klausur-fall').style.display='none';
+  var fallEl=document.getElementById('klausur-fall');
+  if(f.kat==='fall' && f.fallText){
+    fallEl.style.display='';
+    fallEl.innerHTML='<div style="font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#7dd3fc;font-weight:800;margin-bottom:4px">Fallsituation &middot; '+(f.fallKontext||'')+'</div>'+
+      '<div style="font-weight:700;color:#e8f3fb;margin-bottom:5px">'+(f.fallTitel||'')+'</div>'+f.fallText;
+  } else {
+    fallEl.style.display='none';
+  }
   document.getElementById('klausur-frage').textContent=f.frage;
   var wrap=document.getElementById('klausur-optionen'); wrap.innerHTML='';
   f.opt.forEach(function(text,i){
