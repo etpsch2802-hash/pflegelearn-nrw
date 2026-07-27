@@ -8,18 +8,36 @@ klausur-spezifischen Fragen.
 
 ---
 
-## 1. Was die echte Prüfung ist (Zielbild)
+## 1. Was die echte Prüfung ist (Rechtsgrundlage: PflAPrV § 14)
 
-Die schriftliche Abschlussprüfung der generalistischen Pflegeausbildung besteht
-aus **drei Aufsichtsarbeiten** (Klausuren) an drei Tagen, jeweils bezogen auf
-Kompetenzbereiche und Fallsituationen. Jede dauert **120 Minuten**.
+Verbindlich geregelt durch die bundesweite Ausbildungs- und Prüfungsverordnung
+für die Pflegeberufe (PflAPrV), nicht durch die Bezirksregierung Arnsberg. Die
+Behörde überwacht nur das Verfahren; die Aufgaben wählt sie auf Vorschlag der
+Pflegeschule aus und kann landeseinheitliche zentrale Aufgaben vorgeben (in NRW
+der Fall, aber nicht öffentlich).
 
-Für die App bilden wir eine **einzelne Aufsichtsarbeit** als Modul nach — nicht
-alle drei Tage am Stück, das wäre für eine Lern-App unrealistisch. Ziel ist,
-dass die Nutzerin das Gefühl echter Prüfungsbedingungen bekommt: Zeitdruck,
-kein Sofort-Feedback, zusammenhängende Fallfragen, Auswertung erst am Ende.
+**Struktur des schriftlichen Teils (§ 14 PflAPrV):**
+- **Drei Aufsichtsarbeiten**, jede **120 Minuten**, an drei aufeinander-
+  folgenden Werktagen.
+- Jede Arbeit bezieht sich auf einen der drei Prüfungsbereiche und stellt
+  **fallbezogene Aufgaben** — also eine Fallsituation, zu der ausgearbeitete
+  Aufgaben zu bearbeiten sind. KEINE losen Einzelfragen.
+- Die Fallsituationen werden über die drei Arbeiten hinweg **variiert**:
+  unterschiedliche Versorgungskontexte, Altersstufen, Pflegeanlässe.
+- Bestanden, wenn **jede** der drei Arbeiten mindestens „ausreichend" ist.
 
----
+**Wichtige Konsequenz für die App:** Die echte Prüfung ist komplett
+**fallbasiert und frei ausformuliert** — nicht Multiple Choice. Eine App kann
+freie Textantworten nicht automatisch bewerten. Realistische Annäherung:
+**fallbasierte MC-Fragen** (ein Fall, mehrere MC-Aufgaben dazu). Das ist
+deutlich näher am Examen als lose Einzelfragen, aber keine 1:1-Nachbildung.
+
+**Benennung in der App:** „examensnahe Übung" / „Probeklausur", NICHT „echte
+Prüfungssimulation" — um nichts zu versprechen, was über das hinausgeht, was
+das Format leisten kann.
+
+Für die App bilden wir **eine Aufsichtsarbeit** nach (nicht alle drei Tage),
+mit dem Ziel: echtes Prüfungsgefühl (Zeitdruck, kein Feedback, Fallbezug).
 
 ## 2. Kernunterschied zum normalen Quiz
 
@@ -108,20 +126,24 @@ GRANT für anon, authenticated, service_role (Dauerregel).
 
 ---
 
-## 6. Neue Fragen — Umfang
+## 6. Neue Fragen — Fallblöcke (Schritt 2)
 
-Für den ersten Wurf brauchen wir **klausur-spezifische Fallblöcke**, weil die
-im Bestand fehlen. Vorschlag:
-- 8–10 Fallblöcke à 4–5 Fragen = ~40 neue Fragen.
-- Themen breit gestreut: ein internistischer Fall, ein chirurgischer, ein
-  geriatrischer, ein pädiatrischer, ein psychiatrischer, ein Notfall,
-  ein palliativer, einer aus der ambulanten Pflege.
+Nach PflAPrV variieren die Fälle über Versorgungskontext, Altersstufe und
+Pflegeanlass. Genau das bilden die Fallblöcke ab: eine Fallsituation, dann
+4–5 fallbezogene MC-Aufgaben (Assessment → Priorität → Maßnahme → Begründung).
 
-Diese neuen Fragen durchlaufen dieselbe Freigabe wie alle anderen:
-Erst `aktiv=false` bzw. separat markiert, dann Kontrolle durch Jessica,
-dann scharf. (CHECKS 1.9b)
+Erster Satz (Schritt 2): **8 Fallblöcke**, breit variiert:
+1. Internistisch, Erwachsener, Krankenhaus (z. B. Herzinsuffizienz)
+2. Chirurgisch/postoperativ, Erwachsener, Krankenhaus
+3. Geriatrisch, alter Mensch, stationäre Langzeitpflege
+4. Pädiatrisch, Kind, Krankenhaus
+5. Psychiatrisch, Erwachsener/Jugendlicher
+6. Notfall/Akut, Erwachsener (ABCDE)
+7. Palliativ, alter Mensch, Hospiz/ambulant
+8. Ambulante Pflege, chronisch Kranker, häuslich
 
----
+Jeder Fall durchläuft die reguläre Freigabe (CHECKS 1.9b): Kontrolle durch
+Jessica Schenkelberger vor Aktivierung.
 
 ## 7. Reihenfolge der Umsetzung
 
