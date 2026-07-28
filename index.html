@@ -642,6 +642,7 @@
 </style>
   <script src="/data/quiz-fragen.js"></script>
   <script src="/data/klausur-faelle.js"></script>
+  <script src="/data/klausur-grossfaelle.js"></script>
 </head>
 <body>
 
@@ -12847,6 +12848,7 @@ function openExamenIntro() {
     +   '<div style="font-size:11px;color:#cbd5e1;line-height:1.7">• Läuft auf Zeit – bei 0:00 wird automatisch abgegeben<br>• Erklärungen erst nach der Abgabe<br>• Du kannst zwischen Fragen springen<br>• Am Ende: Note, Auswertung pro Thema, schwächstes Thema direkt üben</div>'
     + '</div>'
     + (lim ? '<div style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.25);border-radius:11px;padding:11px;margin-bottom:14px;font-size:11px;color:#fda4af">Im Gratis-Zugang testest du das Format mit ' + cnt + ' Fragen. Das vollständige Examen mit ' + cfg.count + ' Fragen unter Echtbedingungen ist im Vollzugang enthalten.</div>' : '')
+    + (_aktiveGrossfaelle().length ? '<button onclick="startFallklausur()" style="width:100%;background:linear-gradient(135deg,#0891b2,#0e7490);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Fallklausur – ein durchgehender Fall</button>' : '')
     + startBtns
     + '</div>';
   document.body.appendChild(ov);
@@ -12951,6 +12953,42 @@ function startExamen(full) {
   let ov = document.querySelector('[data-exam-overlay]');
   if (!ov) { ov = document.createElement('div'); ov.setAttribute('data-exam-overlay', '1'); ov.style.cssText = 'position:fixed;inset:0;background:#081320;z-index:1100;overflow-y:auto'; document.body.appendChild(ov); }
   renderExamQuestion();
+  if (_examState.timerId) clearInterval(_examState.timerId);
+  _examState.timerId = setInterval(_examTick, 1000);
+}
+
+// ── Fallklausur: ein durchgehender grosser Fall als Pruefung ──
+function _aktiveGrossfaelle() {
+  if (typeof KLAUSUR_GROSSFAELLE === 'undefined') return [];
+  return KLAUSUR_GROSSFAELLE.filter(function(f){ return f.aktiv === true; });
+}
+function startFallklausur(fallId) {
+  const intro = document.querySelector('[data-exam-intro]'); if (intro) intro.remove();
+  const faelle = _aktiveGrossfaelle();
+  if (!faelle.length) { alert('Derzeit ist keine Fallklausur freigegeben.'); return; }
+  let fall = fallId ? faelle.find(function(f){ return f.id === fallId; }) : null;
+  if (!fall) fall = faelle[Math.floor(Math.random() * faelle.length)];
+  // Fragen ins Exam-Format wandeln; Fall-Einleitung an jede Frage haengen (Renderer zeigt sie)
+  const qs = fall.fragen.map(function(q, i){
+    const idx = q.opt.map(function(o, oi){ return { o: o, correct: oi === q.k }; });
+    const sh = _examShuffle(idx);
+    return {
+      frage: q.frage,
+      opts: sh.map(function(x){ return x.o; }),
+      correctIdx: sh.findIndex(function(x){ return x.correct; }),
+      erkl: q.erkl,
+      kat: 'fall',
+      fallTitel: fall.titel,
+      fallKontext: (q.kapitel ? fall.kontext + ' · ' + q.kapitel : fall.kontext),
+      fallText: (i === 0 ? fall.einleitung : (q.kapitel ? '(' + q.kapitel + ') ' + fall.einleitung : fall.einleitung))
+    };
+  });
+  // 2 Minuten pro Frage, mind. 20 Min
+  const minutes = Math.max(20, qs.length * 2);
+  _examState = { questions: qs, idx: 0, answers: new Array(qs.length).fill(null), timeLeft: minutes * 60, timerId: null, full: true, passPct: 50, startTs: Date.now(), finished: false, istFall: true };
+  let ov = document.querySelector('[data-exam-overlay]');
+  if (!ov) { ov = document.createElement('div'); ov.setAttribute('data-exam-overlay', '1'); ov.style.cssText = 'position:fixed;inset:0;background:#081320;z-index:1100;overflow-y:auto'; document.body.appendChild(ov); }
+  renderExamen();
   if (_examState.timerId) clearInterval(_examState.timerId);
   _examState.timerId = setInterval(_examTick, 1000);
 }
