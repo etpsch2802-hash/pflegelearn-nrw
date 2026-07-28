@@ -7,7 +7,7 @@
 var KLAUSUR_GROSSFAELLE = [
   {
     "id": "gf-herzinsuff-geriatrie",
-    "aktiv": true,
+    "aktiv": false,
     "kontext": "Krankenhaus, internistische Station",
     "titel": "Herr Berger, 78 Jahre - dekompensierte Herzinsuffizienz",
     "einleitung": "Herr Berger, 78 Jahre, wird vom Hausarzt mit zunehmender Luftnot und geschwollenen Beinen eingewiesen. Er lebt allein, seine Frau ist vor einem Jahr verstorben. Bekannt sind eine chronische Herzinsuffizienz, Vorhofflimmern und ein leichter Diabetes mellitus Typ 2. Bei Aufnahme: RR 165/95 mmHg, Puls 98/min unregelmaessig, SpO2 89 % bei Raumluft, Atemfrequenz 26/min, Temperatur 36,8 Grad. Er kann nur mit erhoehtem Oberkoerper atmen.",
@@ -172,7 +172,7 @@ var KLAUSUR_GROSSFAELLE = [
   },
   {
     "id": "gf-polytrauma-chirurgie",
-    "aktiv": true,
+    "aktiv": false,
     "kontext": "Krankenhaus, chirurgische Station nach OP",
     "titel": "Frau Cakir, 24 Jahre - nach Verkehrsunfall und Bein-OP",
     "einleitung": "Frau Cakir, 24 Jahre, wurde nach einem Fahrradunfall mit einem offenen Unterschenkelbruch operiert (Osteosynthese). Sie kommt am OP-Tag auf die Station. Sie hat starke Schmerzen (NRS 7/10), ist blass und aengstlich. Der Wundverband am rechten Unterschenkel ist trocken, eine Redon-Drainage foerdert maessig blutig. RR 105/65, Puls 92, Temperatur 37,2 Grad. Sie fragt immer wieder, ob ihr Bein 'wieder normal' werde.",
@@ -337,7 +337,7 @@ var KLAUSUR_GROSSFAELLE = [
   },
   {
     "id": "gf-depression-ambulant",
-    "aktiv": true,
+    "aktiv": false,
     "kontext": "Ambulante psychiatrische Pflege",
     "titel": "Herr Novak, 55 Jahre - Depression nach Jobverlust",
     "einleitung": "Herr Novak, 55 Jahre, wird nach einem Klinikaufenthalt wegen einer schweren depressiven Episode ambulant weiterbetreut. Er hat vor einem Jahr seinen Arbeitsplatz verloren, lebt getrennt und hat wenig sozialen Kontakt. Beim ersten Hausbesuch wirkt die Wohnung ungepflegt, er ist unrasiert, spricht leise und verlangsamt. Er sagt, er nehme seine Medikamente 'meistens', und Essen sei ihm 'egal'.",
