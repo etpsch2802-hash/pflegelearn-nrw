@@ -7,7 +7,7 @@
 var KLAUSUR_GROSSFAELLE = [
   {
     "id": "gf-herzinsuff-geriatrie",
-    "aktiv": false,
+    "aktiv": true,
     "kontext": "Krankenhaus, internistische Station",
     "titel": "Herr Berger, 78 Jahre - dekompensierte Herzinsuffizienz",
     "einleitung": "Herr Berger, 78 Jahre, wird vom Hausarzt mit zunehmender Luftnot und geschwollenen Beinen eingewiesen. Er lebt allein, seine Frau ist vor einem Jahr verstorben. Bekannt sind eine chronische Herzinsuffizienz, Vorhofflimmern und ein leichter Diabetes mellitus Typ 2. Bei Aufnahme: RR 165/95 mmHg, Puls 98/min unregelmaessig, SpO2 89 % bei Raumluft, Atemfrequenz 26/min, Temperatur 36,8 Grad. Er kann nur mit erhoehtem Oberkoerper atmen.",
@@ -29,10 +29,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Aufnahme",
         "frage": "Wie lagerst du Herrn Berger bei der Aufnahme, um seine Atmung zu erleichtern?",
         "opt": [
-          "Flache Rueckenlage",
+          "Eine flache Rueckenlage ganz ohne Erhoehung des Oberkoerpers",
           "Herzbettlagerung: Oberkoerper hoch, Beine tief",
-          "Stabile Seitenlage",
-          "Bauchlage"
+          "Die stabile Seitenlage wie bei bewusstlosen Patienten",
+          "Eine durchgehende Bauchlage zur Entlastung des Rueckens"
         ],
         "k": 1,
         "s": "leicht",
@@ -55,9 +55,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Assessment",
         "frage": "Warum ist bei Herrn Berger das taegliche Wiegen besonders aussagekraeftig?",
         "opt": [
-          "Weil er abnehmen soll",
-          "Weil das Gewicht die Medikamentendosis bestimmt",
-          "Weil es die Diabeteseinstellung zeigt",
+          "Weil er im Rahmen der Behandlung gezielt abnehmen soll",
+          "Weil das Koerpergewicht die genaue Medikamentendosis bestimmt",
+          "Weil sich daran die Einstellung seines Diabetes ablesen laesst",
           "Weil eine rasche Gewichtszunahme Fluessigkeitseinlagerung anzeigt"
         ],
         "k": 3,
@@ -69,9 +69,9 @@ var KLAUSUR_GROSSFAELLE = [
         "frage": "Herr Berger erhaelt nach Anordnung ein Diuretikum. Welche Beobachtung ist jetzt besonders wichtig?",
         "opt": [
           "Urinausscheidung, Elektrolyte und Kreislauf",
-          "Nur die Hautfarbe",
-          "Nur die Koerpertemperatur",
-          "Ausschliesslich das Gewicht"
+          "Ausschliesslich die Farbe und das Aussehen der Haut",
+          "Ausschliesslich die gemessene Koerpertemperatur",
+          "Ausschliesslich das taeglich erfasste Koerpergewicht"
         ],
         "k": 0,
         "s": "schwer",
@@ -81,10 +81,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Massnahmen",
         "frage": "Herr Berger moechte trotz Luftnot nachts allein zur Toilette. Wie handelst du sicher?",
         "opt": [
-          "Ihm das Aufstehen streng verbieten",
+          "Ihm das naechtliche Aufstehen zur Toilette streng verbieten",
           "Sturzrisiko einschaetzen, Hilfe anbieten, Rufanlage in Reichweite legen",
-          "Ihn gewaehren lassen ohne Massnahmen",
-          "Ein Bettgitter reicht als alleinige Massnahme"
+          "Ihn ganz ohne weitere Sicherungsmassnahmen gewaehren lassen",
+          "Ein hochgestelltes Bettgitter allein als ausreichende Massnahme ansehen"
         ],
         "k": 1,
         "s": "mittel",
@@ -146,10 +146,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Entlassung",
         "frage": "Zur Entlassung beraetst du Herrn Berger. Welcher Hinweis ist zur Vermeidung einer erneuten Dekompensation zentral?",
         "opt": [
-          "Moeglichst wenig bewegen",
-          "Viel Salz essen",
+          "Sich moeglichst wenig bewegen und koerperliche Schonung einhalten",
+          "Reichlich salzhaltige Speisen zur Kreislaufanregung essen",
           "Taeglich wiegen und bei rascher Zunahme den Arzt kontaktieren",
-          "Die Medikamente bei Besserung absetzen"
+          "Die verordneten Medikamente bei einsetzender Besserung absetzen"
         ],
         "k": 2,
         "s": "mittel",
@@ -159,9 +159,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Entlassung",
         "frage": "Herr Berger lebt allein und wirkt seit dem Tod seiner Frau niedergeschlagen. Was ist pflegerisch angemessen?",
         "opt": [
-          "Das ist privat und nicht relevant",
-          "Ihn auffordern, sich zusammenzureissen",
-          "Nur die koerperlichen Aspekte beachten",
+          "Das ist seine Privatsache und fuer die Pflege nicht von Bedeutung",
+          "Ihn dazu auffordern, sich zusammenzureissen und nach vorn zu blicken",
+          "Ausschliesslich die koerperlichen Aspekte seiner Erkrankung beachten",
           "Die psychosoziale Situation ernst nehmen und Unterstuetzung (z. B. ambulante Hilfen, Gespraech) anbieten"
         ],
         "k": 3,
@@ -172,7 +172,7 @@ var KLAUSUR_GROSSFAELLE = [
   },
   {
     "id": "gf-polytrauma-chirurgie",
-    "aktiv": false,
+    "aktiv": true,
     "kontext": "Krankenhaus, chirurgische Station nach OP",
     "titel": "Frau Cakir, 24 Jahre - nach Verkehrsunfall und Bein-OP",
     "einleitung": "Frau Cakir, 24 Jahre, wurde nach einem Fahrradunfall mit einem offenen Unterschenkelbruch operiert (Osteosynthese). Sie kommt am OP-Tag auf die Station. Sie hat starke Schmerzen (NRS 7/10), ist blass und aengstlich. Der Wundverband am rechten Unterschenkel ist trocken, eine Redon-Drainage foerdert maessig blutig. RR 105/65, Puls 92, Temperatur 37,2 Grad. Sie fragt immer wieder, ob ihr Bein 'wieder normal' werde.",
@@ -182,9 +182,9 @@ var KLAUSUR_GROSSFAELLE = [
         "frage": "Frau Cakir hat NRS 7/10. Was ist deine vorrangige Massnahme?",
         "opt": [
           "Schmerzmedikation nach Anordnung zeitnah verabreichen und Wirkung kontrollieren",
-          "Sie bitten, die Schmerzen auszuhalten",
-          "Erst am Abend reagieren",
-          "Nur ablenken"
+          "Sie freundlich bitten, die Schmerzen noch eine Weile auszuhalten",
+          "Erst am Abend im Rahmen der Routineversorgung darauf reagieren",
+          "Sie ausschliesslich durch Gespraeche vom Schmerz ablenken"
         ],
         "k": 0,
         "s": "leicht",
@@ -194,10 +194,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Aufnahme",
         "frage": "Frau Cakir ist blass und tachykard. Welche Ursache musst du postoperativ zuerst ausschliessen?",
         "opt": [
-          "Hunger",
+          "Ein einfaches Hungergefuehl aufgrund der laengeren Nuechternheit",
           "Eine Nachblutung / beginnender Volumenmangel",
-          "Langeweile",
-          "Zu warme Bettdecke"
+          "Eine harmlose Langeweile nach dem langen Liegen im Bett",
+          "Eine zu warm eingestellte Bettdecke mit leichtem Waermestau"
         ],
         "k": 1,
         "s": "mittel",
@@ -207,10 +207,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Assessment",
         "frage": "Wie kontrollierst du die Durchblutung, Motorik und Sensibilitaet (DMS) am operierten Bein?",
         "opt": [
-          "Gar nicht, das macht nur der Arzt",
-          "Nur den Verband ansehen",
+          "Gar nicht, da diese Kontrolle ausschliesslich der Arzt durchfuehrt",
+          "Ausschliesslich den angelegten Verband von aussen ansehen",
           "Hautfarbe/Temperatur, Zehenbeweglichkeit und Gefuehl regelmaessig pruefen und vergleichen",
-          "Nur einmal bei Entlassung"
+          "Nur ein einziges Mal am Tag der geplanten Entlassung"
         ],
         "k": 2,
         "s": "mittel",
@@ -220,9 +220,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Assessment",
         "frage": "Welches Zeichen am operierten Unterschenkel wuerde dich an ein Kompartmentsyndrom denken lassen?",
         "opt": [
-          "Leichtes Ziehen, das auf Schmerzmittel gut anspricht",
-          "Trockener Verband",
-          "Temperatur 37,2 Grad",
+          "Ein leichtes Ziehen, das auf die uebliche Schmerzmedikation gut anspricht",
+          "Ein durchgehend trockener und sauber sitzender Wundverband",
+          "Eine gemessene Koerpertemperatur von rund 37,2 Grad",
           "Zunehmender, kaum beeinflussbarer Schmerz, praller Unterschenkel, Gefuehlsstoerung"
         ],
         "k": 3,
@@ -234,9 +234,9 @@ var KLAUSUR_GROSSFAELLE = [
         "frage": "Welche Prophylaxen sind bei Frau Cakir postoperativ besonders wichtig?",
         "opt": [
           "Thrombose-, Pneumonie- und Dekubitusprophylaxe",
-          "Nur Dekubitusprophylaxe",
-          "Keine, da sie jung ist",
-          "Nur Sturzprophylaxe"
+          "Ausschliesslich die Vorbeugung von Druckgeschwueren (Dekubitus)",
+          "Gar keine Prophylaxen, da sie noch jung und belastbar ist",
+          "Ausschliesslich die Vorbeugung von Stuerzen bei Mobilisation"
         ],
         "k": 0,
         "s": "mittel",
@@ -246,10 +246,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Massnahmen",
         "frage": "Bei der ersten Mobilisation wird Frau Cakir schwindelig und blass. Wie reagierst du?",
         "opt": [
-          "Sie zum Weitergehen draengen",
+          "Sie trotz der Beschwerden zum Weitergehen und Durchhalten draengen",
           "Mobilisation stoppen, sicher hinsetzen/lagern, Vitalzeichen und Kreislauf kontrollieren",
-          "Sie allein stehen lassen",
-          "Das Fenster oeffnen und warten"
+          "Sie zur weiteren Kreislaufanregung kurz allein stehen lassen",
+          "Zunaechst nur das Fenster oeffnen und die Entwicklung abwarten"
         ],
         "k": 1,
         "s": "mittel",
@@ -272,9 +272,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Verschlechterung",
         "frage": "Wie verhaeltst du dich bis zum Eintreffen des Arztes bei Verdacht auf Lungenembolie?",
         "opt": [
-          "Die Patientin flach lagern und allein lassen",
-          "Zur Mobilisation auffordern",
-          "Ihr Essen anbieten",
+          "Die Patientin flach hinlegen und zur Beobachtung allein lassen",
+          "Sie zur Foerderung des Kreislaufs zur Mobilisation auffordern",
+          "Ihr zur Staerkung zunaechst etwas zu essen anbieten",
           "Oberkoerper hoch, beruhigen, Vitalzeichen/SpO2 ueberwachen, Sauerstoff nach Anordnung"
         ],
         "k": 3,
@@ -286,9 +286,9 @@ var KLAUSUR_GROSSFAELLE = [
         "frage": "Frau Cakir aeussert nach dem Zwischenfall grosse Angst, erneut etwas 'Schlimmes' zu bekommen. Wie begegnest du ihr?",
         "opt": [
           "Angst ernst nehmen, altersgerecht informieren und Sicherheit durch Praesenz und Aufklaerung geben",
-          "Ihre Angst als uebertrieben abtun",
-          "Das Thema meiden",
-          "Ihr sagen, sie solle nicht so viel nachdenken"
+          "Ihre geaeusserte Angst als deutlich uebertrieben abtun",
+          "Das belastende Thema meiden und bewusst nicht ansprechen",
+          "Ihr sagen, sie solle einfach nicht so viel darueber nachdenken"
         ],
         "k": 0,
         "s": "mittel",
@@ -311,10 +311,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Rehabilitation",
         "frage": "Welche Beobachtung an der OP-Wunde wuerde auf eine Wundinfektion hindeuten?",
         "opt": [
-          "Trockener, reizloser Verband",
-          "Leichter Juckreiz nach Tagen",
+          "Ein durchgehend trockener und reizloser Wundverband",
+          "Ein leichter Juckreiz, der erst nach einigen Tagen auftritt",
           "Zunehmende Roetung, Ueberwaermung, Schwellung, Schmerz und ggf. Fieber",
-          "Blasse Narbe nach Wochen"
+          "Eine blasse, unauffaellige Narbe nach mehreren Wochen"
         ],
         "k": 2,
         "s": "mittel",
@@ -324,9 +324,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Entlassung",
         "frage": "Zur Entlassung: Welcher Hinweis zur Thromboseprophylaxe zu Hause ist wichtig?",
         "opt": [
-          "Bettruhe halten, bis alles verheilt ist",
-          "Prophylaxe sofort beenden",
-          "Viel sitzen mit haengenden Beinen",
+          "Strikte Bettruhe halten, bis die Wunde vollstaendig verheilt ist",
+          "Die verordnete Prophylaxe sofort nach der Entlassung beenden",
+          "Moeglichst viel mit haengenden Beinen sitzen und sich schonen",
           "In Bewegung bleiben, verordnete Prophylaxe (z. B. Spritzen/Struempfe) korrekt fortfuehren"
         ],
         "k": 3,
@@ -337,7 +337,7 @@ var KLAUSUR_GROSSFAELLE = [
   },
   {
     "id": "gf-depression-ambulant",
-    "aktiv": false,
+    "aktiv": true,
     "kontext": "Ambulante psychiatrische Pflege",
     "titel": "Herr Novak, 55 Jahre - Depression nach Jobverlust",
     "einleitung": "Herr Novak, 55 Jahre, wird nach einem Klinikaufenthalt wegen einer schweren depressiven Episode ambulant weiterbetreut. Er hat vor einem Jahr seinen Arbeitsplatz verloren, lebt getrennt und hat wenig sozialen Kontakt. Beim ersten Hausbesuch wirkt die Wohnung ungepflegt, er ist unrasiert, spricht leise und verlangsamt. Er sagt, er nehme seine Medikamente 'meistens', und Essen sei ihm 'egal'.",
@@ -359,10 +359,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Erstkontakt",
         "frage": "Herr Novak sagt, Essen sei ihm 'egal'. Warum ist das pflegerisch bedeutsam?",
         "opt": [
-          "Es ist unwichtig, solange er Medikamente nimmt",
+          "Es ist unwichtig, solange er seine Medikamente zuverlaessig einnimmt",
           "Appetitverlust und Vernachlaessigung koennen Krankheitszeichen sein und die Gesundheit gefaehrden",
-          "Nur sein Gewicht zaehlt",
-          "Das betrifft nur den Arzt"
+          "Ausschliesslich sein aktuelles Koerpergewicht ist dabei entscheidend",
+          "Das betrifft allein den behandelnden Arzt und nicht die Pflege"
         ],
         "k": 1,
         "s": "mittel",
@@ -372,10 +372,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Assessment",
         "frage": "Er berichtet, die Medikamente nur 'meistens' zu nehmen. Wie gehst du damit um?",
         "opt": [
-          "Ihn beschuldigen und ermahnen",
-          "Die Medikamente heimlich ins Essen geben",
+          "Ihn wegen der unregelmaessigen Einnahme beschuldigen und ermahnen",
+          "Ihm die Medikamente ohne sein Wissen heimlich ins Essen geben",
           "Nicht-wertend nach Gruenden fragen und ueber die Bedeutung der regelmaessigen Einnahme informieren",
-          "Das ignorieren"
+          "Die unregelmaessige Einnahme uebergehen und nicht ansprechen"
         ],
         "k": 2,
         "s": "mittel",
@@ -385,9 +385,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Assessment",
         "frage": "Welche Aussage von Herrn Novak erfordert deine hoechste Aufmerksamkeit?",
         "opt": [
-          "'Ich schlafe schlecht.'",
-          "'Ich habe wenig Appetit.'",
-          "'Ich fuehle mich oft muede.'",
+          "Die Aussage, dass er in letzter Zeit sehr schlecht schlafe",
+          "Die Aussage, dass er kaum noch Appetit auf Essen habe",
+          "Die Aussage, dass er sich tagsueber oft muede und erschoepft fuehle",
           "'Manchmal denke ich, es waere besser, nicht mehr da zu sein.'"
         ],
         "k": 3,
@@ -399,9 +399,9 @@ var KLAUSUR_GROSSFAELLE = [
         "frage": "Du sprichst ihn direkt auf Suizidgedanken an. Warum ist dieses offene Nachfragen richtig?",
         "opt": [
           "Offenes Ansprechen erhoeht das Risiko nicht, sondern entlastet und ermoeglicht Hilfe",
-          "Es bringt ihn erst auf die Idee",
-          "Man sollte das Thema besser meiden",
-          "Das darf nur der Arzt"
+          "Das offene Ansprechen bringt ihn erst auf entsprechende Gedanken",
+          "Ein solches Thema sollte man im Gespraech besser ganz vermeiden",
+          "Ueber Suizidgedanken darf ausschliesslich der Arzt sprechen"
         ],
         "k": 0,
         "s": "schwer",
@@ -411,10 +411,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Krise",
         "frage": "Herr Novak bestaetigt Suizidgedanken, verneint aber einen konkreten Plan. Was ist jetzt richtig?",
         "opt": [
-          "Den Hausbesuch normal beenden",
+          "Den Hausbesuch wie geplant in Ruhe und ohne weitere Schritte zu Ende bringen",
           "Situation ernst nehmen, nicht allein lassen bzw. Sicherheit organisieren und umgehend aerztliche/therapeutische Hilfe einbeziehen",
-          "Ihm ein Beruhigungsmittel aus der Hausapotheke geben",
-          "Erst beim naechsten Termin darauf zurueckkommen"
+          "Ihm ein Beruhigungsmittel aus der eigenen Hausapotheke zur Entspannung anbieten",
+          "Das belastende Thema erst beim naechsten vereinbarten Hausbesuch wieder aufgreifen"
         ],
         "k": 1,
         "s": "schwer",
@@ -424,10 +424,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Stabilisierung",
         "frage": "In den folgenden Wochen bessert sich Herr Novaks Antrieb, die Stimmung bleibt aber gedrueckt. Warum ist gerade jetzt Aufmerksamkeit wichtig?",
         "opt": [
-          "Weil jetzt keine Gefahr mehr besteht",
-          "Weil die Betreuung jetzt endet",
+          "Weil mit der Besserung nun keinerlei Gefahr mehr besteht",
+          "Weil die pflegerische Betreuung an dieser Stelle regulaer endet",
           "Weil mit zurueckkehrendem Antrieb das Suizidrisiko voruebergehend steigen kann",
-          "Weil Beobachtung ueberfluessig wird"
+          "Weil eine weitere Beobachtung jetzt ueberfluessig geworden ist"
         ],
         "k": 2,
         "s": "schwer",
@@ -437,9 +437,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Foerderung",
         "frage": "Wie foerderst du Herrn Novaks Selbstversorgung (Koerperpflege, Haushalt) am besten?",
         "opt": [
-          "Alles fuer ihn uebernehmen",
-          "Ihn zu allem draengen",
-          "Es ihm ganz ueberlassen ohne Unterstuetzung",
+          "Ihm saemtliche anfallenden Aufgaben vollstaendig abnehmen",
+          "Ihn nachdruecklich zu allen Taetigkeiten gleichzeitig draengen",
+          "Es ihm ganz allein ueberlassen, ohne jede Unterstuetzung",
           "Kleinschrittig aktivieren, erreichbare Ziele setzen und Erfolge anerkennen"
         ],
         "k": 3,
@@ -451,9 +451,9 @@ var KLAUSUR_GROSSFAELLE = [
         "frage": "Welche Massnahme wirkt der sozialen Isolation von Herrn Novak entgegen?",
         "opt": [
           "Gemeinsam Kontakt- und Tagesstrukturangebote (z. B. Tagesstaette, Gruppen) erarbeiten",
-          "Ihm raten, allein zu bleiben",
-          "Besuche grundsaetzlich vermeiden",
-          "Ihn zu sozialen Kontakten zwingen"
+          "Ihm raten, sich zum Schutz besser weiter zurueckzuziehen",
+          "Besuche bei ihm grundsaetzlich und moeglichst ganz vermeiden",
+          "Ihn ohne Ruecksicht zu sozialen Kontakten draengen und zwingen"
         ],
         "k": 0,
         "s": "mittel",
@@ -463,10 +463,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Verlauf",
         "frage": "Herr Novak fragt, ob er die Medikamente absetzen koenne, da es ihm besser gehe. Wie antwortest du?",
         "opt": [
-          "'Ja, wenn Sie sich besser fuehlen, koennen Sie aufhoeren.'",
+          "'Ja, wenn Sie sich deutlich besser fuehlen, koennen Sie damit aufhoeren.'",
           "'Das entscheidet der Arzt - Antidepressiva werden nicht eigenmaechtig abgesetzt, auch bei Besserung.'",
-          "'Nehmen Sie einfach die halbe Dosis.'",
-          "'Das ist mir egal.'"
+          "'Nehmen Sie ab jetzt einfach nur noch die halbe Dosis ein.'",
+          "'Ob Sie die Medikamente nehmen, ist letztlich Ihre eigene Sache.'"
         ],
         "k": 1,
         "s": "mittel",
@@ -476,10 +476,10 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Angehoerige",
         "frage": "Herrn Novaks erwachsene Tochter meldet sich und moechte helfen, weiss aber nicht wie. Was ist sinnvoll?",
         "opt": [
-          "Ihr sagen, sie solle sich heraushalten",
-          "Ohne seine Zustimmung alle Details weitergeben",
+          "Ihr mitteilen, sie solle sich aus der Behandlung heraushalten",
+          "Ihr auch ohne seine Zustimmung alle Einzelheiten weitergeben",
           "Sie - mit Einverstaendnis von Herrn Novak - einbeziehen und ueber unterstuetzenden Umgang informieren",
-          "Sie ignorieren"
+          "Ihr Angebot uebergehen und die Tochter nicht weiter einbeziehen"
         ],
         "k": 2,
         "s": "mittel",
@@ -489,9 +489,9 @@ var KLAUSUR_GROSSFAELLE = [
         "kapitel": "Verlauf",
         "frage": "Woran erkennst du insgesamt, dass die ambulante psychiatrische Pflege bei Herrn Novak wirkt?",
         "opt": [
-          "Er nimmt zufaellig zu",
-          "Er spricht weniger mit dir",
-          "Die Wohnung bleibt unveraendert",
+          "Dass er im weiteren Verlauf eher zufaellig wieder etwas an Koerpergewicht zunimmt",
+          "Dass er in den Gespraechen insgesamt deutlich weniger mit dir spricht als anfangs",
+          "Dass seine Wohnung unveraendert im gleichen ungepflegten Zustand bleibt",
           "Bessere Selbstversorgung, stabilere Einnahmetreue, mehr Kontakte und Tagesstruktur, keine akute Suizidalitaet"
         ],
         "k": 3,
