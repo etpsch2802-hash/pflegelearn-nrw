@@ -1954,7 +1954,10 @@ const DEMO_MAX_Q = 3;
 
 /* QUIZ_FRAGEN -> data/quiz-fragen.js (1420 Fragen) */
 // Fragenzahl dynamisch: setzt alle .pl-fragen-count-Elemente auf QUIZ_FRAGEN.length (nie wieder veraltet)
-var PL_WDB_STATS = { lern:0, mcq:0 };
+// PL_WDB_MCQ_FALLBACK: Startwert fuer die Wissens-MCQ, damit die Gesamtzahl sofort (vor dem Supabase-Laden)
+// korrekt erscheint und nicht von 1420 auf ~2400 springt. Wird nach dem Laden durch den echten Wert ersetzt.
+var PL_WDB_MCQ_FALLBACK = 980;
+var PL_WDB_STATS = { lern:0, mcq:PL_WDB_MCQ_FALLBACK };
 function plSyncFragenCount(){
   try{
     var n=QUIZ_FRAGEN.length;
@@ -1973,7 +1976,8 @@ function plUpdateWdbStats(){
     loadWissensDB().then(function(d){
       if(!Array.isArray(d)) return;
       var m=0; d.forEach(function(e){ var x=(e.daten&&e.daten.mcq); if(Array.isArray(x)) m+=x.length; });
-      PL_WDB_STATS = { lern:d.length, mcq:m };
+      // Echten Wert nur uebernehmen, wenn geladen; sonst Fallback behalten (Anzeige faellt nie auf 1420 zurueck)
+      PL_WDB_STATS = { lern:d.length, mcq: (m>0 ? m : PL_WDB_MCQ_FALLBACK) };
       plSyncFragenCount();
     }).catch(function(){});
   }catch(e){}
