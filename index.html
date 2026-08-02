@@ -12153,6 +12153,7 @@ function showSearchOverlay() {
   if (!o) return;
   o.style.display = 'block';
   try{ plWakeSyncUI(); }catch(e){}
+  try{ if(plWakeIsOn()){ _plWakeSuspended=false; plWakeStart(); } }catch(e){}
   setTimeout(() => document.getElementById('search-input').focus(), 100);
 }
 function closeSearchOverlay() {
@@ -12206,10 +12207,13 @@ function plWakeIsOn(){ try{ return localStorage.getItem('pl_wake_on')==='1'; }ca
 function plWakePhrase(){ try{ return (localStorage.getItem('pl_wake_phrase')||'hey plan'); }catch(e){ return 'hey plan'; } }
 function _plWakeNorm(s){ return String(s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
 function _plWakeVariants(){
-  var base=_plWakeNorm(plWakePhrase()); var v=[base];
-  if(base.indexOf('hey ')===0){ var rest=base.slice(4); v.push('hei '+rest,'hai '+rest,'he '+rest,'ey '+rest,'hey'+rest); }
+  var base=_plWakeNorm(plWakePhrase()); var v=[base, base.replace(/ /g,'')];
+  if(base.indexOf('hey ')===0){ var rest=base.slice(4);
+    ['hey','hei','hai','hi','he','ey','a','ok','okay','hallo'].forEach(function(p){ v.push(p+' '+rest); v.push(p+rest); });
+  }
   return v;
 }
+function _plWakeHint(txt, color){ var h=document.getElementById('wake-hint'); if(h){ h.textContent=txt; h.style.color=color||'#5f7a8c'; } }
 function plWakeSyncUI(){
   var b=document.getElementById('wake-toggle'), lbl=document.getElementById('wake-toggle-label'), hint=document.getElementById('wake-hint');
   var on=plWakeIsOn();
@@ -12223,7 +12227,14 @@ function plWakeToggle(){
   var on=!plWakeIsOn();
   try{ localStorage.setItem('pl_wake_on', on?'1':'0'); }catch(e){}
   _plWakeErrCount=0; _plWakeSuspended=false;
-  if(on){ plWakeStart(); } else { plWakeStop(); }
+  if(on){
+    _plWakeHint('Mikrofon wird aktiviert …', '#8ab4d0');
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+      navigator.mediaDevices.getUserMedia({audio:true})
+        .then(function(s){ try{ s.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} plWakeStart(); })
+        .catch(function(){ _plWakeHint('Mikrofon-Zugriff nötig – bitte erlauben','#fca5a5'); });
+    } else { plWakeStart(); }
+  } else { plWakeStop(); _plWakeHint('', '#5f7a8c'); }
   plWakeSyncUI();
 }
 function plWakeForceOff(){ try{ localStorage.setItem('pl_wake_on','0'); }catch(e){} plWakeStop(); plWakeSyncUI(); }
@@ -12236,6 +12247,8 @@ function plWakeStart(){
   var r; try{ r=new SR(); }catch(e){ return; }
   r.lang='de-DE'; r.interimResults=true; r.continuous=true; r.maxAlternatives=1;
   _plWakeRec=r;
+  r.onstart=function(){ _plWakeErrCount=0; _plWakeHint('hört zu … sag „'+plWakePhrase()+'"', '#6ee7b7'); };
+  r.onaudiostart=function(){ _plWakeHint('hört zu … sag „'+plWakePhrase()+'"', '#6ee7b7'); };
   r.onresult=function(ev){
     if(_plWakeBusy) return;
     var txt=''; for(var i=ev.resultIndex;i<ev.results.length;i++) txt+=ev.results[i][0].transcript+' ';
@@ -12248,15 +12261,16 @@ function plWakeStart(){
   };
   r.onerror=function(ev){
     var e=(ev&&ev.error)||'';
-    if(e==='not-allowed'||e==='service-not-allowed'){ alert('Fuer den Freisprech-Modus muss der Mikrofon-Zugriff erlaubt sein.'); plWakeForceOff(); return; }
+    if(e==='not-allowed'||e==='service-not-allowed'){ _plWakeHint('Mikrofon-Zugriff nötig – bitte erlauben', '#fca5a5'); alert('Fuer den Freisprech-Modus muss der Mikrofon-Zugriff erlaubt sein.'); plWakeForceOff(); return; }
+    if(e==='no-speech'||e==='aborted') return;
     _plWakeErrCount++;
   };
   r.onend=function(){
     _plWakeRec=null;
-    if(_plWakeErrCount>6){ plWakeForceOff(); return; }
-    if(plWakeIsOn() && !_plWakeSuspended && !_plWakeBusy){ setTimeout(plWakeStart, 500); }
+    if(_plWakeErrCount>8){ _plWakeHint('pausiert – „Freisprechen" aus und wieder an tippen', '#fca5a5'); plWakeForceOff(); return; }
+    if(plWakeIsOn() && !_plWakeSuspended && !_plWakeBusy){ setTimeout(plWakeStart, 400); }
   };
-  try{ r.start(); }catch(e){ _plWakeRec=null; }
+  try{ r.start(); }catch(e){ _plWakeRec=null; setTimeout(function(){ if(plWakeIsOn() && !_plWakeSuspended && !_plWakeRec) plWakeStart(); }, 500); }
 }
 function _plWakeTrigger(q){
   plWakeSuspend();
