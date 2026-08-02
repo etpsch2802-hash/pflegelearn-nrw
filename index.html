@@ -877,6 +877,10 @@
       <button onclick="plSearchVoice()" id="search-mic-btn" aria-label="Sprachsuche" title="Sprachsuche – antippen und sprechen" style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.35);border-radius:11px;padding:12px 14px;color:#7dd3fc;font-family:inherit;cursor:pointer;display:flex;align-items:center"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><use href="#i-mic"/></svg></button>
       <button onclick="closeSearchOverlay()" id="search-back-btn" style="background:rgba(var(--accent-rgb),.18);border:1px solid rgba(var(--accent-rgb),.45);border-radius:11px;padding:12px 18px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">← Zurück</button>
     </div>
+    <div style="display:flex;align-items:center;gap:9px;margin:-6px 2px 14px">
+      <button id="wake-toggle" onclick="plWakeToggle()" style="background:rgba(255,255,255,.08);border:1px solid rgba(var(--accent-rgb),.28);border-radius:9px;padding:7px 11px;color:#8ab4d0;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px"><use href="#i-ear"/></svg><span id="wake-toggle-label">Freisprechen: aus</span></button>
+      <span id="wake-hint" style="font-size:11px;color:#5f7a8c"></span>
+    </div>
     <div id="search-results" style="display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 110px);overflow-y:auto"></div>
   </div>
 </div>
@@ -12117,6 +12121,7 @@ function showSearchOverlay() {
   const o = document.getElementById('search-overlay');
   if (!o) return;
   o.style.display = 'block';
+  try{ plWakeSyncUI(); }catch(e){}
   setTimeout(() => document.getElementById('search-input').focus(), 100);
 }
 function closeSearchOverlay() {
@@ -12131,11 +12136,14 @@ function plSearchVoiceStop(){
   window._plSearchRec=null;
   var btn=document.getElementById('search-mic-btn');
   if(btn){ btn.style.background='rgba(255,255,255,.10)'; btn.style.color='#7dd3fc'; }
+  // Freisprech-Modus danach wieder aufnehmen
+  try{ if(plWakeIsOn()){ setTimeout(plWakeResume, 700); } }catch(e){}
 }
 function plSearchVoice(){
   if(!plMicSupported()){ alert('Sprachsuche wird auf diesem Geraet nicht unterstuetzt. In Chrome auf Android funktioniert sie zuverlaessig.'); return; }
   var inp=document.getElementById('search-input'); if(!inp) return;
   if(window._plSearchRec){ plSearchVoiceStop(); return; }
+  try{ plWakeSuspend(); }catch(e){}
   try{ stopSpeak(); }catch(e){}
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   var r=new SR(); r.lang='de-DE'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
@@ -12151,6 +12159,86 @@ function plSearchVoice(){
   r.onend=function(){ plSearchVoiceStop(); };
   try{ r.start(); }catch(e){ plSearchVoiceStop(); }
 }
+
+/* ── Freisprech-Modus (Wake-Phrase, z. B. „Hey Plan") ──────────────────────
+   Opt-in, Standard AUS. Laeuscht kontinuierlich; erkennt den Aktivierungssatz,
+   oeffnet die Suche und diktiert die Anfrage. Zuverlaessig in Chrome/Android. */
+var _plWakeRec=null, _plWakeSuspended=false, _plWakeBusy=false, _plWakeErrCount=0;
+function plWakeIsOn(){ try{ return localStorage.getItem('pl_wake_on')==='1'; }catch(e){ return false; } }
+function plWakePhrase(){ try{ return (localStorage.getItem('pl_wake_phrase')||'hey plan'); }catch(e){ return 'hey plan'; } }
+function _plWakeNorm(s){ return String(s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function _plWakeVariants(){
+  var base=_plWakeNorm(plWakePhrase()); var v=[base];
+  if(base.indexOf('hey ')===0){ var rest=base.slice(4); v.push('hei '+rest,'hai '+rest,'he '+rest,'ey '+rest,'hey'+rest); }
+  return v;
+}
+function plWakeSyncUI(){
+  var b=document.getElementById('wake-toggle'), lbl=document.getElementById('wake-toggle-label'), hint=document.getElementById('wake-hint');
+  var on=plWakeIsOn();
+  if(lbl) lbl.textContent='Freisprechen: '+(on?'an':'aus');
+  if(b){ b.style.background=on?'rgba(52,211,153,.16)':'rgba(255,255,255,.08)'; b.style.color=on?'#6ee7b7':'#8ab4d0'; b.style.borderColor=on?'rgba(52,211,153,.4)':'rgba(var(--accent-rgb),.28)'; }
+  if(hint) hint.textContent = on ? ('Sag „'+plWakePhrase()+'"') : '';
+}
+function plWakeToggle(){
+  if(!plMicSupported()){ alert('Freisprechen wird auf diesem Geraet nicht unterstuetzt. In Chrome auf Android funktioniert es.'); return; }
+  var on=!plWakeIsOn();
+  try{ localStorage.setItem('pl_wake_on', on?'1':'0'); }catch(e){}
+  _plWakeErrCount=0; _plWakeSuspended=false;
+  if(on){ plWakeStart(); } else { plWakeStop(); }
+  plWakeSyncUI();
+}
+function plWakeForceOff(){ try{ localStorage.setItem('pl_wake_on','0'); }catch(e){} plWakeStop(); plWakeSyncUI(); }
+function plWakeStop(){ try{ if(_plWakeRec){ _plWakeRec.onend=null; _plWakeRec.stop(); } }catch(e){} _plWakeRec=null; }
+function plWakeSuspend(){ _plWakeSuspended=true; plWakeStop(); }
+function plWakeResume(){ _plWakeSuspended=false; if(plWakeIsOn()) plWakeStart(); }
+function plWakeStart(){
+  if(!plMicSupported() || !plWakeIsOn() || _plWakeSuspended || _plWakeRec) return;
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var r; try{ r=new SR(); }catch(e){ return; }
+  r.lang='de-DE'; r.interimResults=true; r.continuous=true; r.maxAlternatives=1;
+  _plWakeRec=r;
+  r.onresult=function(ev){
+    if(_plWakeBusy) return;
+    var txt=''; for(var i=ev.resultIndex;i<ev.results.length;i++) txt+=ev.results[i][0].transcript+' ';
+    var norm=_plWakeNorm(txt); if(!norm) return;
+    var vs=_plWakeVariants();
+    for(var k=0;k<vs.length;k++){
+      var pos=norm.indexOf(vs[k]);
+      if(pos>=0){ _plWakeBusy=true; var q=norm.slice(pos+vs[k].length).trim(); _plWakeTrigger(q); return; }
+    }
+  };
+  r.onerror=function(ev){
+    var e=(ev&&ev.error)||'';
+    if(e==='not-allowed'||e==='service-not-allowed'){ alert('Fuer den Freisprech-Modus muss der Mikrofon-Zugriff erlaubt sein.'); plWakeForceOff(); return; }
+    _plWakeErrCount++;
+  };
+  r.onend=function(){
+    _plWakeRec=null;
+    if(_plWakeErrCount>6){ plWakeForceOff(); return; }
+    if(plWakeIsOn() && !_plWakeSuspended && !_plWakeBusy){ setTimeout(plWakeStart, 500); }
+  };
+  try{ r.start(); }catch(e){ _plWakeRec=null; }
+}
+function _plWakeTrigger(q){
+  plWakeSuspend();
+  try{ if(typeof playFeedback==='function') playFeedback(); }catch(e){}
+  try{ showSearchOverlay(); }catch(e){}
+  setTimeout(function(){
+    var inp=document.getElementById('search-input');
+    if(inp && q){ inp.value=q; try{ doSearch(); }catch(e){} }
+    try{ plSearchVoice(); }catch(e){}
+    _plWakeBusy=false;
+  }, 350);
+}
+/* Nach dem ersten Tippen/Tap den Freisprech-Modus fortsetzen (Berechtigung/Geste) */
+(function(){
+  try{
+    if(plWakeIsOn()){
+      var once=function(){ document.removeEventListener('click',once); document.removeEventListener('touchstart',once); if(plWakeIsOn()) plWakeStart(); };
+      document.addEventListener('click',once); document.addEventListener('touchstart',once);
+    }
+  }catch(e){}
+})();
 function doSearch() {
   const q = document.getElementById('search-input').value.trim().toLowerCase();
   const res = document.getElementById('search-results');
