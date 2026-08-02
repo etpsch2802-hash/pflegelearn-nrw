@@ -841,6 +841,7 @@
     <button onclick="showThemePicker()" class="nav-drop-btn"><span data-i18n="nav_theme"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-palette"/></svg> Mein Theme</span></button>
     <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Effekte: Aus</button>
     <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-speaker"/></svg> Sound: An</button>
+    <button onclick="plWakeToggle()" class="nav-drop-btn" id="wake-menu-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-mic"/></svg> Sprachbefehle: Aus</button>
     <div class="nav-drop-btn" style="display:flex;align-items:center;justify-content:space-between;cursor:default">
       <span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg> Zoom</span>
       <span style="display:flex;gap:8px;align-items:center">
@@ -12196,6 +12197,7 @@ function plWakeSyncUI(){
   if(lbl) lbl.textContent='Freisprechen: '+(on?'an':'aus');
   if(b){ b.style.background=on?'rgba(52,211,153,.16)':'rgba(255,255,255,.08)'; b.style.color=on?'#6ee7b7':'#8ab4d0'; b.style.borderColor=on?'rgba(52,211,153,.4)':'rgba(var(--accent-rgb),.28)'; }
   if(hint) hint.textContent = on ? ('Sag „'+plWakePhrase()+'"') : '';
+  var mb=document.getElementById('wake-menu-btn'); if(mb) mb.innerHTML='🎤 Sprachbefehle: '+(on?'An':'Aus');
 }
 function plWakeToggle(){
   if(!plMicSupported()){ alert('Freisprechen wird auf diesem Geraet nicht unterstuetzt. In Chrome auf Android funktioniert es.'); return; }
@@ -15821,6 +15823,7 @@ function initTheme() {
     const btn = document.getElementById('effekte-toggle-btn');
     if (btn) btn.innerHTML = localStorage.getItem('pl_effekte')==='1' ? '✨ Effekte: An' : '✨ Effekte: Aus';
     if (localStorage.getItem('pl_effekte')==='1') startPartikel();
+    try{ plWakeSyncUI(); }catch(e){}
   }, 500);
 }
 
