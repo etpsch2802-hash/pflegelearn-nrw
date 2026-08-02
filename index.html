@@ -11443,6 +11443,7 @@ async function loadMedikamente(force){
     if (error){ console.warn('[medapo]', error); if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
     _medapoData = data || [];
     renderMedApo(_medQ());
+    try{ var _ls=document.getElementById('lib-search'); if(_ls && _ls.value && typeof renderHomeLibrary==='function'){ renderHomeLibrary(); } }catch(e){}
     return _medapoData;
   } catch(e){ console.warn('[medapo]', e); if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
 }
@@ -11483,6 +11484,23 @@ function medApoToggle(btn){
   var open=body.style.display==='block';
   body.style.display=open?'none':'block';
   var plus=btn.querySelector('.medapo-plus'); if(plus) plus.textContent=open?'+':'-';
+}
+/* Aus der globalen Suche: medapo oeffnen, Wirkstoff filtern und Detailkarte aufklappen */
+function openMedApoWirkstoff(name){
+  try{ navGo('medapo'); }catch(e){ try{ showScreen('medapo'); }catch(_){} }
+  var run=function(){
+    var el=document.getElementById('medapo-search'); if(el){ el.value=name; }
+    if(typeof renderMedApo==='function'){ renderMedApo(name); }
+    setTimeout(function(){
+      var box=document.getElementById('medapo-container'); if(!box) return;
+      var card=box.querySelector('.medapo-card'); if(!card) return;
+      var body=card.querySelector('.medapo-body'); var plus=card.querySelector('.medapo-plus');
+      if(body){ body.style.display='block'; } if(plus){ plus.textContent='-'; }
+    },40);
+  };
+  if(_medapoData){ setTimeout(run,20); }
+  else if(typeof loadMedikamente==='function'){ var p=loadMedikamente(); if(p&&p.then){ p.then(run).catch(run); } else { setTimeout(run,120); } }
+  else { setTimeout(run,80); }
 }
 function renderMedApo(q){
   var box=document.getElementById('medapo-container');
@@ -11923,9 +11941,11 @@ function plBuildSearchHits(q) {
     if (hit(blob)) hits.push({type:'Taschenkarte', icon:k.icon||'📇', color:k.farbe||'#38bdf8', title:k.titel, sub:'Lernkarte', action:"showTaschenkarte('"+k.id+"')"});
   });
 
-  // Medizintechnik / Geräte
+  // Medizintechnik / Geräte (Name, Sub, Beschreibung + Modi/Modellnamen aus den Tabs)
   GERAETE.forEach(function(g){
-    if (hit(g.name) || hit(g.sub) || hit(g.beschreibung)) hits.push({type:'Medizintechnik', icon:g.icon||'⚙️', color:g.color||'#22d3ee', title:g.name, sub:g.sub||'', action:"openGeraet('"+g.id+"')"});
+    var gblob=(g.name||'')+' '+(g.sub||'')+' '+(g.beschreibung||'');
+    try{ (g.tabs||[]).forEach(function(t){ (t.content||[]).forEach(function(sec){ gblob+=' '+(sec.title||'')+' '+((sec.items||[]).join(' ')); }); }); }catch(e){}
+    if (hit(gblob)) hits.push({type:'Medizintechnik', icon:g.icon||'⚙️', color:g.color||'#22d3ee', title:g.name, sub:g.sub||'', action:"openGeraet('"+g.id+"')"});
   });
 
   // Prophylaxen
@@ -11944,12 +11964,30 @@ function plBuildSearchHits(q) {
     if (hit(fa.titel) || hit(fa.fachLabel) || hit(fa.vignette)) hits.push({type:'Fallbeispiel', icon:fa.icon||'🩺', color:fa.farbe||'#38bdf8', title:fa.titel, sub:fa.fachLabel, action:"startFall('"+fa.id+"')"});
   });
 
+  // Medikamente · Nachschlagen (Supabase-DB, 82 Wirkstoffe – öffnet die Detailkarte)
+  var _medapoSeen = {};
+  if (Array.isArray(_medapoData)) {
+    _medapoData.forEach(function(m){
+      var hn=_medArr(m.handelsnamen), tg=_medArr(m.such_tags);
+      var blob=[m.wirkstoff, m.wirkstoffklasse, m.indikation, m.atc, hn.join(' '), tg.join(' ')].join(' ');
+      if (hit(blob)) {
+        _medapoSeen[String(m.wirkstoff||'').toLowerCase()] = 1;
+        hits.push({type:'Medikament', icon:'💊', color:'#38bdf8', title:m.wirkstoff,
+          sub:(m.wirkstoffklasse||'Wirkstoff')+(hn.length?' · '+hn[0]:''),
+          action:"openMedApoWirkstoff('"+String(m.wirkstoff||'').replace(/'/g,"\\'")+"')"});
+      }
+    });
+  } else if (typeof loadMedikamente==='function') {
+    loadMedikamente();
+  }
+
   // Medikamente · Fachbereich
   (function(){
     const lbl = {anaesthesie:'Anästhesie', intensiv:'Intensivmedizin', notfall:'Notfallmedizin', pflege:'Allg. Pflege'};
     const col = {anaesthesie:'#f97316', intensiv:'#22d3ee', notfall:'#f87171', pflege:'#34d399'};
     Object.keys(MEDIKAMENTE).forEach(function(kat){
       (MEDIKAMENTE[kat]||[]).forEach(function(m){
+        if (_medapoSeen[String(m.name||'').toLowerCase()]) return;
         const blob = [m.name, m.gruppe, m.dosis, m.wirkung, m.nw, m.ki, m.pflege].join(' ');
         if (hit(blob)) hits.push({type:'Medikament', icon:'💊', color:col[kat]||'#f97316', title:m.name, sub:(m.gruppe||'')+' · '+(lbl[kat]||kat), action:"showScreen('medikamente');showMedKat('"+kat+"')"});
       });
@@ -11962,6 +12000,7 @@ function plBuildSearchHits(q) {
     const col = {herz:'#f43f5e', antikoagulation:'#f87171', schmerz:'#fbbf24', neuropsych:'#6366f1', diabetes:'#34d399'};
     Object.keys(MEDIKAMENTE_NEU).forEach(function(kat){
       (MEDIKAMENTE_NEU[kat]||[]).forEach(function(m){
+        if (_medapoSeen[String(m.name||'').toLowerCase()]) return;
         const blob = [m.name, m.gruppe, m.indikation, m.wirkung, m.nw, m.ki, m.pflege].join(' ');
         if (hit(blob)) hits.push({type:'Medikament', icon:'💊', color:col[kat]||'#f43f5e', title:m.name, sub:(m.gruppe||'')+' · '+(lbl[kat]||kat), action:"showScreen('medNeu');renderMedNeu('"+kat+"')"});
       });
