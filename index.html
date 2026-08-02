@@ -1684,6 +1684,7 @@
       <button onclick="adminTab('meldungen')" id="atab-meldungen" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:12px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:#38bdf8;font-family:inherit;cursor:pointer">Meldungen<span id="atab-meldungen-badge" style="display:none;margin-left:6px;background:#dc2626;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:1px 6px;font-size:10px;font-weight:900">0</span></button>
       <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Vorlage</button>
       <button onclick="adminTab('nutzer')" id="atab-nutzer" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Nutzer</button>
+      <button onclick="adminTab('sprache')" id="atab-sprache" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-mic"/></svg> Sprache</button>
     </div>
 
     <!-- TAB: TOKEN GENERATOR -->
@@ -1748,6 +1749,22 @@
         <div style="font-size:11px;color:#8ab4d0;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lifebuoy"/></svg> Fallback-Code (optional)</div><div style="font-size:11px;color:#9aabc0;line-height:1.6;margin-bottom:8px">Nicht nötig. Tokens liegen seit dem Supabase-Umbau in der Tabelle <code style="color:#7dd3f7">tokens</code> und sind nach „Speichern &amp; aktivieren“ sofort gültig. Nur einfügen, wenn der Code auch bei ausgefallenem Supabase funktionieren muss.</div>
         <pre id="gen-code" style="font-size:11px;color:#34d399;white-space:pre-wrap;word-break:break-all;margin:0;line-height:1.7"></pre>
         <button onclick="copyCode()" style="margin-top:10px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:7px 13px;color:#34d399;font-size:11px;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Code kopieren</button>
+      </div>
+    </div>
+
+    <!-- TAB: SPRACHE / FREISPRECHEN -->
+    <div id="admin-sprache" class="admin-tab-content" style="display:none">
+      <div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:18px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-mic"/></svg> Sprachsteuerung · Aktivierungssatz</div>
+        <div style="font-size:12px;color:#9aabc0;line-height:1.6;margin-bottom:14px">Satz für den Freisprech-Modus. Wird er gesprochen, öffnet sich die zentrale Suche und hört auf die Anfrage. Kurz und ungewöhnlich wählen (weniger Fehlauslösungen). Funktioniert in Chrome/Android und der installierten App, nicht auf iPhone.</div>
+        <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Aktivierungssatz</div>
+        <input id="admin-wake-input" type="text" placeholder="z. B. hey plan" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:12px" aria-label="Aktivierungssatz">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button onclick="plWakeSave()" style="background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:9px;padding:11px 16px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-save"/></svg> Satz speichern</button>
+          <button onclick="plWakeReset()" style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.28);border-radius:9px;padding:11px 16px;color:#8ab4d0;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">Zurücksetzen</button>
+          <button id="admin-wake-toggle" onclick="plWakeToggle(); plWakeAdminSync();" style="background:rgba(255,255,255,.08);border:1px solid rgba(var(--accent-rgb),.28);border-radius:9px;padding:11px 16px;color:#8ab4d0;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">Freisprechen: aus</button>
+        </div>
+        <div id="admin-wake-status" style="font-size:12px;color:#6ee7b7;min-height:16px"></div>
       </div>
     </div>
 
@@ -3323,6 +3340,7 @@ function adminTab(tab) {
     activeBtn.style.color = "white";
     activeBtn.style.fontWeight = "700";
   }
+  if (tab === "sprache") plWakeAdminSync();
   if (tab === "liste") renderTokenListe();
   if (tab === "stats") renderStats();
   if (tab === "nachricht") renderVorlagen();
@@ -12229,6 +12247,30 @@ function _plWakeTrigger(q){
     try{ plSearchVoice(); }catch(e){}
     _plWakeBusy=false;
   }, 350);
+}
+/* Admin-Panel: Aktivierungssatz verwalten */
+function plWakeAdminSync(){
+  var el=document.getElementById('admin-wake-input'); if(el) el.value=plWakePhrase();
+  var tog=document.getElementById('admin-wake-toggle');
+  if(tog){ var on=plWakeIsOn(); tog.textContent='Freisprechen: '+(on?'an':'aus'); tog.style.background=on?'rgba(52,211,153,.16)':'rgba(255,255,255,.08)'; tog.style.color=on?'#6ee7b7':'#8ab4d0'; tog.style.borderColor=on?'rgba(52,211,153,.4)':'rgba(var(--accent-rgb),.28)'; }
+  var st=document.getElementById('admin-wake-status'); if(st) st.textContent='';
+}
+function plWakeSave(){
+  var el=document.getElementById('admin-wake-input'); if(!el) return;
+  var v=String(el.value||'').replace(/\s+/g,' ').trim().toLowerCase();
+  var st=document.getElementById('admin-wake-status');
+  if(v.length<2){ if(st){ st.textContent='Bitte mindestens 2 Zeichen eingeben.'; st.style.color='#fca5a5'; } return; }
+  try{ localStorage.setItem('pl_wake_phrase', v); }catch(e){}
+  try{ if(plWakeIsOn()){ plWakeStop(); setTimeout(plWakeStart, 300); } }catch(e){}
+  try{ plWakeSyncUI(); }catch(e){}
+  if(st){ st.textContent='Gespeichert. Sag jetzt „'+v+'".'; st.style.color='#6ee7b7'; }
+}
+function plWakeReset(){
+  try{ localStorage.setItem('pl_wake_phrase','hey plan'); }catch(e){}
+  plWakeAdminSync();
+  try{ if(plWakeIsOn()){ plWakeStop(); setTimeout(plWakeStart, 300); } }catch(e){}
+  try{ plWakeSyncUI(); }catch(e){}
+  var st=document.getElementById('admin-wake-status'); if(st){ st.textContent='Zurückgesetzt auf „hey plan".'; st.style.color='#6ee7b7'; }
 }
 /* Nach dem ersten Tippen/Tap den Freisprech-Modus fortsetzen (Berechtigung/Geste) */
 (function(){
