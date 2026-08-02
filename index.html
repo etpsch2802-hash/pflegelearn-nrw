@@ -873,7 +873,8 @@
 <div id="search-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:400;padding:16px">
   <div style="max-width:650px;margin:0 auto">
     <div style="display:flex;gap:10px;margin-bottom:16px">
-      <input id="search-input" type="text" placeholder="Suche: Sepsis, ABCDE, Dekubitus, Furosemid…" oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif" aria-label="Suche: Sepsis, ABCDE, Dekubitus, Furosemid…">
+      <input id="search-input" type="text" placeholder="Stichworte, z. B. Sepsis Antibiotikum · Elisa Alarm · Furosemid" oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif" aria-label="Stichworte suchen">
+      <button onclick="plSearchVoice()" id="search-mic-btn" aria-label="Sprachsuche" title="Sprachsuche – antippen und sprechen" style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.35);border-radius:11px;padding:12px 14px;color:#7dd3fc;font-family:inherit;cursor:pointer;display:flex;align-items:center"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><use href="#i-mic"/></svg></button>
       <button onclick="closeSearchOverlay()" id="search-back-btn" style="background:rgba(var(--accent-rgb),.18);border:1px solid rgba(var(--accent-rgb),.45);border-radius:11px;padding:12px 18px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">← Zurück</button>
     </div>
     <div id="search-results" style="display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 110px);overflow-y:auto"></div>
@@ -11880,20 +11881,27 @@ var PL_SYNONYME = {
   'mh':['maligne hyperthermie','succinylcholin']
 };
 function plBuildSearchHits(q) {
-  var _terms = [q];
-  try {
-    var syn = PL_SYNONYME[q];
-    if (syn) _terms = syn;
-    else {
-      Object.keys(PL_SYNONYME).forEach(function(k){
-        if (k.indexOf(q) === 0 && q.length >= 2) _terms = _terms.concat(PL_SYNONYME[k]);
+  var _qWords = String(q||'').toLowerCase().split(/\s+/).filter(Boolean);
+  // pro Suchwort eine OR-Liste (Wort + passende Synonyme); ALLE Woerter muessen matchen (UND)
+  var _termSets = _qWords.map(function(w){
+    var ts = [w];
+    try {
+      if (PL_SYNONYME[w]) ts = PL_SYNONYME[w].concat([w]);
+      else Object.keys(PL_SYNONYME).forEach(function(k){
+        if (k.indexOf(w) === 0 && w.length >= 2) ts = ts.concat(PL_SYNONYME[k]);
       });
-    }
-  } catch(e){}
+    } catch(e){}
+    return ts;
+  });
   function hit(t){
     var v = String(t==null?'':t).toLowerCase();
-    for (var i=0;i<_terms.length;i++){ if (v.indexOf(_terms[i]) >= 0) return true; }
-    return false;
+    if (!_termSets.length) return false;
+    for (var i=0;i<_termSets.length;i++){
+      var set = _termSets[i], ok = false;
+      for (var j=0;j<set.length;j++){ if (v.indexOf(set[j]) >= 0){ ok = true; break; } }
+      if (!ok) return false;   // dieses Stichwort kam nirgends vor -> kein Treffer
+    }
+    return true;               // alle Stichworte (bzw. Synonyme) vorhanden
   }
   const hits = [];
 
@@ -12112,9 +12120,36 @@ function showSearchOverlay() {
   setTimeout(() => document.getElementById('search-input').focus(), 100);
 }
 function closeSearchOverlay() {
+  try{ plSearchVoiceStop(); }catch(e){}
   document.getElementById('search-overlay').style.display = 'none';
   document.getElementById('search-results').innerHTML = '';
   document.getElementById('search-input').value = '';
+}
+/* Sprachsuche im zentralen Such-Overlay (push-to-talk) */
+function plSearchVoiceStop(){
+  try{ if(window._plSearchRec) window._plSearchRec.stop(); }catch(e){}
+  window._plSearchRec=null;
+  var btn=document.getElementById('search-mic-btn');
+  if(btn){ btn.style.background='rgba(255,255,255,.10)'; btn.style.color='#7dd3fc'; }
+}
+function plSearchVoice(){
+  if(!plMicSupported()){ alert('Sprachsuche wird auf diesem Geraet nicht unterstuetzt. In Chrome auf Android funktioniert sie zuverlaessig.'); return; }
+  var inp=document.getElementById('search-input'); if(!inp) return;
+  if(window._plSearchRec){ plSearchVoiceStop(); return; }
+  try{ stopSpeak(); }catch(e){}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var r=new SR(); r.lang='de-DE'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
+  window._plSearchRec=r;
+  var btn=document.getElementById('search-mic-btn');
+  if(btn){ btn.style.background='rgba(248,113,113,.22)'; btn.style.color='#fca5a5'; }
+  r.onresult=function(ev){
+    var txt=''; for(var i=0;i<ev.results.length;i++) txt+=ev.results[i][0].transcript;
+    inp.value=txt.replace(/\s+/g,' ').trim();
+    try{ doSearch(); }catch(e){}
+  };
+  r.onerror=function(){ plSearchVoiceStop(); };
+  r.onend=function(){ plSearchVoiceStop(); };
+  try{ r.start(); }catch(e){ plSearchVoiceStop(); }
 }
 function doSearch() {
   const q = document.getElementById('search-input').value.trim().toLowerCase();
