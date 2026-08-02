@@ -875,6 +875,7 @@
   <div style="max-width:650px;margin:0 auto">
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <input id="search-input" type="text" placeholder="Stichworte, z. B. Sepsis Antibiotikum · Elisa Alarm · Furosemid" oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif" aria-label="Stichworte suchen">
+      <button onclick="plSearchClear()" id="search-clear-btn" aria-label="Suche leeren" title="Neue Frage (leeren)" style="background:rgba(255,255,255,.08);border:1px solid rgba(var(--accent-rgb),.28);border-radius:11px;padding:12px 13px;color:#8ab4d0;font-size:15px;font-family:inherit;cursor:pointer;display:flex;align-items:center;line-height:1">✕</button>
       <button onclick="plSearchVoice()" id="search-mic-btn" aria-label="Sprachsuche" title="Sprachsuche – antippen und sprechen" style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.35);border-radius:11px;padding:12px 14px;color:#7dd3fc;font-family:inherit;cursor:pointer;display:flex;align-items:center"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><use href="#i-mic"/></svg></button>
       <button onclick="closeSearchOverlay()" id="search-back-btn" style="background:rgba(var(--accent-rgb),.18);border:1px solid rgba(var(--accent-rgb),.45);border-radius:11px;padding:12px 18px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">← Zurück</button>
     </div>
@@ -11904,8 +11905,11 @@ var PL_SYNONYME = {
   'mh':['maligne hyperthermie','succinylcholin']
 };
 function plBuildSearchHits(q) {
-  var _qWords = String(q||'').toLowerCase().split(/\s+/).filter(Boolean);
-  // pro Suchwort eine OR-Liste (Wort + passende Synonyme); ALLE Woerter muessen matchen (UND)
+  var _STOP = {'und':1,'oder':1,'der':1,'die':1,'das':1,'ein':1,'eine':1,'einen':1,'einem':1,'einer':1,'ist':1,'sind':1,'war':1,'was':1,'wie':1,'wo':1,'wer':1,'warum':1,'wieso':1,'weshalb':1,'welche':1,'welcher':1,'welches':1,'zwischen':1,'von':1,'vom':1,'fuer':1,'für':1,'mit':1,'bei':1,'im':1,'in':1,'am':1,'an':1,'auf':1,'zu':1,'zum':1,'zur':1,'den':1,'dem':1,'des':1,'man':1,'ich':1,'du':1,'er':1,'sie':1,'es':1,'wir':1,'ihr':1,'mir':1,'mich':1,'dich':1,'sich':1,'gibt':1,'hat':1,'habe':1,'haben':1,'kann':1,'muss':1,'soll':1,'wird':1,'werden':1,'bitte':1,'mal':1,'noch':1,'auch':1,'nicht':1,'kein':1,'keine':1,'als':1,'wenn':1,'dass':1,'ob':1,'nach':1,'aus':1,'ueber':1,'über':1,'unter':1,'vor':1,'etwas':1,'hey':1,'plan':1,'hallo':1,'okay':1,'ok':1,'zeig':1,'zeige':1,'sag':1,'sage':1,'erklaer':1,'erklaere':1,'erkläre':1,'erklär':1,'suche':1,'finde':1,'nenne':1,'unterschied':1,'thema':1};
+  var _qRaw = String(q||'').toLowerCase().split(/\s+/).filter(Boolean);
+  var _qWords = _qRaw.filter(function(w){ return w.length>=2 && !_STOP[w]; });
+  if (!_qWords.length) _qWords = _qRaw;   // nur Fuellwoerter -> Original nehmen
+  // pro Stichwort eine OR-Liste (Wort + passende Synonyme)
   var _termSets = _qWords.map(function(w){
     var ts = [w];
     try {
@@ -11916,16 +11920,17 @@ function plBuildSearchHits(q) {
     } catch(e){}
     return ts;
   });
-  function hit(t){
-    var v = String(t==null?'':t).toLowerCase();
-    if (!_termSets.length) return false;
+  // Anzahl passender Stichwoerter (0 = kein Treffer). ODER-Logik: schon ein Stichwort genuegt,
+  // die Sortierung (plRankHits) bringt Treffer mit den meisten Stichwoertern nach oben.
+  function hitScore(t){
+    var v = String(t==null?'':t).toLowerCase(), n=0;
     for (var i=0;i<_termSets.length;i++){
-      var set = _termSets[i], ok = false;
-      for (var j=0;j<set.length;j++){ if (v.indexOf(set[j]) >= 0){ ok = true; break; } }
-      if (!ok) return false;   // dieses Stichwort kam nirgends vor -> kein Treffer
+      var set = _termSets[i];
+      for (var j=0;j<set.length;j++){ if (v.indexOf(set[j]) >= 0){ n++; break; } }
     }
-    return true;               // alle Stichworte (bzw. Synonyme) vorhanden
+    return n;
   }
+  function hit(t){ return hitScore(t) > 0; }
   const hits = [];
 
   // Wissensdatenbank (Supabase)
@@ -12083,7 +12088,7 @@ function plBuildSearchHits(q) {
   });
   if (hit(BOBATH.definition) || hit(BOBATH.schlaganfallMuster)) hits.push({type:'Bereich', icon:'🧠', color:'#a78bfa', title:'Bobath-Konzept', sub:'Lagerung · Transfers · 24h-Konzept', action:"showScreen('bobath')"});
 
-  return plRankHits(hits, q);
+  return plRankHits(hits, q, _termSets);
 }
 
 /* Relevanz-Ranking + Deckelung pro Typ.
@@ -12095,15 +12100,22 @@ var PL_TYPE_PRIO = {
 };
 var PL_TYPE_CAP = { 'Quiz':5, 'Merksatz':4, 'Taschenkarte':4, 'Fallbeispiel':4 };
 
-function plRankHits(hits, q) {
+function plRankHits(hits, q, termSets) {
+  function wordMatches(h){
+    if(!termSets || !termSets.length) return 0;
+    var blob=(String(h.title||'')+' '+String(h.sub||'')).toLowerCase(), n=0;
+    for(var i=0;i<termSets.length;i++){ var set=termSets[i]; for(var j=0;j<set.length;j++){ if(blob.indexOf(set[j])>=0){ n++; break; } } }
+    return n;
+  }
   function score(h) {
     var t = String(h.title || '').toLowerCase();
     var s = 0;
-    if (t === q) s -= 40;                      // exakter Titel-Treffer
-    else if (t.indexOf(q) === 0) s -= 25;      // Titel beginnt mit Suchbegriff
-    else if (t.indexOf(q) !== -1) s -= 12;     // Suchbegriff im Titel
+    s -= wordMatches(h) * 30;                   // je mehr Stichwoerter im Titel/Sub, desto weiter oben
+    if (t === q) s -= 40;                       // exakter Titel-Treffer
+    else if (t.indexOf(q) === 0) s -= 25;       // Titel beginnt mit Suchbegriff
+    else if (t.indexOf(q) !== -1) s -= 12;      // Suchbegriff im Titel
     s += (PL_TYPE_PRIO[h.type] !== undefined ? PL_TYPE_PRIO[h.type] : 20);
-    s += Math.min(t.length / 60, 3);           // kurze, praezise Titel bevorzugen
+    s += Math.min(t.length / 60, 3);            // kurze, praezise Titel bevorzugen
     return s;
   }
   hits.forEach(function(h){ h._s = score(h); });
@@ -12167,16 +12179,23 @@ function plSearchVoice(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   var r=new SR(); r.lang='de-DE'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
   window._plSearchRec=r;
+  var base = inp.value ? inp.value.replace(/\s+$/,'') : '';   // bisherige Frage behalten (erweitern)
   var btn=document.getElementById('search-mic-btn');
   if(btn){ btn.style.background='rgba(248,113,113,.22)'; btn.style.color='#fca5a5'; }
   r.onresult=function(ev){
     var txt=''; for(var i=0;i<ev.results.length;i++) txt+=ev.results[i][0].transcript;
-    inp.value=txt.replace(/\s+/g,' ').trim();
+    inp.value=(base?base+' ':'')+txt.replace(/\s+/g,' ').trim();
     try{ doSearch(); }catch(e){}
   };
   r.onerror=function(){ plSearchVoiceStop(); };
   r.onend=function(){ plSearchVoiceStop(); };
   try{ r.start(); }catch(e){ plSearchVoiceStop(); }
+}
+function plSearchClear(){
+  var inp=document.getElementById('search-input'); var res=document.getElementById('search-results');
+  if(inp){ inp.value=''; }
+  if(res){ res.innerHTML=''; }
+  if(inp){ inp.focus(); }
 }
 
 /* ── Freisprech-Modus (Wake-Phrase, z. B. „Hey Plan") ──────────────────────
