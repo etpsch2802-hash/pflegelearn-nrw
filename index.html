@@ -827,6 +827,7 @@
     <button onclick="navGo('notfallmanagement')" class="nav-drop-btn"><span data-i18n="nav_notfall"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-alert"/></svg> Notfallmanagement</span></button>
     <button onclick="navGo('scores')" class="nav-drop-btn"><span data-i18n="nav_scores"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chart"/></svg> Assessment-Scores</span></button>
     <button onclick="navGo('medikamente')" class="nav-drop-btn"><span data-i18n="nav_medi"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-pill"/></svg> Medikamente · Fachbereich</span></button>
+    <button onclick="navGo('medapo')" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg> Medikamente · Nachschlagen</span></button>
     <button onclick="navGo('medizintechnik')" class="nav-drop-btn"><span data-i18n="nav_technik"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cog"/></svg> Medizintechnik</span></button>
   </div>
 
@@ -1068,6 +1069,18 @@
     </div>
     <div id="med-ki-result" style="margin-top:10px;font-size:12px;line-height:1.7;color:#bae6fd;display:none"></div>
   </div>
+</div>
+
+<!-- MEDIKAMENTE NACHSCHLAGEN (Supabase, durchsuchbar) -->
+<div class="page" id="screen-medapo">
+  <div class="hero" style="margin-bottom:12px">
+    <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-pill"/></svg></div>
+    <h1>Medikamente<span> nachschlagen</span></h1>
+    <p>Wirkstoff, Handelsname oder Krankheitsbild &middot; Teilbarkeit &middot; Antidot</p>
+  </div>
+  <input id="medapo-search" type="text" inputmode="search" autocomplete="off" oninput="renderMedApo(this.value)" placeholder="z.B. KHK, Metoprolol, Beloc, Sepsis, Antidot..." aria-label="Medikament oder Krankheitsbild suchen" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.10);border:1px solid rgba(56,189,248,.3);border-radius:11px;padding:13px 15px;color:var(--text,#e0f2fe);font-size:15px;outline:none;font-family:inherit;margin-bottom:6px">
+  <div id="medapo-hint" style="font-size:11px;color:#8ab4d0;margin:0 2px 12px">Tippe ein Krankheitsbild (z.B. KHK) &ndash; passende Wirkstoffe erscheinen automatisch.</div>
+  <div id="medapo-container"></div>
 </div>
 
 <!-- KRANKHEITSBILDER -->
@@ -2341,7 +2354,7 @@ function showScreen(name) {
       ueben:'bn-ueben', quizSelect:'bn-ueben', exam:'bn-ueben', karteikarten:'bn-ueben', faelle:'bn-ueben',
       wissenhub:'bn-wissen', wissensdb:'bn-wissen', krankheitsbilder:'bn-wissen', anatomie:'bn-wissen',
       taschenkarten:'bn-wissen', prophylaxen:'bn-wissen', notfallmanagement:'bn-wissen', scores:'bn-wissen',
-      medikamente:'bn-wissen', medNeu:'bn-wissen', grafiken:'bn-wissen', medizintechnik:'bn-wissen', wundversorgung:'bn-wissen', atl:'bn-wissen',
+      medikamente:'bn-wissen', medNeu:'bn-wissen', medapo:'bn-wissen', grafiken:'bn-wissen', medizintechnik:'bn-wissen', wundversorgung:'bn-wissen', atl:'bn-wissen',
       bobath:'bn-wissen', kinaesthetik:'bn-wissen', merksaetze:'bn-wissen',
       profil:'bn-profil', preise:'bn-profil', ausbildungswege:'bn-profil', support:'bn-profil', admin:'bn-profil'
     };
@@ -2387,6 +2400,7 @@ function showScreen(name) {
   if (name === "merksaetze")    { renderMerksaetze(document.getElementById('merk-search') ? document.getElementById('merk-search').value : ''); }
   if (name === "exam")          { /* renderExam() wird von startExam() aufgerufen */ }
   if (name === "medNeu")        setTimeout(() => { renderMedNeu(); }, 50);
+  if (name === "medapo")        { loadMedikamente(); }
   try{ stopSpeak(); plMicStop(); }catch(e){}
   if (name === "grafiken")      { try{ renderGrafikGalerie(); }catch(e){} }
   if (name === "profil")        { try{ renderSchwaechenRadar(); }catch(e){} try{ var _rs=document.getElementById("pl-reminder-status"); if(_rs) _rs.textContent=plReminderStatus(); }catch(e){} }
@@ -11289,6 +11303,114 @@ async function loadWissensDB(force){
     _wdbData = data || [];
     return _wdbData;
   } catch(e){ console.warn('[wdb]', e); return null; }
+}
+// ─── MEDIKAMENTE NACHSCHLAGEN (Supabase medikamente, durchsuchbar) ───────────
+var _medapoData = null;
+function _medEsc(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function _medArr(x){ return Array.isArray(x) ? x : (x ? [x] : []); }
+function _medQ(){ var el=document.getElementById('medapo-search'); return el ? el.value : ''; }
+async function loadMedikamente(force){
+  var box=document.getElementById('medapo-container');
+  if (_medapoData && !force){ renderMedApo(_medQ()); return _medapoData; }
+  if (!window.SB){ if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Keine Verbindung zur Datenbank.</div>'; return null; }
+  if (box) box.innerHTML='<div style="color:#8ab4d0;padding:12px">Lade Medikamente…</div>';
+  try{
+    const { data, error } = await window.SB
+      .from('medikamente')
+      .select('wirkstoff,handelsnamen,wirkstoffklasse,atc,indikation,wirkweise,wirkdauer,einnahmezeitpunkt,nebenwirkungen,kontraindik,lagerung,darreichung,teilbar,moerserbar,msr,retard,sondengaengig,btm,pflegehinweis,antidot,such_tags,quelle,stand')
+      .eq('aktiv', true)
+      .order('wirkstoff', { ascending:true });
+    if (error){ console.warn('[medapo]', error); if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
+    _medapoData = data || [];
+    renderMedApo(_medQ());
+    return _medapoData;
+  } catch(e){ console.warn('[medapo]', e); if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
+}
+function _medFlagColor(txt){
+  var t=String(txt||'').toLowerCase();
+  if(t.indexOf('nicht zutreffend')>=0) return {bg:'rgba(148,163,184,.12)',bd:'rgba(148,163,184,.3)',fg:'#cbd5e1'};
+  if(t.indexOf('pruefen')>=0||t.indexOf('präparat')>=0||t.indexOf('praeparat')>=0||t.indexOf('bedingt')>=0||t.indexOf('eingeschränkt')>=0||t.indexOf('eingeschraenkt')>=0||t.indexOf('ruecksprache')>=0||t.indexOf('rücksprache')>=0) return {bg:'rgba(251,191,36,.13)',bd:'rgba(251,191,36,.4)',fg:'#fcd34d'};
+  if(t.indexOf('nein')>=0) return {bg:'rgba(248,113,113,.14)',bd:'rgba(248,113,113,.4)',fg:'#fca5a5'};
+  if(t.indexOf('ja')>=0) return {bg:'rgba(74,222,128,.13)',bd:'rgba(74,222,128,.38)',fg:'#86efac'};
+  return {bg:'rgba(251,191,36,.13)',bd:'rgba(251,191,36,.4)',fg:'#fcd34d'};
+}
+function _medRow(label, val){
+  if(!val) return '';
+  return '<div style="margin:6px 0"><span style="font-weight:600;color:#9fc3d6;font-size:12px">'+_medEsc(label)+'</span><br><span>'+_medEsc(val)+'</span></div>';
+}
+function _medFlagBadge(label, val){
+  var c=_medFlagColor(val);
+  return '<div style="background:'+c.bg+';border:1px solid '+c.bd+';border-radius:7px;padding:5px 8px;flex:1 1 130px;min-width:120px"><span style="font-size:10px;font-weight:700;color:'+c.fg+';text-transform:uppercase;letter-spacing:.3px">'+_medEsc(label)+'</span><br><span style="font-size:11px;color:#e0f2fe">'+_medEsc(val)+'</span></div>';
+}
+function _medPraxis(m){
+  var h='<div style="margin:8px 0;padding:8px;background:rgba(255,255,255,.04);border-radius:8px">';
+  h+='<div style="font-size:11px;font-weight:700;color:#9fc3d6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Handhabung</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+  if(m.teilbar) h+=_medFlagBadge('teilbar', m.teilbar);
+  if(m.moerserbar) h+=_medFlagBadge('mörserbar', m.moerserbar);
+  if(m.sondengaengig) h+=_medFlagBadge('sondengängig', m.sondengaengig);
+  h+='</div>';
+  var warn='';
+  if(m.retard) warn+='<span style="display:inline-block;margin:6px 6px 0 0;font-size:11px;font-weight:700;background:rgba(251,191,36,.15);color:#fcd34d;border:1px solid rgba(251,191,36,.4);border-radius:6px;padding:3px 7px">RETARD – nicht teilen/mörsern</span>';
+  if(m.msr) warn+='<span style="display:inline-block;margin:6px 6px 0 0;font-size:11px;font-weight:700;background:rgba(251,191,36,.15);color:#fcd34d;border:1px solid rgba(251,191,36,.4);border-radius:6px;padding:3px 7px">magensaftresistent – nicht teilen/mörsern</span>';
+  if(warn) h+='<div>'+warn+'</div>';
+  h+='</div>';
+  return h;
+}
+function medApoToggle(btn){
+  var card=btn.closest('.medapo-card'); if(!card) return;
+  var body=card.querySelector('.medapo-body'); if(!body) return;
+  var open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  var plus=btn.querySelector('.medapo-plus'); if(plus) plus.textContent=open?'+':'-';
+}
+function renderMedApo(q){
+  var box=document.getElementById('medapo-container');
+  if(!box) return;
+  if(!_medapoData){ loadMedikamente(); return; }
+  var query=String(q==null?'':q).trim().toLowerCase();
+  var words=query.split(/\s+/).filter(Boolean);
+  var list=_medapoData.filter(function(m){
+    if(!words.length) return true;
+    var hay=[m.wirkstoff, m.wirkstoffklasse, m.indikation, m.atc,
+             _medArr(m.handelsnamen).join(' '), _medArr(m.such_tags).join(' ')
+            ].join(' ').toLowerCase();
+    return words.every(function(w){ return hay.indexOf(w)>=0; });
+  });
+  var hint=document.getElementById('medapo-hint');
+  if(hint) hint.textContent = query
+    ? (list.length+' Treffer für "'+q+'"')
+    : (_medapoData.length+' Wirkstoffe – tippe Krankheitsbild, Wirkstoff oder Handelsname.');
+  if(!list.length){ box.innerHTML='<div style="color:#8ab4d0;padding:14px;text-align:center">Kein Treffer. Versuche z.B. „KHK", „Sepsis", „Schmerzen" oder einen Handelsnamen.</div>'; return; }
+  var html='';
+  list.forEach(function(m){
+    var hn=_medArr(m.handelsnamen);
+    var tags=_medArr(m.such_tags);
+    html += '<div class="medapo-card" style="background:rgba(255,255,255,.085);border:1px solid rgba(56,189,248,.15);border-radius:12px;margin-bottom:8px;overflow:hidden">';
+    html += '<button type="button" onclick="medApoToggle(this)" style="width:100%;text-align:left;background:none;border:none;padding:13px 14px;color:inherit;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">';
+    html += '<span style="flex:1 1 auto"><span style="font-weight:700;font-size:15px;color:#e0f2fe">'+_medEsc(m.wirkstoff)+'</span>';
+    if(m.btm) html += ' <span style="font-size:10px;font-weight:700;background:rgba(248,113,113,.2);color:#fca5a5;border:1px solid rgba(248,113,113,.5);border-radius:5px;padding:1px 5px;vertical-align:middle">BtM</span>';
+    if(m.wirkstoffklasse) html += '<br><span style="font-size:12px;color:#93c5d6">'+_medEsc(m.wirkstoffklasse)+'</span>';
+    if(hn.length) html += '<br><span style="font-size:11px;color:#7c9bb0">'+_medEsc(hn.join(', '))+'</span>';
+    html += '</span><span class="medapo-plus" style="font-size:20px;color:#38bdf8;flex:0 0 auto;line-height:1">+</span>';
+    html += '</button>';
+    html += '<div class="medapo-body" style="display:none;padding:0 14px 14px 14px;font-size:13px;line-height:1.6;color:#d5e8f2">';
+    html += _medRow('Wofür / Indikation', m.indikation);
+    html += _medRow('Wirkweise', m.wirkweise);
+    html += _medRow('Wirkeintritt / -dauer', m.wirkdauer);
+    html += _medRow('Einnahme / Applikation', m.einnahmezeitpunkt);
+    if(_medArr(m.darreichung).length) html += _medRow('Darreichung', _medArr(m.darreichung).join(', '));
+    html += _medPraxis(m);
+    if(m.antidot) html += '<div style="margin:8px 0;padding:8px 10px;background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.4);border-radius:8px"><span style="font-weight:700;color:#fdba74;font-size:12px">Antidot / Gegenmittel</span><br><span style="color:#fed7aa">'+_medEsc(m.antidot)+'</span></div>';
+    html += _medRow('Nebenwirkungen', m.nebenwirkungen);
+    html += _medRow('Kontraindikationen', m.kontraindik);
+    html += _medRow('Lagerung', m.lagerung);
+    if(m.pflegehinweis) html += '<div style="margin:8px 0;padding:8px 10px;background:rgba(56,189,248,.1);border-left:3px solid #38bdf8;border-radius:6px"><span style="font-weight:700;color:#7dd3fc;font-size:12px">Pflegehinweis</span><br><span>'+_medEsc(m.pflegehinweis)+'</span></div>';
+    if(tags.length) html += '<div style="margin-top:8px;font-size:11px;color:#7c9bb0">Stichworte: '+_medEsc(tags.join(', '))+'</div>';
+    if(m.quelle||m.stand) html += '<div style="margin-top:6px;font-size:10px;color:#5f7a8c">'+_medEsc(m.quelle||'')+(m.stand?(' · Stand '+_medEsc(m.stand)):'')+'</div>';
+    html += '</div></div>';
+  });
+  box.innerHTML=html;
 }
 var _wdbPending = null;
 function plOpenWdbEntry(slug){
