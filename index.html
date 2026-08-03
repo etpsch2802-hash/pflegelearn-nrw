@@ -12329,6 +12329,10 @@ function doSearch() {
   const res = document.getElementById('search-results');
   if (q.length < 2) { res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Mind. 2 Zeichen eingeben…</div>'; return; }
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  var qRaw = document.getElementById('search-input').value.trim();
+  var _qw = q.split(/\s+/).filter(Boolean);
+  var isFrage = _qw.length >= 3 || /\?$/.test(q) || /\b(was|wie|wo|warum|wieso|weshalb|welche|welcher|welches|unterschied|erklaer|erkläre|erklär|bedeutet|heisst|heißt|zusammenhang)\b/.test(q);
+  var kiRow = '<button onclick="askKIFromSearch()" style="width:100%;text-align:left;background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(8,145,178,.08));border:1px solid rgba(34,211,238,.4);border-radius:11px;padding:12px 14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;margin-bottom:10px"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px;flex:none;color:#22d3ee"><use href="#i-robot"/></svg><span style="min-width:0;overflow:hidden"><span style="display:block;font-size:13px;font-weight:800;color:#7de3f4">Von der KI beantworten lassen</span><span style="display:block;font-size:11px;color:#9fb8cc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">„' + esc(qRaw) + '" – ganze Frage, sofort erklärt</span></span></button>';
   // Wissensdatenbank nachladen, sobald sie fehlt - unabhaengig davon, ob es andere Treffer gibt
   if (!Array.isArray(_wdbData) || !_wdbData.length) {
     if (!window._wdbLoading) {
@@ -12344,11 +12348,11 @@ function doSearch() {
     return;
   }
   if (!hits.length) {
-    res.innerHTML = '<div style="color:#8ab4d0;text-align:center;padding:20px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + esc(q) + '</strong></div>';
+    res.innerHTML = kiRow + '<div style="color:#8ab4d0;text-align:center;padding:16px;font-size:13px">Keine Katalog-Treffer für <strong style="color:#38bdf8">' + esc(qRaw) + '</strong>.<br>Frag die KI oben – sie beantwortet ganze Fragen.</div>';
     return;
   }
   const shown = hits.slice(0, 40);
-  res.innerHTML = '<div style="font-size:11px;color:#8ab4d0;margin-bottom:8px;letter-spacing:1px">' + shown.length + ' Ergebnis' + (shown.length !== 1 ? 'se' : '') + (hits.length > 40 ? ' (von ' + hits.length + ')' : '') + '</div>' +
+  var _list = '<div style="font-size:11px;color:#8ab4d0;margin-bottom:8px;letter-spacing:1px">' + shown.length + ' Ergebnis' + (shown.length !== 1 ? 'se' : '') + (hits.length > 40 ? ' (von ' + hits.length + ')' : '') + '</div>' +
     shown.map(function(h) {
       return '<button onclick="closeSearchOverlay();' + h.action + '" style="width:100%;text-align:left;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.17);border-radius:10px;padding:11px 13px;cursor:pointer;font-family:inherit;display:block;margin-bottom:8px">' +
         '<div style="font-size:10.5px;color:' + h.color + ';letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">' + h.icon + ' ' + h.type + '</div>' +
@@ -12356,6 +12360,16 @@ function doSearch() {
         '<div style="font-size:11px;color:#8ab4d0">' + esc(h.sub) + '</div>' +
         '</button>';
     }).join('');
+  res.innerHTML = isFrage ? (kiRow + _list) : (_list + kiRow);
+}
+function askKIFromSearch(){
+  var inp=document.getElementById('search-input'); if(!inp) return;
+  var q=(inp.value||'').trim(); if(!q) return;
+  try{ plSearchVoiceStop(); }catch(e){}
+  try{ plWakeSuspend(); }catch(e){}
+  try{ closeSearchOverlay(); }catch(e){}
+  try{ startChat(null, 'Ich beantworte deine Frage aus der Suche – einen Moment …'); }catch(e){}
+  setTimeout(function(){ try{ sendMsg(q); }catch(e){} }, 220);
 }
 
 if (localStorage.getItem('pl_lightmode') === '1') toggleDarkMode();
