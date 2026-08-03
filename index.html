@@ -12332,7 +12332,7 @@ function doSearch() {
   var qRaw = document.getElementById('search-input').value.trim();
   var _qw = q.split(/\s+/).filter(Boolean);
   var isFrage = _qw.length >= 3 || /\?$/.test(q) || /\b(was|wie|wo|warum|wieso|weshalb|welche|welcher|welches|unterschied|erklaer|erkläre|erklär|bedeutet|heisst|heißt|zusammenhang)\b/.test(q);
-  var kiRow = '<button onclick="askKIFromSearch()" style="width:100%;text-align:left;background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(8,145,178,.08));border:1px solid rgba(34,211,238,.4);border-radius:11px;padding:12px 14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;margin-bottom:10px"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px;flex:none;color:#22d3ee"><use href="#i-robot"/></svg><span style="min-width:0;overflow:hidden"><span style="display:block;font-size:13px;font-weight:800;color:#7de3f4">Von der KI beantworten lassen</span><span style="display:block;font-size:11px;color:#9fb8cc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">„' + esc(qRaw) + '" – ganze Frage, sofort erklärt</span></span></button>';
+  var kiHtml = isFrage ? plSearchKIBox(qRaw) : '';
   // Wissensdatenbank nachladen, sobald sie fehlt - unabhaengig davon, ob es andere Treffer gibt
   if (!Array.isArray(_wdbData) || !_wdbData.length) {
     if (!window._wdbLoading) {
@@ -12348,7 +12348,7 @@ function doSearch() {
     return;
   }
   if (!hits.length) {
-    res.innerHTML = kiRow + '<div style="color:#8ab4d0;text-align:center;padding:16px;font-size:13px">Keine Katalog-Treffer für <strong style="color:#38bdf8">' + esc(qRaw) + '</strong>.<br>Frag die KI oben – sie beantwortet ganze Fragen.</div>';
+    res.innerHTML = kiHtml + (isFrage ? '' : '<div style="color:#8ab4d0;text-align:center;padding:16px;font-size:13px">Keine Treffer für <strong style="color:#38bdf8">' + esc(qRaw) + '</strong></div>');
     return;
   }
   const shown = hits.slice(0, 40);
@@ -12360,7 +12360,55 @@ function doSearch() {
         '<div style="font-size:11px;color:#8ab4d0">' + esc(h.sub) + '</div>' +
         '</button>';
     }).join('');
-  res.innerHTML = isFrage ? (kiRow + _list) : (_list + kiRow);
+  res.innerHTML = isFrage ? (kiHtml + _list) : _list;
+}
+/* ── Automatische KI-Antwort direkt in der Suche (bei ganzen Fragen) ── */
+var _kiSQ='', _kiSA='', _kiSErr='', _kiSPending='', _kiSTimer=null;
+function _curSearchVal(){ var e=document.getElementById('search-input'); return e?e.value.trim():''; }
+function _kiFmt(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>'); }
+function _kiBox(state, payload){
+  var head='<div style="font-size:10.5px;color:#22d3ee;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px"><svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px"><use href="#i-robot"/></svg> KI-Antwort</div>';
+  var body;
+  if(state==='loading') body='<div style="font-size:12px;color:#8ab4d0">antwortet …</div>';
+  else if(state==='error') body='<div style="font-size:12px;color:#fca5a5">KI gerade nicht erreichbar – bitte gleich nochmal.</div>';
+  else if(state==='limit') body='<div style="font-size:12px;color:#fbbf24">KI-Limit der Demo erreicht – für unbegrenzte Antworten den vollen Zugang freischalten.</div>';
+  else body='<div style="font-size:13px;color:#e2edf5;line-height:1.6">'+payload+'</div>';
+  return '<div style="background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(8,145,178,.04));border:1px solid rgba(34,211,238,.32);border-radius:12px;padding:13px 15px;margin-bottom:12px">'+head+body+'</div>';
+}
+function plSearchKIBox(q){
+  if(_kiSQ===q){
+    if(_kiSA==='__LIMIT__') return _kiBox('limit','');
+    if(_kiSErr) return _kiBox('error','');
+    if(_kiSA) return _kiBox('answer', _kiFmt(_kiSA));
+  }
+  plSearchKIScheduleAnswer(q);
+  return _kiBox('loading','');
+}
+function plSearchKIScheduleAnswer(q){
+  if(_kiSPending===q) return;
+  if(_kiSTimer) clearTimeout(_kiSTimer);
+  _kiSTimer=setTimeout(function(){ plSearchKIRun(q); }, 850);
+}
+function plSearchKIRun(q){
+  if(_kiSPending===q) return;
+  if(_kiSQ===q && (_kiSA||_kiSErr)) return;
+  if(_curSearchVal()!==q) return;
+  if(typeof currentBereich!=='undefined' && currentBereich && !currentBereich.ki_unbegrenzt){
+    var max=currentBereich.ki_max||3;
+    if(typeof kiNachrichtenCount!=='undefined' && kiNachrichtenCount>=max){ _kiSQ=q; _kiSA='__LIMIT__'; _kiSErr=''; _kiSPending=''; if(_curSearchVal()===q) doSearch(); return; }
+    try{ kiNachrichtenCount++; }catch(e){}
+  }
+  _kiSPending=q; _kiSErr='';
+  try{ if(typeof recordKIMessage==='function') recordKIMessage(); }catch(e){}
+  try{
+    callKI([{role:'user', content:q}], (typeof SYS!=='undefined'?SYS:'')).then(function(reply){
+      _kiSPending=''; _kiSQ=q; _kiSA=reply||''; _kiSErr='';
+      if(_curSearchVal()===q) doSearch();
+    }).catch(function(e){
+      _kiSPending=''; _kiSQ=q; _kiSA=''; _kiSErr=(e&&e.message)?e.message:'err';
+      if(_curSearchVal()===q) doSearch();
+    });
+  }catch(e){ _kiSPending=''; _kiSQ=q; _kiSErr='err'; if(_curSearchVal()===q) doSearch(); }
 }
 function askKIFromSearch(){
   var inp=document.getElementById('search-input'); if(!inp) return;
