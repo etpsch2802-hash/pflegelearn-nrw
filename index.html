@@ -12172,7 +12172,7 @@ function plSearchVoiceStop(){
   try{ if(plWakeIsOn()){ setTimeout(plWakeResume, 700); } }catch(e){}
 }
 function plSearchVoice(){
-  if(!plMicSupported()){ alert('Sprachsuche wird auf diesem Geraet nicht unterstuetzt. In Chrome auf Android funktioniert sie zuverlaessig.'); return; }
+  if(!plMicSupported()){ alert('Die Sprachsuche braucht die Web-Spracherkennung, die Firefox nicht unterstützt.\n\nTipp: Tippe ins Suchfeld und nutze das Mikrofon-Symbol der Tastatur – das funktioniert in jedem Browser.'); return; }
   var inp=document.getElementById('search-input'); if(!inp) return;
   if(window._plSearchRec){ plSearchVoiceStop(); return; }
   try{ plWakeSuspend(); }catch(e){}
@@ -12216,14 +12216,22 @@ function _plWakeVariants(){
 function _plWakeHint(txt, color){ var h=document.getElementById('wake-hint'); if(h){ h.textContent=txt; h.style.color=color||'#5f7a8c'; } }
 function plWakeSyncUI(){
   var b=document.getElementById('wake-toggle'), lbl=document.getElementById('wake-toggle-label'), hint=document.getElementById('wake-hint');
+  var mb=document.getElementById('wake-menu-btn');
+  if(!plMicSupported()){
+    if(lbl) lbl.textContent='Freisprechen: nicht verfügbar';
+    if(b){ b.style.background='rgba(255,255,255,.06)'; b.style.color='#94a3b8'; b.style.borderColor='rgba(148,163,184,.25)'; }
+    if(hint){ hint.textContent='In Firefox nicht möglich – Mikro der Tastatur nutzen oder in Chrome öffnen'; hint.style.color='#fbbf24'; }
+    if(mb) mb.innerHTML='🎤 Sprachbefehle (nur Chrome)';
+    return;
+  }
   var on=plWakeIsOn();
   if(lbl) lbl.textContent='Freisprechen: '+(on?'an':'aus');
   if(b){ b.style.background=on?'rgba(52,211,153,.16)':'rgba(255,255,255,.08)'; b.style.color=on?'#6ee7b7':'#8ab4d0'; b.style.borderColor=on?'rgba(52,211,153,.4)':'rgba(var(--accent-rgb),.28)'; }
-  if(hint) hint.textContent = on ? ('Sag „'+plWakePhrase()+'"') : '';
-  var mb=document.getElementById('wake-menu-btn'); if(mb) mb.innerHTML='🎤 Sprachbefehle: '+(on?'An':'Aus');
+  if(hint){ hint.textContent = on ? ('Sag „'+plWakePhrase()+'"') : ''; hint.style.color = on?'#6ee7b7':'#5f7a8c'; }
+  if(mb) mb.innerHTML='🎤 Sprachbefehle: '+(on?'An':'Aus');
 }
 function plWakeToggle(){
-  if(!plMicSupported()){ alert('Freisprechen wird auf diesem Geraet nicht unterstuetzt. In Chrome auf Android funktioniert es.'); return; }
+  if(!plMicSupported()){ alert('Sprachbefehle brauchen die Web-Spracherkennung, die Firefox nicht unterstützt.\n\nSo geht es trotzdem:\n• Suchfeld antippen und das Mikrofon-Symbol der Tastatur nutzen, oder\n• PLAN NRW in Chrome öffnen.'); plWakeSyncUI(); return; }
   var on=!plWakeIsOn();
   try{ localStorage.setItem('pl_wake_on', on?'1':'0'); }catch(e){}
   _plWakeErrCount=0; _plWakeSuspended=false;
