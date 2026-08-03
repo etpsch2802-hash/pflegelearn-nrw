@@ -12153,7 +12153,7 @@ function showSearchOverlay() {
   if (!o) return;
   o.style.display = 'block';
   try{ plWakeSyncUI(); }catch(e){}
-  try{ if(plWakeIsOn()){ _plWakeSuspended=false; plWakeStart(); } }catch(e){}
+  try{ if(plWakeIsOn() && !_plWakeBusy){ _plWakeSuspended=false; plWakeStart(); } }catch(e){}
   setTimeout(() => document.getElementById('search-input').focus(), 100);
 }
 function closeSearchOverlay() {
