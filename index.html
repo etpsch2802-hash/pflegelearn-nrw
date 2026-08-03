@@ -12153,7 +12153,7 @@ function showSearchOverlay() {
   if (!o) return;
   o.style.display = 'block';
   try{ plWakeSyncUI(); }catch(e){}
-  try{ if(plWakeIsOn() && !_plWakeBusy){ _plWakeSuspended=false; plWakeStart(); } }catch(e){}
+  try{ if(plWakeIsOn() && !window._plSearchRec){ _plWakeSuspended=false; plWakeStart(); } }catch(e){}
   setTimeout(() => document.getElementById('search-input').focus(), 100);
 }
 function closeSearchOverlay() {
@@ -12203,6 +12203,7 @@ function plSearchClear(){
    Opt-in, Standard AUS. Laeuscht kontinuierlich; erkennt den Aktivierungssatz,
    oeffnet die Suche und diktiert die Anfrage. Zuverlaessig in Chrome/Android. */
 var _plWakeRec=null, _plWakeSuspended=false, _plWakeBusy=false, _plWakeErrCount=0;
+var _wakeMode='listen', _wakeAnchor=0, _wakeProcessed=0, _wakeSilenceTimer=null;
 function plWakeIsOn(){ try{ return localStorage.getItem('pl_wake_on')==='1'; }catch(e){ return false; } }
 function plWakePhrase(){ try{ return (localStorage.getItem('pl_wake_phrase')||'hey plan'); }catch(e){ return 'hey plan'; } }
 function _plWakeNorm(s){ return String(s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
@@ -12254,17 +12255,28 @@ function plWakeStart(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   var r; try{ r=new SR(); }catch(e){ return; }
   r.lang='de-DE'; r.interimResults=true; r.continuous=true; r.maxAlternatives=1;
-  _plWakeRec=r;
+  _plWakeRec=r; _wakeMode='listen'; _wakeProcessed=0; _wakeAnchor=0;
   r.onstart=function(){ _plWakeErrCount=0; _plWakeHint('hört zu … sag „'+plWakePhrase()+'"', '#6ee7b7'); };
   r.onaudiostart=function(){ _plWakeHint('hört zu … sag „'+plWakePhrase()+'"', '#6ee7b7'); };
   r.onresult=function(ev){
-    if(_plWakeBusy) return;
-    var txt=''; for(var i=ev.resultIndex;i<ev.results.length;i++) txt+=ev.results[i][0].transcript+' ';
-    var norm=_plWakeNorm(txt); if(!norm) return;
-    var vs=_plWakeVariants();
-    for(var k=0;k<vs.length;k++){
-      var pos=norm.indexOf(vs[k]);
-      if(pos>=0){ _plWakeBusy=true; var q=norm.slice(pos+vs[k].length).trim(); _plWakeTrigger(q); return; }
+    var full=''; for(var i=0;i<ev.results.length;i++) full+=ev.results[i][0].transcript+' ';
+    var norm=_plWakeNorm(full); if(!norm) return;
+    if(_wakeMode==='listen'){
+      var region=norm.slice(_wakeProcessed);
+      var vs=_plWakeVariants(), pos=-1, vlen=0;
+      for(var k=0;k<vs.length;k++){ var p=region.indexOf(vs[k]); if(p>=0 && (pos<0 || p<pos)){ pos=p; vlen=vs[k].length; } }
+      if(pos>=0){
+        _wakeMode='dictate';
+        _wakeAnchor=_wakeProcessed+pos+vlen;
+        try{ if(typeof playFeedback==='function') playFeedback(); }catch(e){}
+        try{ showSearchOverlay(); }catch(e){}
+        _wakeSetField(norm.slice(_wakeAnchor).trim());
+        _plWakeHint('… ich höre deine Frage', '#6ee7b7');
+        _wakeArmSilence(norm);
+      }
+    } else {
+      _wakeSetField(norm.slice(_wakeAnchor).trim());
+      _wakeArmSilence(norm);
     }
   };
   r.onerror=function(ev){
@@ -12276,20 +12288,23 @@ function plWakeStart(){
   r.onend=function(){
     _plWakeRec=null;
     if(_plWakeErrCount>8){ _plWakeHint('pausiert – „Freisprechen" aus und wieder an tippen', '#fca5a5'); plWakeForceOff(); return; }
-    if(plWakeIsOn() && !_plWakeSuspended && !_plWakeBusy){ setTimeout(plWakeStart, 400); }
+    if(plWakeIsOn() && !_plWakeSuspended){ setTimeout(plWakeStart, 300); }
   };
   try{ r.start(); }catch(e){ _plWakeRec=null; setTimeout(function(){ if(plWakeIsOn() && !_plWakeSuspended && !_plWakeRec) plWakeStart(); }, 500); }
 }
-function _plWakeTrigger(q){
-  plWakeSuspend();
-  try{ if(typeof playFeedback==='function') playFeedback(); }catch(e){}
-  try{ showSearchOverlay(); }catch(e){}
-  setTimeout(function(){
-    var inp=document.getElementById('search-input');
-    if(inp && q){ inp.value=q; try{ doSearch(); }catch(e){} }
-    try{ plSearchVoice(); }catch(e){}
-    _plWakeBusy=false;
-  }, 350);
+function _wakeSetField(q){
+  var inp=document.getElementById('search-input'); if(!inp) return;
+  if(inp.value===q) return;
+  inp.value=q;
+  try{ doSearch(); }catch(e){}
+}
+function _wakeArmSilence(norm){
+  if(_wakeSilenceTimer) clearTimeout(_wakeSilenceTimer);
+  _wakeSilenceTimer=setTimeout(function(){
+    _wakeMode='listen';
+    _wakeProcessed=norm.length;
+    _plWakeHint('hört zu … sag „'+plWakePhrase()+'"', '#6ee7b7');
+  }, 2600);
 }
 /* Admin-Panel: Aktivierungssatz verwalten */
 function plWakeAdminSync(){
