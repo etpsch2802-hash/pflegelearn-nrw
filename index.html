@@ -1687,6 +1687,7 @@
       <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Vorlage</button>
       <button onclick="adminTab('nutzer')" id="atab-nutzer" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Nutzer</button>
       <button onclick="adminTab('sprache')" id="atab-sprache" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-mic"/></svg> Sprache</button>
+      <button onclick="adminTab('videos')" id="atab-videos" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-play"/></svg> Videos</button>
     </div>
 
     <!-- TAB: TOKEN GENERATOR -->
@@ -1768,6 +1769,24 @@
         </div>
         <div id="admin-wake-status" style="font-size:12px;color:#6ee7b7;min-height:16px"></div>
       </div>
+    </div>
+
+    <!-- TAB: VIDEOS (TikTok-Zuordnung) -->
+    <div id="admin-videos" class="admin-tab-content" style="display:none">
+      <div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:18px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-play"/></svg> TikTok-Video zuordnen</div>
+        <div style="font-size:12px;color:#9aabc0;line-height:1.6;margin-bottom:14px">Ordne einem Krankheitsbild ein TikTok-Video zu. Es erscheint dann automatisch als „Kurzvideo dazu" im Krankheitsbild – ohne Push.</div>
+        <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Krankheitsbild</div>
+        <select id="admin-video-kb" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit;margin-bottom:11px"><option value="">– Krankheitsbild wählen –</option></select>
+        <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">TikTok-Link</div>
+        <input id="admin-video-url" type="url" placeholder="https://www.tiktok.com/@pflegelearn_nrw/video/…" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit;margin-bottom:11px">
+        <div style="font-size:11px;color:#8ab4d0;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Titel (optional)</div>
+        <input id="admin-video-titel" type="text" placeholder="z. B. COPD in 30 Sekunden" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(100,180,220,.2);border-radius:9px;padding:10px 13px;color:#ddf0fb;font-size:13px;outline:none;font-family:inherit;margin-bottom:13px">
+        <button onclick="plVideoSave()" style="background:linear-gradient(135deg,#be185d,#8b5cf6);border:none;border-radius:9px;padding:11px 16px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Video speichern</button>
+        <div id="admin-video-status" style="font-size:12px;color:#6ee7b7;min-height:16px;margin-top:10px"></div>
+      </div>
+      <div style="font-size:11px;color:#8ab4d0;margin:0 2px 8px;text-transform:uppercase;letter-spacing:1px">Zugeordnete Videos</div>
+      <div id="admin-video-liste"></div>
     </div>
 
     <!-- TAB: TOKEN LISTE -->
@@ -3343,6 +3362,7 @@ function adminTab(tab) {
     activeBtn.style.fontWeight = "700";
   }
   if (tab === "sprache") plWakeAdminSync();
+  if (tab === "videos") plVideoAdminInit();
   if (tab === "liste") renderTokenListe();
   if (tab === "stats") renderStats();
   if (tab === "nachricht") renderVorlagen();
@@ -6434,6 +6454,8 @@ function openKrankheitsbild(fachId, bildIdx) {
         </div>
       </div>
 
+      <div id="kb-video-slot"></div>
+
       <div style="background:rgba(255,255,255,.10);border:1px solid ${fach.farbe}20;border-radius:12px;padding:14px;margin-bottom:10px">
         <div style="font-size:11px;color:${fach.farbe};font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">📋 Definition</div>
         <div style="font-size:13px;color:#bae6fd;line-height:1.7">${b.definition}</div>
@@ -6504,8 +6526,79 @@ function openKrankheitsbild(fachId, bildIdx) {
       </button>
     </div>`;
 
+  try{ loadKBVideos(b.name, fachId); }catch(e){}
   showScreen('kb-detail');
 }
+function _vidKey(name){ return String(name||'').toLowerCase().trim(); }
+function _vEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+async function loadKBVideos(name, fachId){
+  var slot=document.getElementById('kb-video-slot'); if(!slot) return;
+  slot.innerHTML='';
+  if(!window.SB) return;
+  try{
+    var res=await window.SB.from('videos').select('*').eq('kb_key', _vidKey(name)).eq('aktiv', true).order('created_at');
+    var rows=(res && res.data)||[];
+    if(!rows.length) return;
+    var html='<div style="background:linear-gradient(135deg,rgba(236,72,153,.12),rgba(139,92,246,.06));border:1px solid rgba(236,72,153,.32);border-radius:12px;padding:13px 14px;margin-bottom:10px">'
+      +'<div style="font-size:11px;color:#f472b6;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:9px">🎬 Kurzvideo dazu</div>';
+    rows.forEach(function(v){
+      var t=_vEsc(v.titel||('Video zu '+name));
+      html+='<a href="'+_vEsc(v.tiktok_url)+'" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;margin-bottom:7px;text-decoration:none;font-family:inherit">'
+        +'<span style="width:38px;height:38px;flex:none;border-radius:9px;background:linear-gradient(135deg,#ec4899,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px">▶</span>'
+        +'<span style="min-width:0"><span style="display:block;font-size:12.5px;font-weight:700;color:#e2edf5;line-height:1.3">'+t+'</span>'
+        +'<span style="display:block;font-size:11px;color:#9fb8cc">Auf TikTok ansehen</span></span></a>';
+    });
+    html+='</div>';
+    slot.innerHTML=html;
+  }catch(e){}
+}
+/* ── Admin: Videos verwalten ── */
+function plVideoAdminInit(){
+  var sel=document.getElementById('admin-video-kb');
+  if(sel && !sel._filled && typeof KRANKHEITSBILDER!=='undefined'){
+    var opts='<option value="">– Krankheitsbild wählen –</option>';
+    Object.keys(KRANKHEITSBILDER).forEach(function(fid){
+      var fach=KRANKHEITSBILDER[fid];
+      (fach.bilder||[]).forEach(function(b){ opts+='<option value="'+_vEsc(fid+'|'+b.name)+'">'+_vEsc(fach.label+' · '+b.name)+'</option>'; });
+    });
+    sel.innerHTML=opts; sel._filled=true;
+  }
+  plVideoLoadListe();
+}
+async function plVideoSave(){
+  var sel=document.getElementById('admin-video-kb'), url=document.getElementById('admin-video-url'), titel=document.getElementById('admin-video-titel'), st=document.getElementById('admin-video-status');
+  var val=sel?sel.value:'', u=(url?url.value:'').trim();
+  if(!val){ if(st){st.textContent='Bitte ein Krankheitsbild wählen.';st.style.color='#fca5a5';} return; }
+  if(!u || u.indexOf('http')!==0){ if(st){st.textContent='Bitte eine gültige TikTok-URL (https://…) eingeben.';st.style.color='#fca5a5';} return; }
+  if(!window.SB){ if(st){st.textContent='Keine Verbindung zur Datenbank.';st.style.color='#fca5a5';} return; }
+  var parts=val.split('|'), fid=parts[0], name=parts.slice(1).join('|');
+  try{
+    var res=await window.SB.from('videos').insert({ kb_key:_vidKey(name), kb_name:name, fach:fid, titel:(titel&&titel.value.trim())||null, tiktok_url:u, aktiv:true });
+    if(res && res.error){ if(st){st.textContent='Fehler: '+res.error.message;st.style.color='#fca5a5';} return; }
+    if(url) url.value=''; if(titel) titel.value='';
+    if(st){ st.textContent='Gespeichert für '+name+'.'; st.style.color='#6ee7b7'; }
+    plVideoLoadListe();
+  }catch(e){ if(st){st.textContent='Fehler beim Speichern.';st.style.color='#fca5a5';} }
+}
+async function plVideoLoadListe(){
+  var box=document.getElementById('admin-video-liste'); if(!box) return;
+  if(!window.SB){ box.innerHTML=''; return; }
+  box.innerHTML='<div style="font-size:12px;color:#8ab4d0">lädt …</div>';
+  try{
+    var res=await window.SB.from('videos').select('*').order('created_at',{ascending:false});
+    var rows=(res&&res.data)||[];
+    if(!rows.length){ box.innerHTML='<div style="font-size:12px;color:#8ab4d0">Noch keine Videos zugeordnet.</div>'; return; }
+    box.innerHTML=rows.map(function(v){
+      return '<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 11px;margin-bottom:6px">'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:#e2edf5">'+_vEsc(v.kb_name||v.kb_key)+(v.aktiv?'':' <span style="color:#fbbf24">(aus)</span>')+'</div>'
+        +'<div style="font-size:10.5px;color:#8ab4d0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_vEsc(v.titel||'')+' · '+_vEsc(v.tiktok_url)+'</div></div>'
+        +'<button onclick="plVideoToggle('+v.id+','+(v.aktiv?'false':'true')+')" style="background:rgba(255,255,255,.1);border:none;border-radius:7px;padding:6px 9px;color:#8ab4d0;font-size:11px;font-family:inherit;cursor:pointer">'+(v.aktiv?'aus':'an')+'</button>'
+        +'<button onclick="plVideoDelete('+v.id+')" style="background:rgba(248,113,113,.15);border:none;border-radius:7px;padding:6px 9px;color:#fca5a5;font-size:11px;font-family:inherit;cursor:pointer">löschen</button></div>';
+    }).join('');
+  }catch(e){ box.innerHTML='<div style="font-size:12px;color:#fca5a5">Fehler beim Laden.</div>'; }
+}
+async function plVideoToggle(id, aktiv){ if(!window.SB) return; try{ await window.SB.from('videos').update({aktiv:aktiv}).eq('id', id); plVideoLoadListe(); }catch(e){} }
+async function plVideoDelete(id){ if(!window.SB) return; if(!confirm('Dieses Video wirklich löschen?')) return; try{ await window.SB.from('videos').delete().eq('id', id); plVideoLoadListe(); }catch(e){} }
 
 
 // ─── KB-FRAGEN SHUFFLE ──────────────────────────────────────────────────────
