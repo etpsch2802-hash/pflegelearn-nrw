@@ -1,0 +1,23 @@
+name: Keep-Alive plan-digital
+
+# Haelt das Supabase-Projekt "plan-digital" (vhddwjimghgefmnybezl) wach,
+# damit es nicht nach ~7 Tagen Inaktivitaet pausiert wird.
+# Der anon-Key ist oeffentlich (wie im Frontend), daher direkt hinterlegt.
+
+on:
+  schedule:
+    - cron: '0 6 */3 * *'   # alle 3 Tage um 06:00 UTC (sicher unter der 7-Tage-Grenze)
+  workflow_dispatch:          # zusaetzlich manuell ausloesbar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping plan-digital
+        run: |
+          KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZGR3amltZ2hnZWZtbnliZXpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMzk5NDMsImV4cCI6MjEwMDgxNTk0M30.2RPBGZkFfStqFofZ3Yn3MWJgxQn1D-R_328Hk6Gt7Ls"
+          curl -sf \
+            "https://vhddwjimghgefmnybezl.supabase.co/rest/v1/keepalive?select=id&limit=1" \
+            -H "apikey: $KEY" \
+            -H "Authorization: Bearer $KEY" \
+          && echo "plan-digital keep-alive ok"
