@@ -7544,13 +7544,18 @@ function toggleLoginBox(){
    Gibt {expired, used, max, rest} zurueck oder null (= kein Trial-Token). */
 async function plTrialInfo(token, code){
   if(!token || token.trial_max == null) return null;
+  // Server-seitig zaehlen (nicht manipulierbar): DB-Funktion trial_touch
+  try{
+    if(window.SB){
+      const { data, error } = await window.SB.rpc('trial_touch', { p_token: code });
+      if(!error && data && data.trial){
+        return { expired: !!data.expired, used: data.used, max: data.max, rest: data.rest };
+      }
+    }
+  }catch(e){}
+  // Fallback (z. B. offline): lokale Anzeige, ohne zu schreiben – der Tag wird erst online gezaehlt
   var max = token.trial_max|0, used = token.trial_used|0;
-  var today = new Date().toISOString().split('T')[0];
-  if(token.trial_last !== today && used <= max){
-    used++;
-    try{ if(window.SB) await window.SB.from('tokens').update({ trial_used: used, trial_last: today }).eq('token', code); }catch(e){}
-  }
-  return { expired: used > max, used: used, max: max, rest: Math.max(0, max - used) };
+  return { expired: used > max, used: used, max: max, rest: Math.max(0, max-used) };
 }
 async function plLookupToken(code) {
   // 1) Supabase (Single Source of Truth)
