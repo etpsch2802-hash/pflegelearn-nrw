@@ -4637,6 +4637,174 @@ const KRANKHEITSBILDER = {
           }
         ],
         fragen: []
+      },
+      {
+        name: "Spontangeburt (physiologische Geburt)",
+        icd: "O80",
+        definition: "Regelrechte vaginale Geburt aus Schädellage am Termin (37+0 bis 41+6 SSW) ohne operative Eingriffe. Verläuft in Phasen: Eröffnungsphase, Austreibungsphase und Nachgeburtsphase.",
+        symptome: ["Regelmäßige, zunehmende Wehen", "Zeichnen (blutig-schleimiger Schleimpfropf)", "Blasensprung (Fruchtwasserabgang)", "Muttermunderöffnung 0 bis 10 cm", "Presswehen in der Austreibungsphase"],
+        diagnostik: ["CTG (Wehentätigkeit + kindliche Herztöne)", "Vaginale Untersuchung (Muttermundweite, Höhenstand)", "Leopold-Handgriffe (Lage des Kindes)", "Vitalzeichen und Temperatur der Mutter", "Fruchtwasser beurteilen (klar/grün = Mekonium)"],
+        therapie: ["Geburtsbegleitung durch Hebamme/Arzt", "Wehenmanagement und Positionswechsel", "Schmerzlinderung (Atmung, Bewegung, ggf. PDA)", "Dammschutz in der Austreibungsphase", "Abnabeln und frühes Bonding (Haut-zu-Haut)"],
+        pflege: ["Wehen unterstützen, zu Positionswechsel und Atemtechnik anleiten", "CTG und Vitalzeichen der Mutter kontinuierlich überwachen", "Blasenentleerung fördern (volle Blase hemmt Geburt)", "Psychisch begleiten, Sicherheit vermitteln", "Nach der Geburt: Fundusstand und Blutung kontrollieren, erstes Anlegen und Bonding fördern"],
+        merksatz: "Geburt in 3 Phasen: Eröffnung (MM bis 10 cm) – Austreibung (Pressen, Kind) – Nachgeburt (Plazenta). Immer CTG und Blutung im Blick.",
+        pflegeplanung: [
+          {
+            problem: "Schmerz und Erschöpfung unter der Geburt r/t Wehentätigkeit m/d/s Schmerzäußerung, Anspannung, Unruhe",
+            ressourcen: ["Gebärende ist motiviert", "Begleitperson anwesend", "Hebamme betreut kontinuierlich"],
+            ziel: "Die Gebärende bewältigt die Geburt möglichst schmerzarm, sicher und selbstbestimmt",
+            massnahmen: ["Atem- und Entspannungstechniken anleiten", "Positionswechsel und Bewegung ermöglichen", "Kontinuierliche CTG- und Vitalzeichenüberwachung", "Emotionale Begleitung und Information", "Blasenentleerung fördern"],
+            evaluation: "Geburt komplikationslos, Gebärende fühlt sich sicher begleitet, Kind wohlauf."
+          }
+        ],
+        fragen: [
+          {f:"In welcher Reihenfolge verlaufen die Geburtsphasen?", opt:["Austreibung – Eröffnung – Nachgeburt", "Eröffnungsphase – Austreibungsphase – Nachgeburtsphase", "Nachgeburt – Eröffnung – Austreibung", "Es gibt nur eine Phase"], k:1, e:"Eröffnungsphase (Muttermund öffnet sich bis 10 cm), Austreibungsphase (vollständige Eröffnung bis Geburt des Kindes, Presswehen), Nachgeburtsphase (Geburt der Plazenta). Danach folgt die Postplazentarphase (frühes Wochenbett)."},
+          {f:"Welches sind sichere Zeichen des Geburtsbeginns?", opt:["Nur Rückenschmerzen", "Regelmäßige, zunehmende Wehen, Blasensprung und Zeichnen", "Übelkeit", "Sodbrennen"], k:1, e:"Geburtsbeginn zeigt sich durch regelmäßige, an Stärke und Frequenz zunehmende Wehen, den Blasensprung (Fruchtwasserabgang) und das Zeichnen (Abgang des blutig-schleimigen Schleimpfropfs)."},
+          {f:"Warum wird unter der Geburt ein CTG geschrieben?", opt:["Nur zur Dokumentation", "Um Wehentätigkeit und kindliche Herztöne zu überwachen und eine Sauerstoffunterversorgung früh zu erkennen", "Um den Blutdruck zu messen", "Um das Gewicht zu bestimmen"], k:1, e:"Das CTG (Kardiotokografie) zeichnet gleichzeitig die Wehen und die kindlichen Herztöne auf. Abfälle der Herzfrequenz können auf eine fetale Hypoxie (Sauerstoffmangel) hinweisen und erfordern rasches Handeln."}
+        ]
+      },
+      {
+        name: "Sectio caesarea (Kaiserschnitt)",
+        icd: "O82",
+        definition: "Operative Entbindung durch Bauchschnitt. Primäre Sectio = geplant, sekundäre/Not-Sectio = während der Geburt bei akuter Gefahr. Häufigste geburtshilfliche Operation.",
+        symptome: ["Indikation z. B. Querlage oder Missverhältnis", "Pathologisches CTG (fetale Hypoxie)", "Placenta praevia", "Schwere Präeklampsie/HELLP", "Geburtsstillstand"],
+        diagnostik: ["CTG und Vitalzeichen", "Labor (Blutbild, Gerinnung, Blutgruppe/Kreuzblut)", "OP-Vorbereitung und Aufklärung", "Sonographie (Lage, Plazentasitz)"],
+        therapie: ["Sectio in Spinal-/Periduralanästhesie oder Vollnarkose", "Postoperative Überwachung", "Schmerztherapie nach Stufenschema", "Thromboseprophylaxe (erhöhtes Risiko)"],
+        pflege: ["Postoperativ Vitalzeichen, Wunde und Verband kontrollieren", "Fundusstand und Lochien überwachen (postpartale Blutung!)", "Konsequente Thromboseprophylaxe (LMWH, Kompression, frühe Mobilisation)", "Schmerzmanagement, damit Mobilisation und Stillen möglich sind", "Stillen aktiv unterstützen (nach Sectio oft erschwert), Bonding fördern", "Blasenkatheter und Ausscheidung beobachten"],
+        merksatz: "Nach Sectio: postoperative Überwachung + Wochenbett-Kontrollen (Fundus/Lochien) + Thromboseprophylaxe + Schmerztherapie + Stillhilfe.",
+        pflegeplanung: [
+          {
+            problem: "Postoperative Schmerzen und Thrombosegefahr r/t abdominaler Operation und eingeschränkter Mobilität m/d/s Wundschmerz, Bewegungseinschränkung",
+            ressourcen: ["Mutter motiviert zu Mobilisation", "Analgesie angeordnet", "Unterstützung durch Personal/Familie"],
+            ziel: "Die Wöchnerin ist ausreichend schmerzarm, wird frühzeitig mobilisiert und entwickelt keine Thrombose",
+            massnahmen: ["Schmerztherapie nach Plan und vor Mobilisation/Stillen", "Thromboseprophylaxe: LMWH, Kompressionsstrümpfe, frühe Mobilisation", "Wunde und Verband regelmäßig kontrollieren", "Fundusstand und Lochien überwachen", "Beim Stillen und Bonding aktiv unterstützen"],
+            evaluation: "Schmerzarm, frühzeitig mobilisiert, keine Thrombose-/Wundkomplikation, Stillbeginn gelungen."
+          }
+        ],
+        fragen: [
+          {f:"Was ist eine typische Indikation für eine Not-Sectio?", opt:["Wunsch nach schneller Geburt", "Akute Gefährdung des Kindes, z. B. pathologisches CTG mit drohender Hypoxie", "Leichte Wehen", "Erschöpfung der Mutter allein"], k:1, e:"Eine sekundäre/Not-Sectio wird bei akuter Gefahr für Mutter oder Kind durchgeführt, z. B. pathologisches CTG (fetale Hypoxie), Nabelschnurvorfall, vorzeitige Plazentalösung oder Geburtsstillstand."},
+          {f:"Worauf ist nach einer Sectio pflegerisch besonders zu achten?", opt:["Nur auf die Wunde", "Konsequente Thromboseprophylaxe – das Thromboserisiko ist nach OP und in Wochenbett deutlich erhöht", "Bettruhe für 2 Wochen", "Kein Stillen"], k:1, e:"Nach der Operation und im Wochenbett ist das Thromboserisiko erhöht. Wichtig sind LMWH, Kompressionsstrümpfe und vor allem die frühe Mobilisation. Zusätzlich gelten die Wochenbett-Kontrollen (Fundus, Lochien)."},
+          {f:"Ist Stillen nach einem Kaiserschnitt möglich?", opt:["Nein, grundsätzlich nicht", "Ja – es ist möglich, oft aber anfangs erschwert und braucht aktive Unterstützung", "Nur mit Medikamenten", "Nur nach 6 Wochen"], k:1, e:"Stillen ist nach einer Sectio möglich. Durch Wundschmerz, verzögerten Milcheinschuss und eingeschränkte Mobilität ist der Start oft erschwert – hier hilft aktive Stillberatung, schmerzarme Positionen und frühes Anlegen."}
+        ]
+      },
+      {
+        name: "Neugeborenenversorgung (Erstversorgung, APGAR)",
+        icd: "Z38",
+        definition: "Erstversorgung und Überwachung des Neugeborenen nach der Geburt: postnatale Adaptation, Wärmeerhalt, APGAR-Beurteilung, Prophylaxen sowie U1/U2 und Neugeborenen-Screening.",
+        symptome: ["Postnatale Adaptation (erster Atemzug, Kreislaufumstellung)", "APGAR bei 1/5/10 Minuten", "Physiologische Neugeborenengelbsucht möglich", "Wärmeempfindlichkeit (Hypothermiegefahr)"],
+        diagnostik: ["APGAR-Score (Atmung, Puls, Grundtonus, Aussehen, Reflexe) bei 1/5/10 min", "U1 direkt nach Geburt, U2 am 3.–10. Lebenstag", "Neugeborenen-Screening (Fersenblut)", "Pulsoxymetrie-Screening", "Gewicht, Länge, Kopfumfang"],
+        therapie: ["Wärmeerhalt (Haut-zu-Haut, Wärmelampe, Mütze)", "Abtrocknen, ggf. Absaugen", "Vitamin-K-Prophylaxe", "Augenprophylaxe nach Bedarf", "Frühes Anlegen und Bonding"],
+        pflege: ["Wärmemanagement: sofort abtrocknen, Haut-zu-Haut, Mütze (Hypothermie vermeiden!)", "APGAR erheben und dokumentieren, Atmung und Hautfarbe beobachten", "Bonding und erstes Anlegen unterstützen", "Prophylaxen durchführen (Vitamin K, Augen)", "U1/U2 und Screening organisieren, Eltern anleiten"],
+        merksatz: "APGAR (A-P-G-A-R) bei 1/5/10 min. Neugeborenes: warm halten, Bonding, U1/U2, Vitamin K, Screening.",
+        pflegeplanung: [
+          {
+            problem: "Gefahr der Hypothermie und gestörten Adaptation r/t unreifer Thermoregulation m/d/s großer Körperoberfläche und Nässe nach Geburt",
+            ressourcen: ["Mutter für Haut-zu-Haut bereit", "Wärmelampe/Erstversorgungsplatz vorhanden"],
+            ziel: "Das Neugeborene hält eine stabile Körpertemperatur und adaptiert komplikationslos",
+            massnahmen: ["Sofort abtrocknen und Wärme erhalten (Haut-zu-Haut, Wärmelampe, Mütze)", "APGAR und Vitalzeichen erheben", "Atmung, Hautfarbe und Temperatur überwachen", "Bonding und erstes Anlegen fördern", "Prophylaxen und Screening durchführen"],
+            evaluation: "Temperatur stabil, Adaptation regelrecht, APGAR gut, Bonding gelungen."
+          }
+        ],
+        fragen: [
+          {f:"Wofür stehen die Buchstaben im APGAR-Score?", opt:["Alter, Puls, Gewicht, Atmung, Reflexe", "Atmung, Puls, Grundtonus, Aussehen (Hautfarbe), Reflexe", "Aussehen, Puls, Größe, Atmung, Reaktion", "Atmung, Position, Gewicht, Alter, Reflexe"], k:1, e:"APGAR bewertet Atmung, Puls, Grundtonus, Aussehen (Hautfarbe) und Reflexe – je 0 bis 2 Punkte, erhoben bei 1, 5 und 10 Minuten. Ein Wert von 7 bis 10 gilt als unauffällig."},
+          {f:"Warum ist der Wärmeerhalt beim Neugeborenen so wichtig?", opt:["Aus Komfortgründen", "Neugeborene kühlen wegen großer Körperoberfläche und unreifer Thermoregulation schnell aus (Hypothermiegefahr)", "Damit sie schlafen", "Nur bei Frühgeborenen relevant"], k:1, e:"Neugeborene verlieren wegen ihrer relativ großen Körperoberfläche und der unreifen Wärmeregulation rasch Wärme. Abtrocknen, Haut-zu-Haut-Kontakt und Mütze beugen einer gefährlichen Auskühlung vor."},
+          {f:"Wann wird die U1 durchgeführt?", opt:["Am 10. Lebenstag", "Direkt nach der Geburt", "Nach 6 Wochen", "Erst bei Auffälligkeiten"], k:1, e:"Die U1 erfolgt unmittelbar nach der Geburt (Erstuntersuchung inkl. APGAR). Die U2 folgt am 3. bis 10. Lebenstag, ergänzt durch das Neugeborenen-Screening aus Fersenblut."}
+        ]
+      },
+      {
+        name: "Stillen und Laktation",
+        icd: "Z39.1",
+        definition: "Ernährung des Säuglings mit Muttermilch. Die Laktation wird durch Prolaktin (Milchbildung) und Oxytocin (Milchflussreflex) gesteuert. Milchreifung von Kolostrum über Übergangs- zu reifer Milch.",
+        symptome: ["Milcheinschuss um den 2.–4. Tag", "Let-down-Reflex (Milchspendereflex)", "Mögliche wunde Mamillen", "Möglicher Milchstau", "Mögliche Mastitis (Brustentzündung)"],
+        diagnostik: ["Anlege- und Stillposition beurteilen", "Trinkverhalten und Gewichtsverlauf des Kindes", "Brust auf Rötung/Stau/Überwärmung prüfen", "Ausscheidung des Kindes (nasse Windeln)"],
+        therapie: ["Korrekte Anlegetechnik anleiten", "Häufiges Anlegen nach Bedarf", "Verschiedene Stillpositionen zeigen", "Milchstau: entleeren, wärmen vor/kühlen nach dem Stillen", "Mastitis: weiterstillen/entleeren, ggf. Antibiose"],
+        pflege: ["Stillberatung: Anlegetechnik und Positionen zeigen", "Zum Bedarfsstillen anleiten", "Mamillenpflege und Vorbeugung wunder Brustwarzen", "Milchstau und Mastitis vorbeugen und früh erkennen", "Auf Ernährung, Flüssigkeit und Ruhe der Mutter achten, psychisch unterstützen"],
+        merksatz: "Prolaktin bildet, Oxytocin lässt fließen. Häufig anlegen, richtige Technik. Milchstau/Mastitis: weiter stillen und entleeren.",
+        pflegeplanung: [
+          {
+            problem: "Stillschwierigkeiten und wunde Mamillen r/t fehlerhafter Anlegetechnik m/d/s Schmerz beim Anlegen, Unsicherheit der Mutter",
+            ressourcen: ["Mutter motiviert zu stillen", "Stillberatung verfügbar", "Kind trinkt grundsätzlich"],
+            ziel: "Die Mutter legt schmerzfrei korrekt an und stillt sicher und selbstständig",
+            massnahmen: ["Anlegetechnik anleiten (Kind erfasst Warzenhof, nicht nur Mamille)", "Verschiedene Stillpositionen zeigen", "Mamillenpflege beraten", "Zu häufigem Anlegen ermutigen", "Milchstau/Mastitis vorbeugen und Zeichen erklären"],
+            evaluation: "Anlegen schmerzfrei, Mamillen intakt, Mutter stillt sicher, Kind nimmt zu."
+          }
+        ],
+        fragen: [
+          {f:"Welche Hormone steuern die Laktation?", opt:["Insulin und Adrenalin", "Prolaktin (Milchbildung) und Oxytocin (Milchflussreflex)", "Östrogen und Testosteron", "Cortisol und Thyroxin"], k:1, e:"Prolaktin sorgt für die Milchbildung, Oxytocin löst den Milchspende-/Let-down-Reflex aus. Häufiges Anlegen fördert über den Saugreiz beide Hormone und damit die Milchmenge."},
+          {f:"Wie geht man bei einer beginnenden Mastitis in der Regel vor?", opt:["Sofort abstillen", "In der Regel weiterstillen/entleeren, kühlen und schonen – bei Bedarf Antibiose", "Nur kühlen und nicht mehr anlegen", "Nichts tun"], k:1, e:"Bei Mastitis wird meist weiter gestillt bzw. entleert (Milchstau lösen!), zusätzlich Kühlung nach dem Stillen, Schonung und ausreichend Flüssigkeit. Bei ausbleibender Besserung oder Fieber ggf. Antibiotikum – Abstillen ist selten nötig."},
+          {f:"Was ist ein Zeichen für eine korrekte Anlegetechnik?", opt:["Das Kind erfasst nur die Brustwarze", "Das Kind erfasst Mamille und großen Teil des Warzenhofs, Lippen sind nach außen gestülpt", "Die Mutter hat starke Schmerzen", "Das Kind saugt nur kurz an"], k:1, e:"Beim korrekten Anlegen erfasst das Kind die Mamille samt großem Teil des Warzenhofs, die Lippen sind nach außen gestülpt, Kinn berührt die Brust. Das beugt wunden Mamillen vor und sichert effektives Trinken."}
+        ]
+      },
+      {
+        name: "Gestationsdiabetes (GDM)",
+        icd: "O24.4",
+        definition: "Erstmals in der Schwangerschaft auftretende Glukosetoleranzstörung. Häufigste Schwangerschaftskomplikation. Risiken: kindliche Makrosomie, Geburtskomplikationen, neonatale Hypoglykämie, späteres Diabetesrisiko der Mutter.",
+        symptome: ["Meist symptomarm – Screening entscheidend", "Mögliche Makrosomie (großes Kind)", "Mögliches Polyhydramnion (viel Fruchtwasser)", "Nach Geburt: Hypoglykämiegefahr des Kindes"],
+        diagnostik: ["Oraler Glukosetoleranztest (oGTT) in der 24.–28. SSW", "Blutzucker-Tagesprofil", "HbA1c ergänzend", "Sonographie (kindliches Wachstum, Fruchtwassermenge)"],
+        therapie: ["Basis: Ernährungsumstellung und Bewegung", "Blutzucker-Selbstkontrolle", "Bei unzureichender Einstellung: Insulin (keine oralen Antidiabetika in der Schwangerschaft)", "Engmaschige Betreuung"],
+        pflege: ["Blutzuckermessung schulen und Werte dokumentieren", "Ernährungsberatung unterstützen", "Ggf. Insulingabe und -schulung", "Auf Zielwerte und Komplikationszeichen achten", "Nach der Geburt: Kind auf Hypoglykämie überwachen, Mutter über Nachsorge informieren"],
+        merksatz: "GDM: oGTT 24.–28. SSW. Erst Ernährung/Bewegung, dann Insulin (keine Tabletten!). Nach Geburt: Kind auf Hypoglykämie überwachen.",
+        pflegeplanung: [
+          {
+            problem: "Erhöhtes Blutzuckerniveau r/t Gestationsdiabetes m/d/s pathologischem oGTT",
+            ressourcen: ["Schwangere motiviert", "Ernährungsberatung verfügbar", "BZ-Messgerät vorhanden"],
+            ziel: "Die Blutzuckerwerte liegen im Zielbereich, die Schwangerschaft verläuft komplikationslos",
+            massnahmen: ["Blutzucker-Selbstmessung anleiten und dokumentieren lassen", "Ernährungsumstellung und Bewegung unterstützen", "Ggf. Insulingabe schulen und überwachen", "Auf Zielwerte und Warnzeichen achten", "Nach Geburt: Neugeborenes auf Hypoglykämie kontrollieren"],
+            evaluation: "BZ-Werte im Zielbereich, keine Komplikationen, Kind ohne Hypoglykämie."
+          }
+        ],
+        fragen: [
+          {f:"Wann wird das Screening auf Gestationsdiabetes (oGTT) durchgeführt?", opt:["In der 6. SSW", "In der 24. bis 28. SSW", "Erst nach der Geburt", "Im ersten Trimenon immer"], k:1, e:"Der orale Glukosetoleranztest (oGTT) wird als Screening in der 24. bis 28. Schwangerschaftswoche durchgeführt, da der GDM meist symptomarm verläuft und sonst unentdeckt bliebe."},
+          {f:"Welche medikamentöse Therapie ist bei GDM zulässig, wenn Ernährung nicht ausreicht?", opt:["Orale Antidiabetika (Tabletten)", "Insulin – orale Antidiabetika sind in der Schwangerschaft nicht Mittel der Wahl", "Gar keine", "Cortison"], k:1, e:"Reichen Ernährung und Bewegung nicht aus, wird mit Insulin behandelt. Orale Antidiabetika werden in der Schwangerschaft in der Regel nicht eingesetzt. Basis bleibt immer die Ernährungsumstellung."},
+          {f:"Worauf muss das Neugeborene einer Mutter mit GDM nach der Geburt überwacht werden?", opt:["Auf Fieber", "Auf Hypoglykämie (Unterzucker)", "Auf Bluthochdruck", "Auf Übergewicht sofort"], k:1, e:"Das Kind hat sich intrauterin an hohe Zuckerwerte angepasst und produziert vermehrt Insulin. Nach der Geburt fällt das mütterliche Zuckerangebot weg – es droht eine neonatale Hypoglykämie, die überwacht werden muss."}
+        ]
+      },
+      {
+        name: "HELLP-Syndrom",
+        icd: "O14.2",
+        definition: "Schwere Verlaufsform der Präeklampsie. HELLP steht für Hemolysis (Hämolyse), Elevated Liver enzymes (erhöhte Leberwerte) und Low Platelets (Thrombozytopenie). Lebensbedrohlich für Mutter und Kind.",
+        symptome: ["Rechtsseitiger Oberbauchschmerz (Leberkapselspannung)", "Übelkeit und Erbrechen", "Kopfschmerzen, Sehstörungen", "Hypertonie und Ödeme", "Gefahr von Eklampsie, Leberruptur, Gerinnungsstörung (DIC)"],
+        diagnostik: ["Labor: Hämolysezeichen (LDH erhöht), Transaminasen erhöht, Thrombozyten erniedrigt", "Blutdruckmessung", "Proteinurie (Urin)", "Gerinnungsstatus", "CTG (kindliches Befinden)"],
+        therapie: ["Einzige kausale Therapie: Entbindung", "Blutdrucksenkung", "Magnesium zur Krampfprophylaxe", "Kortison zur Lungenreife des Kindes", "Intensivüberwachung"],
+        pflege: ["Engmaschige Überwachung von Blutdruck, Neurologie und Oberbauchschmerz", "Reizarme Umgebung schaffen (Eklampsie-Prophylaxe: Licht/Lärm reduzieren)", "Magnesiumgabe überwachen (Reflexe, Atmung, Ausscheidung)", "Ein- und Ausfuhr bilanzieren", "Notfall- und OP-Bereitschaft sicherstellen"],
+        merksatz: "HELLP = Hämolyse + erhöhte Leberwerte + Thrombozyten erniedrigt. Leitsymptom Oberbauchschmerz rechts! Einzige Therapie: Entbindung. Reizarm wegen Eklampsiegefahr.",
+        pflegeplanung: [
+          {
+            problem: "Lebensbedrohliche Komplikationsgefahr (Eklampsie, Leberruptur) r/t HELLP-Syndrom m/d/s Oberbauchschmerz, Hypertonie, pathologischem Labor",
+            ressourcen: ["Klinik/Personal vorbereitet", "Intensiv-/OP-Bereitschaft vorhanden"],
+            ziel: "Komplikationen werden früh erkannt, Mutter und Kind bleiben stabil bis zur Entbindung",
+            massnahmen: ["Engmaschige Überwachung von RR, Neurologie, Reflexen und Oberbauchschmerz", "Reizarme Umgebung zur Eklampsie-Prophylaxe", "Magnesiumtherapie überwachen (Reflexe, Atemfrequenz, Urinausscheidung)", "Ein-/Ausfuhr bilanzieren, Labor kontrollieren", "Notfall- und OP-Bereitschaft sicherstellen"],
+            evaluation: "Keine Eklampsie/Blutung, Werte stabilisiert, rechtzeitige Entbindung."
+          }
+        ],
+        fragen: [
+          {f:"Wofür steht die Abkürzung HELLP?", opt:["High Energy Low Level Pressure", "Hämolyse, erhöhte Leberwerte (Elevated Liver enzymes), erniedrigte Thrombozyten (Low Platelets)", "Herz-, Leber- und Lungen-Problem", "Hypertonie, Ejektion, Laktat, Leukozyten, Puls"], k:1, e:"HELLP = Hemolysis (Hämolyse), Elevated Liver enzymes (erhöhte Leberwerte) und Low Platelets (niedrige Thrombozyten). Es ist eine schwere Verlaufsform der Präeklampsie."},
+          {f:"Welches ist ein typisches Leitsymptom des HELLP-Syndroms?", opt:["Schmerzen im linken Bein", "Rechtsseitiger Oberbauchschmerz (Leberkapselspannung)", "Halsschmerzen", "Ohrenschmerzen"], k:1, e:"Der rechtsseitige Oberbauchschmerz entsteht durch die Spannung der Leberkapsel und ist ein Warnzeichen. Zusammen mit Übelkeit, Kopfschmerz und Hypertonie muss an ein HELLP-Syndrom gedacht werden."},
+          {f:"Was ist die einzige kausale Therapie des HELLP-Syndroms?", opt:["Bettruhe", "Die Entbindung", "Antibiotika", "Abwarten bis zum Termin"], k:1, e:"Ursächlich beseitigt wird das HELLP-Syndrom nur durch die Entbindung. Bis dahin werden Blutdruck gesenkt, Magnesium zur Krampfprophylaxe und Kortison zur Lungenreife gegeben und Mutter und Kind intensiv überwacht."}
+        ]
+      },
+      {
+        name: "Frühgeburt / vorzeitige Wehen",
+        icd: "O60",
+        definition: "Geburt vor abgeschlossener 37. Schwangerschaftswoche (37+0 SSW). Vorzeitige Wehen sind muttermundwirksame Wehen vor diesem Zeitpunkt. Häufigste Ursache perinataler Morbidität und Mortalität.",
+        symptome: ["Vorzeitige, regelmäßige Wehen", "Vorzeitiger Blasensprung", "Muttermundverkürzung und -eröffnung", "Ggf. vaginale Blutung", "Druckgefühl nach unten"],
+        diagnostik: ["CTG (Wehentätigkeit)", "Vaginale Untersuchung und Zervixlängenmessung (Sonographie)", "Fibronektin-Test", "Infektionsparameter (Labor, Abstrich)", "Fruchtwasser-/Blasensprungnachweis"],
+        therapie: ["Tokolyse (Wehenhemmung, z. B. Atosiban/Fenoterol)", "Lungenreifeinduktion mit Kortison (Betamethason)", "Magnesium zur Neuroprotektion des Kindes", "Antibiotika bei Infektion", "Verlegung in ein Perinatalzentrum"],
+        pflege: ["Wehentätigkeit und CTG überwachen", "Tokolyse nach Anordnung geben und Nebenwirkungen beobachten (z. B. mütterliche Tachykardie)", "Lungenreifegabe sicherstellen und dokumentieren", "Körperliche Schonung ermöglichen, Infektionszeichen beobachten", "Psychisch begleiten (Angst!) und Frühgeborenenversorgung/Verlegung vorbereiten"],
+        merksatz: "Frühgeburt unter 37 SSW. Vorzeitige Wehen: Tokolyse (Wehen hemmen) + Lungenreife (Kortison) + ggf. Magnesium (Neuroschutz). Perinatalzentrum!",
+        pflegeplanung: [
+          {
+            problem: "Gefahr der Frühgeburt r/t vorzeitiger Wehentätigkeit m/d/s regelmäßiger Wehen, Zervixverkürzung",
+            ressourcen: ["Schwangere kooperativ", "Tokolyse verfügbar", "Perinatalzentrum erreichbar"],
+            ziel: "Die Schwangerschaft wird möglichst prolongiert, die Lungenreife des Kindes abgeschlossen",
+            massnahmen: ["CTG- und Wehenüberwachung", "Tokolyse nach Anordnung, Nebenwirkungen kontrollieren", "Lungenreifegabe sicherstellen", "Körperliche Schonung ermöglichen, Infektzeichen beobachten", "Psychische Begleitung, Verlegung/Frühgeborenenversorgung vorbereiten"],
+            evaluation: "Wehen sistieren/reduziert, Lungenreife abgeschlossen, Kind bestmöglich versorgt."
+          }
+        ],
+        fragen: [
+          {f:"Ab wann spricht man von einer Frühgeburt?", opt:["Geburt vor der 40. SSW", "Geburt vor abgeschlossener 37. SSW (vor 37+0)", "Geburt nach der 42. SSW", "Jede Geburt per Sectio"], k:1, e:"Eine Frühgeburt ist die Geburt vor abgeschlossener 37. Schwangerschaftswoche. Je unreifer das Kind, desto höher das Risiko für Atemprobleme, Infektionen und weitere Komplikationen."},
+          {f:"Warum wird bei drohender Frühgeburt Kortison gegeben?", opt:["Zur Wehenhemmung", "Zur Lungenreifeinduktion des Kindes (Surfactant-Bildung)", "Gegen Schmerzen", "Zur Blutdrucksenkung"], k:1, e:"Kortison (z. B. Betamethason) beschleunigt die kindliche Lungenreife und die Surfactant-Bildung. Das senkt das Risiko für ein Atemnotsyndrom des Frühgeborenen deutlich."},
+          {f:"Was ist das Ziel einer Tokolyse?", opt:["Die Wehen zu verstärken", "Die Wehentätigkeit zu hemmen und die Geburt hinauszuzögern", "Den Blutdruck zu senken", "Die Geburt einzuleiten"], k:1, e:"Die Tokolyse hemmt die Wehen und zögert die Geburt hinaus. Das gewonnene Zeitfenster wird genutzt, um die Lungenreifeinduktion abzuschließen und ggf. in ein Perinatalzentrum zu verlegen."}
+        ]
       }
       ]
   },
