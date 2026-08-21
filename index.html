@@ -7655,7 +7655,7 @@ function showTrialStart(){
   ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
   setTimeout(function(){ var n=document.getElementById('trial-name'); if(n) n.focus(); },100);
 }
-function startTrial(){
+async function startTrial(){
   var used=false; try{ used=(localStorage.getItem('pl_trial_used')==='1'); }catch(e){}
   var tu=null; try{ tu=localStorage.getItem('pl_trial_until'); }catch(e){}
   var today=new Date().toISOString().split('T')[0];
@@ -7664,37 +7664,39 @@ function startTrial(){
   var email=(document.getElementById('trial-email')?document.getElementById('trial-email').value:'').trim();
   var tconsent=false; try{ var _ce=document.getElementById('trial-consent'); tconsent=_ce?_ce.checked:false; }catch(e){}
   if(!name){ alert('Bitte Name eingeben!'); return; }
-  // Achse 3.3: E-Mail verpflichtend - ohne Kontaktkanal ist der Trial weder wiederherstellbar noch nachfassbar
+  // Double-Opt-In verpflichtend: Trial-Zugang gibt es erst nach Klick auf den Bestaetigungslink (kein Sofort-Grant, nicht umgehbar)
   if(!email || !/^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$/.test(email)){
-    alert('Bitte eine g\u00fcltige E-Mail eingeben.\n\nDamit sichern wir deinen Lernfortschritt und du kannst deinen Zugang jederzeit wiederherstellen.');
+    alert('Bitte eine gültige E-Mail eingeben.\n\nWir schicken dir einen Bestätigungslink – ein Klick und dein 7-Tage-Vollzugang ist aktiv.');
     var _te=document.getElementById('trial-email'); if(_te) _te.focus();
     return;
   }
-  var d=new Date(); d.setDate(d.getDate()+7); // Trial 7 Tage (Server-Token via /api/register maszgeblich)
-  var ablauf=d.toISOString().split('T')[0];
+  var btn=document.querySelector('#trial-modal button[onclick*="startTrial"]');
+  var _orig=btn?btn.innerHTML:'';
+  if(btn){ btn.innerHTML='⏳ Wird gesendet...'; btn.disabled=true; }
   try{
-    localStorage.setItem('pl_trial_until',ablauf);
-    localStorage.setItem('pl_trial_name',name);
-    localStorage.setItem('pl_trial_email',email);
-    localStorage.setItem('pl_trial_used','1');
-    localStorage.removeItem('pl_trial_expired');
-  }catch(e){}
-  try{ if(typeof emailjs!=='undefined' && email){ emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{name:name,email:email,ausbildung:'7-Tage-Trial (Sofortstart)',datum:new Date().toLocaleString('de-DE'),message:'Trial automatisch gestartet'}); } }catch(e){}
-  try{ plSaveLead(email, name, 'trial', ablauf, tconsent); }catch(e){}
-  try{ gaEvent('sign_up',{method:'trial_instant'}); gaEvent('begin_trial',{dauer:7}); }catch(e){}
-  var m=document.getElementById('trial-modal'); if(m) m.remove();
-  currentUser={ token:'TRIAL', name:name, email:email, bereich:'alle', ablauf:ablauf };
-  currentBereich=BEREICH_CONFIG['alle'];
-  kiNachrichtenCount=0;
-  try{ sessionStorage.setItem('pl_user',name); }catch(e){}
-  var ps=document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
-  showScreen('home');
-  renderAusbList(); applyBereichsFilter();
-  updateUserDisplay(name,false);
-  updateStreak(); renderHomeStats();
-  try{ logLogin('TRIAL',name); }catch(e){}
-  setTimeout(function(){ try{unlockAudio();playHeartbeat();}catch(e){} },400);
-  setTimeout(showOnboarding,500);
+    var r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name:name, email:email, ausbildung:'Trial (Sofort-Formular)' }) });
+    var data=await r.json().catch(function(){ return {}; });
+    if(!r.ok || !data.ok) throw new Error(data.error||'Fehler');
+    try{ plSaveLead(email, name, 'trial', '', tconsent); }catch(e){}
+    try{ gaEvent('sign_up',{method:'email_confirm'}); }catch(e){}
+    var m=document.getElementById('trial-modal'); if(m) m.remove();
+    var already=data.already;
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px';
+    ov.innerHTML='<div style="background:linear-gradient(145deg,#0d2135,#091525);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:30px;max-width:380px;width:100%;text-align:center">'
+      +'<div style="font-size:52px;margin-bottom:12px">📩</div>'
+      +'<div style="font-size:20px;font-weight:900;color:#34d399;margin-bottom:8px">'+(already?'Fast geschafft!':'Bestätige deine E-Mail')+'</div>'
+      +'<div style="font-size:13px;color:#b3c4d6;line-height:1.7;margin-bottom:16px">'+(already
+          ?'Für <strong style="color:#38bdf8">'+email+'</strong> gibt es bereits einen Zugang. Prüfe deine E-Mails (auch Spam) und klicke auf den Bestätigungslink.'
+          :'Wir haben dir eine E-Mail an <strong style="color:#38bdf8">'+email+'</strong> geschickt. Klicke darin auf <strong>„Zugang aktivieren"</strong> – danach bist du sofort drin.')+'</div>'
+      +'<div style="background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);border-radius:10px;padding:12px;margin-bottom:20px;font-size:11px;color:#fbbf24;line-height:1.6">💡 Keine Mail erhalten? Bitte auch den Spam-Ordner prüfen.</div>'
+      +'<button onclick="this.closest(\'div[style]\').remove()" style="width:100%;background:linear-gradient(135deg,#0369a1,var(--accent));border:none;border-radius:12px;padding:14px;color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">Verstanden</button>'
+      +'</div>';
+    document.body.appendChild(ov);
+  }catch(e){
+    if(btn){ btn.innerHTML=_orig||'Erneut versuchen'; btn.disabled=false; }
+    alert('Es gab ein Problem beim Senden. Bitte prüfe deine Verbindung und versuche es erneut.');
+  }
 }
 function toggleLoginBox(){
   var c=document.getElementById('login-collapse');
