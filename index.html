@@ -7367,7 +7367,7 @@ init();
 // Ablauf: YYYY-MM-DD
 
 const TOKEN_DB = {
-  // ── 21-Tage-Trial (manuell vergeben) ──
+  // ── 7-Tage-Trial (manuell vergeben) ──
   "GPA-2026-E3OH-PEKDEMIR": { name:"Fati (Pekdemir)", bereich:"alle", ablauf:"2026-06-24", aktiv:true },
   // ── Neue Testzugaenge (2 Wochen, gueltig bis 2026-06-20) ──
   "TEST-MAIKE-2026":       { name:"Maike (Lehrerin)",        bereich:"alle", ablauf:"2026-06-20", aktiv:true },
@@ -7670,7 +7670,7 @@ function startTrial(){
     var _te=document.getElementById('trial-email'); if(_te) _te.focus();
     return;
   }
-  var d=new Date(); d.setDate(d.getDate()+21); // Sprint 1.5: Trial 7 -> 21 Tage (Azubi-Lernrhythmus, Aha-Moment sicherer erreichen)
+  var d=new Date(); d.setDate(d.getDate()+7); // Trial 7 Tage (Server-Token via /api/register maszgeblich)
   var ablauf=d.toISOString().split('T')[0];
   try{
     localStorage.setItem('pl_trial_until',ablauf);
@@ -7679,9 +7679,9 @@ function startTrial(){
     localStorage.setItem('pl_trial_used','1');
     localStorage.removeItem('pl_trial_expired');
   }catch(e){}
-  try{ if(typeof emailjs!=='undefined' && email){ emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{name:name,email:email,ausbildung:'21-Tage-Trial (Sofortstart)',datum:new Date().toLocaleString('de-DE'),message:'Trial automatisch gestartet'}); } }catch(e){}
+  try{ if(typeof emailjs!=='undefined' && email){ emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{name:name,email:email,ausbildung:'7-Tage-Trial (Sofortstart)',datum:new Date().toLocaleString('de-DE'),message:'Trial automatisch gestartet'}); } }catch(e){}
   try{ plSaveLead(email, name, 'trial', ablauf, tconsent); }catch(e){}
-  try{ gaEvent('sign_up',{method:'trial_instant'}); gaEvent('begin_trial',{dauer:21}); }catch(e){}
+  try{ gaEvent('sign_up',{method:'trial_instant'}); gaEvent('begin_trial',{dauer:7}); }catch(e){}
   var m=document.getElementById('trial-modal'); if(m) m.remove();
   currentUser={ token:'TRIAL', name:name, email:email, bereich:'alle', ablauf:ablauf };
   currentBereich=BEREICH_CONFIG['alle'];
@@ -7969,7 +7969,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   } catch(e) {}
 
-  // Persistenter 21-Tage-Trial (laufzeitbasiert, kein Server) - Vorrang nach Paid
+  // Persistenter 7-Tage-Trial (laufzeitbasiert, kein Server) - Vorrang nach Paid
   try {
     const trialUntil = localStorage.getItem('pl_trial_until');
     if (trialUntil) {
