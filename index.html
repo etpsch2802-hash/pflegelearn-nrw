@@ -7676,7 +7676,7 @@ async function startTrial(){
   try{
     var r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name:name, email:email, ausbildung:'Trial (Sofort-Formular)' }) });
     var data=await r.json().catch(function(){ return {}; });
-    if(!r.ok || !data.ok) throw new Error(data.error||'Fehler');
+    if(!r.ok || !data.ok) throw new Error((data&&(data.error||data.reason))||('HTTP '+r.status));
     try{ plSaveLead(email, name, 'trial', '', tconsent); }catch(e){}
     try{ gaEvent('sign_up',{method:'email_confirm'}); }catch(e){}
     var m=document.getElementById('trial-modal'); if(m) m.remove();
@@ -7695,7 +7695,7 @@ async function startTrial(){
     document.body.appendChild(ov);
   }catch(e){
     if(btn){ btn.innerHTML=_orig||'Erneut versuchen'; btn.disabled=false; }
-    alert('Es gab ein Problem beim Senden. Bitte prüfe deine Verbindung und versuche es erneut.');
+    alert('Registrierung fehlgeschlagen ('+((e&&e.message)||'unbekannt')+').\n\nBitte diesen Hinweis melden oder mit einem Code anmelden.');
   }
 }
 function toggleLoginBox(){
