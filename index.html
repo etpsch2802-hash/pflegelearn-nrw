@@ -7695,7 +7695,8 @@ async function startTrial(){
     document.body.appendChild(ov);
   }catch(e){
     if(btn){ btn.innerHTML=_orig||'Erneut versuchen'; btn.disabled=false; }
-    alert('Registrierung fehlgeschlagen ('+((e&&e.message)||'unbekannt')+').\n\nBitte diesen Hinweis melden oder mit einem Code anmelden.');
+    try{ console.error('[startTrial]', e && e.message); }catch(_){}
+    alert('Es gab ein Problem bei der Registrierung. Bitte prüfe deine Internetverbindung und versuche es gleich noch einmal. Klappt es weiterhin nicht, schreib uns an kontakt@plan-nrw.de.');
   }
 }
 function toggleLoginBox(){
