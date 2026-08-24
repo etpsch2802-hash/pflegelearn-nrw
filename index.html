@@ -1010,7 +1010,7 @@
     <button onclick="openExamenIntro()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-file"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prüfungssimulator</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Examen unter Zeit</span></button>
     <button onclick="navGo('karteikarten')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-layers"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Karteikarten</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Spaced Repetition</span></button>
     <button onclick="navGo('faelle')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pulse"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fallbeispiele</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Interaktive Fälle</span></button>
-    <button onclick="openCEHub()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Lernen nach §53 PflBG</span></button><button onclick="navGo('medtrainer')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pill"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medikamenten-Trainer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Dosis &amp; Infusionen rechnen</span></button>
+    <button onclick="openCEHub()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Lernen nach §53 PflBG</span></button><button onclick="navGo('medtrainer')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pill"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medikamenten-Trainer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Dosis &amp; Infusionen rechnen</span></button><button onclick="openExamPicker('fachgespraech')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-mic"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fachgespräch (KI)</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Reflexion einer Pflegesituation</span></button>
   </div>
 </div>
 
@@ -2199,6 +2199,24 @@ REGELN:
 - Bewertung fair, nachvollziehbar, an Bewertungskriterien orientiert. Antworte ausschliesslich auf Deutsch.
 - Kein Rat fuer reale Patienten – reine Pruefungssimulation.`;
 
+const SYS_FACHGESPRAECH = `Du bist Fachpr\u00fcfer:in f\u00fcr das REFLEKTIERENDE FACHGESPR\u00c4CH der praktischen Abschlusspr\u00fcfung in der generalistischen Pflegeausbildung NRW (\u00a716 PflAPrV). Das Fachgespr\u00e4ch bezieht sich auf EINE konkrete Pflegesituation.
+
+ABLAUF:
+- Bei der ersten Nachricht "[START]": Stelle kurz eine realistische, konkrete Pflegesituation vor (Patient:in, relevante Diagnosen, aktuelle Lage) und passe sie an Ausbildungsweg, Thema und Niveau an. Stelle dann die ERSTE Reflexionsfrage. Nur EINE Frage.
+- F\u00fchre das Gespr\u00e4ch entlang dieser Phasen, immer nur EINE Frage pro Nachricht:
+  1. Situationseinsch\u00e4tzung: Was war das zentrale Pflegeproblem? Woran hast du es erkannt?
+  2. Pflegerisches Handeln & Begr\u00fcndung: Was hast du getan und WARUM (fachlich, Expertenstandard)?
+  3. Priorisierung: Was zuerst und warum? Was h\u00e4tte gef\u00e4hrlich werden k\u00f6nnen?
+  4. Evaluation & Alternativen: Wie hast du den Erfolg \u00fcberpr\u00fcft? Was w\u00fcrdest du anders machen?
+  5. Selbstreflexion: Was hast du \u00fcber deine Rolle und dich gelernt?
+- Hake nach, wenn Begr\u00fcndungen fehlen ("Begr\u00fcnden Sie das fachlich", "Woran machen Sie das fest?"). Bleibe konsequent an DIESER Situation, nicht in Lehrbuchbreite.
+- Nach Phase 5: STRUKTURIERTES FEEDBACK entlang der Kompetenzbereiche nach \u00a753 PflBG: I Pflegeprozess/Pflegediagnostik \u00b7 II Kommunikation & Beratung \u00b7 III intra-/interprofessionelles Handeln \u00b7 IV rechtlich/ethisch \u00b7 V wissenschaftlich begr\u00fcndet. Dazu St\u00e4rken, 2\u20133 konkrete Entwicklungspunkte und eine Gesamteinsch\u00e4tzung (bestanden / grenzwertig / nicht bestanden).
+
+REGELN:
+- Fachlich korrekt nach DNQP-Expertenstandards, S3-Leitlinien, KRINKO, NVL, ERC/SSC wo relevant.
+- Reflexionsf\u00f6rderlich, wertsch\u00e4tzend, aber anspruchsvoll. Antworte ausschlie\u00dflich auf Deutsch.
+- Bleibe in der Pr\u00fcfer-Rolle; gib keine Musterl\u00f6sung vorweg. Reine Pr\u00fcfungssimulation, kein Rat f\u00fcr reale Patienten.`;
+
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let currentScreen = "home";
 let currentAusb = null;
@@ -2573,6 +2591,7 @@ function openKIChooser() {
       </div>
       ${opt('💬','KI-Chat','Jede Frage · sofort beantwortet',"startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')",'#22d3ee')}
       ${opt('🎓','Mündliche Prüfung','KI-Prüfer · Fragen · Note',"openExamPicker('muendlich')",'#38bdf8')}
+      ${opt('🗣️','Fachgespräch zum Fall','Reflexion einer Pflegesituation',"openExamPicker('fachgespraech')",'#2dd4bf')}
       ${opt('✍️','Schriftliche Prüfung','Aufgabe · Punkte · Korrektur',"openExamPicker('schriftlich')",'#a78bfa')}
       ${opt('📊','Prüfungs-Verlauf','Deine absolvierten Prüfungen','showExamHistory()','#b3c4d6')}
       <button onclick="document.getElementById('ki-chooser').remove()" style="width:100%;background:transparent;border:none;color:#9aabc0;font-size:12px;margin-top:6px;font-family:inherit;cursor:pointer">Abbrechen</button>
@@ -2707,7 +2726,7 @@ function openExamPicker(modus) {
   if (currentBereich && !currentBereich.ki_unbegrenzt) { showUpgradeModal(); return; }
   loadExamSettings();
   examTopic = '';
-  const titel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : '✍️ Schriftliche Prüfung';
+  const titel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : (modus === 'fachgespraech' ? '🗣️ Fachgespräch zum Fall' : '✍️ Schriftliche Prüfung');
   const ov = document.createElement('div');
   ov.id = 'exam-picker';
   ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
@@ -2764,9 +2783,9 @@ function startKIExam(modus, id) {
   const a = id ? AUSBILDUNGEN.find(x => x.id === id) : null;
   const c = a ? a.color : "var(--accent)";
   const bar = document.getElementById("chat-context-bar");
-  const modusLabel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : '✍️ Schriftliche Prüfung';
+  const modusLabel = modus === 'muendlich' ? '🎓 Mündliche Prüfung' : (modus === 'fachgespraech' ? '🗣️ Fachgespräch' : '✍️ Schriftliche Prüfung');
   const lvlLabel = examLevel === 'azubi' ? 'Azubi' : examLevel === 'profi' ? 'Profi' : 'Examen';
-  const ttsBtn = (modus === 'muendlich' && ttsSupported())
+  const ttsBtn = ((modus === 'muendlich' || modus === 'fachgespraech') && ttsSupported())
     ? `<button id="tts-bar-btn" onclick="showVoicePanel()" style="margin-left:auto;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);border-radius:8px;padding:4px 9px;color:#38bdf8;font-size:13px;font-family:inherit;cursor:pointer">${ttsEnabled?'🔊':'🔇'}</button>` : '';
   bar.style.display = "flex";
   bar.style.borderBottomColor = (a ? a.color : "#38bdf8") + "20";
@@ -2776,7 +2795,9 @@ function startKIExam(modus, id) {
   document.getElementById("messages").innerHTML = "";
   // Verlauf-Session anlegen
   currentExamSession = { id: 'ex_' + Date.now(), ts: Date.now(), modus, ausb: a ? (a.nr + ' · ' + a.title) : 'Allgemein', level: examLevel, turns: 0 };
-  const intro = modus === 'muendlich'
+  const intro = modus === 'fachgespraech'
+    ? '\U0001F5E3\ufe0f **Reflektierendes Fachgespr\u00e4ch gestartet.**\n\nIch bin dein:e Fachpr\u00fcfer:in. Ich stelle dir eine konkrete Pflegesituation vor und wir reflektieren sie \u2013 Einsch\u00e4tzung, Begr\u00fcndung, Priorisierung, Evaluation. Antworte wie in der echten praktischen Pr\u00fcfung.\n\n_Einen Moment \u2013 ich bereite die Situation vor\u2026_'
+    : modus === 'muendlich'
     ? '🎓 **Mündliche Prüfungssimulation gestartet.**\n\nIch bin dein Prüfer. Ich stelle dir nacheinander Fragen, hake nach und bewerte am Ende mit Note. Antworte so, wie du es in der echten Prüfung würdest.\n\n_Einen Moment – ich eröffne die Prüfung…_'
     : '✍️ **Schriftliche Prüfungssimulation gestartet.**\n\nIch gebe dir eine Prüfungsaufgabe. Schreibe deine Antwort in den Chat – ich bewerte mit Punkten, Musterlösung und Korrektur.\n\n_Einen Moment – ich erstelle die Aufgabe…_';
   appendMsg("ai", intro, a?.color);
@@ -2836,7 +2857,7 @@ async function examKickoff() {
   document.getElementById("send-btn").disabled = true;
   showTyping();
   try {
-    let activeSys = examMode === 'muendlich' ? SYS_EXAM_MUENDLICH : SYS_EXAM_SCHRIFTLICH;
+    let activeSys = examMode === 'muendlich' ? SYS_EXAM_MUENDLICH : (examMode === 'fachgespraech' ? SYS_FACHGESPRAECH : SYS_EXAM_SCHRIFTLICH);
     if (a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
     activeSys += `\n\n${examLevelText(examLevel)}`;
     if (examTopic) activeSys += `\n\nPRÜFUNGSTHEMA: Prüfe gezielt und ausschließlich zum Thema "${examTopic}". Eröffne die Prüfung mit einer passenden Fallsituation oder Einstiegsfrage zu diesem Thema.`;
@@ -2845,7 +2866,7 @@ async function examKickoff() {
     chatHistory.push({ role:"assistant", content: reply });
     appendMsg("ai", reply, a?.color);
     examUpdateSession(reply);
-    if (examMode === 'muendlich') speak(reply);
+    if (examMode === 'muendlich' || examMode === 'fachgespraech') speak(reply);
   } catch(e) {
     removeTyping();
     appendMsg("ai", '⚠️ Fehler: ' + (e.message || 'KI nicht erreichbar'), a?.color);
@@ -3036,6 +3057,7 @@ async function sendMsg(text) {
     }
     let activeSys = SYS;
     if (examMode === 'muendlich') activeSys = SYS_EXAM_MUENDLICH;
+    else if (examMode === 'fachgespraech') activeSys = SYS_FACHGESPRAECH;
     else if (examMode === 'schriftlich') activeSys = SYS_EXAM_SCHRIFTLICH;
     if (examMode && a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
     if (examMode) activeSys += `\n\n${examLevelText(examLevel)}`;
@@ -16804,7 +16826,8 @@ function renderHomeStats() {
     { id:'berufseinstieg', tag:'neu', ziel:'berufseinstieg', titel:'Berufseinstieg \u2013 Erste 100 Tage',
       sub:'Sicher durchs erste Berufsjahr nach dem Examen', datum:'2026-08' },
     { id:'medtrainer', tag:'neu', ziel:'medtrainer', titel:'Medikamenten-Trainer',
-      sub:'Dosis & Infusionsraten rechnen \u2013 Schritt fuer Schritt', datum:'2026-08' }
+      sub:'Dosis & Infusionsraten rechnen \u2013 Schritt fuer Schritt', datum:'2026-08' },
+    { id:'fachgespraech', tag:'neu', ziel:function(){ openExamPicker('fachgespraech'); }, titel:'Fachgespr\u00e4ch (KI)', sub:'Reflexion einer Pflegesituation \u2013 wie in der praktischen Pr\u00fcfung', datum:'2026-09' }
   ];
 
   var SEEN_KEY = 'pl_neu_seen';
