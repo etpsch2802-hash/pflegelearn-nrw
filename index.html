@@ -1391,7 +1391,7 @@
     <button class="qbtn" onclick="sendMsg('Unterschiede erklären')">Unterschiede</button>
   </div>
   <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" type="text" placeholder="Frage stellen…" onkeydown="if(event.key==='Enter')sendMsg()" aria-label="Frage stellen…">
+    <input class="chat-input" id="chat-input" type="text" enterkeyhint="send" placeholder="Frage stellen…" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMsg();}" aria-label="Frage stellen…">
     <button id="mic-btn" onclick="plMicToggle('chat-input')" title="Antwort diktieren" aria-label="Antwort diktieren" style="background:rgba(255,255,255,.13);border:1px solid rgba(56,189,248,.28);border-radius:10px;padding:0 11px;color:#7dd3fc;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><use href="#i-mic2"/></svg></button>
     <button class="send-btn" id="send-btn" onclick="sendMsg()" aria-label="Nachricht senden"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-send"/></svg></button>
   </div>
