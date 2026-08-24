@@ -1010,7 +1010,7 @@
     <button onclick="openExamenIntro()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-file"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prüfungssimulator</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Examen unter Zeit</span></button>
     <button onclick="navGo('karteikarten')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-layers"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Karteikarten</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Spaced Repetition</span></button>
     <button onclick="navGo('faelle')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pulse"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fallbeispiele</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Interaktive Fälle</span></button>
-    <button onclick="openCEHub()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Lernen nach §53 PflBG</span></button>
+    <button onclick="openCEHub()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Lernen nach §53 PflBG</span></button><button onclick="navGo('medtrainer')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pill"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medikamenten-Trainer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Dosis &amp; Infusionen rechnen</span></button>
   </div>
 </div>
 
@@ -2400,7 +2400,7 @@ function showScreen(name) {
     document.querySelectorAll('.bottom-nav button').forEach(function(b){ b.classList.remove('bn-active'); });
     var _bnMap = {
       home:'bn-heute',
-      ueben:'bn-ueben', quizSelect:'bn-ueben', exam:'bn-ueben', karteikarten:'bn-ueben', faelle:'bn-ueben',
+      ueben:'bn-ueben', quizSelect:'bn-ueben', exam:'bn-ueben', karteikarten:'bn-ueben', faelle:'bn-ueben', medtrainer:'bn-ueben',
       wissenhub:'bn-wissen', wissensdb:'bn-wissen', krankheitsbilder:'bn-wissen', anatomie:'bn-wissen',
       taschenkarten:'bn-wissen', prophylaxen:'bn-wissen', notfallmanagement:'bn-wissen', scores:'bn-wissen',
       medikamente:'bn-wissen', medNeu:'bn-wissen', medapo:'bn-wissen', grafiken:'bn-wissen', medizintechnik:'bn-wissen', wundversorgung:'bn-wissen', atl:'bn-wissen',
@@ -16803,7 +16803,7 @@ function renderHomeStats() {
   window.PL_NEU = window.PL_NEU || [
     { id:'berufseinstieg', tag:'neu', ziel:'berufseinstieg', titel:'Berufseinstieg \u2013 Erste 100 Tage',
       sub:'Sicher durchs erste Berufsjahr nach dem Examen', datum:'2026-08' },
-    { id:'medtrainer', tag:'bald', titel:'Medikamenten-Trainer',
+    { id:'medtrainer', tag:'neu', ziel:'medtrainer', titel:'Medikamenten-Trainer',
       sub:'Dosis & Infusionsraten rechnen \u2013 Schritt fuer Schritt', datum:'2026-08' }
   ];
 
@@ -16990,6 +16990,178 @@ function renderHomeStats() {
   }
   window.openBerufseinstieg=function(){ ensure(); showScreen('berufseinstieg'); };
   try{ if(document.readyState!=='loading') ensure(); else document.addEventListener('DOMContentLoaded', ensure); }catch(e){}
+})();
+
+/* ===========================================================================
+   MODUL #2 . MEDIKAMENTEN-TRAINER
+   Randomisierte Rechenaufgaben + exakte Berechnung + Rechenweg.
+   Pools: Grundlagen / Infusionen / Perfusor & Intensiv / Gemischt.
+   Freigabe (Formeln/Inhalt): Patrick & Jessica.
+   =========================================================================== */
+(function(){
+  function ri(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function nf(x){ var r=Math.round(x*1000)/1000; return (''+r).replace('.',','); }
+
+  // ── GENERATOREN (Rückgabe: {frage,einheit,answer,tol,schritte[]}) ──────────
+  function gDosisKg(){
+    var kg=ri(45,95), d=pick([0.5,1,2,3,5,10]), ans=kg*d;
+    return {frage:'Anordnung: '+nf(d)+' mg/kg Körpergewicht. Patient:in wiegt '+kg+' kg.<br>Welche Gesamtdosis in mg?',
+      einheit:'mg', answer:ans, tol:0.01,
+      schritte:['Gesamtdosis = Dosis pro kg × Körpergewicht', nf(d)+' mg/kg × '+kg+' kg = '+nf(ans)+' mg']};
+  }
+  function gTabletten(){
+    var st=pick([5,10,20,25,40,50,100,200,250,500]), f=pick([0.5,1,1.5,2,3]), soll=st*f;
+    return {frage:'Verordnet: '+nf(soll)+' mg. Eine Tablette enthält '+st+' mg.<br>Wie viele Tabletten?',
+      einheit:'Tabletten', answer:f, tol:0.01,
+      schritte:['Anzahl = verordnete Dosis ÷ Wirkstoff pro Tablette', nf(soll)+' mg ÷ '+st+' mg = '+nf(f)+' Tablette(n)']};
+  }
+  function gAmpulle(){
+    var a=pick([[100,2],[10,1],[500,10],[20,2],[50,5],[250,5],[1000,10]]), conc=a[0]/a[1], zml=pick([0.5,1,1.5,2,3,4,5]), soll=conc*zml;
+    return {frage:'Ampulle: '+a[0]+' mg in '+a[1]+' ml. Verordnet: '+nf(soll)+' mg.<br>Wie viel ml aufziehen?',
+      einheit:'ml', answer:zml, tol:0.05,
+      schritte:['Konzentration = '+a[0]+' mg ÷ '+a[1]+' ml = '+nf(conc)+' mg/ml','Volumen = verordnete Dosis ÷ Konzentration', nf(soll)+' mg ÷ '+nf(conc)+' mg/ml = '+nf(zml)+' ml']};
+  }
+  function gRate(){
+    var v=pick([250,500,1000]), h=pick([2,4,6,8,10,12,24]), ans=v/h;
+    return {frage:v+' ml Infusion über '+h+' h.<br>Laufrate in ml/h?',
+      einheit:'ml/h', answer:ans, tol:0.1,
+      schritte:['Laufrate = Volumen ÷ Zeit', v+' ml ÷ '+h+' h = '+nf(ans)+' ml/h']};
+  }
+  function gTropfen(){
+    var v=pick([250,500,1000]), h=pick([2,4,6,8,10,12]), tf=pick([20,20,20,15,60]), min=h*60, raw=(v*tf)/min, ans=Math.round(raw);
+    return {frage:v+' ml über '+h+' h, Tropffaktor '+tf+' Tropfen/ml.<br>Tropfgeschwindigkeit in Tropfen/min?',
+      einheit:'Tropfen/min', answer:ans, tol:1,
+      schritte:['Zeit in Minuten: '+h+' h × 60 = '+min+' min','Tropfen/min = (Volumen × Tropffaktor) ÷ Zeit(min)','('+v+' ml × '+tf+') ÷ '+min+' min = '+nf(Math.round(raw*100)/100)+' ≈ '+ans+' Tropfen/min']};
+  }
+  function gLaufzeit(){
+    var rate=pick([50,100,125,250]), m=pick([1,2,3,4,5,6]), v=rate*m, ans=v/rate;
+    return {frage:v+' ml Infusion läuft mit '+rate+' ml/h.<br>Laufzeit in Stunden?',
+      einheit:'h', answer:ans, tol:0.05,
+      schritte:['Laufzeit = Volumen ÷ Laufrate', v+' ml ÷ '+rate+' ml/h = '+nf(ans)+' h']};
+  }
+  function gPerfusor(){
+    var s2=pick([[50,50],[250,50],[100,50],[50,20]]), conc=s2[0]/s2[1];
+    if(pick([0,1])===0){
+      var r=pick([1,2,3,4,5,6,8,10]), ans=conc*r;
+      return {frage:'Perfusor: '+s2[0]+' mg in '+s2[1]+' ml. Läuft mit '+r+' ml/h.<br>Wie viel mg/h erhält der/die Patient:in?',
+        einheit:'mg/h', answer:ans, tol:0.1,
+        schritte:['Konzentration = '+s2[0]+' mg ÷ '+s2[1]+' ml = '+nf(conc)+' mg/ml','mg/h = Konzentration × Laufrate', nf(conc)+' mg/ml × '+r+' ml/h = '+nf(ans)+' mg/h']};
+    } else {
+      var dose=pick([1,2,3,4,5,6,8,10]), ans2=dose/conc;
+      return {frage:'Perfusor: '+s2[0]+' mg in '+s2[1]+' ml. Verordnet: '+dose+' mg/h.<br>Laufrate in ml/h?',
+        einheit:'ml/h', answer:ans2, tol:0.1,
+        schritte:['Konzentration = '+s2[0]+' mg ÷ '+s2[1]+' ml = '+nf(conc)+' mg/ml','ml/h = verordnete Dosis ÷ Konzentration', dose+' mg/h ÷ '+nf(conc)+' mg/ml = '+nf(ans2)+' ml/h']};
+    }
+  }
+  function gKatecholamin(){
+    var m=pick([['Noradrenalin',5,50],['Adrenalin',5,50],['Dobutamin',250,50],['Dopamin',200,50]]);
+    var concUg=(m[1]*1000)/m[2], kg=ri(60,90), dose=pick([0.05,0.1,0.2,0.3,0.5]);
+    var ugMin=dose*kg, ugH=ugMin*60, ans=ugH/concUg;
+    return {frage:m[0]+': '+m[1]+' mg in '+m[2]+' ml. Patient:in '+kg+' kg, Anordnung '+nf(dose)+' µg/kg/min.<br>Laufrate in ml/h?',
+      einheit:'ml/h', answer:ans, tol:0.2,
+      schritte:['Konzentration: '+m[1]+' mg = '+(m[1]*1000)+' µg → '+(m[1]*1000)+' µg ÷ '+m[2]+' ml = '+nf(concUg)+' µg/ml',
+        'Dosis/min: '+nf(dose)+' µg/kg/min × '+kg+' kg = '+nf(ugMin)+' µg/min',
+        'Dosis/h: '+nf(ugMin)+' µg/min × 60 = '+nf(ugH)+' µg/h',
+        'Laufrate = '+nf(ugH)+' µg/h ÷ '+nf(concUg)+' µg/ml = '+nf(ans)+' ml/h']};
+  }
+
+  var POOLS=[
+    {k:'grundlagen', label:'Grundlagen', gens:[gDosisKg,gTabletten,gAmpulle]},
+    {k:'infusionen', label:'Infusionen', gens:[gRate,gTropfen,gLaufzeit]},
+    {k:'perfusor',   label:'Perfusor & Intensiv', gens:[gPerfusor,gKatecholamin]},
+    {k:'gemischt',   label:'Gemischt', gens:[gDosisKg,gTabletten,gAmpulle,gRate,gTropfen,gLaufzeit,gPerfusor,gKatecholamin]}
+  ];
+  var st={ pool:'grundlagen', current:null, richtig:0, gesamt:0, serie:0 };
+
+  function poolGens(){ for(var i=0;i<POOLS.length;i++){ if(POOLS[i].k===st.pool) return POOLS[i].gens; } return POOLS[0].gens; }
+
+  function newQuestion(){
+    var gens=poolGens(); st.current=pick(gens)();
+    var el=document.getElementById('medt-card'); if(!el) return;
+    var q=st.current;
+    el.innerHTML='<div style="background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:16px;padding:16px 15px">'
+      +'<div style="font-size:14.5px;color:#e6eef7;line-height:1.55;margin-bottom:13px">'+q.frage+'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
+        +'<input id="medt-input" inputmode="decimal" autocomplete="off" placeholder="Antwort" style="flex:1;min-width:0;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.30);border-radius:10px;padding:11px 13px;color:#e6eef7;font-size:15px;font-family:inherit;outline:none">'
+        +'<span style="font-size:13px;color:#9fb8cc;font-weight:600;white-space:nowrap">'+q.einheit+'</span>'
+      +'</div>'
+      +'<button id="medt-btn" onclick="medtCheck()" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.9),rgba(56,189,248,.75));border:none;border-radius:11px;padding:12px;color:#04121f;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer">Prüfen</button>'
+      +'<div id="medt-feedback"></div>'
+      +'</div>';
+    var i=document.getElementById('medt-input');
+    if(i){ try{ i.focus(); }catch(e){} i.onkeydown=function(e){ if(e.key==='Enter') medtCheck(); }; }
+  }
+
+  window.medtCheck=function(){
+    var q=st.current; if(!q) return;
+    var inp=document.getElementById('medt-input'); if(!inp) return;
+    var fb=document.getElementById('medt-feedback');
+    var raw=(inp.value||'').trim().replace(',', '.').replace(/\s/g,'');
+    var val=parseFloat(raw);
+    if(raw===''||isNaN(val)){ if(fb) fb.innerHTML='<div style="margin-top:11px;font-size:12.5px;color:#fbbf24">Bitte eine Zahl eingeben.</div>'; return; }
+    st.gesamt++;
+    var ok=Math.abs(val-q.answer)<=q.tol;
+    if(ok){ st.richtig++; st.serie++; } else { st.serie=0; }
+    inp.disabled=true;
+    var btn=document.getElementById('medt-btn'); if(btn) btn.style.display='none';
+    var head = ok
+      ? '<div style="display:flex;align-items:center;gap:8px;color:#34d399;font-size:14px;font-weight:800"><span style="font-size:17px">✅</span> Richtig!</div>'
+      : '<div style="display:flex;align-items:center;gap:8px;color:#fb7185;font-size:14px;font-weight:800"><span style="font-size:17px">✗</span> Nicht ganz &ndash; richtig: '+nf(q.answer)+' '+q.einheit+'</div>';
+    var steps=q.schritte.map(function(x,idx){
+      return '<div style="display:flex;gap:8px;font-size:12.5px;color:#c3d4e4;line-height:1.5;margin-bottom:'+(idx===q.schritte.length-1?'0':'5px')+'"><span style="color:var(--accent);font-weight:800;flex-shrink:0">'+(idx+1)+'.</span><span>'+x+'</span></div>';
+    }).join('');
+    fb.innerHTML='<div style="margin-top:13px">'+head
+      +'<div style="margin-top:11px;background:rgba(var(--accent-rgb),.07);border-radius:11px;padding:12px 13px">'
+        +'<div style="font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#7dd3fc;margin-bottom:8px">Rechenweg</div>'+steps+'</div>'
+      +'<button onclick="medtNext()" style="width:100%;margin-top:11px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.17);border-radius:11px;padding:11px;color:#e2e8f0;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer">Nächste Aufgabe →</button>'
+      +'</div>';
+    medtUpdateStats();
+  };
+
+  window.medtNext=function(){ newQuestion(); };
+
+  window.medtSetPool=function(k){ st.pool=k; renderMedTrainer(); };
+
+  function medtUpdateStats(){
+    var el=document.getElementById('medt-stats'); if(!el) return;
+    var quote = st.gesamt>0 ? Math.round(st.richtig/st.gesamt*100) : 0;
+    el.innerHTML='<div style="display:flex;gap:8px">'
+      +'<div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);border-radius:11px;padding:9px 6px;text-align:center"><div style="font-size:17px;font-weight:900;color:#e2e8f0">'+st.richtig+'/'+st.gesamt+'</div><div style="font-size:10px;color:#8ab4d0">richtig</div></div>'
+      +'<div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);border-radius:11px;padding:9px 6px;text-align:center"><div style="font-size:17px;font-weight:900;color:#e2e8f0">'+quote+'%</div><div style="font-size:10px;color:#8ab4d0">Quote</div></div>'
+      +'<div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);border-radius:11px;padding:9px 6px;text-align:center"><div style="font-size:17px;font-weight:900;color:'+(st.serie>0?'#fbbf24':'#e2e8f0')+'">'+(st.serie>0?('🔥 '+st.serie):'0')+'</div><div style="font-size:10px;color:#8ab4d0">Serie</div></div>'
+      +'</div>';
+  }
+
+  window.renderMedTrainer=function(){
+    var el=document.getElementById('medt-content'); if(!el) return;
+    var chips=POOLS.map(function(P){
+      var on=P.k===st.pool;
+      return '<button onclick="medtSetPool(\''+P.k+'\')" style="background:'+(on?'rgba(var(--accent-rgb),.9)':'rgba(255,255,255,.07)')+';border:1px solid '+(on?'transparent':'rgba(255,255,255,.16)')+';border-radius:9px;padding:7px 12px;color:'+(on?'#04121f':'#c3d4e4')+';font-size:12px;font-weight:'+(on?'800':'600')+';font-family:inherit;cursor:pointer;white-space:nowrap">'+P.label+'</button>';
+    }).join('');
+    el.innerHTML='<div style="background:rgba(255,255,255,.05);border:1px solid rgba(var(--accent-rgb),.15);border-radius:14px;padding:12px 14px;margin-bottom:13px">'
+        +'<div style="font-size:12.5px;color:#c3d4e4;line-height:1.55">Sicher rechnen ist Patientensicherheit. Wähle einen Bereich, löse Aufgaben &ndash; nach jeder Antwort siehst du den vollständigen Rechenweg.</div></div>'
+      +'<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">'+chips+'</div>'
+      +'<div id="medt-stats" style="margin-bottom:12px"></div>'
+      +'<div id="medt-card"></div>'
+      +'<div style="font-size:10.5px;color:#6b8ba3;line-height:1.5;margin-top:14px;text-align:center">Übungswerte &ndash; keine Therapieempfehlung. In der Praxis gelten ärztliche Anordnung, Fachinformation und hausinterne Standards. Immer 6-R-Regel &amp; Doppelkontrolle.</div>';
+    medtUpdateStats();
+    newQuestion();
+  };
+
+  function ensureMedt(){
+    if(!document.getElementById('screen-medtrainer')){
+      var d=document.createElement('div'); d.id='screen-medtrainer'; d.className='page';
+      d.innerHTML='<div style="margin-bottom:14px">'
+        +'<div style="font-family:\'DM Serif Display\',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">💊 Medikamenten-Trainer</div>'
+        +'<div style="font-size:11px;color:#8ab4d0">Dosis · Infusionen · Perfusor sicher rechnen</div>'
+        +'</div><div id="medt-content"></div>';
+      document.body.appendChild(d);
+    }
+    renderMedTrainer();
+  }
+  window.openMedtrainer=function(){ ensureMedt(); showScreen('medtrainer'); };
+  try{ if(document.readyState!=='loading') ensureMedt(); else document.addEventListener('DOMContentLoaded', ensureMedt); }catch(e){}
 })();
 
 function setUserName() {
