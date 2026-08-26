@@ -184,6 +184,8 @@ section {
 .split-half-title { font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 5px; }
 .split-divider { width: 1px; background: var(--border); align-self: stretch; }
 @media (max-width: 540px) { .split-divider { display: none; } }
+.feat-wide{grid-column:span 2}
+@media(max-width:640px){.feature-grid{grid-template-columns:1fr}.feat-wide{grid-column:auto}.split-row{flex-direction:column;gap:14px}.split-half{min-width:0}.split-divider{display:none}}
 
 /* ── AUSBILDUNG GRID ── */
 .ausb-grid {
@@ -327,7 +329,7 @@ footer {
 <div class="stats-bar">
   <div class="stat"><div class="stat-num">7</div><div class="stat-label">Ausbildungswege</div></div>
   <div class="stat"><div class="stat-num">2.000+</div><div class="stat-label">Prüfungsfragen</div></div>
-  <div class="stat"><div class="stat-num">100</div><div class="stat-label">Krankheitsbilder</div></div>
+  <div class="stat"><div class="stat-num">159</div><div class="stat-label">Krankheitsbilder</div></div>
   <div class="stat"><div class="stat-num">80+</div><div class="stat-label">Wirkstoffe</div></div>
   <div class="stat"><div class="stat-num">400+</div><div class="stat-label">Lerneinheiten</div></div>
 </div>
@@ -425,7 +427,7 @@ footer {
       <div class="feat-card-title">Prüfungs-Quiz</div>
       <div class="feat-card-text">Multiple Choice für alle Ausbildungswege. Sofortiges Feedback mit Erklärung.</div>
     </div>
-    <div class="feat-card" style="grid-column:span 2">
+    <div class="feat-card feat-wide">
       <div class="feat-card-icon"><svg class="fic"><use href="#x-ai"/></svg></div>
       <div class="feat-card-title">KI-Assistent &amp; Prüfungssimulation</div>
       <div class="split-row">
@@ -443,7 +445,7 @@ footer {
     <div class="feat-card">
       <div class="feat-card-icon"><svg class="fic"><use href="#x-activity"/></svg></div>
       <div class="feat-card-title">Krankheitsbilder</div>
-      <div class="feat-card-text">100 Krankheitsbilder – Innere, Chirurgie, Neurologie, Onkologie & mehr. Mit Pflegeplanung, Symptomen & Therapie.</div>
+      <div class="feat-card-text">159 Krankheitsbilder – Innere, Chirurgie, Neurologie, Onkologie & mehr. Mit Pflegeplanung, Symptomen & Therapie.</div>
     </div>
     <div class="feat-card">
       <div class="feat-card-icon"><svg class="fic"><use href="#x-clipboard"/></svg></div>
