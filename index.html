@@ -7941,6 +7941,7 @@ function applyBereichsFilter() {
 }
 
 function showUpgradeModal() {
+  if (!window.PL_PAYMENTS_ON) { if (window.plFreeLimitInfo) plFreeLimitInfo(); return; }
   const overlay = document.createElement("div");
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
   overlay.innerHTML = `
@@ -18923,28 +18924,45 @@ function showDatenschutz() {
 
 
 /* === BEZAHL-SCHALTER (temporär) ==========================================
-   PL_PAYMENTS_ON = false  -> alle Bezahl-Buttons verborgen, Kauf pausiert.
+   PL_PAYMENTS_ON = false  -> App wirkt wie reine Gratis-Version:
+   Preise-Screen neutralisiert, alle Kauf-/Upgrade-/Preise-Hinweise verborgen.
    REAKTIVIEREN (alte Einstellungen): nur auf true setzen. Sonst nichts ändern.
    ========================================================================= */
 window.PL_PAYMENTS_ON = false;
+window.plFreeLimitInfo = function(){
+  try{
+    if(document.getElementById('pl-free-limit')) return;
+    var o=document.createElement('div'); o.id='pl-free-limit';
+    o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)';
+    o.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.3);border-radius:18px;padding:24px;max-width:320px;text-align:center">'
+      +'<div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe;margin-bottom:10px">Für heute geschafft</div>'
+      +'<div style="font-size:13px;color:#b3c4d6;line-height:1.6;margin-bottom:16px">Du hast heute alle KI-Anfragen genutzt. Morgen geht es weiter – dein Zugang bleibt kostenlos.</div>'
+      +'<button onclick="var m=document.getElementById(\'pl-free-limit\');if(m)m.remove()" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:10px;padding:12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Alles klar</button></div>';
+    document.body.appendChild(o);
+    o.addEventListener('click',function(e){ if(e.target===o) o.remove(); });
+  }catch(e){}
+};
 (function(){
   if (window.PL_PAYMENTS_ON) return;
   function apply(){
     if(!document.getElementById('pl-pay-off-style')){
       var st=document.createElement('style'); st.id='pl-pay-off-style';
-      st.textContent='[onclick*="kaufPlan"],[onclick*="showPlanPicker"],a[href*="buy.stripe.com"],a[href*="copecart"]{display:none!important}';
+      st.textContent='[onclick*="kaufPlan"],[onclick*="showPlanPicker"],[onclick*="showUpgradeModal"],[onclick*="navGo(\'preise\')"],[onclick*="showScreen(\'preise\')"],a[href*="buy.stripe.com"],a[href*="copecart"]{display:none!important}';
       (document.head||document.documentElement).appendChild(st);
     }
     var scr=document.getElementById('screen-preise');
-    if(scr && !document.getElementById('pl-pay-note')){
-      var note=document.createElement('div'); note.id='pl-pay-note';
-      note.style.cssText='background:rgba(56,189,248,.10);border:1px solid rgba(56,189,248,.32);border-radius:12px;padding:14px 15px;margin:6px 0 14px;color:#e0f2fe;font-size:13px;line-height:1.6;text-align:center';
-      note.innerHTML='<b>Der Kauf ist gerade kurz pausiert.</b><br>Dein kostenloser Zugang bleibt aktiv \u2013 die Bezahlung ist in K\u00fcrze wieder verf\u00fcgbar.';
-      var fb=scr.querySelector('[onclick*="kaufPlan"]');
-      if(fb && fb.parentNode){ fb.parentNode.insertBefore(note, fb); } else { scr.insertBefore(note, scr.firstChild); }
+    if(scr && scr.getAttribute('data-free-only')!=='1'){
+      scr.setAttribute('data-free-only','1');
+      scr.innerHTML='<div class="hero" style="margin-bottom:16px"><h1>Dein <span>Lernbereich</span></h1>'
+        +'<p>Alle Inhalte sind aktuell frei zugänglich – leg einfach los.</p></div>'
+        +'<div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:16px;padding:22px;text-align:center">'
+        +'<div style="font-size:15px;font-weight:800;color:#86efac;margin-bottom:8px">Komplett kostenlos nutzbar</div>'
+        +'<div style="font-size:13px;color:#b3c4d6;line-height:1.65">Prüfungsquiz, Krankheitsbilder, Medikamenten-Trainer, KI-Prüfer und mehr – ohne Kosten. Viel Erfolg beim Lernen!</div></div>';
     }
   }
-  try{ if(document.readyState!=='loading') apply(); else document.addEventListener('DOMContentLoaded', apply); }catch(e){}
+  function run(){ try{ apply(); }catch(e){} }
+  try{ if(document.readyState!=='loading') run(); else document.addEventListener('DOMContentLoaded', run); }catch(e){}
+  try{ window.addEventListener('load', function(){ setTimeout(run, 200); }); }catch(e){}
 })();
 
 // ─── STRIPE WEITERLEITUNG ───────────────────────────────────────────────────
@@ -19170,6 +19188,7 @@ function plGruppencodeRestore(){
 window.addEventListener('load', function(){ setTimeout(plGruppencodeRestore, 700); });
 
 function showTrialExpiredUpsell(){
+  if (!window.PL_PAYMENTS_ON) return;
   try{ localStorage.removeItem('pl_trial_expired'); }catch(e){}
   if(document.getElementById('trial-expired')) return;
   // Trial 2.0: Wert-Recap (Verlustaversion) aus vorhandenen Daten – zeigt, was der
@@ -19206,6 +19225,7 @@ function showTrialExpiredUpsell(){
   try{ gaEvent('trial_expired_view',{ fragen:_fragen, score:_score }); }catch(e){}
 }
 function maybeTrialCountdown(until){
+  if (!window.PL_PAYMENTS_ON) return;
   try{
     var end=new Date(until+'T23:59:59');
     var days=Math.ceil((end-new Date())/86400000);
