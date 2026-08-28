@@ -16632,7 +16632,7 @@ function coachCardHTML() {
   if (istNeu) {
     return _coachCard({ tone: 'green', emoji: '👋', kicker: 'Willkommen',
       msg: 'Schön, dass du da bist' + an + '. Lass uns in <b>3 Minuten</b> herausfinden, wo du stehst – ein paar kurze Fragen, ganz entspannt.',
-      cta: "Los geht's", onclick: "navGo('quizSelect')" });
+      cta: "Los geht's", onclick: "startEinstufung()" });
   }
   // 2) Examen steht kurz bevor – Endspurt
   if (tage !== null && tage > 0 && tage <= 7) {
@@ -21460,6 +21460,141 @@ if (_savedLang !== 'de') {
     };
   }
 })();
+</script>
+<script>
+/* ── PLAN: Standortbestimmung / Einstufung (additiv) ──────────────────────
+   Nutzt die bestehende Quiz-Engine (Sofort-Feedback + recordKatAnswer sind
+   dort schon vorhanden). Belegt quizList mit 15 gestreuten Fragen und faengt
+   das Ende (showResult) ab, um einen eigenen Ergebnis-Screen zu zeigen. */
+(function () {
+  function _relKats() {
+    try { if (typeof _prRelevantKats === 'function') { var r = _prRelevantKats(); if (r && r.length) return r; } } catch (e) {}
+    var s = {}; try { QUIZ_FRAGEN.forEach(function (q) { if (q && q.kat) s[q.kat] = 1; }); } catch (e) {}
+    return Object.keys(s);
+  }
+
+  function _pickFragen(n) {
+    var kats = _relKats();
+    if (!kats.length) return [];
+    var by = {};
+    kats.forEach(function (k) {
+      by[k] = (QUIZ_FRAGEN || []).filter(function (q) { return q && q.kat === k && q.opt && typeof q.k === 'number'; })
+        .slice().sort(function () { return Math.random() - 0.5; });
+    });
+    var out = [], i = 0, guard = 0, max = n * 6;
+    while (out.length < n && guard < max) {
+      var arr = by[kats[i % kats.length]];
+      if (arr && arr.length) out.push(arr.shift());
+      i++; guard++;
+    }
+    return out.slice(0, n);
+  }
+
+  window.startEinstufung = function () {
+    var picked = _pickFragen(15);
+    if (!picked.length) { try { if (typeof navGo === 'function') navGo('quizSelect'); } catch (e) {} return; }
+    quizList = picked.map(function (q) {
+      var indexed = q.opt.map(function (o, idx) { return { text: o, correct: idx === q.k }; });
+      indexed.sort(function () { return Math.random() - 0.5; });
+      return Object.assign({}, q, { opt: indexed.map(function (x) { return x.text; }), k: indexed.findIndex(function (x) { return x.correct; }) });
+    });
+    window._plEinstufung = true;
+    quizKat = 'einstufung'; quizNiveau = 'alle'; quizCE = null;
+    quizIdx = 0; quizAnswers = []; selectedAns = null; showExp = false;
+    try { if (typeof gaEvent === 'function') gaEvent('einstufung_start', { n: quizList.length }); } catch (e) {}
+    showScreen('quiz'); renderQuestion();
+  };
+
+  function _lbl(id) {
+    try { if (typeof katLabel === 'function') { var l = katLabel(id); if (l) return l; } } catch (e) {}
+    try { var k = KATS.find(function (x) { return x.id === id; }); if (k && k.label) return k.label; } catch (e) {}
+    return id;
+  }
+
+  window.showEinstufungResult = function () {
+    var ans = (typeof quizAnswers !== 'undefined' && quizAnswers) ? quizAnswers : [];
+    var total = ans.length;
+    var richtig = ans.filter(function (a) { return a && a.q && a.sel === a.q.k; }).length;
+    var pct = total ? Math.round(richtig / total * 100) : 0;
+
+    var per = {};
+    ans.forEach(function (a) {
+      if (!a || !a.q) return;
+      var k = a.q.kat || '—';
+      if (!per[k]) per[k] = { c: 0, t: 0 };
+      per[k].t++; if (a.sel === a.q.k) per[k].c++;
+    });
+    var rows = Object.keys(per).map(function (k) {
+      var d = per[k];
+      return { id: k, label: _lbl(k), acc: Math.round(d.c / d.t * 100), c: d.c, t: d.t };
+    });
+    rows.sort(function (a, b) { return a.acc - b.acc; });
+    var luecke = rows.length ? rows[0] : null;
+
+    var lab, col;
+    if (pct < 40) { lab = 'Am Anfang'; col = '#f87171'; }
+    else if (pct < 60) { lab = 'Auf Kurs'; col = '#fbbf24'; }
+    else if (pct < 75) { lab = 'Solide'; col = '#38bdf8'; }
+    else if (pct < 90) { lab = 'Stark'; col = '#34d399'; }
+    else { lab = 'Top vorbereitet'; col = '#a78bfa'; }
+
+    function bcol(a) { return a < 50 ? '#f87171' : (a < 75 ? '#fbbf24' : '#34d399'); }
+
+    var rowsHtml = rows.map(function (r) {
+      return '<div style="margin-bottom:9px">'
+        + '<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:4px">'
+        + '<span style="font-size:12.5px;color:#e0f2fe;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.label + '</span>'
+        + '<span style="font-size:12.5px;color:' + bcol(r.acc) + ';font-weight:800;flex-shrink:0">' + r.c + '/' + r.t + '</span></div>'
+        + '<div style="background:rgba(255,255,255,.08);border-radius:20px;height:6px;overflow:hidden"><div style="background:' + bcol(r.acc) + ';height:100%;width:' + r.acc + '%"></div></div>'
+        + '</div>';
+    }).join('');
+
+    var gapHtml = luecke
+      ? '<div style="background:rgba(255,255,255,.06);border:1px solid ' + bcol(luecke.acc) + '44;border-radius:12px;padding:11px 13px;margin:14px 0 4px">'
+        + '<div style="font-size:10.5px;color:#b3c4d6;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Hier holst du am schnellsten Punkte</div>'
+        + '<div style="font-size:14px;font-weight:800;color:#e0f2fe">' + luecke.label + ' · ' + luecke.acc + '%</div></div>'
+      : '';
+
+    var ov = document.createElement('div');
+    ov.id = 'einstufung-result';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto';
+    ov.innerHTML = '<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid ' + col + '55;border-radius:20px;padding:24px 20px;max-width:400px;width:100%;text-align:center">'
+      + '<div style="font-size:11px;color:#9fc3da;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-bottom:10px">Deine Standortbestimmung</div>'
+      + '<div style="font-size:52px;font-weight:900;color:' + col + ';line-height:1">' + pct + '%</div>'
+      + '<div style="font-size:14px;color:#e0f2fe;font-weight:800;margin-top:2px">' + lab + '</div>'
+      + '<div style="font-size:12.5px;color:#9fc3da;margin-top:4px;margin-bottom:16px">' + richtig + ' von ' + total + ' Fragen richtig</div>'
+      + '<div style="text-align:left">' + rowsHtml + '</div>'
+      + gapHtml
+      + '<button id="eins-cta" style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:14px">Hier starten →</button>'
+      + '<button id="eins-home" style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer;margin-top:10px">Zur Startseite</button>'
+      + '</div>';
+    document.body.appendChild(ov);
+
+    var b1 = ov.querySelector('#eins-cta');
+    var b2 = ov.querySelector('#eins-home');
+    if (b1) b1.onclick = function () {
+      ov.remove();
+      if (luecke) { try { startQuiz(luecke.id); } catch (e) { try { navGo('quizSelect'); } catch (e2) {} } }
+      else { try { navGo('quizSelect'); } catch (e) {} }
+    };
+    if (b2) b2.onclick = function () { ov.remove(); try { navGo('home'); } catch (e) {} };
+
+    try { if (typeof gaEvent === 'function') gaEvent('einstufung_result', { score: pct, richtig: richtig, total: total }); } catch (e) {}
+  };
+
+  // showResult additiv wrappen: bei Einstufung eigenen Ergebnis-Screen zeigen.
+  if (typeof window.showResult === 'function') {
+    var _origSR = window.showResult;
+    window.showResult = function () {
+      if (window._plEinstufung) {
+        window._plEinstufung = false;
+        try { return window.showEinstufungResult(); } catch (e) {}
+      }
+      return _origSR.apply(this, arguments);
+    };
+  }
+})();
+
 </script>
 </body>
 </html>
