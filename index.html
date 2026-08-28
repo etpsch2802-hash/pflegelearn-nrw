@@ -643,6 +643,7 @@
   <script src="/data/quiz-fragen.js"></script>
   <script src="/data/klausur-faelle.js"></script>
   <script src="/data/klausur-grossfaelle.js"></script>
+<style id="pl-ekg-css">.pl-ekg{position:relative;width:100%;height:60px;margin:0 auto;overflow:visible;display:block}.pl-ekg svg{width:100%;height:100%;overflow:visible;display:block}.pl-ekg__base,.pl-ekg__scan{fill:none;stroke:var(--accent,#38bdf8);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.pl-ekg__base{opacity:.22;stroke-dasharray:1000;stroke-dashoffset:1000;animation:pl-ekg-draw 1.9s ease-out .15s forwards}.pl-ekg__scan{opacity:0;filter:drop-shadow(0 0 6px rgba(56,189,248,.55));stroke-dasharray:26 974;stroke-dashoffset:1000;animation:pl-ekg-scan 2.6s linear 2s infinite}@keyframes pl-ekg-draw{to{stroke-dashoffset:0}}@keyframes pl-ekg-scan{0%{stroke-dashoffset:1000;opacity:0}8%{opacity:1}92%{opacity:1}100%{stroke-dashoffset:0;opacity:0}}.pl-ekg--slim{height:34px;opacity:.8}.pl-ekg--hero{height:64px;margin:14px auto 6px}@media(prefers-reduced-motion:reduce){.pl-ekg__base{stroke-dashoffset:0;opacity:.7;animation:none}.pl-ekg__scan{display:none}}</style>
 </head>
 <body>
 
@@ -650,6 +651,7 @@
 <div class="pw-screen active" id="pw-screen">
   <div class="pw-logo"><img src="icon-192.png" alt="PLAN" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(var(--accent-rgb),.6))"></div>
   <div class="pw-subtitle" style="margin-top:8px"><span data-i18n="login_subtitle">Prüfungs-Portal NRW</span></div>
+  <div class="pl-ekg pl-ekg--hero" aria-hidden="true"><svg viewBox="0 0 720 180" preserveAspectRatio="none"><path class="pl-ekg__base" pathLength="1000" d="M0,90 L40,90 Q50,78 60,90 L70,90 L76,104 L82,28 L88,120 L94,90 L120,90 Q140,66 160,90 L180,90 L220,90 Q230,78 240,90 L250,90 L256,104 L262,28 L268,120 L274,90 L300,90 Q320,66 340,90 L360,90 L400,90 Q410,78 420,90 L430,90 L436,104 L442,28 L448,120 L454,90 L480,90 Q500,66 520,90 L540,90 L580,90 Q590,78 600,90 L610,90 L616,104 L622,28 L628,120 L634,90 L660,90 Q680,66 700,90 L720,90"/><path class="pl-ekg__scan" pathLength="1000" d="M0,90 L40,90 Q50,78 60,90 L70,90 L76,104 L82,28 L88,120 L94,90 L120,90 Q140,66 160,90 L180,90 L220,90 Q230,78 240,90 L250,90 L256,104 L262,28 L268,120 L274,90 L300,90 Q320,66 340,90 L360,90 L400,90 Q410,78 420,90 L430,90 L436,104 L442,28 L448,120 L454,90 L480,90 Q500,66 520,90 L540,90 L580,90 Q590,78 600,90 L610,90 L616,104 L622,28 L628,120 L634,90 L660,90 Q680,66 700,90 L720,90"/></svg></div>
   <div style="text-align:center;color:var(--accent);font-weight:600;font-size:13px;margin-top:6px">Damit du immer einen PLAN hast.</div>
 
   <!-- ROLLEN-AUSWAHL: gleich beim Start klar, fuer wen die App ist -->
@@ -963,6 +965,7 @@
 <div class="page" id="screen-home">
   <!-- Sprint UI "Lerncoach": persoenliche Begruessung + EIN adaptiver naechster Schritt statt Menue -->
   <div id="home-greeting" style="margin-top:6px"></div>
+  <div class="pl-ekg pl-ekg--slim" aria-hidden="true"><svg viewBox="0 0 720 180" preserveAspectRatio="none"><path class="pl-ekg__base" pathLength="1000" d="M0,90 L40,90 Q50,78 60,90 L70,90 L76,104 L82,28 L88,120 L94,90 L120,90 Q140,66 160,90 L180,90 L220,90 Q230,78 240,90 L250,90 L256,104 L262,28 L268,120 L274,90 L300,90 Q320,66 340,90 L360,90 L400,90 Q410,78 420,90 L430,90 L436,104 L442,28 L448,120 L454,90 L480,90 Q500,66 520,90 L540,90 L580,90 Q590,78 600,90 L610,90 L616,104 L622,28 L628,120 L634,90 L660,90 Q680,66 700,90 L720,90"/><path class="pl-ekg__scan" pathLength="1000" d="M0,90 L40,90 Q50,78 60,90 L70,90 L76,104 L82,28 L88,120 L94,90 L120,90 Q140,66 160,90 L180,90 L220,90 Q230,78 240,90 L250,90 L256,104 L262,28 L268,120 L274,90 L300,90 Q320,66 340,90 L360,90 L400,90 Q410,78 420,90 L430,90 L436,104 L442,28 L448,120 L454,90 L480,90 Q500,66 520,90 L540,90 L580,90 Q590,78 600,90 L610,90 L616,104 L622,28 L628,120 L634,90 L660,90 Q680,66 700,90 L720,90"/></svg></div>
   <div class="section-label" style="display:none"></div>
   <div style="font-size:11px;color:#a8c4b6;font-weight:600;margin:0 2px 12px;display:flex;align-items:center;gap:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg> Entwickelt von Patrick Schenkelberger &ndash; Fachpfleger Anästhesie &amp; Intensivmedizin, Praxisanleiter NRW</div>
 
