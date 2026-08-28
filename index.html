@@ -18944,10 +18944,11 @@ window.plFreeLimitInfo = function(){
 };
 (function(){
   if (window.PL_PAYMENTS_ON) return;
+  try{ if(typeof showTrialStart==='function' && !window._plTrialWrapped){ window._plTrialWrapped=true; var _st=showTrialStart; showTrialStart=function(){ _st.apply(this,arguments); setTimeout(function(){ var m=document.getElementById('trial-modal'); if(m){ m.innerHTML=m.innerHTML.replace('7 Tage Vollzugang','Voller Zugang – kostenlos').replace('7 Tage gratis starten','Kostenlos starten'); } },0); }; } }catch(e){}
   function apply(){
     if(!document.getElementById('pl-pay-off-style')){
       var st=document.createElement('style'); st.id='pl-pay-off-style';
-      st.textContent='[onclick*="kaufPlan"],[onclick*="showPlanPicker"],[onclick*="showUpgradeModal"],[onclick*="navGo(\'preise\')"],[onclick*="showScreen(\'preise\')"],a[href*="buy.stripe.com"],a[href*="copecart"]{display:none!important}';
+      st.textContent='[onclick*="kaufPlan"],[onclick*="showPlanPicker"],[onclick*="showUpgradeModal"],[onclick*="navGo(\'preise\')"],[onclick*="showScreen(\'preise\')"],[onclick="showGratisStart()"],a[href*="buy.stripe.com"],a[href*="copecart"]{display:none!important}';
       (document.head||document.documentElement).appendChild(st);
     }
     var scr=document.getElementById('screen-preise');
@@ -18959,6 +18960,7 @@ window.plFreeLimitInfo = function(){
         +'<div style="font-size:15px;font-weight:800;color:#86efac;margin-bottom:8px">Komplett kostenlos nutzbar</div>'
         +'<div style="font-size:13px;color:#b3c4d6;line-height:1.65">Prüfungsquiz, Krankheitsbilder, Medikamenten-Trainer, KI-Prüfer und mehr – ohne Kosten. Viel Erfolg beim Lernen!</div></div>';
     }
+    try{ var hb=document.querySelector('[onclick="showTrialStart()"]'); if(hb && hb.getAttribute('data-free-txt')!=='1'){ hb.setAttribute('data-free-txt','1'); hb.innerHTML=hb.innerHTML.replace('7 Tage kostenlos testen','Jetzt kostenlos loslegen'); } }catch(e){}
   }
   function run(){ try{ apply(); }catch(e){} }
   try{ if(document.readyState!=='loading') run(); else document.addEventListener('DOMContentLoaded', run); }catch(e){}
