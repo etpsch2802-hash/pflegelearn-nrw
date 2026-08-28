@@ -18922,6 +18922,31 @@ function showDatenschutz() {
 
 
 
+/* === BEZAHL-SCHALTER (temporär) ==========================================
+   PL_PAYMENTS_ON = false  -> alle Bezahl-Buttons verborgen, Kauf pausiert.
+   REAKTIVIEREN (alte Einstellungen): nur auf true setzen. Sonst nichts ändern.
+   ========================================================================= */
+window.PL_PAYMENTS_ON = false;
+(function(){
+  if (window.PL_PAYMENTS_ON) return;
+  function apply(){
+    if(!document.getElementById('pl-pay-off-style')){
+      var st=document.createElement('style'); st.id='pl-pay-off-style';
+      st.textContent='[onclick*="kaufPlan"],[onclick*="showPlanPicker"],a[href*="buy.stripe.com"],a[href*="copecart"]{display:none!important}';
+      (document.head||document.documentElement).appendChild(st);
+    }
+    var scr=document.getElementById('screen-preise');
+    if(scr && !document.getElementById('pl-pay-note')){
+      var note=document.createElement('div'); note.id='pl-pay-note';
+      note.style.cssText='background:rgba(56,189,248,.10);border:1px solid rgba(56,189,248,.32);border-radius:12px;padding:14px 15px;margin:6px 0 14px;color:#e0f2fe;font-size:13px;line-height:1.6;text-align:center';
+      note.innerHTML='<b>Der Kauf ist gerade kurz pausiert.</b><br>Dein kostenloser Zugang bleibt aktiv \u2013 die Bezahlung ist in K\u00fcrze wieder verf\u00fcgbar.';
+      var fb=scr.querySelector('[onclick*="kaufPlan"]');
+      if(fb && fb.parentNode){ fb.parentNode.insertBefore(note, fb); } else { scr.insertBefore(note, scr.firstChild); }
+    }
+  }
+  try{ if(document.readyState!=='loading') apply(); else document.addEventListener('DOMContentLoaded', apply); }catch(e){}
+})();
+
 // ─── STRIPE WEITERLEITUNG ───────────────────────────────────────────────────
 const STRIPE_PLANS = {
   // 21.07.2026 KORREKTUR: Zuordnung war exakt spiegelverkehrt - '1m' zeigte auf den 79,99-EUR-Link.
@@ -18937,6 +18962,7 @@ const _PLAN_WERT = { '1m': 9.99, '3m': 24.99, '6m': 44.99, '12m': 79.99 };
 // engagement/trial_expired/trial_countdown/inline_gate) -> macht den Funnel je
 // Trigger messbar (View -> begin_checkout -> purchase).
 function kaufPlan(plan, src) {
+  if (!window.PL_PAYMENTS_ON) return;
   var _src = src || 'preise';
   try {
     if (typeof gaEvent === 'function') gaEvent('begin_checkout', {
@@ -19826,6 +19852,7 @@ function plCountdownHint(){
   } catch(e){ return ''; }
 }
 function showPlanPicker(src){
+  if (!window.PL_PAYMENTS_ON) return;
   var _psrc = src || 'plan_picker';
   try{ var pu=localStorage.getItem('pl_paid_until'); if(pu){ var t0=new Date().toISOString().split('T')[0]; if(t0<=pu){ showScreen('home'); return; } } }catch(e){}
   try{ gaEvent('view_item_list',{item_list_name:'plan_picker', source:_psrc}); }catch(e){}
