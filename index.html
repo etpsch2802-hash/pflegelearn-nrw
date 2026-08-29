@@ -21601,9 +21601,9 @@ if (_savedLang !== 'de') {
 <script>
 /* ── PLAN: Fachklausuren nach Kompetenzbereich I–V (PflAPrV/§53 PflBG) ──────
    Eigenständige Einzelklausuren im Prüfungsbereich, getrennt vom KI-Examens-
-   prüfer. Zweck: Aufbau aufs Examen + Wissensabfrage. Overlay-Flow (wie
-   openExamenIntro). Pilotinhalte KB I – fachliche Freigabe (Jessica) steht aus
-   → durchgehend [PRÜFEN]. KB II–V vorbereitet, aber gesperrt. */
+   prüfer. Zweck: Aufbau aufs Examen + Wissensabfrage. Overlay-Flow.
+   KB I freigegeben. KB II–V: Pilotinhalte – fachliche Freigabe (Jessica) steht
+   aus → pruefen:true → durchgängig [PRÜFEN]. Banner an pruefen-Flag gekoppelt. */
 (function () {
   function each(nl, fn) { Array.prototype.forEach.call(nl, fn); }
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -21616,54 +21616,83 @@ if (_savedLang !== 'de') {
       dauer_min: 20, pruefen: false,
       fall: 'Frau Brandt, 82 Jahre, wird am 3. Tag nach einem ischämischen Schlaganfall (Apoplex) auf deiner Station betreut. Sie hat eine Halbseitenlähmung links (Hemiparese) und eine Schluckstörung (Dysphagie). Sie ist überwiegend bettlägerig, kann sich kaum selbst umlagern und braucht Unterstützung bei Körperpflege und Nahrungsaufnahme. Die Haut über dem Kreuzbein ist gerötet.',
       aufgaben: [
-        {
-          typ: 'mc', punkte: 2,
-          frage: 'Mit welchem standardisierten Instrument schätzt du das Dekubitusrisiko strukturiert ein?',
-          opt: ['Barthel-Index', 'Braden-Skala', 'Glasgow Coma Scale', 'BMI'], k: 1,
-          erkl: 'Die Braden-Skala erfasst sechs Risikofaktoren (u. a. Mobilität, Aktivität, Feuchtigkeit). Der Barthel-Index misst Selbstständigkeit, die GCS die Bewusstseinslage.'
-        },
-        {
-          typ: 'mc', punkte: 2,
-          frage: 'Frau Brandt hat eine Dysphagie. Welche Maßnahme senkt das Aspirationsrisiko beim Essen am ehesten?',
-          opt: ['Flachlagerung während der Mahlzeit', 'Aufrechte Sitzposition (ca. 90°) und angepasste Kostform', 'Schnelles Anreichen großer Bissen', 'Trinken im Liegen'], k: 1,
-          erkl: 'Aufrechte Positionierung und an die Schluckfähigkeit angepasste Kostform (z. B. angedickte Flüssigkeiten) senken das Aspirationsrisiko; Flachlagerung und Trinken im Liegen erhöhen es.'
-        },
-        {
-          typ: 'offen', punkte: 4,
-          frage: 'Formuliere zwei pflegerelevante Probleme im PESR-Format (Problem – Ätiologie – Symptome – Ressourcen).',
-          muster: 'Beispiel 1 – Problem: erhöhtes Dekubitusrisiko; Ursache: Immobilität und Hemiparese links; Symptome: Rötung über dem Kreuzbein, eingeschränkte Eigenbewegung; Ressource: nimmt Unterstützung beim Umlagern an. Beispiel 2 – Problem: Aspirationsgefahr; Ursache: Dysphagie nach Apoplex; Symptome: Schluckstörung; Ressource: kann mit Unterstützung aufrecht sitzen.',
-          kriterien: ['Struktur P-E-S-R erkennbar', 'Ursache passt zum Problem', 'Mindestens eine Ressource benannt', 'Fachsprachlich korrekt']
-        },
-        {
-          typ: 'offen', punkte: 3,
-          frage: 'Formuliere ein SMART-Pflegeziel zur Dekubitusprophylaxe für Frau Brandt.',
-          muster: 'Die Haut über dem Kreuzbein zeigt bis zum Ende des stationären Aufenthalts keine weitere Verschlechterung (kein neuer Dekubitus Kategorie ≥1), überprüft durch tägliche Hautinspektion. → spezifisch, messbar, angemessen, realistisch, terminiert.',
-          kriterien: ['Spezifisch & messbar', 'Realistisch & terminiert', 'Bezug zur Situation']
-        },
-        {
-          typ: 'offen', punkte: 4,
-          frage: 'Nenne vier pflegerische Maßnahmen zur Dekubitusprophylaxe entsprechend dem Expertenstandard.',
-          muster: '1. Bewegungsförderung / individuell geplante Positionswechsel. 2. Hautinspektion und Hautpflege bei jeder Positionierung. 3. Gezielter Einsatz druckverteilender Hilfsmittel. 4. Förderung von Eigenbewegung und Mobilisation. Ergänzend: Ernährungs-/Flüssigkeitsstatus beachten, Information/Schulung.',
-          kriterien: ['Vier plausible Maßnahmen', 'Am Expertenstandard orientiert', 'Keine starre 2-h-Regel als einzige Antwort']
-        },
-        {
-          typ: 'mc', punkte: 2,
-          frage: 'Welcher DNQP-Expertenstandard steht für Frau Brandt aktuell im Vordergrund?',
-          opt: ['Schmerzmanagement', 'Dekubitusprophylaxe in der Pflege', 'Entlassungsmanagement', 'Förderung der Harnkontinenz'], k: 1,
-          erkl: 'Bei Immobilität und beginnender Hautrötung steht die Dekubitusprophylaxe im Vordergrund; andere Standards können ergänzend relevant werden.'
-        },
-        {
-          typ: 'offen', punkte: 3,
-          frage: 'Wie evaluierst du, ob dein Dekubitus-Ziel erreicht wurde?',
-          muster: 'Regelmäßige, dokumentierte Hautinspektion (z. B. bei jeder Positionierung), Vergleich mit dem Ausgangsbefund, erneute Risikoeinschätzung mit der Braden-Skala und Anpassung des Maßnahmenplans bei Veränderung.',
-          kriterien: ['Beobachtungs-/Messkriterium genannt', 'Bezug zum formulierten Ziel', 'Konsequenz/Anpassung benannt']
-        }
+        { typ: 'mc', punkte: 2, frage: 'Mit welchem standardisierten Instrument schätzt du das Dekubitusrisiko strukturiert ein?', opt: ['Barthel-Index', 'Braden-Skala', 'Glasgow Coma Scale', 'BMI'], k: 1, erkl: 'Die Braden-Skala erfasst sechs Risikofaktoren (u. a. Mobilität, Aktivität, Feuchtigkeit). Der Barthel-Index misst Selbstständigkeit, die GCS die Bewusstseinslage.' },
+        { typ: 'mc', punkte: 2, frage: 'Frau Brandt hat eine Dysphagie. Welche Maßnahme senkt das Aspirationsrisiko beim Essen am ehesten?', opt: ['Flachlagerung während der Mahlzeit', 'Aufrechte Sitzposition (ca. 90°) und angepasste Kostform', 'Schnelles Anreichen großer Bissen', 'Trinken im Liegen'], k: 1, erkl: 'Aufrechte Positionierung und an die Schluckfähigkeit angepasste Kostform (z. B. angedickte Flüssigkeiten) senken das Aspirationsrisiko; Flachlagerung und Trinken im Liegen erhöhen es.' },
+        { typ: 'offen', punkte: 4, frage: 'Formuliere zwei pflegerelevante Probleme im PESR-Format (Problem – Ätiologie – Symptome – Ressourcen).', muster: 'Beispiel 1 – Problem: erhöhtes Dekubitusrisiko; Ursache: Immobilität und Hemiparese links; Symptome: Rötung über dem Kreuzbein, eingeschränkte Eigenbewegung; Ressource: nimmt Unterstützung beim Umlagern an. Beispiel 2 – Problem: Aspirationsgefahr; Ursache: Dysphagie nach Apoplex; Symptome: Schluckstörung; Ressource: kann mit Unterstützung aufrecht sitzen.', kriterien: ['Struktur P-E-S-R erkennbar', 'Ursache passt zum Problem', 'Mindestens eine Ressource benannt', 'Fachsprachlich korrekt'] },
+        { typ: 'offen', punkte: 3, frage: 'Formuliere ein SMART-Pflegeziel zur Dekubitusprophylaxe für Frau Brandt.', muster: 'Die Haut über dem Kreuzbein zeigt bis zum Ende des stationären Aufenthalts keine weitere Verschlechterung (kein neuer Dekubitus Kategorie ≥1), überprüft durch tägliche Hautinspektion. → spezifisch, messbar, angemessen, realistisch, terminiert.', kriterien: ['Spezifisch & messbar', 'Realistisch & terminiert', 'Bezug zur Situation'] },
+        { typ: 'offen', punkte: 4, frage: 'Nenne vier pflegerische Maßnahmen zur Dekubitusprophylaxe entsprechend dem Expertenstandard.', muster: '1. Bewegungsförderung / individuell geplante Positionswechsel. 2. Hautinspektion und Hautpflege bei jeder Positionierung. 3. Gezielter Einsatz druckverteilender Hilfsmittel. 4. Förderung von Eigenbewegung und Mobilisation. Ergänzend: Ernährungs-/Flüssigkeitsstatus beachten, Information/Schulung.', kriterien: ['Vier plausible Maßnahmen', 'Am Expertenstandard orientiert', 'Keine starre 2-h-Regel als einzige Antwort'] },
+        { typ: 'mc', punkte: 2, frage: 'Welcher DNQP-Expertenstandard steht für Frau Brandt aktuell im Vordergrund?', opt: ['Schmerzmanagement', 'Dekubitusprophylaxe in der Pflege', 'Entlassungsmanagement', 'Förderung der Harnkontinenz'], k: 1, erkl: 'Bei Immobilität und beginnender Hautrötung steht die Dekubitusprophylaxe im Vordergrund; andere Standards können ergänzend relevant werden.' },
+        { typ: 'offen', punkte: 3, frage: 'Wie evaluierst du, ob dein Dekubitus-Ziel erreicht wurde?', muster: 'Regelmäßige, dokumentierte Hautinspektion (z. B. bei jeder Positionierung), Vergleich mit dem Ausgangsbefund, erneute Risikoeinschätzung mit der Braden-Skala und Anpassung des Maßnahmenplans bei Veränderung.', kriterien: ['Beobachtungs-/Messkriterium genannt', 'Bezug zum formulierten Ziel', 'Konsequenz/Anpassung benannt'] }
       ]
     },
-    { id: 'kb2', kb: 'II', status: 'gesperrt', pruefen: true, titel: 'Kommunikation & Beratung', fokus: 'Personen- und situationsbezogen kommunizieren, informieren, beraten' },
-    { id: 'kb3', kb: 'III', status: 'gesperrt', pruefen: true, titel: 'Intra-/interprofessionelles Handeln', fokus: 'Im interdisziplinären Team verantwortlich mitwirken und steuern' },
-    { id: 'kb4', kb: 'IV', status: 'gesperrt', pruefen: true, titel: 'Recht, Gesetz & Ethik', fokus: 'Rechtliche und ethische Rahmenbedingungen reflektiert anwenden' },
-    { id: 'kb5', kb: 'V', status: 'gesperrt', pruefen: true, titel: 'Wissenschaftlich fundiertes Handeln', fokus: 'Pflegehandeln auf Basis aktueller Evidenz begründen' }
+
+    {
+      id: 'kb2', kb: 'II', status: 'pilot',
+      titel: 'Kommunikation & Beratung',
+      fokus: 'Personen- und situationsbezogen kommunizieren, informieren, beraten',
+      dauer_min: 20, pruefen: true,
+      fall: 'Herr Yılmaz, 58 Jahre, wurde neu mit Diabetes mellitus Typ 2 diagnostiziert und soll zum Umgang mit der Erkrankung angeleitet und beraten werden. Er wirkt verunsichert und sagt: „Das schaffe ich nie." Er spricht wenig Deutsch; seine erwachsene Tochter ist anwesend und möchte übersetzen.',
+      aufgaben: [
+        { typ: 'mc', punkte: 2, frage: 'Für eine wichtige Aufklärung/Beratung bei Sprachbarriere – welches Vorgehen ist am professionellsten?', opt: ['Dauerhaft die Tochter als einzige Dolmetscherin nutzen', 'Einen professionellen Dolmetscherdienst hinzuziehen', 'Lauter und langsamer auf Deutsch sprechen', 'Auf die Beratung verzichten'], k: 1, erkl: 'Für relevante Aufklärungs-/Beratungsinhalte ist ein professioneller Dolmetscher vorzuziehen; Angehörige sind bei komplexen/sensiblen Inhalten wegen Rollenkonflikt und Fachterminologie ungeeignet.' },
+        { typ: 'mc', punkte: 2, frage: 'Herr Yılmaz sagt „Das schaffe ich nie." Welche Reaktion entspricht aktivem Zuhören?', opt: ['„Das ist doch nicht so schwer."', '„Sie schaffen das schon, keine Sorge."', '„Sie machen sich Sorgen, ob Sie das mit dem Spritzen hinbekommen?"', '„Andere schaffen das auch."'], k: 2, erkl: 'Das Verbalisieren emotionaler Inhalte (Paraphrasieren) zeigt Verständnis und öffnet das Gespräch; Bagatellisieren blockiert.' },
+        { typ: 'offen', punkte: 4, frage: 'Nenne vier Grundprinzipien einer gelungenen Beratung bzw. Anleitung.', muster: 'Adressaten-/bedürfnisorientiert, verständliche Sprache ohne Fachjargon, Ressourcenorientierung, aktive Einbindung und Verständnissicherung (Rückfragen), Freiwilligkeit/Selbstbestimmung, strukturiertes Vorgehen, Wiederholung und ergänzend schriftliche Information.', kriterien: ['Vier plausible Prinzipien', 'Adressatenorientierung genannt', 'Verständnissicherung genannt'] },
+        { typ: 'offen', punkte: 3, frage: 'Beschreibe kurz die Teach-Back-Methode und wozu sie dient.', muster: 'Die beratene Person gibt das Verstandene in eigenen Worten wieder oder führt die Tätigkeit vor; die Pflegekraft prüft so das Verständnis und korrigiert Missverständnisse. Ziel ist nachhaltige Handlungs-/Wissenskompetenz.', kriterien: ['Rückgabe in eigenen Worten/Demonstration', 'Zweck Verständnisprüfung', 'Korrektur/Anpassung'] },
+        { typ: 'mc', punkte: 2, frage: 'Welche vier Seiten einer Nachricht beschreibt das Kommunikationsmodell von Schulz von Thun?', opt: ['Sachinhalt, Selbstoffenbarung, Beziehung, Appell', 'Sender, Empfänger, Kanal, Code', 'These, Antithese, Synthese, Fazit', 'Anamnese, Diagnose, Therapie, Evaluation'], k: 0, erkl: 'Vier-Seiten-Modell (Kommunikationsquadrat): Sachinhalt, Selbstoffenbarung, Beziehung, Appell.' },
+        { typ: 'offen', punkte: 4, frage: 'Eine Angehörige ruft aufgebracht und laut an. Nenne vier deeskalierende Kommunikationsstrategien.', muster: 'Ruhig und langsam bleiben, ausreden lassen und aktiv zuhören, Verständnis für die Emotion zeigen (validieren), Ich-Botschaften statt Vorwürfe, konkrete Lösung/nächsten Schritt anbieten, sich nicht rechtfertigen oder gegenangreifen, ggf. Gesprächstermin/Rückruf anbieten.', kriterien: ['Vier plausible Strategien', 'Deeskalation statt Konfrontation', 'Lösungsorientierung'] },
+        { typ: 'offen', punkte: 3, frage: 'Warum sollten Kinder nicht als Dolmetscher für medizinische Aufklärung eingesetzt werden? Nenne Gründe.', muster: 'Rollen- und Loyalitätskonflikt, Überforderung, fehlende Fachterminologie, Gefahr von Übersetzungsfehlern, Verletzung der Intimsphäre und des Kindeswohls, keine rechtssichere Aufklärung gewährleistet.', kriterien: ['Zwei stichhaltige Gründe', 'Professionelle Haltung erkennbar'] }
+      ]
+    },
+
+    {
+      id: 'kb3', kb: 'III', status: 'pilot',
+      titel: 'Intra-/interprofessionelles Handeln',
+      fokus: 'Im interdisziplinären Team verantwortlich mitwirken und steuern',
+      dauer_min: 20, pruefen: true,
+      fall: 'Zum Schichtwechsel übergibst du Frau Kern, 76, am 1. Tag nach Hüft-TEP. Du sollst zusätzlich eine Blutzuckerkontrolle an eine Pflegehilfskraft delegieren und mit der Physiotherapie die Mobilisation abstimmen. Bei der Mobilisation beobachtest du starke Schmerzen.',
+      aufgaben: [
+        { typ: 'mc', punkte: 2, frage: 'Wofür steht das strukturierte Übergabeschema SBAR?', opt: ['Situation, Background, Assessment, Recommendation', 'Sicherheit, Betreuung, Anamnese, Reha', 'Sofort, Bald, Ambulant, Reha', 'Situation, Befund, Antwort, Rückfrage'], k: 0, erkl: 'SBAR = Situation, Background, Assessment, Recommendation – standardisierte, sichere Informationsweitergabe.' },
+        { typ: 'offen', punkte: 4, frage: 'Strukturiere eine kurze SBAR-Übergabe zu Frau Kern (je ein Satz pro Buchstabe).', muster: 'S: Frau Kern, 76, Z. n. Hüft-TEP, 1. postoperativer Tag. B: OP komplikationslos, vorbekannte Hypertonie. A: Vitalzeichen stabil, Schmerz bei Mobilisation, erste Mobilisation an der Bettkante erfolgt. R: heute weitere Mobilisation mit der PT, Schmerz-Reevaluation, Thromboseprophylaxe fortführen.', kriterien: ['Alle vier SBAR-Elemente', 'Situationsbezogen', 'Konkrete Empfehlung'] },
+        { typ: 'mc', punkte: 2, frage: 'Welche Tätigkeit ist eine Vorbehaltsaufgabe (§4 PflBG) und NICHT an eine Hilfskraft delegierbar?', opt: ['Blutzucker messen', 'Erhebung/Feststellung des Pflegebedarfs und Steuerung des Pflegeprozesses', 'Beim Essen anreichen', 'Betten machen'], k: 1, erkl: 'Die Erhebung und Feststellung des Pflegebedarfs sowie Organisation, Steuerung und Evaluation des Pflegeprozesses sind Vorbehaltsaufgaben nach §4 PflBG.' },
+        { typ: 'offen', punkte: 4, frage: 'Bevor du die Blutzuckerkontrolle delegierst – welche vier Punkte der Delegationsverantwortung beachtest du?', muster: 'Qualifikation/Kompetenz der Person prüfen (angeleitet?), Eignung/Delegierbarkeit der Tätigkeit, klare Anweisung (wie, wann, Grenzwerte, was zu melden ist), Erreichbarkeit für Rückfragen; Anordnungs-/Überwachungsverantwortung bleibt bei dir, Dokumentation.', kriterien: ['Qualifikation geprüft', 'Klare Anweisung', 'Verantwortung/Überwachung benannt'] },
+        { typ: 'mc', punkte: 2, frage: 'Was beschreibt interprofessionelle Zusammenarbeit am besten?', opt: ['Jede Berufsgruppe arbeitet strikt getrennt', 'Verschiedene Berufsgruppen stimmen sich koordiniert am gemeinsamen Ziel ab', 'Die Pflege übernimmt ärztliche Aufgaben', 'Nur Ärzte entscheiden'], k: 1, erkl: 'Interprofessionell = koordinierte, zielorientierte Zusammenarbeit unterschiedlicher Berufe (Pflege, Medizin, Therapie …).' },
+        { typ: 'offen', punkte: 3, frage: 'Nenne drei typische Schnittstellenprobleme bei Übergaben und je eine Gegenmaßnahme.', muster: 'Informationsverlust → strukturierte Übergabe/Checkliste (SBAR); unvollständige Doku → standardisierte Dokumentation; Zeitdruck/Störungen → ruhiger Rahmen, Bedside-Handover; Missverständnisse → Rückfragen/Read-back.', kriterien: ['Drei Probleme', 'Je passende Maßnahme'] },
+        { typ: 'offen', punkte: 3, frage: 'Die PT plant die Mobilisation, du beobachtest starke Schmerzen. Wie handelst du interprofessionell verantwortlich?', muster: 'Beobachtung kommunizieren, gemeinsam abstimmen (Schmerzmanagement vor Mobilisation, ärztliche Rücksprache zur Analgesie), Mobilisation anpassen oder verschieben, dokumentieren und ans Team zurückmelden.', kriterien: ['Kommunikation im Team', 'Patientenzentrierte Anpassung', 'Dokumentation/Rückmeldung'] }
+      ]
+    },
+
+    {
+      id: 'kb4', kb: 'IV', status: 'pilot',
+      titel: 'Recht, Gesetz & Ethik',
+      fokus: 'Rechtliche und ethische Rahmenbedingungen reflektiert anwenden',
+      dauer_min: 20, pruefen: true,
+      fall: 'Frau Doll, 84, mit fortgeschrittener Demenz, ist sturzgefährdet und versucht nachts wiederholt allein aufzustehen. Eine Kollegin schlägt vor, sie mit einem Bauchgurt im Bett zu fixieren. Frau Doll hat eine gesetzliche Betreuerin. Zusätzlich fragt eine Nachbarin am Telefon nach Frau Dolls Gesundheitszustand.',
+      aufgaben: [
+        { typ: 'mc', punkte: 2, frage: 'Unter welcher Voraussetzung ist eine freiheitsentziehende Maßnahme (z. B. Bauchgurt) grundsätzlich zulässig?', opt: ['Auf Anordnung einer beliebigen Pflegekraft', 'Nur mit Einwilligung des einwilligungsfähigen Betroffenen oder richterlicher Genehmigung – und als letztes Mittel', 'Wenn Angehörige es wünschen', 'Immer bei Sturzgefahr'], k: 1, erkl: 'FEM bedürfen grundsätzlich der Einwilligung der/des einwilligungsfähigen Betroffenen oder einer richterlichen Genehmigung (§1831 BGB), sind ultima ratio und regelmäßig zu überprüfen.' },
+        { typ: 'offen', punkte: 4, frage: 'Nenne vier weniger eingreifende Alternativen zur Fixierung.', muster: 'Niedrig-/Bodenpflegebett, Sturzsensor/Klingelmatte, Hüftprotektoren, angepasste Beleuchtung/Nachtlicht, Bewegungsförderung und Beschäftigung, regelmäßiges Anbieten von Toilettengängen, Umgebung sichern, Bezugspflege/Nähe.', kriterien: ['Vier plausible Alternativen', 'Weniger eingreifend', 'Ultima-ratio-Gedanke erkennbar'] },
+        { typ: 'mc', punkte: 2, frage: 'Die Nachbarin fragt telefonisch nach dem Gesundheitszustand. Wie handelst du korrekt?', opt: ['Auskunft geben, weil die Nachbarin nett ist', 'Keine Auskunft – Schweigepflicht und Datenschutz, keine Weitergabe ohne Einwilligung', 'Nur die Diagnose nennen', 'Der Nachbarin die Diagnose durchgeben und an die Betreuerin verweisen'], k: 1, erkl: 'Schweigepflicht (§203 StGB) und Datenschutz: keine Auskunft an Unbefugte ohne Einwilligung der Betroffenen bzw. der/des Bevollmächtigten.' },
+        { typ: 'offen', punkte: 3, frage: 'Welche Rolle hat die gesetzliche Betreuerin in dieser Situation?', muster: 'Sie vertritt Frau Doll in den übertragenen Aufgabenkreisen (z. B. Gesundheitssorge), ist in Entscheidungen einzubeziehen, muss einer FEM zustimmen bzw. die richterliche Genehmigung veranlassen und handelt am (mutmaßlichen) Willen und Wohl der Betreuten orientiert.', kriterien: ['Vertretung im Aufgabenkreis', 'Einbindung bei FEM/Einwilligung', 'Orientierung am Willen/Wohl'] },
+        { typ: 'mc', punkte: 2, frage: 'Was besagt die Dokumentationspflicht in der Pflege?', opt: ['Dokumentation ist freiwillig', 'Maßnahmen und Beobachtungen sind zeitnah, wahrheitsgemäß und nachvollziehbar zu dokumentieren', 'Nur Ärzte dokumentieren', 'Dokumentation nur bei Zwischenfällen'], k: 1, erkl: 'Es besteht eine rechtliche Dokumentationspflicht (u. a. §630f BGB); die Doku muss zeitnah, vollständig, wahrheitsgemäß und nachvollziehbar sein – auch aus Haftungs- und Beweisgründen.' },
+        { typ: 'offen', punkte: 4, frage: 'Skizziere ein ethisches Vorgehen beim Fixierungs-Dilemma (z. B. anhand medizinethischer Prinzipien).', muster: 'Abwägung von Autonomie (Selbstbestimmung/Freiheit) gegen Fürsorge/Nichtschaden (Sturzschutz) und Gerechtigkeit; strukturierte Fallbesprechung im Team, Alternativen prüfen (ultima ratio), Betreuerin und ggf. Ethikberatung einbeziehen, Entscheidung dokumentieren und reevaluieren.', kriterien: ['Autonomie vs. Fürsorge benannt', 'Strukturierte Abwägung/Team', 'Betroffenenwille berücksichtigt'] },
+        { typ: 'offen', punkte: 3, frage: 'Frau Doll wird ohne Genehmigung fixiert und verletzt sich. Welche rechtlichen Folgen drohen und was ist die Lehre?', muster: 'Mögliche straf- (Freiheitsberaubung, Körperverletzung) und zivilrechtliche Folgen (Haftung/Schadensersatz). Lehre: FEM nur mit Rechtsgrundlage, dokumentiert und als letztes Mittel – Handeln ohne Genehmigung ist unzulässig.', kriterien: ['Rechtsfolge benannt', 'Korrekte Konsequenz für die Praxis'] }
+      ]
+    },
+
+    {
+      id: 'kb5', kb: 'V', status: 'pilot',
+      titel: 'Wissenschaftlich fundiertes Handeln',
+      fokus: 'Pflegehandeln auf Basis aktueller Evidenz begründen',
+      dauer_min: 20, pruefen: true,
+      fall: 'Auf deiner Station wird die Dekubitusprophylaxe seit Jahren mit einer starren 2-Stunden-Umlagerung durchgeführt, „weil man das so macht". Du möchtest das Vorgehen auf den aktuellen wissenschaftlichen Stand bringen und evidenzbasiert begründen.',
+      aufgaben: [
+        { typ: 'mc', punkte: 2, frage: 'Was bedeutet evidenzbasierte Pflege (EBN)?', opt: ['Pflege nach Tradition und Bauchgefühl', 'Verbindung aus bester verfügbarer Evidenz, pflegerischer Expertise und Patientenpräferenz', 'Pflege nur nach ärztlicher Anordnung', 'Ausschließlich nach Studienlage, ohne Erfahrung'], k: 1, erkl: 'EBN integriert externe Evidenz, interne (pflegerische) Expertise sowie Werte und Präferenzen der zu pflegenden Person.' },
+        { typ: 'mc', punkte: 2, frage: 'Welche Evidenz hat in der Evidenzhierarchie in der Regel die höchste Aussagekraft?', opt: ['Expertenmeinung', 'Fallbericht', 'Systematische Übersichtsarbeit / Metaanalyse von RCTs', 'Erfahrungsbericht einer Kollegin'], k: 2, erkl: 'Systematische Reviews und Metaanalysen randomisierter kontrollierter Studien stehen oben; Expertenmeinung und Fallberichte niedriger.' },
+        { typ: 'offen', punkte: 4, frage: 'Wo bzw. wie findest du für die Dekubitusprophylaxe verlässliche, aktuelle Evidenz? Nenne vier Quellen/Wege.', muster: 'DNQP-Expertenstandard, aktuelle Leitlinien (z. B. AWMF/S3), Fachdatenbanken (PubMed, Cochrane, CINAHL), peer-reviewte Fachzeitschriften und Fachgesellschaften – jeweils mit Prüfung von Aktualität und Qualität.', kriterien: ['Vier seriöse Quellen', 'Bezug zu Expertenstandard/Leitlinie'] },
+        { typ: 'offen', punkte: 3, frage: 'Die starre 2-Stunden-Regel gilt als überholt. Wie lautet die aktuelle evidenzbasierte Empfehlung sinngemäß?', muster: 'Positionswechsel individuell nach Risiko, Hautzustand, Gewebetoleranz und Eigenbewegung planen – nicht starr 2 h für alle; druckverteilende Hilfsmittel und Bewegungsförderung einbeziehen und die Intervalle an die Person anpassen.', kriterien: ['Individualisierung statt starres Intervall', 'Risiko-/Hautorientierung'] },
+        { typ: 'mc', punkte: 2, frage: 'Was ist ein DNQP-Expertenstandard?', opt: ['Eine gesetzliche Verordnung', 'Ein wissenschaftlich fundiertes, konsentiertes Instrument zur Sicherung und Weiterentwicklung der Pflegequalität', 'Eine Krankenkassen-Richtlinie', 'Eine Herstellerempfehlung'], k: 1, erkl: 'Nationale Expertenstandards des DNQP sind evidenz- und konsensbasierte Instrumente der Qualitätsentwicklung mit hoher fachlicher Verbindlichkeit.' },
+        { typ: 'offen', punkte: 4, frage: 'Skizziere in vier Schritten, wie du die neue Praxis auf Station einführst – von der Fragestellung bis zur Evaluation.', muster: '1. Klinische Frage/Problem formulieren (z. B. PICO). 2. Evidenz/Expertenstandard recherchieren und bewerten. 3. Umsetzung planen (Team schulen, angepasster Standard/Bewegungsplan, Hilfsmittel). 4. Implementieren und evaluieren (z. B. Dekubitusrate, Audit, Anpassung).', kriterien: ['Nachvollziehbarer EBN-Kreislauf', 'Team-Schulung', 'Evaluation/Kennzahl'] },
+        { typ: 'offen', punkte: 3, frage: 'Eine Kollegin sagt „Studien sind doch nur Theorie." Wie begründest du den Nutzen evidenzbasierten Arbeitens?', muster: 'Höhere Pflegequalität und Patientensicherheit, Vermeidung überholter oder schädlicher Routinen, nachvollziehbare und rechtssichere Begründung des Handelns, effizienter Ressourceneinsatz, Professionalisierung – Evidenz ergänzt die Erfahrung, ersetzt sie nicht.', kriterien: ['Nutzen für Qualität/Sicherheit', 'Erfahrung + Evidenz verbunden'] }
+      ]
+    }
   ];
   window.FACHKLAUSUREN = FK;
 
@@ -21693,8 +21722,9 @@ if (_savedLang !== 'de') {
       var right = locked
         ? '<span style="font-size:11px;color:#64748b;flex-shrink:0">Freigabe ausstehend</span>'
         : (best != null ? '<span style="font-size:12px;color:#34d399;font-weight:700;flex-shrink:0">' + best + '%</span>' : '<span style="font-size:11px;color:#38bdf8;flex-shrink:0">starten →</span>');
+      var flag = (!locked && k.pruefen) ? ' <span style="font-size:9px;color:#fcd34d;border:1px solid rgba(245,158,11,.4);border-radius:4px;padding:1px 4px;vertical-align:middle">PRÜFEN</span>' : '';
       return '<button ' + (locked ? 'disabled' : 'data-fk-open="' + k.id + '"') + ' style="width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,' + (locked ? '.03' : '.06') + ');border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 14px;margin-bottom:8px;cursor:' + (locked ? 'default' : 'pointer') + ';opacity:' + (locked ? '.55' : '1') + '">'
-        + '<span style="min-width:0"><span style="display:inline-block;min-width:26px;font-weight:800;color:#a78bfa">' + k.kb + '</span><span style="font-size:13.5px;color:#e0f2fe;font-weight:700">' + esc(k.titel) + '</span><br><span style="font-size:11px;color:#8ba0b4;margin-left:26px">' + esc(k.fokus || '') + '</span></span>'
+        + '<span style="min-width:0"><span style="display:inline-block;min-width:26px;font-weight:800;color:#a78bfa">' + k.kb + '</span><span style="font-size:13.5px;color:#e0f2fe;font-weight:700">' + esc(k.titel) + '</span>' + flag + '<br><span style="font-size:11px;color:#8ba0b4;margin-left:26px">' + esc(k.fokus || '') + '</span></span>'
         + right + '</button>';
     }).join('');
     var ov = document.createElement('div');
@@ -21703,7 +21733,7 @@ if (_savedLang !== 'de') {
     ov.innerHTML = '<div style="background:linear-gradient(160deg,#161f36,#0b1424);border:1px solid rgba(167,139,250,.3);border-radius:20px;padding:20px;width:100%;max-width:440px">'
       + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-size:17px;font-weight:800;color:#fff">Fachklausuren</div><button data-fk-close style="background:none;border:none;color:#8ba0b4;font-size:22px;line-height:1;cursor:pointer">×</button></div>'
       + '<div style="font-size:12px;color:#9fb2c6;margin-bottom:14px">Einzelklausuren nach Kompetenzbereich I–V (PflAPrV/§53 PflBG) – zum Aufbau aufs Examen und zur Wissensabfrage.</div>'
-      + (FK.some(function(x){return x.status==='pilot'&&x.pruefen;})?AMBER:'')
+      + (FK.some(function (x) { return x.status === 'pilot' && x.pruefen; }) ? AMBER : '')
       + rows
       + '</div>';
     document.body.appendChild(ov);
@@ -21727,7 +21757,7 @@ if (_savedLang !== 'de') {
       '<div style="font-size:11px;color:#a78bfa;font-weight:800;letter-spacing:1px">KOMPETENZBEREICH ' + k.kb + '</div>'
       + '<div style="font-size:19px;font-weight:800;color:#fff;margin:4px 0 2px">' + esc(k.titel) + '</div>'
       + '<div style="font-size:12px;color:#9fb2c6;margin-bottom:14px">' + esc(k.fokus || '') + '</div>'
-      + (k.pruefen?AMBER:'')
+      + (k.pruefen ? AMBER : '')
       + '<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:13px;margin-bottom:14px;font-size:12.5px;color:#cbd5e1;line-height:1.55"><b style="color:#e0f2fe">Fallsituation</b><br>' + esc(k.fall) + '</div>'
       + '<div style="display:flex;gap:8px;margin-bottom:14px">'
       + '<div style="flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:#38bdf8">' + k.aufgaben.length + '</div><div style="font-size:10px;color:#8ba0b4">Aufgaben</div></div>'
@@ -21808,13 +21838,16 @@ if (_savedLang !== 'de') {
     else if (pct < 75) { lab = 'Solide'; col = '#38bdf8'; }
     else if (pct < 90) { lab = 'Prüfungsnah'; col = '#34d399'; }
     else { lab = 'Exzellent'; col = '#a78bfa'; }
+    var hinweis = (_fk && _fk.pruefen)
+      ? '<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#fcd34d">[PRÜFEN] Inhalte fachlich noch nicht freigegeben.</div>'
+      : '<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#9fb2c6">Die Bewertung offener Aufgaben beruht auf deiner Selbsteinschätzung.</div>';
     var ov = _shell(
       '<div style="text-align:center">'
       + '<div style="font-size:11px;color:#a78bfa;font-weight:800;letter-spacing:1px">KB ' + k.kb + ' · ' + esc(k.titel) + '</div>'
       + '<div style="font-size:52px;font-weight:900;color:' + col + ';line-height:1;margin-top:8px">' + pct + '%</div>'
       + '<div style="font-size:14px;color:#e0f2fe;font-weight:800">' + lab + '</div>'
       + '<div style="font-size:12.5px;color:#9fb2c6;margin-top:4px">' + _pkt + ' von ' + _max + ' Punkten</div>'
-      + ((_fk&&_fk.pruefen)?'<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#fcd34d">[PRÜFEN] Inhalte fachlich noch nicht freigegeben.</div>':'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#9fb2c6">Die Bewertung offener Aufgaben beruht auf deiner Selbsteinschätzung.</div>')
+      + hinweis
       + '<button data-fk-retry style="width:100%;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Nochmal</button>'
       + '<button data-fk-done style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer;margin-top:10px">Zu den Klausuren</button>'
       + '</div>', 'result'
@@ -21823,7 +21856,6 @@ if (_savedLang !== 'de') {
     ov.querySelector('[data-fk-done]').onclick = function () { _closeAll(); openFachklausuren(); };
   }
 })();
-
 </script>
 </body>
 </html>
