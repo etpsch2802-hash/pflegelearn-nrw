@@ -13770,6 +13770,7 @@ function openExamenIntro() {
     + '</div>'
     + (lim ? '<div style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.25);border-radius:11px;padding:11px;margin-bottom:14px;font-size:11px;color:#fda4af">Im Gratis-Zugang testest du das Format mit ' + cnt + ' Fragen. Das vollständige Examen mit ' + cfg.count + ' Fragen unter Echtbedingungen ist im Vollzugang enthalten.</div>' : '')
     + (_aktiveGrossfaelle().length ? '<button onclick="startFallklausur()" style="width:100%;background:linear-gradient(135deg,#0891b2,#0e7490);border:none;border-radius:11px;padding:14px;color:white;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Fallklausur – ein durchgehender Fall</button>' : '')
+    + '<button onclick="openFachklausuren()" style="width:100%;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;border-radius:11px;padding:13px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;margin-bottom:8px">Einzelklausuren · Kompetenzbereich I–V</button>'
     + startBtns
     + '</div>';
   document.body.appendChild(ov);
@@ -21597,5 +21598,232 @@ if (_savedLang !== 'de') {
 
 </script>
 <script>(function(){if(typeof window.quizAddToday==="function"){var _q=window.quizAddToday;window.quizAddToday=function(){if(window._plEinstufung)return;return _q.apply(this,arguments);};}if(typeof window.showScreen==="function"){var _os=window.showScreen;window.showScreen=function(name){if(window._plEinstufung&&name!=="quiz"){window._plEinstufung=false;}return _os.apply(this,arguments);};}})();</script>
+<script>
+/* ── PLAN: Fachklausuren nach Kompetenzbereich I–V (PflAPrV/§53 PflBG) ──────
+   Eigenständige Einzelklausuren im Prüfungsbereich, getrennt vom KI-Examens-
+   prüfer. Zweck: Aufbau aufs Examen + Wissensabfrage. Overlay-Flow (wie
+   openExamenIntro). Pilotinhalte KB I – fachliche Freigabe (Jessica) steht aus
+   → durchgehend [PRÜFEN]. KB II–V vorbereitet, aber gesperrt. */
+(function () {
+  function each(nl, fn) { Array.prototype.forEach.call(nl, fn); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  var FK = [
+    {
+      id: 'kb1', kb: 'I', status: 'pilot',
+      titel: 'Pflegeprozess & Pflegediagnostik',
+      fokus: 'Pflegesituationen erheben, planen, durchführen und evaluieren',
+      dauer_min: 20, pruefen: true,
+      fall: 'Frau Brandt, 82 Jahre, wird am 3. Tag nach einem ischämischen Schlaganfall (Apoplex) auf deiner Station betreut. Sie hat eine Halbseitenlähmung links (Hemiparese) und eine Schluckstörung (Dysphagie). Sie ist überwiegend bettlägerig, kann sich kaum selbst umlagern und braucht Unterstützung bei Körperpflege und Nahrungsaufnahme. Die Haut über dem Kreuzbein ist gerötet.',
+      aufgaben: [
+        {
+          typ: 'mc', punkte: 2,
+          frage: 'Mit welchem standardisierten Instrument schätzt du das Dekubitusrisiko strukturiert ein?',
+          opt: ['Barthel-Index', 'Braden-Skala', 'Glasgow Coma Scale', 'BMI'], k: 1,
+          erkl: 'Die Braden-Skala erfasst sechs Risikofaktoren (u. a. Mobilität, Aktivität, Feuchtigkeit). Der Barthel-Index misst Selbstständigkeit, die GCS die Bewusstseinslage.'
+        },
+        {
+          typ: 'mc', punkte: 2,
+          frage: 'Frau Brandt hat eine Dysphagie. Welche Maßnahme senkt das Aspirationsrisiko beim Essen am ehesten?',
+          opt: ['Flachlagerung während der Mahlzeit', 'Aufrechte Sitzposition (ca. 90°) und angepasste Kostform', 'Schnelles Anreichen großer Bissen', 'Trinken im Liegen'], k: 1,
+          erkl: 'Aufrechte Positionierung und an die Schluckfähigkeit angepasste Kostform (z. B. angedickte Flüssigkeiten) senken das Aspirationsrisiko; Flachlagerung und Trinken im Liegen erhöhen es.'
+        },
+        {
+          typ: 'offen', punkte: 4,
+          frage: 'Formuliere zwei pflegerelevante Probleme im PESR-Format (Problem – Ätiologie – Symptome – Ressourcen).',
+          muster: 'Beispiel 1 – Problem: erhöhtes Dekubitusrisiko; Ursache: Immobilität und Hemiparese links; Symptome: Rötung über dem Kreuzbein, eingeschränkte Eigenbewegung; Ressource: nimmt Unterstützung beim Umlagern an. Beispiel 2 – Problem: Aspirationsgefahr; Ursache: Dysphagie nach Apoplex; Symptome: Schluckstörung; Ressource: kann mit Unterstützung aufrecht sitzen.',
+          kriterien: ['Struktur P-E-S-R erkennbar', 'Ursache passt zum Problem', 'Mindestens eine Ressource benannt', 'Fachsprachlich korrekt']
+        },
+        {
+          typ: 'offen', punkte: 3,
+          frage: 'Formuliere ein SMART-Pflegeziel zur Dekubitusprophylaxe für Frau Brandt.',
+          muster: 'Die Haut über dem Kreuzbein zeigt bis zum Ende des stationären Aufenthalts keine weitere Verschlechterung (kein neuer Dekubitus Kategorie ≥1), überprüft durch tägliche Hautinspektion. → spezifisch, messbar, angemessen, realistisch, terminiert.',
+          kriterien: ['Spezifisch & messbar', 'Realistisch & terminiert', 'Bezug zur Situation']
+        },
+        {
+          typ: 'offen', punkte: 4,
+          frage: 'Nenne vier pflegerische Maßnahmen zur Dekubitusprophylaxe entsprechend dem Expertenstandard.',
+          muster: '1. Bewegungsförderung / individuell geplante Positionswechsel. 2. Hautinspektion und Hautpflege bei jeder Positionierung. 3. Gezielter Einsatz druckverteilender Hilfsmittel. 4. Förderung von Eigenbewegung und Mobilisation. Ergänzend: Ernährungs-/Flüssigkeitsstatus beachten, Information/Schulung.',
+          kriterien: ['Vier plausible Maßnahmen', 'Am Expertenstandard orientiert', 'Keine starre 2-h-Regel als einzige Antwort']
+        },
+        {
+          typ: 'mc', punkte: 2,
+          frage: 'Welcher DNQP-Expertenstandard steht für Frau Brandt aktuell im Vordergrund?',
+          opt: ['Schmerzmanagement', 'Dekubitusprophylaxe in der Pflege', 'Entlassungsmanagement', 'Förderung der Harnkontinenz'], k: 1,
+          erkl: 'Bei Immobilität und beginnender Hautrötung steht die Dekubitusprophylaxe im Vordergrund; andere Standards können ergänzend relevant werden.'
+        },
+        {
+          typ: 'offen', punkte: 3,
+          frage: 'Wie evaluierst du, ob dein Dekubitus-Ziel erreicht wurde?',
+          muster: 'Regelmäßige, dokumentierte Hautinspektion (z. B. bei jeder Positionierung), Vergleich mit dem Ausgangsbefund, erneute Risikoeinschätzung mit der Braden-Skala und Anpassung des Maßnahmenplans bei Veränderung.',
+          kriterien: ['Beobachtungs-/Messkriterium genannt', 'Bezug zum formulierten Ziel', 'Konsequenz/Anpassung benannt']
+        }
+      ]
+    },
+    { id: 'kb2', kb: 'II', status: 'gesperrt', pruefen: true, titel: 'Kommunikation & Beratung', fokus: 'Personen- und situationsbezogen kommunizieren, informieren, beraten' },
+    { id: 'kb3', kb: 'III', status: 'gesperrt', pruefen: true, titel: 'Intra-/interprofessionelles Handeln', fokus: 'Im interdisziplinären Team verantwortlich mitwirken und steuern' },
+    { id: 'kb4', kb: 'IV', status: 'gesperrt', pruefen: true, titel: 'Recht, Gesetz & Ethik', fokus: 'Rechtliche und ethische Rahmenbedingungen reflektiert anwenden' },
+    { id: 'kb5', kb: 'V', status: 'gesperrt', pruefen: true, titel: 'Wissenschaftlich fundiertes Handeln', fokus: 'Pflegehandeln auf Basis aktueller Evidenz begründen' }
+  ];
+  window.FACHKLAUSUREN = FK;
+
+  var _fk = null, _idx = 0, _pkt = 0, _max = 0;
+
+  function _bestKey(id) { return 'pl_fk_' + id; }
+  function _getBest(id) { try { var v = localStorage.getItem(_bestKey(id)); return v ? parseInt(v, 10) : null; } catch (e) { return null; } }
+  function _setBest(id, p) { try { var b = _getBest(id); if (b == null || p > b) localStorage.setItem(_bestKey(id), String(p)); } catch (e) {} }
+  function _closeAll() { each(document.querySelectorAll('[data-fk]'), function (e) { e.remove(); }); }
+  var AMBER = '<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);border-radius:10px;padding:9px 11px;margin-bottom:14px;font-size:11px;color:#fcd34d">[PRÜFEN] Pilotinhalt – fachliche Freigabe steht aus.</div>';
+
+  function _shell(inner, tag) {
+    var ov = document.createElement('div');
+    ov.setAttribute('data-fk', tag || 'run');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1210;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto';
+    ov.innerHTML = '<div style="background:linear-gradient(160deg,#161f36,#0b1424);border:1px solid rgba(167,139,250,.3);border-radius:20px;padding:20px;width:100%;max-width:460px">' + inner + '</div>';
+    document.body.appendChild(ov);
+    return ov;
+  }
+
+  window.openFachklausuren = function () {
+    try { each(document.querySelectorAll('[data-exam-intro]'), function (e) { e.remove(); }); } catch (e) {}
+    _closeAll();
+    var rows = FK.map(function (k) {
+      var locked = k.status !== 'pilot';
+      var best = _getBest(k.id);
+      var right = locked
+        ? '<span style="font-size:11px;color:#64748b;flex-shrink:0">Freigabe ausstehend</span>'
+        : (best != null ? '<span style="font-size:12px;color:#34d399;font-weight:700;flex-shrink:0">' + best + '%</span>' : '<span style="font-size:11px;color:#38bdf8;flex-shrink:0">starten →</span>');
+      return '<button ' + (locked ? 'disabled' : 'data-fk-open="' + k.id + '"') + ' style="width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,' + (locked ? '.03' : '.06') + ');border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 14px;margin-bottom:8px;cursor:' + (locked ? 'default' : 'pointer') + ';opacity:' + (locked ? '.55' : '1') + '">'
+        + '<span style="min-width:0"><span style="display:inline-block;min-width:26px;font-weight:800;color:#a78bfa">' + k.kb + '</span><span style="font-size:13.5px;color:#e0f2fe;font-weight:700">' + esc(k.titel) + '</span><br><span style="font-size:11px;color:#8ba0b4;margin-left:26px">' + esc(k.fokus || '') + '</span></span>'
+        + right + '</button>';
+    }).join('');
+    var ov = document.createElement('div');
+    ov.setAttribute('data-fk', 'list');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1200;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto';
+    ov.innerHTML = '<div style="background:linear-gradient(160deg,#161f36,#0b1424);border:1px solid rgba(167,139,250,.3);border-radius:20px;padding:20px;width:100%;max-width:440px">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-size:17px;font-weight:800;color:#fff">Fachklausuren</div><button data-fk-close style="background:none;border:none;color:#8ba0b4;font-size:22px;line-height:1;cursor:pointer">×</button></div>'
+      + '<div style="font-size:12px;color:#9fb2c6;margin-bottom:14px">Einzelklausuren nach Kompetenzbereich I–V (PflAPrV/§53 PflBG) – zum Aufbau aufs Examen und zur Wissensabfrage.</div>'
+      + AMBER
+      + rows
+      + '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+    ov.querySelector('[data-fk-close]').onclick = function () { ov.remove(); };
+    each(ov.querySelectorAll('[data-fk-open]'), function (b) { b.onclick = function () { startFachklausur(b.getAttribute('data-fk-open')); }; });
+  };
+
+  window.startFachklausur = function (id) {
+    var k = FK.find(function (x) { return x.id === id; });
+    if (!k || k.status !== 'pilot' || !k.aufgaben || !k.aufgaben.length) return;
+    _fk = k; _idx = 0; _pkt = 0;
+    _max = k.aufgaben.reduce(function (s, a) { return s + (a.punkte || 0); }, 0);
+    _renderIntro();
+  };
+
+  function _renderIntro() {
+    _closeAll();
+    var k = _fk;
+    var ov = _shell(
+      '<div style="font-size:11px;color:#a78bfa;font-weight:800;letter-spacing:1px">KOMPETENZBEREICH ' + k.kb + '</div>'
+      + '<div style="font-size:19px;font-weight:800;color:#fff;margin:4px 0 2px">' + esc(k.titel) + '</div>'
+      + '<div style="font-size:12px;color:#9fb2c6;margin-bottom:14px">' + esc(k.fokus || '') + '</div>'
+      + AMBER
+      + '<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:13px;margin-bottom:14px;font-size:12.5px;color:#cbd5e1;line-height:1.55"><b style="color:#e0f2fe">Fallsituation</b><br>' + esc(k.fall) + '</div>'
+      + '<div style="display:flex;gap:8px;margin-bottom:14px">'
+      + '<div style="flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:#38bdf8">' + k.aufgaben.length + '</div><div style="font-size:10px;color:#8ba0b4">Aufgaben</div></div>'
+      + '<div style="flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:#38bdf8">' + _max + '</div><div style="font-size:10px;color:#8ba0b4">Punkte</div></div>'
+      + '<div style="flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:#38bdf8">' + (k.dauer_min || 20) + '</div><div style="font-size:10px;color:#8ba0b4">Min. Richtwert</div></div>'
+      + '</div>'
+      + '<button data-fk-start style="width:100%;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Klausur starten</button>'
+      + '<button data-fk-back style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer;margin-top:10px">Zurück</button>'
+    );
+    ov.querySelector('[data-fk-start]').onclick = function () { _idx = 0; _pkt = 0; _renderAufgabe(); };
+    ov.querySelector('[data-fk-back]').onclick = function () { _closeAll(); openFachklausuren(); };
+  }
+
+  function _renderAufgabe() {
+    _closeAll();
+    var k = _fk, a = k.aufgaben[_idx], nr = _idx + 1, tot = k.aufgaben.length;
+    var head = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:11px;color:#a78bfa;font-weight:800">KB ' + k.kb + ' · Aufgabe ' + nr + '/' + tot + '</div><div style="font-size:11px;color:#8ba0b4">' + _pkt + '/' + _max + ' P</div></div>'
+      + '<div style="background:rgba(255,255,255,.05);height:5px;border-radius:6px;overflow:hidden;margin-bottom:14px"><div style="background:#7c3aed;height:100%;width:' + Math.round(nr / tot * 100) + '%"></div></div>'
+      + '<div style="font-size:14.5px;color:#e0f2fe;font-weight:700;line-height:1.5;margin-bottom:14px">' + esc(a.frage) + ' <span style="color:#8ba0b4;font-weight:600">(' + a.punkte + ' P)</span></div>';
+    if (a.typ === 'mc') {
+      var opts = a.opt.map(function (o, i) { return '<button data-mc="' + i + '" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:12px 14px;margin-bottom:8px;color:#e0f2fe;font-size:13.5px;cursor:pointer">' + esc(o) + '</button>'; }).join('');
+      var ov = _shell(head + opts + '<div data-mc-fb></div>');
+      each(ov.querySelectorAll('[data-mc]'), function (b) { b.onclick = function () { _pickMC(parseInt(b.getAttribute('data-mc'), 10), ov); }; });
+    } else {
+      var ov2 = _shell(head
+        + '<textarea data-fk-ta placeholder="Deine Antwort (optional – zur Selbstkontrolle)" style="width:100%;min-height:88px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#e0f2fe;font-size:13px;padding:11px;resize:vertical;font-family:inherit"></textarea>'
+        + '<button data-fk-show style="width:100%;background:linear-gradient(135deg,#0369a1,#0284c7);border:none;border-radius:11px;padding:12px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;margin-top:10px">Musterlösung anzeigen</button>'
+        + '<div data-fk-muster></div>');
+      ov2.querySelector('[data-fk-show]').onclick = function () { _showMuster(a, ov2); };
+    }
+  }
+
+  function _pickMC(i, ov) {
+    var a = _fk.aufgaben[_idx], richtig = (i === a.k);
+    if (richtig) _pkt += a.punkte;
+    each(ov.querySelectorAll('[data-mc]'), function (b) {
+      var bi = parseInt(b.getAttribute('data-mc'), 10); b.disabled = true; b.style.cursor = 'default';
+      if (bi === a.k) { b.style.background = 'rgba(52,211,153,.18)'; b.style.borderColor = '#34d399'; }
+      else if (bi === i) { b.style.background = 'rgba(248,113,113,.16)'; b.style.borderColor = '#f87171'; }
+    });
+    var fb = ov.querySelector('[data-mc-fb]');
+    fb.innerHTML = '<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:11px;font-size:12.5px;color:#cbd5e1;line-height:1.5;margin-top:8px"><b style="color:' + (richtig ? '#34d399' : '#f87171') + '">' + (richtig ? 'Richtig' : 'Nicht korrekt') + '</b> · ' + esc(a.erkl || '') + '</div>'
+      + '<button data-fk-next style="width:100%;background:#7c3aed;border:none;border-radius:11px;padding:12px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;margin-top:10px">' + (_idx + 1 < _fk.aufgaben.length ? 'Weiter' : 'Auswertung') + '</button>';
+    fb.querySelector('[data-fk-next]').onclick = function () { _next(); };
+  }
+
+  function _showMuster(a, ov) {
+    var sb = ov.querySelector('[data-fk-show]'); if (sb) sb.style.display = 'none';
+    var box = ov.querySelector('[data-fk-muster]');
+    var krit = (a.kriterien && a.kriterien.length) ? '<ul style="margin:8px 0 0;padding-left:18px;color:#9fb2c6;font-size:12px;line-height:1.6">' + a.kriterien.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' : '';
+    box.innerHTML = '<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;font-size:12.5px;color:#cbd5e1;line-height:1.55;margin-top:12px"><b style="color:#e0f2fe">Musterlösung</b><br>' + esc(a.muster) + krit + '</div>'
+      + '<div style="font-size:12px;color:#9fb2c6;margin:12px 0 8px;text-align:center">Wie gut war deine Antwort?</div>'
+      + '<div style="display:flex;gap:8px">'
+      + '<button data-sb="1" style="flex:1;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.35);border-radius:10px;padding:11px;color:#34d399;font-size:12.5px;font-weight:700;cursor:pointer">Sicher</button>'
+      + '<button data-sb="0.5" style="flex:1;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.35);border-radius:10px;padding:11px;color:#fbbf24;font-size:12.5px;font-weight:700;cursor:pointer">Teilweise</button>'
+      + '<button data-sb="0" style="flex:1;background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.35);border-radius:10px;padding:11px;color:#f87171;font-size:12.5px;font-weight:700;cursor:pointer">Lücke</button>'
+      + '</div>';
+    each(box.querySelectorAll('[data-sb]'), function (b) {
+      b.onclick = function () {
+        var f = parseFloat(b.getAttribute('data-sb')), a2 = _fk.aufgaben[_idx];
+        _pkt += Math.round(a2.punkte * f); _next();
+      };
+    });
+  }
+
+  function _next() {
+    if (_idx + 1 < _fk.aufgaben.length) { _idx++; _renderAufgabe(); }
+    else { _result(); }
+  }
+
+  function _result() {
+    _closeAll();
+    var k = _fk, pct = _max ? Math.round(_pkt / _max * 100) : 0;
+    _setBest(k.id, pct);
+    var lab, col;
+    if (pct < 40) { lab = 'Grundlagen festigen'; col = '#f87171'; }
+    else if (pct < 60) { lab = 'Auf Kurs'; col = '#fbbf24'; }
+    else if (pct < 75) { lab = 'Solide'; col = '#38bdf8'; }
+    else if (pct < 90) { lab = 'Prüfungsnah'; col = '#34d399'; }
+    else { lab = 'Exzellent'; col = '#a78bfa'; }
+    var ov = _shell(
+      '<div style="text-align:center">'
+      + '<div style="font-size:11px;color:#a78bfa;font-weight:800;letter-spacing:1px">KB ' + k.kb + ' · ' + esc(k.titel) + '</div>'
+      + '<div style="font-size:52px;font-weight:900;color:' + col + ';line-height:1;margin-top:8px">' + pct + '%</div>'
+      + '<div style="font-size:14px;color:#e0f2fe;font-weight:800">' + lab + '</div>'
+      + '<div style="font-size:12.5px;color:#9fb2c6;margin-top:4px">' + _pkt + ' von ' + _max + ' Punkten</div>'
+      + '<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#fcd34d">[PRÜFEN] Bewertung dient der Selbsteinschätzung – Inhalte fachlich noch nicht freigegeben.</div>'
+      + '<button data-fk-retry style="width:100%;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Nochmal</button>'
+      + '<button data-fk-done style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer;margin-top:10px">Zu den Klausuren</button>'
+      + '</div>', 'result'
+    );
+    ov.querySelector('[data-fk-retry]').onclick = function () { startFachklausur(k.id); };
+    ov.querySelector('[data-fk-done]').onclick = function () { _closeAll(); openFachklausuren(); };
+  }
+})();
+
+</script>
 </body>
 </html>
