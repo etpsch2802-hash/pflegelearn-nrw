@@ -21613,7 +21613,7 @@ if (_savedLang !== 'de') {
       id: 'kb1', kb: 'I', status: 'pilot',
       titel: 'Pflegeprozess & Pflegediagnostik',
       fokus: 'Pflegesituationen erheben, planen, durchführen und evaluieren',
-      dauer_min: 20, pruefen: true,
+      dauer_min: 20, pruefen: false,
       fall: 'Frau Brandt, 82 Jahre, wird am 3. Tag nach einem ischämischen Schlaganfall (Apoplex) auf deiner Station betreut. Sie hat eine Halbseitenlähmung links (Hemiparese) und eine Schluckstörung (Dysphagie). Sie ist überwiegend bettlägerig, kann sich kaum selbst umlagern und braucht Unterstützung bei Körperpflege und Nahrungsaufnahme. Die Haut über dem Kreuzbein ist gerötet.',
       aufgaben: [
         {
@@ -21703,7 +21703,7 @@ if (_savedLang !== 'de') {
     ov.innerHTML = '<div style="background:linear-gradient(160deg,#161f36,#0b1424);border:1px solid rgba(167,139,250,.3);border-radius:20px;padding:20px;width:100%;max-width:440px">'
       + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-size:17px;font-weight:800;color:#fff">Fachklausuren</div><button data-fk-close style="background:none;border:none;color:#8ba0b4;font-size:22px;line-height:1;cursor:pointer">×</button></div>'
       + '<div style="font-size:12px;color:#9fb2c6;margin-bottom:14px">Einzelklausuren nach Kompetenzbereich I–V (PflAPrV/§53 PflBG) – zum Aufbau aufs Examen und zur Wissensabfrage.</div>'
-      + AMBER
+      + (FK.some(function(x){return x.status==='pilot'&&x.pruefen;})?AMBER:'')
       + rows
       + '</div>';
     document.body.appendChild(ov);
@@ -21727,7 +21727,7 @@ if (_savedLang !== 'de') {
       '<div style="font-size:11px;color:#a78bfa;font-weight:800;letter-spacing:1px">KOMPETENZBEREICH ' + k.kb + '</div>'
       + '<div style="font-size:19px;font-weight:800;color:#fff;margin:4px 0 2px">' + esc(k.titel) + '</div>'
       + '<div style="font-size:12px;color:#9fb2c6;margin-bottom:14px">' + esc(k.fokus || '') + '</div>'
-      + AMBER
+      + (k.pruefen?AMBER:'')
       + '<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:13px;margin-bottom:14px;font-size:12.5px;color:#cbd5e1;line-height:1.55"><b style="color:#e0f2fe">Fallsituation</b><br>' + esc(k.fall) + '</div>'
       + '<div style="display:flex;gap:8px;margin-bottom:14px">'
       + '<div style="flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:#38bdf8">' + k.aufgaben.length + '</div><div style="font-size:10px;color:#8ba0b4">Aufgaben</div></div>'
@@ -21814,7 +21814,7 @@ if (_savedLang !== 'de') {
       + '<div style="font-size:52px;font-weight:900;color:' + col + ';line-height:1;margin-top:8px">' + pct + '%</div>'
       + '<div style="font-size:14px;color:#e0f2fe;font-weight:800">' + lab + '</div>'
       + '<div style="font-size:12.5px;color:#9fb2c6;margin-top:4px">' + _pkt + ' von ' + _max + ' Punkten</div>'
-      + '<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#fcd34d">[PRÜFEN] Bewertung dient der Selbsteinschätzung – Inhalte fachlich noch nicht freigegeben.</div>'
+      + ((_fk&&_fk.pruefen)?'<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#fcd34d">[PRÜFEN] Inhalte fachlich noch nicht freigegeben.</div>':'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:9px 11px;margin:16px 0;font-size:11px;color:#9fb2c6">Die Bewertung offener Aufgaben beruht auf deiner Selbsteinschätzung.</div>')
       + '<button data-fk-retry style="width:100%;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Nochmal</button>'
       + '<button data-fk-done style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer;margin-top:10px">Zu den Klausuren</button>'
       + '</div>', 'result'
