@@ -17215,12 +17215,18 @@ Gib die Aufgabe GENAU in dieser Struktur aus (mit **fett** hervorgehobenen Ueber
 **Bezug zu den Kompetenzbereichen (sec53 PflBG)** - welche Kompetenzen gefoerdert werden.
 **Hinweise fuer die Anleitung** - worauf die/der Praxisanleitende achtet (Sicherheit, Aufsicht, Grad der Selbststaendigkeit).
 
-Regeln: fachlich korrekt nach DNQP-Expertenstandards, S3-Leitlinien, KRINKO, NVL wo relevant. Wertschaetzend und praxisnah. Antworte ausschliesslich auf Deutsch. Keine Handlung ohne aerztliche Anordnung/hausinterne Standards; die Aufgabe dient dem Lernen unter Anleitung.`;
+Regeln: fachlich korrekt nach DNQP-Expertenstandards, S3-Leitlinien, KRINKO, NVL wo relevant. Wertschaetzend und praxisnah. Antworte ausschliesslich auf Deutsch. Keine Handlung ohne aerztliche Anordnung/hausinterne Standards; die Aufgabe dient dem Lernen unter Anleitung. Gib Mengen und Schemata knapp an; verwende KEINE langen wiederholten Zahlenreihen.`;
 
   var DRITTEL=[{k:'1',l:'1. Drittel'},{k:'2',l:'2. Drittel'},{k:'3',l:'3. Drittel'}];
   var BEREICHE=['Akutpflege','Langzeitpflege','Ambulant','Pädiatrie','Psychiatrie'];
   var pa={ drittel:'2', bereich:'Akutpflege', busy:false, result:'' };
 
+  function deLoop(t){
+    if(!t) return t;
+    t=t.replace(/(\d{1,3})([–—\-\/,\s]+)(?:\1\2){3,}\1?/g,function(m,g1,g2){return g1+g2+g1+' …';});
+    t=t.replace(/(\S{2,10})\1{5,}/g,function(m,g1){return g1+g1+'…';});
+    return t;
+  }
   function fmt(t){
     var e=String(t==null?'':t).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});
     e=e.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#e6eef7">$1</strong>');
@@ -17303,7 +17309,8 @@ Regeln: fachlich korrekt nach DNQP-Expertenstandards, S3-Leitlinien, KRINKO, NVL
     var userMsg='Ausbildungsdrittel: '+pa.drittel+'. Einsatzbereich: '+pa.bereich+'. Thema: '+(thema||'passend zum Einsatzbereich frei wählen')+'. Erstelle die Arbeits- und Lernaufgabe.';
     try{
       var reply=await callKI([{role:'user',content:userMsg}], SYS_LERNAUFGABE);
-      pa.result=reply||'';
+      reply=deLoop(reply||'');
+      pa.result=reply;
       if(res) res.innerHTML=resultCard(reply||'(keine Antwort erhalten)');
     }catch(e){
       if(res) res.innerHTML='<div style="margin-top:12px;color:#fb7185;font-size:12.5px;padding:12px;background:rgba(251,113,133,.08);border-radius:12px">\u26A0\uFE0F Fehler: '+((e&&e.message)||'KI nicht erreichbar')+'</div>';
