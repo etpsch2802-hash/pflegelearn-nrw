@@ -22024,5 +22024,127 @@ if (_savedLang !== 'de') {
   }
 })();
 </script>
+<script>
+/* ── PLAN: Perfusor- & Infusionswissen (ITS) ───────────────────────────────
+   Eigenständiges Wissensmodul aus allgemeingültigen Fachquellen (Leitlinien,
+   Standardliteratur, Herstellerprinzipien). KEINE hausinternen SOP-Daten,
+   keine klinikspezifischen Konzentrationen/Standzeiten/Lumen-Belegungen.
+   Klinisch sensibel -> alle Inhalte [PRÜFEN] bis Freigabe (Jessica).
+   Öffentlicher Einstieg bleibt geparkt (PL_NEU 'bald'); Aufruf via
+   window.openPerfusorwissen() (Review-Vorschau). */
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function each(nl, fn) { Array.prototype.forEach.call(nl, fn); }
+
+  var PW = [
+    {
+      id: 'zvk', titel: 'ZVK & Lumen-Management',
+      intro: 'Mehrlumige zentrale Venenkatheter erlauben mehrere getrennte Infusionen über einen Zugang – Grundlagen für sicheres Belegen.',
+      punkte: [
+        'Jedes Lumen thematisch belegen, beschriften und dokumentieren – so bleiben inkompatible Substanzen getrennt und Verwechslungen werden vermieden.',
+        'Vasoaktive Substanzen (z. B. Katecholamine) laufen über ein eigenes, ununterbrochen laufendes Lumen – keine Boli oder Spülungen über dieses Lumen.',
+        'Lumen unterscheiden sich in Durchmesser, Flussrate und Austrittsposition (proximal/distal). Die konkrete Zuordnung ist nicht bundeseinheitlich – immer nach gültigem Hausstandard belegen.',
+        'Freie Schenkel für Zuspritzungen/Kurzinfusionen einplanen; kritische Dauerinfusionen nicht dafür unterbrechen.',
+        'Aseptik: nadelfreie Konnektoren vor jeder Manipulation wischdesinfizieren, Diskonnektionen minimieren, Standzeiten nach Leitlinie/Hausstandard.',
+        'Alle Systeme eindeutig mit Inhalt, Datum und Uhrzeit kennzeichnen.'
+      ]
+    },
+    {
+      id: 'filter', titel: 'Infusions- & Perfusorfilter',
+      intro: 'Inline-Filter reduzieren Partikel, Mikroorganismen, Endotoxine und Luft. Porengröße nach Lösungsart wählen.',
+      punkte: [
+        '0,2 µm-Filter: für wässrige Lösungen; bakterien- und partikeldicht. Membranen mit positiver Ladung halten zusätzlich Endotoxine zurück.',
+        '1,2 µm-Filter: für Fettemulsionen/Lipide und All-in-One-Mischinfusionen (parenterale Ernährung) – hält Partikel, Pilze und Lipidaggregate zurück.',
+        'Lipide/Fettemulsionen NICHT über 0,2 µm-Filter geben – die Emulsion verstopft die feine Membran.',
+        'Manche Wirkstoffe adsorbieren an Filtermembranen oder dürfen nicht filtriert werden – immer Fachinformation/Herstellerangabe prüfen.',
+        'Filter senken das Risiko von Partikel- und Luftembolien sowie infusionsbedingten Reaktionen.',
+        'Standzeiten unterscheiden sich je nach Lösung (wässrig vs. lipidhaltig) – nach Herstellerangabe und Hausstandard wechseln und mit Datum versehen.'
+      ]
+    },
+    {
+      id: 'katecholamine', titel: 'Katecholamin-Perfusoren',
+      intro: 'Vasoaktive Katecholamine werden kontinuierlich und fein titrierbar über Spritzenpumpen gegeben – Kontinuität ist entscheidend.',
+      punkte: [
+        'Kontinuierliche, ununterbrochene Gabe über einen eigenen Schenkel – schon kurze Unterbrechungen oder ungewollte Boli können den Kreislauf destabilisieren.',
+        'Totraum kleinhalten und Boli vermeiden; nicht über denselben Schenkel spülen oder zuspritzen.',
+        'Pumpen-/Spritzenwechsel überlappend planen (Rendezvous-/Umsteck-Technik), damit keine Förderlücke und kein Druckstoß entsteht.',
+        'Konzentration und Trägerlösung nach Hausstandard – Substanz, Konzentration, Datum und Uhrzeit eindeutig beschriften.',
+        'Laufrate und Wirkung engmaschig überwachen (Blutdruck, Herzfrequenz, Perfusion); Änderungen dokumentieren.',
+        'Farb-/Kennzeichnungssysteme für vasoaktive Leitungen nach Hausstandard konsequent nutzen.'
+      ]
+    },
+    {
+      id: 'sedierung', titel: 'Sedierungs- & Analgesie-Perfusoren',
+      intro: 'Sedativa und Analgetika werden kontinuierlich und zielorientiert gesteuert – nach Sedierungsziel und Schmerz-Assessment.',
+      punkte: [
+        'Steuerung nach Zielscore (z. B. RASS) und regelmäßigem Schmerz-Assessment – nur so tief sedieren wie nötig.',
+        'Propofol: eigene Leitung, Emulsion – strenge Hygiene, definierte Wechselintervalle wegen Infektionsrisiko beachten.',
+        'Regelmäßige Reevaluation und – wo indiziert – Sedierungspausen/Weaning nach Konzept.',
+        'Analgesie vor Sedierung bedenken (Analgosedierung); Schmerz zuerst behandeln.',
+        'Wirkung und Nebenwirkungen überwachen (Atmung, Kreislauf, Vigilanz) und dokumentieren.',
+        'Systeme eindeutig beschriften (Substanz, Konzentration, Datum/Uhrzeit).'
+      ]
+    },
+    {
+      id: 'kompatibilitaet', titel: 'Kompatibilität & Trägerlösung',
+      intro: 'Nicht alle Medikamente vertragen sich in einer Leitung – Unverträglichkeiten können ausfällen oder Wirkstoffe inaktivieren.',
+      punkte: [
+        'Y-Site-Kompatibilität ist nicht selbstverständlich – im Zweifel Kompatibilitätstabelle oder Apotheke heranziehen, bevor zwei Substanzen zusammenlaufen.',
+        'Inkompatible Substanzen über getrennte Schenkel/Lumen führen.',
+        'Passende Trägerlösung wählen (z. B. NaCl 0,9 % oder Glukose 5 %) – manche Wirkstoffe sind nur in einer bestimmten Lösung stabil.',
+        'Ausfällungen, Trübungen oder Farbänderungen sind Warnzeichen – solche Leitungen nicht verwenden.',
+        'Keine ungeprüften Mischungen ansetzen; Zubereitung nach Standard und aseptisch.',
+        'Alle Zubereitungen und Leitungen eindeutig kennzeichnen (Inhalt, Konzentration, Datum/Uhrzeit).'
+      ]
+    }
+  ];
+  window.PERFUSORWISSEN = PW;
+
+  var AMBER = '<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);border-radius:10px;padding:9px 11px;margin-bottom:14px;font-size:11px;color:#fcd34d">[PRÜFEN] Fachlich noch nicht freigegeben. Allgemeine Prinzipien – im Alltag gilt immer der jeweilige Hausstandard.</div>';
+
+  function _close() { each(document.querySelectorAll('[data-pw]'), function (e) { e.remove(); }); }
+
+  function _shell(inner, tag) {
+    var ov = document.createElement('div');
+    ov.setAttribute('data-pw', tag || 'x');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1200;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto';
+    ov.innerHTML = '<div style="background:linear-gradient(160deg,#122031,#08131f);border:1px solid rgba(34,211,238,.28);border-radius:20px;padding:20px;width:100%;max-width:460px;margin:auto">' + inner + '</div>';
+    document.body.appendChild(ov);
+    return ov;
+  }
+
+  window.openPerfusorwissen = function () {
+    _close();
+    var rows = PW.map(function (t) {
+      return '<button data-pw-open="' + t.id + '" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 14px;margin-bottom:8px;cursor:pointer">'
+        + '<div style="font-size:13.5px;color:#e0f2fe;font-weight:700">' + esc(t.titel) + '</div>'
+        + '<div style="font-size:11.5px;color:#8ba0b4;margin-top:2px;line-height:1.4">' + esc(t.intro) + '</div></button>';
+    }).join('');
+    var ov = _shell(
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div><div style="font-size:11px;color:#22d3ee;font-weight:800;letter-spacing:1px">INTENSIV · WISSEN</div><div style="font-size:17px;font-weight:800;color:#fff">Perfusor- & Infusionswissen</div></div><button data-pw-close style="background:none;border:none;color:#8ba0b4;font-size:22px;line-height:1;cursor:pointer">×</button></div>'
+      + AMBER + rows, 'list'
+    );
+    ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+    ov.querySelector('[data-pw-close]').onclick = function () { ov.remove(); };
+    each(ov.querySelectorAll('[data-pw-open]'), function (b) { b.onclick = function () { _detail(b.getAttribute('data-pw-open')); }; });
+  };
+
+  function _detail(id) {
+    var t = PW.filter(function (x) { return x.id === id; })[0]; if (!t) return;
+    _close();
+    var lis = t.punkte.map(function (p) { return '<li style="margin-bottom:9px">' + esc(p) + '</li>'; }).join('');
+    var ov = _shell(
+      '<div style="font-size:11px;color:#22d3ee;font-weight:800;letter-spacing:1px">INTENSIV · WISSEN</div>'
+      + '<div style="font-size:18px;font-weight:800;color:#fff;margin:4px 0 10px">' + esc(t.titel) + '</div>'
+      + AMBER
+      + '<div style="font-size:12.5px;color:#cbd5e1;line-height:1.55;margin-bottom:12px">' + esc(t.intro) + '</div>'
+      + '<ul style="margin:0;padding-left:18px;color:#dbe7f2;font-size:13px;line-height:1.5">' + lis + '</ul>'
+      + '<button data-pw-back style="width:100%;background:none;border:1px solid rgba(255,255,255,.14);border-radius:11px;padding:12px;color:#9fb2c6;font-size:13px;cursor:pointer;margin-top:16px">Zurück</button>',
+      'detail'
+    );
+    ov.querySelector('[data-pw-back]').onclick = function () { openPerfusorwissen(); };
+  }
+})();
+</script>
 </body>
 </html>
