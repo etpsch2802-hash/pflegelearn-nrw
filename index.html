@@ -679,7 +679,7 @@
 
   <!-- HERO: 7 Tage Gratis-Trial (Vollzugang) -->
   <button onclick="try{if(typeof gaEvent==='function')gaEvent('trial_start_click',{});}catch(e){};showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
-    <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> 7 Tage kostenlos testen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · keine Kreditkarte · sofort startklar</span>
+    <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Jetzt kostenlos loslegen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · ohne Kosten · sofort startklar</span>
   </button>
 
   <!-- Sekundär: Gratis schnuppern -->
@@ -19282,25 +19282,47 @@ function renderSocialProof(){
       }catch(e){}
     });
   }catch(e){}
-  // B: veroeffentlichte Testimonials (moderiert: published=true)
+  // B: Testimonials - kompakt & rotierend (eine Karte statt drei; neueste zuerst)
   try{
-    window.SB.from('testimonials').select('name,text,bereich').eq('published',true).limit(3).then(function(res){
+    window.SB.from('testimonials').select('name,text,bereich').eq('published',true).order('created_at',{ascending:false}).limit(6).then(function(res){
       try{
         if(res.error || !res.data || !res.data.length) return;
-        var box=document.createElement('div');
-        box.style.cssText='width:100%;max-width:340px;margin:14px auto 0;display:flex;flex-direction:column;gap:8px';
-        res.data.forEach(function(t){
-          var c=document.createElement('div');
-          c.style.cssText='background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:11px;text-align:left';
-          var q=document.createElement('div');
-          q.style.cssText='font-size:12px;color:#cfe8ff;line-height:1.5';
-          q.textContent='\u201E'+String(t.text||'').slice(0,180)+'\u201C';
-          var w=document.createElement('div');
-          w.style.cssText='font-size:11px;color:#9dbdd2;margin-top:6px';
+        var items=res.data, dotEls=null;
+        var wrap=document.createElement('div');
+        wrap.style.cssText='width:100%;max-width:340px;margin:16px auto 0';
+        var stars=document.createElement('div');
+        stars.style.cssText='text-align:center;color:#fbbf24;font-size:15px;letter-spacing:3px;margin-bottom:8px';
+        stars.textContent='\u2605\u2605\u2605\u2605\u2605';
+        var card=document.createElement('div');
+        card.style.cssText='background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:12px;padding:13px 15px;text-align:left;min-height:92px;transition:opacity .4s ease';
+        var q=document.createElement('div');
+        q.style.cssText='font-size:12.5px;color:#cfe8ff;line-height:1.55';
+        var w=document.createElement('div');
+        w.style.cssText='font-size:11px;color:#9dbdd2;margin-top:8px;font-weight:700';
+        card.appendChild(q); card.appendChild(w);
+        wrap.appendChild(stars); wrap.appendChild(card);
+        if(items.length>1){
+          var dots=document.createElement('div');
+          dots.style.cssText='display:flex;gap:5px;justify-content:center;margin-top:9px';
+          items.forEach(function(){ var dt=document.createElement('span'); dt.style.cssText='width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s'; dots.appendChild(dt); });
+          wrap.appendChild(dots); dotEls=dots.children;
+        }
+        host.appendChild(wrap);
+        var i=0;
+        function show(k){
+          var t=items[k];
+          q.textContent='\u201E'+String(t.text||'').slice(0,170)+'\u201C';
           w.textContent=(t.name||'Azubi')+(t.bereich?(' \u00b7 '+t.bereich):'');
-          c.appendChild(q); c.appendChild(w); box.appendChild(c);
-        });
-        host.appendChild(box);
+          if(dotEls){ for(var j=0;j<dotEls.length;j++){ dotEls[j].style.background=(j===k)?'#38bdf8':'rgba(255,255,255,.2)'; } }
+        }
+        show(0);
+        if(items.length>1){
+          setInterval(function(){
+            i=(i+1)%items.length;
+            card.style.opacity='0';
+            setTimeout(function(){ show(i); card.style.opacity='1'; },400);
+          }, 4500);
+        }
       }catch(e){}
     });
   }catch(e){}
