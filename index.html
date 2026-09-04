@@ -7599,10 +7599,10 @@ function showKiTeaser(){
   document.body.appendChild(ov);
   ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
 }
-function plSaveLead(email, name, quelle, trialUntil, consent){
+async function plSaveLead(email, name, quelle, trialUntil, consent){
   try{
     if(!window.SB || !email || String(email).indexOf('@')<1) return;
-    window.SB.from('leads').upsert({
+    var res = await window.SB.from('leads').upsert({
       email: String(email).toLowerCase().slice(0,120),
       name: (name||'').slice(0,60),
       quelle: quelle||'',
@@ -7610,7 +7610,13 @@ function plSaveLead(email, name, quelle, trialUntil, consent){
       consent: !!consent,
       updated_at: new Date().toISOString()
     }, { onConflict: 'email' });
-  }catch(e){}
+    if(res && res.error){
+      try{ console.warn('[plSaveLead] Supabase-Fehler:', res.error.message||res.error); }catch(_){}
+      try{ if(typeof gaEvent==='function') gaEvent('lead_save_error',{ quelle: quelle||'' }); }catch(_){}
+    } else {
+      try{ if(typeof gaEvent==='function') gaEvent('lead_saved',{ quelle: quelle||'' }); }catch(_){}
+    }
+  }catch(e){ try{ console.warn('[plSaveLead] Exception:', e && e.message); }catch(_){} }
 }
 function showGratisStart(){
   const ov=document.createElement('div');
@@ -7654,6 +7660,7 @@ function startGratis(){
   updateStreak();
   renderHomeStats();
   logLogin('GRATIS',name);
+  try{ if(typeof gaEvent==='function') gaEvent('sign_up',{ method:'gratis' }); }catch(e){}
   setTimeout(()=>{ try{unlockAudio();playHeartbeat();}catch(e){} },400);
   setTimeout(showOnboarding,500);
 }
