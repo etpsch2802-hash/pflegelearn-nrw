@@ -677,15 +677,8 @@
       var g=G[id]; if(g){ cta.style.background='linear-gradient(135deg,'+g[0]+','+g[1]+')'; cta.style.color=g[2]; cta.style.boxShadow='0 6px 22px '+g[1]+'55'; }
     } }catch(e){}
   }catch(e){} };
-  window.setPersona = function(id){
-    try{ localStorage.setItem('pl_persona', id); }catch(e){}
-    try{
-      var C={azubi:['#38bdf8','#7dd3f7','56,189,248'],examiniert:['#2dd4bf','#5eead4','45,212,191'],lehrkraft:['#a78bfa','#c4b5fd','167,139,250']};
-      var c=C[id]; if(c){ var r=document.documentElement; r.style.setProperty('--accent',c[0]); r.style.setProperty('--accent2',c[1]); r.style.setProperty('--accent-rgb',c[2]); }
-    }catch(e){}
-  };
   window.plPickRole = function(id){ try{ if(typeof setPersona==='function') setPersona(id); }catch(e){} plHiliteRole(id); };
-  try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s){ plHiliteRole(s); try{ setPersona(s); }catch(e){} } }); }catch(e){}
+  try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s){ plHiliteRole(s); } }); }catch(e){}
   </script>
 
   <!-- HERO -->
@@ -16799,11 +16792,8 @@ function renderHomeStats() {
   window.setPersona = function(id){
     if(!PC[id]) return;
     try{ localStorage.setItem('pl_persona', id); }catch(e){}
-    // Rollenfarbe nur als Startvorschlag: eine bereits bewusst gewaehlte Themefarbe bleibt erhalten
-    try{
-      var _hasTheme=false; try{ _hasTheme = !!localStorage.getItem('pl_theme'); }catch(e){}
-      if(!_hasTheme && typeof applyTheme==='function') applyTheme(THEME_MAP[id]||'sky');
-    }catch(e){}
+    // Rollenwechsel setzt die passende App-Farbe (Azubi sky / Examinierte teal / Lehrkraft violet)
+    try{ if(typeof applyTheme==='function') applyTheme(THEME_MAP[id]||'sky'); }catch(e){}
     var ov=document.getElementById('persona-modal'); if(ov) ov.remove();
     try{ renderPersonaBanner(); }catch(e){}
     try{ if(typeof renderHomeStats==='function') renderHomeStats(); }catch(e){}
@@ -16852,7 +16842,12 @@ function renderHomeStats() {
       + '<button onclick="openPersonaChooser()" style="margin-left:auto;background:none;border:none;color:#04121f;opacity:.72;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:underline">wechseln</button>'
       + '</div></div>';
   };
-  try{ if(document.readyState!=='loading') renderPersonaBanner(); else document.addEventListener('DOMContentLoaded', renderPersonaBanner); }catch(e){}
+  function _pInit(){
+    try{ var id=get(); if(id){ var cur=''; try{cur=localStorage.getItem('pl_theme')||'';}catch(e){}
+      if((!cur||{sky:1,teal:1,violet:1}[cur]) && typeof applyTheme==='function') applyTheme(THEME_MAP[id]||'sky'); } }catch(e){}
+    try{ renderPersonaBanner(); }catch(e){}
+  }
+  try{ if(document.readyState!=='loading') _pInit(); else document.addEventListener('DOMContentLoaded', _pInit); }catch(e){}
 })();
 
 /* ===========================================================================
