@@ -672,6 +672,10 @@
       b.style.background=on?(map[r]+'22'):'rgba(255,255,255,.04)';
       b.style.color=on?'#ffffff':'#cfe6f5';
     });
+    try{ var cta=document.getElementById('pw-hero-cta'); if(cta){
+      var G={azubi:['#38bdf8','#0ea5e9','#04263a'],examiniert:['#2dd4bf','#14b8a6','#042925'],lehrkraft:['#a78bfa','#8b5cf6','#ffffff']};
+      var g=G[id]; if(g){ cta.style.background='linear-gradient(135deg,'+g[0]+','+g[1]+')'; cta.style.color=g[2]; cta.style.boxShadow='0 6px 22px '+g[1]+'55'; }
+    } }catch(e){}
   }catch(e){} };
   window.plPickRole = function(id){ try{ if(typeof setPersona==='function') setPersona(id); }catch(e){} plHiliteRole(id); };
   try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s) plHiliteRole(s); }); }catch(e){}
@@ -679,7 +683,7 @@
 
   <!-- HERO -->
   <div style="width:100%;max-width:340px;margin:4px auto 9px;text-align:center;font-size:11.5px;font-weight:800;color:#34d399;letter-spacing:.3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.12em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Aktuell 100% kostenlos · voller Zugang</div>
-  <button onclick="try{if(typeof gaEvent==='function')gaEvent('trial_start_click',{});}catch(e){};showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
+  <button id="pw-hero-cta" onclick="try{if(typeof gaEvent==='function')gaEvent('trial_start_click',{});}catch(e){};showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
     <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Jetzt kostenlos loslegen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · ohne Kosten · sofort startklar</span>
   </button>
 
