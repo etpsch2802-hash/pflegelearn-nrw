@@ -677,8 +677,15 @@
       var g=G[id]; if(g){ cta.style.background='linear-gradient(135deg,'+g[0]+','+g[1]+')'; cta.style.color=g[2]; cta.style.boxShadow='0 6px 22px '+g[1]+'55'; }
     } }catch(e){}
   }catch(e){} };
+  window.setPersona = function(id){
+    try{ localStorage.setItem('pl_persona', id); }catch(e){}
+    try{
+      var C={azubi:['#38bdf8','#7dd3f7','56,189,248'],examiniert:['#2dd4bf','#5eead4','45,212,191'],lehrkraft:['#a78bfa','#c4b5fd','167,139,250']};
+      var c=C[id]; if(c){ var r=document.documentElement; r.style.setProperty('--accent',c[0]); r.style.setProperty('--accent2',c[1]); r.style.setProperty('--accent-rgb',c[2]); }
+    }catch(e){}
+  };
   window.plPickRole = function(id){ try{ if(typeof setPersona==='function') setPersona(id); }catch(e){} plHiliteRole(id); };
-  try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s) plHiliteRole(s); }); }catch(e){}
+  try{ document.addEventListener('DOMContentLoaded', function(){ var s=''; try{s=localStorage.getItem('pl_persona')||'';}catch(e){} if(s){ plHiliteRole(s); try{ setPersona(s); }catch(e){} } }); }catch(e){}
   </script>
 
   <!-- HERO -->
