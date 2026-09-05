@@ -13238,9 +13238,9 @@ function pruefungsreifeHeroHTML() {
 
   return '<div class="pr-hero" style="background:linear-gradient(160deg,' + pr.col + '1f,' + pr.col + '08);border:1px solid ' + pr.col + '3d">'
     + '<div onclick="showPruefungsreife()" style="cursor:pointer">'
-    + '<div class="pr-ring" style="background:conic-gradient(' + pr.col + ' ' + deg + 'deg, var(--ring-track) ' + deg + 'deg)">'
+    + '<div class="pr-ring" id="pr-hero-ring" data-col="' + pr.col + '" data-target="' + pr.score + '" style="background:conic-gradient(' + pr.col + ' ' + deg + 'deg, var(--ring-track) ' + deg + 'deg)">'
     + '<div class="pr-hole">'
-    + '<div class="pr-score" style="color:' + pr.col + '">' + pr.score + '%</div>'
+    + '<div class="pr-score" id="pr-hero-score" style="color:' + pr.col + '">' + pr.score + '%</div>'
     + '<div class="pr-score-sub">Pr\u00fcfungsreife</div>'
     + '</div></div>'
     + '<div class="pr-label">' + pr.label + '</div>'
@@ -16682,6 +16682,23 @@ function coachCardHTML() {
     cta: 'Weiterlernen', onclick: "navGo('quizSelect')" });
 }
 
+function plAnimatePrHero(){
+  try{
+    var ring=document.getElementById('pr-hero-ring'), num=document.getElementById('pr-hero-score');
+    if(!ring||!num) return;
+    var targetScore=parseInt(ring.getAttribute('data-target'),10)||0;
+    var col=ring.getAttribute('data-col')||'#38bdf8';
+    var from=(typeof window._prLastScore==='number')?window._prLastScore:0;
+    function paint(v){ var deg=v*3.6; ring.style.background='conic-gradient('+col+' '+deg+'deg, var(--ring-track) '+deg+'deg)'; num.textContent=Math.round(v)+'%'; }
+    var reduce=false; try{ reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+    if(reduce||from===targetScore){ paint(targetScore); window._prLastScore=targetScore; return; }
+    var start=null, dur=800;
+    function ease(t){ return 1-Math.pow(1-t,3); }
+    function step(ts){ if(start===null)start=ts; var p=Math.min(1,(ts-start)/dur); paint(from+(targetScore-from)*ease(p)); if(p<1) requestAnimationFrame(step); else window._prLastScore=targetScore; }
+    paint(from);
+    requestAnimationFrame(step);
+  }catch(e){}
+}
 function renderHomeStats() {
   const el = document.getElementById('home-stats');
   if (!el) return;
@@ -16746,7 +16763,7 @@ function renderHomeStats() {
   var heroEl = document.getElementById('home-hero');
   if (heroEl) {
     if (_cold) { heroEl.innerHTML = ''; }
-    else { try { heroEl.innerHTML = pruefungsreifeHeroHTML(); } catch(e) { heroEl.innerHTML = ''; } }
+    else { try { heroEl.innerHTML = pruefungsreifeHeroHTML(); try{ plAnimatePrHero(); }catch(e2){} } catch(e) { heroEl.innerHTML = ''; } }
   }
 
   // Streak/Tagesziel als Inline-Zeile: nur im Warm-Zustand
