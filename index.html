@@ -3192,7 +3192,10 @@ function pickAnswer(i) {
   if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
   const expEl = document.getElementById("explanation");
   expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`
-    + '<button type="button" onclick="plMeldeFrage(this)" data-frage="' + plFfEsc(q.frage) + '" data-kat="' + plFfEsc(q.kat||'') + '" style="margin-top:10px;background:none;border:none;padding:2px 0;color:#8ba6bd;font-size:11px;font-family:inherit;cursor:pointer;text-decoration:underline">Fehler in dieser Frage melden</button>';
+    + '<div style="margin-top:11px;display:flex;gap:16px;align-items:center">'
+    + '<button type="button" onclick="plFrageHilfreich(this)" style="background:none;border:none;padding:2px 0;color:#8ba6bd;font-size:11px;font-family:inherit;cursor:pointer">\uD83D\uDC4D Hilfreich</button>'
+    + '<button type="button" onclick="plMeldeFrage(this)" data-frage="' + plFfEsc(q.frage) + '" data-kat="' + plFfEsc(q.kat||'') + '" style="background:none;border:none;padding:2px 0;color:#8ba6bd;font-size:11px;font-family:inherit;cursor:pointer;text-decoration:underline">Fehler melden</button>'
+    + '</div>';
   expEl.style.display = "block";
   const nextBtn = document.getElementById("next-btn");
   nextBtn.style.display = "block";
@@ -19182,6 +19185,10 @@ async function plAdminPushToggle(){
 
 /* ── Fehlermeldung zu Fragen · CHECKS.md Achse 1.9 ── */
 function plFfEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+window.plFrageHilfreich = function(btn){
+  try{ if(typeof gaEvent==='function') gaEvent('frage_hilfreich',{}); }catch(e){}
+  try{ var p=btn && btn.parentNode; if(p) p.innerHTML='<span style="font-size:11px;color:#34d399;font-weight:700">Danke f\u00fcr dein Feedback!</span>'; }catch(e){}
+};
 function plMeldeFrage(btn){
   if(!btn) return;
   var frage = btn.getAttribute('data-frage') || '';
