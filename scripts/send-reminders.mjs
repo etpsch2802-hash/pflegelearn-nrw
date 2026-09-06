@@ -23,20 +23,30 @@ function cleanName(n) {
 }
 
 const TEXTE = [
-  'Halte deine Serie am Leben. Schon ein Quiz reicht heute.',
+  'Deine Karteikarten warten – ein paar Minuten Wiederholung halten dich im Rhythmus.',
+  'Halte deine Serie am Leben. Ein kurzes Quiz reicht heute.',
   'Zehn Minuten heute sind mehr wert als drei Stunden vor der Prüfung.',
   'Ein Fach, fünf Fragen, fertig. Mehr braucht es heute nicht.',
-  'Dein Radar zeigt, wo es hakt. Schau kurz rein.',
-  'Kurz üben, dann Feierabend. Deine Serie dankt es dir.'
+  'Dein Schwächen-Radar zeigt, wo es hakt. Schau kurz rein.',
+  'Kurz üben, dann Feierabend. Deine Serie dankt es dir.',
+  'Wiederholen schlägt Neulernen. Heute ein paar fällige Karten?',
+  'Der KI-Prüfer hat gleich Zeit für dich – teste dein Wissen.',
+  'Kleine Schritte, großer Effekt. Eine Lerneinheit vor dem Feierabend?',
+  'Prüfungsreife wächst mit jedem Tag. Heute schon dran gewesen?',
+  'Fünf Minuten Karteikarten – dein Kopf merkt sich den Rest.',
+  'Bleib dran: Wer täglich kurz übt, geht entspannt ins Examen.'
 ];
-const text = TEXTE[new Date().getDate() % TEXTE.length];
+const TITEL = ['Zeit für deinen PLAN', 'Deine tägliche Runde wartet', 'Kurz lernen mit PLAN NRW'];
+const _day = new Date().getDate();
+const text = TEXTE[_day % TEXTE.length];
+const titelBase = TITEL[_day % TITEL.length];
 
 let sent = 0, removed = 0, failed = 0;
 for (const r of rows) {
   const sub = typeof r.sub === 'string' ? JSON.parse(r.sub) : r.sub;
   const name = cleanName(r.name);
   const payload = JSON.stringify({
-    title: name ? `Hallo ${name}, Zeit zum Lernen` : 'Zeit zum Lernen – PLAN NRW',
+    title: name ? `${name}, ${titelBase}` : `${titelBase} · PLAN NRW`,
     body: text,
     url: 'https://plan-nrw.de',
     tag: 'pl-reminder'
