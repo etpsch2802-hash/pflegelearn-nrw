@@ -21664,6 +21664,7 @@ if (_savedLang !== 'de') {
       + '<div style="text-align:left">' + rowsHtml + '</div>'
       + gapHtml
       + '<button id="eins-cta" style="width:100%;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:14px">Hier starten →</button>'
+      + '<button id="eins-plan" style="width:100%;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.35);border-radius:12px;padding:12px;color:var(--accent);font-size:13.5px;font-weight:800;cursor:pointer;margin-top:10px;font-family:inherit">\uD83D\uDCC5 Lernplan erstellen</button>'
       + '<button id="eins-home" style="width:100%;background:none;border:none;color:#6b8ba3;font-size:13px;cursor:pointer;margin-top:10px">Zur Startseite</button>'
       + '</div>';
     document.body.appendChild(ov);
@@ -21676,6 +21677,8 @@ if (_savedLang !== 'de') {
       else { try { navGo('quizSelect'); } catch (e) {} }
     };
     if (b2) b2.onclick = function () { ov.remove(); try { navGo('home'); } catch (e) {} };
+    var b3 = ov.querySelector('#eins-plan');
+    if (b3) b3.onclick = function () { ov.remove(); try { navGo('lernplan'); } catch (e) {} };
 
     try { if (typeof gaEvent === 'function') gaEvent('einstufung_result', { score: pct, richtig: richtig, total: total }); } catch (e) {}
   };
@@ -22088,6 +22091,7 @@ if (_savedLang !== 'de') {
     _closeAll();
     var k = _fk, pct = _max ? Math.round(_pkt / _max * 100) : 0;
     if (!k.pruefen) _setBest(k.id, pct);
+    try{ if(pct>=75 && typeof plCelebrate==='function') plCelebrate((pct>=90?'Exzellent':'Stark')+' \u2013 '+pct+'%!', pct>=90?'\uD83C\uDFC6':'\uD83C\uDF89'); }catch(e){}
     var lab, col;
     if (pct < 40) { lab = 'Grundlagen festigen'; col = '#f87171'; }
     else if (pct < 60) { lab = 'Auf Kurs'; col = '#fbbf24'; }
