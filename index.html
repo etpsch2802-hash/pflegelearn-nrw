@@ -2383,7 +2383,9 @@ function maybeShowOnboarding() {
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg></span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Unten ist die <b>Navigationsleiste</b>: Start, Fälle, Quiz, Suche und Menü.</div></div>'
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Über die <b>Suche</b> findest du Krankheitsbilder, Quizfragen und Themen sofort.</div></div>'
       +   '</div>'
-      +   '<button onclick="dismissOnboarding()" style="width:100%;background:linear-gradient(135deg,var(--accent),var(--accent));border:none;border-radius:12px;padding:14px;color:#04121f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer">Los geht\'s</button>'
+      +   '<div style="font-size:12.5px;color:#9fb8cc;text-align:center;line-height:1.5;margin-bottom:14px">Lass uns kurz herausfinden, wo du stehst \u2013 dann bekommst du gezielte Empfehlungen.</div>'
+      + '<button onclick="dismissOnboarding(); try{ startEinstufung(); }catch(e){}" style="width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;padding:14px;color:#04121f;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">In 3 Minuten: Wo stehe ich?</button>'
+      + '<button onclick="dismissOnboarding()" style="width:100%;background:none;border:none;color:#7fa6c2;font-size:13px;font-family:inherit;cursor:pointer;margin-top:10px">Erstmal umschauen</button>'
       + '</div>';
     document.body.appendChild(ov);
   } catch (e) {}
