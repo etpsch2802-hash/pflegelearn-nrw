@@ -2,7 +2,7 @@
 // Route: /api/welcome
 //   POST { email }  -> sendet einmalig eine Begruessungsmail via Resend.
 //
-// Rechtlich: TRANSAKTIONSMAIL (Funktionsueberblick + neutrale Rabattcode-Erklaerung),
+// Rechtlich: TRANSAKTIONSMAIL (Funktionsueberblick, aktuell kostenlos-Hinweis),
 // daher ohne Newsletter-Einwilligung zulaessig. KEIN aggressiver Kaufaufruf.
 // Werbliche Update-Mails laufen separat und nur an Newsletter-Abonnenten.
 //
@@ -29,8 +29,8 @@ function mailHtml() {
     <p style="margin:0 0 16px;color:#475569">&uuml;ber 2.200 Pr&uuml;fungsfragen, 429 Lerneinheiten, 159 Krankheitsbilder, Fallbeispiele, Karteikarten und ein KI-Lernassistent, der dir Fragen erkl&auml;rt.</p>
     <p style="margin:0 0 6px"><b>Dein Fortschritt</b></p>
     <p style="margin:0 0 16px;color:#475569">Solange du angemeldet bist, wird dein Lernstand gesichert und ist auf jedem Ger&auml;t verf&uuml;gbar.</p>
-    <p style="margin:0 0 6px"><b>Rabattcodes</b></p>
-    <p style="margin:0 0 16px;color:#475569">PLAN bietet immer wieder Startrabatte an. Einen Code gibst du beim Bezahlvorgang im Feld &bdquo;Gutscheincode&ldquo; ein &ndash; der Preis passt sich sofort an. Aktuell l&auml;uft der Code <b style="color:#0f766e">START5</b> f&uuml;r 40&nbsp;% Rabatt.</p>
+    <p style="margin:0 0 6px"><b>Aktuell kostenlos</b></p>
+    <p style="margin:0 0 16px;color:#475569">PLAN ist derzeit komplett kostenlos &ndash; voller Zugang zu allen Pr&uuml;fungsfragen, F&auml;llen und dem KI-Pr&uuml;fer, ohne versteckte Kosten. Nutze die Zeit und komm gut vorbereitet in deine Pr&uuml;fung.</p>
     <p style="margin:0 0 6px"><b>Loslegen</b></p>
     <p style="margin:0 0 20px;color:#475569">&Ouml;ffne die App und starte mit &bdquo;Frage des Tages&ldquo; oder such dir im Bereich &Uuml;ben dein Thema.</p>
     <p style="margin:0 0 4px">Viel Erfolg beim Lernen,</p>
