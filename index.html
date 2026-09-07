@@ -681,7 +681,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 
   <!-- HERO -->
   <div style="width:100%;max-width:340px;margin:4px auto 9px;text-align:center;font-size:11.5px;font-weight:800;color:#34d399;letter-spacing:.3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.12em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Aktuell 100% kostenlos · voller Zugang</div>
-  <button id="pw-hero-cta" onclick="try{if(typeof gaEvent==='function')gaEvent('trial_start_click',{});}catch(e){};showTrialStart()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
+  <button id="pw-hero-cta" onclick="try{if(typeof gaEvent==='function')gaEvent('trial_start_click',{});}catch(e){};startHeroCTA()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
     <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Jetzt kostenlos loslegen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · ohne Kosten · sofort startklar</span>
   </button>
 
@@ -3140,7 +3140,7 @@ function startQuiz(kat) {
       k: indexed.findIndex(x => x.correct)
     };
   });
-  if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
+  if (window.PL_PAYMENTS_ON && currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
     const _used = quizUsedToday();
     if (_used >= currentBereich.quiz_max) { showGratisLimit('quiz', currentBereich.quiz_max); return; }
     quizList = quizList.slice(0, Math.max(1, currentBereich.quiz_max - _used));
@@ -3187,7 +3187,7 @@ function pickAnswer(i) {
   if (i === q.k) playCorrect(); else playWrong();
   recordQuizAnswer(i === q.k);
   recordKatAnswer(q.kat, i === q.k);
-  if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
+  if (window.PL_PAYMENTS_ON && currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') quizAddToday(1);
   const expEl = document.getElementById("explanation");
   expEl.innerHTML = `<div class="exp-label">💡 Erklärung</div>${q.erkl}`
     + '<div style="margin-top:11px;display:flex;gap:16px;align-items:center">'
@@ -3329,7 +3329,7 @@ function startQuizCE(ceId) {
     return Object.assign({}, q, { opt: indexed.map(x => x.text), k: indexed.findIndex(x => x.correct) });
   });
   quizList = quizList.slice(0, 20); // CE-Quiz: einheitlich max. 20 Fragen
-  if (currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
+  if (window.PL_PAYMENTS_ON && currentBereich && currentBereich.gratis && typeof currentBereich.quiz_max === 'number') {
     const _used = quizUsedToday();
     if (_used >= currentBereich.quiz_max) { showGratisLimit('quiz', currentBereich.quiz_max); return; }
     quizList = quizList.slice(0, Math.max(1, currentBereich.quiz_max - _used));
@@ -7629,6 +7629,11 @@ async function plSaveLead(email, name, quelle, trialUntil, consent){
     }
   }catch(e){ try{ console.warn('[plSaveLead] Exception:', e && e.message); }catch(_){} }
 }
+window.startHeroCTA = function(){
+  // Kostenlos-Phase: sofort rein (kein Double-Opt-in-Zwang). Bezahlphase: Trial mit Bestaetigung.
+  try{ if(window.PL_PAYMENTS_ON){ showTrialStart(); } else { showGratisStart(); } }
+  catch(e){ try{ showGratisStart(); }catch(_){} }
+};
 function showGratisStart(){
   const ov=document.createElement('div');
   ov.id='gratis-modal';
@@ -7637,7 +7642,7 @@ function showGratisStart(){
     <div style="background:linear-gradient(160deg,#0d2135,#091525);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:24px;width:100%;max-width:340px">
       <div style="text-align:center;font-size:30px;margin-bottom:6px">🎓</div>
       <div style="text-align:center;font-family:'DM Serif Display',serif;font-size:19px;color:#e0f2fe;margin-bottom:4px"><span data-i18n="btn_free">Gratis starten</span></div>
-      <div style="text-align:center;font-size:11px;color:#b3c4d6;line-height:1.6;margin-bottom:16px">Eingeschränkte Version · 20 Quizfragen/Tag · 2 Fälle je Fach · Karteikarten · KI 5/Tag. Jederzeit auf Vollzugriff erweiterbar.</div>
+      <div style="text-align:center;font-size:11px;color:#b3c4d6;line-height:1.6;margin-bottom:16px">'+(window.PL_PAYMENTS_ON?'Eingeschränkte Version · 20 Quizfragen/Tag · 2 Fälle je Fach · Karteikarten · KI 5/Tag. Jederzeit auf Vollzugriff erweiterbar.':'Voller Zugang · komplett kostenlos · alle Prüfungsfragen, Fälle, Karteikarten & KI-Prüfer.')+'</div>
       <input id="gratis-name" type="text" placeholder="Dein Name" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">
       <input id="gratis-email" type="email" placeholder="deine@email.de" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:8px">
       <div style="font-size:10.5px;color:#8ab4d0;line-height:1.5;margin-bottom:14px">Mit dem Start stimmst du der Verarbeitung deiner Angaben gemäß Datenschutzerklärung zu.</div>
