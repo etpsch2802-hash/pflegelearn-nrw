@@ -7660,6 +7660,7 @@ function startGratis(){
   if(!email || !email.includes('@')){ alert('Bitte gültige E-Mail eingeben!'); return; }
   try { if(typeof emailjs!=='undefined'){ emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { name:name, email:email, ausbildung:'Gratis-Zugang (eingeschränkt)', datum:new Date().toLocaleString('de-DE'), message:'Neuer Gratis-Nutzer' }); } } catch(e){}
   try{ plSaveLead(email, name, 'gratis', null, gconsent); }catch(e){}
+  try{ if(email) fetch('/api/welcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}); }catch(e){}
   const m=document.getElementById('gratis-modal'); if(m) m.remove();
   currentUser={ token:'GRATIS', name:name, email:email, bereich:'gratis', ablauf:'2099-12-31' };
   currentBereich=BEREICH_CONFIG['gratis'];
