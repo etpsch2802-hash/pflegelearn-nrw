@@ -1697,6 +1697,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
       <button onclick="adminTab('generator')" id="atab-generator" style="border-radius:20px;border:1px solid var(--accent);padding:6px 14px;font-size:11px;font-weight:700;background:var(--accent);color:white;font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Token Generator</button>
       <button onclick="adminTab('liste')" id="atab-liste" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Token Liste</button>
       <button onclick="adminTab('stats')" id="atab-stats" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chart"/></svg> Statistiken</button>
+      <button onclick="adminTab('live')" id="atab-live" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit;cursor:pointer">🟢 Live<span id="atab-live-badge" style="display:none;margin-left:6px;background:#16a34a;color:#fff;border-radius:9px;padding:1px 6px;font-size:10px;font-weight:900">0</span></button>
       <button onclick="adminTab('meldungen')" id="atab-meldungen" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:12px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit;cursor:pointer">Meldungen<span id="atab-meldungen-badge" style="display:none;margin-left:6px;background:#dc2626;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:1px 6px;font-size:10px;font-weight:900">0</span></button>
       <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Vorlage</button>
       <button onclick="adminTab('nutzer')" id="atab-nutzer" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Nutzer</button>
@@ -1705,6 +1706,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     </div>
 
     <!-- TAB: TOKEN GENERATOR -->
+    <div id="admin-live" class="admin-tab-content" style="display:none"><div id="live-users-box" style="padding:4px 0"><div style="color:var(--text3);font-size:13px">Lade …</div></div></div>
     <div id="admin-generator" class="admin-tab-content" style="display:block">
       <div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:18px;margin-bottom:12px">
         <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Neuen Token erstellen</div>
@@ -3409,6 +3411,7 @@ function adminTab(tab) {
   if (tab === "stats") renderStats();
   if (tab === "nachricht") renderVorlagen();
   if (tab === "meldungen") { renderFeedbackListe("offen"); plAdminPushState(); }
+  if (tab === "live") renderLiveUsers(true);
 }
 
 function genToken() {
@@ -22240,6 +22243,51 @@ if (_savedLang !== 'de') {
     ov.querySelector('[data-pw-back]').onclick = function () { openPerfusorwissen(); };
   }
 })();
+</script>
+<script>
+/* Live-Praesenz: Heartbeat + Admin-Ansicht */
+(function(){
+  var SID; try{ SID=localStorage.getItem('pl_sid'); if(!SID){ SID='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem('pl_sid',SID);} }catch(e){ SID='s'+Math.random().toString(36).slice(2,10); }
+  window._plHeartbeat=function(){
+    try{
+      if(!window.SB || !window.currentUser) return;
+      var scr=''; try{ var a=document.querySelector('.page.active'); scr=a?((''+a.id).replace('screen-','')):''; }catch(e){}
+      window.SB.from('presence').upsert({ sid:SID, name:((currentUser.name||'Gast')+'').slice(0,60), email:((currentUser.email||'')+'').slice(0,120), screen:scr.slice(0,40), last_seen:new Date().toISOString() }, { onConflict:'sid', returning:'minimal' });
+    }catch(e){}
+  };
+  setInterval(function(){ try{ window._plHeartbeat(); }catch(e){} }, 45000);
+  var w=setInterval(function(){ if(window.SB && window.currentUser){ try{ window._plHeartbeat(); }catch(e){} clearInterval(w); } }, 2000);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden){ try{ window._plHeartbeat(); }catch(e){} } });
+})();
+window._liveTimer=null;
+window.renderLiveUsers=function(start){
+  var box=document.getElementById('live-users-box'); if(!box) return;
+  function _e(s){ return (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var tok=(window.currentUser&&currentUser.token)||'';
+  fetch('/api/presence',{headers:{'x-admin-token':tok}}).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok){ box.innerHTML='<div style="color:#f87171;font-size:13px">Live-Daten nicht verfügbar (Admin-Rechte?).</div>'; return; }
+    var badge=document.getElementById('atab-live-badge'); if(badge){ badge.style.display=d.count>0?'inline':'none'; badge.textContent=d.count; }
+    var head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span style="width:11px;height:11px;border-radius:50%;background:'+(d.count>0?'#16a34a':'#64748b')+';display:inline-block"></span><span style="font-size:19px;font-weight:800;color:var(--text)">'+d.count+' gerade aktiv</span></div>';
+    if(!d.users||!d.users.length){ box.innerHTML=head+'<div style="color:var(--text3);font-size:13px">Aktuell ist niemand in der App.</div>'; return; }
+    var rows=d.users.map(function(u){
+      var when=u.secondsAgo<60?('vor '+u.secondsAgo+'\u00a0s'):('vor '+Math.round(u.secondsAgo/60)+'\u00a0min');
+      var sub=[u.screen?_e(u.screen):'', u.email?_e(u.email):''].filter(Boolean).join(' \u00b7 ');
+      return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.14);border-radius:10px;padding:10px 12px;margin-bottom:7px">'
+        +'<div style="min-width:0"><div style="font-weight:700;color:var(--text);font-size:14px">'+_e(u.name)+'</div>'
+        +(sub?('<div style="font-size:11px;color:var(--text3);margin-top:1px">'+sub+'</div>'):'')+'</div>'
+        +'<div style="font-size:11px;color:#16a34a;white-space:nowrap;flex-shrink:0">'+when+'</div></div>';
+    }).join('');
+    box.innerHTML=head+rows;
+  }).catch(function(){ box.innerHTML='<div style="color:#f87171;font-size:13px">Fehler beim Laden.</div>'; });
+  if(start){
+    if(window._liveTimer) clearInterval(window._liveTimer);
+    window._liveTimer=setInterval(function(){
+      var t=document.getElementById('admin-live'); var sc=document.getElementById('screen-admin');
+      if(t && t.style.display!=='none' && sc && sc.classList.contains('active')){ renderLiveUsers(false); }
+      else { clearInterval(window._liveTimer); window._liveTimer=null; }
+    },15000);
+  }
+};
 </script>
 </body>
 </html>
