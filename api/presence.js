@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     }
     secret = secret.trim();
     if (secret !== String(ADMIN_SECRET).trim()) {
-      return res.status(401).json({ ok: false, error: 'unauthorized', got: secret.length });
+      return res.status(401).json({ ok: false, error: 'unauthorized', got: secret.length, exp: String(ADMIN_SECRET).trim().length });
     }
 
     const dayAgo = new Date(Date.now() - 86400000).toISOString();
