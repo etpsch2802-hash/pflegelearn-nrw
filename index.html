@@ -22263,9 +22263,9 @@ window._liveTimer=null;
 window.renderLiveUsers=function(start){
   var box=document.getElementById('live-users-box'); if(!box) return;
   function _e(s){ return (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  if(!window._adminSecret){ try{ window._adminSecret = prompt('Admin-Passwort eingeben:')||''; }catch(e){} }
+  if(!window._adminSecret){ try{ window._adminSecret = (prompt('Admin-Passwort eingeben:')||'').trim(); }catch(e){} }
   if(!window._adminSecret){ box.innerHTML='<div style="color:var(--text3);font-size:13px">Kein Admin-Passwort eingegeben.</div>'; return; }
-  fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:window._adminSecret})}).then(function(r){return r.json();}).then(function(d){
+  fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json','x-admin-secret':(window._adminSecret||'').trim()},body:JSON.stringify({secret:(window._adminSecret||'').trim()})}).then(function(r){return r.json();}).then(function(d){
     if(d && d.error==='unauthorized'){ window._adminSecret=null; box.innerHTML='<div style="color:#f87171;font-size:13px">Falsches Admin-Passwort. Tab erneut öffnen.</div>'; return; }
     if(!d||!d.ok){ box.innerHTML='<div style="color:#f87171;font-size:13px">Live-Daten aktuell nicht verfügbar.</div>'; return; }
     var badge=document.getElementById('atab-live-badge'); if(badge){ badge.style.display=d.count>0?'inline':'none'; badge.textContent=d.count; }
