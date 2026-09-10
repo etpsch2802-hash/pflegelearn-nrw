@@ -22263,9 +22263,11 @@ window._liveTimer=null;
 window.renderLiveUsers=function(start){
   var box=document.getElementById('live-users-box'); if(!box) return;
   function _e(s){ return (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  var tok=(window.currentUser&&currentUser.token)||'';
-  fetch('/api/presence',{headers:{'x-admin-token':tok}}).then(function(r){return r.json();}).then(function(d){
-    if(!d||!d.ok){ box.innerHTML='<div style="color:#f87171;font-size:13px">Live-Daten nicht verfügbar (Admin-Rechte?).</div>'; return; }
+  if(!window._adminSecret){ try{ window._adminSecret = prompt('Admin-Passwort eingeben:')||''; }catch(e){} }
+  if(!window._adminSecret){ box.innerHTML='<div style="color:var(--text3);font-size:13px">Kein Admin-Passwort eingegeben.</div>'; return; }
+  fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:window._adminSecret})}).then(function(r){return r.json();}).then(function(d){
+    if(d && d.error==='unauthorized'){ window._adminSecret=null; box.innerHTML='<div style="color:#f87171;font-size:13px">Falsches Admin-Passwort. Tab erneut öffnen.</div>'; return; }
+    if(!d||!d.ok){ box.innerHTML='<div style="color:#f87171;font-size:13px">Live-Daten aktuell nicht verfügbar.</div>'; return; }
     var badge=document.getElementById('atab-live-badge'); if(badge){ badge.style.display=d.count>0?'inline':'none'; badge.textContent=d.count; }
     var head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span style="width:11px;height:11px;border-radius:50%;background:'+(d.count>0?'#16a34a':'#64748b')+';display:inline-block"></span><span style="font-size:19px;font-weight:800;color:var(--text)">'+d.count+' gerade aktiv</span></div>';
     if(!d.users||!d.users.length){ box.innerHTML=head+'<div style="color:var(--text3);font-size:13px">Aktuell ist niemand in der App.</div>'; return; }
