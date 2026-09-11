@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>PLAN Agent</title>
+<style>
+:root{--bg:#f4f1ea;--ink:#1d2327;--mut:#6b7178;--acc:#0f6e62;--warn:#b4441f;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+h1{font:700 22px/1.2 ui-serif,Georgia,serif;margin:0 0 4px}.sub{color:var(--mut);font-size:13px;margin:0 0 18px}
+label{display:block;font-weight:600;font-size:13px;margin:12px 0 4px}
+input[type=password],textarea{width:100%;padding:11px 12px;border:1px solid #cfc9bd;border-radius:10px;font:inherit;background:#fff}
+textarea{min-height:70px}.row{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px}
+button{margin-top:14px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--acc);color:#fff;font:600 16px system-ui}
+button:disabled{opacity:.5}
+.st{margin-top:16px;font-size:13px;color:var(--mut)}.err{color:var(--warn);font-weight:600}
+section{background:var(--card);border-radius:12px;padding:14px 16px;margin-top:12px;border-left:4px solid var(--acc)}
+section h2{font:700 15px system-ui;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em;color:var(--acc)}
+section ul{margin:0;padding-left:18px}section li{margin:4px 0}
+.k{font-size:12px;color:var(--mut)}pre{white-space:pre-wrap;word-break:break-word;font-size:12px;margin:0}
+details{margin-top:12px}summary{cursor:pointer;font-weight:600}
+</style></head><body><main>
+<h1>PLAN Business-Agent</h1><p class="sub">Read-only · Secret wird nicht gespeichert</p>
+<label for="s">Admin-Secret</label><input id="s" type="password" autocomplete="off">
+<label for="k">Kontext (optional, keine Personendaten)</label><textarea id="k" maxlength="600">Gratisphase, Closed Test läuft, Ziel 12 Tester</textarea>
+<div class="row"><input id="n" type="checkbox"><label for="n" style="margin:0;font-weight:400">Nur Kennzahlen (ohne KI)</label></div>
+<button id="b">Analyse starten</button>
+<div id="st" class="st"></div><div id="out"></div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+function el(t,txt,c){var e=document.createElement(t);if(txt!=null)e.textContent=txt;if(c)e.className=c;return e}
+function sec(title,items,fmt){var s=el('section');s.appendChild(el('h2',title));
+  if(typeof items==='string'){s.appendChild(el('p',items));return s}
+  var u=el('ul');(items||[]).forEach(function(x){var li=el('li');fmt?fmt(li,x):li.textContent=String(x);u.appendChild(li)});
+  if(!(items||[]).length)u.appendChild(el('li','–'));s.appendChild(u);return s}
+$('b').onclick=async function(){
+  var sec_=$('s').value.trim();if(!sec_){$('st').innerHTML='';$('st').appendChild(el('span','Secret fehlt','err'));return}
+  var b=this;b.disabled=true;$('out').innerHTML='';$('st').textContent='Läuft … (bis ~30 s)';
+  try{
+    var r=await fetch('/api/admin-users',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({secret:sec_,action:'agent',kontext:$('k').value,nurDaten:$('n').checked})});
+    var txt=await r.text(),j=null;try{j=JSON.parse(txt)}catch(e){}
+    $('st').textContent='HTTP '+r.status+(j&&j.mode?' · '+j.mode:'');
+    if(!r.ok||!j){$('st').appendChild(el('div',(j&&j.error)||txt.slice(0,300),'err'))}
+    var o=$('out'),a=j&&j.analysis;
+    if(a){
+      o.appendChild(sec('Lage',a.lage||'–'));
+      o.appendChild(sec('Auffälligkeiten',a.auffaelligkeiten));
+      o.appendChild(sec('Chancen',a.chancen));
+      o.appendChild(sec('Risiken',a.risiken));
+      o.appendChild(sec('Top 3 Aktionen',a.top3_aktionen,function(li,x){li.appendChild(el('strong',x.aktion||''));
+        li.appendChild(el('div','Aufwand '+(x.aufwand||'?')+' · '+(x.erwarteter_effekt||''),'k'));li.appendChild(el('div',x.kpi_bezug||'','k'))}));
+      o.appendChild(sec('Freigabe nötig',a.freigabe,function(li,x){li.appendChild(el('strong',x.vorschlag||''));li.appendChild(el('div',x.warum_freigabe||'','k'))}));
+      o.appendChild(sec('Datenlücken',a.datenluecken));
+    } else if(j&&j.analysis_raw){o.appendChild(sec('Analyse (Rohtext)',j.analysis_raw))}
+    else if(j&&j.hinweis){o.appendChild(sec('Hinweis',j.hinweis))}
+    if(j&&j.data){var d=el('details');d.open=!a;d.appendChild(el('summary','Kennzahlen (Rohdaten)'));
+      var s=el('section');s.appendChild(el('pre',JSON.stringify(j.data,null,2)));d.appendChild(s);o.appendChild(d)}
+  }catch(e){$('st').appendChild(el('div','Netzwerkfehler: '+e.message,'err'))}
+  b.disabled=false;
+};
+})();
+</script></main></body></html>
