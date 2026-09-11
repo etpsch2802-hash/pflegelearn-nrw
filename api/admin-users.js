@@ -2,6 +2,7 @@
 // Route: /api/admin-users
 //   POST { secret }  -> { count, users:[{email, created_at, newsletter, last_sign_in}] }
 //   POST { secret, action:'agent', kontext?, nurDaten? } -> Business-Agent V1 (read-only, nur Aggregate)
+//   POST { secret, action:'besucher' } -> Website-Besucher 7 Tage (Vercel Web Analytics, anonym)
 //
 // Sicherheit:
 // - Liest auth.users NUR mit dem Service-Role-Key, der serverseitig in der Env liegt.
@@ -55,6 +56,13 @@ export default async function handler(req, res) {
   if (secret !== EXP) { res.status(401).json({ error: 'unauthorized', got: secret.length, exp: EXP.length }); return; }
 
   // Business-Agent V1 (read-only): POST { secret, action:'agent', kontext?, nurDaten? }
+  // Website-Besucher (Vercel Web Analytics): POST { secret, action:'besucher' }
+  if (body.action === 'besucher') {
+    try { res.status(200).json(await plBesucher()); }
+    catch (e) { console.error('[besucher]', e && e.message); if (!res.headersSent) res.status(500).json({ ok: false, error: 'server' }); }
+    return;
+  }
+
   if (body.action === 'agent') {
     try { await plAgent(res, SB_URL, SB_SERVICE, body); }
     catch (e) { console.error('[agent]', e && e.message); if (!res.headersSent) res.status(500).json({ ok: false, error: 'server' }); }
@@ -177,6 +185,7 @@ async function plAgent(res, SB_URL, KEY, body) {
     else { D[keys[i]] = []; fehlt.push(keys[i]); console.error('[agent] Quelle', keys[i], r.reason && r.reason.message); }
   });
   const abgeschnitten = keys.filter(k => D[k].length >= 10000);
+  let web = null; try { web = await plBesucher(); } catch (e) { web = null; }
 
   const U = D.nutzer, Ld = D.leads, A = D.abos, K = D.klassen, T = D.tokens.filter(x => !x.admin), P = D.progress;
   const sitze = K.reduce((s, k) => s + (Number(k.sitzplaetze) || 0), 0);
@@ -218,6 +227,7 @@ async function plAgent(res, SB_URL, KEY, body) {
     qualitaet: { feedback_offen: D.feedback.filter(f => f.status === 'offen').length, feedback_30d: D.feedback.filter(f => seit(f.created_at, 30)).length },
     push_abonnenten: D.push.filter(p => !p.admin).length,
     testimonials: { veroeffentlicht: D.testimonials.filter(x => x.published).length, unveroeffentlicht: D.testimonials.filter(x => !x.published).length },
+    website_7d: (web && web.ok) ? { heute: web.heute, woche: web.woche, herkunft: web.quellen, utm: web.utm, seiten: web.seiten, geraete: web.geraete } : { nicht_verfuegbar: true },
     kennzahlen: {
       lead_pdf_quote_pct: pct(Ld.filter(l => l.pdf_sent).length, Ld.length),
       nutzer_aktiv_7d_pct: pct(U.filter(u => seit(u.l, 7)).length, U.length)
@@ -286,4 +296,67 @@ async function plAgent(res, SB_URL, KEY, body) {
     ok: true, mode: 'read-only', data: data,
     analysis: analysis, analysis_raw: analysis ? undefined : txt
   });
+}
+
+// ===================== Website-Besucher (Vercel Web Analytics API, read-only) =====================
+// POST /api/admin-users { secret, action:'besucher' }  -> aggregierte, anonyme Besucherzahlen (7 Tage)
+// Env: VERCEL_TOKEN (Pflicht), optional VERCEL_PROJECT, VERCEL_TEAM_SLUG
+async function plBesucher() {
+  const TOKEN = process.env.VERCEL_TOKEN;
+  if (!TOKEN) return { ok: false, error: 'VERCEL_TOKEN fehlt' };
+  const PRJ = process.env.VERCEL_PROJECT || 'pflegelearn-nrw';
+  const SLUG = process.env.VERCEL_TEAM_SLUG || 'patrick-schenkelberger-s-projects';
+  const now = new Date();
+  const heute = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const woche = new Date(heute.getTime() - 6 * 864e5);
+  const until = String(now.getTime());
+
+  async function vq(ep, extra) {
+    const p = new URLSearchParams(Object.assign({ projectId: PRJ, slug: SLUG, until: until }, extra));
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 10000);
+    try {
+      const r = await fetch('https://api.vercel.com/v1/query/web-analytics/visits/' + ep + '?' + p.toString(), {
+        headers: { 'Authorization': 'Bearer ' + TOKEN }, signal: ctl.signal
+      });
+      if (!r.ok) throw new Error(ep + ':' + r.status);
+      const j = await r.json();
+      return j.data;
+    } finally { clearTimeout(to); }
+  }
+  const s7 = String(woche.getTime()), s0 = String(heute.getTime());
+  const q = {
+    heute: vq('count', { since: s0 }),
+    woche: vq('count', { since: s7 }),
+    tage: vq('aggregate', { since: s7, by: 'day' }),
+    quellen: vq('aggregate', { since: s7, by: 'referrerHostname', limit: '6' }),
+    seiten: vq('aggregate', { since: s7, by: 'requestPath', limit: '6' }),
+    utm: vq('aggregate', { since: s7, by: 'utmSource', limit: '6' }),
+    geraete: vq('aggregate', { since: s7, by: 'deviceType', limit: '4' })
+  };
+  const keys = Object.keys(q);
+  const erg = await Promise.allSettled(keys.map(k => q[k]));
+  const R = {}, fehler = [];
+  erg.forEach((r, i) => {
+    if (r.status === 'fulfilled') R[keys[i]] = r.value;
+    else { R[keys[i]] = null; fehler.push(String(r.reason && r.reason.message || 'fehler')); }
+  });
+  if (fehler.length === keys.length) {
+    console.error('[besucher]', fehler.join(', '));
+    return { ok: false, error: 'Vercel-API: ' + fehler[0] };
+  }
+  const zahl = d => ({ besucher: (d && d.visitors) || 0, aufrufe: (d && d.pageviews) || 0 });
+  const liste = (arr, key) => (Array.isArray(arr) ? arr : []).map(x => ({
+    name: (x[key] == null || x[key] === '') ? '(direkt/unbekannt)' : String(x[key]),
+    besucher: x.visitors || 0, aufrufe: x.pageviews || 0
+  }));
+  return {
+    ok: true, quelle: 'Vercel Web Analytics', zeitraum_tage: 7,
+    heute: zahl(R.heute), woche: zahl(R.woche),
+    tage: (Array.isArray(R.tage) ? R.tage : []).map(x => ({ tag: String(x.timestamp || '').slice(0, 10), besucher: x.visitors || 0, aufrufe: x.pageviews || 0 })),
+    quellen: liste(R.quellen, 'referrerHostname'),
+    seiten: liste(R.seiten, 'requestPath'),
+    utm: liste(R.utm, 'utmSource'),
+    geraete: liste(R.geraete, 'deviceType'),
+    fehler: fehler
+  };
 }
