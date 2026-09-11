@@ -18,7 +18,7 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-secret');
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   // GET -> Diagnose: welche Env-Variablen sind vorhanden? (nur Ja/Nein, nie die Werte)
   if (req.method === 'GET') {
@@ -47,10 +47,12 @@ export default async function handler(req, res) {
 
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
-  const secret = body && body.secret ? String(body.secret) : '';
+  // Wie presence.js: Header oder Body, beidseitig getrimmt (Env-Werte enthalten oft Zeilenumbruch/Leerzeichen).
+  const secret = String(req.headers['x-admin-secret'] || (body && body.secret) || '').trim();
+  const EXP = String(ADMIN_SECRET).trim();
 
   // Konstanter Zeitvergleich waere ideal; bei einem einzelnen Secret genuegt der direkte Vergleich.
-  if (secret !== ADMIN_SECRET) { res.status(401).json({ error: 'unauthorized' }); return; }
+  if (secret !== EXP) { res.status(401).json({ error: 'unauthorized', got: secret.length, exp: EXP.length }); return; }
 
   // Business-Agent V1 (read-only): POST { secret, action:'agent', kontext?, nurDaten? }
   if (body.action === 'agent') {
