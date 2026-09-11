@@ -21253,6 +21253,23 @@ if (_savedLang !== 'de') {
 }
 // ═══════════════════════════════════════════════
 </script>
+<!-- GA-Diagnose: nur mit ?gadebug in der URL aktiv (sendet debug_mode -> GA DebugView) -->
+<script>
+(function(){
+  if ((location.search||'').indexOf('gadebug') === -1) return;
+  try { if (typeof gtag === 'function') gtag('config','G-YJLC762MTC',{debug_mode:true}); } catch(e){}
+  setTimeout(function(){
+    var c=null; try{ c=localStorage.getItem('pl_consent'); }catch(e){}
+    var loaded=!!window.google_tag_manager;
+    var ok=loaded && c==='granted';
+    var d=document.createElement('div');
+    d.style.cssText='position:fixed;top:8px;left:8px;right:8px;z-index:2147483001;background:#111;color:#fff;font:13px/1.6 monospace;padding:12px;border-radius:10px;border:3px solid '+(ok?'#22c55e':'#ef4444');
+    d.textContent='GA-Diagnose | gtag.js geladen: '+(loaded?'JA':'NEIN (Blocker/Netz)')+' | Einwilligung: '+(c||'keine')+' | dataLayer: '+((window.dataLayer||[]).length)+' | '+(ok?'OK: Daten werden gesendet':'Es werden KEINE Daten gesendet')+' | Tippen = schliessen';
+    d.onclick=function(){ d.remove(); };
+    document.body.appendChild(d);
+  }, 3000);
+})();
+</script>
 <!-- DSGVO Cookie-Consent (Google Consent Mode v2) -->
 <div id="pl-consent" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:#0b1424;border-top:1px solid #1e3a5f;padding:16px 18px;font-family:'DM Sans',sans-serif;box-shadow:0 -8px 24px rgba(0,0,0,.4)">
   <div style="max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
