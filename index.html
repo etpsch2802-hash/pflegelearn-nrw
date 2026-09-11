@@ -1822,6 +1822,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <!-- TAB: STATISTIKEN -->
     <div id="admin-stats" class="admin-tab-content" style="display:none">
       <div id="live-user-stats" style="margin-bottom:12px"></div>
+      <div id="web-besucher-stats" style="margin-bottom:12px"></div>
       <div id="stats-content" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
 
@@ -3648,6 +3649,7 @@ async function renderLiveUserStats() {
 
 function renderStats() {
   try { renderLiveUserStats(); } catch(e){}
+  try { if (window.renderWebBesucher) window.renderWebBesucher(false); } catch(e){}
   const el = document.getElementById("stats-content");
   if (!el) return;
   const allTokens = { ...TOKEN_DB, ...localTokenDB };
@@ -22263,6 +22265,48 @@ if (_savedLang !== 'de') {
     ov.querySelector('[data-pw-back]').onclick = function () { openPerfusorwissen(); };
   }
 })();
+</script>
+<script>
+/* Admin: Website-Besucher (Vercel Web Analytics) - Daten via /api/admin-users action=besucher */
+window.renderWebBesucher=function(force){
+  var el=document.getElementById('web-besucher-stats'); if(!el) return;
+  function _e(s){ return (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function wrap(inner){ return '<div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:16px">'+inner+'</div>'; }
+  var TITEL='<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">\uD83C\uDF10 Website-Besucher (7 Tage)</div>';
+  function card(l,v){ return '<div style="background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">'+_e(v)+'</div><div style="font-size:11px;color:#b3c4d6;margin-top:2px">'+_e(l)+'</div></div>'; }
+  function top(t,arr){
+    if(!arr||!arr.length) return '';
+    return '<div style="margin-top:14px"><div style="font-size:11px;font-weight:700;color:#8ab4d0;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">'+_e(t)+'</div>'
+      +arr.map(function(x){ return '<div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_e(x.name)+'</span><span style="color:var(--accent);font-weight:700;flex-shrink:0">'+_e(x.besucher)+'</span></div>'; }).join('')+'</div>';
+  }
+  if(!window._adminSecret){
+    if(!force){
+      el.innerHTML=wrap(TITEL+'<button type="button" id="wb-load" style="width:100%;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:11px;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer">Besucherzahlen laden</button>');
+      var b=document.getElementById('wb-load'); if(b) b.onclick=function(){ window.renderWebBesucher(true); };
+      return;
+    }
+    try{ window._adminSecret=(prompt('Admin-Passwort eingeben:')||'').trim(); }catch(e){}
+    if(!window._adminSecret){ window.renderWebBesucher(false); return; }
+  }
+  el.innerHTML=wrap(TITEL+'<div style="font-size:12px;color:#b3c4d6">\u23F3 Lade Besucherzahlen\u2026</div>');
+  var sec=(window._adminSecret||'').trim();
+  fetch('/api/admin-users',{method:'POST',headers:{'Content-Type':'application/json','x-admin-secret':sec},body:JSON.stringify({secret:sec,action:'besucher'})})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d&&d.error==='unauthorized'){ window._adminSecret=null; el.innerHTML=wrap(TITEL+'<div style="color:#f87171;font-size:13px">Passwort stimmt nicht \u00b7 eingegeben: '+_e(d.got)+' Zeichen, erwartet: '+_e(d.exp)+'</div>'); return; }
+    if(!d||!d.ok){ el.innerHTML=wrap(TITEL+'<div style="color:#facc15;font-size:13px">Nicht verf\u00fcgbar: '+_e(d&&d.error||'unbekannt')+'</div>'); return; }
+    var max=1; (d.tage||[]).forEach(function(t){ if(t.besucher>max) max=t.besucher; });
+    var bars='<div style="display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:14px">'+(d.tage||[]).map(function(t){
+      var h=Math.max(4,Math.round(t.besucher/max*62));
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="font-size:10px;color:#b3c4d6">'+_e(t.besucher)+'</div><div style="width:100%;height:'+h+'px;background:var(--accent);border-radius:4px 4px 0 0;opacity:.85"></div><div style="font-size:9px;color:#8ab4d0">'+_e(t.tag.slice(8,10)+'.'+t.tag.slice(5,7))+'</div></div>';
+    }).join('')+'</div>';
+    el.innerHTML=wrap(TITEL
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'+card('Heute',d.heute.besucher)+card('Besucher 7 T.',d.woche.besucher)+card('Aufrufe 7 T.',d.woche.aufrufe)+'</div>'
+      +bars+top('Herkunft',d.quellen)+top('UTM-Quelle',d.utm)+top('Seiten',d.seiten)+top('Ger\u00e4te',d.geraete)
+      +'<div style="font-size:11px;color:#8ab4d0;margin-top:12px">Quelle: Vercel Web Analytics \u00b7 cookielos, alle Besucher</div>');
+  })
+  .catch(function(){ el.innerHTML=wrap(TITEL+'<div style="color:#f87171;font-size:13px">Netzwerkfehler.</div>'); });
+};
 </script>
 <script>
 /* Live-Praesenz: Heartbeat + Admin-Ansicht */
