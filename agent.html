@@ -41,7 +41,7 @@ $('b').onclick=async function(){
       body:JSON.stringify({secret:sec_,action:'agent',kontext:$('k').value,nurDaten:$('n').checked})});
     var txt=await r.text(),j=null;try{j=JSON.parse(txt)}catch(e){}
     $('st').textContent='HTTP '+r.status+(j&&j.mode?' · '+j.mode:'');
-    if(!r.ok||!j){$('st').appendChild(el('div',(j&&j.error)||txt.slice(0,300),'err'))}
+    if(!r.ok||!j){$('st').appendChild(el('div',((j&&j.error)||txt.slice(0,300))+(j&&j.got!=null?' · eingegeben '+j.got+' Zeichen, erwartet '+j.exp:''),'err'))}
     var o=$('out'),a=j&&j.analysis;
     if(a){
       o.appendChild(sec('Lage',a.lage||'–'));
