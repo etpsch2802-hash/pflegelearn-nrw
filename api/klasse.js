@@ -208,7 +208,49 @@ export default async function handler(req, res) {
         headers: sbHeaders(SB_SERVICE)
       });
       var auf = await qr.json();
-      res.status(200).json({ ok: true, aufgaben: Array.isArray(auf) ? auf : [] });
+      if (!Array.isArray(auf)) auf = [];
+
+      // Erledigt-Stand: pro Aufgabe wer abgehakt hat (Lehrkraft) bzw. ob ich abgehakt habe (Azubi)
+      var meineMail = (body.email ? String(body.email) : '').trim().toLowerCase();
+      if (auf.length) {
+        var ids = auf.map(function (a) { return '"' + a.id + '"'; }).join(',');
+        var stR = await fetch(SB_URL + '/rest/v1/aufgaben_status?aufgabe_id=in.(' + encodeURIComponent(ids) + ')&select=aufgabe_id,email', { headers: sbHeaders(SB_SERVICE) });
+        var st = await stR.json(); if (!Array.isArray(st)) st = [];
+        var mR = await fetch(SB_URL + '/rest/v1/klassen_mitglieder?klasse_id=eq.' + encodeURIComponent(qkid) + '&select=name,email', { headers: sbHeaders(SB_SERVICE) });
+        var mem = await mR.json(); if (!Array.isArray(mem)) mem = [];
+        var nameVon = {};
+        mem.forEach(function (m) { nameVon[String(m.email || '').toLowerCase()] = m.name || m.email; });
+        auf.forEach(function (a) {
+          var meine = st.filter(function (x) { return x.aufgabe_id === a.id; });
+          var mails = meine.map(function (x) { return String(x.email || '').toLowerCase(); });
+          a.erledigt_anzahl = mails.length;
+          a.mitglieder_anzahl = mem.length;
+          a.erledigt_namen = mails.map(function (e) { return nameVon[e] || e; });
+          a.offen_namen = mem.filter(function (m) { return mails.indexOf(String(m.email || '').toLowerCase()) === -1; })
+                             .map(function (m) { return m.name || m.email; });
+          a.erledigt = meineMail ? (mails.indexOf(meineMail) !== -1) : false;
+        });
+      }
+      res.status(200).json({ ok: true, aufgaben: auf });
+      return;
+    }
+
+    // ── Azubi hakt eine Aufgabe ab (oder nimmt den Haken zurueck) ──
+    if (action === 'aufgabe_done') {
+      var aid = (body.aufgabe_id ? String(body.aufgabe_id) : '').trim();
+      var amail = (body.email ? String(body.email) : '').trim().toLowerCase();
+      if (!aid || !emailRe.test(amail)) { res.status(400).json({ error: 'parameter' }); return; }
+      if (body.erledigt === false) {
+        await fetch(SB_URL + '/rest/v1/aufgaben_status?aufgabe_id=eq.' + encodeURIComponent(aid) + '&email=eq.' + encodeURIComponent(amail), {
+          method: 'DELETE', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'return=minimal' })
+        });
+      } else {
+        await fetch(SB_URL + '/rest/v1/aufgaben_status?on_conflict=aufgabe_id,email', {
+          method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'resolution=merge-duplicates,return=minimal' }),
+          body: JSON.stringify({ aufgabe_id: aid, email: amail, erledigt_at: new Date().toISOString() })
+        });
+      }
+      res.status(200).json({ ok: true });
       return;
     }
 
