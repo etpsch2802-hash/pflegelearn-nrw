@@ -13128,6 +13128,8 @@ function computePruefungsreife() {
 function renderCountdown() {
   var el = document.getElementById('home-countdown');
   if (!el || !currentUser) return;
+  var _p = ''; try { _p = localStorage.getItem('pl_persona') || ''; } catch(e){}
+  if (_p === 'examiniert' || _p === 'lehrkraft') { el.innerHTML = ''; return; }  // kein Examensdatum fuer diese Rollen
   var d = null;
   try { d = localStorage.getItem('pl_examen_datum') || localStorage.getItem('pl_pruefungsdatum'); } catch(e){}
 
