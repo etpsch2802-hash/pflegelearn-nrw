@@ -1019,8 +1019,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div class="hero" style="margin-bottom:14px"><div class="hero-icon"><svg class="ic" viewBox="0 0 24 24" style="width:1em;height:1em"><use href="#i-target"/></svg></div><h1>Üben<span> &amp; prüfen</span></h1><p>Alles zum aktiven Lernen an einem Ort</p></div>
   <button onclick="openKIChooser()" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.14),rgba(var(--accent-rgb),.05));border:1px solid rgba(var(--accent-rgb),.3);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:26px;height:26px"><use href="#i-mic"/></svg><span><span style="display:block;font-size:14px;font-weight:800;color:#e2e8f0">Mündliche KI-Prüfung</span><span style="display:block;font-size:11px;color:#9fb8cc">Prüfer oder Praxisanleiter – üben wie im Examen</span></span></button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <button onclick="navGo('quizSelect')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pencil"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Quiz</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Fragen nach Fachbereich</span></button>
-    <button onclick="openExamenIntro()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-file"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prüfungssimulator</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Examen unter Zeit</span></button><button onclick="openFachklausuren()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-check"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fachklausuren</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Nach Kompetenzbereich I–V</span></button>
+    <button onclick="navGo('quizSelect')" id="tour-tile-quiz" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pencil"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Quiz</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Fragen nach Fachbereich</span></button>
+    <button onclick="openExamenIntro()" id="tour-tile-examen" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-file"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prüfungssimulator</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Examen unter Zeit</span></button><button onclick="openFachklausuren()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-check"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fachklausuren</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Nach Kompetenzbereich I–V</span></button>
     <button onclick="navGo('karteikarten')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-layers"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Karteikarten</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Spaced Repetition</span></button>
     <button onclick="navGo('faelle')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pulse"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fallbeispiele</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Interaktive Fälle</span></button>
     <button onclick="openCEHub()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Lernen nach §53 PflBG</span></button><button onclick="navGo('medtrainer')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pill"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medikamenten-Trainer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Dosis &amp; Infusionen rechnen</span></button><button onclick="openExamPicker('fachgespraech')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-mic"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fachgespräch (KI)</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Reflexion einer Pflegesituation</span></button>
@@ -22325,7 +22325,8 @@ window.renderWebBesucher=function(force){
 
   var SCHRITTE=[
     { id:'bn-heute',  t:'Dein Tagesplan',      x:'Hier siehst du jeden Tag, was ansteht: f\u00e4llige Wiederholungen und neue Fragen.' },
-    { id:'bn-ueben',  t:'\u00dcben & Pr\u00fcfung', x:'Fragen nach Fach, Lernmodus oder komplette Pr\u00fcfungssimulation.' },
+    { id:'tour-tile-quiz', screen:'ueben', t:'Fragen \u00fcben', x:'Nach Fach, nach Lernmodus oder gezielt deine Schwachstellen.' },
+    { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Hier startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen. Darin findest du auch die Fachklausuren pro Fach und die Fallklausur.' },
     { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
     { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Einstellungen und Feedback.', oeffneMenu:true },
     { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
@@ -22353,6 +22354,7 @@ window.renderWebBesucher=function(force){
   function ende(grund){
     setDone(); track('tour_'+grund,{schritt:i+1});
     try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
+    try{ if(grund==='fertig'&&typeof navGo==='function') navGo('home'); }catch(e){}
     weg();
   }
   function zeichne(){
@@ -22380,14 +22382,19 @@ window.renderWebBesucher=function(force){
   function naechster(){
     i++;
     if(i>=S.length){ ende('fertig'); return; }
-    var s=S[i];
-    if(s.oeffneMenu&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} }
-    if(s.brauchtMenu&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} }
-    setTimeout(zeichne,s.brauchtMenu||s.oeffneMenu?260:0);
+    var s=S[i], warte=0;
+    var aktiv=document.querySelector('.page.active');
+    if(s.screen && (!aktiv || aktiv.id!=='screen-'+s.screen)){
+      try{ if(typeof navGo==='function') navGo(s.screen); }catch(e){}
+      warte=420;
+    }
+    if(!s.screen && menuOffen() && !s.brauchtMenu && !s.oeffneMenu){ try{ toggleNavMenu(); }catch(e){} }
+    if((s.oeffneMenu||s.brauchtMenu)&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} warte=Math.max(warte,260); }
+    setTimeout(zeichne,warte);
   }
   window.plTourStart=function(manuell){
     if(running) return;
-    S=SCHRITTE.filter(function(s){ var x=el(s.id); return x&&(s.brauchtMenu||sichtbar(x)); });
+    S=SCHRITTE.filter(function(s){ var x=el(s.id); return x&&(s.brauchtMenu||s.screen||sichtbar(x)); });
     if(!S.length) return;
     i=-1; running=true; bau();
     try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
