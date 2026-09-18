@@ -306,6 +306,15 @@ export default async function handler(req, res) {
       var al = await ar.json(); if (!Array.isArray(al)) al = [];
       var verteilung = [0, 0, 0, 0, 0, 0];
       al.forEach(function (a) { if (a.antwort >= 0 && a.antwort < 6) verteilung[a.antwort]++; });
+      var rang = [], meine = null;
+      if (sess.punkte_an !== false) {
+        var rr = await fetch(SB_URL + '/rest/v1/live_teilnehmer?session_id=eq.' + sess.id + '&select=teilnehmer,name,punkte&order=punkte.desc&limit=50', { headers: sbHeaders(SB_SERVICE) });
+        var rl = await rr.json(); if (!Array.isArray(rl)) rl = [];
+        rang = rl.slice(0, 5).map(function (x, ix) { return { platz: ix + 1, name: x.name || 'Ohne Namen', punkte: x.punkte || 0 }; });
+        for (var q = 0; q < rl.length; q++) {
+          if (tn && rl[q].teilnehmer === tn) { meine = { platz: q + 1, punkte: rl[q].punkte || 0, von: rl.length }; break; }
+        }
+      }
       var f = sess.frage || null;
       var offen = (sess.status === 'frage');
       res.status(200).json({
@@ -313,6 +322,7 @@ export default async function handler(req, res) {
         teilnehmer: tl.length, antworten: al.length,
         frage: f ? { f: f.f, opt: f.opt, k: offen ? null : f.k, e: offen ? null : (f.e || '') } : null,
         verteilung: verteilung.slice(0, f && f.opt ? f.opt.length : 4),
+        punkte_an: sess.punkte_an !== false, rangliste: rang, meine_punkte: meine,
         schon_geantwortet: tn ? al.some(function (a) { return a.teilnehmer === tn; }) : false,
         meine_antwort: tn ? (al.filter(function (a) { return a.teilnehmer === tn; })[0] || {}).antwort : null
       });
@@ -339,11 +349,30 @@ export default async function handler(req, res) {
       var ant = Number(body.antwort);
       if (!atn || !Number.isInteger(ant) || ant < 0 || ant > 5) { res.status(400).json({ error: 'antwort' }); return; }
       var richtig = !!(asess.frage && asess.frage.k === ant);
-      await fetch(SB_URL + '/rest/v1/live_answers?on_conflict=session_id,runde,teilnehmer', {
-        method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'resolution=ignore-duplicates,return=minimal' }),
+      var ins = await fetch(SB_URL + '/rest/v1/live_answers?on_conflict=session_id,runde,teilnehmer', {
+        method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'resolution=ignore-duplicates,return=representation' }),
         body: JSON.stringify({ session_id: asess.id, runde: asess.runde, teilnehmer: atn, antwort: ant, richtig: richtig })
       });
-      res.status(200).json({ ok: true });
+      var neu = [];
+      try { neu = await ins.json(); } catch (e) { neu = []; }
+      // Punkt nur fuer die erste Antwort dieser Runde und nur wenn der Punktestand aktiv ist
+      if (richtig && asess.punkte_an !== false && Array.isArray(neu) && neu.length) {
+        await fetch(SB_URL + '/rest/v1/rpc/live_punkt', {
+          method: 'POST', headers: sbHeaders(SB_SERVICE),
+          body: JSON.stringify({ p_session: asess.id, p_teilnehmer: atn, p_delta: 1 })
+        });
+      }
+      res.status(200).json({ ok: true, richtig: richtig });
+      return;
+    }
+
+    if (action === 'live_punkte') {
+      var pcode = (body.code ? String(body.code) : '').trim().toUpperCase();
+      var ple = (body.lehrer_email ? String(body.lehrer_email) : '').trim().toLowerCase();
+      var psess = pcode ? await liveSession(pcode) : null;
+      if (!psess || psess.lehrer_email !== ple) { res.status(403).json({ error: 'verboten' }); return; }
+      await livePatch(psess.id, { punkte_an: body.an === true });
+      res.status(200).json({ ok: true, punkte_an: body.an === true });
       return;
     }
 
