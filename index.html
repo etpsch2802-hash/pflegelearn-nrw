@@ -22314,6 +22314,120 @@ window.renderWebBesucher=function(force){
 };
 </script>
 <script>
+/* Persona-Startseite: Lehrkraft und Examinierte sehen andere Karten als Azubis */
+(function(){
+  var LABELS={ medikamente:'Medikamente', wissensdb:'Wissensdatenbank', grafiken:'Grafiken', krankheitsbilder:'Krankheitsbilder',
+    anatomie:'Anatomie', taschenkarten:'Taschenkarten', prophylaxen:'Prophylaxen', notfallmanagement:'Notfallmanagement',
+    scores:'Scores', medizintechnik:'Medizintechnik', wundversorgung:'Wundversorgung', atl:'ATL', massnahmenplan:'Ma\u00dfnahmenplan',
+    merksaetze:'Merks\u00e4tze', berufseinstieg:'Berufseinstieg', praxisanleiter:'Praxisanleiter', kinaesthetik:'Kin\u00e4sthetik',
+    bobath:'Bobath', faelle:'Fallbeispiele', ausbildungswege:'Fachweiterbildung' };
+  function persona(){ try{ return localStorage.getItem('pl_persona')||''; }catch(e){ return ''; } }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function karte(inner){ return '<div style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:16px">'+inner+'</div>'; }
+  function titel(t){ return '<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;font-weight:700;margin-bottom:10px">'+t+'</div>'; }
+
+  /* ---- Verlauf: was zuletzt nachgeschlagen wurde ---- */
+  function merke(s){
+    if(!LABELS[s]) return;
+    try{
+      var a=JSON.parse(localStorage.getItem('pl_recent')||'[]');
+      a=a.filter(function(x){ return x!==s; }); a.unshift(s);
+      localStorage.setItem('pl_recent',JSON.stringify(a.slice(0,5)));
+    }catch(e){}
+  }
+  function verlauf(){ try{ return JSON.parse(localStorage.getItem('pl_recent')||'[]'); }catch(e){ return []; } }
+  window.plOeffne=function(s){ if(s==='medikamente'){ try{ openMedChooser(); }catch(e){} } else { try{ navGo(s); }catch(e){} } };
+  if(typeof window.navGo==='function'){ var _nav=window.navGo; window.navGo=function(s){ merke(s); return _nav.apply(this,arguments); }; }
+  if(typeof window.openMedChooser==='function'){ var _med=window.openMedChooser; window.openMedChooser=function(){ merke('medikamente'); return _med.apply(this,arguments); }; }
+
+  /* ---- Lehrkraft: Klassen-\u00dcbersicht statt Pr\u00fcfungsreife ---- */
+  var _klCache=null, _klZeit=0, _klLaeuft=false;
+  function lehrerKarte(el){
+    var le=''; try{ le=localStorage.getItem('pl_lehrer_email')||''; }catch(e){}
+    if(!le){
+      el.innerHTML=karte(titel('Dein Kurs')
+        +'<div style="font-size:14px;color:#cfe3f3;line-height:1.5;margin-bottom:12px">Melde dich einmal im Lehrer-Bereich an, dann siehst du hier deine Kurse, die belegten Pl\u00e4tze und den Beitrittscode.</div>'
+        +'<button onclick="showLehrer()" style="width:100%;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:12px;color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer">Lehrer-Bereich \u00f6ffnen</button>');
+      return;
+    }
+    function zeichne(kl){
+      if(!kl.length){
+        el.innerHTML=karte(titel('Deine Kurse')
+          +'<div style="font-size:14px;color:#cfe3f3;line-height:1.5;margin-bottom:12px">Noch kein Kurs angelegt. Lege deinen ersten Kurs an, dann k\u00f6nnen deine Azubis mit einem Code beitreten.</div>'
+          +'<button onclick="showLehrer()" style="width:100%;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:12px;color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer">Kurs anlegen</button>');
+        return;
+      }
+      var reihen=kl.slice(0,3).map(function(k){
+        var m=k.mitglieder||0, p=k.sitzplaetze||0, quote=p?Math.round(m/p*100):0;
+        var tage=null; try{ tage=Math.ceil((new Date(k.lizenz_bis)-new Date())/86400000); }catch(e){}
+        return '<div style="padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)">'
+          +'<div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">'
+            +'<div style="font-size:14px;font-weight:800;color:#e0f2fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(k.name)+'</div>'
+            +'<div style="font-family:monospace;font-size:15px;font-weight:800;color:var(--accent);letter-spacing:2px;flex-shrink:0">'+esc(k.join_code)+'</div>'
+          +'</div>'
+          +'<div style="display:flex;justify-content:space-between;font-size:11.5px;color:#9fc3da;margin-top:4px"><span>'+m+' von '+p+' Pl\u00e4tzen belegt</span>'
+          +(tage!=null&&tage>=0?('<span>Lizenz noch '+tage+' Tage</span>'):'')+'</div>'
+          +'<div style="height:6px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:6px;overflow:hidden"><div style="height:100%;width:'+quote+'%;background:var(--accent);border-radius:4px"></div></div>'
+        +'</div>';
+      }).join('');
+      var frei=kl.reduce(function(s,k){ return s+Math.max(0,(k.sitzplaetze||0)-(k.mitglieder||0)); },0);
+      el.innerHTML=karte(titel('Deine Kurse')+reihen
+        +'<div style="font-size:11.5px;color:#8ab4d0;margin:10px 0 12px">'+kl.length+' Kurs'+(kl.length>1?'e':'')+' \u00b7 '+frei+' freie Pl\u00e4tze</div>'
+        +'<div style="display:flex;gap:8px">'
+          +'<button onclick="showLehrer()" style="flex:1.3;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:12px;color:#fff;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer">Kurs &amp; Dashboard</button>'
+          +'<button onclick="navGo(\'faelle\')" style="flex:1;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px;color:#cfe3f3;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer">Unterrichts-F\u00e4lle</button>'
+        +'</div>');
+    }
+    if(_klCache && Date.now()-_klZeit<60000){ zeichne(_klCache); return; }
+    if(!el.innerHTML) el.innerHTML=karte(titel('Deine Kurse')+'<div style="font-size:13px;color:#8ab4d0">L\u00e4dt\u2026</div>');
+    if(_klLaeuft) return;
+    _klLaeuft=true;
+    fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list',lehrer_email:le})})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ _klLaeuft=false; _klCache=(d&&d.klassen)||[]; _klZeit=Date.now(); zeichne(_klCache); })
+      .catch(function(){ _klLaeuft=false; el.innerHTML=karte(titel('Deine Kurse')+'<div style="font-size:13px;color:#fb7185">Kurse konnten nicht geladen werden.</div><button onclick="showLehrer()" style="width:100%;margin-top:10px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:11px;color:#cfe3f3;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer">Lehrer-Bereich \u00f6ffnen</button>'); });
+  }
+
+  /* ---- Examinierte: Nachschlagen statt Pr\u00fcfungsreife ---- */
+  function examKarte(el){
+    var v=verlauf().filter(function(s){ return LABELS[s]; });
+    var chips=v.length
+      ? v.map(function(s){ return '<button onclick="plOeffne(\''+s+'\')" style="background:rgba(var(--accent-rgb),.10);border:1px solid rgba(var(--accent-rgb),.28);border-radius:999px;padding:8px 13px;color:#cfe3f3;font-size:12.5px;font-family:inherit;cursor:pointer">'+esc(LABELS[s])+'</button>'; }).join('')
+      : '<div style="font-size:13px;color:#9fc3da;line-height:1.5">Noch nichts nachgeschlagen. Was du \u00f6ffnest, liegt hier beim n\u00e4chsten Mal griffbereit.</div>';
+    el.innerHTML=karte(titel('Zuletzt nachgeschlagen')
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">'+chips+'</div>'
+      +'<div style="display:flex;gap:8px">'
+        +'<button onclick="openMedChooser()" style="flex:1.2;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:12px;color:#fff;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer">Medikamente</button>'
+        +'<button onclick="showSearchOverlay()" style="flex:1;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px;color:#cfe3f3;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer">Suche</button>'
+      +'</div>');
+  }
+
+  function plPersonaHome(){
+    var p=persona(); if(p!=='lehrkraft'&&p!=='examiniert') return;
+    var hero=document.getElementById('home-hero');
+    if(hero){ if(p==='lehrkraft') lehrerKarte(hero); else examKarte(hero); }
+    if(p==='lehrkraft'){
+      var st=document.getElementById('home-stats'); if(st) st.innerHTML='';          // kein Tagesziel, keine Serie
+      var co=document.getElementById('home-coach'); if(co) co.innerHTML='';          // kein Lern-Coach
+      var cl=document.getElementById('home-coach-label'); if(cl) cl.style.display='none';
+      var fdt=document.getElementById('home-fdt');
+      if(fdt&&fdt.innerHTML.indexOf('FRAGE DES TAGES')>-1) fdt.innerHTML=fdt.innerHTML.replace('FRAGE DES TAGES','IMPULS F\u00dcR DEN UNTERRICHT');
+    }
+  }
+  window.plPersonaHome=plPersonaHome;
+  ['renderHomeStats','renderFrageDesTages'].forEach(function(fn){
+    if(typeof window[fn]!=='function') return;
+    var o=window[fn];
+    window[fn]=function(){ var r=o.apply(this,arguments); try{ plPersonaHome(); }catch(e){} return r; };
+  });
+  if(typeof window.setPersona==='function'){
+    var _sp=window.setPersona;
+    window.setPersona=function(){ var r=_sp.apply(this,arguments); _klCache=null; try{ plPersonaHome(); }catch(e){} return r; };
+  }
+  setTimeout(function(){ try{ plPersonaHome(); }catch(e){} },900);
+})();
+</script>
+<script>
 /* Onboarding-Tour: Spotlight-Rundgang beim ersten Start, jederzeit abbrechbar und wiederholbar */
 (function(){
   var S=[], i=0, node={}, running=false;
