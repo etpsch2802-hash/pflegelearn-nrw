@@ -799,7 +799,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   </button>
   <div class="header-btns">
     <button class="hbtn hbtn-back" id="btn-back" onclick="goBack()" style="display:none"><span data-i18n="btn_back">← Zurück</span></button>
-    <button class="hbtn" onclick="showSearchOverlay()" aria-label="Suche öffnen" title="Suche" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg></button>
+    <button class="hbtn" id="btn-suche" onclick="showSearchOverlay()" aria-label="Suche öffnen" title="Suche" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg></button>
     <button class="hbtn" id="btn-darkmode" onclick="toggleDarkMode()" aria-label="Hell- und Dunkelmodus umschalten" title="Hell/Dunkel" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-moon"/></svg></button>
     <button class="hbtn" onclick="toggleNavMenu()" aria-label="Menü öffnen" title="Menü" style="background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.15);color:#b3c4d6" id="btn-hamburger"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-menu"/></svg></button>
   </div>
@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <button onclick="navGo('taschenkarten')" class="nav-drop-btn"><span data-i18n="nav_taschen"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-idcard"/></svg> Taschenkarten</span></button>
     <button onclick="navGo('preise')" class="nav-drop-btn"><span data-i18n="nav_preise"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-card"/></svg> Plan &amp; Preise</span></button>
     <button onclick="document.getElementById('nav-dropdown').style.display='none';showKlasseBeitreten()" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg> Kurs beitreten</span></button>
-    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLehrer()" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-school"/></svg> Lehrer-Bereich</span></button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';showLehrer()" id="nav-lehrer-btn" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-school"/></svg> Lehrer-Bereich</span></button>
     <button onclick="showThemePicker()" class="nav-drop-btn"><span data-i18n="nav_theme"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-palette"/></svg> Mein Theme</span></button>
     <button onclick="toggleEffekte()" class="nav-drop-btn" id="effekte-toggle-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Effekte: Aus</button>
     <button onclick="const on=toggleSound(); this.innerHTML = on ? '🔊 Sound: An' : '🔇 Sound: Aus';" class="nav-drop-btn" id="sound-toggle-btn"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-speaker"/></svg> Sound: An</button>
@@ -1022,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <button onclick="navGo('quizSelect')" id="tour-tile-quiz" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pencil"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Quiz</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Fragen nach Fachbereich</span></button>
     <button onclick="openExamenIntro()" id="tour-tile-examen" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-file"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Prüfungssimulator</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Examen unter Zeit</span></button><button onclick="openFachklausuren()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-check"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fachklausuren</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Nach Kompetenzbereich I–V</span></button>
     <button onclick="navGo('karteikarten')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-layers"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Karteikarten</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Spaced Repetition</span></button>
-    <button onclick="navGo('faelle')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pulse"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fallbeispiele</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Interaktive Fälle</span></button>
+    <button onclick="navGo('faelle')" id="tour-tile-faelle" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pulse"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fallbeispiele</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Interaktive Fälle</span></button>
     <button onclick="openCEHub()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kompetenzbereiche</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Lernen nach §53 PflBG</span></button><button onclick="navGo('medtrainer')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-pill"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Medikamenten-Trainer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Dosis &amp; Infusionen rechnen</span></button><button onclick="openExamPicker('fachgespraech')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-mic"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Fachgespräch (KI)</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Reflexion einer Pflegesituation</span></button>
   </div>
 </div>
@@ -1057,8 +1057,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     <button onclick="showScreen('support')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-lifebuoy"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Über mich &amp; Hilfe</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Der Autor · Support · FAQ</span></button>
     <button onclick="showScreen('preise')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-card"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Plan &amp; Preise</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Zugang verwalten</span></button>
-    <button onclick="openSchuleChooser()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-cap"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kurs &amp; Lehrer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Beitreten · Dashboard</span></button>
-    <button onclick="showScreen('ausbildungswege')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Ausbildungswege</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">GPA · ATA · OTA · Fachpflege</span></button>
+    <button onclick="openSchuleChooser()" id="tour-tile-kurs" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-cap"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kurs &amp; Lehrer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Beitreten · Dashboard</span></button>
+    <button onclick="showScreen('ausbildungswege')" id="tour-tile-wege" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Ausbildungswege</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">GPA · ATA · OTA · Fachpflege</span></button>
     <button onclick="openPersonaChooser()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-user"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Mein Bereich</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Azubi · Fachkraft · Lehrkraft</span></button>
     <button onclick="showThemePicker()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-palette"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Mein Theme</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Farbwelt wählen</span></button>
     <button onclick="plToggleReminders()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-bulb"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Lernerinnerungen</span><span id="pl-reminder-status" style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Aus</span></button><button onclick="toggleDarkMode()" aria-label="Hell- und Dunkelmodus umschalten" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-moon"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Hell / Dunkel</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Ansicht umschalten</span></button>
@@ -21520,6 +21520,8 @@ if (_savedLang !== 'de') {
     try{
       if(typeof currentUser==='undefined' || !currentUser) return;      // nur eingeloggt
       if(localStorage.getItem('pl_onboarded')!=='1') return;            // erst nach dem Welcome
+      var _p=''; try{ _p=localStorage.getItem('pl_persona')||''; }catch(e){}
+      if(_p==='examiniert'||_p==='lehrkraft') return;                   // nur Azubis haben ein Examensdatum
       if(hatDatum() || fertig()) return;                               // nur einmal, wenn kein Datum
       setTimeout(zeige, 1100);
     }catch(e){}
@@ -22312,9 +22314,11 @@ window.renderWebBesucher=function(force){
 <script>
 /* Onboarding-Tour: Spotlight-Rundgang beim ersten Start, jederzeit abbrechbar und wiederholbar */
 (function(){
-  var KEY='pl_tour_v1', S=[], i=0, node={}, running=false;
-  function done(){ try{ return localStorage.getItem(KEY)==='1'; }catch(e){ return true; } }
-  function setDone(){ try{ localStorage.setItem(KEY,'1'); }catch(e){} }
+  var S=[], i=0, node={}, running=false;
+  function persona(){ try{ var p=localStorage.getItem('pl_persona')||''; return (p==='examiniert'||p==='lehrkraft')?p:'azubi'; }catch(e){ return 'azubi'; } }
+  function KEY(){ return 'pl_tour_v1_'+persona(); }
+  function done(){ try{ return localStorage.getItem(KEY())==='1'; }catch(e){ return true; } }
+  function setDone(){ try{ localStorage.setItem(KEY(),'1'); }catch(e){} }
   function track(ev,extra){
     try{ if(typeof gtag==='function') gtag('event',ev,extra||{}); }catch(e){}
     try{ if(typeof window.va==='function') window.va('event',{name:ev}); }catch(e){}
@@ -22323,14 +22327,32 @@ window.renderWebBesucher=function(force){
   function sichtbar(x){ if(!x) return false; var r=x.getBoundingClientRect(); return r.width>0&&r.height>0&&getComputedStyle(x).display!=='none'; }
   function menuOffen(){ var d=el('nav-dropdown'); return d&&getComputedStyle(d).display!=='none'; }
 
-  var SCHRITTE=[
+  var TOUREN={
+  azubi:[
     { id:'bn-heute',  t:'Dein Tagesplan',      x:'Hier siehst du jeden Tag, was ansteht: f\u00e4llige Wiederholungen und neue Fragen.' },
     { id:'tour-tile-quiz', screen:'ueben', t:'Fragen \u00fcben', x:'Nach Fach, nach Lernmodus oder gezielt deine Schwachstellen.' },
     { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Hier startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen. Darin findest du auch die Fachklausuren pro Fach und die Fallklausur.' },
     { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
     { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Einstellungen und Feedback.', oeffneMenu:true },
     { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
-  ];
+  ],
+  examiniert:[
+    { id:'btn-suche', t:'Schnell nachschlagen', x:'Im Dienst z\u00e4hlt Tempo: Medikament, Score oder Krankheitsbild direkt suchen.' },
+    { id:'bn-wissen', t:'Wissensbibliothek',    x:'Krankheitsbilder, Medikamente, Scores, Notfallmanagement und Taschenkarten an einem Ort.' },
+    { id:'tour-tile-wege', screen:'profil', t:'Fachweiterbildung', x:'An\u00e4sthesie, Intensiv, OP: Wege, Voraussetzungen und Lernstoff f\u00fcr die Weiterbildung.' },
+    { id:'ki-fab',    t:'KI-Assistent',         x:'Fachfragen im Klartext beantwortet, mit Bezug auf die Pflegepraxis.' },
+    { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Einstellungen und Feedback.', oeffneMenu:true },
+    { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
+  ],
+  lehrkraft:[
+    { id:'tour-tile-faelle', screen:'ueben', t:'Fallbeispiele f\u00fcr den Unterricht', x:'Fertige Fallsituationen und Gro\u00dff\u00e4lle, direkt im Kurs einsetzbar.' },
+    { id:'tour-tile-kurs', screen:'profil', t:'Kurs & Klassen', x:'Klasse anlegen, Sitzpl\u00e4tze vergeben und den Lernstand deiner Sch\u00fcler sehen.' },
+    { id:'ki-fab',    t:'KI-Assistent',    x:'Aufgaben, Pr\u00fcfungsfragen und Fallbeispiele generieren lassen.' },
+    { id:'btn-hamburger', t:'Das Men\u00fc', x:'Hier liegen der Lehrer-Bereich, Wissen, Einstellungen und Feedback.', oeffneMenu:true },
+    { id:'nav-lehrer-btn', t:'Lehrer-Bereich', x:'Dashboard deiner Klassen: Fortschritt, Aufgaben und Lizenz.', brauchtMenu:true },
+    { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Fehlt ein Thema oder stimmt eine Frage nicht? Schreib es mir hier.', brauchtMenu:true }
+  ]
+  };
 
   function bau(){
     if(node.back) return;
@@ -22352,7 +22374,7 @@ window.renderWebBesucher=function(force){
     window.removeEventListener('resize',zeichne); window.removeEventListener('scroll',zeichne,true);
   }
   function ende(grund){
-    setDone(); track('tour_'+grund,{schritt:i+1});
+    setDone(); track('tour_'+grund,{schritt:i+1,rolle:persona()});
     try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
     try{ if(grund==='fertig'&&typeof navGo==='function') navGo('home'); }catch(e){}
     weg();
@@ -22394,13 +22416,13 @@ window.renderWebBesucher=function(force){
   }
   window.plTourStart=function(manuell){
     if(running) return;
-    S=SCHRITTE.filter(function(s){ var x=el(s.id); return x&&(s.brauchtMenu||s.screen||sichtbar(x)); });
+    S=(TOUREN[persona()]||TOUREN.azubi).filter(function(s){ var x=el(s.id); return x&&(s.brauchtMenu||s.screen||sichtbar(x)); });
     if(!S.length) return;
     i=-1; running=true; bau();
     try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
     node.back.onclick=function(){};
     window.addEventListener('resize',zeichne); window.addEventListener('scroll',zeichne,true);
-    track('tour_start',{manuell:manuell?1:0});
+    track('tour_start',{manuell:manuell?1:0,rolle:persona()});
     naechster();
   };
   // Erststart: erst wenn der Nutzer eingeloggt und wirklich in der App ist
