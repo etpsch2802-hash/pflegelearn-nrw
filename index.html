@@ -860,7 +860,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
       </span>
     </div>
     <button onclick="navGo('support')" class="nav-drop-btn" style="color:var(--accent)"><span data-i18n="nav_support"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lifebuoy"/></svg> Hilfe & Support</span></button>
-    <button onclick="showFeedback()" class="nav-drop-btn" style="color:#34d399"><span data-i18n="nav_feedback"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chat"/></svg> Feedback / Fehler melden</span></button>
+    <button onclick="plTourStart(true)" class="nav-drop-btn" style="color:#8ab4d0">✨ App-Tour starten</button>
+    <button onclick="showFeedback()" id="nav-feedback-btn" class="nav-drop-btn" style="color:#34d399"><span data-i18n="nav_feedback"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chat"/></svg> Feedback / Fehler melden</span></button>
   </div>
 
   <hr style="border-color:rgba(255,255,255,.13);margin:6px 0">
@@ -22307,6 +22308,105 @@ window.renderWebBesucher=function(force){
   })
   .catch(function(){ el.innerHTML=wrap(TITEL+'<div style="color:#f87171;font-size:13px">Netzwerkfehler.</div>'); });
 };
+</script>
+<script>
+/* Onboarding-Tour: Spotlight-Rundgang beim ersten Start, jederzeit abbrechbar und wiederholbar */
+(function(){
+  var KEY='pl_tour_v1', S=[], i=0, node={}, running=false;
+  function done(){ try{ return localStorage.getItem(KEY)==='1'; }catch(e){ return true; } }
+  function setDone(){ try{ localStorage.setItem(KEY,'1'); }catch(e){} }
+  function track(ev,extra){
+    try{ if(typeof gtag==='function') gtag('event',ev,extra||{}); }catch(e){}
+    try{ if(typeof window.va==='function') window.va('event',{name:ev}); }catch(e){}
+  }
+  function el(id){ return document.getElementById(id); }
+  function sichtbar(x){ if(!x) return false; var r=x.getBoundingClientRect(); return r.width>0&&r.height>0&&getComputedStyle(x).display!=='none'; }
+  function menuOffen(){ var d=el('nav-dropdown'); return d&&getComputedStyle(d).display!=='none'; }
+
+  var SCHRITTE=[
+    { id:'bn-heute',  t:'Dein Tagesplan',      x:'Hier siehst du jeden Tag, was ansteht: f\u00e4llige Wiederholungen und neue Fragen.' },
+    { id:'bn-ueben',  t:'\u00dcben & Pr\u00fcfung', x:'Fragen nach Fach, Lernmodus oder komplette Pr\u00fcfungssimulation.' },
+    { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
+    { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Einstellungen und Feedback.', oeffneMenu:true },
+    { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
+  ];
+
+  function bau(){
+    if(node.back) return;
+    var b=document.createElement('div');
+    b.id='pl-tour-back';
+    b.style.cssText='position:fixed;inset:0;z-index:999997;background:transparent';
+    var r=document.createElement('div');
+    r.id='pl-tour-ring';
+    r.style.cssText='position:fixed;z-index:999998;border-radius:14px;box-shadow:0 0 0 9999px rgba(3,10,20,.78),0 0 0 3px var(--accent);pointer-events:none;transition:all .25s ease';
+    var t=document.createElement('div');
+    t.id='pl-tour-tip';
+    t.style.cssText='position:fixed;z-index:999999;max-width:330px;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.35);border-radius:14px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.55);color:#e6eef7;font-size:14px;line-height:1.5';
+    document.body.appendChild(b); document.body.appendChild(r); document.body.appendChild(t);
+    node={back:b,ring:r,tip:t};
+  }
+  function weg(){
+    ['pl-tour-back','pl-tour-ring','pl-tour-tip'].forEach(function(id){ var x=el(id); if(x&&x.parentNode) x.parentNode.removeChild(x); });
+    node={}; running=false;
+    window.removeEventListener('resize',zeichne); window.removeEventListener('scroll',zeichne,true);
+  }
+  function ende(grund){
+    setDone(); track('tour_'+grund,{schritt:i+1});
+    try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
+    weg();
+  }
+  function zeichne(){
+    if(!running) return;
+    var s=S[i], ziel=el(s.id);
+    if(!ziel||!sichtbar(ziel)){ naechster(); return; }
+    var r=ziel.getBoundingClientRect(), pad=8;
+    node.ring.style.top=(r.top-pad)+'px'; node.ring.style.left=(r.left-pad)+'px';
+    node.ring.style.width=(r.width+pad*2)+'px'; node.ring.style.height=(r.height+pad*2)+'px';
+    var letzter=(i===S.length-1);
+    node.tip.innerHTML='<div style="font-size:11px;letter-spacing:1px;color:var(--accent);font-weight:800;margin-bottom:5px">SCHRITT '+(i+1)+' VON '+S.length+'</div>'
+      +'<div style="font-weight:800;font-size:16px;margin-bottom:6px;color:#fff">'+s.t+'</div>'
+      +'<div style="color:#b3c4d6;margin-bottom:14px">'+s.x+'</div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button type="button" id="pl-tour-skip" style="flex:1;background:none;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:10px;color:#8ab4d0;font-size:13px;font-family:inherit;cursor:pointer">'+(letzter?'Schlie\u00dfen':'\u00dcberspringen')+'</button>'
+      +'<button type="button" id="pl-tour-next" style="flex:1.4;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:10px;padding:10px;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer">'+(letzter?'Los geht\u2019s':'Weiter')+'</button>'
+      +'</div>';
+    el('pl-tour-skip').onclick=function(){ ende(letzter?'fertig':'abbruch'); };
+    el('pl-tour-next').onclick=function(){ letzter?ende('fertig'):naechster(); };
+    var th=node.tip.offsetHeight||170, platzUnten=window.innerHeight-r.bottom;
+    var top=(platzUnten>th+20)?(r.bottom+14):Math.max(14,r.top-th-14);
+    node.tip.style.top=top+'px';
+    node.tip.style.left=Math.max(12,Math.min(window.innerWidth-12-node.tip.offsetWidth,r.left+r.width/2-node.tip.offsetWidth/2))+'px';
+  }
+  function naechster(){
+    i++;
+    if(i>=S.length){ ende('fertig'); return; }
+    var s=S[i];
+    if(s.oeffneMenu&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} }
+    if(s.brauchtMenu&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} }
+    setTimeout(zeichne,s.brauchtMenu||s.oeffneMenu?260:0);
+  }
+  window.plTourStart=function(manuell){
+    if(running) return;
+    S=SCHRITTE.filter(function(s){ var x=el(s.id); return x&&(s.brauchtMenu||sichtbar(x)); });
+    if(!S.length) return;
+    i=-1; running=true; bau();
+    try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
+    node.back.onclick=function(){};
+    window.addEventListener('resize',zeichne); window.addEventListener('scroll',zeichne,true);
+    track('tour_start',{manuell:manuell?1:0});
+    naechster();
+  };
+  // Erststart: erst wenn der Nutzer eingeloggt und wirklich in der App ist
+  var v=0, w=setInterval(function(){
+    if(++v>40){ clearInterval(w); return; }
+    if(done()||running) { clearInterval(w); return; }
+    var aktiv=document.querySelector('.page.active');
+    if(window.currentUser && aktiv && aktiv.id==='screen-home' && sichtbar(el('bottom-nav'))){
+      clearInterval(w);
+      setTimeout(function(){ if(!done()) window.plTourStart(false); },1400);
+    }
+  },1500);
+})();
 </script>
 <script>
 /* Live-Praesenz: Heartbeat + Admin-Ansicht */
