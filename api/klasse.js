@@ -428,6 +428,55 @@ export default async function handler(req, res) {
       return;
     }
 
+    // ── Kurs-Nachrichten: Ankuendigung der Lehrkraft (Einweg) + private Frage an die Lehrkraft ──
+    // Azubis koennen NICHT untereinander schreiben. Es gibt bewusst keinen Klassenchat.
+    if (action === 'nachricht_senden' || action === 'nachrichten') {
+      var nkid = (body.klasse_id ? String(body.klasse_id) : '').trim();
+      var nk = null;
+      if (!nkid && body.code) { nk = await findByCode(SB_URL, SB_SERVICE, String(body.code).trim().toUpperCase()); if (nk) nkid = nk.id; }
+      if (!nkid) { res.status(400).json({ error: 'klasse_id' }); return; }
+      if (!nk) {
+        var kr = await fetch(SB_URL + '/rest/v1/klassen?id=eq.' + encodeURIComponent(nkid) + '&select=*&limit=1', { headers: sbHeaders(SB_SERVICE) });
+        var ka = await kr.json(); nk = (Array.isArray(ka) && ka[0]) ? ka[0] : null;
+      }
+      if (!nk) { res.status(404).json({ error: 'klasse' }); return; }
+
+      var nmail = (body.email ? String(body.email) : '').trim().toLowerCase();
+      var istLehrkraft = !!nmail && String(nk.lehrer_email || '').toLowerCase() === nmail;
+      var mitglied = null;
+      if (!istLehrkraft && nmail) {
+        var mr = await fetch(SB_URL + '/rest/v1/klassen_mitglieder?klasse_id=eq.' + encodeURIComponent(nkid) + '&email=eq.' + encodeURIComponent(nmail) + '&select=name,email&limit=1', { headers: sbHeaders(SB_SERVICE) });
+        var ma = await mr.json(); mitglied = (Array.isArray(ma) && ma[0]) ? ma[0] : null;
+      }
+      if (!istLehrkraft && !mitglied) { res.status(403).json({ error: 'kein_zugriff' }); return; }
+
+      if (action === 'nachricht_senden') {
+        var ntext = String(body.text || '').trim().slice(0, 1000);
+        if (!ntext) { res.status(400).json({ error: 'text' }); return; }
+        await fetch(SB_URL + '/rest/v1/kurs_nachrichten', {
+          method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'return=minimal' }),
+          body: JSON.stringify({
+            klasse_id: nkid,
+            richtung: istLehrkraft ? 'an_kurs' : 'an_lehrkraft',
+            von_email: nmail,
+            von_name: istLehrkraft ? (nk.lehrer_name || 'Lehrkraft') : (mitglied.name || 'Azubi'),
+            text: ntext
+          })
+        });
+        res.status(200).json({ ok: true });
+        return;
+      }
+
+      // Lesen: Lehrkraft sieht alles, Azubi nur Ankuendigungen + eigene Fragen
+      var qs = '/rest/v1/kurs_nachrichten?klasse_id=eq.' + encodeURIComponent(nkid) + '&select=id,richtung,von_name,von_email,text,created_at&order=created_at.desc&limit=100';
+      if (!istLehrkraft) qs += '&or=(richtung.eq.an_kurs,von_email.eq.' + encodeURIComponent(nmail) + ')';
+      var nr = await fetch(SB_URL + qs, { headers: sbHeaders(SB_SERVICE) });
+      var nl = await nr.json(); if (!Array.isArray(nl)) nl = [];
+      if (!istLehrkraft) nl.forEach(function (n) { if (n.richtung === 'an_kurs') n.von_email = null; });
+      res.status(200).json({ ok: true, rolle: istLehrkraft ? 'lehrkraft' : 'azubi', klasse_name: nk.name, nachrichten: nl });
+      return;
+    }
+
     res.status(400).json({ error: 'action' });
   } catch (e) {
     console.error('[klasse] server', e);
