@@ -980,6 +980,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <!-- ── PERSONA-BANNER: rollenspezifischer Einstieg (Azubi / Examiniert / Lehrkraft), per JS gefuellt ── -->
   <div id="home-persona"></div>
   <div id="home-aufgaben" style="margin-top:12px"></div>
+  <div id="home-nachrichten" style="margin-top:12px"></div>
 
   <!-- ── HEUTE FÄLLIG: SRS-Wiederholungen als taeglicher Rueckkehrgrund ── -->
   <div id="home-due" style="margin-bottom:14px"></div>
@@ -18511,6 +18512,8 @@ function showMeineAufgaben(){
       var box=ov.firstChild; var auf=(d&&d.aufgaben)||[];
       var head='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Meine Aufgaben</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 10px;color:#b3c4d6;cursor:pointer">✕</button></div>'
         +(kn?('<div style="font-size:11px;color:#8ab4d0;margin:-8px 0 12px">Kurs „'+plEsc(kn)+'"</div>'):'');
+      var msgBtn='<button onclick="this.closest(\'[style*=fixed]\').remove();plKursMsgAzubi()" style="width:100%;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:#7dd3fc;border-radius:11px;padding:11px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px">Nachrichten &amp; Frage an die Lehrkraft</button>';
+      head=head+msgBtn;
       if(!auf.length){ box.innerHTML=head+'<div style="text-align:center;color:#8ab4d0;font-size:13px;padding:16px 0">Noch keine Aufgaben – deine Lehrkraft hat noch nichts verteilt.</div>'; return; }
       box.innerHTML=head+auf.map(function(a){
         var inh=a.inhalt||{}; var faellig=a.faellig_am?('<span style="color:#fbbf24">fällig '+plEsc(a.faellig_am)+'</span>'):'';
@@ -18602,6 +18605,7 @@ function plLehrerRender(){
       +'<div style="display:flex;gap:7px;margin-top:7px">'
         +'<button onclick="plStatsOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(167,139,250,.15);border:1px solid #a78bfa;color:#c4b5fd;border-radius:10px;padding:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Lernstand</button>'
         +'<button onclick="plLiveOpen(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(249,115,22,.15);border:1px solid #fb923c;color:#fdba74;border-radius:10px;padding:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Live-Quiz</button>'
+        +'<button onclick="plKursMsgLehrer(\''+plEsc(k.id)+'\')" style="flex:1;background:rgba(56,189,248,.14);border:1px solid #38bdf8;color:#7dd3fc;border-radius:10px;padding:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Nachrichten</button>'
       +'</div></div>';
   }).join('');
 }
@@ -22684,6 +22688,109 @@ window.renderWebBesucher=function(force){
     window.renderHomeStats=function(){ var r=o.apply(this,arguments); try{ window.plAufgabenBanner(false); }catch(e){} return r; };
   }
   setTimeout(function(){ try{ window.plAufgabenBanner(false); }catch(e){} },1500);
+})();
+</script>
+<script>
+/* Kurs-Nachrichten: Lehrkraft schreibt an den Kurs (Einweg), Azubi fragt privat die Lehrkraft.
+   Azubis schreiben sich bewusst NICHT untereinander - es gibt keinen Klassenchat. */
+(function(){
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function post(b){ return fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){ return r.json(); }); }
+  function lmail(){ try{ return localStorage.getItem('pl_lehrer_email')||''; }catch(e){ return ''; } }
+  function amail(){ try{ return (typeof plKlUserEmail==='function')?plKlUserEmail():''; }catch(e){ return ''; } }
+  function kcode(){ try{ return localStorage.getItem('pl_klasse_code')||''; }catch(e){ return ''; } }
+  function datum(iso){ try{ var d=new Date(iso); return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+  var SEK='background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);color:#cfe3f3;border-radius:12px;padding:12px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer';
+  var PRIM='background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:12px;color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer';
+
+  function fenster(id){
+    var alt=document.getElementById(id); if(alt) alt.remove();
+    var ov=document.createElement('div'); ov.id=id;
+    ov.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.88);z-index:1300;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;backdrop-filter:blur(3px)';
+    ov.innerHTML='<div id="'+id+'-in" style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px;padding:20px;width:100%;max-width:520px;margin:auto"></div>';
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    document.body.appendChild(ov);
+    return document.getElementById(id+'-in');
+  }
+
+  function liste(d, lehrer){
+    if(!d.nachrichten.length) return '<div style="font-size:13px;color:#8ab4d0;padding:12px 0">Noch keine Nachrichten.</div>';
+    return d.nachrichten.map(function(n){
+      var ank=(n.richtung==='an_kurs');
+      var wer=ank?(lehrer?'Du an den Kurs':esc(n.von_name||'Lehrkraft')):(lehrer?('Frage von '+esc(n.von_name||'Azubi')):'Deine Frage');
+      return '<div style="background:'+(ank?'rgba(var(--accent-rgb),.08)':'rgba(255,255,255,.06)')+';border:1px solid '+(ank?'rgba(var(--accent-rgb),.22)':'rgba(255,255,255,.10)')+';border-radius:12px;padding:12px;margin-bottom:9px">'
+        +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#8ab4d0;margin-bottom:5px"><span>'+wer+'</span><span>'+datum(n.created_at)+'</span></div>'
+        +'<div style="font-size:13.5px;color:#e2e8f0;line-height:1.5;white-space:pre-wrap">'+esc(n.text)+'</div></div>';
+    }).join('');
+  }
+
+  /* ── Lehrkraft ── */
+  window.plKursMsgLehrer=function(kid){
+    var el=fenster('pl-msg');
+    el.innerHTML='<div style="color:#8ab4d0;font-size:13px">Nachrichten werden geladen…</div>';
+    post({action:'nachrichten',klasse_id:kid,email:lmail()}).then(function(d){
+      if(!d||!d.ok){ el.innerHTML='<div style="color:#fb7185;font-size:13px">Konnte nicht geladen werden.</div>'; return; }
+      el.innerHTML='<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin-bottom:2px">Kurs-Nachrichten</div>'
+        +'<div style="font-size:11px;color:#8ab4d0;margin-bottom:14px">Kurs „'+esc(d.klasse_name||'')+'" · Azubis schreiben nur an dich, nicht untereinander</div>'
+        +'<textarea id="plm-text" maxlength="1000" placeholder="Ankündigung an den ganzen Kurs…" style="width:100%;min-height:80px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px;color:#fff;font-size:14px;font-family:inherit;margin-bottom:10px"></textarea>'
+        +'<div style="display:flex;gap:8px;margin-bottom:16px"><button onclick="plKursMsgSend(\''+esc(kid)+'\',true)" style="flex:1;'+PRIM+'">An den Kurs senden</button>'
+        +'<button onclick="plKursMsgClose()" style="flex:.6;'+SEK+'">Schließen</button></div>'
+        +liste(d,true);
+    });
+  };
+  /* ── Azubi ── */
+  window.plKursMsgAzubi=function(){
+    var code=kcode();
+    if(!code){ return; }
+    var el=fenster('pl-msg');
+    el.innerHTML='<div style="color:#8ab4d0;font-size:13px">Nachrichten werden geladen…</div>';
+    post({action:'nachrichten',code:code,email:amail()}).then(function(d){
+      if(!d||!d.ok){ el.innerHTML='<div style="color:#fb7185;font-size:13px">Konnte nicht geladen werden.</div><button onclick="plKursMsgClose()" style="width:100%;margin-top:12px;'+SEK+'">Schließen</button>'; return; }
+      try{ if(d.nachrichten[0]) localStorage.setItem('pl_msg_gesehen', d.nachrichten[0].created_at); }catch(e){}
+      el.innerHTML='<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin-bottom:2px">Kurs-Nachrichten</div>'
+        +'<div style="font-size:11px;color:#8ab4d0;margin-bottom:14px">Kurs „'+esc(d.klasse_name||'')+'" · deine Frage sieht nur deine Lehrkraft</div>'
+        +'<textarea id="plm-text" maxlength="1000" placeholder="Frage an deine Lehrkraft…" style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px;color:#fff;font-size:14px;font-family:inherit;margin-bottom:10px"></textarea>'
+        +'<div style="display:flex;gap:8px;margin-bottom:16px"><button onclick="plKursMsgSend(\'\',false)" style="flex:1;'+PRIM+'">Frage senden</button>'
+        +'<button onclick="plKursMsgClose()" style="flex:.6;'+SEK+'">Schließen</button></div>'
+        +liste(d,false);
+    });
+  };
+  window.plKursMsgSend=function(kid, lehrer){
+    var t=(document.getElementById('plm-text')||{}).value||'';
+    if(!t.trim()) return;
+    post(lehrer?{action:'nachricht_senden',klasse_id:kid,email:lmail(),text:t}
+               :{action:'nachricht_senden',code:kcode(),email:amail(),text:t})
+      .then(function(){ lehrer?plKursMsgLehrer(kid):plKursMsgAzubi(); try{ if(window.plMsgBanner) window.plMsgBanner(true); }catch(e){} });
+  };
+  window.plKursMsgClose=function(){ var o=document.getElementById('pl-msg'); if(o) o.remove(); };
+
+  /* ── Heute: Hinweis auf neue Ankuendigung ── */
+  var _c=null,_z=0;
+  window.plMsgBanner=function(neu){
+    var el=document.getElementById('home-nachrichten'); if(!el) return;
+    if(!kcode()||!amail()){ el.innerHTML=''; return; }
+    function zeichne(list){
+      var ank=list.filter(function(n){ return n.richtung==='an_kurs'; });
+      if(!ank.length){ el.innerHTML=''; return; }
+      var gesehen=''; try{ gesehen=localStorage.getItem('pl_msg_gesehen')||''; }catch(e){}
+      var neueAnz=ank.filter(function(n){ return !gesehen || n.created_at>gesehen; }).length;
+      if(!neueAnz){ el.innerHTML=''; return; }
+      el.innerHTML='<button onclick="plKursMsgAzubi()" style="width:100%;text-align:left;background:rgba(255,255,255,.085);border:1px solid var(--accent);border-radius:14px;padding:14px;cursor:pointer;font-family:inherit">'
+        +'<div style="display:flex;align-items:center;gap:11px"><div style="flex:1">'
+        +'<div style="font-size:13.5px;font-weight:800;color:#e0f2fe">'+neueAnz+' neue Nachricht'+(neueAnz>1?'en':'')+' deiner Lehrkraft</div>'
+        +'<div style="font-size:11.5px;color:#9fc3da;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(ank[0].text)+'</div></div>'
+        +'<span style="color:var(--accent);font-size:16px">\u203a</span></div></button>';
+    }
+    if(!neu && _c && Date.now()-_z<120000){ zeichne(_c); return; }
+    post({action:'nachrichten',code:kcode(),email:amail()}).then(function(d){
+      if(!d||!d.ok) return; _c=d.nachrichten||[]; _z=Date.now(); zeichne(_c);
+    }).catch(function(){});
+  };
+  if(typeof window.renderHomeStats==='function'){
+    var o=window.renderHomeStats;
+    window.renderHomeStats=function(){ var r=o.apply(this,arguments); try{ window.plMsgBanner(false); }catch(e){} return r; };
+  }
+  setTimeout(function(){ try{ window.plMsgBanner(false); }catch(e){} },1800);
 })();
 </script>
 <script>
