@@ -18574,6 +18574,12 @@ function showLehrer(){
   var gate=document.getElementById('lehrer-gate'); var main=document.getElementById('lehrer-main');
   if(le){ if(gate)gate.style.display='none'; if(main)main.style.display='block'; plLehrerLoad(); }
   else { if(gate)gate.style.display='block'; if(main)main.style.display='none'; }
+  // Admin: Lehrer-Bereich ohne eigenen Kurs ansehen (Demo fuer Vorfuehrung und Tutorial)
+  try{
+    if(gate && typeof isAdmin==='function' && isAdmin() && !document.getElementById('lehrer-demo-btn')){
+      gate.insertAdjacentHTML('beforeend','<button id="lehrer-demo-btn" onclick="plLehrerDemo()" style="width:100%;margin-top:10px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.45);color:#fcd34d;border-radius:11px;padding:11px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Demo-Kurs ansehen (Admin)</button>');
+    }
+  }catch(e){}
 }
 function plLehrerLogin(){
   var e=(document.getElementById('lehrer-email').value||'').trim().toLowerCase();
@@ -22797,6 +22803,84 @@ window.renderWebBesucher=function(force){
     window.renderHomeStats=function(){ var r=o.apply(this,arguments); try{ window.plMsgBanner(false); }catch(e){} return r; };
   }
   setTimeout(function(){ try{ window.plMsgBanner(false); }catch(e){} },1800);
+})();
+</script>
+<script>
+/* Admin-Demo: Lehrer-Bereich ohne echten Kurs ansehen (fuer Vorfuehrung und Tutorial) */
+(function(){
+  var DEMO_ID='demo-kurs';
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function demoAn(){ return window._plDemoKurs===true; }
+  var SEK='background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);color:#cfe3f3;border-radius:12px;padding:12px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer';
+  function fenster(inner){
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.88);z-index:1300;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;backdrop-filter:blur(3px)';
+    ov.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px;padding:20px;width:100%;max-width:520px;margin:auto">'
+      +'<div style="display:inline-block;font-size:10px;font-weight:900;letter-spacing:1px;color:#04121f;background:#fbbf24;border-radius:6px;padding:3px 8px;margin-bottom:10px">DEMO</div>'
+      +inner+'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;margin-top:14px;'+SEK+'">Schließen</button></div>';
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    document.body.appendChild(ov);
+  }
+
+  window.plLehrerDemo=function(){
+    window._plDemoKurs=true;
+    try{ showScreen('lehrer'); }catch(e){}
+    var g=document.getElementById('lehrer-gate'), m=document.getElementById('lehrer-main');
+    if(g) g.style.display='none'; if(m) m.style.display='block';
+    try{
+      _plKlassen=[{ id:DEMO_ID, name:'Demo-Kurs PFK 2026', schule:'Beispiel-Pflegeschule', join_code:'DEMO1',
+        sitzplaetze:12, mitglieder:8, lizenz_bis:new Date(Date.now()+180*864e5).toISOString().slice(0,10) }];
+      plLehrerRender();
+    }catch(e){}
+    var host=document.getElementById('lehrer-klassen');
+    if(host) host.insertAdjacentHTML('afterbegin','<div style="background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.4);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#fcd34d">Demo-Ansicht: Beispieldaten, nichts wird gespeichert. Neu laden beendet die Demo.</div>');
+  };
+
+  /* Die drei Werkzeuge im Demo-Modus mit Beispieldaten zeigen */
+  function wrap(name, bau){
+    var orig=window[name];
+    window[name]=function(id){
+      if(demoAn() && String(id)===DEMO_ID){ bau(); return; }
+      return orig.apply(this,arguments);
+    };
+  }
+  function nimmFragen(n){
+    try{ if(typeof QUIZ_FRAGEN!=='undefined'&&QUIZ_FRAGEN.length) return QUIZ_FRAGEN[Math.floor(Math.random()*QUIZ_FRAGEN.length)]; }catch(e){}
+    return null;
+  }
+  setTimeout(function(){
+    if(typeof window.plStatsOpen==='function') wrap('plStatsOpen',function(){
+      var m=[['Lena B.',312,84,6,1],['Tim K.',208,71,2,0],['Aylin Ö.',455,91,12,0],['Jonas R.',54,58,0,9],['Mia S.',0,null,0,null]];
+      fenster('<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;margin-bottom:12px">Lernstand der Klasse</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
+        +['8 Azubis','5 aktiv (7 T.)','79% Schnitt'].map(function(t){ var p=t.split(' '); return '<div style="background:rgba(var(--accent-rgb),.08);border-radius:12px;padding:11px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--accent)">'+esc(p[0])+'</div><div style="font-size:10.5px;color:#9fc3da">'+esc(p.slice(1).join(' '))+'</div></div>'; }).join('')
+        +'</div>'
+        +m.map(function(x){
+          var farbe=x[2]==null?'#8ab4d0':(x[2]>=75?'#34d399':(x[2]>=55?'#fcd34d':'#fb7185'));
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)">'
+            +'<div><div style="font-size:14px;font-weight:700;color:#e0f2fe">'+esc(x[0])+'</div>'
+            +'<div style="font-size:11px;color:#8ab4d0">'+(x[1]?(x[1]+' Fragen · Serie '+x[3]):'noch nicht gestartet')+(x[4]!=null?(' · zuletzt vor '+x[4]+' T.'):'')+'</div></div>'
+            +'<div style="font-size:17px;font-weight:800;color:'+farbe+'">'+(x[2]==null?'–':x[2]+'%')+'</div></div>';
+        }).join(''));
+    });
+    if(typeof window.plLiveOpen==='function') wrap('plLiveOpen',function(){
+      var q=nimmFragen();
+      fenster('<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;letter-spacing:1.5px;color:#8ab4d0;text-transform:uppercase;font-weight:700">Beitrittscode</div>'
+        +'<div style="font-family:monospace;font-size:38px;font-weight:800;color:var(--accent);letter-spacing:6px">DEMO1</div>'
+        +'<div style="font-size:12px;color:#9fc3da">8 im Raum · App-Menü → „Live-Quiz beitreten"</div></div>'
+        +(q?('<div style="font-size:16px;font-weight:800;color:#fff;line-height:1.4;margin-bottom:12px">'+esc(q.f)+'</div>'
+        +(q.opt||[]).map(function(o,ix){ var n=[5,1,2,0][ix]||0, r=(ix===q.k);
+          return '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12.5px;color:'+(r?'#34d399':'#cfe3f3')+'"><span>'+esc(o)+'</span><span>'+n+'</span></div>'
+          +'<div style="height:9px;background:rgba(255,255,255,.08);border-radius:5px;margin-top:3px;overflow:hidden"><div style="height:100%;width:'+(n*20)+'%;background:'+(r?'#34d399':'var(--accent)')+';border-radius:5px"></div></div></div>'; }).join('')):'')
+        +'<div style="font-size:12px;color:#9fc3da;margin-top:10px">Im echten Kurs: Frage starten, auflösen, Punktestand an oder aus.</div>');
+    });
+    if(typeof window.plKursMsgLehrer==='function') wrap('plKursMsgLehrer',function(){
+      fenster('<div style="font-family:\'DM Serif Display\',serif;font-size:19px;color:#e0f2fe;margin-bottom:12px">Kurs-Nachrichten</div>'
+        +'<div style="background:rgba(var(--accent-rgb),.08);border:1px solid rgba(var(--accent-rgb),.22);border-radius:12px;padding:12px;margin-bottom:9px"><div style="font-size:11px;color:#8ab4d0;margin-bottom:5px">Du an den Kurs</div><div style="font-size:13.5px;color:#e2e8f0">Denkt an die Fallklausur am Freitag. Wiederholt bitte Schock und Volumentherapie.</div></div>'
+        +'<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:12px"><div style="font-size:11px;color:#8ab4d0;margin-bottom:5px">Frage von Tim K.</div><div style="font-size:13.5px;color:#e2e8f0">Zählt die Fallklausur zur Note oder ist das nur zum Üben?</div></div>'
+        +'<div style="font-size:12px;color:#9fc3da;margin-top:10px">Azubis schreiben nur an dich, nicht untereinander.</div>');
+    });
+  },1200);
 })();
 </script>
 <script>
