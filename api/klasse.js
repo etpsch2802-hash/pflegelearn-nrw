@@ -225,6 +225,138 @@ export default async function handler(req, res) {
       return;
     }
 
+    // ── Lernstand einer Klasse (nur fuer die eigene Lehrkraft) ──
+    if (action === 'stats') {
+      var skid = (body.klasse_id ? String(body.klasse_id) : '').trim();
+      var sle = (body.lehrer_email ? String(body.lehrer_email) : '').trim().toLowerCase();
+      if (!skid || !emailRe.test(sle)) { res.status(400).json({ error: 'parameter' }); return; }
+      var sr = await fetch(SB_URL + '/rest/v1/rpc/klasse_stats', {
+        method: 'POST', headers: sbHeaders(SB_SERVICE),
+        body: JSON.stringify({ p_klasse: skid, p_lehrer: sle })
+      });
+      if (!sr.ok) { var st = await sr.text(); console.error('[klasse] stats', sr.status, st); res.status(500).json({ error: 'stats' }); return; }
+      var rows = await sr.json();
+      if (!Array.isArray(rows)) rows = [];
+      var aktiv7 = 0, sumQ = 0, sumR = 0, mitDaten = 0;
+      var jetzt = Date.now();
+      var liste = rows.map(function (r) {
+        var t = r.quiz_total || 0, c = r.quiz_correct || 0;
+        var letzte = r.letzte ? Date.parse(r.letzte) : 0;
+        if (letzte && jetzt - letzte <= 7 * 86400000) aktiv7++;
+        if (t > 0) { sumQ += t; sumR += c; mitDaten++; }
+        return {
+          name: r.name || '', fragen: t, richtig: c,
+          quote: t ? Math.round(c / t * 100) : null,
+          streak: r.streak || 0, letzte: r.letzte || null
+        };
+      });
+      res.status(200).json({
+        ok: true, mitglieder: liste,
+        schnitt: { teilnehmer: liste.length, mit_daten: mitDaten, aktiv_7d: aktiv7,
+                   fragen: sumQ, quote: sumQ ? Math.round(sumR / sumQ * 100) : null }
+      });
+      return;
+    }
+
+    // ── Live-Quiz ────────────────────────────────────────────────────────────
+    async function liveSession(code) {
+      var r = await fetch(SB_URL + '/rest/v1/live_sessions?code=eq.' + encodeURIComponent(code) + '&select=*&limit=1', { headers: sbHeaders(SB_SERVICE) });
+      var a = await r.json();
+      return Array.isArray(a) && a[0] ? a[0] : null;
+    }
+    async function livePatch(id, felder) {
+      felder.updated_at = new Date().toISOString();
+      await fetch(SB_URL + '/rest/v1/live_sessions?id=eq.' + encodeURIComponent(id), {
+        method: 'PATCH', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'return=minimal' }), body: JSON.stringify(felder)
+      });
+    }
+
+    if (action === 'live_start') {
+      var lle = (body.lehrer_email ? String(body.lehrer_email) : '').trim().toLowerCase();
+      if (!emailRe.test(lle)) { res.status(400).json({ error: 'lehrer_email' }); return; }
+      var lkid = (body.klasse_id ? String(body.klasse_id) : '').trim() || null;
+      var neu = null;
+      for (var v = 0; v < 6 && !neu; v++) {
+        var c = genCode(5);
+        var ir = await fetch(SB_URL + '/rest/v1/live_sessions', {
+          method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'return=representation' }),
+          body: JSON.stringify({ code: c, klasse_id: lkid, lehrer_email: lle, status: 'warten', runde: 0 })
+        });
+        if (ir.ok) { var ia = await ir.json(); neu = Array.isArray(ia) ? ia[0] : ia; }
+      }
+      if (!neu) { res.status(500).json({ error: 'live_start' }); return; }
+      res.status(200).json({ ok: true, code: neu.code, session_id: neu.id });
+      return;
+    }
+
+    if (action === 'live_state') {
+      var scode = (body.code ? String(body.code) : '').trim().toUpperCase();
+      var sess = scode ? await liveSession(scode) : null;
+      if (!sess) { res.status(200).json({ ok: false, error: 'nicht_gefunden' }); return; }
+      var tn = (body.teilnehmer ? String(body.teilnehmer) : '').slice(0, 60);
+      if (tn) {
+        await fetch(SB_URL + '/rest/v1/live_teilnehmer?on_conflict=session_id,teilnehmer', {
+          method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'resolution=merge-duplicates,return=minimal' }),
+          body: JSON.stringify({ session_id: sess.id, teilnehmer: tn, name: (body.name ? String(body.name) : '').slice(0, 40), gesehen_at: new Date().toISOString() })
+        });
+      }
+      var tr = await fetch(SB_URL + '/rest/v1/live_teilnehmer?session_id=eq.' + sess.id + '&select=teilnehmer', { headers: sbHeaders(SB_SERVICE) });
+      var tl = await tr.json(); if (!Array.isArray(tl)) tl = [];
+      var ar = await fetch(SB_URL + '/rest/v1/live_answers?session_id=eq.' + sess.id + '&runde=eq.' + sess.runde + '&select=antwort,richtig,teilnehmer', { headers: sbHeaders(SB_SERVICE) });
+      var al = await ar.json(); if (!Array.isArray(al)) al = [];
+      var verteilung = [0, 0, 0, 0, 0, 0];
+      al.forEach(function (a) { if (a.antwort >= 0 && a.antwort < 6) verteilung[a.antwort]++; });
+      var f = sess.frage || null;
+      var offen = (sess.status === 'frage');
+      res.status(200).json({
+        ok: true, status: sess.status, runde: sess.runde,
+        teilnehmer: tl.length, antworten: al.length,
+        frage: f ? { f: f.f, opt: f.opt, k: offen ? null : f.k, e: offen ? null : (f.e || '') } : null,
+        verteilung: verteilung.slice(0, f && f.opt ? f.opt.length : 4),
+        schon_geantwortet: tn ? al.some(function (a) { return a.teilnehmer === tn; }) : false,
+        meine_antwort: tn ? (al.filter(function (a) { return a.teilnehmer === tn; })[0] || {}).antwort : null
+      });
+      return;
+    }
+
+    if (action === 'live_frage') {
+      var fcode = (body.code ? String(body.code) : '').trim().toUpperCase();
+      var fle = (body.lehrer_email ? String(body.lehrer_email) : '').trim().toLowerCase();
+      var fsess = fcode ? await liveSession(fcode) : null;
+      if (!fsess || fsess.lehrer_email !== fle) { res.status(403).json({ error: 'verboten' }); return; }
+      var fr = body.frage;
+      if (!fr || !fr.f || !Array.isArray(fr.opt) || typeof fr.k !== 'number') { res.status(400).json({ error: 'frage' }); return; }
+      await livePatch(fsess.id, { status: 'frage', runde: fsess.runde + 1, frage: { f: String(fr.f).slice(0, 500), opt: fr.opt.slice(0, 6).map(function (o) { return String(o).slice(0, 200); }), k: fr.k, e: String(fr.e || '').slice(0, 800) } });
+      res.status(200).json({ ok: true, runde: fsess.runde + 1 });
+      return;
+    }
+
+    if (action === 'live_answer') {
+      var acode = (body.code ? String(body.code) : '').trim().toUpperCase();
+      var asess = acode ? await liveSession(acode) : null;
+      if (!asess || asess.status !== 'frage') { res.status(200).json({ ok: false, error: 'keine_frage' }); return; }
+      var atn = (body.teilnehmer ? String(body.teilnehmer) : '').slice(0, 60);
+      var ant = Number(body.antwort);
+      if (!atn || !Number.isInteger(ant) || ant < 0 || ant > 5) { res.status(400).json({ error: 'antwort' }); return; }
+      var richtig = !!(asess.frage && asess.frage.k === ant);
+      await fetch(SB_URL + '/rest/v1/live_answers?on_conflict=session_id,runde,teilnehmer', {
+        method: 'POST', headers: sbHeaders(SB_SERVICE, { 'Prefer': 'resolution=ignore-duplicates,return=minimal' }),
+        body: JSON.stringify({ session_id: asess.id, runde: asess.runde, teilnehmer: atn, antwort: ant, richtig: richtig })
+      });
+      res.status(200).json({ ok: true });
+      return;
+    }
+
+    if (action === 'live_reveal' || action === 'live_end') {
+      var rcode = (body.code ? String(body.code) : '').trim().toUpperCase();
+      var rle = (body.lehrer_email ? String(body.lehrer_email) : '').trim().toLowerCase();
+      var rsess = rcode ? await liveSession(rcode) : null;
+      if (!rsess || rsess.lehrer_email !== rle) { res.status(403).json({ error: 'verboten' }); return; }
+      await livePatch(rsess.id, { status: action === 'live_reveal' ? 'aufgeloest' : 'beendet' });
+      res.status(200).json({ ok: true });
+      return;
+    }
+
     res.status(400).json({ error: 'action' });
   } catch (e) {
     console.error('[klasse] server', e);
