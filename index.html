@@ -979,6 +979,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 
   <!-- ── PERSONA-BANNER: rollenspezifischer Einstieg (Azubi / Examiniert / Lehrkraft), per JS gefuellt ── -->
   <div id="home-persona"></div>
+  <div id="home-aufgaben" style="margin-top:12px"></div>
 
   <!-- ── HEUTE FÄLLIG: SRS-Wiederholungen als taeglicher Rueckkehrgrund ── -->
   <div id="home-due" style="margin-bottom:14px"></div>
@@ -18505,7 +18506,7 @@ function showMeineAufgaben(){
   var kn=''; try{ kn=localStorage.getItem('pl_klasse_name')||''; }catch(e){}
   if(!code){ plOverlay('<div style="text-align:center;color:#cde8f7"><div style="font-size:34px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg></div><div style="font-size:15px;font-weight:700;margin:8px 0">Du bist noch in keinem Kurs.</div><button onclick="this.closest(\'[style*=fixed]\').remove();showKlasseBeitreten()" style="background:rgba(var(--accent-rgb),.15);border:1px solid var(--accent);color:#ddf0fb;border-radius:10px;padding:10px 16px;font-weight:700;font-family:inherit;cursor:pointer">Kurs beitreten</button></div>'); return; }
   var ov=plOverlay('<div style="text-align:center;color:#9fc3da;font-size:13px;padding:20px">Aufgaben werden geladen…</div>');
-  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'aufgaben',code:code})})
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'aufgaben',code:code,email:plKlUserEmail()})})
     .then(function(r){return r.json();}).then(function(d){
       var box=ov.firstChild; var auf=(d&&d.aufgaben)||[];
       var head='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-family:\'DM Serif Display\',serif;font-size:18px;color:#e0f2fe"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Meine Aufgaben</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 10px;color:#b3c4d6;cursor:pointer">✕</button></div>'
@@ -18520,9 +18521,25 @@ function showMeineAufgaben(){
           +'<div style="font-size:14px;font-weight:700;color:#e0f2fe">'+plEsc(a.titel)+'</div>'
           +(inh.text?('<div style="font-size:12.5px;color:#9fc3da;line-height:1.5;margin-top:4px">'+plEsc(inh.text)+'</div>'):'')
           +(faellig?('<div style="font-size:11px;margin-top:6px">'+faellig+'</div>'):'')
-          +action+'</div>';
+          +action
+          +'<button id="ad-'+plEsc(a.id)+'" onclick="plAufgabeAbhaken(\''+plEsc(a.id)+'\','+(a.erledigt?'false':'true')+')" style="margin-top:8px;width:100%;background:'+(a.erledigt?'rgba(52,211,153,.18)':'rgba(255,255,255,.08)')+';border:1px solid '+(a.erledigt?'#34d399':'rgba(255,255,255,.18)')+';color:'+(a.erledigt?'#6ee7b7':'#cfe3f3')+';border-radius:10px;padding:10px;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer">'+(a.erledigt?'\u2713 Erledigt':'Als erledigt markieren')+'</button>'
+          +'</div>';
       }).join('');
     }).catch(function(){ ov.firstChild.innerHTML='<div style="text-align:center;color:#fb7185;padding:20px">Konnte Aufgaben nicht laden.</div>'; });
+}
+/* Azubi hakt eine Aufgabe ab (oder nimmt es zurueck) */
+function plAufgabeAbhaken(aufgabeId, erledigt){
+  var mail=plKlUserEmail();
+  var b=document.getElementById('ad-'+aufgabeId);
+  if(!mail){ if(b){ b.textContent='Bitte zuerst anmelden'; } return; }
+  if(b){ b.disabled=true; b.textContent='\u2026'; }
+  fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'aufgabe_done',aufgabe_id:aufgabeId,email:mail,erledigt:erledigt})})
+    .then(function(r){return r.json();}).then(function(){
+      try{ var ov=document.querySelector('.pl-ov'); if(ov) ov.remove(); }catch(e){}
+      try{ showMeineAufgaben(); }catch(e){}
+      try{ if(window.plAufgabenBanner) window.plAufgabenBanner(true); }catch(e){}
+    })
+    .catch(function(){ if(b){ b.disabled=false; b.textContent='Nochmal versuchen'; } });
 }
 function plStartAufgabenQuiz(kat){ try{ if(typeof startQuiz==='function'){ startQuiz(kat); return; } }catch(e){} try{ showScreen('quizSelect'); }catch(e){} }
 function plStartAufgabenFall(id){ try{ if(typeof startFall==='function'){ startFall(id); return; } }catch(e){} try{ showScreen('faelle'); }catch(e){} }
@@ -18687,11 +18704,25 @@ function plAufgabenOpen(id){
         return '<div class="asg-row" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)">'
           +'<div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:#e0f2fe">'+(ICON[a.typ]||'•')+' '+plEsc(a.titel)+'</div>'
           +(sub?('<div style="font-size:11.5px;color:#9fc3da;margin-top:2px">'+plEsc(sub)+'</div>'):'')
-          +(a.faellig_am?('<div style="font-size:11px;color:#fbbf24;margin-top:2px">fällig '+plEsc(a.faellig_am)+'</div>'):'')+'</div>'
+          +(a.faellig_am?('<div style="font-size:11px;color:#fbbf24;margin-top:2px">fällig '+plEsc(a.faellig_am)+'</div>'):'')
+          +plAufgabeStand(a)+'</div>'
           +'<button onclick="plAufgabeDelete(\''+plEsc(a.id)+'\',this)" title="Löschen" style="background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);color:#f87171;border-radius:8px;padding:6px 9px;font-size:13px;cursor:pointer;font-family:inherit">🗑</button>'
         +'</div>';
       }).join('');
     }).catch(function(){ ov.firstChild.innerHTML='<div style="text-align:center;color:#fb7185;padding:20px">Konnte Aufgaben nicht laden.</div>'; });
+}
+/* Erledigt-Balken + offene Namen fuer die Lehrkraft */
+function plAufgabeStand(a){
+  var ges=a.mitglieder_anzahl||0, fertig=a.erledigt_anzahl||0;
+  if(!ges) return '<div style="font-size:11px;color:#8ab4d0;margin-top:5px">Noch keine Azubis im Kurs</div>';
+  var pct=Math.round(fertig/ges*100);
+  var offen=(a.offen_namen||[]).slice(0,6).map(function(n){ return plEsc(n); }).join(', ');
+  var rest=(a.offen_namen||[]).length-6;
+  return '<div style="margin-top:7px">'
+    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#9fc3da"><span>'+fertig+' von '+ges+' erledigt</span><span>'+pct+'%</span></div>'
+    +'<div style="height:6px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(pct===100?'#34d399':'var(--accent)')+';border-radius:4px"></div></div>'
+    +(offen?('<div style="font-size:11px;color:#fbbf24;margin-top:5px">offen: '+offen+(rest>0?(' +'+rest+' weitere'):'')+'</div>'):'')
+    +'</div>';
 }
 function plAufgabeDelete(aufgabeId, btn){
   if(!confirm('Diese Aufgabe für den Kurs löschen?')) return;
@@ -22609,6 +22640,50 @@ window.renderWebBesucher=function(force){
   }
   window.plLiveAntwort=function(ix){ post({action:'live_answer',code:S.code,teilnehmer:S.id,antwort:ix}).then(plLiveSTick); };
   window.plLiveLeave=function(){ if(S.timer){ clearInterval(S.timer); S.timer=null; } S.code=''; schliessen('pl-livej'); };
+})();
+</script>
+<script>
+/* Heute: Erinnerung an offene Kurs-Aufgaben (nur wenn der Nutzer in einem Kurs ist) */
+(function(){
+  var _cache=null, _zeit=0, _laeuft=false;
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function code(){ try{ return localStorage.getItem('pl_klasse_code')||''; }catch(e){ return ''; } }
+  function mail(){ try{ return (typeof plKlUserEmail==='function')?plKlUserEmail():''; }catch(e){ return ''; } }
+  function zeichne(auf){
+    var el=document.getElementById('home-aufgaben'); if(!el) return;
+    var offen=auf.filter(function(a){ return !a.erledigt; });
+    if(!offen.length){ el.innerHTML=''; return; }
+    var jetzt=Date.now(), bald=null, ueber=0;
+    offen.forEach(function(a){
+      if(!a.faellig_am) return;
+      var t=Math.ceil((Date.parse(a.faellig_am+'T23:59:59')-jetzt)/86400000);
+      if(t<0){ ueber++; return; }
+      if(bald===null||t<bald) bald=t;
+    });
+    var zeile = ueber ? (ueber+' überfällig')
+      : (bald===0 ? 'heute fällig' : (bald===1 ? 'morgen fällig' : (bald!=null ? ('fällig in '+bald+' Tagen') : 'ohne Frist')));
+    var farbe = ueber ? '#f87171' : (bald!=null&&bald<=1 ? '#fbbf24' : 'var(--accent)');
+    el.innerHTML='<button onclick="showMeineAufgaben()" style="width:100%;text-align:left;background:rgba(255,255,255,.085);border:1px solid '+farbe+';border-radius:14px;padding:14px;cursor:pointer;font-family:inherit">'
+      +'<div style="display:flex;align-items:center;gap:11px">'
+      +'<div style="flex:1"><div style="font-size:13.5px;font-weight:800;color:#e0f2fe">'+offen.length+' offene Aufgabe'+(offen.length>1?'n':'')+' aus deinem Kurs</div>'
+      +'<div style="font-size:11.5px;color:'+farbe+';margin-top:2px">'+esc(offen[0].titel)+' · '+zeile+'</div></div>'
+      +'<span style="color:var(--accent);font-size:16px">\u203a</span></div></button>';
+  }
+  window.plAufgabenBanner=function(neu){
+    var el=document.getElementById('home-aufgaben'); if(!el) return;
+    if(!code()){ el.innerHTML=''; return; }
+    if(!neu && _cache && Date.now()-_zeit<120000){ zeichne(_cache); return; }
+    if(_laeuft) return; _laeuft=true;
+    fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'aufgaben',code:code(),email:mail()})})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ _laeuft=false; _cache=(d&&d.aufgaben)||[]; _zeit=Date.now(); zeichne(_cache); })
+      .catch(function(){ _laeuft=false; });
+  };
+  if(typeof window.renderHomeStats==='function'){
+    var o=window.renderHomeStats;
+    window.renderHomeStats=function(){ var r=o.apply(this,arguments); try{ window.plAufgabenBanner(false); }catch(e){} return r; };
+  }
+  setTimeout(function(){ try{ window.plAufgabenBanner(false); }catch(e){} },1500);
 })();
 </script>
 <script>
