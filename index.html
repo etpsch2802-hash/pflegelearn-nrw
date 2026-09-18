@@ -16919,6 +16919,9 @@ function renderHomeStats() {
   ];
 
   var SEEN_KEY = 'pl_neu_seen';
+  var OPEN_KEY = 'pl_neu_geoeffnet';
+  function geoeffnet(){ try{ return JSON.parse(localStorage.getItem(OPEN_KEY)||'[]'); }catch(e){ return []; } }
+  function markGeoeffnet(id){ try{ var a=geoeffnet(); if(a.indexOf(id)<0){ a.push(id); localStorage.setItem(OPEN_KEY, JSON.stringify(a)); } }catch(e){} }
   function seen(){ try{ return JSON.parse(localStorage.getItem(SEEN_KEY)||'[]'); }catch(e){ return []; } }
   function markAllSeen(){ try{ localStorage.setItem(SEEN_KEY, JSON.stringify((PL_NEU||[]).map(function(x){return x.id;}))); }catch(e){} }
   function unseenCount(){ var sn=seen(); return (PL_NEU||[]).filter(function(x){ return sn.indexOf(x.id)<0; }).length; }
@@ -16938,6 +16941,8 @@ function renderHomeStats() {
     var it=null, arr=(PL_NEU||[]);
     for(var i=0;i<arr.length;i++){ if(arr[i].id===id){ it=arr[i]; break; } }
     if(!it) return;
+    markGeoeffnet(id);                       // gelesen -> Karte verschwindet
+    try{ plNeuRender(); }catch(e){}
     if(it.tag==='bald'){ toast('\u201E'+it.titel+'\u201C kommt in K\u00FCrze \u2013 wir arbeiten dran. \uD83D\uDD27'); return; }
     if(typeof it.ziel==='function'){ try{ it.ziel(); }catch(e){} return; }
     if(typeof it.ziel==='string' && it.ziel){ try{ navGo(it.ziel); }catch(e){ try{ showScreen(it.ziel); }catch(_e){} } }
@@ -16945,7 +16950,8 @@ function renderHomeStats() {
 
   window.plNeuRender = function(){
     var el=document.getElementById('home-neu'); if(!el) return;
-    var items=PL_NEU||[];
+    var _auf=geoeffnet();
+    var items=(PL_NEU||[]).filter(function(x){ return _auf.indexOf(x.id)<0; });
     if(!items.length){ el.innerHTML=''; return; }
     var rows=items.map(function(it){
       var isBald = it.tag==='bald';
@@ -22798,7 +22804,8 @@ window.renderWebBesucher=function(force){
 (function(){
   var S=[], i=0, node={}, running=false;
   function persona(){ try{ var p=localStorage.getItem('pl_persona')||''; return (p==='examiniert'||p==='lehrkraft')?p:'azubi'; }catch(e){ return 'azubi'; } }
-  function KEY(){ return 'pl_tour_v1_'+persona(); }
+  var VERSION={ azubi:'v2', examiniert:'v1', lehrkraft:'v2' };   // hochzaehlen = Tour wird einmal neu gezeigt
+  function KEY(){ var p=persona(); return 'pl_tour_'+(VERSION[p]||'v1')+'_'+p; }
   function done(){ try{ return localStorage.getItem(KEY())==='1'; }catch(e){ return true; } }
   function setDone(){ try{ localStorage.setItem(KEY(),'1'); }catch(e){} }
   function track(ev,extra){
@@ -22815,7 +22822,9 @@ window.renderWebBesucher=function(force){
     { id:'tour-tile-quiz', screen:'ueben', t:'Fragen \u00fcben', x:'Nach Fach, nach Lernmodus oder gezielt deine Schwachstellen.' },
     { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Hier startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen. Darin findest du auch die Fachklausuren pro Fach und die Fallklausur.' },
     { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
-    { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Einstellungen und Feedback.', oeffneMenu:true },
+    { id:'home-aufgaben', screen:'home', t:'Aufgaben aus deinem Kurs', x:'Hier stehen offene Aufgaben mit Frist. Erledigtes hakst du selbst ab, deine Lehrkraft sieht den Stand.' },
+    { id:'home-nachrichten', screen:'home', t:'Nachrichten deiner Lehrkraft', x:'Ank\u00fcndigungen landen hier. Dort kannst du auch privat eine Frage stellen \u2013 die sieht nur deine Lehrkraft.' },
+    { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Live-Quiz beitreten, Einstellungen und Feedback.', oeffneMenu:true },
     { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
   ],
   examiniert:[
@@ -22829,7 +22838,7 @@ window.renderWebBesucher=function(force){
   ],
   lehrkraft:[
     { id:'tour-tile-faelle', screen:'ueben', t:'Fallbeispiele f\u00fcr den Unterricht', x:'Fertige Fallsituationen und Gro\u00dff\u00e4lle, direkt im Kurs einsetzbar.' },
-    { id:'tour-tile-kurs', screen:'profil', t:'Kurs & Klassen', x:'Klasse anlegen, Sitzpl\u00e4tze vergeben und den Lernstand deiner Sch\u00fcler sehen.' },
+    { id:'tour-tile-kurs', screen:'profil', t:'Kurs, Lernstand & Live-Quiz', x:'Im Lehrer-Bereich hat jeder Kurs drei Werkzeuge: Lernstand zeigt den Stand jedes Azubis, Live-Quiz spielt eine Fragerunde \u00fcber den Beamer, Nachrichten sendet Ank\u00fcndigungen an den Kurs.' },
     { id:'ki-fab',    t:'KI-Assistent',    x:'Aufgaben, Pr\u00fcfungsfragen und Fallbeispiele generieren lassen.' },
     { id:'btn-hamburger', t:'Das Men\u00fc', x:'Hier liegen der Lehrer-Bereich, Wissen, Einstellungen und Feedback.', oeffneMenu:true },
     { id:'nav-lehrer-btn', t:'Lehrer-Bereich', x:'Dashboard deiner Klassen: Fortschritt, Aufgaben und Lizenz.', brauchtMenu:true },
