@@ -1615,6 +1615,12 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div id="pl-test-steps" style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
     <div style="font-size:16px;font-weight:800;color:#e0f2fe;margin-bottom:4px">So kommst du in den Play-Store-Test</div>
     <div style="font-size:12px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dauert eine Minute. Nutze bei allen Schritten dasselbe Google-Konto.</div>
+    <div id="pl-test-inapp" style="display:none;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.45);border-radius:12px;padding:13px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:#fde68a;margin-bottom:4px">Erst in Chrome öffnen</div>
+      <div style="font-size:12px;color:#fcd9a0;line-height:1.6;margin-bottom:10px">Im TikTok- oder Instagram-Browser bist du nicht bei Google angemeldet, dann klappt der Gruppenbeitritt nicht.</div>
+      <a href="intent://plan-nrw.de/test#Intent;scheme=https;package=com.android.chrome;end" style="display:block;background:#fbbf24;color:#1c1300;font-weight:800;border-radius:10px;padding:11px;text-decoration:none;text-align:center">In Chrome öffnen</a>
+      <div style="font-size:11px;color:#fcd9a0;line-height:1.5;margin-top:8px">Klappt nicht? Oben rechts auf ⋯ tippen → „Im Browser öffnen“.</div>
+    </div>
     <div id="pl-test-ios" style="display:none;font-size:12px;color:#fbbf24;line-height:1.6;margin-bottom:12px">Der Test läuft nur auf Android. Auf dem iPhone nutzt du PLAN einfach weiter hier im Browser.</div>
     <a href="https://groups.google.com/g/plan-nrw-tester" target="_blank" rel="noopener" onclick="plTestStep(1)" style="display:block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px;text-align:center">1 · Google-Gruppe beitreten</a>
     <a href="https://play.google.com/apps/testing/com.pflegelearn.nrw" target="_blank" rel="noopener" onclick="plTestStep(2)" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px;text-align:center">2 · Test aktivieren („Tester werden“)</a>
@@ -18381,7 +18387,9 @@ function plTestBannerRender(){
     +'<button onclick="plTestBannerClose()" aria-label="Hinweis schließen" style="position:absolute;top:6px;right:6px;width:32px;height:32px;background:none;border:none;color:#8ab4d0;font-size:18px;cursor:pointer;font-family:inherit">×</button>'
     +'</div>';
 }
-function plTestIosHint(){ var h=document.getElementById('pl-test-ios'); if(h && !plIsAndroid()) h.style.display='block'; }
+function plTestIosHint(){ var h=document.getElementById('pl-test-ios'); if(h && !plIsAndroid()) h.style.display='block';
+  try{ var ua=navigator.userAgent||''; var ia=document.getElementById('pl-test-inapp');
+    if(ia && plIsAndroid() && /musical_ly|BytedanceWebview|TikTok|Instagram|FBAN|FBAV|; wv\)/i.test(ua)) ia.style.display='block'; }catch(e){} }
 try{
   var _plRunTest=function(){
     plTestBannerRender(); plTestIosHint();
