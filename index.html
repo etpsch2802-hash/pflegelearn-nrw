@@ -973,6 +973,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 <div class="page" id="screen-home">
   <!-- Sprint UI "Lerncoach": persoenliche Begruessung + EIN adaptiver naechster Schritt statt Menue -->
   <div id="home-greeting" style="margin-top:6px"></div>
+  <div id="pl-test-banner"></div>
   <div class="pl-ekg pl-ekg--slim" aria-hidden="true"><svg viewBox="0 0 720 180" preserveAspectRatio="none"><path class="pl-ekg__base" pathLength="1000" d="M0,90 L40,90 Q50,78 60,90 L70,90 L76,104 L82,28 L88,120 L94,90 L120,90 Q140,66 160,90 L180,90 L220,90 Q230,78 240,90 L250,90 L256,104 L262,28 L268,120 L274,90 L300,90 Q320,66 340,90 L360,90 L400,90 Q410,78 420,90 L430,90 L436,104 L442,28 L448,120 L454,90 L480,90 Q500,66 520,90 L540,90 L580,90 Q590,78 600,90 L610,90 L616,104 L622,28 L628,120 L634,90 L660,90 Q680,66 700,90 L720,90"/><path class="pl-ekg__scan" pathLength="1000" d="M0,90 L40,90 Q50,78 60,90 L70,90 L76,104 L82,28 L88,120 L94,90 L120,90 Q140,66 160,90 L180,90 L220,90 Q230,78 240,90 L250,90 L256,104 L262,28 L268,120 L274,90 L300,90 Q320,66 340,90 L360,90 L400,90 Q410,78 420,90 L430,90 L436,104 L442,28 L448,120 L454,90 L480,90 Q500,66 520,90 L540,90 L580,90 Q590,78 600,90 L610,90 L616,104 L622,28 L628,120 L634,90 L660,90 Q680,66 700,90 L720,90"/></svg></div>
   <div class="section-label" style="display:none"></div>
   <div style="font-size:11px;color:#a8c4b6;font-weight:600;margin:0 2px 12px;display:flex;align-items:center;gap:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-stetho"/></svg> Entwickelt von Patrick Schenkelberger &ndash; Fachpfleger Anästhesie &amp; Intensivmedizin, Praxisanleiter NRW</div>
@@ -1616,6 +1617,16 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
       &#9203; Bitte die App während der Testphase 14&nbsp;Tage installiert lassen
     </div>
     <div id="tester-slots" style="font-size:11px;color:#8fd6bf;margin:12px 0 0;font-weight:700"></div>
+  </div>
+
+  <div id="pl-test-steps" style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
+    <div style="font-size:16px;font-weight:800;color:#e0f2fe;margin-bottom:4px">So kommst du in den Play-Store-Test</div>
+    <div style="font-size:12px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dauert eine Minute. Nutze bei allen Schritten dasselbe Google-Konto.</div>
+    <div id="pl-test-ios" style="display:none;font-size:12px;color:#fbbf24;line-height:1.6;margin-bottom:12px">Der Test läuft nur auf Android. Auf dem iPhone nutzt du PLAN einfach weiter hier im Browser.</div>
+    <a href="https://groups.google.com/g/plan-nrw-tester" target="_blank" rel="noopener" onclick="plTestStep(1)" style="display:block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px;text-align:center">1 · Google-Gruppe beitreten</a>
+    <a href="https://play.google.com/apps/testing/com.pflegelearn.nrw" target="_blank" rel="noopener" onclick="plTestStep(2)" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px;text-align:center">2 · Test aktivieren („Tester werden“)</a>
+    <a href="https://play.google.com/store/apps/details?id=com.pflegelearn.nrw" target="_blank" rel="noopener" onclick="plTestStep(3)" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:12px;text-align:center">3 · App installieren</a>
+    <div style="font-size:12px;color:#cde8f7;line-height:1.7">Danach wichtig: 14 Tage installiert lassen, regelmäßig ein paar Fragen machen und uns ehrlich Feedback geben. Nur so zählt dein Test bei Google.</div>
   </div>
 
   <div id="tester-form" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:16px;padding:20px">
@@ -18320,14 +18331,15 @@ function plTesterGrant(name){
       +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dein <b>6-Monats-Vollzugang</b> ist freigeschaltet. Damit dein Test auch für den Play&nbsp;Store zählt, mach bitte diese 3 Schritte – am besten gleich:</div>'
       +'<div style="text-align:left;background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px 15px;font-size:12.5px;color:#cde8f7;line-height:1.7;margin-bottom:14px">'
         +'<b style="color:#e0f2fe">1.</b> Der <b>Tester-Gruppe beitreten</b> (Button unten).<br>'
-        +'<b style="color:#e0f2fe">2.</b> Danach die App über den <b>Play&nbsp;Store installieren</b>.<br>'
+        +'<b style="color:#e0f2fe">2.</b> Den <b>Test aktivieren</b> („Tester werden“ tippen) und die App über den <b>Play&nbsp;Store installieren</b>.<br>'
         +'<b style="color:#34d399">3. Wichtig:</b> Die App die vollen <b style="color:#34d399">14 Tage installiert lassen</b> – nicht deinstallieren – und <b style="color:#34d399">ab und zu kurz öffnen</b>. Nur dann zählt dein Test.'
       +'</div>'
       +(PL_TESTER_GROUP_URL
         ? '<a href="'+PL_TESTER_GROUP_URL+'" target="_blank" rel="noopener" style="display:block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px">1 · Tester-Gruppe beitreten</a>'
         : '')
+      +'<a href="'+PL_TESTER_TEST_URL+'" target="_blank" rel="noopener" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:9px">2 · Test aktivieren</a>'
       +(PL_TESTER_OPTIN_URL
-        ? '<a href="'+PL_TESTER_OPTIN_URL+'" target="_blank" rel="noopener" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:10px">2 · App im Play Store installieren</a>'
+        ? '<a href="'+PL_TESTER_OPTIN_URL+'" target="_blank" rel="noopener" style="display:block;background:rgba(52,211,153,.15);border:1px solid #34d399;color:#6ee7b7;font-weight:800;border-radius:11px;padding:13px;text-decoration:none;margin-bottom:10px">3 · App im Play Store installieren</a>'
         : '')
       +'<button onclick="showScreen(\'home\')" style="width:100%;background:rgba(var(--accent-rgb),.15);border:1px solid var(--accent);color:#ddf0fb;border-radius:11px;padding:12px;font-weight:700;font-family:inherit;cursor:pointer">Jetzt schon loslegen → zur App</button></div>';
   }
@@ -18356,6 +18368,42 @@ function submitTester(){
       if(msg){ msg.style.color='#fb7185'; msg.textContent='Das hat nicht geklappt – bitte später erneut versuchen oder an kontakt@plan-nrw.de schreiben.'; }
     });
 }
+var PL_TESTER_TEST_URL = 'https://play.google.com/apps/testing/com.pflegelearn.nrw'; // Opt-in-Link fuer den Closed Test
+// ─── PLAY-STORE-TEST: Route /test + Home-Banner (nur Android, nicht in der TWA) ───
+function plIsAndroid(){ try{ return /Android/i.test(navigator.userAgent||''); }catch(e){ return false; } }
+function plIsTWA(){
+  try{
+    if((document.referrer||'').indexOf('android-app://com.pflegelearn.nrw')===0) localStorage.setItem('pl_is_twa','1');
+    return localStorage.getItem('pl_is_twa')==='1';
+  }catch(e){ return false; }
+}
+function plTestStep(n){ try{ if(typeof gaEvent==='function') gaEvent('tester_step', { step:n }); }catch(e){} }
+function plTestBannerClose(){
+  try{ localStorage.setItem('pl_test_banner_closed','1'); }catch(e){}
+  var b=document.getElementById('pl-test-banner'); if(b) b.innerHTML='';
+}
+function plTestBannerOpen(){ try{ if(typeof gaEvent==='function') gaEvent('tester_banner_click', {}); }catch(e){} showTester(); }
+function plTestBannerRender(){
+  var el=document.getElementById('pl-test-banner'); if(!el) return;
+  try{ if(localStorage.getItem('pl_test_banner_closed')==='1') return; }catch(e){}
+  if(!plIsAndroid() || plIsTWA()) return;
+  el.innerHTML='<div role="region" aria-label="Play-Store-Test" style="position:relative;display:flex;align-items:center;gap:12px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.38);border-radius:14px;padding:13px 40px 13px 14px;margin:12px 0">'
+    +'<div style="font-size:26px;line-height:1">💙</div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:800;color:#e0f2fe">Hilf PLAN in den Play Store</div>'
+    +'<div style="font-size:12px;color:#9fc3da;line-height:1.5;margin-top:2px">Werde Tester – dauert eine Minute.</div>'
+    +'<button onclick="plTestBannerOpen()" style="margin-top:9px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:10px;padding:9px 14px;color:#04231a;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">Jetzt mitmachen</button></div>'
+    +'<button onclick="plTestBannerClose()" aria-label="Hinweis schließen" style="position:absolute;top:6px;right:6px;width:32px;height:32px;background:none;border:none;color:#8ab4d0;font-size:18px;cursor:pointer;font-family:inherit">×</button>'
+    +'</div>';
+}
+function plTestIosHint(){ var h=document.getElementById('pl-test-ios'); if(h && !plIsAndroid()) h.style.display='block'; }
+try{
+  var _plRunTest=function(){
+    plTestBannerRender(); plTestIosHint();
+    var p=(location.pathname||'').toLowerCase().replace(/\/+$/,'');
+    if(p==='/test' || p==='/tester') setTimeout(showTester, 400);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', _plRunTest); else _plRunTest();
+}catch(e){}
 // Deep-Link: plan-nrw.de/#tester führt direkt zur Tester-Anmeldung (für Recruiting-Posts)
 try{ if(location.hash==='#tester'){ window.addEventListener('load', function(){ setTimeout(showTester, 400); }); } }catch(e){}
 
