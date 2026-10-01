@@ -2,11 +2,10 @@
 // Route: /api/tester
 //   GET                 -> { count, limit, full, remaining }
 //   POST { email }       -> registriert einen Tester in public.leads (source='tester').
-// Cap = 15 Tester (Google verlangt mind. 12 fuer 14 Tage; wir nehmen 15 als Puffer).
+// Kein Cap mehr (Entscheidung 2026-10-01): so viele Tester wie moeglich.
 // Nutzt die bestehende leads-Tabelle (kein neues Schema noetig): Tester = leads mit source='tester'.
 // Beruehrt NICHT: lead.js, chat.js, stripe-webhook.js.
 
-const LIMIT = 15;
 
 async function countTester(SB_URL, SB_SERVICE) {
   const r = await fetch(SB_URL + '/rest/v1/leads?source=eq.tester&select=email', {
@@ -46,7 +45,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const count = await countTester(SB_URL, SB_SERVICE);
-      res.status(200).json({ count, limit: LIMIT, full: count >= LIMIT, remaining: Math.max(0, LIMIT - count) });
+      res.status(200).json({ count, full: false });
     } catch (e) {
       console.error('[tester] count', e);
       res.status(500).json({ error: 'count' });
@@ -64,10 +63,6 @@ export default async function handler(req, res) {
   if (!re.test(email) || email.length > 200) { res.status(400).json({ error: 'email' }); return; }
 
   try {
-    // Cap pruefen (bei belegten Plaetzen keine Registrierung)
-    const count = await countTester(SB_URL, SB_SERVICE);
-    if (count >= LIMIT) { res.status(200).json({ full: true, count, limit: LIMIT }); return; }
-
     // Tester speichern
     const ins = await fetch(SB_URL + '/rest/v1/leads', {
       method: 'POST',
@@ -99,7 +94,7 @@ export default async function handler(req, res) {
     }
 
     const newCount = await countTester(SB_URL, SB_SERVICE);
-    res.status(200).json({ ok: true, count: newCount, limit: LIMIT, remaining: Math.max(0, LIMIT - newCount) });
+    res.status(200).json({ ok: true, count: newCount });
   } catch (e) {
     console.error('[tester] server', e);
     res.status(500).json({ error: 'server' });
