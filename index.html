@@ -966,7 +966,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     </button>
   </div>
   <div style="text-align:center;margin-top:10px">
-    <button onclick="showTester()" style="background:none;border:none;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-flask"/></svg> Tester werden – 6 Monate gratis</button>
+    <button onclick="showTester()" style="background:none;border:none;color:#34d399;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-flask"/></svg> Tester werden – hilf PLAN in den Play Store</button>
   </div>
 </div>
 
@@ -1601,22 +1601,15 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div class="hero" style="margin-bottom:16px">
     <div class="hero-icon"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-flask"/></svg></div>
     <h1>Werde <span>Tester</span></h1>
-    <p>Hilf, PLAN offiziell in den Play Store zu bringen &ndash; und lerne 6&nbsp;Monate gratis.</p>
+    <p>Hilf, PLAN offiziell in den Play Store zu bringen.</p>
   </div>
 
-  <div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
-    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#34d399;margin-bottom:6px">Dein Dankeschön</div>
-    <div style="font-size:24px;font-weight:800;color:#e0f2fe;line-height:1.1">6&nbsp;Monate Vollzugang gratis</div>
-    <div style="font-size:12px;color:#9fc3da;margin:8px 0 0;line-height:1.6">Als Dankeschön fürs Testen schalten wir dir den kompletten Vollzugang für 6&nbsp;Monate frei &ndash; über <span class="pl-total-count">2000</span> Fragen, KI-Tutor, Prüfungssimulation.</div>
-  </div>
 
   <div style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:16px;padding:16px 18px;margin-bottom:14px">
     <div style="font-size:13px;color:#cde8f7;line-height:1.95">
-      &#9989; Du bekommst 6&nbsp;Monate Vollzugang geschenkt<br>
       &#9989; Du hilfst, die App offiziell in den Play&nbsp;Store zu bringen<br>
       &#9203; Bitte die App während der Testphase 14&nbsp;Tage installiert lassen
     </div>
-    <div id="tester-slots" style="font-size:11px;color:#8fd6bf;margin:12px 0 0;font-weight:700"></div>
   </div>
 
   <div id="pl-test-steps" style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.32);border-radius:16px;padding:18px;margin-bottom:14px">
@@ -18294,7 +18287,7 @@ window.sendFeedback = function() {
 };
 
 
-// ─── TESTER-PROGRAMM (6 Monate gratis, Cap = 15) ───
+// ─── TESTER-PROGRAMM (ohne Gratis-Zeitraum, ohne Cap – Entscheidung 2026-10-01) ───
 var PL_TESTER_LIMIT = 15;
 var PL_TESTER_OPTIN_URL = 'https://play.google.com/store/apps/details?id=com.pflegelearn.nrw'; // Play-Test-Link (funktioniert nach Beitritt zur Tester-Gruppe)
 var PL_TESTER_GROUP_URL = 'https://groups.google.com/g/plan-nrw-tester'; // Google-Gruppe: hier treten Tester selbst bei
@@ -18304,6 +18297,7 @@ function plTesterLock(txt){
   if(b){ b.disabled=true; b.style.opacity='.5'; b.style.cursor='not-allowed'; if(txt) b.textContent=txt; }
 }
 function plTesterLoadCount(){
+  return; // Cap entfernt (2026-10-01) – keine Platzanzeige mehr
   var slots=document.getElementById('tester-slots');
   fetch('/api/tester').then(function(r){ return r.json(); }).then(function(d){
     if(!d || typeof d.remaining==='undefined') return;
@@ -18314,21 +18308,13 @@ function plTesterLoadCount(){
   }).catch(function(){ /* lokal/offline: Button aktiv lassen – der Server erzwingt den Cap ohnehin */ });
 }
 function plTesterGrant(name){
-  try{
-    var dt=new Date(); dt.setDate(dt.getDate()+182); // ~6 Monate
-    var until=dt.toISOString().split('T')[0];
-    localStorage.setItem('pl_paid_until', until);
-    localStorage.setItem('pl_paid_plan', 'tester');
-    localStorage.setItem('pl_paid_name', name||'Tester');
-    if(name){ localStorage.setItem('pl_user_name', name); localStorage.setItem('pl_user', name); }
-    localStorage.setItem('pl_token', 'TESTER');
-  }catch(e){}
+  try{ if(name){ localStorage.setItem('pl_user_name', name); } }catch(e){}
   try{ if(typeof gaEvent==='function') gaEvent('tester_signup', {}); }catch(e){}
   var form=document.getElementById('tester-form');
   if(form){
     form.innerHTML='<div style="text-align:center"><div style="font-size:40px">🎉</div>'
-      +'<div style="font-size:17px;font-weight:800;color:#e0f2fe;margin:8px 0">Willkommen an Bord!</div>'
-      +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Dein <b>6-Monats-Vollzugang</b> ist freigeschaltet. Damit dein Test auch für den Play&nbsp;Store zählt, mach bitte diese 3 Schritte – am besten gleich:</div>'
+      +'<div style="font-size:17px;font-weight:800;color:#e0f2fe;margin:8px 0">Danke, du bist eingetragen!</div>'
+      +'<div style="font-size:13px;color:#9fc3da;line-height:1.6;margin-bottom:14px">Damit dein Test auch für den Play&nbsp;Store zählt, mach bitte diese 3 Schritte – am besten gleich:</div>'
       +'<div style="text-align:left;background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px 15px;font-size:12.5px;color:#cde8f7;line-height:1.7;margin-bottom:14px">'
         +'<b style="color:#e0f2fe">1.</b> Der <b>Tester-Gruppe beitreten</b> (Button unten).<br>'
         +'<b style="color:#e0f2fe">2.</b> Den <b>Test aktivieren</b> („Tester werden“ tippen) und die App über den <b>Play&nbsp;Store installieren</b>.<br>'
