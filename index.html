@@ -154,6 +154,22 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   .hbtn { border-radius:7px; border:1px solid; padding:6px 12px; font-size:11px; font-weight:600; }
   .hbtn-back { background:rgba(var(--accent-rgb),.1); border-color:rgba(var(--accent-rgb),.22); color:var(--accent2); }
   .hbtn-quiz { background:rgba(52,211,153,.1); border-color:rgba(52,211,153,.25); color:var(--c1); }
+  /* Schmale Handys: Kopfleiste darf nicht über den Rand laufen (Fix 2026-10-02) */
+  .header-btns { flex-shrink:0; }
+  .logo-btn { min-width:0; flex:1 1 auto; overflow:hidden; }
+  .logo-btn > div { min-width:0; overflow:hidden; }
+  .logo-title { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  @media (max-width:440px){
+    .header { padding:10px 10px; gap:8px; }
+    .logo-sub { display:none; }
+    .header-btns { gap:5px; }
+    .hbtn { padding:6px 9px; }
+  }
+  @media (max-width:380px){ .logo-title span { display:none; } }
+  @media (max-width:350px){
+    .logo-btn > div { display:none; }
+    .hbtn { padding:6px 7px; }
+  }
 
   /* PAGE WRAPPER */
   .page { display:none; max-width:740px; margin:0 auto; padding:18px 14px 16px; }
