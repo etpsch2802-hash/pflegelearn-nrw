@@ -8170,6 +8170,13 @@ function hideLogoutMenu() {
 }
 
 function logoutConfirm() {
+  // Rueckkehrer merken (nur Typ/Name/E-Mail, kein Code) -> Startseite zeigt "Weiter lernen, Name"
+  try{
+    var _tk=localStorage.getItem('pl_token')||sessionStorage.getItem('pl_token')||'';
+    var _nm=(currentUser&&currentUser.name)||localStorage.getItem('pl_user')||sessionStorage.getItem('pl_user')||'';
+    var _em=localStorage.getItem('pl_gratis_email')||sessionStorage.getItem('pl_gratis_email')||'';
+    if(_tk||_nm) localStorage.setItem('pl_last_login', JSON.stringify({typ:(_tk==='GRATIS'?'gratis':'code'), name:_nm, email:_em}));
+  }catch(e){}
   hideLogoutMenu();
   sessionStorage.clear();
   try { localStorage.removeItem('pl_token'); localStorage.removeItem('pl_user'); localStorage.removeItem('pl_gratis_email'); } catch(e){}
@@ -8183,6 +8190,7 @@ function logoutConfirm() {
   showScreen("home");
   const ps = document.getElementById("pw-screen");
   if (ps) ps.classList.add("active");
+  try{ if(typeof plResumeRender==='function') plResumeRender(); }catch(e){}
   // Reset alle Filter
   document.querySelectorAll(".ausb-card").forEach(c => { c.style.opacity="1"; c.style.pointerEvents="auto"; });
   // Tester-Info einmalig anzeigen
@@ -18414,6 +18422,40 @@ try{
   };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', _plRunTest); else _plRunTest();
 }catch(e){}
+// ─── RUECKKEHRER: grosser Button wird zu "Weiter lernen, <Name>" (2026-10-03) ───
+function plLastLogin(){ try{ return JSON.parse(localStorage.getItem('pl_last_login')||'null'); }catch(e){ return null; } }
+function plResumeGratis(L){
+  currentUser={ token:'GRATIS', name:L.name||'', email:L.email||'', bereich:'gratis', ablauf:'2099-12-31' };
+  currentBereich=BEREICH_CONFIG['gratis']; kiNachrichtenCount=0;
+  try{ sessionStorage.setItem('pl_token','GRATIS'); sessionStorage.setItem('pl_user',currentUser.name); sessionStorage.setItem('pl_gratis_email',currentUser.email);
+       localStorage.setItem('pl_token','GRATIS'); localStorage.setItem('pl_user',currentUser.name); localStorage.setItem('pl_gratis_email',currentUser.email); }catch(e){}
+  var ps=document.getElementById('pw-screen'); if(ps) ps.classList.remove('active');
+  showScreen('home'); renderAusbList(); applyBereichsFilter(); updateUserDisplay(currentUser.name,false); updateStreak(); renderHomeStats();
+  try{ logLogin('GRATIS',currentUser.name); }catch(e){}
+  try{ if(typeof gaEvent==='function') gaEvent('login',{method:'resume_gratis'}); }catch(e){}
+}
+function plResumeClick(){
+  var L=plLastLogin(); if(!L){ startHeroCTA(); return; }
+  if(L.typ==='gratis'){ plResumeGratis(L); return; }
+  try{ var box=document.getElementById('login-collapse'); if(box && box.style.display==='none') toggleLoginBox(); }catch(e){}
+  try{ var n=document.getElementById('pw-name'); if(n && L.name) n.value=L.name; var r=document.getElementById('remember-me'); if(r) r.checked=true;
+       var i=document.getElementById('pw-input'); if(i){ i.focus(); i.scrollIntoView({behavior:'smooth',block:'center'}); } }catch(e){}
+}
+function plResumeForget(){ try{ localStorage.removeItem('pl_last_login'); }catch(e){} location.reload(); }
+function plResumeRender(){
+  try{
+    if(localStorage.getItem('pl_token')) return;
+    var L=plLastLogin(); if(!L || !L.name) return;
+    var cta=document.getElementById('pw-hero-cta'); if(!cta || cta.getAttribute('data-resume')==='1') return;
+    var vn=String(L.name).trim().split(/\s+/)[0].replace(/[<>&"']/g,'');
+    cta.setAttribute('data-resume','1'); cta.removeAttribute('onclick'); cta.onclick=plResumeClick;
+    cta.innerHTML='Weiter lernen, '+vn+' →<br><span style="font-size:11px;font-weight:700;opacity:.85">'+(L.typ==='gratis'?'Ein Tipp – du bist sofort wieder drin':'Nur noch deinen Zugangscode eingeben')+'</span>';
+    if(!document.getElementById('pl-resume-new')){
+      cta.insertAdjacentHTML('afterend','<button id="pl-resume-new" onclick="plResumeForget()" style="background:none;border:none;color:#7fa6c2;font-size:12px;margin-top:10px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Nicht '+vn+'? Neu starten</button>');
+    }
+  }catch(e){}
+}
+try{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', plResumeRender); else plResumeRender(); }catch(e){}
 // Deep-Link: plan-nrw.de/#tester führt direkt zur Tester-Anmeldung (für Recruiting-Posts)
 try{ if(location.hash==='#tester'){ window.addEventListener('load', function(){ setTimeout(showTester, 400); }); } }catch(e){}
 
