@@ -705,14 +705,14 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   </button>
 
   <!-- Sekundär: Gratis schnuppern -->
-  <button onclick="try{if(typeof gaEvent==='function')gaEvent('gratis_start_click',{});}catch(e){};showGratisStart()" style="background:none;border:none;color:#7fa6c2;font-size:13px;margin-top:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Oder erst gratis reinschnuppern</button>
+  <button onclick="try{if(typeof gaEvent==='function')gaEvent('gratis_start_click',{});}catch(e){};showGratisStart()" style="display:none;background:none;border:none;color:#7fa6c2;font-size:13px;margin-top:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Oder erst gratis reinschnuppern</button>
 
   <!-- Vertrauen -->
   <div style="width:100%;max-width:340px;margin:14px auto 0;text-align:center;font-size:11px;color:#9dbdd2;line-height:1.7"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cross"/></svg> Entwickelt von Patrick Schenkelberger &ndash; Fachpfleger Anästhesie &amp; Intensivmedizin, Praxisanleiter NRW</div>
   <div id="pl-socialproof" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
 
   <!-- Login einklappbar (wiederkehrende Nutzer) -->
-  <button onclick="toggleLoginBox()" id="login-toggle" style="width:100%;max-width:340px;margin:20px auto 0;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:10px;padding:11px;color:#9fc3da;font-size:13px;font-weight:700;cursor:pointer"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon einen Zugangscode? Anmelden</button>
+  <button onclick="toggleLoginBox()" id="login-toggle" style="margin:18px auto 0;background:none;border:none;padding:6px;color:#7fa6c2;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon einen Zugangscode? Anmelden</button>
   <div id="login-collapse" style="display:none;width:100%;max-width:340px;margin:10px auto 0">
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Dein Name</div>
