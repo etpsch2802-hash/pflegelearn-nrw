@@ -21474,11 +21474,23 @@ if (_savedLang !== 'de') {
 (function(){
   function isGratisRoute(){
     var p = (location.pathname||'').toLowerCase().replace(/\/+$/,'');
-    if (p === '/gratis') return true;
+    if (p === '/gratis' || p.indexOf('/gratis/') === 0) return true;
     if ((location.search||'').toLowerCase().indexOf('gratis') !== -1) return true;
     if ((location.hash||'').toLowerCase().indexOf('gratis') !== -1) return true;
     return false;
   }
+  var PK = {
+    eselsbruecken: { t:'12 Eselsbr&uuml;cken f&uuml;rs Pflegeexamen', k:'12 Eselsbr&uuml;cken', d:'Pflegeprozess, PESR, SMART, ATL, AEDL, 10-R-Regel, SBAR, ABCDE &amp; mehr &ndash; kompakt auf einen Blick.' },
+    rea:           { t:'Reanimation &amp; Notfallalgorithmen', k:'Reanimations-Poster', d:'4 Algorithmus-Poster: BLS, PBLS f&uuml;r Kinder, Fremdk&ouml;rper und ALS &ndash; zum Ausdrucken und Laminieren.' },
+    spickzettel:   { t:'Examens-Spickzettel', k:'Examens-Spickzettel', d:'Vitalwerte, Scores, Perfusor-Formeln, Hygiene, Recht &amp; Abk&uuml;rzungen &ndash; alle Kernzahlen f&uuml;r die letzten Tage vor der Pr&uuml;fung.' },
+    prophylaxen:   { t:'Prophylaxen-Kompendium', k:'Prophylaxen-Kompendium', d:'16 Prophylaxen mit Risikofaktoren, Assessment-Skalen, Ma&szlig;nahmen und Expertenstandards.' },
+    notfallkarten: { t:'Notfallkarten An&auml;sthesie &amp; Intensiv', k:'Notfallkarten', d:'19 Medikamente mit Dosierung, Wirkung, Nebenwirkungen und Pflegehinweisen.' },
+    pflegeplanung: { t:'Pflegeplanungs-Vorlagen', k:'Pflegeplanungs-Vorlagen', d:'8 Formulare nach AEDL mit Anleitung zu PESR und SMART &ndash; plus zwei ausgef&uuml;llte Musterbeispiele.' },
+    doku:          { t:'Dokumentationsvorlagen', k:'Dokumentationsvorlagen', d:'Wunddokumentation, Vitalzeichen, SBAR-&Uuml;bergabe, Pflegebericht und Sturzprotokoll &ndash; 5 Formulare.' }
+  };
+  function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
+  var SL = slug(), C = PK[SL];
+  function others(){ var h=''; for (var k in PK){ if(k!==SL) h+='<a href="/gratis/'+k+'" style="display:block;text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;margin-bottom:7px;color:#cbd9e6;font-size:13px;text-decoration:none">&#128196; '+PK[k].t+' <span style="float:right;color:#34d399">&rarr;</span></a>'; } return h; }
   function build(){
     if (document.getElementById('plg-overlay')) return;
     var ov = document.createElement('div');
@@ -21491,8 +21503,8 @@ if (_savedLang !== 'de') {
       +     '<img src="/icon-512.png" alt="PLAN NRW" style="width:96px;height:96px;display:block;margin:0 auto;filter:drop-shadow(0 0 22px rgba(34,211,238,.32))">'
       +   '</div>'
       +   '<div style="text-align:center;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#22d3ee;font-weight:700;margin-bottom:8px">PLAN NRW &middot; Gratis f&uuml;r dich</div>'
-      +   '<h1 style="text-align:center;font-family:\'DM Serif Display\',Georgia,serif;font-size:27px;line-height:1.25;color:#eaf4fb;margin:0 0 10px">12 Eselsbr&uuml;cken f&uuml;rs Pflegeexamen</h1>'
-      +   '<p style="text-align:center;font-size:14px;line-height:1.6;color:#9fb6c9;margin:0 0 18px">Die wichtigsten Merkhilfen f&uuml;r Pflegeplanung, Pflegeziele, ATL, AEDL, Pflegediagnosen &amp; mehr &ndash; kostenlos als PDF.</p>'
+      +   '<h1 style="text-align:center;font-family:\'DM Serif Display\',Georgia,serif;font-size:27px;line-height:1.25;color:#eaf4fb;margin:0 0 10px">'+C.t+'</h1>'
+      +   '<p style="text-align:center;font-size:14px;line-height:1.6;color:#9fb6c9;margin:0 0 18px">'+C.d+' Kostenlos als PDF.</p>'
       +   '<div style="display:flex;flex-direction:column;gap:8px;margin:0 auto 20px;max-width:320px">'
       +     '<div style="font-size:13px;color:#cbd9e6"><span style="color:#34d399;font-weight:800">&#10003;</span> Sofort per E-Mail als PDF</div>'
       +     '<div style="font-size:13px;color:#cbd9e6"><span style="color:#34d399;font-weight:800">&#10003;</span> Von einem Fachpfleger &amp; Pr&uuml;fer erstellt</div>'
@@ -21516,7 +21528,7 @@ if (_savedLang !== 'de') {
       var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!re.test(email)) { msg.style.color='#fca5a5'; msg.textContent='Bitte gib eine g\u00fcltige E-Mail-Adresse ein.'; return; }
       btn.disabled = true; btn.textContent = 'Wird gesendet \u2026';
-      fetch('/api/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, source: 'gratis-eselsbruecken' }) })
+      fetch('/api/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, source: 'gratis-'+SL, paket: SL }) })
         .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { ok:r.ok, j:j }; }); })
         .then(function(res){
           if (res.ok) { success(); }
@@ -21531,13 +21543,15 @@ if (_savedLang !== 'de') {
         '<div style="text-align:center;padding:20px 6px">'
         + '<div style="width:74px;height:74px;border-radius:50%;background:rgba(52,211,153,.15);border:2px solid #34d399;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:36px;color:#34d399">&#10003;</div>'
         + '<h1 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:25px;color:#eaf4fb;margin:0 0 10px">Fast geschafft!</h1>'
-        + '<p style="font-size:14px;line-height:1.65;color:#9fb6c9;margin:0 0 8px">Wir haben dir die <strong style="color:#cbd9e6">12 Eselsbr&uuml;cken</strong> gerade per E-Mail geschickt.</p>'
+        + '<p style="font-size:14px;line-height:1.65;color:#9fb6c9;margin:0 0 8px">Wir haben dir die <strong style="color:#cbd9e6">'+C.k+'</strong> gerade per E-Mail geschickt.</p>'
         + '<p style="font-size:13px;line-height:1.6;color:#7e97ab;margin:0 0 22px">Schau in dein Postfach &ndash; und bitte auch im <strong>Spam-Ordner</strong> nach.</p>'
-        + '<a href="/" style="display:inline-block;background:rgba(34,211,238,.12);border:1px solid #22d3ee;border-radius:11px;padding:13px 22px;color:#7ff0ff;font-size:14px;font-weight:700;text-decoration:none">App entdecken &middot; 7 Tage gratis</a>'
+        + '<a href="/" style="display:inline-block;background:rgba(34,211,238,.12);border:1px solid #22d3ee;border-radius:11px;padding:13px 22px;color:#7ff0ff;font-size:14px;font-weight:700;text-decoration:none">App entdecken &middot; komplett kostenlos</a>'
+        + '<div style="margin-top:26px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#22d3ee;font-weight:700;margin-bottom:10px">Noch mehr Gratis-PDFs</div>' + others()
         + '</div>';
     }
 
     btn.addEventListener('click', submit);
+    try{ if(typeof gaEvent==='function') gaEvent('gratis_view',{paket:SL}); }catch(e){}
     inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') { submit(); } });
     setTimeout(function(){ try { inp.focus(); } catch(e){} }, 200);
   }
