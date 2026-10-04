@@ -16941,7 +16941,7 @@ function renderHomeStats() {
    =========================================================================== */
 (function(){
   window.PL_NEU = window.PL_NEU || [
-    { id:'gratispdfs', tag:'neu', ziel:function(){ plPdfOpen(); }, titel:'Gratis-PDFs zum Ausdrucken', sub:'7 Lernhilfen \u2013 Reanimation, Spickzettel, Prophylaxen & mehr', datum:'2026-10' },
+    { id:'gratispdfs', tag:'neu', ziel:function(){ plPdfOpen(); }, titel:'Gratis-PDFs zum Ausdrucken', sub:'11 Lernhilfen \u2013 Reanimation, Laborwerte, Dosierungsrechnen & mehr', datum:'2026-10' },
     { id:'perfusorwissen', tag:'neu', ziel:function(){ openPerfusorwissen(); }, titel:'Perfusor & Infusion (ITS)', sub:'ZVK, Filter, Katecholamine \u2013 Grundlagen der Infusionstherapie', datum:'2026-09' },
     { id:'fachklausuren', tag:'neu', ziel:function(){ openFachklausuren(); }, titel:'Fachklausuren I\u2013V', sub:'Einzelklausuren je Kompetenzbereich \u2013 jetzt mehrere Fälle pro Bereich', datum:'2026-09' },
     { id:'berufseinstieg', tag:'neu', ziel:'berufseinstieg', titel:'Berufseinstieg \u2013 Erste 100 Tage',
@@ -21481,7 +21481,11 @@ if (_savedLang !== 'de') {
     ['prophylaxen','PLAN-NRW_Prophylaxen-Kompendium.pdf','🛡️','Prophylaxen-Kompendium','16 Prophylaxen mit Skalen und Standards'],
     ['notfallkarten','PLAN-NRW_Notfallkarten_Anaesthesie-Intensiv.pdf','💊','Notfallkarten Anästhesie & Intensiv','19 Medikamente mit Dosierung und Pflegehinweisen'],
     ['pflegeplanung','PLAN-NRW_Pflegeplanungs-Vorlagen.pdf','📋','Pflegeplanungs-Vorlagen','8 Formulare + 2 Musterbeispiele'],
-    ['doku','PLAN-NRW_Dokumentationsvorlagen.pdf','🗂️','Dokumentationsvorlagen','Wunde, Vitalzeichen, SBAR, Pflegebericht, Sturz']
+    ['doku','PLAN-NRW_Dokumentationsvorlagen.pdf','🗂️','Dokumentationsvorlagen','Wunde, Vitalzeichen, SBAR, Pflegebericht, Sturz'],
+    ['laborwerte','PLAN-NRW_Laborwerte-kompakt.pdf','🧪','Laborwerte kompakt','35+ Werte mit Normbereich und Bedeutung'],
+    ['dosierung','PLAN-NRW_Dosierungsrechnen.pdf','🧮','Dosierungsrechnen','Alle Formeln + 12 Übungsaufgaben mit Lösungen'],
+    ['lernplan','PLAN-NRW_8-Wochen-Lernplan.pdf','🗓️','8-Wochen-Lernplan','Fahrplan zum Examen mit Tracker und Checkliste'],
+    ['praxiseinsatz','PLAN-NRW_Praxiseinsatz-Begleiter.pdf','🩺','Praxiseinsatz-Begleiter','Checklisten, Lernziele, Reflexion, Nachweis']
   ];
   var BLOB={};   // geladene PDFs (slug -> Blob)
   function find(k){ for(var i=0;i<L.length;i++) if(L[i][0]===k) return L[i]; return null; }
@@ -21598,7 +21602,11 @@ if (_savedLang !== 'de') {
     prophylaxen:   { t:'Prophylaxen-Kompendium', k:'Prophylaxen-Kompendium', d:'16 Prophylaxen mit Risikofaktoren, Assessment-Skalen, Ma&szlig;nahmen und Expertenstandards.' },
     notfallkarten: { t:'Notfallkarten An&auml;sthesie &amp; Intensiv', k:'Notfallkarten', d:'19 Medikamente mit Dosierung, Wirkung, Nebenwirkungen und Pflegehinweisen.' },
     pflegeplanung: { t:'Pflegeplanungs-Vorlagen', k:'Pflegeplanungs-Vorlagen', d:'8 Formulare nach AEDL mit Anleitung zu PESR und SMART &ndash; plus zwei ausgef&uuml;llte Musterbeispiele.' },
-    doku:          { t:'Dokumentationsvorlagen', k:'Dokumentationsvorlagen', d:'Wunddokumentation, Vitalzeichen, SBAR-&Uuml;bergabe, Pflegebericht und Sturzprotokoll &ndash; 5 Formulare.' }
+    doku:          { t:'Dokumentationsvorlagen', k:'Dokumentationsvorlagen', d:'Wunddokumentation, Vitalzeichen, SBAR-&Uuml;bergabe, Pflegebericht und Sturzprotokoll &ndash; 5 Formulare.' },
+    laborwerte: { t:'Laborwerte kompakt', k:'Laborwerte kompakt', d:'Die wichtigsten Laborwerte mit Normbereich und Bedeutung erh&ouml;hter und erniedrigter Werte &ndash; mit Pflege-Fokus.' },
+    dosierung: { t:'Dosierungsrechnen', k:'Dosierungsrechnen', d:'Alle Formeln f&uuml;rs Medikamenten- und Infusionsrechnen plus 12 &Uuml;bungsaufgaben mit L&ouml;sungsweg.' },
+    lernplan: { t:'8-Wochen-Lernplan', k:'8-Wochen-Lernplan', d:'Acht Wochen Fahrplan zum Pflegeexamen mit Tracker, Lerntipps und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
+    praxiseinsatz: { t:'Praxiseinsatz-Begleiter', k:'Praxiseinsatz-Begleiter', d:'Checklisten f&uuml;r Erst-, Zwischen- und Abschlussgespr&auml;ch, Lernziele, Reflexionsbogen und Nachweis der Praxisanleitung.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
