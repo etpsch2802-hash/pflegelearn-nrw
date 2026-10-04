@@ -52,9 +52,26 @@ function mailHtml(p) {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+  // GET /api/lead?pdf=<slug>: Direkt-Download fuer eingeloggte App-Nutzer (in lead.js, da Vercel-Hobby max. 12 Functions)
+  if (req.method === 'GET') {
+    const ds = String((req.query && req.query.pdf) || '').toLowerCase();
+    const dp = PAKETE[ds];
+    if (!dp) { res.status(404).json({ error: 'unbekannt' }); return; }
+    try {
+      const r = await fetch(BASE + dp.file);
+      if (!r.ok) { res.status(502).json({ error: 'quelle', status: r.status }); return; }
+      const buf = Buffer.from(await r.arrayBuffer());
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Length', String(buf.length));
+      res.setHeader('Content-Disposition', 'attachment; filename="' + dp.file + '"');
+      res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+      res.status(200).send(buf);
+    } catch (e) { console.error('[lead] pdf', e); res.status(500).json({ error: 'server' }); }
+    return;
+  }
   if (req.method !== 'POST') { res.status(405).json({ error: 'method' }); return; }
 
   const SB_URL = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
