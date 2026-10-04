@@ -21474,7 +21474,6 @@ if (_savedLang !== 'de') {
 <!-- PLAN NRW: Gratis-PDFs in der App (Direkt-Download fuer eingeloggte Nutzer, 2026-10-03) -->
 <script>
 (function(){
-  var B='https://raw.githubusercontent.com/etpsch2802-hash/pflegelearn-nrw/main/assets/pdf/';
   var L=[
     ['rea','PLAN-NRW_Reanimations-Algorithmen.pdf','🫀','Reanimation & Notfallalgorithmen','4 Poster: BLS, PBLS, Fremdkörper, ALS'],
     ['spickzettel','PLAN-NRW_Examens-Spickzettel.pdf','📝','Examens-Spickzettel','Alle Kernzahlen für die letzten Tage vor der Prüfung'],
@@ -21484,29 +21483,101 @@ if (_savedLang !== 'de') {
     ['pflegeplanung','PLAN-NRW_Pflegeplanungs-Vorlagen.pdf','📋','Pflegeplanungs-Vorlagen','8 Formulare + 2 Musterbeispiele'],
     ['doku','PLAN-NRW_Dokumentationsvorlagen.pdf','🗂️','Dokumentationsvorlagen','Wunde, Vitalzeichen, SBAR, Pflegebericht, Sturz']
   ];
-  window.plPdfClose=function(){ var o=document.getElementById('pl-pdf-ov'); if(o) o.remove(); };
-  window.plPdfDl=function(k){ try{ if(typeof gaEvent==='function') gaEvent('pdf_download',{paket:k}); }catch(e){}
-    try{ var t=document.createElement('div'); t.textContent='Download gestartet \u2013 du findest das PDF in deinen Downloads.';
-      t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1600;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center';
-      document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); },3200); }catch(e){} };
+  var BLOB={};   // geladene PDFs (slug -> Blob)
+  function find(k){ for(var i=0;i<L.length;i++) if(L[i][0]===k) return L[i]; return null; }
+  function ga(n,p){ try{ if(typeof gaEvent==='function') gaEvent(n,p||{}); }catch(e){} }
+  function toast(m){ try{ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1700;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); },3200); }catch(e){} }
+  function load(k){
+    if(BLOB[k]) return Promise.resolve(BLOB[k]);
+    return fetch('/api/lead?pdf='+k).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.blob(); })
+      .then(function(b){ BLOB[k]=b; return b; });
+  }
+  window.plPdfClose=function(){ ['pl-pdf-ov','pl-pdf-act','pl-pdf-view'].forEach(function(id){ var o=document.getElementById(id); if(o) o.remove(); }); };
   window.plPdfOpen=function(){
     plPdfClose();
     var rows=L.map(function(p){
-      return '<a href="/api/lead?pdf='+p[0]+'" download="'+p[1]+'" onclick="plPdfDl(\''+p[0]+'\')" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:12px;margin-bottom:9px;text-decoration:none">'
+      return '<button onclick="plPdfAct(\''+p[0]+'\')" style="width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:12px;margin-bottom:9px;cursor:pointer;font-family:inherit">'
         +'<span style="font-size:24px;flex:none">'+p[2]+'</span>'
         +'<span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:800;color:#e2e8f0">'+p[3]+'</span><span style="display:block;font-size:11.5px;color:#9fb8cc;margin-top:2px">'+p[4]+'</span></span>'
-        +'<span style="flex:none;font-size:11px;font-weight:800;color:#04231a;background:linear-gradient(135deg,#34d399,#10b981);border-radius:9px;padding:7px 10px">PDF ↓</span></a>';
+        +'<span style="flex:none;font-size:11px;font-weight:800;color:#04231a;background:linear-gradient(135deg,#34d399,#10b981);border-radius:9px;padding:7px 10px">Öffnen</span></button>';
     }).join('');
     var ov=document.createElement('div'); ov.id='pl-pdf-ov';
     ov.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(2,8,16,.82);display:flex;align-items:flex-end;justify-content:center';
     ov.onclick=function(e){ if(e.target===ov) plPdfClose(); };
     ov.innerHTML='<div role="dialog" aria-label="Gratis-PDFs" style="width:100%;max-width:520px;max-height:88vh;overflow-y:auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(52,211,153,.25);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))">'
       +'<div style="display:flex;align-items:center;margin-bottom:4px"><span style="font-size:17px;font-weight:800;color:#e0f2fe">📄 Gratis-PDFs zum Ausdrucken</span><button onclick="plPdfClose()" aria-label="Schließen" style="margin-left:auto;width:36px;height:36px;background:none;border:none;color:#8ab4d0;font-size:20px;cursor:pointer">×</button></div>'
-      +'<div style="font-size:12px;color:#9fc3da;line-height:1.55;margin-bottom:14px">Im PLAN-Design, A4 und druckfertig. Tipp: Auf festes Papier drucken und laminieren.</div>'
-      +rows
-      +'<div style="font-size:11px;color:#6b8aa3;line-height:1.5;margin-top:6px;text-align:center">Lernhilfen für Ausbildung und Prüfung · Es gelten die Standards deiner Einrichtung.</div></div>';
-    document.body.appendChild(ov);
-    try{ if(typeof gaEvent==='function') gaEvent('pdf_list_open',{}); }catch(e){}
+      +'<div style="font-size:12px;color:#9fc3da;line-height:1.55;margin-bottom:14px">Direkt in der App ansehen oder mit einer anderen App öffnen – z. B. Word, Drive oder zum Drucken.</div>'
+      +rows+'<div style="font-size:11px;color:#6b8aa3;line-height:1.5;margin-top:6px;text-align:center">Lernhilfen für Ausbildung und Prüfung · Es gelten die Standards deiner Einrichtung.</div></div>';
+    document.body.appendChild(ov); ga('pdf_list_open');
+  };
+  // Aktionsauswahl: Ansehen · Öffnen mit/Teilen · Speichern
+  window.plPdfAct=function(k){
+    var p=find(k); if(!p) return;
+    var o=document.getElementById('pl-pdf-act'); if(o) o.remove();
+    var canShare=!!(navigator.canShare && window.File && navigator.canShare({files:[new File([''],'t.pdf',{type:'application/pdf'})]}));
+    var btn=function(on,ic,t,s,main){ return '<button onclick="'+on+'" style="width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:'+(main?'linear-gradient(135deg,#34d399,#10b981)':'rgba(255,255,255,.06)')+';border:1px solid '+(main?'transparent':'rgba(255,255,255,.12)')+';border-radius:13px;padding:13px 14px;margin-bottom:9px;cursor:pointer;font-family:inherit"><span style="font-size:22px">'+ic+'</span><span><span style="display:block;font-size:14px;font-weight:800;color:'+(main?'#04231a':'#e2e8f0')+'">'+t+'</span><span style="display:block;font-size:11.5px;color:'+(main?'#064e3b':'#9fb8cc')+'">'+s+'</span></span></button>'; };
+    var d=document.createElement('div'); d.id='pl-pdf-act';
+    d.style.cssText='position:fixed;inset:0;z-index:1600;background:rgba(2,8,16,.6);display:flex;align-items:flex-end;justify-content:center';
+    d.onclick=function(e){ if(e.target===d) d.remove(); };
+    d.innerHTML='<div style="width:100%;max-width:520px;background:#0d2135;border:1px solid rgba(52,211,153,.25);border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))">'
+      +'<div style="font-size:15px;font-weight:800;color:#e0f2fe;margin-bottom:12px">'+p[2]+' '+p[3]+'</div>'
+      +btn("plPdfView('"+k+"')",'📖','In der App ansehen','Sofort lesen, ohne Datei zu suchen',true)
+      +(canShare?btn("plPdfShare('"+k+"')",'📤','Öffnen mit … / Teilen','Word, Drive, Drucken, WhatsApp, E-Mail',false):'')
+      +btn("plPdfSave('"+k+"')",'⬇️','Auf dem Handy speichern','Landet im Ordner „Downloads"',false)
+      +'<div id="pl-pdf-st" style="font-size:11.5px;color:#9fb8cc;text-align:center;min-height:16px;margin-top:2px"></div></div>';
+    document.body.appendChild(d);
+    load(k).catch(function(){});   // vorladen -> Teilen klappt danach ohne Wartezeit
+  };
+  window.plPdfSave=function(k){
+    var p=find(k); ga('pdf_download',{paket:k,weg:'speichern'});
+    var a=document.createElement('a'); a.href='/api/lead?pdf='+k; a.download=p[1]; document.body.appendChild(a); a.click(); a.remove();
+    toast('Gespeichert in „Downloads" – Tipp: über „Ansehen" geht es schneller.');
+  };
+  window.plPdfShare=function(k){
+    var p=find(k), st=document.getElementById('pl-pdf-st');
+    var go=function(b){
+      var f=new File([b],p[1],{type:'application/pdf'});
+      ga('pdf_download',{paket:k,weg:'teilen'});
+      return navigator.share({files:[f],title:p[3]}).catch(function(e){ if(e && e.name!=='AbortError'){ toast('Teilen nicht möglich – bitte „Speichern" nutzen.'); } });
+    };
+    if(BLOB[k]){ go(BLOB[k]); return; }
+    if(st) st.textContent='PDF wird geladen …';
+    load(k).then(function(){ if(st) st.textContent='Bereit – bitte noch einmal auf „Öffnen mit …" tippen.'; })
+      .catch(function(){ if(st) st.textContent='Laden fehlgeschlagen – bitte Verbindung prüfen.'; });
+  };
+  // Eingebauter Viewer (pdf.js) – zeigt alle Seiten direkt in der App
+  function pdfjs(){
+    if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise(function(res,rej){
+      var sc=document.createElement('script'); sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      sc.onload=function(){ try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(window.pdfjsLib); }catch(e){ rej(e); } };
+      sc.onerror=rej; document.head.appendChild(sc);
+    });
+  }
+  window.plPdfView=function(k){
+    var p=find(k); ga('pdf_download',{paket:k,weg:'ansehen'});
+    var act=document.getElementById('pl-pdf-act'); if(act) act.remove();
+    var v=document.createElement('div'); v.id='pl-pdf-view';
+    v.style.cssText='position:fixed;inset:0;z-index:1700;background:#525659;display:flex;flex-direction:column';
+    v.innerHTML='<div style="flex:none;display:flex;align-items:center;gap:8px;background:#0b1a2e;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;border-bottom:1px solid rgba(52,211,153,.3)">'
+      +'<button onclick="document.getElementById(\'pl-pdf-view\').remove()" style="background:none;border:none;color:#e0f2fe;font-size:15px;font-weight:700;cursor:pointer;padding:6px 8px">‹ Zurück</button>'
+      +'<span style="flex:1;min-width:0;color:#e0f2fe;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p[3]+'</span>'
+      +(navigator.canShare?'<button onclick="plPdfShare(\''+k+'\')" style="background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:9px;padding:7px 11px;color:#04231a;font-size:12px;font-weight:800;cursor:pointer">📤 Öffnen mit</button>':'')
+      +'</div><div id="pl-pdf-pages" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 0 calc(20px + env(safe-area-inset-bottom,0px));text-align:center;color:#e0f2fe;font-size:13px">PDF wird geladen …<div id="pl-pdf-st"></div></div>';
+    document.body.appendChild(v);
+    var box=v.querySelector('#pl-pdf-pages');
+    Promise.all([load(k),pdfjs()]).then(function(r){ return r[0].arrayBuffer().then(function(ab){ return r[1].getDocument({data:ab}).promise; }); })
+      .then(function(doc){
+        box.innerHTML='';
+        var w=Math.min(box.clientWidth||window.innerWidth,900)-16, dpr=Math.min(window.devicePixelRatio||1,2);
+        var chain=Promise.resolve();
+        for(var i=1;i<=doc.numPages;i++){ (function(n){ chain=chain.then(function(){ return doc.getPage(n).then(function(pg){
+          var vp0=pg.getViewport({scale:1}), sc=w/vp0.width, vp=pg.getViewport({scale:sc*dpr});
+          var c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; c.style.cssText='width:'+w+'px;height:auto;display:block;margin:0 auto 10px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)';
+          box.appendChild(c); return pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; }); }); })(i); }
+        return chain;
+      })
+      .catch(function(){ box.innerHTML='<div style="padding:30px 20px;color:#fecaca">Das PDF konnte nicht angezeigt werden.<br><br><button onclick="plPdfSave(\''+k+'\')" style="background:#10b981;border:none;border-radius:10px;padding:10px 16px;color:#04231a;font-weight:800">Stattdessen speichern</button></div>'; });
   };
 })();
 </script>
