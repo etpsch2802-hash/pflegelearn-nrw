@@ -23,7 +23,15 @@ const PAKETE = {
   pflegeplanung: { file: 'PLAN-NRW_Pflegeplanungs-Vorlagen.pdf', titel: 'Pflegeplanungs-Vorlagen', subject: 'Deine Pflegeplanungs-Vorlagen sind da',
     text: '8 Formulare nach AEDL mit Anleitung zu PESR und SMART &ndash; plus zwei ausgef&uuml;llte Musterbeispiele.' },
   doku: { file: 'PLAN-NRW_Dokumentationsvorlagen.pdf', titel: 'Dokumentationsvorlagen', subject: 'Deine Dokumentationsvorlagen sind da',
-    text: 'Wunddokumentation, Vitalzeichen, SBAR-&Uuml;bergabe, Pflegebericht und Sturzprotokoll &ndash; 5 Formulare zum Ausdrucken.' }
+    text: 'Wunddokumentation, Vitalzeichen, SBAR-&Uuml;bergabe, Pflegebericht und Sturzprotokoll &ndash; 5 Formulare zum Ausdrucken.' },
+  laborwerte: { file: 'PLAN-NRW_Laborwerte-kompakt.pdf', titel: 'Laborwerte kompakt', subject: 'Deine Laborwerte-&Uuml;bersicht ist da',
+    text: 'Die wichtigsten Laborwerte mit Normbereich und Bedeutung erh&ouml;hter und erniedrigter Werte &ndash; mit Pflege-Fokus.' },
+  dosierung: { file: 'PLAN-NRW_Dosierungsrechnen.pdf', titel: 'Dosierungsrechnen', subject: 'Dein Dosierungsrechnen-PDF ist da',
+    text: 'Alle Formeln f&uuml;rs Medikamenten- und Infusionsrechnen plus 12 &Uuml;bungsaufgaben mit L&ouml;sungsweg.' },
+  lernplan: { file: 'PLAN-NRW_8-Wochen-Lernplan.pdf', titel: '8-Wochen-Lernplan', subject: 'Dein 8-Wochen-Lernplan ist da',
+    text: 'Acht Wochen Fahrplan zum Pflegeexamen mit Tracker, Lerntipps und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
+  praxiseinsatz: { file: 'PLAN-NRW_Praxiseinsatz-Begleiter.pdf', titel: 'Praxiseinsatz-Begleiter', subject: 'Dein Praxiseinsatz-Begleiter ist da',
+    text: 'Checklisten f&uuml;r Erst-, Zwischen- und Abschlussgespr&auml;ch, Lernziele, Reflexionsbogen und Nachweis der Praxisanleitung.' }
 };
 
 function mailHtml(p) {
