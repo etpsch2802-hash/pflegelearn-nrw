@@ -13,6 +13,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > - Diese Frage ist entschieden und darf **nicht erneut aufgeworfen** werden.
 > Kanonische Marketing-Zahlen überall einheitlich: **2.000+ Prüfungsfragen · 400 Lerneinheiten · 80+ Wirkstoffe · KI-Lernassistent.**
 
+> **⚠️ Vercel-Limit:** Hobby-Plan erlaubt **max. 12 Serverless Functions** (Dateien in `api/`). Eine 13. Datei lässt **jeden Deploy fehlschlagen** (03.10.2026 passiert mit `api/pdf.js`). Neue Endpunkte immer als Zweig in eine bestehende Datei einbauen (z. B. `GET /api/lead?pdf=<slug>`).
+
 ---
 
 ## 1. Projektüberblick
