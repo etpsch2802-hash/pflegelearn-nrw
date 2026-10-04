@@ -860,6 +860,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div class="nav-sec-body" id="navsec-sonstiges" style="display:none">
     <button onclick="navGo('home')" class="nav-drop-btn"><span data-i18n="nav_home"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-home"/></svg> Startseite</span></button>
     <button onclick="navGo('taschenkarten')" class="nav-drop-btn"><span data-i18n="nav_taschen"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-idcard"/></svg> Taschenkarten</span></button>
+    <button onclick="document.getElementById('nav-dropdown').style.display='none';plPdfOpen()" class="nav-drop-btn"><span>📄 Gratis-PDFs</span></button>
     <button onclick="navGo('preise')" class="nav-drop-btn"><span data-i18n="nav_preise"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-card"/></svg> Plan &amp; Preise</span></button>
     <button onclick="document.getElementById('nav-dropdown').style.display='none';showKlasseBeitreten()" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cap"/></svg> Kurs beitreten</span></button>
     <button onclick="document.getElementById('nav-dropdown').style.display='none';showLehrer()" id="nav-lehrer-btn" class="nav-drop-btn"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg>‍<svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-school"/></svg> Lehrer-Bereich</span></button>
@@ -16940,6 +16941,7 @@ function renderHomeStats() {
    =========================================================================== */
 (function(){
   window.PL_NEU = window.PL_NEU || [
+    { id:'gratispdfs', tag:'neu', ziel:function(){ plPdfOpen(); }, titel:'Gratis-PDFs zum Ausdrucken', sub:'7 Lernhilfen \u2013 Reanimation, Spickzettel, Prophylaxen & mehr', datum:'2026-10' },
     { id:'perfusorwissen', tag:'neu', ziel:function(){ openPerfusorwissen(); }, titel:'Perfusor & Infusion (ITS)', sub:'ZVK, Filter, Katecholamine \u2013 Grundlagen der Infusionstherapie', datum:'2026-09' },
     { id:'fachklausuren', tag:'neu', ziel:function(){ openFachklausuren(); }, titel:'Fachklausuren I\u2013V', sub:'Einzelklausuren je Kompetenzbereich \u2013 jetzt mehrere Fälle pro Bereich', datum:'2026-09' },
     { id:'berufseinstieg', tag:'neu', ziel:'berufseinstieg', titel:'Berufseinstieg \u2013 Erste 100 Tage',
@@ -21467,6 +21469,42 @@ if (_savedLang !== 'de') {
   window.plOpenConsent = function(){ wire(); show(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+})();
+</script>
+<!-- PLAN NRW: Gratis-PDFs in der App (Direkt-Download fuer eingeloggte Nutzer, 2026-10-03) -->
+<script>
+(function(){
+  var B='https://raw.githubusercontent.com/etpsch2802-hash/pflegelearn-nrw/main/assets/pdf/';
+  var L=[
+    ['rea','PLAN-NRW_Reanimations-Algorithmen.pdf','🫀','Reanimation & Notfallalgorithmen','4 Poster: BLS, PBLS, Fremdkörper, ALS'],
+    ['spickzettel','PLAN-NRW_Examens-Spickzettel.pdf','📝','Examens-Spickzettel','Alle Kernzahlen für die letzten Tage vor der Prüfung'],
+    ['eselsbruecken','PLAN-NRW_12-Eselsbruecken.pdf','💡','12 Eselsbrücken','Pflegeprozess, PESR, SMART, ATL, AEDL & mehr'],
+    ['prophylaxen','PLAN-NRW_Prophylaxen-Kompendium.pdf','🛡️','Prophylaxen-Kompendium','16 Prophylaxen mit Skalen und Standards'],
+    ['notfallkarten','PLAN-NRW_Notfallkarten_Anaesthesie-Intensiv.pdf','💊','Notfallkarten Anästhesie & Intensiv','19 Medikamente mit Dosierung und Pflegehinweisen'],
+    ['pflegeplanung','PLAN-NRW_Pflegeplanungs-Vorlagen.pdf','📋','Pflegeplanungs-Vorlagen','8 Formulare + 2 Musterbeispiele'],
+    ['doku','PLAN-NRW_Dokumentationsvorlagen.pdf','🗂️','Dokumentationsvorlagen','Wunde, Vitalzeichen, SBAR, Pflegebericht, Sturz']
+  ];
+  window.plPdfClose=function(){ var o=document.getElementById('pl-pdf-ov'); if(o) o.remove(); };
+  window.plPdfDl=function(k){ try{ if(typeof gaEvent==='function') gaEvent('pdf_download',{paket:k}); }catch(e){} };
+  window.plPdfOpen=function(){
+    plPdfClose();
+    var rows=L.map(function(p){
+      return '<a href="'+B+p[1]+'" target="_blank" rel="noopener" onclick="plPdfDl(\''+p[0]+'\')" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:12px;margin-bottom:9px;text-decoration:none">'
+        +'<span style="font-size:24px;flex:none">'+p[2]+'</span>'
+        +'<span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:800;color:#e2e8f0">'+p[3]+'</span><span style="display:block;font-size:11.5px;color:#9fb8cc;margin-top:2px">'+p[4]+'</span></span>'
+        +'<span style="flex:none;font-size:11px;font-weight:800;color:#04231a;background:linear-gradient(135deg,#34d399,#10b981);border-radius:9px;padding:7px 10px">PDF ↓</span></a>';
+    }).join('');
+    var ov=document.createElement('div'); ov.id='pl-pdf-ov';
+    ov.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(2,8,16,.82);display:flex;align-items:flex-end;justify-content:center';
+    ov.onclick=function(e){ if(e.target===ov) plPdfClose(); };
+    ov.innerHTML='<div role="dialog" aria-label="Gratis-PDFs" style="width:100%;max-width:520px;max-height:88vh;overflow-y:auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(52,211,153,.25);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))">'
+      +'<div style="display:flex;align-items:center;margin-bottom:4px"><span style="font-size:17px;font-weight:800;color:#e0f2fe">📄 Gratis-PDFs zum Ausdrucken</span><button onclick="plPdfClose()" aria-label="Schließen" style="margin-left:auto;width:36px;height:36px;background:none;border:none;color:#8ab4d0;font-size:20px;cursor:pointer">×</button></div>'
+      +'<div style="font-size:12px;color:#9fc3da;line-height:1.55;margin-bottom:14px">Im PLAN-Design, A4 und druckfertig. Tipp: Auf festes Papier drucken und laminieren.</div>'
+      +rows
+      +'<div style="font-size:11px;color:#6b8aa3;line-height:1.5;margin-top:6px;text-align:center">Lernhilfen für Ausbildung und Prüfung · Es gelten die Standards deiner Einrichtung.</div></div>';
+    document.body.appendChild(ov);
+    try{ if(typeof gaEvent==='function') gaEvent('pdf_list_open',{}); }catch(e){}
+  };
 })();
 </script>
 <!-- PLAN NRW: Gratis-Eselsbruecken Lead-Capture (Route /gratis) -->
