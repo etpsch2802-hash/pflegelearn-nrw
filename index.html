@@ -6867,6 +6867,7 @@ function shuffleKBFragen(fragen) {
       opts: indexed.map(x => x.text),
       correctIdx: indexed.findIndex(x => x.isCorrect),
       erkl: frage.erkl || '',
+      frage: frage.f || frage.frage || '',
     };
   });
 }
@@ -6896,6 +6897,7 @@ function answerKBFrage(frageIdx, antwortIdx, farbe) {
   const istRichtig = (antwortIdx === correctIdx);
   if (istRichtig) playCorrect(); else playWrong();
   recordQuizAnswer(istRichtig);
+  try { if (window.plcOrakel && sf) plcOrakel(sf.frage, !istRichtig, erkl ? erkl.parentNode : null); } catch (e) {}
 }
 
 function startKBKIChat(fachId, bildIdx) {
@@ -8630,6 +8632,7 @@ function answerABCDE(idx){
   const o=st.optionen[idx];
   const fb=document.getElementById('abcde-fb');
   if(!fb) return;
+  try{ if(window.plcOrakel) plcOrakel('abcde:'+st.letter+':'+st.prompt, !o.richtig, fb, abcdeRun); }catch(e){}
   if(o.richtig){
     if(abcdeDone.indexOf(abcdeStep)<0) abcdeDone.push(abcdeStep);
     fb.innerHTML='<div style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:9px;padding:10px;font-size:12px;color:#bbf7d0"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg> '+o.fb+'</div>'
@@ -12212,6 +12215,7 @@ function _wdbAnswer(idx){
   var Q=_wdbQuiz; if (Q.answered) return; Q.answered=true;
   var c=Q.cards[Q.i];
   if (idx===c.richtig) Q.known++; else Q.missed.push(c);
+  try { if (window.plcOrakel) plcOrakel(c.frage, idx!==c.richtig, document.getElementById('wdb-quiz-answer')); } catch (e) {}
   var btns = document.querySelectorAll('#wdb-quiz-overlay .wdb-opt');
   btns.forEach(function(b){
     var bi=parseInt(b.getAttribute('data-idx'),10); b.disabled=true; b.style.cursor='default';
@@ -14058,6 +14062,7 @@ function finishExamen(auto) {
     if (ok) richtig++;
     if (sel !== null && typeof recordKatAnswer === 'function') recordKatAnswer(q.kat, ok);
   });
+  try { if (window.plcOrakelBatch) plcOrakelBatch(st.questions.map(function(q, i){ return st.answers[i] === null ? null : { t: q.frage, w: st.answers[i] !== q.correctIdx }; })); } catch (e) {}
   const total = st.questions.length;
   const pct = total ? Math.round(richtig / total * 100) : 0;
   if (typeof recordQuizResult === 'function') recordQuizResult('examen', richtig, total);
@@ -17974,6 +17979,7 @@ function answerExam(idx) {
   const correct = idx === q.k;
   examState.answers.push({ q, chosen: idx, correct });
   recordQuizAnswer(correct);
+  try { if (window.plcOrakel) plcOrakel(q.frage, !correct, null); } catch (e) {}
 
   // kurzes Feedback
   const btns = document.querySelectorAll('#exam-content button[onclick^="answerExam"]');
@@ -19792,6 +19798,7 @@ function fdtAnswer(i){
   try{ if(typeof recordQuizAnswer==='function') recordQuizAnswer(ok); }catch(e){}
   try{ if(typeof gaEvent==='function') gaEvent('fdt_answer',{richtig:ok?1:0}); }catch(e){}
   renderFrageDesTages();
+  try{ if(window.plcOrakel) plcOrakel(q.frage, !ok, document.getElementById('home-fdt')); }catch(e){}
   if(ok){ try{ plCelebrate('Frage des Tages geknackt!','\u2b50'); }catch(e){} }
 }
 function fdtShare(){
@@ -22379,6 +22386,7 @@ if (_savedLang !== 'de') {
     fb.innerHTML = '<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:11px;font-size:12.5px;color:#cbd5e1;line-height:1.5;margin-top:8px"><b style="color:' + (richtig ? '#34d399' : '#f87171') + '">' + (richtig ? 'Richtig' : 'Nicht korrekt') + '</b> · ' + esc(a.erkl || '') + '</div>'
       + '<button data-fk-next style="width:100%;background:#7c3aed;border:none;border-radius:11px;padding:12px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;margin-top:10px">' + (_idx + 1 < _fk.aufgaben.length ? 'Weiter' : 'Auswertung') + '</button>';
     fb.querySelector('[data-fk-next]').onclick = function () { _next(); };
+    try { if (window.plcOrakel) plcOrakel('fk:' + a.frage, !richtig, fb); } catch (e) {}
   }
 
   function _showMuster(a, ov) {
@@ -23390,8 +23398,28 @@ window.renderLiveUsers=function(start){
     }).catch(function(){ var s=box.querySelector('.plc-sub'); if(s) s.textContent='Gerade offline. Dein Status ist gespeichert.'; });
   }
 
-  /* ══ B: FEHLER-ORAKEL ══ */
-  function qkey(t){ var h=5381,s=String(t||''); for(var i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return 'q:'+(h>>>0).toString(36)+':'+s.length; }
+  /* ══ B: FEHLER-ORAKEL (app-weit) ══ */
+  function qkey(t){ var h=5381,s=String(t||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim(); for(var i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return 'q:'+(h>>>0).toString(36)+':'+s.length; }
+  var onceMap=(typeof WeakMap==='function')?new WeakMap():null;
+  /* plcOrakel(frageText, falsch, container|null, scope?) – zaehlt Antwort; zeigt Hinweis nur mit container */
+  function plcOrakel(text, wrong, container, scope){
+    if(!text) return;
+    var k=qkey(text);
+    if(scope&&onceMap){ var set=onceMap.get(scope); if(!set){ set={}; onceMap.set(scope,set); } if(set[k]) return; set[k]=1; }
+    rpc('record_answer',{p_key:k,p_wrong:!!wrong}).then(function(r){
+      if(!wrong||!container||!r||r.total<2||r.wrong_pct<35) return;
+      if(container.querySelector('.plc-orakel')) return;
+      var d=document.createElement('div'); d.className='plc-orakel';
+      d.textContent='Mach dir keinen Kopf: '+r.wrong_pct+' % aller Azubis lagen bei dieser Frage auch falsch.';
+      container.appendChild(d);
+    }).catch(function(){});
+  }
+  /* Batch fuer Pruefungsmodi ohne Sofort-Feedback: items=[{t:frageText,w:falsch}] */
+  function plcOrakelBatch(items){
+    var arr=(items||[]).filter(function(x){return x&&x.t;}).map(function(x){ return {k:qkey(x.t),w:!!x.w}; });
+    for(var i=0;i<arr.length;i+=200) rpc('record_answers_batch',{p_items:arr.slice(i,i+200)}).catch(function(){});
+  }
+  window.plcOrakel=plcOrakel; window.plcOrakelBatch=plcOrakelBatch;
   function hookQuiz(){
     if(typeof window.pickAnswer!=='function'||window.pickAnswer._plc) return;
     var orig=window.pickAnswer;
@@ -23399,16 +23427,7 @@ window.renderLiveUsers=function(start){
       var q=null, fresh=false;
       try{ fresh=(selectedAns===null); q=quizList[quizIdx]; }catch(e){}
       var ret=orig.apply(this,arguments);
-      if(fresh&&q&&q.frage){
-        var wrong=(i!==q.k);
-        rpc('record_answer',{p_key:qkey(q.frage),p_wrong:wrong}).then(function(r){
-          if(!wrong||!r||r.total<2||r.wrong_pct<35) return;
-          var ex=document.getElementById('explanation'); if(!ex||ex.querySelector('.plc-orakel')) return;
-          var d=document.createElement('div'); d.className='plc-orakel';
-          d.textContent='Mach dir keinen Kopf: '+r.wrong_pct+' % aller Azubis lagen bei dieser Frage auch falsch.';
-          ex.appendChild(d);
-        }).catch(function(){});
-      }
+      if(fresh&&q&&q.frage) plcOrakel(q.frage, i!==q.k, document.getElementById('explanation'));
       return ret;
     };
     wrapped._plc=true; window.pickAnswer=wrapped;
