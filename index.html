@@ -19125,45 +19125,17 @@ function sendKuendigung() {
 }
 
 function showDatenschutz() {
+  // Eine Quelle: zeigt die vollstaendige Erklaerung aus /datenschutz.html
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:1000;overflow-y:auto;padding:20px';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:1000;display:flex;flex-direction:column;padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))';
   overlay.innerHTML = `
-    <div style="max-width:600px;margin:0 auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.2);border-radius:18px;padding:24px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:#e0f2fe">🔒 Datenschutzerklärung</div>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 12px;color:#b3c4d6;cursor:pointer;font-size:15px">✕</button>
+    <div style="max-width:720px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;background:#0b1a2e;border:1px solid rgba(var(--accent-rgb),.2);border-radius:18px;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08)">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#e0f2fe">🔒 Datenschutzerklärung</div>
+        <button aria-label="Schließen" onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 12px;color:#b3c4d6;cursor:pointer;font-size:15px">✕</button>
       </div>
-      <div style="font-size:13px;color:#b3c4d6;line-height:1.8">
-        <strong style="color:#ddf0fb">1. Verantwortlicher</strong><br>
-        Patrick Schenkelberger, Am Steinknapp 20a, 44795 Bochum<br>
-        E-Mail: kontakt@plan-nrw.de<br><br>
-
-        <strong style="color:#ddf0fb">2. Erhobene und übertragene Daten</strong><br>
-        <u>Registrierung & Feedback:</u> Name, E-Mail-Adresse und Ausbildungsbereich werden über EmailJS an externe Server übertragen, um den Zugangscode zuzusenden.<br>
-        <u>KI-Assistent:</u> Deine Chat-Eingaben werden über einen Vercel-Proxy an Groq (Groq Inc., USA) übertragen.<br>
-        <u>Zahlungen:</u> Bei Käufen wirst du zu Stripe weitergeleitet. Stripe erhebt Zahlungsdaten eigenständig.<br>
-        <u>Lokal gespeichert (kein Upload):</u> Lernfortschritt, Zugangscode, Theme, Einstellungen.<br><br>
-
-        <strong style="color:#ddf0fb">3. Drittanbieter</strong><br>
-        • EmailJS (E-Mail-Versand): emailjs.com/legal/privacy-policy<br>
-        • Groq Inc. (KI): groq.com/privacy-policy<br>
-        • Stripe (Zahlung): stripe.com/de/privacy<br>
-        • Vercel (Hosting): vercel.com/legal/privacy-policy<br><br>
-
-        <strong style="color:#ddf0fb">4. Aufbewahrung</strong><br>
-        Registrierungs-E-Mails werden im Gmail-Postfach des Betreibers gespeichert bis der Zugangscode vergeben wurde. Lokale Daten bleiben bis zur manuellen Löschung erhalten.<br><br>
-
-        <strong style="color:#ddf0fb">5. Datenlöschung</strong><br>
-        • In der App: Einstellungen → Alle Daten löschen<br>
-        • Browser: Website-Daten für plan-nrw.de löschen<br>
-        • Per E-Mail: kontakt@plan-nrw.de<br>
-        Vollständige Datenschutzerklärung: <a href="https://plan-nrw.de/datenschutz.html" style="color:var(--accent)" target="_blank">plan-nrw.de/datenschutz.html</a><br><br>
-
-        <strong style="color:#ddf0fb">6. Deine Rechte (DSGVO)</strong><br>
-        Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch. Kontakt: kontakt@plan-nrw.de<br><br>
-
-        <strong style="color:#ddf0fb">Stand:</strong> Juni 2026
-      </div>
+      <iframe src="/datenschutz.html" title="Datenschutzerklärung" style="flex:1;width:100%;border:0;background:#0b1a2e" loading="lazy"></iframe>
+      <div style="padding:8px 14px;font-size:12px;color:#93b9d1;text-align:center">Lädt nicht? <a href="https://plan-nrw.de/datenschutz.html" target="_blank" rel="noopener" style="color:var(--accent)">plan-nrw.de/datenschutz.html öffnen</a></div>
     </div>`;
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
