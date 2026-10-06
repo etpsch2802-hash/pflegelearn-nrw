@@ -892,6 +892,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <button onclick="showDatenschutz()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_datenschutz"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-lock"/></svg> Datenschutz</span></button>
   <button onclick="showAGB()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><span data-i18n="nav_agb"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-layers"/></svg> AGB & Widerruf</span></button>
   <button onclick="showKuendigung()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-receipt"/></svg> Abo kündigen</button>
+  <button id="nav-konto-del" onclick="if(window.plKontoLoeschen)plKontoLoeschen()" class="nav-drop-btn" style="display:none;color:#fca5a5;font-size:11px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-door"/></svg> Konto &amp; Daten löschen</button>
   <button onclick="plOpenConsent()" class="nav-drop-btn" style="color:#8ab4d0;font-size:11px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-cookie"/></svg> Cookie-Einstellungen</button>
     <hr style="border-color:rgba(248,113,113,.15);margin:6px 0">
   <button onclick="document.getElementById('nav-dropdown').style.display='none';showLogoutMenu()" class="nav-drop-btn" style="color:#f87171;font-weight:700"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-door"/></svg> <span data-i18n="btn_logout">Abmelden</span></button>
@@ -20592,6 +20593,7 @@ window.addEventListener('load', () => {
         '<button id="pl-cloud-out" style="width:100%;background:none;border:1px solid rgba(244,63,94,.5);color:#f87171;border-radius:10px;padding:11px;font-family:inherit;font-size:14px;cursor:pointer">Abmelden</button>';
       body.querySelector('#pl-cloud-sync').onclick=function(){ pull(); };
       body.querySelector('#pl-cloud-out').onclick=signOut;
+      try{ if(window.plKontoAllowed&&plKontoAllowed()){ var _kd=document.createElement('button'); _kd.textContent='Konto löschen'; _kd.style.cssText='display:block;margin:12px auto 0;background:none;border:none;color:#fca5a5;font-family:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer'; _kd.onclick=function(){ var ov=document.getElementById('pl-cloud-ov'); if(ov) ov.style.display='none'; plKontoLoeschen(); }; body.appendChild(_kd); } }catch(e){}
     } else {
       body.innerHTML='<div style="background:rgba(var(--accent-rgb),.09);border:1px solid rgba(var(--accent-rgb),.28);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:12.5px;color:#cbe6f5;line-height:1.55"><b style="color:#7dd3fc">Fortschritt sichern</b><br>Melde dich mit deiner E-Mail an, damit dein Lernstand gespeichert wird und auf jedem Ger&auml;t verf&uuml;gbar ist. Ohne Anmeldung bleibt er nur auf diesem Ger&auml;t.</div>'+
         '<input id="pl-cloud-mail" type="email" inputmode="email" placeholder="deine@email.de" style="width:100%;background:#081420;border:1px solid rgba(34,211,238,.25);border-radius:10px;padding:12px;color:#ddf0fb;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px">'+
@@ -23918,6 +23920,124 @@ window.renderLiveUsers=function(start){
   function init(){ readLinks(); hookQuiz(); hookNav(); try{ mountHome(); }catch(e){} setTimeout(handlePendingTisch,1500); if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()&&beta()) soundStart(); }catch(e){} }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(init,400); });
   else setTimeout(init,400);
+})();
+</script>
+<script>
+/* ══ PLAN Konto loeschen (Art. 17 DSGVO / Play-Store-Pflicht) ══ */
+(function(){
+  'use strict';
+  var PL_KONTO_PUBLIC=false;   // true = fuer alle sichtbar; sonst nur Admin (Testmodus, loescht nichts)
+  function admin(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function allowed(){ return PL_KONTO_PUBLIC||admin(); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function sb(){ return window.SB||null; }
+  function devKey(){ try{ return localStorage.getItem('pl_com_key'); }catch(e){ return null; } }
+  function notify(email,info){
+    try{ if(typeof emailjs!=='undefined'&&typeof EMAILJS_SERVICE!=='undefined')
+      emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { name: email||'Geraet ohne Konto', email: email||'-', ausbildung: 'KONTOLOESCHUNG', datum: new Date().toLocaleString('de-DE'), message: info });
+    }catch(e){}
+  }
+  function wipeLocal(){
+    try{ localStorage.clear(); }catch(e){} try{ sessionStorage.clear(); }catch(e){}
+    try{ if(window.caches&&caches.keys) caches.keys().then(function(k){ k.forEach(function(n){ caches.delete(n); }); }); }catch(e){}
+  }
+  function close(){ var o=document.getElementById('pl-del-ov'); if(o) o.remove(); }
+  function shell(inner){
+    close();
+    var ov=document.createElement('div'); ov.id='pl-del-ov';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:10002;overflow-y:auto;padding:20px;padding-top:calc(20px + env(safe-area-inset-top,0px))';
+    ov.innerHTML='<div role="dialog" aria-modal="true" aria-labelledby="pl-del-h" style="max-width:440px;margin:0 auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(248,113,113,.35);border-radius:18px;padding:22px;color:#b3c4d6;font-size:13.5px;line-height:1.6">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div id="pl-del-h" style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe">Konto &amp; Daten löschen</div>'
+      +'<button aria-label="Schließen" data-x style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 12px;color:#b3c4d6;cursor:pointer;font-size:15px">✕</button></div><div id="pl-del-body">'+inner+'</div></div>';
+    document.body.appendChild(ov);
+    ov.querySelector('[data-x]').onclick=close;
+    ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
+    return ov;
+  }
+  var BTN='width:100%;border-radius:11px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;';
+  var RED=BTN+'background:rgba(248,113,113,.16);border:1px solid rgba(248,113,113,.55);color:#fecaca;';
+  var GREY=BTN+'background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#b3c4d6;font-weight:600;';
+  var TEST='<div style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.4);border-radius:10px;padding:9px 11px;margin-bottom:12px;color:#fde68a;font-size:12.5px"><b>Testmodus (Admin):</b> Es wird nichts gelöscht. Du siehst den Ablauf wie ein Nutzer.</div>';
+  function li(t){ return '<li style="margin-bottom:4px">'+t+'</li>'; }
+
+  function open(){
+    if(!allowed()) return;
+    try{ var dd=document.getElementById('nav-dropdown'); if(dd) dd.style.display='none'; }catch(e){}
+    var ov=shell('<div style="text-align:center;padding:20px 0">Lädt…</div>');
+    var c=sb();
+    if(!c||!c.auth){ renderLocal(); return; }
+    c.auth.getSession().then(function(r){
+      var s=r&&r.data&&r.data.session;
+      if(!s){ renderLocal(); return; }
+      return c.rpc('delete_my_account',{p_dry:true}).then(function(x){
+        if(x.error||!x.data||!x.data.ok){ renderError(); return; }
+        renderAccount(x.data);
+      });
+    }).catch(renderError);
+  }
+  function renderError(){
+    var b=document.getElementById('pl-del-body'); if(!b) return;
+    b.innerHTML='<p>Die Daten konnten gerade nicht geladen werden. Prüfe deine Internetverbindung und versuch es nochmal.</p><p>Alternativ: <a href="/konto-loeschen.html" target="_blank" rel="noopener" style="color:#38bdf8">Löschung per E-Mail anfragen</a>.</p><button style="'+GREY+'" data-c>Schließen</button>';
+    b.querySelector('[data-c]').onclick=close;
+  }
+  function renderAccount(d){
+    var b=document.getElementById('pl-del-body'); if(!b) return;
+    var n=d.daten||{}, test=!!d.admin||admin(), abo=d.abo;
+    var list=li('Dein Konto und die Anmeldung mit <b>'+esc(d.email)+'</b>')
+      +li('Lernfortschritt in der Cloud, Profil, Bewertungen und Zugangsdaten')
+      +(n.klassen_mitglied?li('Mitgliedschaft in '+n.klassen_mitglied+' Klasse'+(n.klassen_mitglied>1?'n':'')+' samt Aufgaben-Status'):'')
+      +(n.eigene_klassen?li('<b>'+n.eigene_klassen+' eigene Klasse'+(n.eigene_klassen>1?'n':'')+' als Lehrkraft</b>. Deine Schülerinnen und Schüler verlieren den Zugang zu diesen Klassen.'):'')
+      +(n.zugangscodes?li(n.zugangscodes+' Zugangscode'+(n.zugangscodes>1?'s':'')+'. Ein noch laufender Zugang endet damit.'):'')
+      +li('Community-Daten (Lerntisch, Schicht-Radar, Umfragen, Care-Packages, Einladungslink)')
+      +li('Alle Daten auf diesem Gerät');
+    var aboBox=abo?'<div style="background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.35);border-radius:10px;padding:10px 12px;margin:12px 0;color:#fde68a;font-size:12.5px"><b>Laufendes Abo</b>'+(abo.bis?' (bezahlt bis '+new Date(abo.bis).toLocaleDateString('de-DE')+')':'')+': Mit der Löschung kündigen wir es zum Ende des bezahlten Zeitraums. Danach wird nichts mehr abgebucht.</div>':'';
+    b.innerHTML=(test?TEST:'')+'<p style="margin-bottom:8px">Das wird <b style="color:#fecaca">endgültig</b> gelöscht und lässt sich nicht wiederherstellen:</p><ul style="padding-left:18px;margin:0 0 6px">'+list+'</ul>'
+      +aboBox
+      +'<p style="font-size:12px;color:#8ab4d0;margin-top:8px">Zahlungsbelege bewahren wir aus gesetzlichen Gründen bis zu 10 Jahre auf. <a href="/konto-loeschen.html" target="_blank" rel="noopener" style="color:#38bdf8">Mehr dazu</a></p>'
+      +'<label for="pl-del-in" style="display:block;margin-top:14px;font-size:12.5px;color:#ddf0fb">Tippe <b>LÖSCHEN</b> zur Bestätigung:</label>'
+      +'<input id="pl-del-in" autocomplete="off" autocapitalize="characters" style="width:100%;box-sizing:border-box;margin-top:6px;background:#081420;border:1px solid rgba(248,113,113,.35);border-radius:10px;padding:12px;color:#fff;font-size:15px;font-family:inherit;letter-spacing:1px">'
+      +'<button id="pl-del-go" disabled style="'+RED+'opacity:.45">Konto endgültig löschen</button><button style="'+GREY+'" data-c>Abbrechen</button>';
+    var inp=b.querySelector('#pl-del-in'), go=b.querySelector('#pl-del-go');
+    b.querySelector('[data-c]').onclick=close;
+    inp.oninput=function(){ var v=inp.value.trim().toUpperCase().replace('OE','Ö'); var ok=(v==='LÖSCHEN'||v==='LOSCHEN'); go.disabled=!ok; go.style.opacity=ok?'1':'.45'; };
+    go.onclick=function(){
+      go.disabled=true; go.textContent='Wird gelöscht…';
+      if(test){ setTimeout(function(){ renderDone(true); },700); return; }
+      var c=sb();
+      c.rpc('delete_my_account',{p_dry:false}).then(function(x){
+        if(x.error||!x.data||!x.data.ok||x.data.dry){ go.disabled=false; go.textContent='Konto endgültig löschen'; renderError(); return; }
+        var k=devKey(); var p=k?c.rpc('plc_delete_my_data',{p_key:k}):Promise.resolve();
+        notify(d.email, 'Konto geloescht.'+(abo?' LAUFENDES ABO ('+(abo.status||'')+', bis '+(abo.bis||'?')+') IN STRIPE ZUM PERIODENENDE KUENDIGEN.':''));
+        return Promise.resolve(p).catch(function(){}).then(function(){ return c.auth.signOut().catch(function(){}); }).then(function(){ wipeLocal(); renderDone(false); });
+      }).catch(function(){ go.disabled=false; go.textContent='Konto endgültig löschen'; renderError(); });
+    };
+  }
+  function renderLocal(){
+    var b=document.getElementById('pl-del-body'); if(!b) return; var test=admin();
+    b.innerHTML=(test?TEST:'')+'<p>Du bist mit keinem Online-Konto angemeldet. Dein Lernstand liegt nur auf diesem Gerät.</p>'
+      +'<p style="margin-top:8px">Hier kannst du alle Daten auf diesem Gerät löschen, inklusive deiner Community-Daten auf dem Server.</p>'
+      +'<p style="font-size:12px;color:#8ab4d0;margin-top:8px">Du hast einen Zugangscode gekauft oder ein Online-Konto auf einem anderen Gerät? Dann <a href="/konto-loeschen.html" target="_blank" rel="noopener" style="color:#38bdf8">frag die Löschung per E-Mail an</a>.</p>'
+      +'<button id="pl-del-local" style="'+RED+'">Alle Daten auf diesem Gerät löschen</button><button style="'+GREY+'" data-c>Abbrechen</button>';
+    b.querySelector('[data-c]').onclick=close;
+    b.querySelector('#pl-del-local').onclick=function(){
+      if(!window.confirm('Wirklich alle Daten auf diesem Gerät löschen? Dein Lernstand geht dabei verloren.')) return;
+      if(test){ renderDone(true); return; }
+      var k=devKey(), c=sb(); var p=(k&&c)?c.rpc('plc_delete_my_data',{p_key:k}):Promise.resolve();
+      Promise.resolve(p).catch(function(){}).then(function(){ wipeLocal(); renderDone(false); });
+    };
+  }
+  function renderDone(test){
+    var b=document.getElementById('pl-del-body'); if(!b) return;
+    b.innerHTML=(test?TEST:'')+'<div style="text-align:center;padding:10px 0"><div style="font-size:34px">✅</div><div style="font-size:16px;color:#e0f2fe;font-weight:700;margin:6px 0">'+(test?'Test abgeschlossen':'Deine Daten wurden gelöscht')+'</div>'
+      +'<p>'+(test?'Im echten Ablauf wären Konto und Daten jetzt gelöscht, du wärst abgemeldet und die App würde neu starten.':'Die App startet jetzt neu.')+'</p></div>'
+      +(test?'<button style="'+GREY+'" data-c>Schließen</button>':'');
+    var x=b.querySelector('[data-c]'); if(x) x.onclick=close;
+    if(!test) setTimeout(function(){ location.replace('/'); },2200);
+  }
+  window.plKontoLoeschen=open;
+  window.plKontoAllowed=allowed;
+  function showNav(){ var e=document.getElementById('nav-konto-del'); if(e) e.style.display=allowed()?'':'none'; }
+  setInterval(showNav,2000); setTimeout(showNav,500);
 })();
 </script>
 </body>
