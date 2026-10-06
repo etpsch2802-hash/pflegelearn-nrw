@@ -23308,6 +23308,9 @@ window.renderLiveUsers=function(start){
   'use strict';
   var LS = window.localStorage;
   function sb(){ return window.SB || null; }
+  /* Beta: Community-Funktionen nur fuer Admin sichtbar, bis freigegeben (PLC_PUBLIC=true schaltet fuer alle frei) */
+  var PLC_PUBLIC=false;
+  function beta(){ if(PLC_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function key(){ var k=null; try{k=LS.getItem('pl_com_key');}catch(e){} if(!k){ k='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,12); try{LS.setItem('pl_com_key',k);}catch(e){} } return k; }
   function today(){ return new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Berlin'}); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -23374,6 +23377,12 @@ window.renderLiveUsers=function(start){
     '.plc-avrow button.t{border-radius:9px;padding:5px 9px;font-size:11.5px;background:rgba(255,255,255,.07);color:#dbe7f1}.plc-avrow button.on{border-color:#7dd3fc}',
     '.plc-toggles{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:14px;font-size:12px;color:#93b9d1}.plc-toggles label{display:flex;gap:6px;align-items:center}',
     '#plc-lt-pill{position:fixed;left:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:9990;background:#163246;color:#fff;border:1px solid rgba(125,211,252,.4);border-radius:22px;padding:9px 14px;font-family:inherit;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;box-shadow:0 6px 18px rgba(0,0,0,.35);cursor:pointer}',
+    '.plc-hit{cursor:pointer;outline:none}.plc-hit:focus-visible{stroke:#7dd3fc;stroke-width:2}',
+    '.plc-gift{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10001;background:#163246;border:1px solid rgba(125,211,252,.35);border-radius:18px;padding:16px;width:min(320px,88vw);box-shadow:0 18px 50px rgba(0,0,0,.5);color:#e8f1f8}',
+    '.plc-scene{position:relative}.plc-float{position:absolute;left:50%;top:45%;font-size:42px;transform:translate(-50%,0);animation:plcFloat 1.5s ease-out forwards;pointer-events:none}',
+    '@keyframes plcFloat{0%{opacity:0;transform:translate(-50%,10px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.1)}100%{opacity:0;transform:translate(-50%,-70px) scale(1)}}',
+    '.plc-tbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.plc-tbtns .plc-btn{font-size:12.5px;padding:10px 8px}',
+    '@media (prefers-reduced-motion:reduce){.plc-float{animation:none;opacity:0}}',
     '@media (prefers-reduced-motion:reduce){.plc-av,.plc-drop,.plc-steam,.plc-light,.plc-tw{animation:none}.plc-prog span{transition:none}}',
     '@media (prefers-reduced-motion:reduce){.plc-sheet,.plc-sheet-bg,.plc-bar i span,.plc-opt .f,.plc-toast{transition:none}}'
   ].join('\n');
@@ -23425,7 +23434,7 @@ window.renderLiveUsers=function(start){
     var k=qkey(text);
     if(scope&&onceMap){ var set=onceMap.get(scope); if(!set){ set={}; onceMap.set(scope,set); } if(set[k]) return; set[k]=1; }
     rpc('record_answer',{p_key:k,p_wrong:!!wrong}).then(function(r){
-      if(!wrong||!container||!r||r.total<2||r.wrong_pct<35) return;
+      if(!wrong||!container||!r||r.total<2||r.wrong_pct<35||!beta()) return;
       if(container.querySelector('.plc-orakel')) return;
       var d=document.createElement('div'); d.className='plc-orakel';
       d.textContent='Mach dir keinen Kopf: '+r.wrong_pct+' % aller Azubis lagen bei dieser Frage auch falsch.';
@@ -23475,25 +23484,77 @@ window.renderLiveUsers=function(start){
     return p[0]+(p.length>1?' '+p[p.length-1].charAt(0).toUpperCase()+'.':'');
   }
   function fmt(ms){ var s=Math.max(0,Math.ceil(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
-  function startRemote(){ return rpc('lerntisch_start2',{p_key:key(),p_name:ltName(),p_avatar:myAv()}).catch(function(){}); }
+  function curTable(){ return (lsGet('pl_lt_table')||'').toUpperCase(); }
+  function startRemote(){ return rpc('lerntisch_start3',{p_key:key(),p_name:ltName(),p_avatar:myAv(),p_table:curTable()}).catch(function(e){
+    if(e&&String(e.message||'').indexOf('tisch unbekannt')>-1){ lsSet('pl_lt_table',null); toast('Dieser Gruppentisch existiert nicht mehr. Du sitzt am öffentlichen Tisch.'); return rpc('lerntisch_start3',{p_key:key(),p_name:ltName(),p_avatar:myAv(),p_table:''}).catch(function(){}); }
+  }); }
 
-  /* ── Geraeusch: leises Bibliotheksrauschen (WebAudio, kein Download) ── */
+  /* ── Geraeusch: Bibliotheks-Atmosphaere (im Geraet erzeugt: Raumton, Umblaettern, Getuschel, Stuhl, Stift) ── */
   var snd=null;
   function soundOn(){ return lsGet('pl_lt_sound')==='1'; }
+  function noiseBuf(ctx,sec,brown){ var n=Math.floor(ctx.sampleRate*sec), b=ctx.createBuffer(1,n,ctx.sampleRate), d=b.getChannelData(0), l=0; for(var i=0;i<n;i++){ var w=Math.random()*2-1; if(brown){ l=(l+0.02*w)/1.02; d[i]=l*3.2; } else d[i]=w; } return b; }
+  function rr(a,b){ return a+Math.random()*(b-a); }
+  function outNode(ctx,gainV){ var g=ctx.createGain(); g.gain.value=gainV; var p=ctx.createStereoPanner?ctx.createStereoPanner():null; if(p){ p.pan.value=rr(-0.8,0.8); g.connect(p); p.connect(snd.master); } else g.connect(snd.master); return g; }
+  function sPage(t){
+    var c=snd.ctx, dur=rr(0.35,0.6), src=c.createBufferSource(); src.buffer=snd.white;
+    var hp=c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=700;
+    var bp=c.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=0.8; bp.frequency.setValueAtTime(rr(2600,3800),t); bp.frequency.exponentialRampToValueAtTime(rr(900,1300),t+dur);
+    var g=outNode(c,0); var v=rr(0.10,0.18);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v*0.4,t+0.04);
+    for(var k=1;k<8;k++){ g.gain.linearRampToValueAtTime(v*rr(0.4,1),t+dur*k/8); }   // Knistern
+    g.gain.linearRampToValueAtTime(0,t+dur+0.08);
+    src.connect(hp); hp.connect(bp); bp.connect(g); src.start(t, rr(0,1)); src.stop(t+dur+0.1);
+  }
+  function sWhisper(t){
+    var c=snd.ctx, syl=Math.floor(rr(7,16)), tt=t, f=rr(1600,2600), g=outNode(c,0);
+    var src=c.createBufferSource(); src.buffer=snd.white;
+    var bp=c.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=2.2; bp.frequency.setValueAtTime(f,t);
+    var bp2=c.createBiquadFilter(); bp2.type='peaking'; bp2.gain.value=8; bp2.Q.value=3;
+    var vol=rr(0.018,0.032);
+    g.gain.setValueAtTime(0,t);
+    for(var i=0;i<syl;i++){
+      var d=rr(0.07,0.2), gap=Math.random()<0.18?rr(0.25,0.5):rr(0.02,0.07);
+      bp.frequency.setValueAtTime(f*rr(0.75,1.3),tt); bp2.frequency.setValueAtTime(rr(700,1400),tt);
+      g.gain.linearRampToValueAtTime(vol*rr(0.5,1),tt+d*0.3); g.gain.linearRampToValueAtTime(vol*0.15,tt+d); g.gain.linearRampToValueAtTime(0,tt+d+gap*0.6);
+      tt+=d+gap;
+    }
+    src.connect(bp); bp.connect(bp2); bp2.connect(g); src.start(t, rr(0,1)); src.stop(tt+0.2);
+  }
+  function sChair(t){
+    var c=snd.ctx, dur=rr(0.35,0.9);
+    var o=c.createOscillator(); o.type='sawtooth'; var f0=rr(85,150); o.frequency.setValueAtTime(f0,t); o.frequency.linearRampToValueAtTime(f0*rr(0.8,1.35),t+dur);
+    var bp=c.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=9; bp.frequency.value=rr(500,900);
+    var am=c.createGain(); am.gain.value=0; var lfo=c.createOscillator(); lfo.type='square'; lfo.frequency.value=rr(18,34); var lg=c.createGain(); lg.gain.value=0.5; lfo.connect(lg); lg.connect(am.gain);
+    var g=outNode(c,0), v=rr(0.05,0.09); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+0.06); g.gain.setValueAtTime(v,t+dur-0.1); g.gain.linearRampToValueAtTime(0,t+dur);
+    o.connect(bp); bp.connect(am); am.connect(g); o.start(t); lfo.start(t); o.stop(t+dur+0.05); lfo.stop(t+dur+0.05);
+    // Schleifen ueber den Boden
+    var s=c.createBufferSource(); s.buffer=snd.white; var lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=rr(350,600);
+    var g2=outNode(c,0); g2.gain.setValueAtTime(0,t+dur*0.2); g2.gain.linearRampToValueAtTime(rr(0.05,0.1),t+dur*0.35); g2.gain.linearRampToValueAtTime(0,t+dur*0.9);
+    s.connect(lp); lp.connect(g2); s.start(t, rr(0,1)); s.stop(t+dur);
+  }
+  function sPen(t){
+    var c=snd.ctx, n=Math.floor(rr(2,5)), tt=t, g=outNode(c,0);
+    var s=c.createBufferSource(); s.buffer=snd.white; var hp=c.createBiquadFilter(); hp.type='bandpass'; hp.frequency.value=rr(2500,4200); hp.Q.value=4;
+    g.gain.setValueAtTime(0,t);
+    for(var i=0;i<n;i++){ var v=rr(0.06,0.12); g.gain.setValueAtTime(v,tt); g.gain.exponentialRampToValueAtTime(0.0005,tt+0.03); tt+=rr(0.09,0.22); }
+    s.connect(hp); hp.connect(g); s.start(t, rr(0,1)); s.stop(tt+0.05);
+  }
+  function sched(fn,a,b){ if(!snd) return; var id=setTimeout(function(){ if(!snd) return; try{ fn(snd.ctx.currentTime+0.05); if(fn===sPage&&Math.random()<0.3) fn(snd.ctx.currentTime+rr(0.7,1.4)); }catch(e){} sched(fn,a,b); }, rr(a,b)*1000); snd.timers.push(id); }
   function soundStart(){
     if(snd||!soundOn()) return;
     try{
       var C=window.AudioContext||window.webkitAudioContext; if(!C) return;
-      var ctx=new C(), len=ctx.sampleRate*3, buf=ctx.createBuffer(1,len,ctx.sampleRate), d=buf.getChannelData(0), last=0;
-      for(var i=0;i<len;i++){ var w=Math.random()*2-1; last=(last+0.02*w)/1.02; d[i]=last*3.2; }
-      var src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
-      var f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=700;
-      var g=ctx.createGain(); g.gain.value=0; g.gain.linearRampToValueAtTime(0.09, ctx.currentTime+1.5);
-      src.connect(f); f.connect(g); g.connect(ctx.destination); src.start();
-      snd={ctx:ctx,g:g};
+      var ctx=new C(); if(ctx.state==='suspended') ctx.resume();
+      var master=ctx.createGain(); master.gain.value=0; master.gain.linearRampToValueAtTime(1, ctx.currentTime+2); master.connect(ctx.destination);
+      snd={ctx:ctx,master:master,timers:[],white:noiseBuf(ctx,2,false)};
+      // leiser Raumton
+      var rt=ctx.createBufferSource(); rt.buffer=noiseBuf(ctx,4,true); rt.loop=true; var lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=380;
+      var rg=ctx.createGain(); rg.gain.value=0.035; rt.connect(lp); lp.connect(rg); rg.connect(master); rt.start();
+      sched(sPage,18,55); sched(sWhisper,50,150); sched(sChair,110,280); sched(sPen,35,110);
+      setTimeout(function(){ if(snd) sPage(snd.ctx.currentTime+0.1); },2500);
     }catch(e){}
   }
-  function soundStop(){ if(!snd) return; var s=snd; snd=null; try{ s.g.gain.linearRampToValueAtTime(0, s.ctx.currentTime+0.8); setTimeout(function(){ s.ctx.close(); },900); }catch(e){} }
+  function soundStop(){ if(!snd) return; var s=snd; snd=null; s.timers.forEach(clearTimeout); try{ s.master.gain.linearRampToValueAtTime(0, s.ctx.currentTime+0.8); setTimeout(function(){ s.ctx.close(); },900); }catch(e){} }
 
   /* ── Szene ── */
   function rnd(seed){ return function(){ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; }; }
@@ -23567,7 +23628,9 @@ window.renderLiveUsers=function(start){
       +'<rect x="0" y="122" width="360" height="70" fill="#0f1c28"/><rect x="0" y="122" width="360" height="2" fill="#1d2f3e"/>';
     // Stuehle + Avatare (hinterer Reihe)
     X.forEach(function(x,i){ o+='<rect x="'+(x-20)+'" y="128" width="40" height="58" rx="9" fill="#2e2119"/><rect x="'+(x-15)+'" y="133" width="30" height="40" rx="6" fill="#3d2c21"/>'; });
-    placed.forEach(function(p,j){ o+=avatarSVG(X[p.i],176,parseAv(p.s.a,p.s.n),false,j+1); });
+    placed.forEach(function(p,j){ o+=avatarSVG(X[p.i],176,parseAv(p.s.a,p.s.n),false,j+1);
+      var gc='', x=X[p.i]; if(p.s.c) gc+='☕'+(p.s.c>1?p.s.c:''); if(p.s.p) gc+=(gc?' ':'')+'💪'+(p.s.p>1?p.s.p:'');
+      if(gc) o+='<text x="'+x+'" y="132" text-anchor="middle" font-size="9" fill="#ffe2a6">'+gc+'</text>'; });
     o+='<g'+(run?(Date.now()-(ltEnd()-LT_MS)<1500?' class="plc-drop"':''):' opacity=".32"')+'>'+avatarSVG(X[meIdx],176,meAv,true,0)+'</g>';
     // Haengelampen + Lichtkegel
     [110,250].forEach(function(lx){ o+='<path d="M'+lx+' 0 V112" stroke="#2a3a48" stroke-width="1.2"/><path d="M'+(lx-60)+' 186 L'+(lx-13)+' 124 L'+(lx+13)+' 124 L'+(lx+60)+' 186 Z" fill="url(#plc-glow)" class="plc-light"/>'
@@ -23582,11 +23645,13 @@ window.renderLiveUsers=function(start){
     // Namen
     placed.forEach(function(p){ var nm=String(p.s.n); if(/^Anonym/.test(nm)) nm='Anonym'; o+='<text x="'+X[p.i]+'" y="232" text-anchor="middle" font-size="8.5" fill="#93b9d1">'+esc(nm.slice(0,11))+'</text>'; });
     o+='<text x="'+X[meIdx]+'" y="232" text-anchor="middle" font-size="9" font-weight="700" fill="'+(run?'#7dd3fc':'#5d7a90')+'">'+(run?'Du':'Dein Platz')+'</text>';
+    var mine=seats.filter(function(z){return z.me;})[0]; if(run&&mine){ var mg=''; if(mine.c) mg+='☕'+(mine.c>1?mine.c:''); if(mine.p) mg+=(mg?' ':'')+'💪'+(mine.p>1?mine.p:''); if(mg) o+='<text x="'+X[meIdx]+'" y="132" text-anchor="middle" font-size="9" fill="#ffe2a6">'+mg+'</text>'; }
+    placed.forEach(function(p){ o+='<rect class="plc-hit" data-sid="'+esc(p.s.sid||'')+'" data-n="'+esc(p.s.n)+'" x="'+(X[p.i]-26)+'" y="125" width="52" height="112" fill="transparent" tabindex="0" role="button" aria-label="'+esc(p.s.n)+' etwas schicken"/>'; });
     return o+'</svg>';
   }
 
   function openLerntisch(){
-    if(document.getElementById('plc-lt')) return;
+    if(document.getElementById('plc-lt')||!beta()) return;
     var ov=document.createElement('div'); ov.className='plc-ov'; ov.id='plc-lt'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label','Lerntisch');
     ov.innerHTML='<div style="max-width:560px;margin:0 auto"><button class="plc-link" id="plc-lt-close" style="font-size:14px">‹ Zurück</button>'
       +'<div class="plc-h" style="font-size:20px;margin-top:8px">Lerntisch</div><div class="plc-sub">25 Minuten Fokus. Du kannst direkt in PLAN lernen, der Timer läuft mit.</div>'
@@ -23597,6 +23662,7 @@ window.renderLiveUsers=function(start){
       +'<div style="display:flex;justify-content:center;margin-top:12px"><button class="plc-btn" id="plc-lt-go" style="min-width:200px;padding:13px 16px;font-size:15px">Hinsetzen und starten</button></div>'
       +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Während der Einheit lernen</div>'
       +'<div class="plc-quick"><button data-go="quiz">🧠<span>Quiz</span></button><button data-go="karteikarten">🗂️<span>Karteikarten</span></button><button data-go="krankheitsbilder">🩺<span>Krankheitsbilder</span></button></div>'
+      +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Tisch und Einladungen</div><div id="plc-lt-tables"></div>'
       +'<details class="plc-det"><summary>Avatar anpassen</summary><div id="plc-lt-avpick"></div></details>'
       +'<div class="plc-toggles"><label><input type="checkbox" id="plc-lt-anon"> Anonym am Tisch</label><label><input type="checkbox" id="plc-lt-snd"> Bibliotheks-Geräusch</label></div>'
       +'<div class="plc-sub" id="plc-lt-today" style="text-align:center;margin-top:10px"></div></div>';
@@ -23611,9 +23677,9 @@ window.renderLiveUsers=function(start){
       if(!running()) startSession();
       closeLerntisch();
       var t=b.getAttribute('data-go');
-      try{ if(typeof navGo==='function') navGo(t); else showScreen(t); }catch(e){ try{ showScreen(t); }catch(_){} }
+      try{ if(t==='quiz'){ showScreen('quizSelect'); try{ renderQuizSelect(); }catch(_){} } else if(typeof navGo==='function') navGo(t); else showScreen(t); }catch(e){ try{ showScreen(t==='quiz'?'quizSelect':t); }catch(_){} }
     }; });
-    renderAvPick();
+    renderAvPick(); renderTables();
     ltSceneSig=''; ltRender(); ltLive();
     ltPoll=setInterval(ltLive,20000);
   }
@@ -23647,8 +23713,8 @@ window.renderLiveUsers=function(start){
   function ltRender(){
     var sc=document.getElementById('plc-lt-scene'); if(!sc) return;
     var run=running(), left=ltEnd()-Date.now(), br=brEnd()-Date.now();
-    var sig=[run, (ltSeats&&JSON.stringify(ltSeats.seats.map(function(s){return s.n+s.a+s.me;})))||'', myAv(), doneToday(), new Date().getHours()].join('|');
-    if(sig!==ltSceneSig){ sc.innerHTML=sceneSVG(); ltSceneSig=sig; }
+    var sig=[run, (ltSeats&&JSON.stringify(ltSeats.seats.map(function(s){return s.n+s.a+s.me+s.c+s.p;})))||'', myAv(), doneToday(), new Date().getHours()].join('|');
+    if(sig!==ltSceneSig){ sc.innerHTML=sceneSVG(); ltSceneSig=sig; bindSeats(sc); }
     var cf=document.getElementById('plc-coffee'); if(cf&&run){ var lvl=Math.max(0,left/LT_MS); cf.setAttribute('y',(181+(1-lvl)*8).toFixed(1)); }
     var t=document.getElementById('plc-lt-time'), b=document.getElementById('plc-lt-go'), bar=document.getElementById('plc-lt-bar'), st=document.getElementById('plc-lt-status');
     if(run){ t.textContent=fmt(left); b.textContent='Einheit beenden'; bar.style.width=(100-left/LT_MS*100).toFixed(2)+'%'; }
@@ -23658,10 +23724,12 @@ window.renderLiveUsers=function(start){
     st.textContent = br>0&&!run ? 'Pause. Steh kurz auf, trink etwas.'
       : others ? (others===1?'Gerade lernt 1 Azubi mit dir.':'Gerade lernen '+others+' Azubis mit dir.')
       : run ? 'Du sitzt gerade allein am Tisch. Wer dazukommt, erscheint hier.' : 'Der Tisch ist frei. Setz dich dazu.';
+    if(curTable()) st.textContent='Gruppentisch '+curTable()+': '+st.textContent;
     var dn=doneToday(), td=document.getElementById('plc-lt-today'); if(td) td.textContent=dn?('Heute geschafft: '+dn+' Einheit'+(dn===1?'':'en')+' ('+dn*25+' Minuten)'):'';
   }
-  function ltLive(){
-    rpc('get_lerntisch_seats',{p_key:key()}).then(function(r){ ltSeats=r||{seats:[]}; ltRender(); }).catch(function(){ ltRender(); });
+  function ltLive(noGifts){
+    rpc('get_lerntisch_seats2',{p_key:key(),p_table:curTable()}).then(function(r){ ltSeats=r||{seats:[]}; ltRender(); }).catch(function(){ ltRender(); });
+    if(noGifts!==true) pollGifts();
   }
   /* ── Mini-Timer im Rest der App ── */
   function pillRender(){
@@ -23672,12 +23740,107 @@ window.renderLiveUsers=function(start){
     p.textContent=(run?'☕ ':'🧘 ')+fmt(run?ltEnd()-Date.now():brEnd()-Date.now());
     p.setAttribute('aria-label', run?'Lerntisch: Restzeit, zum Öffnen tippen':'Pause läuft, zum Öffnen tippen');
   }
+  var giftTick=0;
   function globalTick(){
+    if(!beta()){ var pp=document.getElementById('plc-lt-pill'); if(pp) pp.remove(); return; }
+    if(running()&&!document.getElementById('plc-lt')&&++giftTick%30===0) pollGifts();
     if(ltEnd()&&!running()) stopSession(false);
     if(brEnd()&&brEnd()<=Date.now()) lsSet('pl_lt_br', null);
     ltRender(); pillRender();
   }
   window.plcOpenLerntisch=openLerntisch;
+
+  /* ── Care-Package am Tisch ── */
+  var GIFT={kaffee:{e:'☕',t:'einen Kaffee'},power:{e:'💪',t:'Power'}};
+  function bindSeats(sc){
+    sc.querySelectorAll('.plc-hit').forEach(function(h){
+      function go(){ giftMenu(h.getAttribute('data-sid'), h.getAttribute('data-n')); }
+      h.addEventListener('click',go); h.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+    });
+  }
+  function giftMenu(sid,name){
+    if(!sid) return; var old=document.getElementById('plc-gift'); if(old) old.remove();
+    var d=document.createElement('div'); d.id='plc-gift'; d.className='plc-gift'; d.setAttribute('role','dialog');
+    d.innerHTML='<div class="plc-h" style="justify-content:center">'+esc(name)+' etwas schicken</div><div class="plc-sub" style="text-align:center">Anonym, ohne Text.</div>'
+      +'<div style="display:flex;gap:10px;margin-top:12px"><button class="plc-btn" data-k="kaffee" style="flex:1;font-size:15px">☕ Kaffee</button><button class="plc-btn" data-k="power" style="flex:1;font-size:15px">💪 Power</button></div>'
+      +'<button class="plc-link" style="display:block;margin:10px auto 0" data-x>Abbrechen</button>';
+    document.body.appendChild(d);
+    d.querySelector('[data-x]').onclick=function(){ d.remove(); };
+    d.querySelectorAll('[data-k]').forEach(function(b){ b.onclick=function(){
+      var k=b.getAttribute('data-k'); d.remove();
+      rpc('send_gift',{p_key:key(),p_sid:sid,p_kind:k}).then(function(r){
+        if(r&&r.ok){ toast(GIFT[k].e+' Geschickt an '+name+'.'); floatGift(GIFT[k].e); ltLive(); }
+        else toast(r&&r.grund==='schon'?'Du hast '+name+' gerade erst etwas geschickt.':r&&r.grund==='weg'?name+' ist gerade aufgestanden.':'Gerade nicht möglich. Versuch es gleich nochmal.');
+      }).catch(function(){ toast('Keine Verbindung. Versuch es gleich nochmal.'); });
+    }; });
+  }
+  function floatGift(e){ var sc=document.getElementById('plc-lt-scene'); var f=document.createElement('div'); f.className='plc-float'; f.textContent=e; (sc||document.body).appendChild(f); setTimeout(function(){ f.remove(); },1600); }
+  var giftBusy=false;
+  function pollGifts(){
+    if(giftBusy||!running()) return; giftBusy=true;
+    rpc('get_my_gifts',{p_key:key()}).then(function(list){
+      giftBusy=false; if(!list||!list.length) return;
+      var c=list.filter(function(k){return k==='kaffee';}).length, p=list.length-c, parts=[];
+      if(c) parts.push(c===1?'einen ☕ Kaffee':c+'× ☕ Kaffee'); if(p) parts.push(p===1?'💪 Power':p+'× 💪 Power');
+      toast((list.length===1?'Jemand hat dir ':'Andere am Tisch haben dir ')+parts.join(' und ')+' geschickt!');
+      floatGift(c?'☕':'💪'); try{ if(typeof playCorrect==='function') playCorrect(); }catch(e){}
+      ltSceneSig=''; if(document.getElementById('plc-lt')) ltLive(true);
+    }).catch(function(){ giftBusy=false; });
+  }
+
+  /* ── Gruppentische + Einladungen (Teilen ueber eigenes Handy, kein Server-Mailversand) ── */
+  var invCode=null;
+  function getInvite(){ if(invCode) return Promise.resolve(invCode); return rpc('get_invite_code',{p_key:key()}).then(function(c){ invCode=c; return c; }); }
+  function share(title,text,url){
+    if(navigator.share) return navigator.share({title:title,text:text,url:url}).catch(function(){});
+    var full=text+' '+url;
+    try{ navigator.clipboard.writeText(full).then(function(){ toast('Link kopiert. Füg ihn in WhatsApp oder deine Mail ein.'); }); }catch(e){ window.prompt('Link kopieren:',full); }
+  }
+  function tableLink(code,inv){ return 'https://plan-nrw.de/?tisch='+(code||'1')+(inv?'&von='+inv:''); }
+  function renderTables(){
+    var box=document.getElementById('plc-lt-tables'); if(!box) return; var tc=curTable();
+    box.innerHTML='<div class="plc-card" style="margin:0">'
+      +'<div class="plc-h">'+(tc?'👥 Gruppentisch '+esc(tc):'🌍 Öffentlicher Tisch')+'</div>'
+      +'<div class="plc-sub">'+(tc?'Hier sitzen nur Leute mit eurem Code.':'Alle, die gerade mit PLAN lernen.')+'</div>'
+      +'<div class="plc-tbtns"><button class="plc-btn" data-a="invite">📨 Zum Tisch einladen</button>'
+      +(tc?'<button class="plc-btn" data-a="public">🌍 Zum öffentlichen Tisch</button>':'<button class="plc-btn" data-a="create">👥 Gruppentisch erstellen</button>')
+      +'</div><div style="display:flex;gap:8px;margin-top:8px"><input class="plc-in" id="plc-tcode" placeholder="Code eingeben, z. B. K7Q2M" maxlength="5" autocapitalize="characters" style="margin:0;text-transform:uppercase"><button class="plc-btn" data-a="join">Beitreten</button></div></div>'
+      +'<div class="plc-card" style="margin:10px 0 0"><div class="plc-h">💌 PLAN weiterempfehlen</div><div class="plc-sub" id="plc-inv-stats">Teile deinen Link mit Kolleginnen, Kollegen und deiner Klasse.</div>'
+      +'<button class="plc-btn" data-a="app" style="margin-top:10px;width:100%">Link teilen</button></div>';
+    box.querySelectorAll('[data-a]').forEach(function(b){ b.onclick=function(){ tableAction(b.getAttribute('data-a')); }; });
+    rpc('my_invite_stats',{p_key:key()}).then(function(r){ var el=document.getElementById('plc-inv-stats'); if(el&&r&&r.besuche) el.textContent=r.besuche===1?'1 Person hat PLAN über deinen Link geöffnet.':r.besuche+' Personen haben PLAN über deinen Link geöffnet.'; }).catch(function(){});
+  }
+  function switchTable(code){
+    lsSet('pl_lt_table', code||null); ltSeats=null; ltSceneSig='';
+    if(running()) startRemote().then(ltLive); else ltLive();
+    renderTables(); ltRender();
+  }
+  function tableAction(a){
+    if(a==='public'){ switchTable(''); toast('Du sitzt jetzt am öffentlichen Tisch.'); return; }
+    if(a==='create'){ rpc('create_tisch',{p_key:key()}).then(function(c){ switchTable(c); toast('Gruppentisch '+c+' erstellt. Lade jetzt deine Leute ein.'); })
+      .catch(function(e){ toast(e&&String(e.message||'').indexOf('limit')>-1?'Du hast heute schon 5 Tische erstellt.':'Erstellen hat nicht geklappt. Prüfe deine Verbindung.'); }); return; }
+    if(a==='join'){ var v=(document.getElementById('plc-tcode').value||'').trim().toUpperCase(); if(v.length!==5){ toast('Der Code hat 5 Zeichen.'); return; }
+      rpc('check_tisch',{p_code:v}).then(function(ok){ if(ok){ switchTable(v); toast('Willkommen am Gruppentisch '+v+'.'); } else toast('Diesen Code gibt es nicht. Prüf die Schreibweise.'); }).catch(function(){ toast('Keine Verbindung.'); }); return; }
+    getInvite().then(function(inv){
+      if(a==='invite'){ var tc=curTable(); share('PLAN Lerntisch', tc?'Lern mit mir an unserem Gruppentisch in PLAN (Code '+tc+'). 25 Minuten Fokus, gemeinsam:':'Ich sitze am Lerntisch in PLAN. Komm dazu, 25 Minuten Fokus, gemeinsam:', tableLink(tc,inv)); }
+      if(a==='app') share('PLAN NRW','Ich lerne mit PLAN für die Pflegeausbildung. Schau mal rein:','https://plan-nrw.de/?von='+inv);
+    }).catch(function(){ toast('Link konnte nicht erstellt werden. Prüfe deine Verbindung.'); });
+  }
+  /* Deep-Links: ?von=CODE (Besuch zaehlen) und ?tisch=CODE|1 (Lerntisch oeffnen) */
+  var pendingTisch=null;
+  function readLinks(){
+    try{
+      var u=new URL(location.href), von=u.searchParams.get('von'), t=u.searchParams.get('tisch'); if(!von&&!t) return;
+      if(von&&/^[A-Z0-9]{6}$/i.test(von)) rpc('invite_visit',{p_code:von.toUpperCase(),p_key:key()}).catch(function(){});
+      if(t) pendingTisch=t.toUpperCase();
+      u.searchParams.delete('von'); u.searchParams.delete('tisch'); history.replaceState(history.state,'',u.pathname+(u.search||'')+u.hash);
+    }catch(e){}
+  }
+  function handlePendingTisch(){
+    if(!pendingTisch||!beta()) return; var t=pendingTisch; pendingTisch=null;
+    if(t==='1'){ lsSet('pl_lt_table',null); openLerntisch(); return; }
+    rpc('check_tisch',{p_code:t}).then(function(ok){ if(ok) lsSet('pl_lt_table',t); else toast('Der Gruppentisch aus dem Link existiert nicht mehr.'); openLerntisch(); }).catch(function(){ openLerntisch(); });
+  }
 
   /* ══ D: UMFRAGEN ══ */
   function renderPolls(){
@@ -23743,6 +23906,7 @@ window.renderLiveUsers=function(start){
   /* ══ HOME-MOUNT ══ */
   function mountHome(){
     var home=document.getElementById('screen-home'); if(!home) return;
+    if(!beta()){ var old=document.getElementById('plc-home'); if(old) old.remove(); return; }
     if(!document.getElementById('plc-home')){
       var anchor=document.getElementById('home-persona');
       var w=document.createElement('div'); w.id='plc-home'; w.style.marginTop='12px';
@@ -23760,11 +23924,11 @@ window.renderLiveUsers=function(start){
   function hookNav(){
     if(typeof window.showScreen!=='function'||window.showScreen._plc) return;
     var orig=window.showScreen;
-    var w=function(name){ var r=orig.apply(this,arguments); try{ if(name==='home') mountHome(); if(name==='admin') renderAdmin(); }catch(e){} return r; };
+    var w=function(name){ var r=orig.apply(this,arguments); try{ if(name==='home'){ mountHome(); handlePendingTisch(); } if(name==='admin') renderAdmin(); }catch(e){} return r; };
     w._plc=true; window.showScreen=w;
   }
 
-  function init(){ hookQuiz(); hookNav(); try{ mountHome(); }catch(e){} if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()) soundStart(); }catch(e){} }
+  function init(){ readLinks(); hookQuiz(); hookNav(); try{ mountHome(); }catch(e){} setTimeout(handlePendingTisch,1500); if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()&&beta()) soundStart(); }catch(e){} }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(init,400); });
   else setTimeout(init,400);
 })();
