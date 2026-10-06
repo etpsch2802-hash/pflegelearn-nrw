@@ -24000,9 +24000,14 @@ window.renderLiveUsers=function(start){
 
   /* ── Eigene Karteikarten + Favoriten (nur Beta) ── */
   function myCards(){ try{ var a=JSON.parse(lsGet('pl_my_cards')||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
-  function saveCards(a){ lsSet('pl_my_cards', JSON.stringify(a.slice(0,500))); try{ if(typeof initSR==='function') initSR(); }catch(e){} }
+  function saveCards(a){
+    var prev=myCards(), now=Date.now(), keep={}; a.forEach(function(c){ keep[c.id]=1; });
+    var d=delMap(); prev.forEach(function(c){ if(!keep[c.id]) d.c[c.id]=now; }); saveDel(d);
+    lsSet('pl_my_cards', JSON.stringify(a.slice(0,500))); try{ if(typeof initSR==='function') initSR(); }catch(e){} ksPushSoon(); }
   function favs(){ try{ var o=JSON.parse(lsGet('pl_favs')||'{}'); return (o&&typeof o==='object')?o:{}; }catch(e){ return {}; } }
-  function saveFavs(o){ lsSet('pl_favs', JSON.stringify(o)); }
+  function saveFavs(o){
+    var prev=favs(), now=Date.now(), d=delMap(); Object.keys(prev).forEach(function(k){ if(!o[k]) d.f[k]=now; }); saveDel(d);
+    lsSet('pl_favs', JSON.stringify(o)); ksPushSoon(); }
   function isFav(q){ return !!favs()[qkey(q.frage)]; }
   function toggleFav(q){ var o=favs(), k=qkey(q.frage);
     if(o[k]) delete o[k]; else o[k]={frage:q.frage,opt:(q.opt||[]).slice(0,6),k:q.k,erkl:q.erkl||'',kat:q.kat||'',t:Date.now()};
@@ -24058,7 +24063,7 @@ window.renderLiveUsers=function(start){
       var f=ov.querySelector('#plc-cf').value.trim(), an=ov.querySelector('#plc-ca').value.trim(), t=ov.querySelector('#plc-ct').value.trim();
       if(f.length<3||an.length<1){ toast('Bitte Vorder- und Rückseite ausfüllen.'); return; }
       var arr=myCards();
-      if(c) arr=arr.map(function(z){ return z.id===c.id?{id:z.id,frage:f,antwort:an,thema:t,t:z.t}:z; });
+      if(c) arr=arr.map(function(z){ return z.id===c.id?{id:z.id,frage:f,antwort:an,thema:t,t:z.t,u:Date.now()}:z; });
       else arr.unshift({id:'my_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),frage:f,antwort:an,thema:t,t:Date.now()});
       saveCards(arr); toast(c?'Karte gespeichert.':'Karte erstellt. Sie ist jetzt in deiner Wiederholung.');
       cardEditor(null); try{ renderKarteikarten(); }catch(e){}
@@ -24086,6 +24091,44 @@ window.renderLiveUsers=function(start){
     d.querySelector('[data-c]').onclick=function(){ toast(addCardFromQuiz(q)?'Als Karteikarte gespeichert.':'Diese Karte hast du schon.'); this.disabled=true; this.textContent='🗂️ Gespeichert'; };
   }
   window.plcOpenFavs=openFavs; window.plcCardEditor=cardEditor;
+  /* ── Cloud-Sync für eigene Karten + Favoriten (Tabelle progress, modul 'karten_v1', nur mit Cloud-Konto) ── */
+  var KS={uid:null, timer:null, last:'', busy:false, writing:false};
+  function delMap(){ try{ var d=JSON.parse(lsGet('pl_kf_del')||'{}'); return {c:d.c||{}, f:d.f||{}}; }catch(e){ return {c:{},f:{}}; } }
+  function saveDel(d){ var now=Date.now(), lim=90*864e5; ['c','f'].forEach(function(x){ Object.keys(d[x]).forEach(function(k){ if(now-d[x][k]>lim) delete d[x][k]; }); }); lsSet('pl_kf_del', JSON.stringify(d)); }
+  function ksLocal(){ return {cards:myCards(), favs:favs(), del:delMap()}; }
+  function ksMerge(a,b){
+    var del={c:{},f:{}};
+    [a.del||{},b.del||{}].forEach(function(d){ ['c','f'].forEach(function(x){ var m=d[x]||{}; Object.keys(m).forEach(function(k){ del[x][k]=Math.max(del[x][k]||0, m[k]); }); }); });
+    var cm={}; (a.cards||[]).concat(b.cards||[]).forEach(function(c){ if(!c||!c.id) return; var o=cm[c.id]; if(!o||(c.u||c.t||0)>(o.u||o.t||0)) cm[c.id]=c; });
+    var cards=Object.keys(cm).map(function(k){ return cm[k]; }).filter(function(c){ return !(del.c[c.id]>=(c.u||c.t||0)); }).sort(function(x,y){ return (y.t||0)-(x.t||0); });
+    var fm={}; [a.favs||{},b.favs||{}].forEach(function(f){ Object.keys(f).forEach(function(k){ if(!fm[k]||(f[k].t||0)>(fm[k].t||0)) fm[k]=f[k]; }); });
+    Object.keys(fm).forEach(function(k){ if(del.f[k]>=(fm[k].t||0)) delete fm[k]; });
+    return {cards:cards, favs:fm, del:del};
+  }
+  function ksWrite(m){ KS.writing=true; try{ lsSet('pl_my_cards', JSON.stringify(m.cards.slice(0,500))); lsSet('pl_favs', JSON.stringify(m.favs)); saveDel(m.del); try{ if(typeof initSR==='function') initSR(); }catch(e){} } finally { KS.writing=false; } }
+  function ksPushSoon(){ if(!KS.uid||KS.writing) return; clearTimeout(KS.timer); KS.timer=setTimeout(ksPush, 1500); }
+  function ksPush(){
+    if(!KS.uid||!sb()) return; var d=ksLocal(), j=JSON.stringify(d); if(j===KS.last) return;
+    sb().from('progress').upsert({user_id:KS.uid, modul:'karten_v1', daten:d, updated_at:new Date().toISOString()},{onConflict:'user_id,modul'})
+      .then(function(r){ if(!r.error) KS.last=j; });
+  }
+  function ksPull(){
+    if(!KS.uid||!sb()||KS.busy) return; KS.busy=true;
+    sb().from('progress').select('daten').eq('user_id',KS.uid).eq('modul','karten_v1').maybeSingle().then(function(r){
+      KS.busy=false; if(r.error) return;
+      var remote=(r.data&&r.data.daten)||{}, m=ksMerge(ksLocal(), remote);
+      ksWrite(m); KS.last='';
+      if(JSON.stringify(m)!==JSON.stringify(remote)) ksPush(); else KS.last=JSON.stringify(m);
+      try{ var bar=document.querySelector('#sr-content .plc-cardbar'); if(bar){ bar.remove(); cardsBar(); } }catch(e){}
+    }, function(){ KS.busy=false; });
+  }
+  function ksInit(tries){
+    var c=sb(); if(!c||!c.auth){ if((tries||0)<40) setTimeout(function(){ ksInit((tries||0)+1); },500); return; }
+    try{ c.auth.getSession().then(function(r){ var s=r&&r.data&&r.data.session; if(s&&s.user){ KS.uid=s.user.id; ksPull(); } }); }catch(e){}
+    try{ c.auth.onAuthStateChange(function(ev,s){ var id=s&&s.user?s.user.id:null; if(id&&id!==KS.uid){ KS.uid=id; ksPull(); } if(!id) KS.uid=null; }); }catch(e){}
+    document.addEventListener('pl_cloud_synced', function(){ ksPull(); });
+  }
+
 
   window.plcOpenLerntisch=openLerntisch;
   window.addEventListener('popstate', function(e){
@@ -24272,7 +24315,7 @@ window.renderLiveUsers=function(start){
     w._plc=true; window.showScreen=w;
   }
 
-  function init(){ readLinks(); hookQuiz(); hookNav(); try{ hookCards(); }catch(e){} try{ mountHome(); }catch(e){} setTimeout(handlePendingTisch,1500); if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()&&beta()) soundStart(); }catch(e){} }
+  function init(){ readLinks(); hookQuiz(); hookNav(); try{ hookCards(); ksInit(0); }catch(e){} try{ mountHome(); }catch(e){} setTimeout(handlePendingTisch,1500); if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()&&beta()) soundStart(); }catch(e){} }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(init,400); });
   else setTimeout(init,400);
 })();
