@@ -4,7 +4,8 @@
 // 2) Verschickt das angeforderte Gratis-PDF (paket) als Anhang von kontakt@plan-nrw.de.
 // Beruehrt NICHT: chat.js, vercel.json, Stripe-Button, stripe-webhook.js.
 
-const BASE = 'https://raw.githubusercontent.com/etpsch2802-hash/pflegelearn-nrw/main/assets/pdf/';
+// Gratis-PDFs liegen in einem eigenen oeffentlichen Repo, damit das Haupt-Repo privat sein kann.
+const BASE = 'https://raw.githubusercontent.com/etpsch2802-hash/plan-nrw-gratis-pdfs/main/';
 const FROM = 'PLAN NRW <kontakt@plan-nrw.de>';
 const REPLY_TO = 'pflegelearn.nrw@gmail.com';
 
