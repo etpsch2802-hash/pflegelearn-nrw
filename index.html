@@ -23924,7 +23924,7 @@ window.renderLiveUsers=function(start){
     if(!running()) startSession();
     closeLerntisch();
     try{ quizCE=null; }catch(e){}
-    quizKat='alle'; quizList=list; quizIdx=0; quizAnswers=[]; selectedAns=null; showExp=false;
+    quizKat='alle'; quizList=list; quizIdx=0; quizAnswers=[]; selectedAns=null; window.showExp=false; /* showExp ist in der App nicht deklariert (implizit global) */
     showScreen('quiz'); renderQuestion();
     toast('Themen-Quiz „'+label+'“: '+list.length+' Fragen');
   }
@@ -23968,9 +23968,10 @@ window.renderLiveUsers=function(start){
       return;
     }
     var wdbReady=false; try{ wdbReady=Array.isArray(_wdbData)&&_wdbData.length>0; }catch(e){}
-    if(!wdbReady&&!renderTopic._loading&&typeof loadWissensDB==='function'){
-      renderTopic._loading=true;
-      try{ Promise.resolve(loadWissensDB()).then(function(){ renderTopic._loading=false; if(document.getElementById('plc-lt-topic')) renderTopic(); }).catch(function(){ renderTopic._loading=false; }); }catch(e){ renderTopic._loading=false; }
+    // Wissensdatenbank genau einmal nachladen (kein Endlos-Neuladen, falls sie offline/leer bleibt)
+    if(!wdbReady&&!renderTopic._tried&&typeof loadWissensDB==='function'){
+      renderTopic._tried=true;
+      try{ Promise.resolve(loadWissensDB()).then(function(){ var ok=false; try{ ok=Array.isArray(_wdbData)&&_wdbData.length>0; }catch(e){} if(!ok) renderTopic._failed=true; if(document.getElementById('plc-lt-topic')) renderTopic(); }).catch(function(){ renderTopic._failed=true; if(document.getElementById('plc-lt-topic')) renderTopic(); }); }catch(e){}
     }
     var raw=cur.t, terms=topicTerms(raw), pool=topicQuizPool(terms,raw), hits=[];
     try{ if(typeof plBuildSearchHits==='function') hits=plBuildSearchHits(terms.slice(0,12).join(' ')||raw).filter(function(h){ return h.type!=='Quiz'; }); }catch(e){}
@@ -23978,7 +23979,7 @@ window.renderLiveUsers=function(start){
     box.innerHTML='<div class="plc-card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="plc-h" style="margin:0">🎯 '+esc(raw)+'</div><button class="plc-link" id="plc-topic-chg" style="padding:0">Ändern</button></div>'
       +'<div class="plc-kibox"><div class="plc-kihead">✨ Kurz erklärt</div><div id="plc-topic-ki"></div><div class="plc-kinote">KI-generiert. Prüf wichtige Inhalte mit deinen Unterlagen.</div></div>'
       +(pool.length?'<button class="plc-btn" id="plc-topic-quiz" style="width:100%;margin-top:10px">📝 Themen-Quiz starten ('+Math.min(20,pool.length)+' Fragen)</button>':'<div class="plc-sub" style="margin-top:10px">Zu diesem Thema gibt es noch keine Quizfragen.</div>')
-      +(!wdbReady?'<div class="plc-sub" style="margin-top:12px">📚 Wissensdatenbank wird geladen …</div>':'')
+      +(!wdbReady&&!renderTopic._failed?'<div class="plc-sub" style="margin-top:12px">📚 Wissensdatenbank wird geladen …</div>':'')
       +(hits.length?'<div class="plc-sub" style="margin:12px 0 4px;font-weight:600;color:#c3d4e4">Passende Inhalte</div><div class="plc-hits">'+hits.map(function(h,i){ return '<button data-h="'+i+'"><span class="t">'+h.icon+' '+esc(h.type)+'</span><span class="n">'+esc(h.title)+'</span></button>'; }).join('')+'</div>':'')
       +'</div>';
     box.querySelector('#plc-topic-chg').onclick=function(){ topicSet(null); renderTopic(); ltRender(); };
