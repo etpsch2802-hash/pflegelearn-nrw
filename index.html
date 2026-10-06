@@ -23351,6 +23351,8 @@ window.renderLiveUsers=function(start){
     '.plc-kihead{font-size:10.5px;color:#22d3ee;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}.plc-kinote{font-size:10.5px;color:#6f93ad;margin-top:8px}',
     '.plc-hits{display:flex;flex-direction:column;gap:6px}.plc-hits button{font-family:inherit;cursor:pointer;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:8px 11px;color:#e8f1f8}',
     '.plc-hits .t{display:block;font-size:10px;color:#7dd3fc;letter-spacing:.5px;text-transform:uppercase}.plc-hits .n{display:block;font-size:13px;font-weight:600;margin-top:2px}',
+    '.plc-lh{margin-top:10px}.plc-lh-row{display:flex;gap:8px;flex-wrap:wrap}.plc-lh-row button{font-family:inherit;cursor:pointer;background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.35);color:#cffafe;border-radius:10px;padding:7px 11px;font-size:12.5px;font-weight:600}',
+    '.plc-lh-out{margin-top:8px}.plc-lh-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6;color:#e2edf5}',
     '.plc-hit{cursor:pointer;outline:none}.plc-hit:focus-visible{stroke:#7dd3fc;stroke-width:2}',
     '.plc-gift{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10001;background:#163246;border:1px solid rgba(125,211,252,.35);border-radius:18px;padding:16px;width:min(320px,88vw);box-shadow:0 18px 50px rgba(0,0,0,.5);color:#e8f1f8}',
     '.plc-scene{position:relative}.plc-float{position:absolute;left:50%;top:45%;font-size:42px;transform:translate(-50%,0);animation:plcFloat 1.5s ease-out forwards;pointer-events:none}',
@@ -23421,6 +23423,52 @@ window.renderLiveUsers=function(start){
     for(var i=0;i<arr.length;i+=200) rpc('record_answers_batch',{p_items:arr.slice(i,i+200)}).catch(function(){});
   }
   window.plcOrakel=plcOrakel; window.plcOrakelBatch=plcOrakelBatch;
+  /* ── Sprach-Hilfe im Quiz: "Einfach erklärt" (B1-Deutsch) + "Übersetzen" (Fachbegriffe bleiben deutsch) ── */
+  var LANGS=[['en','English'],['tr','Türkçe'],['ar','العربية'],['ru','Русский'],['uk','Українська'],['pl','Polski'],['ro','Română'],['fa','فارسی'],['es','Español']];
+  var LNAME={en:'Englisch',tr:'Türkisch',ar:'Arabisch',ru:'Russisch',uk:'Ukrainisch',pl:'Polnisch',ro:'Rumänisch',fa:'Persisch (Farsi/Dari)',es:'Spanisch'};
+  function kiQuota(){
+    try{ if(typeof currentBereich!=='undefined'&&currentBereich&&!currentBereich.ki_unbegrenzt){ var max=currentBereich.ki_max||3; if(typeof kiNachrichtenCount!=='undefined'&&kiNachrichtenCount>=max) return false; kiNachrichtenCount++; } }catch(e){}
+    try{ if(typeof recordKIMessage==='function') recordKIMessage(); }catch(e){}
+    return true;
+  }
+  function lhCache(k,v){ var m={}; try{ m=JSON.parse(lsGet('pl_lh_cache')||'{}'); }catch(e){}
+    if(v===undefined) return m[k]; m[k]={v:v,t:Date.now()}; var ks=Object.keys(m); if(ks.length>60){ ks.sort(function(a,b){return m[a].t-m[b].t;}).slice(0,ks.length-60).forEach(function(x){ delete m[x]; }); }
+    lsSet('pl_lh_cache',JSON.stringify(m)); }
+  function lhFmt(t){ return esc(t).replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/^#+\s*(.*)$/gm,'<b>$1</b>').replace(/^\s*[-•*]\s+/gm,'• ').replace(/\n/g,'<br>'); }
+  function langHelp(q,box){
+    if(!q||!box||!beta()||box.querySelector('.plc-lh')) return;
+    var d=document.createElement('div'); d.className='plc-lh';
+    var cur=lsGet('pl_lang')||'';
+    d.innerHTML='<div class="plc-lh-row"><button data-m="einfach">🗣️ Einfach erklärt</button><button data-m="tr">🌍 '+(cur?'Übersetzen: '+esc((LANGS.filter(function(l){return l[0]===cur;})[0]||['',''])[1]):'Übersetzen')+'</button></div><div class="plc-lh-out" aria-live="polite"></div>';
+    box.appendChild(d);
+    var out=d.querySelector('.plc-lh-out');
+    d.querySelector('[data-m=einfach]').onclick=function(){ run('einfach',''); };
+    d.querySelector('[data-m=tr]').onclick=function(){ var l=lsGet('pl_lang'); if(l) run('tr',l); else pick(); };
+    function pick(){
+      out.innerHTML='<div class="plc-sub" style="margin-bottom:6px">In welche Sprache? Fachbegriffe bleiben zusätzlich auf Deutsch, weil die Prüfung auf Deutsch ist.</div><div class="plc-chiprow" style="margin-top:0">'+LANGS.map(function(l){ return '<button data-l="'+l[0]+'">'+esc(l[1])+'</button>'; }).join('')+'</div>';
+      out.querySelectorAll('[data-l]').forEach(function(b){ b.onclick=function(){ var l=b.getAttribute('data-l'); lsSet('pl_lang',l); d.querySelector('[data-m=tr]').textContent='🌍 Übersetzen: '+b.textContent; run('tr',l); }; });
+    }
+    function run(mode,lang){
+      var ck=qkey(q.frage)+'|'+mode+'|'+lang, c=lhCache(ck);
+      var rtl=(lang==='ar'||lang==='fa');
+      function show(t){ out.innerHTML='<div class="plc-lh-box"'+(rtl?' dir="rtl"':'')+'>'+lhFmt(t)+'</div><div class="plc-kinote">KI-generiert. Im Zweifel gilt die deutsche Erklärung.'+(mode==='tr'?' <button class="plc-link" data-chg style="padding:0;font-size:10.5px">Sprache ändern</button>':'')+'</div>';
+        var cg=out.querySelector('[data-chg]'); if(cg) cg.onclick=function(){ lsSet('pl_lang',null); pick(); }; }
+      if(c&&c.v){ show(c.v); return; }
+      if(!kiQuota()){ out.innerHTML='<div class="plc-sub" style="color:#fbbf24">Dein KI-Kontingent ist für heute aufgebraucht.</div>'; return; }
+      if(typeof callKI!=='function'){ out.textContent='KI gerade nicht verfügbar.'; return; }
+      var opts=(q.opt||[]).map(function(o,i){ return String.fromCharCode(65+i)+') '+o+(i===q.k?'  [richtig]':''); }).join('\n');
+      var base='Frage: '+q.frage+'\nAntworten:\n'+opts+'\nErklärung: '+(q.erkl||'');
+      var prompt = mode==='einfach'
+        ? base+'\n\nErkläre das in einfacher deutscher Sprache (Sprachniveau B1, kurze Sätze, schwere Fachwörter kurz erklären) für Pflege-Azubis. Sag, warum die richtige Antwort stimmt, und gib am Ende einen kurzen Merksatz. Höchstens 110 Wörter.'
+        : base+'\n\nÜbersetze Frage, Antworten (Kennzeichnung [richtig] beibehalten) und Erklärung ins '+LNAME[lang]+'. Schreibe hinter jeden wichtigen Fachbegriff den deutschen Begriff in Klammern, z. B. "pressure ulcer (Dekubitus)", weil die Prüfung auf Deutsch ist. Keine zusätzlichen Kommentare.';
+      out.innerHTML='<div class="plc-sub">'+(mode==='einfach'?'Wird einfach erklärt …':'Wird übersetzt …')+'</div>';
+      callKI([{role:'user',content:prompt}], (typeof SYS!=='undefined'?SYS:'')).then(function(a){
+        a=String(a||'').trim(); if(!a){ out.innerHTML='<div class="plc-sub">Keine Antwort erhalten. Tipp nochmal.</div>'; return; }
+        lhCache(ck,a); if(document.body.contains(out)) show(a);
+      }).catch(function(){ if(document.body.contains(out)) out.innerHTML='<div class="plc-sub" style="color:#fca5a5">KI gerade nicht erreichbar.</div>'; });
+    }
+  }
+  window.plcLangHelp=langHelp;
   function hookQuiz(){
     if(typeof window.pickAnswer!=='function'||window.pickAnswer._plc) return;
     var orig=window.pickAnswer;
@@ -23428,7 +23476,7 @@ window.renderLiveUsers=function(start){
       var q=null, fresh=false;
       try{ fresh=(selectedAns===null); q=quizList[quizIdx]; }catch(e){}
       var ret=orig.apply(this,arguments);
-      if(fresh&&q&&q.frage) plcOrakel(q.frage, i!==q.k, document.getElementById('explanation'));
+      if(fresh&&q&&q.frage){ plcOrakel(q.frage, i!==q.k, document.getElementById('explanation')); try{ langHelp(q, document.getElementById('explanation')); }catch(e){} }
       return ret;
     };
     wrapped._plc=true; window.pickAnswer=wrapped;
