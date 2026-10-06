@@ -23342,7 +23342,7 @@ window.renderLiveUsers=function(start){
     '.plc-steam{animation:plcSteam 2.6s ease-in-out infinite}.plc-steam.s2{animation-delay:-1.3s}@keyframes plcSteam{0%{transform:translateY(2px);opacity:0}40%{opacity:.55}100%{transform:translateY(-6px);opacity:0}}',
     '.plc-light{animation:plcLight 6s ease-in-out infinite}@keyframes plcLight{0%,100%{opacity:1}50%{opacity:.82}}',
     '.plc-tw{animation:plcTw 3s ease-in-out infinite}@keyframes plcTw{50%{opacity:.25}}',
-    '.plc-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}',
+    '.plc-quick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}',
     '.plc-quick button{font-family:inherit;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:14px;color:#e8f1f8;padding:12px 6px;font-size:20px;display:flex;flex-direction:column;align-items:center;gap:4px}',
     '.plc-quick button span{font-size:11.5px;font-weight:600;color:#c3d4e4}',
     '.plc-det{margin-top:14px;background:rgba(255,255,255,.04);border-radius:14px;padding:10px 12px}.plc-det summary{cursor:pointer;font-size:13px;font-weight:600;color:#c3d4e4}',
@@ -23643,7 +23643,7 @@ window.renderLiveUsers=function(start){
       +'<div style="display:flex;justify-content:center;margin-top:12px"><button class="plc-btn" id="plc-lt-go" style="min-width:200px;padding:13px 16px;font-size:15px">Hinsetzen und starten</button></div>'
       +'<div id="plc-lt-topic" style="margin-top:20px"></div>'
       +'<div class="plc-sub" style="margin:18px 0 6px;font-weight:600;color:#c3d4e4">Oder frei lernen</div>'
-      +'<div class="plc-quick"><button data-go="quiz">🧠<span>Quiz</span></button><button data-go="karteikarten">🗂️<span>Karteikarten</span></button><button data-go="krankheitsbilder">🩺<span>Krankheitsbilder</span></button></div>'
+      +'<div class="plc-quick"><button data-go="quiz">🧠<span>Quiz</span></button><button data-go="karteikarten">🗂️<span>Karteikarten</span></button><button data-go="krankheitsbilder">🩺<span>Krankheitsbilder</span></button><button data-go="wissensdb">📚<span>Wissensdatenbank</span></button></div>'
       +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Tisch und Einladungen</div><div id="plc-lt-tables"></div>'
       +'<details class="plc-det"><summary>Avatar anpassen</summary><div id="plc-lt-avpick"></div></details>'
       +'<div class="plc-toggles"><label><input type="checkbox" id="plc-lt-anon"> Anonym am Tisch</label><label><input type="checkbox" id="plc-lt-snd"> Bibliotheks-Geräusch</label></div>'
@@ -23799,6 +23799,7 @@ window.renderLiveUsers=function(start){
   function topicKI(raw,box){
     var cache=null; try{ cache=JSON.parse(lsGet('pl_lt_topic_ki')||'null'); }catch(e){}
     if(cache&&cache.d===today()&&cache.t===raw&&cache.a){ box.innerHTML=kiFmt(cache.a); return; }
+    if(topicKI._pending===raw){ box.innerHTML='<span style="color:#8ab4d0">KI fasst das Thema zusammen …</span>'; return; }
     try{ if(typeof currentBereich!=='undefined'&&currentBereich&&!currentBereich.ki_unbegrenzt){ var max=currentBereich.ki_max||3; if(typeof kiNachrichtenCount!=='undefined'&&kiNachrichtenCount>=max){ box.innerHTML='<span style="color:#fbbf24">Dein KI-Kontingent ist für heute aufgebraucht. Quiz und Inhalte unten funktionieren weiter.</span>'; return; } kiNachrichtenCount++; } }catch(e){}
     try{ if(typeof recordKIMessage==='function') recordKIMessage(); }catch(e){}
     if(typeof callKI!=='function'){ box.textContent='KI gerade nicht verfügbar.'; return; }
@@ -23806,10 +23807,13 @@ window.renderLiveUsers=function(start){
       ? raw+'\n\nAntworte kurz und prüfungsrelevant für die generalistische Pflegeausbildung in NRW (höchstens 150 Wörter, Stichpunkte erlaubt).'
       : 'Gib mir einen kompakten Lernüberblick zum Thema „'+raw+'“ für die generalistische Pflegeausbildung in NRW: Kernwissen, wichtigste Krankheitsbilder, Pflegeschwerpunkte, typische Prüfungsfallen. Höchstens 180 Wörter, Stichpunkte.';
     box.innerHTML='<span style="color:#8ab4d0">KI fasst das Thema zusammen …</span>';
+    topicKI._pending=raw;
+    function el(){ return document.getElementById('plc-topic-ki'); }
     callKI([{role:'user',content:prompt}], (typeof SYS!=='undefined'?SYS:'')).then(function(a){
-      a=String(a||'').trim(); if(!a){ box.textContent='Keine Antwort erhalten. Versuch es gleich nochmal.'; return; }
-      lsSet('pl_lt_topic_ki', JSON.stringify({d:today(),t:raw,a:a})); if(document.body.contains(box)) box.innerHTML=kiFmt(a);
-    }).catch(function(){ if(document.body.contains(box)) box.innerHTML='<span style="color:#fca5a5">KI gerade nicht erreichbar. Quiz und Inhalte unten funktionieren trotzdem.</span>'; });
+      topicKI._pending=null; a=String(a||'').trim(); var b=el(); var cur=topicGet();
+      if(!a){ if(b) b.textContent='Keine Antwort erhalten. Öffne das Thema gleich nochmal.'; return; }
+      lsSet('pl_lt_topic_ki', JSON.stringify({d:today(),t:raw,a:a})); if(b&&cur&&cur.t===raw) b.innerHTML=kiFmt(a);
+    }).catch(function(){ topicKI._pending=null; var b=el(); if(b) b.innerHTML='<span style="color:#fca5a5">KI gerade nicht erreichbar. Quiz und Inhalte unten funktionieren trotzdem.</span>'; });
   }
   function runAction(a){
     if(!running()) startSession();
@@ -23830,12 +23834,18 @@ window.renderLiveUsers=function(start){
       box.querySelectorAll('[data-t]').forEach(function(b){ b.onclick=function(){ go(b.getAttribute('data-t')); }; });
       return;
     }
+    var wdbReady=false; try{ wdbReady=Array.isArray(_wdbData)&&_wdbData.length>0; }catch(e){}
+    if(!wdbReady&&!renderTopic._loading&&typeof loadWissensDB==='function'){
+      renderTopic._loading=true;
+      try{ Promise.resolve(loadWissensDB()).then(function(){ renderTopic._loading=false; if(document.getElementById('plc-lt-topic')) renderTopic(); }).catch(function(){ renderTopic._loading=false; }); }catch(e){ renderTopic._loading=false; }
+    }
     var raw=cur.t, terms=topicTerms(raw), pool=topicQuizPool(terms,raw), hits=[];
     try{ if(typeof plBuildSearchHits==='function') hits=plBuildSearchHits(terms.slice(0,12).join(' ')||raw).filter(function(h){ return h.type!=='Quiz'; }); }catch(e){}
-    hits=hits.slice(0,10);
+    hits=hits.slice(0,12);
     box.innerHTML='<div class="plc-card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="plc-h" style="margin:0">🎯 '+esc(raw)+'</div><button class="plc-link" id="plc-topic-chg" style="padding:0">Ändern</button></div>'
       +'<div class="plc-kibox"><div class="plc-kihead">✨ Kurz erklärt</div><div id="plc-topic-ki"></div><div class="plc-kinote">KI-generiert. Prüf wichtige Inhalte mit deinen Unterlagen.</div></div>'
       +(pool.length?'<button class="plc-btn" id="plc-topic-quiz" style="width:100%;margin-top:10px">📝 Themen-Quiz starten ('+Math.min(20,pool.length)+' Fragen)</button>':'<div class="plc-sub" style="margin-top:10px">Zu diesem Thema gibt es noch keine Quizfragen.</div>')
+      +(!wdbReady?'<div class="plc-sub" style="margin-top:12px">📚 Wissensdatenbank wird geladen …</div>':'')
       +(hits.length?'<div class="plc-sub" style="margin:12px 0 4px;font-weight:600;color:#c3d4e4">Passende Inhalte</div><div class="plc-hits">'+hits.map(function(h,i){ return '<button data-h="'+i+'"><span class="t">'+h.icon+' '+esc(h.type)+'</span><span class="n">'+esc(h.title)+'</span></button>'; }).join('')+'</div>':'')
       +'</div>';
     box.querySelector('#plc-topic-chg').onclick=function(){ topicSet(null); renderTopic(); ltRender(); };
