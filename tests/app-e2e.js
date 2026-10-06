@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:8099';
 let pass = 0, fail = 0; const fails = [];
-function check(name, cond, extra) { if (cond) { pass++; console.log('  ✅ ' + name); } else { fail++; fails.push(name); console.log('  ❌ ' + name + (extra ? '  → ' + extra : '')); } }
+function check(name, cond, extra) { if (cond) { pass++; console.log('  ✅ ' + name); } else { fail++; fails.push(name); console.log('  ❌ ' + name + (extra ? '  → ' + extra : '')); if (process.env.GITHUB_ACTIONS) console.log('::error title=E2E::' + name + (extra ? ' – ' + String(extra).slice(0, 300) : '')); } }
 
 // supabase-js lokal ausliefern, falls installiert (stabil, kein CDN-Ausfall im Test)
 let SB_LOCAL = null;
@@ -166,4 +166,4 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
   console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
   if (fail) console.log('Fehlgeschlagen:\n - ' + fails.join('\n - '));
   process.exit(fail === 0 ? 0 : 1);
-})().catch(e => { console.error('TEST-FEHLER:', e); process.exit(2); });
+})().catch(e => { console.error('TEST-FEHLER:', e); if (process.env.GITHUB_ACTIONS) console.log('::error title=E2E-Abbruch::' + String(e && e.message || e).split('\n')[0].slice(0, 300)); process.exit(2); });
