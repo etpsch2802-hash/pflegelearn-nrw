@@ -7655,10 +7655,7 @@ async function plSaveLead(email, name, quelle, trialUntil, consent){
   try{
     if(!window.SB || !email || String(email).indexOf('@')<1) return;
     // Sicherheit: nur neue E-Mails eintragen (Spalten email/source), bestehende nie ueberschreiben
-    var res = await window.SB.from('leads').upsert({
-      email: String(email).toLowerCase().slice(0,120),
-      source: String(quelle||'app').slice(0,60)
-    }, { onConflict: 'email', ignoreDuplicates: true });
+    var res = await window.SB.rpc('plc_save_lead', { p_email: String(email).toLowerCase().slice(0,120), p_source: String(quelle||'app').slice(0,60) });
     if(res && res.error){
       try{ console.warn('[plSaveLead] Supabase-Fehler:', res.error.message||res.error); }catch(_){}
       try{ if(typeof gaEvent==='function') gaEvent('lead_save_error',{ quelle: quelle||'' }); }catch(_){}
