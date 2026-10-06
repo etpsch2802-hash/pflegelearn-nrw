@@ -58,6 +58,8 @@ async function login(page, code) {
   await page.waitForTimeout(1200);
   await page.evaluate(() => { document.querySelectorAll('#onboarding-overlay, #pl-consent, #engage-upsell').forEach(e => e.remove()); try { localStorage.setItem('pl_com_status', JSON.stringify({ d: new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' }), s: 'FREI' })); } catch (e) {} });
 }
+// Zeitgesteuerte App-Hinweise (Pruefungsdatum, Push) entfernen, damit sie keine Klicks abfangen
+async function tap(page, sel) { await page.evaluate(sl => { document.querySelectorAll('#examdate-prompt, #push-modal, #onboarding-overlay, #pl-consent').forEach(e => e.remove()); const el = document.querySelector(sl); if (!el) throw new Error('nicht gefunden: ' + sl); el.click(); }, sel); }
 const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined' && !!currentUser);
 
 (async () => {
@@ -159,6 +161,32 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     await page.evaluate(() => { const o = document.getElementById('pl-del-ov'); if (o) o.remove(); showDatenschutz(); }); await page.waitForTimeout(300);
     check('Datenschutz-Dialog lädt datenschutz.html', (await page.locator('iframe[src="/datenschutz.html"]').count()) === 1);
     check('Keine JS-Fehler', S.errors.length === 0, S.errors.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('6) Eigene Karteikarten & Favoriten');
+  {
+    const { ctx, page } = await newPage(browser, S);
+    await login(page, 'TEST-ADMIN');
+    await page.evaluate(() => { const k = KATS.find(x => QUIZ_FRAGEN.some(q => q.kat === x.id)); startQuiz(k.id); }); await page.waitForTimeout(400);
+    await page.evaluate(() => pickAnswer(0)); await page.waitForTimeout(500);
+    check('Quiz: Knöpfe „Merken“ und „Als Karteikarte“', (await page.locator('#explanation .plc-qx button').count()) === 2);
+    await tap(page, '#explanation .plc-qx [data-f]'); await tap(page, '#explanation .plc-qx [data-c]'); await page.waitForTimeout(300);
+    check('Favorit gespeichert', await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('pl_favs') || '{}')).length === 1));
+    check('Karteikarte aus Quiz gespeichert', await page.evaluate(() => JSON.parse(localStorage.getItem('pl_my_cards') || '[]').length === 1));
+    await page.evaluate(() => { showScreen('karteikarten'); renderKarteikarten(); }); await page.waitForTimeout(400);
+    check('Karteikarten-Leiste sichtbar', (await page.locator('#sr-content .plc-cardbar').count()) === 1);
+    await tap(page, '#sr-content .plc-cardbar [data-a=new]'); await page.waitForTimeout(300);
+    await page.fill('#plc-cf', 'Was bedeutet SpO2?'); await page.fill('#plc-ca', 'Sauerstoffsättigung im Blut'); await page.fill('#plc-ct', 'Lunge');
+    await tap(page, '#plc-csave'); await page.waitForTimeout(300);
+    check('Eigene Karte erstellt', await page.evaluate(() => JSON.parse(localStorage.getItem('pl_my_cards') || '[]').length === 2));
+    check('Eigene Karten im Wiederholungssystem', await page.evaluate(() => { initSR(); return srKarten.filter(k => k.fach === 'eigene').length === 2; }));
+    await page.evaluate(() => { const m = document.getElementById('plc-modal'); if (m) m.remove(); plcOpenFavs(); }); await page.waitForTimeout(300);
+    check('Favoriten-Liste zeigt 1 Frage', (await page.locator('#plc-modal .plc-myitem').count()) === 1);
+    await tap(page, '#plc-favquiz'); await page.waitForTimeout(400);
+    check('Favoriten-Quiz startet', (await page.evaluate(() => currentScreen)) === 'quiz' && (await page.evaluate(() => quizList.length)) === 1);
+    check('Favoriten-Quiz startet keinen Lerntisch-Timer', await page.evaluate(() => !(+localStorage.getItem('pl_lt_end') > Date.now())));
+    check('Keine JS-Fehler (Karten/Favoriten)', S.errors.length === 0, S.errors.join(' | '));
     await ctx.close();
   }
 
