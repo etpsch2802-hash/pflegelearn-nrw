@@ -23667,7 +23667,8 @@ window.renderLiveUsers=function(start){
       +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Tisch und Einladungen</div><div id="plc-lt-tables"></div>'
       +'<details class="plc-det"><summary>Avatar anpassen</summary><div id="plc-lt-avpick"></div></details>'
       +'<div class="plc-toggles"><label><input type="checkbox" id="plc-lt-anon"> Anonym am Tisch</label><label><input type="checkbox" id="plc-lt-snd"> Bibliotheks-Geräusch</label></div>'
-      +'<div class="plc-sub" id="plc-lt-today" style="text-align:center;margin-top:10px"></div></div>';
+      +'<div class="plc-sub" id="plc-lt-today" style="text-align:center;margin-top:10px"></div>'
+      +'<div style="text-align:center;margin-top:18px"><button class="plc-link" id="plc-del" style="color:#93b9d1;font-weight:500">Meine Community-Daten löschen</button> · <a class="plc-link" style="color:#93b9d1;font-weight:500;text-decoration:none" href="/datenschutz.html#community" target="_blank" rel="noopener">Datenschutz</a></div></div>';
     document.body.appendChild(ov);
     var an=document.getElementById('plc-lt-anon'), sd=document.getElementById('plc-lt-snd');
     an.checked=lsGet('pl_lt_anon')==='1'; sd.checked=soundOn();
@@ -23675,6 +23676,13 @@ window.renderLiveUsers=function(start){
     an.onchange=function(){ lsSet('pl_lt_anon',this.checked?'1':'0'); if(running()) startRemote().then(ltLive); };
     sd.onchange=function(){ lsSet('pl_lt_sound',this.checked?'1':'0'); if(this.checked&&running()) soundStart(); else soundStop(); };
     document.getElementById('plc-lt-go').onclick=function(){ if(running()) stopSession(true); else startSession(); };
+    document.getElementById('plc-del').onclick=function(){
+      if(!window.confirm('Alle Community-Daten dieses Geräts löschen? (Schicht-Radar, Lerntisch, Care-Packages, Umfrage-Stimmen, Gruppentische, Einladungslink)')) return;
+      rpc('plc_delete_my_data',{p_key:key()}).then(function(){
+        ['pl_com_status','pl_lt_end','pl_lt_br','pl_lt_table','pl_lt_done','pl_com_key'].forEach(function(k){ lsSet(k,null); });
+        soundStop(); ltSeats=null; ltSceneSig=''; invCode=null; toast('Deine Community-Daten wurden gelöscht.'); closeLerntisch(); try{ mountHome(); }catch(e){}
+      }).catch(function(){ toast('Löschen hat nicht geklappt. Prüfe deine Verbindung oder schreib an kontakt@plan-nrw.de.'); });
+    };
     ov.querySelectorAll('.plc-quick button').forEach(function(b){ b.onclick=function(){
       if(!running()) startSession();
       closeLerntisch();
