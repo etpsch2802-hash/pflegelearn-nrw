@@ -5,7 +5,7 @@ let pass = 0, fail = 0;
 function check(name, cond) { if (cond) { pass++; console.log('  ✅ ' + name); } else { fail++; console.log('  ❌ ' + name); } }
 
 async function freshPage(browser) {
-  const ctx = await browser.newContext();
+  const ctx = await browser.newContext({ serviceWorkers: 'block' });
   const page = await ctx.newPage();
   await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => typeof window.plCheckEngagementUpsell === 'function', { timeout: 20000 });
@@ -26,17 +26,10 @@ async function triggerAndCheck(page, setupObj) {
 }
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 
-  console.log('Test 1: UI-Texte 21 Tage / Content-Schutz');
-  {
-    const { ctx, page } = await freshPage(browser);
-    const html = await page.evaluate(() => document.documentElement.outerHTML);
-    check('"21 Tage" erscheint im DOM', /21[ -]Tage/.test(html));
-    check('keine Trial-"7 Tage kostenlos/gratis" mehr', !/(kostenlos|gratis)[^<]{0,6}7[ -]Tage|7[ -]Tage[^<]{0,10}(kostenlos|gratis)/.test(html));
-    check('med. Content "7 Tagen Granulationsgewebe" erhalten', html.includes('7 Tagen Granulationsgewebe'));
-    await ctx.close();
-  }
+  // (06.10.2026) Test 1 (Trial-Texte 21/7 Tage) entfernt: Trial-Laenge wurde produktseitig geaendert,
+  // die App ist derzeit kostenlos. Upsell-Logik (Tests 2-5) bleibt geprueft.
 
   console.log('Test 2: Upsell erscheint bei erster Examens-Sim (Trigger B)');
   {
