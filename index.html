@@ -23352,6 +23352,11 @@ window.renderLiveUsers=function(start){
     '.plc-toggles{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:14px;font-size:12px;color:#93b9d1}.plc-toggles label{display:flex;gap:6px;align-items:center}',
     '#plc-lt-pill{display:flex;align-items:center;gap:10px;position:fixed;left:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:9990;background:#163246;color:#fff;border:1px solid rgba(125,211,252,.4);border-radius:22px;padding:9px 14px;font-family:inherit;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;box-shadow:0 6px 18px rgba(0,0,0,.35);cursor:pointer}',
     '.plc-pill-go{font-size:12px;font-weight:700;color:#7dd3fc;border-left:1px solid rgba(125,211,252,.35);padding-left:10px}',
+    '.plc-chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.plc-chiprow button{font-family:inherit;cursor:pointer;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:#dbe7f1;border-radius:16px;padding:6px 11px;font-size:12px}',
+    '.plc-kibox{margin-top:10px;background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(8,145,178,.04));border:1px solid rgba(34,211,238,.3);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.6;color:#e2edf5}',
+    '.plc-kihead{font-size:10.5px;color:#22d3ee;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}.plc-kinote{font-size:10.5px;color:#6f93ad;margin-top:8px}',
+    '.plc-hits{display:flex;flex-direction:column;gap:6px}.plc-hits button{font-family:inherit;cursor:pointer;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:8px 11px;color:#e8f1f8}',
+    '.plc-hits .t{display:block;font-size:10px;color:#7dd3fc;letter-spacing:.5px;text-transform:uppercase}.plc-hits .n{display:block;font-size:13px;font-weight:600;margin-top:2px}',
     '.plc-hit{cursor:pointer;outline:none}.plc-hit:focus-visible{stroke:#7dd3fc;stroke-width:2}',
     '.plc-gift{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10001;background:#163246;border:1px solid rgba(125,211,252,.35);border-radius:18px;padding:16px;width:min(320px,88vw);box-shadow:0 18px 50px rgba(0,0,0,.5);color:#e8f1f8}',
     '.plc-scene{position:relative}.plc-float{position:absolute;left:50%;top:45%;font-size:42px;transform:translate(-50%,0);animation:plcFloat 1.5s ease-out forwards;pointer-events:none}',
@@ -23636,7 +23641,8 @@ window.renderLiveUsers=function(start){
       +'<div class="plc-timer" id="plc-lt-time">25:00</div>'
       +'<div class="plc-sub" id="plc-lt-status" style="text-align:center;min-height:18px"></div>'
       +'<div style="display:flex;justify-content:center;margin-top:12px"><button class="plc-btn" id="plc-lt-go" style="min-width:200px;padding:13px 16px;font-size:15px">Hinsetzen und starten</button></div>'
-      +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Während der Einheit lernen</div>'
+      +'<div id="plc-lt-topic" style="margin-top:20px"></div>'
+      +'<div class="plc-sub" style="margin:18px 0 6px;font-weight:600;color:#c3d4e4">Oder frei lernen</div>'
       +'<div class="plc-quick"><button data-go="quiz">🧠<span>Quiz</span></button><button data-go="karteikarten">🗂️<span>Karteikarten</span></button><button data-go="krankheitsbilder">🩺<span>Krankheitsbilder</span></button></div>'
       +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Tisch und Einladungen</div><div id="plc-lt-tables"></div>'
       +'<details class="plc-det"><summary>Avatar anpassen</summary><div id="plc-lt-avpick"></div></details>'
@@ -23663,7 +23669,7 @@ window.renderLiveUsers=function(start){
       var t=b.getAttribute('data-go');
       try{ if(t==='quiz'){ showScreen('quizSelect'); try{ renderQuizSelect(); }catch(_){} } else if(typeof navGo==='function') navGo(t); else showScreen(t); }catch(e){ try{ showScreen(t==='quiz'?'quizSelect':t); }catch(_){} }
     }; });
-    renderAvPick(); renderTables();
+    renderAvPick(); renderTables(); renderTopic();
     ltSceneSig=''; ltRender(); ltLive();
     ltPoll=setInterval(ltLive,20000);
   }
@@ -23709,6 +23715,7 @@ window.renderLiveUsers=function(start){
       : others ? (others===1?'Gerade lernt 1 Azubi mit dir.':'Gerade lernen '+others+' Azubis mit dir.')
       : run ? 'Du sitzt gerade allein am Tisch. Wer dazukommt, erscheint hier.' : 'Der Tisch ist frei. Setz dich dazu.';
     if(curTable()) st.textContent='Gruppentisch '+curTable()+': '+st.textContent;
+    var _tp=topicGet(); if(_tp) st.textContent='🎯 '+_tp.t+' · '+st.textContent;
     var dn=doneToday(), td=document.getElementById('plc-lt-today'); if(td) td.textContent=dn?('Heute geschafft: '+dn+' Einheit'+(dn===1?'':'en')+' ('+dn*25+' Minuten)'):'';
   }
   function ltLive(noGifts){
@@ -23732,6 +23739,111 @@ window.renderLiveUsers=function(start){
     if(brEnd()&&brEnd()<=Date.now()) lsSet('pl_lt_br', null);
     ltRender(); pillRender();
   }
+  /* ── Lernthema heute (Themen-Paket: KI-Kurzueberblick, Themen-Quiz, passende Inhalte) ── */
+  var TOPICS={
+    'Lunge':['lunge','pulmo','atmung','atem','pneumon','ards','copd','asthma','lungenembol','pneumothorax','beatmung','sauerstoff','spo2','dyspnoe','husten','bronch','trache','absaug','inhalat','pleura','tuberkulose','hypox','atemnot'],
+    'Herz':['herz','kardi','myokard','infarkt','angina','ekg','vorhofflimmern','rhythmus','blutdruck','hyperton','hypoton','schock','puls','koronar','klappe','endokard','perikard','thrombo'],
+    'Diabetes':['diabet','insulin','blutzucker','glukose','hypoglyk','hyperglyk','ketoazid','hba1c','metformin','fußsyndrom'],
+    'Wunden':['wund','dekubitus','verband','ulcus','ulkus','granulation','exsudat','débridement','debridement','nekrose'],
+    'Schmerz':['schmerz','analget','opioid','morphin','nrs','nsar','metamizol'],
+    'Hygiene':['hygien','desinfekt','mrsa','keim','infektion','isolation','steril','nosokom','handschuh'],
+    'Niere':['niere','renal','dialyse','harn','urin','blasenkatheter','kreatinin','oligurie','anurie','bilanz'],
+    'Neurologie':['schlaganfall','apoplex','insult','neuro','demenz','delir','parkinson','epilep','krampf','hirn','gcs','bewusstsein','sklerose'],
+    'Magen-Darm':['magen','darm','gastro','obstipation','diarrh','ileus','pankrea','leber','galle','sonde','peg','erbrech','übelkeit']
+  };
+  var TSTOP={'was':1,'ist':1,'sind':1,'wie':1,'warum':1,'wieso':1,'welche':1,'welcher':1,'welches':1,'der':1,'die':1,'das':1,'ein':1,'eine':1,'und':1,'oder':1,'bei':1,'mit':1,'von':1,'zum':1,'zur':1,'den':1,'dem':1,'des':1,'ich':1,'möchte':1,'moechte':1,'heute':1,'alles':1,'über':1,'ueber':1,'lernen':1,'erklär':1,'erkläre':1,'erklaere':1,'bitte':1,'mir':1,'mal':1,'zu':1,'im':1,'in':1,'am':1,'an':1,'für':1,'fuer':1,'thema':1,'man':1,'macht':1,'bedeutet':1,'heißt':1,'heisst':1};
+  function topicGet(){ try{ var v=JSON.parse(lsGet('pl_lt_topic')||'null'); if(v&&v.d===today()&&v.t) return v; }catch(e){} return null; }
+  function topicSet(t){ lsSet('pl_lt_topic', t?JSON.stringify({d:today(),t:t}):null); }
+  function isQuestion(t){ return /\?\s*$/.test(t)||/^(was|wie|warum|wieso|welche|welcher|welches|wann|wo|erklär|erkläre|erklaere)\b/i.test(t.trim()); }
+  function topicTerms(raw){
+    var low=raw.toLowerCase(), terms=[];
+    Object.keys(TOPICS).forEach(function(k){ var kl=k.toLowerCase(); if(low.indexOf(kl)>-1||TOPICS[k].some(function(w){ return low.indexOf(w)>-1&&w.length>3; })) terms=terms.concat(TOPICS[k]); });
+    low.split(/[^a-zäöüß0-9-]+/).filter(function(w){ return w.length>=3&&!TSTOP[w]; }).forEach(function(w){
+      terms.push(w.length>6?w.slice(0,w.length-2):w);
+      try{ if(window.PL_SYNONYME&&PL_SYNONYME[w]) terms=terms.concat(PL_SYNONYME[w]); }catch(e){}
+    });
+    var seen={}; return terms.filter(function(t){ t=String(t).toLowerCase(); if(!t||seen[t]) return false; seen[t]=1; return true; });
+  }
+  function scoreText(txt,terms){ var v=String(txt||'').toLowerCase(), n=0; for(var i=0;i<terms.length;i++) if(v.indexOf(terms[i])>-1) n++; return n; }
+  function primTerms(raw){ return raw.toLowerCase().split(/[^a-zäöüß0-9-]+/).filter(function(w){ return w.length>=3&&!TSTOP[w]; }).map(function(w){ return w.length>6?w.slice(0,w.length-2):w; }); }
+  /* Eigene Stichwoerter zuerst (z. B. nur ARDS-Fragen), aufgefuellt mit dem Themenfeld */
+  function topicQuizPool(terms,raw){
+    var src=[]; try{ src=QUIZ_FRAGEN; }catch(e){ return []; }
+    try{ if(currentBereich&&currentBereich.quiz_kats) src=src.filter(function(q){ return currentBereich.quiz_kats.indexOf(q.kat)>-1; }); }catch(e){}
+    var prim=primTerms(raw||'');
+    function sc(q,t){ return scoreText(q.frage,t)*2+scoreText(q.erkl,t)+scoreText((q.opt||[]).join(' '),t); }
+    var rows=src.map(function(q){ return {q:q, p:prim.length?sc(q,prim):0, s:sc(q,terms)}; }).filter(function(x){ return x.p>0||x.s>0; });
+    var a=rows.filter(function(x){ return x.p>0; }).sort(function(x,y){ return y.p-x.p||y.s-x.s; });
+    var b=rows.filter(function(x){ return x.p===0; }).sort(function(x,y){ return y.s-x.s; });
+    return a.concat(b).map(function(x){ return x.q; });
+  }
+  function startTopicQuiz(pool,label){
+    var list=pool.slice(0,20).sort(function(){ return Math.random()-0.5; }).map(function(q){
+      var ix=q.opt.map(function(o,i){ return {text:o,c:i===q.k}; }).sort(function(){ return Math.random()-0.5; });
+      var c={}; for(var k in q) c[k]=q[k]; c.opt=ix.map(function(x){return x.text;}); c.k=ix.findIndex(function(x){return x.c;}); return c;
+    });
+    try{
+      if(window.PL_PAYMENTS_ON&&currentBereich&&currentBereich.gratis&&typeof currentBereich.quiz_max==='number'){
+        var used=quizUsedToday(); if(used>=currentBereich.quiz_max){ showGratisLimit('quiz',currentBereich.quiz_max); return; }
+        list=list.slice(0,Math.max(1,currentBereich.quiz_max-used));
+      }
+    }catch(e){}
+    if(!running()) startSession();
+    closeLerntisch();
+    try{ quizCE=null; }catch(e){}
+    quizKat='alle'; quizList=list; quizIdx=0; quizAnswers=[]; selectedAns=null; showExp=false;
+    showScreen('quiz'); renderQuestion();
+    toast('Themen-Quiz „'+label+'“: '+list.length+' Fragen');
+  }
+  function kiFmt(t){ return esc(t).replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/^#+\s*(.*)$/gm,'<b>$1</b>').replace(/^\s*[-•*]\s+/gm,'• ').replace(/\n/g,'<br>'); }
+  function topicKI(raw,box){
+    var cache=null; try{ cache=JSON.parse(lsGet('pl_lt_topic_ki')||'null'); }catch(e){}
+    if(cache&&cache.d===today()&&cache.t===raw&&cache.a){ box.innerHTML=kiFmt(cache.a); return; }
+    try{ if(typeof currentBereich!=='undefined'&&currentBereich&&!currentBereich.ki_unbegrenzt){ var max=currentBereich.ki_max||3; if(typeof kiNachrichtenCount!=='undefined'&&kiNachrichtenCount>=max){ box.innerHTML='<span style="color:#fbbf24">Dein KI-Kontingent ist für heute aufgebraucht. Quiz und Inhalte unten funktionieren weiter.</span>'; return; } kiNachrichtenCount++; } }catch(e){}
+    try{ if(typeof recordKIMessage==='function') recordKIMessage(); }catch(e){}
+    if(typeof callKI!=='function'){ box.textContent='KI gerade nicht verfügbar.'; return; }
+    var prompt=isQuestion(raw)
+      ? raw+'\n\nAntworte kurz und prüfungsrelevant für die generalistische Pflegeausbildung in NRW (höchstens 150 Wörter, Stichpunkte erlaubt).'
+      : 'Gib mir einen kompakten Lernüberblick zum Thema „'+raw+'“ für die generalistische Pflegeausbildung in NRW: Kernwissen, wichtigste Krankheitsbilder, Pflegeschwerpunkte, typische Prüfungsfallen. Höchstens 180 Wörter, Stichpunkte.';
+    box.innerHTML='<span style="color:#8ab4d0">KI fasst das Thema zusammen …</span>';
+    callKI([{role:'user',content:prompt}], (typeof SYS!=='undefined'?SYS:'')).then(function(a){
+      a=String(a||'').trim(); if(!a){ box.textContent='Keine Antwort erhalten. Versuch es gleich nochmal.'; return; }
+      lsSet('pl_lt_topic_ki', JSON.stringify({d:today(),t:raw,a:a})); if(document.body.contains(box)) box.innerHTML=kiFmt(a);
+    }).catch(function(){ if(document.body.contains(box)) box.innerHTML='<span style="color:#fca5a5">KI gerade nicht erreichbar. Quiz und Inhalte unten funktionieren trotzdem.</span>'; });
+  }
+  function runAction(a){
+    if(!running()) startSession();
+    closeLerntisch();
+    try{ (new Function(a))(); }catch(e){ toast('Inhalt konnte nicht geöffnet werden.'); }
+  }
+  function renderTopic(){
+    var box=document.getElementById('plc-lt-topic'); if(!box) return;
+    var cur=topicGet();
+    if(!cur){
+      box.innerHTML='<div class="plc-card" style="margin:0"><div class="plc-h">🎯 Dein Thema heute</div><div class="plc-sub">Wähl ein Thema oder stell eine Frage, z. B. „Lunge“ oder „Was ist ARDS?“</div>'
+        +'<div style="display:flex;gap:8px;margin-top:10px"><input class="plc-in" id="plc-topic-in" placeholder="Thema oder Frage" maxlength="120" style="margin:0" enterkeyhint="go"><button class="plc-btn" id="plc-topic-go">Los</button></div>'
+        +'<div class="plc-chiprow">'+Object.keys(TOPICS).map(function(k){ return '<button data-t="'+esc(k)+'">'+esc(k)+'</button>'; }).join('')+'</div></div>';
+      var inp=box.querySelector('#plc-topic-in');
+      function go(v){ v=String(v||'').trim(); if(v.length<2){ inp.focus(); return; } topicSet(v); renderTopic(); ltRender(); }
+      box.querySelector('#plc-topic-go').onclick=function(){ go(inp.value); };
+      inp.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); go(inp.value); } };
+      box.querySelectorAll('[data-t]').forEach(function(b){ b.onclick=function(){ go(b.getAttribute('data-t')); }; });
+      return;
+    }
+    var raw=cur.t, terms=topicTerms(raw), pool=topicQuizPool(terms,raw), hits=[];
+    try{ if(typeof plBuildSearchHits==='function') hits=plBuildSearchHits(terms.slice(0,12).join(' ')||raw).filter(function(h){ return h.type!=='Quiz'; }); }catch(e){}
+    hits=hits.slice(0,10);
+    box.innerHTML='<div class="plc-card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="plc-h" style="margin:0">🎯 '+esc(raw)+'</div><button class="plc-link" id="plc-topic-chg" style="padding:0">Ändern</button></div>'
+      +'<div class="plc-kibox"><div class="plc-kihead">✨ Kurz erklärt</div><div id="plc-topic-ki"></div><div class="plc-kinote">KI-generiert. Prüf wichtige Inhalte mit deinen Unterlagen.</div></div>'
+      +(pool.length?'<button class="plc-btn" id="plc-topic-quiz" style="width:100%;margin-top:10px">📝 Themen-Quiz starten ('+Math.min(20,pool.length)+' Fragen)</button>':'<div class="plc-sub" style="margin-top:10px">Zu diesem Thema gibt es noch keine Quizfragen.</div>')
+      +(hits.length?'<div class="plc-sub" style="margin:12px 0 4px;font-weight:600;color:#c3d4e4">Passende Inhalte</div><div class="plc-hits">'+hits.map(function(h,i){ return '<button data-h="'+i+'"><span class="t">'+h.icon+' '+esc(h.type)+'</span><span class="n">'+esc(h.title)+'</span></button>'; }).join('')+'</div>':'')
+      +'</div>';
+    box.querySelector('#plc-topic-chg').onclick=function(){ topicSet(null); renderTopic(); ltRender(); };
+    var qb=box.querySelector('#plc-topic-quiz'); if(qb) qb.onclick=function(){ startTopicQuiz(pool,raw); };
+    box.querySelectorAll('[data-h]').forEach(function(b){ b.onclick=function(){ runAction(hits[+b.getAttribute('data-h')].action); }; });
+    topicKI(raw, box.querySelector('#plc-topic-ki'));
+  }
+
   window.plcOpenLerntisch=openLerntisch;
   window.addEventListener('popstate', function(e){
     var ov=document.getElementById('plc-lt');
