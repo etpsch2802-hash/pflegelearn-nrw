@@ -61,10 +61,5 @@ jobs:
           done
       - name: E2E Kernablaeufe (app-e2e.js, blockierend)
         run: BASE_URL=http://127.0.0.1:8099 node tests/app-e2e.js
-      - name: E2E Trial-Texte (trial-e2e.js, nicht blockierend – Erwartungen teils veraltet, siehe Annotation)
-        if: always()
-        continue-on-error: true
-        run: |
-          if [ -f tests/trial-e2e.js ]; then
-            BASE_URL=http://127.0.0.1:8099 node tests/trial-e2e.js || echo "::warning::trial-e2e.js: Test 1 erwartet noch '21 Tage' – Produkt nutzt inzwischen 7 Test-Tage. Erwartung klaeren."
-          fi
+      - name: E2E Trial-Upsell (trial-e2e.js)
+        run: BASE_URL=http://127.0.0.1:8099 node tests/trial-e2e.js
