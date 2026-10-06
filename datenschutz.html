@@ -53,7 +53,7 @@
     <ul>
       <li><strong>Name:</strong> Wird beim Login freiwillig eingegeben und ausschließlich lokal gespeichert</li>
       <li><strong>Zugangscode:</strong> Wird lokal gespeichert bei aktivierter "Angemeldet bleiben" Funktion</li>
-      <li><strong>Lernfortschritt:</strong> Quiz-Ergebnisse, Streak, Karteikarten-Fortschritt — ausschließlich lokal im Browser (localStorage)</li>
+      <li><strong>Lernfortschritt:</strong> Quiz-Ergebnisse, Streak, Karteikarten-Fortschritt werden lokal im Browser (localStorage) gespeichert. Wenn du mit einem Konto angemeldet bist, wird dein Lernfortschritt zusätzlich in unserer Datenbank bei Supabase (Serverstandort EU, Irland) gespeichert und mit deinem Konto verknüpft. So kannst du auf mehreren Geräten weiterlernen und verlierst deinen Fortschritt nicht. Rechtsgrundlage ist die Bereitstellung der App (Art. 6 Abs. 1 lit. b DSGVO). Die Daten werden gespeichert, bis du dein Konto löschen lässt oder die Löschung per E-Mail an kontakt@plan-nrw.de verlangst.</li>
       <li><strong>Einstellungen:</strong> Theme-Auswahl, Sound-Einstellungen — ausschließlich lokal</li>
       <li><strong>Aktivitäts-/Präsenzdaten:</strong> Während der aktiven Nutzung wird kurzzeitig übertragen, dass du gerade aktiv bist – dein Anzeigename, die aktuell geöffnete Ansicht und der Zeitpunkt der letzten Aktivität. Dies dient ausschließlich dem Betrieb und der Nutzungsübersicht (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Die Einträge werden automatisch spätestens nach 24 Stunden gelöscht; Zugriff auf diese Übersicht hat ausschließlich der Betreiber.</li>
       <li><strong>Community-Funktionen:</strong> Wenn du Schicht-Radar, Lerntisch, Umfragen, Care-Packages oder Einladungslinks nutzt, werden die dafür nötigen Daten in unserer Datenbank gespeichert. Details siehe Abschnitt 3.</li>
@@ -103,7 +103,7 @@
     Bei Zahlungen werden Daten an Stripe Inc. übertragen. Es gelten die <a href="https://stripe.com/de/privacy" target="_blank">Datenschutzbestimmungen von Stripe</a>.</p>
 
     <p><strong>Supabase Inc.</strong> (Datenbank &amp; Konten)<br>
-    Konto-, Zugangs- und Abodaten (z. B. E-Mail-Adresse, Freischaltstatus) sowie die Community-Daten (Abschnitt 3) werden in einer Datenbank bei Supabase gespeichert und verarbeitet. Serverstandort ist die EU (Irland). Es gelten die <a href="https://supabase.com/privacy" target="_blank">Datenschutzbestimmungen von Supabase</a>.</p>
+    Konto-, Zugangs- und Abodaten (z. B. E-Mail-Adresse, Freischaltstatus) sowie der synchronisierte Lernfortschritt und die Community-Daten (Abschnitt 3) werden in einer Datenbank bei Supabase gespeichert und verarbeitet. Serverstandort ist die EU (Irland). Es gelten die <a href="https://supabase.com/privacy" target="_blank">Datenschutzbestimmungen von Supabase</a>.</p>
 
     <p><strong>Vercel Inc.</strong> (Hosting)<br>
     Die App wird über Vercel gehostet. Vercel kann Server-Logs (IP-Adressen, Zugriffszeiten) speichern. Es gelten die <a href="https://vercel.com/legal/privacy-policy" target="_blank">Datenschutzbestimmungen von Vercel</a>.</p>
@@ -129,6 +129,7 @@
       <ul>
         <li>Lokale Daten: Browser-Einstellungen → Datenschutz → Website-Daten löschen → plan-nrw.de, bzw. bei der Android-App: Einstellungen → Apps → PLAN → Speicher → Daten löschen</li>
         <li>Community-Daten: in der App über Lerntisch → „Meine Community-Daten löschen“</li>
+        <li>Konto und synchronisierter Lernfortschritt: per E-Mail an <a href="mailto:kontakt@plan-nrw.de">kontakt@plan-nrw.de</a></li>
         <li>Per E-Mail-Anfrage: <a href="mailto:kontakt@plan-nrw.de">kontakt@plan-nrw.de</a></li>
       </ul>
     </div>
