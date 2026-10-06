@@ -3626,7 +3626,7 @@ function filterTokenListe() {
   });
 }
 
-var PL_PROTECTED_TOKENS = ['TEST-PFLEGE-2026-T001', 'GRATIS', 'NeleLily2916'];
+var PL_PROTECTED_TOKENS = ['TEST-PFLEGE-2026-T001', 'GRATIS'];
 async function toggleToken(token) {
   if (PL_PROTECTED_TOKENS.indexOf(token) > -1) { showCopyFeedback("Geschuetzter Code – kann nicht gesperrt werden 🔒"); return; }
   let neu = null;
@@ -7456,7 +7456,6 @@ const TOKEN_DB = {
   "TEST-GAST-2026-01":     { name:"Gastzugang 1",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "TEST-GAST-2026-02":     { name:"Gastzugang 2",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
   "TEST-GAST-2026-03":     { name:"Gastzugang 3",            bereich:"alle", ablauf:"2026-06-20", aktiv:true },
-  "NeleLily2916":         { name:"Patrick",  bereich:"alle", ablauf:"2099-12-31", aktiv:true, admin:true },
   "GRATIS":                { name:"Gast",     bereich:"gratis", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T001":{ name:"Tester 1", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T002":{ name:"Tester 2", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
@@ -7655,14 +7654,11 @@ function showKiTeaser(){
 async function plSaveLead(email, name, quelle, trialUntil, consent){
   try{
     if(!window.SB || !email || String(email).indexOf('@')<1) return;
+    // Sicherheit: nur neue E-Mails eintragen (Spalten email/source), bestehende nie ueberschreiben
     var res = await window.SB.from('leads').upsert({
       email: String(email).toLowerCase().slice(0,120),
-      name: (name||'').slice(0,60),
-      quelle: quelle||'',
-      trial_until: trialUntil||null,
-      consent: !!consent,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'email' });
+      source: String(quelle||'app').slice(0,60)
+    }, { onConflict: 'email', ignoreDuplicates: true });
     if(res && res.error){
       try{ console.warn('[plSaveLead] Supabase-Fehler:', res.error.message||res.error); }catch(_){}
       try{ if(typeof gaEvent==='function') gaEvent('lead_save_error',{ quelle: quelle||'' }); }catch(_){}
@@ -7829,9 +7825,8 @@ async function plLookupToken(code) {
   // 1) Supabase (Single Source of Truth)
   try {
     if (window.SB) {
-      const { data, error } = await window.SB
-        .from('tokens').select('token,name,bereich,ablauf,aktiv,admin,trial_max,trial_used,trial_last')
-        .eq('token', code).maybeSingle();
+      // Sicherheit: kein direkter Tabellenzugriff mehr, nur Pruefung genau dieses Codes (RPC)
+      const { data, error } = await window.SB.rpc('plc_lookup_token', { p_code: code });
       if (!error && data) return { name:data.name, bereich:data.bereich, ablauf:data.ablauf, aktiv:data.aktiv !== false, admin:data.admin === true, trial_max:data.trial_max, trial_used:data.trial_used, trial_last:data.trial_last, _src:'sb' };
     }
   } catch(e) { console.warn('[Token] Supabase-Lookup fehlgeschlagen, nutze Fallback', e); }
@@ -7845,16 +7840,20 @@ async function plSaveToken(t) {
   try {
     const row = { token: t.token, name: t.name, bereich: t.bereich, ablauf: t.ablauf, preis: t.preis || null, aktiv: true };
     if (t.trial_max != null) { row.trial_max = t.trial_max; row.trial_used = t.trial_used || 0; row.trial_last = t.trial_last || null; }
-    const { error } = await window.SB.from('tokens').upsert(row, { onConflict: 'token' });
-    return error ? { ok:false, err:error.message } : { ok:true };
+    const adm = (typeof currentUser !== 'undefined' && currentUser && currentUser.token) || '';
+    const { data, error } = await window.SB.rpc('admin_save_token', { p_admin: adm, p_row: row });
+    if (error) return { ok:false, err:error.message };
+    return (data && data.ok) ? { ok:true } : { ok:false, err:(data && data.err) || 'abgelehnt' };
   } catch(e) { return { ok:false, err:String(e) }; }
 }
 
 async function plSetTokenAktiv(code, aktiv) {
   if (!window.SB) return { ok:false, err:'Supabase nicht verfuegbar' };
   try {
-    const { error } = await window.SB.from('tokens').update({ aktiv: aktiv }).eq('token', code);
-    return error ? { ok:false, err:error.message } : { ok:true };
+    const adm = (typeof currentUser !== 'undefined' && currentUser && currentUser.token) || '';
+    const { data, error } = await window.SB.rpc('admin_set_token_aktiv', { p_admin: adm, p_code: code, p_aktiv: !!aktiv });
+    if (error) return { ok:false, err:error.message };
+    return (data && data.ok) ? { ok:true } : { ok:false, err:(data && data.err) || 'abgelehnt' };
   } catch(e) { return { ok:false, err:String(e) }; }
 }
 
@@ -17710,11 +17709,9 @@ const ADMIN_EMAILS = ['pschenkelberger@web.de','pflegelearn.nrw@gmail.com','etps
 function isAdmin() {
   try {
     // Token-basiertes Admin-Flag (Supabase-Spalte tokens.admin) – geraeteunabhaengig
-    if (typeof currentUser !== 'undefined' && currentUser && currentUser.admin === true) return true;
-    const ids = [];
-    if (typeof currentUser !== 'undefined' && currentUser) { ids.push(currentUser.email); ids.push(currentUser.name); }
-    try { ids.push(localStorage.getItem('pl_sub_email')); } catch (e) {}
-    return ids.some(function(x){ return x && ADMIN_EMAILS.indexOf(String(x).trim().toLowerCase()) > -1; });
+    // Sicherheit: nur das serverseitig gepruefte Admin-Flag des Zugangscodes zaehlt.
+    // (Frueher reichten Name/E-Mail – beide waren beim Gratis-Login frei eintippbar.)
+    return (typeof currentUser !== 'undefined' && currentUser && currentUser.admin === true);
   } catch (e) { return false; }
 }
 // ── Admin: registrierte Nutzer laden ──
