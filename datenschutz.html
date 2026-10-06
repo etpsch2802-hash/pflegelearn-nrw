@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Datenschutzerklärung – PflegeLearn NRW</title>
+  <title>Datenschutzerklärung – PLAN NRW</title>
   <style>
     * { box-sizing:border-box; margin:0; padding:0; }
     body {
@@ -33,11 +33,11 @@
 <div class="container">
 
   <div class="logo">
-    <div class="logo-text">PflegeLearn <span>NRW</span></div>
+    <div class="logo-text">PLAN <span>NRW</span></div>
   </div>
 
   <h1>Datenschutzerklärung</h1>
-  <div class="badge">Stand: Juni 2026 · DSGVO-konform</div>
+  <div class="badge">Stand: Oktober 2026 · DSGVO-konform</div>
 
   <div class="section">
     <h2>1. Verantwortlicher</h2>
@@ -56,29 +56,54 @@
       <li><strong>Lernfortschritt:</strong> Quiz-Ergebnisse, Streak, Karteikarten-Fortschritt — ausschließlich lokal im Browser (localStorage)</li>
       <li><strong>Einstellungen:</strong> Theme-Auswahl, Sound-Einstellungen — ausschließlich lokal</li>
       <li><strong>Aktivitäts-/Präsenzdaten:</strong> Während der aktiven Nutzung wird kurzzeitig übertragen, dass du gerade aktiv bist – dein Anzeigename, die aktuell geöffnete Ansicht und der Zeitpunkt der letzten Aktivität. Dies dient ausschließlich dem Betrieb und der Nutzungsübersicht (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Die Einträge werden automatisch spätestens nach 24 Stunden gelöscht; Zugriff auf diese Übersicht hat ausschließlich der Betreiber.</li>
+      <li><strong>Community-Funktionen:</strong> Wenn du Schicht-Radar, Lerntisch, Umfragen, Care-Packages oder Einladungslinks nutzt, werden die dafür nötigen Daten in unserer Datenbank gespeichert. Details siehe Abschnitt 3.</li>
     </ul>
-    <p>Bei bestimmten Funktionen (Registrierung, Feedback, KI-Assistent) werden Daten an externe Dienstleister übertragen. Details siehe Abschnitt 4.</p>
+    <p>Bei bestimmten Funktionen (Registrierung, Feedback, KI-Assistent, Community) werden Daten an externe Dienstleister übertragen. Details siehe Abschnitt 5.</p>
+  </div>
+
+  <div class="section" id="community">
+    <h2>3. Community-Funktionen</h2>
+    <p>Die Community-Funktionen sind freiwillig. Für sie erzeugt die App eine <strong>zufällige Gerätekennung</strong> (z.&nbsp;B. <code>d1x9…</code>), die lokal gespeichert wird (Schlüssel <code>pl_com_key</code>). Sie enthält weder Name noch E-Mail-Adresse. So kann die App z.&nbsp;B. erkennen, dass du in einer Umfrage schon abgestimmt hast. Die Gerätekennung wird nicht mit deinem Konto verknüpft. Die Daten liegen bei Supabase auf Servern in der EU (Irland).</p>
+    <ul>
+      <li><strong>Schicht-Radar:</strong> Gerätekennung, Datum und der gewählte Tagesstatus (z.&nbsp;B. Spätdienst). Andere sehen nur Prozentwerte aller Meldungen, nie einzelne Einträge.</li>
+      <li><strong>Fehler-Statistik:</strong> Pro Frage wird nur gezählt, wie oft sie beantwortet und wie oft sie falsch beantwortet wurde. Dabei wird nichts gespeichert, das auf dich oder dein Gerät verweist.</li>
+      <li><strong>Lerntisch:</strong> Gerätekennung, Anzeigename, Avatar-Einstellungen, ggf. Code des Gruppentischs sowie Beginn und Ende der Lerneinheit. Als Anzeigename wird dein Vorname mit dem Anfangsbuchstaben des Nachnamens verwendet (z.&nbsp;B. „Laura&nbsp;M.“). Mit „Anonym am Tisch“ erscheinst du als „Anonyme Pflegekraft“. Name und Avatar sind für andere Personen sichtbar, die gerade am selben Tisch sitzen.</li>
+      <li><strong>Care-Packages (Kaffee/Power):</strong> Gerätekennung von Absender und Empfänger, Art und Zeitpunkt. Der Empfänger erfährt nicht, wer das Care-Package geschickt hat. Freitext ist nicht möglich.</li>
+      <li><strong>Umfragen:</strong> Gerätekennung und gewählte Antwort, damit jede Person nur einmal abstimmen kann. Angezeigt werden ausschließlich Prozentwerte.</li>
+      <li><strong>Einladungen:</strong> Einladungslinks verschickst du selbst über dein Handy, z.&nbsp;B. per WhatsApp oder E-Mail. PLAN versendet keine E-Mails an Dritte und erhält keine Kontaktdaten der Eingeladenen. Gespeichert werden dein Einladungscode mit deiner Gerätekennung sowie die Gerätekennung von Personen, die PLAN über deinen Link öffnen. So siehst du, wie viele Personen deinen Link genutzt haben.</li>
+    </ul>
+    <p><strong>Zweck und Rechtsgrundlage:</strong> Bereitstellung der Funktionen, die du aktiv nutzt (Art. 6 Abs. 1 lit. b DSGVO). Hinzu kommt der Schutz vor Missbrauch, z.&nbsp;B. durch Begrenzung der Anzahl von Care-Packages (Art. 6 Abs. 1 lit. f DSGVO, berechtigtes Interesse).</p>
+    <p><strong>Speicherdauer (automatische Löschung):</strong></p>
+    <ul>
+      <li>Schicht-Radar: 30 Tage</li>
+      <li>Lerntisch-Sitzungen: spätestens 1 Stunde nach Ende der Lerneinheit</li>
+      <li>Care-Packages: 7 Tage</li>
+      <li>Gruppentische: 90 Tage nach der letzten Nutzung</li>
+      <li>Umfragen samt Stimmen: 90 Tage nach Ende der Umfrage</li>
+      <li>Einladungsbesuche: 12 Monate; Einladungscodes ohne Besuche: 12 Monate nach der letzten Nutzung</li>
+    </ul>
+    <p>Du kannst alle Community-Daten deines Geräts sofort löschen lassen: in der App über <em>Lerntisch → „Meine Community-Daten löschen“</em> oder per E-Mail an <a href="mailto:kontakt@plan-nrw.de">kontakt@plan-nrw.de</a>.</p>
   </div>
 
   <div class="section">
-    <h2>3. Aufbewahrungsdauer</h2>
+    <h2>4. Aufbewahrungsdauer</h2>
     <p>Alle lokal gespeicherten Daten bleiben auf dem Gerät des Nutzers gespeichert bis:</p>
     <ul>
       <li>Der Nutzer sie manuell löscht</li>
       <li>Der Browser-Cache geleert wird</li>
       <li>Die App deinstalliert wird</li>
     </ul>
-    <p>Es gibt keine serverseitige Speicherung oder Aufbewahrungsfrist da keine Daten an unsere Server übertragen werden.</p>
+    <p>Serverseitig gespeicherte Daten (z.&nbsp;B. Konto- und Zugangsdaten, Präsenzdaten, Community-Daten) werden nach den in den Abschnitten 2, 3 und 5 genannten Fristen gelöscht bzw. sobald sie für den jeweiligen Zweck nicht mehr erforderlich sind und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
   </div>
 
   <div class="section">
-    <h2>4. Drittanbieter</h2>
+    <h2>5. Drittanbieter</h2>
 
     <p><strong>Stripe Inc.</strong> (Zahlungsabwicklung)<br>
     Bei Zahlungen werden Daten an Stripe Inc. übertragen. Es gelten die <a href="https://stripe.com/de/privacy" target="_blank">Datenschutzbestimmungen von Stripe</a>.</p>
 
     <p><strong>Supabase Inc.</strong> (Datenbank &amp; Konten)<br>
-    Konto-, Zugangs- und Abodaten (z. B. E-Mail-Adresse, Freischaltstatus) werden in einer Datenbank bei Supabase gespeichert und verarbeitet. Es gelten die <a href="https://supabase.com/privacy" target="_blank">Datenschutzbestimmungen von Supabase</a>.</p>
+    Konto-, Zugangs- und Abodaten (z. B. E-Mail-Adresse, Freischaltstatus) sowie die Community-Daten (Abschnitt 3) werden in einer Datenbank bei Supabase gespeichert und verarbeitet. Serverstandort ist die EU (Irland). Es gelten die <a href="https://supabase.com/privacy" target="_blank">Datenschutzbestimmungen von Supabase</a>.</p>
 
     <p><strong>Vercel Inc.</strong> (Hosting)<br>
     Die App wird über Vercel gehostet. Vercel kann Server-Logs (IP-Adressen, Zugriffszeiten) speichern. Es gelten die <a href="https://vercel.com/legal/privacy-policy" target="_blank">Datenschutzbestimmungen von Vercel</a>.</p>
@@ -97,13 +122,13 @@
   </div>
 
   <div class="section" id="loeschung">
-    <h2>5. Datenlöschung und deine Rechte</h2>
+    <h2>6. Datenlöschung und deine Rechte</h2>
 
     <div class="highlight">
       <p><strong>So löschst du deine Daten:</strong></p>
       <ul>
-        <li>In der App: Hamburger-Menü → Einstellungen → "Alle Daten löschen"</li>
-        <li>Manuell im Browser: Einstellungen → Datenschutz → Website-Daten löschen → pflegelearn-nrw.vercel.app</li>
+        <li>Lokale Daten: Browser-Einstellungen → Datenschutz → Website-Daten löschen → plan-nrw.de, bzw. bei der Android-App: Einstellungen → Apps → PLAN → Speicher → Daten löschen</li>
+        <li>Community-Daten: in der App über Lerntisch → „Meine Community-Daten löschen“</li>
         <li>Per E-Mail-Anfrage: <a href="mailto:kontakt@plan-nrw.de">kontakt@plan-nrw.de</a></li>
       </ul>
     </div>
@@ -123,20 +148,21 @@
   </div>
 
   <div class="section">
-    <h2>6. Cookies und Einwilligung</h2>
+    <h2>7. Cookies und Einwilligung</h2>
     <p>Für den Betrieb der App werden keine technisch notwendigen Cookies benötigt; Lernfortschritte werden ausschließlich über den localStorage deines Browsers gespeichert.</p>
     <p>Analyse-Cookies (Google Analytics) werden ausschließlich nach deiner ausdrücklichen Einwilligung gesetzt. Beim ersten Aufruf erscheint ein Hinweisbanner mit den Optionen „Akzeptieren" und „Ablehnen". Bis zur Einwilligung läuft Google Analytics im eingeschränkten Modus (Google Consent Mode v2) ohne Cookies. Vercel Web Analytics setzt keine Cookies und benötigt daher keine Einwilligung.</p>
+    <p>Für die Community-Funktionen speichert die App technisch notwendige Werte im localStorage, z.&nbsp;B. die zufällige Gerätekennung (<code>pl_com_key</code>), deinen Tagesstatus, Timer, Avatar- und Toneinstellungen sowie den gewählten Gruppentisch (Schlüssel beginnend mit <code>pl_com_</code> bzw. <code>pl_lt_</code>). Diese Speicherung ist für die von dir gewünschten Funktionen unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG) und erfordert keine Einwilligung.</p>
     <p>Deine Auswahl wird im localStorage gespeichert (Schlüssel <code>pl_consent</code>). Du kannst sie jederzeit über den Link „Cookie-Einstellungen" (im Menü und auf der Startseite) erneut aufrufen und ändern. Ein Widerruf wirkt für die Zukunft.</p>
   </div>
 
   <div class="section">
-    <h2>7. Minderjährige</h2>
+    <h2>8. Minderjährige</h2>
     <p>Die App richtet sich an Personen ab 16 Jahren (Pflegeazubis). Es werden keine Daten von Kindern unter 16 Jahren bewusst erhoben.</p>
   </div>
 
   <footer>
-    <p>PflegeLearn NRW · Patrick Schenkelberger · kontakt@plan-nrw.de · Stand: Juni 2026</p>
-    <p><a href="https://pflegelearn-nrw.vercel.app">Zurück zur App</a></p>
+    <p>PLAN NRW · Patrick Schenkelberger · kontakt@plan-nrw.de · Stand: Oktober 2026</p>
+    <p><a href="https://plan-nrw.de">Zurück zur App</a></p>
   </footer>
 
 </div>
