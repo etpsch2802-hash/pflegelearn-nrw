@@ -43,6 +43,16 @@ async function newPage(browser, state) {
     const m = url.match(/\/rest\/v1\/rpc\/([a-z0-9_]+)/i);
     if (m) return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(rpcMock(m[1], body, state)) });
     if (/\/auth\/v1\//.test(url)) return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    if (/\/rest\/v1\/progress/.test(url)) {
+      const meth = route.request().method();
+      if (meth === 'GET') {
+        const modul = (url.match(/modul=eq\.([a-z0-9_]+)/) || [])[1];
+        const row = (state.progress || {})[modul];
+        return route.fulfill({ status: row ? 200 : 406, contentType: 'application/json', body: row ? JSON.stringify({ daten: row }) : JSON.stringify({ code: 'PGRST116', message: 'no rows' }) });
+      }
+      state.pushes = state.pushes || []; try { state.pushes.push(JSON.parse(route.request().postData() || '{}')); } catch (e) {}
+      return route.fulfill({ status: 201, contentType: 'application/json', body: '' });
+    }
     return route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
   });
   if (SB_LOCAL) await page.route(/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js/, r => r.fulfill({ status: 200, contentType: 'application/javascript', body: SB_LOCAL }));
@@ -187,6 +197,52 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     check('Favoriten-Quiz startet', (await page.evaluate(() => currentScreen)) === 'quiz' && (await page.evaluate(() => quizList.length)) === 1);
     check('Favoriten-Quiz startet keinen Lerntisch-Timer', await page.evaluate(() => !(+localStorage.getItem('pl_lt_end') > Date.now())));
     check('Keine JS-Fehler (Karten/Favoriten)', S.errors.length === 0, S.errors.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('7) Cloud-Sync Karten & Favoriten');
+  {
+    const remoteCard = { id: 'my_remote1', frage: 'Remote-Frage?', antwort: 'Remote-Antwort', thema: 'Herz', t: 1000 };
+    S.progress = { karten_v1: { cards: [remoteCard], favs: { 'q:abc:3': { frage: 'Fav vom Handy', opt: ['a', 'b'], k: 0, erkl: '', t: 2000 } }, del: { c: {}, f: {} } } };
+    S.pushes = [];
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
+    await ctx.addInitScript(() => { try {
+      localStorage.setItem('pl_consent', 'denied'); localStorage.setItem('pl_onboarded', '1');
+      localStorage.setItem('pl_my_cards', JSON.stringify([{ id: 'my_local1', frage: 'Lokale Frage?', antwort: 'Lokal', thema: '', t: 3000 }]));
+      const exp = Math.floor(Date.now() / 1000) + 3600;
+      localStorage.setItem('sb-tpgverrpznsujvzbntmj-auth-token', JSON.stringify({ access_token: 'test', refresh_token: 'test', token_type: 'bearer', expires_in: 3600, expires_at: exp, user: { id: '00000000-0000-0000-0000-000000000001', email: 'sync@test.de', aud: 'authenticated' } }));
+    } catch (e) {} });
+    ctx.close = ctx.close.bind(ctx);
+    const page = await ctx.newPage(); S.errors = [];
+    page.on('pageerror', e => S.errors.push(String(e.message || e)));
+    const ctxRoute = async route => {
+      const url = route.request().url(); let body = {};
+      try { body = JSON.parse(route.request().postData() || '{}'); } catch (e) {}
+      const m = url.match(/\/rest\/v1\/rpc\/([a-z0-9_]+)/i);
+      if (m) return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(rpcMock(m[1], body, S)) });
+      if (/\/rest\/v1\/progress/.test(url)) {
+        if (route.request().method() === 'GET') { const modul = (url.match(/modul=eq\.([a-z0-9_]+)/) || [])[1]; const row = S.progress[modul]; return route.fulfill({ status: row ? 200 : 406, contentType: 'application/json', body: row ? JSON.stringify({ daten: row }) : '{"code":"PGRST116"}' }); }
+        try { S.pushes.push(JSON.parse(route.request().postData() || '{}')); } catch (e) {}
+        return route.fulfill({ status: 201, contentType: 'application/json', body: '' });
+      }
+      return route.fulfill({ status: 200, contentType: 'application/json', body: url.includes('/auth/v1/') ? '{}' : '[]' });
+    };
+    await page.route(/supabase\.co\//, ctxRoute);
+    if (SB_LOCAL) await page.route(/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js/, r => r.fulfill({ status: 200, contentType: 'application/javascript', body: SB_LOCAL }));
+    await page.route(/googletagmanager|google-analytics|_vercel\/insights|emailjs/, r => r.fulfill({ status: 200, contentType: 'application/javascript', body: '' }));
+    await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => typeof window.checkPW === 'function' && !!window.SB, null, { timeout: 30000 });
+    await page.waitForTimeout(3500);
+    const ids = await page.evaluate(() => JSON.parse(localStorage.getItem('pl_my_cards') || '[]').map(c => c.id).sort().join(','));
+    check('Karten vom anderen Gerät übernommen (lokal + Cloud zusammengeführt)', ids === 'my_local1,my_remote1', ids);
+    check('Favorit vom anderen Gerät übernommen', await page.evaluate(() => !!JSON.parse(localStorage.getItem('pl_favs') || '{}')['q:abc:3']));
+    const push = S.pushes.filter(p => p && p.modul === 'karten_v1').pop();
+    check('Zusammengeführter Stand in die Cloud geschrieben', !!push && push.daten.cards.length === 2);
+    await page.evaluate(() => { localStorage.setItem('pl_my_cards', JSON.stringify(JSON.parse(localStorage.getItem('pl_my_cards')).filter(c => c.id !== 'my_remote1'))); });
+    await login(page, 'TEST-ADMIN');
+    await page.evaluate(() => { plcCardEditor(null); }); await page.waitForTimeout(300);
+    await page.evaluate(() => { document.querySelectorAll('#examdate-prompt, #push-modal').forEach(e => e.remove()); const b = document.querySelector('#plc-modal [data-d]'); });
+    check('Keine JS-Fehler (Cloud-Sync)', S.errors.length === 0, S.errors.join(' | '));
     await ctx.close();
   }
 
