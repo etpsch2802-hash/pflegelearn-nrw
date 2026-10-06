@@ -23519,6 +23519,25 @@ window.renderLiveUsers=function(start){
     for(var i=0;i<n;i++){ var v=rr(0.06,0.12); g.gain.setValueAtTime(v,tt); g.gain.exponentialRampToValueAtTime(0.0005,tt+0.03); tt+=rr(0.09,0.22); }
     s.connect(hp); hp.connect(g); s.start(t, rr(0,1)); s.stop(tt+0.05);
   }
+  function sBeep(t){ // entfernte Patientenklingel/Monitor
+    var c=snd.ctx, g=outNode(c,0), o=c.createOscillator(); o.type='sine'; o.frequency.value=rr(880,1050);
+    var n=Math.random()<0.5?2:3, tt=t; g.gain.setValueAtTime(0,t);
+    for(var i=0;i<n;i++){ g.gain.setValueAtTime(0,tt); g.gain.linearRampToValueAtTime(rr(0.012,0.022),tt+0.01); g.gain.setValueAtTime(rr(0.012,0.022),tt+0.16); g.gain.linearRampToValueAtTime(0,tt+0.18); tt+=0.32; }
+    var lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1800; o.connect(lp); lp.connect(g); o.start(t); o.stop(tt+0.05);
+  }
+  function sCoffee(t){ // Kaffeemaschine: Mahlen + Zischen
+    var c=snd.ctx, s=c.createBufferSource(); s.buffer=snd.white; var bp=c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=rr(300,450); bp.Q.value=1.2;
+    var am=c.createGain(); am.gain.value=0.5; var lfo=c.createOscillator(); lfo.frequency.value=rr(28,40); var lg=c.createGain(); lg.gain.value=0.4; lfo.connect(lg); lg.connect(am.gain);
+    var g=outNode(c,0); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.05,t+0.2); g.gain.setValueAtTime(0.05,t+2.2); g.gain.linearRampToValueAtTime(0,t+2.5);
+    s.connect(bp); bp.connect(am); am.connect(g); s.start(t,rr(0,1)); s.stop(t+2.6); lfo.start(t); lfo.stop(t+2.6);
+    var s2=c.createBufferSource(); s2.buffer=snd.white; var hp=c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=3000; var g2=outNode(c,0);
+    g2.gain.setValueAtTime(0,t+3); g2.gain.linearRampToValueAtTime(0.025,t+3.4); g2.gain.linearRampToValueAtTime(0,t+6); s2.connect(hp); hp.connect(g2); s2.start(t+3,rr(0,1)); s2.stop(t+6.1);
+  }
+  function sClink(t){ // Porzellan / Loeffel an Tasse
+    var c=snd.ctx, n=Math.random()<0.6?1:2, tt=t;
+    for(var i=0;i<n;i++){ [2600,3350,4100].forEach(function(f,j){ var o=c.createOscillator(); o.type='sine'; o.frequency.value=f*rr(0.97,1.03); var g=outNode(c,0); var v=[0.03,0.018,0.01][j];
+      g.gain.setValueAtTime(v,tt); g.gain.exponentialRampToValueAtTime(0.0003,tt+rr(0.25,0.5)); o.connect(g); o.start(tt); o.stop(tt+0.55); }); tt+=rr(0.12,0.3); }
+  }
   function sched(fn,a,b){ if(!snd) return; var id=setTimeout(function(){ if(!snd) return; try{ fn(snd.ctx.currentTime+0.05); if(fn===sPage&&Math.random()<0.3) fn(snd.ctx.currentTime+rr(0.7,1.4)); }catch(e){} sched(fn,a,b); }, rr(a,b)*1000); snd.timers.push(id); }
   function soundStart(){
     if(snd||!soundOn()) return;
@@ -23530,21 +23549,31 @@ window.renderLiveUsers=function(start){
       // leiser Raumton
       var rt=ctx.createBufferSource(); rt.buffer=noiseBuf(ctx,4,true); rt.loop=true; var lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=380;
       var rg=ctx.createGain(); rg.gain.value=0.035; rt.connect(lp); lp.connect(rg); rg.connect(master); rt.start();
-      sched(sPage,18,55); sched(sWhisper,50,150); sched(sChair,110,280); sched(sPen,35,110);
+      var th=persona();
+      sched(sPage,th==='azubi'?18:35,th==='azubi'?55:90); sched(sWhisper,th==='azubi'?50:30,th==='azubi'?150:90); sched(sChair,110,280); sched(sPen,35,110);
+      if(th==='examiniert'){ sched(sCoffee,90,240); sched(sBeep,60,180); }
+      if(th==='lehrkraft'){ sched(sClink,35,110); }
       setTimeout(function(){ if(snd) sPage(snd.ctx.currentTime+0.1); },2500);
     }catch(e){}
   }
   function soundStop(){ if(!snd) return; var s=snd; snd=null; s.timers.forEach(clearTimeout); try{ s.master.gain.linearRampToValueAtTime(0, s.ctx.currentTime+0.8); setTimeout(function(){ s.ctx.close(); },900); }catch(e){} }
 
-  /* ── Szene ── */
+  /* ── Szene (je Rolle: Azubi = Bibliothek, Examiniert = Pausenraum, Lehrkraft = Lounge) ── */
   function rnd(seed){ return function(){ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; }; }
-  function sky(){
-    var h=new Date().getHours();
-    if(h>=7&&h<17) return {a:'#8fcfe6',b:'#d8eef5',o:'<circle cx="198" cy="34" r="9" fill="#ffe7a3"/>'};
-    if(h>=17&&h<21||h>=5&&h<7) return {a:'#6b4e8a',b:'#f4a26b',o:'<circle cx="160" cy="88" r="10" fill="#ffd08a" opacity=".9"/>'};
-    return {a:'#08152b',b:'#1d3557',o:'<circle cx="200" cy="32" r="8" fill="#f1ead2"/><circle cx="204" cy="29" r="7" fill="#0f2240"/>'
-      +[[156,26],[172,48],[186,22],[210,60],[164,70],[194,80]].map(function(p){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1" fill="#e6eef8" class="plc-tw"/>';}).join('')};
+  function persona(){ var p=lsGet('pl_persona')||''; return (p==='examiniert'||p==='lehrkraft')?p:'azubi'; }
+  var ROOM={azubi:{name:'Bibliothek',ico:'📚'},examiniert:{name:'Pausenraum',ico:'☕'},lehrkraft:{name:'Lounge',ico:'🛋️'}};
+  /* Fensterhimmel nach Uhrzeit, relativ zum Fensterrahmen */
+  function sky(wx,wy,ww,wh){
+    var h=new Date().getHours(), o='';
+    function P(fx,fy){ return [ (wx+ww*fx).toFixed(1), (wy+wh*fy).toFixed(1) ]; }
+    if(h>=7&&h<17){ var s=P(.75,.22); return {a:'#8fcfe6',b:'#d8eef5',o:'<circle cx="'+s[0]+'" cy="'+s[1]+'" r="'+(ww*.12).toFixed(1)+'" fill="#ffe7a3"/>'}; }
+    if(h>=17&&h<21||h>=5&&h<7){ var u=P(.22,.85); return {a:'#6b4e8a',b:'#f4a26b',o:'<circle cx="'+u[0]+'" cy="'+u[1]+'" r="'+(ww*.14).toFixed(1)+'" fill="#ffd08a" opacity=".9"/>'}; }
+    var m=P(.78,.2), r=ww*.11;
+    o='<circle cx="'+m[0]+'" cy="'+m[1]+'" r="'+r.toFixed(1)+'" fill="#f1ead2"/><circle cx="'+(+m[0]+r*.5).toFixed(1)+'" cy="'+(+m[1]-r*.4).toFixed(1)+'" r="'+(r*.88).toFixed(1)+'" fill="#0f2240"/>';
+    [[.15,.12],[.38,.45],[.55,.08],[.9,.6],[.25,.72],[.68,.82]].forEach(function(f){ var q=P(f[0],f[1]); o+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="1" fill="#e6eef8" class="plc-tw"/>'; });
+    return {a:'#08152b',b:'#1d3557',o:o};
   }
+  function skyDefs(S){ return '<linearGradient id="plc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+S.a+'"/><stop offset="1" stop-color="'+S.b+'"/></linearGradient>'; }
   function shelves(){
     var r=rnd(42), cols=['#7a4b3a','#3f5e7a','#6d7f4e','#a07c3a','#5b4a6e','#8a3f3f','#2f5d5a','#b39b74'], out='';
     [[18,62],[70,114]].forEach(function(row){
@@ -23562,6 +23591,76 @@ window.renderLiveUsers=function(start){
     });
     return out;
   }
+  /* ---- Bibliothek ---- */
+  function bgLibrary(){
+    var S=sky(145,15,70,88);
+    return {defs:skyDefs(S), svg:'<rect width="360" height="250" fill="#13212e"/>'
+      +'<rect x="140" y="10" width="80" height="98" rx="3" fill="#3b2a1f"/><rect x="145" y="15" width="70" height="88" fill="url(#plc-sky)"/>'+S.o
+      +'<path d="M180 15 V103 M145 59 H215" stroke="#3b2a1f" stroke-width="3"/>'+shelves()
+      +'<rect x="0" y="122" width="360" height="70" fill="#0f1c28"/><rect x="0" y="122" width="360" height="2" fill="#1d2f3e"/>'};
+  }
+  /* ---- Pausenraum (Station) ---- */
+  function wallClock(cx,cy,r){
+    var d=new Date(), m=d.getMinutes(), h=d.getHours()%12+m/60;
+    function hand(a,len,w,c){ var rad=(a-90)*Math.PI/180; return '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(rad)*len).toFixed(1)+'" y2="'+(cy+Math.sin(rad)*len).toFixed(1)+'" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round"/>'; }
+    var t=''; for(var i=0;i<12;i++){ var a=i*30*Math.PI/180; t+='<line x1="'+(cx+Math.sin(a)*(r-3)).toFixed(1)+'" y1="'+(cy-Math.cos(a)*(r-3)).toFixed(1)+'" x2="'+(cx+Math.sin(a)*(r-1)).toFixed(1)+'" y2="'+(cy-Math.cos(a)*(r-1)).toFixed(1)+'" stroke="#3a4a52" stroke-width="1"/>'; }
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="'+(r+2)+'" fill="#55656d"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#eef3f5"/>'+t+hand(h*30,r*.5,2,'#22303a')+hand(m*6,r*.78,1.3,'#22303a')+'<circle cx="'+cx+'" cy="'+cy+'" r="1.4" fill="#c0392b"/>';
+  }
+  function bgPause(){
+    var S=sky(20,18,70,66), tiles='';
+    for(var y=124;y<192;y+=10) tiles+='<path d="M0 '+y+' H360" stroke="#2b4650" stroke-width=".8"/>';
+    for(var x=0;x<360;x+=12) tiles+='<path d="M'+x+' 122 V192" stroke="#2b4650" stroke-width=".8"/>';
+    var blinds=''; for(var b=22;b<84;b+=5) blinds+='<rect x="20" y="'+b+'" width="70" height="2.2" fill="#c9d3d8" opacity=".55"/>';
+    var notes=[[154,30,'#fde68a'],[172,36,'#a7f3d0'],[190,28,'#fbcfe8'],[210,38,'#bfdbfe'],[228,30,'#fde68a'],[160,56,'#fecaca'],[184,58,'#e9d5ff'],[214,60,'#a7f3d0']].map(function(n){ return '<rect x="'+n[0]+'" y="'+n[1]+'" width="14" height="12" fill="'+n[2]+'" transform="rotate('+(((n[0]*7)%9)-4)+' '+(n[0]+7)+' '+(n[1]+6)+')"/><circle cx="'+(n[0]+7)+'" cy="'+(n[1]+1.5)+'" r="1.2" fill="#c0392b"/>'; }).join('');
+    return {defs:skyDefs(S), svg:'<rect width="360" height="250" fill="#1b2a31"/>'
+      +'<rect x="15" y="13" width="80" height="76" rx="2" fill="#a9b6bc"/><rect x="20" y="18" width="70" height="66" fill="url(#plc-sky)"/>'+S.o+blinds+'<rect x="13" y="88" width="84" height="4" fill="#a9b6bc"/>'
+      +wallClock(120,36,13)
+      +'<rect x="146" y="18" width="100" height="62" rx="2" fill="#8a6a44"/><rect x="149" y="21" width="94" height="56" fill="#a17f55"/>'+notes
+      +'<text x="196" y="74" text-anchor="middle" font-size="6.5" font-weight="700" fill="#3b2a1f" opacity=".75">DIENSTPLAN</text>'
+      +'<rect x="262" y="30" width="86" height="34" rx="2" fill="#56666e"/><path d="M305 30 V64" stroke="#46555c"/><circle cx="300" cy="47" r="1.4" fill="#2b363b"/><circle cx="310" cy="47" r="1.4" fill="#2b363b"/>'
+      +'<rect x="262" y="96" width="86" height="6" rx="1" fill="#7c8b92"/><rect x="264" y="102" width="82" height="20" fill="#4e5d64"/>'
+      +'<rect x="272" y="74" width="20" height="22" rx="2" fill="#24292c"/><rect x="276" y="79" width="12" height="6" rx="1" fill="#3a4246"/><circle cx="289" cy="78" r="1.2" fill="#ef4444"/><rect x="279" y="89" width="6" height="7" fill="#f5f5f5" opacity=".85"/>'
+      +'<rect x="300" y="86" width="8" height="10" rx="1.5" fill="#e07a5f"/><rect x="312" y="86" width="8" height="10" rx="1.5" fill="#81b29a"/><rect x="324" y="84" width="10" height="12" rx="2" fill="#f2cc8f"/>'
+      +'<rect x="0" y="122" width="360" height="70" fill="#22383f"/>'+tiles+'<rect x="0" y="121" width="360" height="2" fill="#35555f"/>'};
+  }
+  /* ---- Lehrkraefte-Lounge ---- */
+  function bgLounge(){
+    var S=sky(146,16,68,80), stripes='';
+    for(var x=0;x<360;x+=9) stripes+='<rect x="'+x+'" y="0" width="4" height="122" fill="#ffffff" opacity=".022"/>';
+    var leaves=[[316,96,-30],[330,88,10],[342,100,40],[322,108,-60],[338,112,70],[328,78,-5]].map(function(l){ return '<ellipse cx="'+l[0]+'" cy="'+l[1]+'" rx="11" ry="5.5" fill="#3f7d4e" transform="rotate('+l[2]+' '+l[0]+' '+l[1]+')"/><path d="M'+(l[0]-8)+' '+l[1]+' L'+(l[0]+8)+' '+l[1]+'" stroke="#2f5e3a" stroke-width=".8" transform="rotate('+l[2]+' '+l[0]+' '+l[1]+')"/>'; }).join('');
+    return {defs:skyDefs(S)+'<radialGradient id="plc-lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffcf7a" stop-opacity=".35"/><stop offset="1" stop-color="#ffcf7a" stop-opacity="0"/></radialGradient>',
+      svg:'<rect width="360" height="250" fill="#251d2b"/>'+stripes
+      +'<rect x="141" y="11" width="78" height="90" rx="2" fill="#5a4636"/><rect x="146" y="16" width="68" height="80" fill="url(#plc-sky)"/>'+S.o+'<path d="M180 16 V96" stroke="#5a4636" stroke-width="2.5"/>'
+      +'<path d="M128 8 Q136 60 130 118 L146 118 L146 8 Z" fill="#7a2e3a"/><path d="M232 8 Q224 60 230 118 L214 118 L214 8 Z" fill="#7a2e3a"/><rect x="124" y="5" width="112" height="4" rx="2" fill="#b08a4a"/>'
+      +'<rect x="26" y="24" width="42" height="32" fill="#b08a4a"/><rect x="29" y="27" width="36" height="26" fill="#2f4858"/><circle cx="40" cy="38" r="7" fill="#e0a458"/><path d="M29 53 L44 40 L54 47 L65 36 V53 Z" fill="#33658a"/>'
+      +'<rect x="76" y="34" width="30" height="40" fill="#b08a4a"/><rect x="79" y="37" width="24" height="34" fill="#efe6d2"/><path d="M83 64 Q91 44 99 64" stroke="#7a2e3a" stroke-width="2" fill="none"/><circle cx="91" cy="50" r="4" fill="#33658a"/>'
+      +'<rect x="250" y="30" width="56" height="40" fill="#b08a4a"/><rect x="253" y="33" width="50" height="34" fill="#3d3a4b"/><rect x="258" y="38" width="16" height="24" fill="#86bbd8"/><rect x="278" y="44" width="20" height="18" fill="#f6ae2d"/>'
+      +'<circle cx="28" cy="100" r="34" fill="url(#plc-lamp)" class="plc-light"/><path d="M28 104 V184" stroke="#1a141e" stroke-width="2"/><path d="M14 104 L20 86 L36 86 L42 104 Z" fill="#e8d5a8"/><ellipse cx="28" cy="184" rx="9" ry="2" fill="#1a141e"/>'
+      +'<path d="M318 152 L322 128 L334 128 L338 152 Z" fill="#8a5a3b"/>'+leaves
+      +'<rect x="0" y="122" width="360" height="70" fill="#1e1724"/><path d="M0 124 H360" stroke="#3a2e40" stroke-width="2"/>'
+      +'<rect x="10" y="132" width="100" height="50" fill="none" stroke="#33283a" stroke-width="1.5"/><rect x="130" y="132" width="100" height="50" fill="none" stroke="#33283a" stroke-width="1.5"/><rect x="250" y="132" width="100" height="50" fill="none" stroke="#33283a" stroke-width="1.5"/>'};
+  }
+  function chairSVG(th,x){
+    if(th==='examiniert') return '<rect x="'+(x-16)+'" y="134" width="32" height="44" rx="10" fill="#3d7ea6"/><rect x="'+(x-12)+'" y="138" width="24" height="30" rx="7" fill="#4a90ba"/>';
+    if(th==='lehrkraft') return '<path d="M'+(x-25)+' 186 V140 Q'+(x-25)+' 124 '+(x-10)+' 124 H'+(x+10)+' Q'+(x+25)+' 124 '+(x+25)+' 140 V186 Z" fill="#7a4526"/><path d="M'+(x-17)+' 186 V142 Q'+(x-17)+' 132 '+(x-7)+' 132 H'+(x+7)+' Q'+(x+17)+' 132 '+(x+17)+' 142 V186 Z" fill="#8f5530"/><path d="M'+(x-12)+' 136 Q'+x+' 132 '+(x+12)+' 136" stroke="#b07246" stroke-width="1.2" fill="none" opacity=".7"/>';
+    return '<rect x="'+(x-20)+'" y="128" width="40" height="58" rx="9" fill="#2e2119"/><rect x="'+(x-15)+'" y="133" width="30" height="40" rx="6" fill="#3d2c21"/>';
+  }
+  function lightsSVG(th){
+    if(th==='examiniert') return '<rect x="110" y="0" width="140" height="7" rx="2" fill="#d7e3ea"/><rect x="116" y="5" width="128" height="3" fill="#f4fbff"/><path d="M116 8 L244 8 L340 186 L20 186 Z" fill="url(#plc-glowc)" class="plc-light"/>';
+    if(th==='lehrkraft') return [130,230].map(function(lx){ return '<path d="M'+lx+' 0 V96" stroke="#3a2e40" stroke-width="1.2"/><path d="M'+(lx-55)+' 186 L'+(lx-10)+' 112 L'+(lx+10)+' 112 L'+(lx+55)+' 186 Z" fill="url(#plc-glow)" class="plc-light"/><path d="M'+(lx-14)+' 112 Q'+lx+' 92 '+(lx+14)+' 112 Z" fill="#b08a4a"/><ellipse cx="'+lx+'" cy="112" rx="8" ry="2" fill="#ffe2a6"/>'; }).join('');
+    return [110,250].map(function(lx){ return '<path d="M'+lx+' 0 V112" stroke="#2a3a48" stroke-width="1.2"/><path d="M'+(lx-60)+' 186 L'+(lx-13)+' 124 L'+(lx+13)+' 124 L'+(lx+60)+' 186 Z" fill="url(#plc-glow)" class="plc-light"/>'
+      +'<path d="M'+(lx-15)+' 124 Q'+lx+' 104 '+(lx+15)+' 124 Z" fill="#2f6b4f"/><ellipse cx="'+lx+'" cy="124" rx="9" ry="2.2" fill="#ffe2a6"/>'; }).join('');
+  }
+  function tableSVG(th){
+    if(th==='examiniert') return '<path d="M18 184 L342 184 L358 206 L2 206 Z" fill="url(#plc-wood)"/><path d="M2 206 H358 V211 H2 Z" fill="#8c979d"/>'
+      +'<rect x="20" y="211" width="5" height="39" fill="#9aa5ab"/><rect x="335" y="211" width="5" height="39" fill="#9aa5ab"/>';
+    if(th==='lehrkraft') return '<path d="M18 184 L342 184 L358 206 L2 206 Z" fill="url(#plc-wood)"/><path d="M24 186 L336 186" stroke="#fff" stroke-opacity=".12" stroke-width="1.2"/><path d="M2 206 H358 V214 H2 Z" fill="#2a1a10"/>'
+      +'<path d="M22 214 L18 250 H28 L30 214 Z" fill="#2a1a10"/><path d="M338 214 L342 250 H332 L330 214 Z" fill="#2a1a10"/>';
+    return '<path d="M18 184 L342 184 L358 206 L2 206 Z" fill="url(#plc-wood)"/><path d="M2 206 H358 V216 H2 Z" fill="#4f321d"/>'
+      +'<rect x="14" y="216" width="10" height="34" fill="#4f321d"/><rect x="336" y="216" width="10" height="34" fill="#4f321d"/>';
+  }
+  var WOOD={azubi:['#9a6a42','#6e4628'],examiniert:['#dfe5e8','#aab4b9'],lehrkraft:['#5a3a26','#2f1d12']};
+  function mug(x,col){ return '<rect x="'+(x-4)+'" y="183" width="8" height="9" rx="1.5" fill="'+col+'"/><path d="M'+(x+4)+' 185 q3 0 3 3 q0 2 -3 2" fill="none" stroke="'+col+'" stroke-width="1.2"/>'; }
   function avatarSVG(x,y,av,me,i,name){
     var c=SCRUB[av.c], sk=SKIN[av.s], hc=HAIRC[av.k], out='<g class="plc-av'+(me?' me':'')+'" style="animation-delay:-'+(i*0.7)+'s">';
     if(av.h===2) out+='<path d="M'+(x-13)+' '+(y-24)+' Q'+(x-14)+' '+(y-4)+' '+(x-10)+' '+(y+2)+' L'+(x+10)+' '+(y+2)+' Q'+(x+14)+' '+(y-4)+' '+(x+13)+' '+(y-24)+' Z" fill="'+hc+'"/>';
@@ -23591,39 +23690,31 @@ window.renderLiveUsers=function(start){
   function stack(x,n){ var o='',cols=['#3b6ea8','#a07c3a','#8a3f3f','#2f5d5a','#5b4a6e']; for(var i=0;i<Math.min(n,6);i++) o+='<rect x="'+(x-9+(i%2))+'" y="'+(190-i*3.4)+'" width="18" height="3.2" rx=".6" fill="'+cols[i%5]+'"/>'; return o; }
 
   function sceneSVG(){
-    var S=sky(), run=running(), meAv=parseAv(myAv());
+    var th=persona(), run=running(), meAv=parseAv(myAv());
+    var BG=th==='examiniert'?bgPause():th==='lehrkraft'?bgLounge():bgLibrary(), W=WOOD[th];
     var seats=(ltSeats&&ltSeats.seats)||[], others=seats.filter(function(s){return !s.me;});
     var X=[40,96,152,208,264,320], order=[2,3,1,4,0,5], meIdx=2;
     var placed=[], free=order.filter(function(i){ return i!==meIdx; });
     others.slice(0,5).forEach(function(s,j){ placed.push({i:free[j],s:s}); });
-    var extra=Math.max(0,others.length-5);
-    var o='<svg viewBox="0 0 360 250" role="img" aria-label="'+(run?'Du sitzt am Lerntisch':'Leerer Platz am Lerntisch')+(others.length?', '+others.length+' weitere lernen mit':'')+'" style="display:block;width:100%;height:auto">'
-      +'<defs><linearGradient id="plc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+S.a+'"/><stop offset="1" stop-color="'+S.b+'"/></linearGradient>'
-      +'<linearGradient id="plc-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6a42"/><stop offset="1" stop-color="#6e4628"/></linearGradient>'
-      +'<radialGradient id="plc-glow" cx=".5" cy="0" r="1"><stop offset="0" stop-color="#ffd58a" stop-opacity=".42"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient></defs>'
-      +'<rect width="360" height="250" fill="#13212e"/>'
-      +'<rect x="140" y="10" width="80" height="98" rx="3" fill="#3b2a1f"/><rect x="145" y="15" width="70" height="88" fill="url(#plc-sky)"/>'+S.o
-      +'<path d="M180 15 V103 M145 59 H215" stroke="#3b2a1f" stroke-width="3"/>'
-      +shelves()
-      +'<rect x="0" y="122" width="360" height="70" fill="#0f1c28"/><rect x="0" y="122" width="360" height="2" fill="#1d2f3e"/>';
-    // Stuehle + Avatare (hinterer Reihe)
-    X.forEach(function(x,i){ o+='<rect x="'+(x-20)+'" y="128" width="40" height="58" rx="9" fill="#2e2119"/><rect x="'+(x-15)+'" y="133" width="30" height="40" rx="6" fill="#3d2c21"/>'; });
+    var extra=Math.max(0,others.length-5), lbl=th==='examiniert'?'#9cc3d0':th==='lehrkraft'?'#c9b8d6':'#93b9d1';
+    var o='<svg viewBox="0 0 360 250" role="img" aria-label="'+ROOM[th].name+': '+(run?'Du sitzt am Lerntisch':'Leerer Platz am Lerntisch')+(others.length?', '+others.length+' weitere lernen mit':'')+'" style="display:block;width:100%;height:auto">'
+      +'<defs>'+BG.defs
+      +'<linearGradient id="plc-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+W[0]+'"/><stop offset="1" stop-color="'+W[1]+'"/></linearGradient>'
+      +'<radialGradient id="plc-glow" cx=".5" cy="0" r="1"><stop offset="0" stop-color="#ffd58a" stop-opacity=".42"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient>'
+      +'<linearGradient id="plc-glowc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8f6ff" stop-opacity=".22"/><stop offset="1" stop-color="#e8f6ff" stop-opacity="0"/></linearGradient></defs>'
+      +BG.svg;
+    X.forEach(function(x){ o+=chairSVG(th,x); });
     placed.forEach(function(p,j){ o+=avatarSVG(X[p.i],176,parseAv(p.s.a,p.s.n),false,j+1);
       var gc='', x=X[p.i]; if(p.s.c) gc+='☕'+(p.s.c>1?p.s.c:''); if(p.s.p) gc+=(gc?' ':'')+'💪'+(p.s.p>1?p.s.p:'');
       if(gc) o+='<text x="'+x+'" y="132" text-anchor="middle" font-size="9" fill="#ffe2a6">'+gc+'</text>'; });
     o+='<g'+(run?(Date.now()-(ltEnd()-LT_MS)<1500?' class="plc-drop"':''):' opacity=".32"')+'>'+avatarSVG(X[meIdx],176,meAv,true,0)+'</g>';
-    // Haengelampen + Lichtkegel
-    [110,250].forEach(function(lx){ o+='<path d="M'+lx+' 0 V112" stroke="#2a3a48" stroke-width="1.2"/><path d="M'+(lx-60)+' 186 L'+(lx-13)+' 124 L'+(lx+13)+' 124 L'+(lx+60)+' 186 Z" fill="url(#plc-glow)" class="plc-light"/>'
-      +'<path d="M'+(lx-15)+' 124 Q'+lx+' 104 '+(lx+15)+' 124 Z" fill="#2f6b4f"/><ellipse cx="'+lx+'" cy="124" rx="9" ry="2.2" fill="#ffe2a6"/>'; });
-    // Tisch
-    o+='<path d="M18 184 L342 184 L358 206 L2 206 Z" fill="url(#plc-wood)"/><path d="M2 206 H358 V216 H2 Z" fill="#4f321d"/>'
-      +'<rect x="14" y="216" width="10" height="34" fill="#4f321d"/><rect x="336" y="216" width="10" height="34" fill="#4f321d"/>';
-    placed.forEach(function(p){ o+=bookOpen(X[p.i]); });
+    o+=lightsSVG(th)+tableSVG(th);
+    var mugs=['#e07a5f','#81b29a','#f2cc8f','#9b87d6','#3d7ea6'];
+    placed.forEach(function(p,j){ o+=bookOpen(X[p.i]); if(th!=='azubi') o+=mug(X[p.i]+22,mugs[j%5]); });
     if(run){ var left=ltEnd()-Date.now(); o+=bookOpen(X[meIdx])+cup(X[meIdx]+24, left/LT_MS); }
     var dn=doneToday(); if(dn) o+=stack(X[meIdx]-25,dn);
     if(extra) o+='<g><rect x="314" y="188" width="34" height="14" rx="7" fill="#1f3a4f"/><text x="331" y="198" text-anchor="middle" font-size="8" fill="#dbe7f1" font-weight="700">+'+extra+'</text></g>';
-    // Namen
-    placed.forEach(function(p){ var nm=String(p.s.n); if(/^Anonym/.test(nm)) nm='Anonym'; o+='<text x="'+X[p.i]+'" y="232" text-anchor="middle" font-size="8.5" fill="#93b9d1">'+esc(nm.slice(0,11))+'</text>'; });
+    placed.forEach(function(p){ var nm=String(p.s.n); if(/^Anonym/.test(nm)) nm='Anonym'; o+='<text x="'+X[p.i]+'" y="232" text-anchor="middle" font-size="8.5" fill="'+lbl+'">'+esc(nm.slice(0,11))+'</text>'; });
     o+='<text x="'+X[meIdx]+'" y="232" text-anchor="middle" font-size="9" font-weight="700" fill="'+(run?'#7dd3fc':'#5d7a90')+'">'+(run?'Du':'Dein Platz')+'</text>';
     var mine=seats.filter(function(z){return z.me;})[0]; if(run&&mine){ var mg=''; if(mine.c) mg+='☕'+(mine.c>1?mine.c:''); if(mine.p) mg+=(mg?' ':'')+'💪'+(mine.p>1?mine.p:''); if(mg) o+='<text x="'+X[meIdx]+'" y="132" text-anchor="middle" font-size="9" fill="#ffe2a6">'+mg+'</text>'; }
     placed.forEach(function(p){ o+='<rect class="plc-hit" data-sid="'+esc(p.s.sid||'')+'" data-n="'+esc(p.s.n)+'" x="'+(X[p.i]-26)+'" y="125" width="52" height="112" fill="transparent" tabindex="0" role="button" aria-label="'+esc(p.s.n)+' etwas schicken"/>'; });
@@ -23635,7 +23726,7 @@ window.renderLiveUsers=function(start){
     if(fromPop!==true){ try{ if(!(history.state&&history.state.plcLt)) history.pushState({screen:(typeof currentScreen!=='undefined'&&currentScreen)||'home', plcLt:1}, ''); }catch(e){} }
     var ov=document.createElement('div'); ov.className='plc-ov'; ov.id='plc-lt'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label','Lerntisch');
     ov.innerHTML='<div style="max-width:560px;margin:0 auto"><button class="plc-link" id="plc-lt-close" style="font-size:14px">‹ Zurück</button>'
-      +'<div class="plc-h" style="font-size:20px;margin-top:8px">Lerntisch</div><div class="plc-sub">25 Minuten Fokus. Du kannst direkt in PLAN lernen, der Timer läuft mit.</div>'
+      +'<div class="plc-h" style="font-size:20px;margin-top:8px">Lerntisch <span style="font-size:13px;font-weight:600;color:#93b9d1">· '+ROOM[persona()].ico+' '+ROOM[persona()].name+'</span></div><div class="plc-sub">25 Minuten Fokus. Du kannst direkt in PLAN lernen, der Timer läuft mit.</div>'
       +'<div class="plc-scene" id="plc-lt-scene"></div>'
       +'<div class="plc-prog"><span id="plc-lt-bar"></span></div>'
       +'<div class="plc-timer" id="plc-lt-time">25:00</div>'
@@ -23646,7 +23737,7 @@ window.renderLiveUsers=function(start){
       +'<div class="plc-quick"><button data-go="quiz">🧠<span>Quiz</span></button><button data-go="karteikarten">🗂️<span>Karteikarten</span></button><button data-go="krankheitsbilder">🩺<span>Krankheitsbilder</span></button><button data-go="wissensdb">📚<span>Wissensdatenbank</span></button></div>'
       +'<div class="plc-sub" style="margin:22px 0 6px;font-weight:600;color:#c3d4e4">Tisch und Einladungen</div><div id="plc-lt-tables"></div>'
       +'<details class="plc-det"><summary>Avatar anpassen</summary><div id="plc-lt-avpick"></div></details>'
-      +'<div class="plc-toggles"><label><input type="checkbox" id="plc-lt-anon"> Anonym am Tisch</label><label><input type="checkbox" id="plc-lt-snd"> Bibliotheks-Geräusch</label></div>'
+      +'<div class="plc-toggles"><label><input type="checkbox" id="plc-lt-anon"> Anonym am Tisch</label><label><input type="checkbox" id="plc-lt-snd"> Raum-Geräusche</label></div>'
       +'<div class="plc-sub" id="plc-lt-today" style="text-align:center;margin-top:10px"></div>'
       +'<div style="text-align:center;margin-top:18px"><button class="plc-link" id="plc-del" style="color:#93b9d1;font-weight:500">Meine Community-Daten löschen</button> · <a class="plc-link" style="color:#93b9d1;font-weight:500;text-decoration:none" href="/datenschutz.html#community" target="_blank" rel="noopener">Datenschutz</a></div></div>';
     document.body.appendChild(ov);
@@ -23703,7 +23794,7 @@ window.renderLiveUsers=function(start){
   function ltRender(){
     var sc=document.getElementById('plc-lt-scene'); if(!sc) return;
     var run=running(), left=ltEnd()-Date.now(), br=brEnd()-Date.now();
-    var sig=[run, (ltSeats&&JSON.stringify(ltSeats.seats.map(function(s){return s.n+s.a+s.me+s.c+s.p;})))||'', myAv(), doneToday(), new Date().getHours()].join('|');
+    var sig=[run, (ltSeats&&JSON.stringify(ltSeats.seats.map(function(s){return s.n+s.a+s.me+s.c+s.p;})))||'', myAv(), doneToday(), new Date().getHours(), persona(), persona()==='examiniert'?new Date().getMinutes():0].join('|');
     if(sig!==ltSceneSig){ sc.innerHTML=sceneSVG(); ltSceneSig=sig; bindSeats(sc); }
     var cf=document.getElementById('plc-coffee'); if(cf&&run){ var lvl=Math.max(0,left/LT_MS); cf.setAttribute('y',(181+(1-lvl)*8).toFixed(1)); }
     var t=document.getElementById('plc-lt-time'), b=document.getElementById('plc-lt-go'), bar=document.getElementById('plc-lt-bar'), st=document.getElementById('plc-lt-status');
@@ -23712,7 +23803,7 @@ window.renderLiveUsers=function(start){
     else { t.textContent='25:00'; b.textContent='Hinsetzen und starten'; bar.style.width='0%'; }
     var others=ltSeats?ltSeats.seats.filter(function(s){return !s.me;}).length:0;
     st.textContent = br>0&&!run ? 'Pause. Steh kurz auf, trink etwas.'
-      : others ? (others===1?'Gerade lernt 1 Azubi mit dir.':'Gerade lernen '+others+' Azubis mit dir.')
+      : others ? (others===1?'Gerade lernt 1 weitere Person mit dir.':'Gerade lernen '+others+' andere mit dir.')
       : run ? 'Du sitzt gerade allein am Tisch. Wer dazukommt, erscheint hier.' : 'Der Tisch ist frei. Setz dich dazu.';
     if(curTable()) st.textContent='Gruppentisch '+curTable()+': '+st.textContent;
     var _tp=topicGet(); if(_tp) st.textContent='🎯 '+_tp.t+' · '+st.textContent;
@@ -24023,7 +24114,7 @@ window.renderLiveUsers=function(start){
       var w=document.createElement('div'); w.id='plc-home'; w.style.marginTop='12px';
       w.innerHTML='<div id="plc-radar"></div><div id="plc-polls"></div>'
         +'<button class="plc-card" id="plc-lt-entry" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:12px">'
-        +'<span style="font-size:24px">☕</span><span style="flex:1"><span class="plc-h" style="margin:0">Lerntisch</span><span class="plc-sub" style="display:block">25 Minuten Fokus, gemeinsam mit anderen Azubis</span></span><span style="color:#7dd3fc;font-size:18px">›</span></button>';
+        +'<span style="font-size:24px">☕</span><span style="flex:1"><span class="plc-h" style="margin:0">Lerntisch</span><span class="plc-sub" style="display:block">25 Minuten Fokus, gemeinsam mit anderen</span></span><span style="color:#7dd3fc;font-size:18px">›</span></button>';
       if(anchor&&anchor.parentNode) anchor.parentNode.insertBefore(w,anchor.nextSibling); else home.appendChild(w);
       document.getElementById('plc-lt-entry').onclick=openLerntisch;
     }
