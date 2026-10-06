@@ -6899,6 +6899,7 @@ function answerKBFrage(frageIdx, antwortIdx, farbe) {
   if (istRichtig) playCorrect(); else playWrong();
   recordQuizAnswer(istRichtig);
   try { if (window.plcOrakel && sf) plcOrakel(sf.frage, !istRichtig, erkl ? erkl.parentNode : null); } catch (e) {}
+  try { if (window.plcLangHelp && sf && erkl) setTimeout(function(){ plcLangHelp({ frage: sf.frage, opt: sf.opts, k: sf.correctIdx, erkl: sf.erkl }, erkl.parentNode); }, 0); } catch (e) {}
 }
 
 function startKBKIChat(fachId, bildIdx) {
@@ -8630,6 +8631,7 @@ function answerABCDE(idx){
   const fb=document.getElementById('abcde-fb');
   if(!fb) return;
   try{ if(window.plcOrakel) plcOrakel('abcde:'+st.letter+':'+st.prompt, !o.richtig, fb, abcdeRun); }catch(e){}
+  try{ if(window.plcLangHelp) setTimeout(function(){ var ki=st.optionen.findIndex(function(x){return x.richtig;}); plcLangHelp({ frage: st.label+': '+st.prompt, opt: st.optionen.map(function(x){return x.text;}), k: ki, erkl: (st.optionen[ki]&&st.optionen[ki].erkl)||'' }, fb); },0); }catch(e){}
   if(o.richtig){
     if(abcdeDone.indexOf(abcdeStep)<0) abcdeDone.push(abcdeStep);
     fb.innerHTML='<div style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:9px;padding:10px;font-size:12px;color:#bbf7d0"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-check"/></svg> '+o.fb+'</div>'
@@ -12213,6 +12215,7 @@ function _wdbAnswer(idx){
   var c=Q.cards[Q.i];
   if (idx===c.richtig) Q.known++; else Q.missed.push(c);
   try { if (window.plcOrakel) plcOrakel(c.frage, idx!==c.richtig, document.getElementById('wdb-quiz-answer')); } catch (e) {}
+  try { if (window.plcLangHelp) setTimeout(function(){ var bx=document.getElementById('wdb-quiz-answer'); var op=[].map.call(document.querySelectorAll('#wdb-quiz-overlay .wdb-opt'), function(b){ return b.textContent.trim(); }); if (bx) plcLangHelp({ frage: c.frage, opt: op, k: c.richtig, erkl: c.erkl || c.antwort || '' }, bx); }, 0); } catch (e) {}
   var btns = document.querySelectorAll('#wdb-quiz-overlay .wdb-opt');
   btns.forEach(function(b){
     var bi=parseInt(b.getAttribute('data-idx'),10); b.disabled=true; b.style.cursor='default';
@@ -19766,6 +19769,7 @@ function fdtAnswer(i){
   try{ if(typeof gaEvent==='function') gaEvent('fdt_answer',{richtig:ok?1:0}); }catch(e){}
   renderFrageDesTages();
   try{ if(window.plcOrakel) plcOrakel(q.frage, !ok, document.getElementById('home-fdt')); }catch(e){}
+  try{ if(window.plcLangHelp) setTimeout(function(){ var bx=document.getElementById('home-fdt'); if(bx) plcLangHelp(q, bx); },0); }catch(e){}
   if(ok){ try{ plCelebrate('Frage des Tages geknackt!','\u2b50'); }catch(e){} }
 }
 function fdtShare(){
@@ -22355,6 +22359,7 @@ if (_savedLang !== 'de') {
       + '<button data-fk-next style="width:100%;background:#7c3aed;border:none;border-radius:11px;padding:12px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;margin-top:10px">' + (_idx + 1 < _fk.aufgaben.length ? 'Weiter' : 'Auswertung') + '</button>';
     fb.querySelector('[data-fk-next]').onclick = function () { _next(); };
     try { if (window.plcOrakel) plcOrakel('fk:' + a.frage, !richtig, fb); } catch (e) {}
+    try { if (window.plcLangHelp) { var _op = Array.prototype.map.call(ov.querySelectorAll('[data-mc]'), function (b) { return b.textContent.trim(); }); plcLangHelp({ frage: a.frage, opt: _op, k: a.k, erkl: a.erkl || '' }, fb); } } catch (e) {}
   }
 
   function _showMuster(a, ov) {
@@ -23353,6 +23358,11 @@ window.renderLiveUsers=function(start){
     '.plc-hits .t{display:block;font-size:10px;color:#7dd3fc;letter-spacing:.5px;text-transform:uppercase}.plc-hits .n{display:block;font-size:13px;font-weight:600;margin-top:2px}',
     '.plc-lh{margin-top:10px}.plc-lh-row{display:flex;gap:8px;flex-wrap:wrap}.plc-lh-row button{font-family:inherit;cursor:pointer;background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.35);color:#cffafe;border-radius:10px;padding:7px 11px;font-size:12.5px;font-weight:600}',
     '.plc-lh-out{margin-top:8px}.plc-lh-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6;color:#e2edf5}',
+    '.plc-qx{margin-top:10px}',
+    '.plc-cardbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.plc-cardbar button{font-family:inherit;cursor:pointer;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.35);color:#fde68a;border-radius:16px;padding:6px 11px;font-size:12px;font-weight:700}.plc-cardbar button.on{background:#fbbf24;color:#1a1306}',
+    '.plc-modal{position:fixed;inset:0;z-index:10003;background:rgba(0,0,0,.82);overflow-y:auto;padding:20px;padding-top:calc(20px + env(safe-area-inset-top,0px))}.plc-modal-box{max-width:480px;margin:0 auto;background:#10202d;border:1px solid rgba(var(--accent-rgb),.3);border-radius:18px;padding:18px;color:#dbe7f1}',
+    '.plc-x{background:rgba(255,255,255,.12);border:none;border-radius:8px;padding:6px 11px;color:#cbd5e1;cursor:pointer;font-size:15px}.plc-lbl{display:block;font-size:12px;color:#93b9d1;margin-top:10px}',
+    '.plc-mylist{display:flex;flex-direction:column;gap:6px;margin-top:8px}.plc-myitem{display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 10px}.plc-myitem div{flex:1;min-width:0}.plc-myitem b{display:block;font-size:12.5px;color:#e8f1f8;font-weight:600}.plc-myitem span{display:block;font-size:11px;color:#93b9d1;margin-top:2px}.plc-myitem button{background:none;border:none;cursor:pointer;font-size:16px;padding:4px}',
     '.plc-hit{cursor:pointer;outline:none}.plc-hit:focus-visible{stroke:#7dd3fc;stroke-width:2}',
     '.plc-gift{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10001;background:#163246;border:1px solid rgba(125,211,252,.35);border-radius:18px;padding:16px;width:min(320px,88vw);box-shadow:0 18px 50px rgba(0,0,0,.5);color:#e8f1f8}',
     '.plc-scene{position:relative}.plc-float{position:absolute;left:50%;top:45%;font-size:42px;transform:translate(-50%,0);animation:plcFloat 1.5s ease-out forwards;pointer-events:none}',
@@ -23476,7 +23486,7 @@ window.renderLiveUsers=function(start){
       var q=null, fresh=false;
       try{ fresh=(selectedAns===null); q=quizList[quizIdx]; }catch(e){}
       var ret=orig.apply(this,arguments);
-      if(fresh&&q&&q.frage){ plcOrakel(q.frage, i!==q.k, document.getElementById('explanation')); try{ langHelp(q, document.getElementById('explanation')); }catch(e){} }
+      if(fresh&&q&&q.frage){ plcOrakel(q.frage, i!==q.k, document.getElementById('explanation')); try{ quizExtras(q, document.getElementById('explanation')); langHelp(q, document.getElementById('explanation')); }catch(e){} }
       return ret;
     };
     wrapped._plc=true; window.pickAnswer=wrapped;
@@ -23910,7 +23920,7 @@ window.renderLiveUsers=function(start){
     var b=rows.filter(function(x){ return x.p===0; }).sort(function(x,y){ return y.s-x.s; });
     return a.concat(b).map(function(x){ return x.q; });
   }
-  function startTopicQuiz(pool,label){
+  function startTopicQuiz(pool,label,noTimer){
     var list=pool.slice(0,20).sort(function(){ return Math.random()-0.5; }).map(function(q){
       var ix=q.opt.map(function(o,i){ return {text:o,c:i===q.k}; }).sort(function(){ return Math.random()-0.5; });
       var c={}; for(var k in q) c[k]=q[k]; c.opt=ix.map(function(x){return x.text;}); c.k=ix.findIndex(function(x){return x.c;}); return c;
@@ -23921,7 +23931,7 @@ window.renderLiveUsers=function(start){
         list=list.slice(0,Math.max(1,currentBereich.quiz_max-used));
       }
     }catch(e){}
-    if(!running()) startSession();
+    if(!noTimer){ if(!running()) startSession(); }
     closeLerntisch();
     try{ quizCE=null; }catch(e){}
     quizKat='alle'; quizList=list; quizIdx=0; quizAnswers=[]; selectedAns=null; window.showExp=false; /* showExp ist in der App nicht deklariert (implizit global) */
@@ -23987,6 +23997,95 @@ window.renderLiveUsers=function(start){
     box.querySelectorAll('[data-h]').forEach(function(b){ b.onclick=function(){ runAction(hits[+b.getAttribute('data-h')].action); }; });
     topicKI(raw, box.querySelector('#plc-topic-ki'));
   }
+
+  /* ── Eigene Karteikarten + Favoriten (nur Beta) ── */
+  function myCards(){ try{ var a=JSON.parse(lsGet('pl_my_cards')||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+  function saveCards(a){ lsSet('pl_my_cards', JSON.stringify(a.slice(0,500))); try{ if(typeof initSR==='function') initSR(); }catch(e){} }
+  function favs(){ try{ var o=JSON.parse(lsGet('pl_favs')||'{}'); return (o&&typeof o==='object')?o:{}; }catch(e){ return {}; } }
+  function saveFavs(o){ lsSet('pl_favs', JSON.stringify(o)); }
+  function isFav(q){ return !!favs()[qkey(q.frage)]; }
+  function toggleFav(q){ var o=favs(), k=qkey(q.frage);
+    if(o[k]) delete o[k]; else o[k]={frage:q.frage,opt:(q.opt||[]).slice(0,6),k:q.k,erkl:q.erkl||'',kat:q.kat||'',t:Date.now()};
+    saveFavs(o); return !!o[k]; }
+  function addCardFromQuiz(q){
+    var a=myCards(), ant=(q.opt&&q.opt[q.k]!=null?q.opt[q.k]:'')+(q.erkl?'\n\n'+q.erkl:'');
+    if(a.some(function(c){ return c.frage===q.frage; })) return false;
+    a.unshift({id:'my_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), frage:q.frage, antwort:ant.trim(), thema:'Aus dem Quiz', t:Date.now()});
+    saveCards(a); return true;
+  }
+  /* Eigene Karten in das bestehende Karteikarten-System (Wiederholung nach Lernkurve) einspeisen */
+  function hookCards(){
+    if(typeof window.generateKarteikarten==='function'&&!window.generateKarteikarten._plc){
+      var og=window.generateKarteikarten;
+      var g=function(){ var k=og.apply(this,arguments)||[]; if(!beta()) return k;
+        return k.concat(myCards().map(function(c){ return {id:c.id, fach:'eigene', fachLabel:'Meine Karten', name:c.thema||'Eigene Karte', icd:'', typ:'Eigene Karte', frage:c.frage, antwort:c.antwort}; })); };
+      g._plc=true; window.generateKarteikarten=g;
+    }
+    if(typeof window.renderKarteikarten==='function'&&!window.renderKarteikarten._plc){
+      var orr=window.renderKarteikarten;
+      var r=function(){ var res=orr.apply(this,arguments); try{ cardsBar(); }catch(e){} return res; };
+      r._plc=true; window.renderKarteikarten=r;
+    }
+  }
+  function cardsBar(){
+    if(!beta()) return; var el=document.getElementById('sr-content'); if(!el||el.querySelector('.plc-cardbar')) return;
+    var n=myCards().length, f=Object.keys(favs()).length, on=false; try{ on=(srFilter==='eigene'); }catch(e){}
+    var d=document.createElement('div'); d.className='plc-cardbar';
+    d.innerHTML='<button data-a="new">✍️ Eigene Karte</button><button data-a="mine"'+(on?' class="on"':'')+'>🗂️ Meine Karten ('+n+')</button><button data-a="fav">⭐ Favoriten ('+f+')</button>';
+    el.insertBefore(d, el.firstChild);
+    d.querySelector('[data-a=new]').onclick=function(){ cardEditor(null); };
+    d.querySelector('[data-a=mine]').onclick=function(){ if(!n){ cardEditor(null); return; } try{ setSRFilter(on?'alle':'eigene'); }catch(e){} };
+    d.querySelector('[data-a=fav]').onclick=openFavs;
+  }
+  function modal(html){
+    var old=document.getElementById('plc-modal'); if(old) old.remove();
+    var ov=document.createElement('div'); ov.id='plc-modal'; ov.className='plc-modal'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+    ov.innerHTML='<div class="plc-modal-box">'+html+'</div>'; document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    var x=ov.querySelector('[data-x]'); if(x) x.onclick=function(){ ov.remove(); };
+    return ov;
+  }
+  function cardEditor(id){
+    var a=myCards(), c=id?a.filter(function(z){return z.id===id;})[0]:null;
+    var list=a.length?'<div class="plc-sub" style="margin:16px 0 6px;font-weight:600;color:#c3d4e4">Meine Karten ('+a.length+')</div><div class="plc-mylist">'+a.map(function(z){ return '<div class="plc-myitem"><div><b>'+esc(z.frage).slice(0,140)+'</b><span>'+esc(z.thema||'')+'</span></div><button data-e="'+z.id+'" aria-label="Bearbeiten">✏️</button><button data-d="'+z.id+'" aria-label="Löschen">🗑️</button></div>'; }).join('')+'</div>':'';
+    var ov=modal('<div style="display:flex;justify-content:space-between;align-items:center"><div class="plc-h" style="font-size:17px;margin:0">'+(c?'Karte bearbeiten':'✍️ Eigene Karteikarte')+'</div><button class="plc-x" data-x aria-label="Schließen">✕</button></div>'
+      +'<div class="plc-sub" style="margin:4px 0 10px">Deine Karten kommen automatisch in die Wiederholung nach Lernkurve.</div>'
+      +'<label class="plc-lbl" for="plc-cf">Vorderseite (Frage)</label><textarea class="plc-in" id="plc-cf" rows="2" maxlength="300">'+esc(c?c.frage:'')+'</textarea>'
+      +'<label class="plc-lbl" for="plc-ca">Rückseite (Antwort)</label><textarea class="plc-in" id="plc-ca" rows="4" maxlength="1200">'+esc(c?c.antwort:'')+'</textarea>'
+      +'<label class="plc-lbl" for="plc-ct">Thema (optional)</label><input class="plc-in" id="plc-ct" maxlength="40" placeholder="z. B. Lunge" value="'+esc(c?c.thema||'':'')+'">'
+      +'<button class="plc-btn" id="plc-csave" style="width:100%;margin-top:12px">'+(c?'Änderungen speichern':'Karte speichern')+'</button>'+list);
+    ov.querySelector('#plc-csave').onclick=function(){
+      var f=ov.querySelector('#plc-cf').value.trim(), an=ov.querySelector('#plc-ca').value.trim(), t=ov.querySelector('#plc-ct').value.trim();
+      if(f.length<3||an.length<1){ toast('Bitte Vorder- und Rückseite ausfüllen.'); return; }
+      var arr=myCards();
+      if(c) arr=arr.map(function(z){ return z.id===c.id?{id:z.id,frage:f,antwort:an,thema:t,t:z.t}:z; });
+      else arr.unshift({id:'my_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),frage:f,antwort:an,thema:t,t:Date.now()});
+      saveCards(arr); toast(c?'Karte gespeichert.':'Karte erstellt. Sie ist jetzt in deiner Wiederholung.');
+      cardEditor(null); try{ renderKarteikarten(); }catch(e){}
+    };
+    ov.querySelectorAll('[data-e]').forEach(function(b){ b.onclick=function(){ cardEditor(b.getAttribute('data-e')); }; });
+    ov.querySelectorAll('[data-d]').forEach(function(b){ b.onclick=function(){ if(!window.confirm('Diese Karte löschen?')) return; saveCards(myCards().filter(function(z){ return z.id!==b.getAttribute('data-d'); })); cardEditor(null); try{ renderKarteikarten(); }catch(e){} }; });
+  }
+  function openFavs(){
+    var o=favs(), keys=Object.keys(o).sort(function(a,b){ return o[b].t-o[a].t; });
+    var ov=modal('<div style="display:flex;justify-content:space-between;align-items:center"><div class="plc-h" style="font-size:17px;margin:0">⭐ Meine Favoriten</div><button class="plc-x" data-x aria-label="Schließen">✕</button></div>'
+      +(keys.length?'<button class="plc-btn" id="plc-favquiz" style="width:100%;margin:12px 0 4px">📝 Favoriten-Quiz starten ('+Math.min(20,keys.length)+' Fragen)</button>'
+        +'<div class="plc-mylist">'+keys.map(function(k){ var q=o[k]; return '<div class="plc-myitem"><div><b>'+esc(q.frage).slice(0,160)+'</b><span>✓ '+esc((q.opt||[])[q.k]||'')+'</span></div><button data-r="'+esc(k)+'" aria-label="Aus Favoriten entfernen">⭐</button></div>'; }).join('')+'</div>'
+        :'<div class="plc-sub" style="margin-top:12px">Noch keine Favoriten. Tippe im Quiz nach einer Antwort auf „☆ Merken“.</div>'));
+    var b=ov.querySelector('#plc-favquiz'); if(b) b.onclick=function(){ ov.remove(); startTopicQuiz(keys.map(function(k){ return o[k]; }).filter(function(q){ return q.opt&&q.opt.length>1; }), 'Favoriten', true); };
+    ov.querySelectorAll('[data-r]').forEach(function(x){ x.onclick=function(){ var f=favs(); delete f[x.getAttribute('data-r')]; saveFavs(f); openFavs(); }; });
+  }
+  /* Im Quiz: Merken + Als Karteikarte */
+  function quizExtras(q,box){
+    if(!q||!box||!beta()||box.querySelector('.plc-qx')) return;
+    var d=document.createElement('div'); d.className='plc-qx plc-lh-row';
+    function lab(){ return isFav(q)?'⭐ Gemerkt':'☆ Merken'; }
+    d.innerHTML='<button data-f aria-pressed="'+isFav(q)+'">'+lab()+'</button><button data-c>🗂️ Als Karteikarte</button>';
+    box.appendChild(d);
+    d.querySelector('[data-f]').onclick=function(){ var on=toggleFav(q); this.textContent=lab(); this.setAttribute('aria-pressed',on); toast(on?'Zu deinen Favoriten hinzugefügt.':'Aus den Favoriten entfernt.'); };
+    d.querySelector('[data-c]').onclick=function(){ toast(addCardFromQuiz(q)?'Als Karteikarte gespeichert.':'Diese Karte hast du schon.'); this.disabled=true; this.textContent='🗂️ Gespeichert'; };
+  }
+  window.plcOpenFavs=openFavs; window.plcCardEditor=cardEditor;
 
   window.plcOpenLerntisch=openLerntisch;
   window.addEventListener('popstate', function(e){
@@ -24173,7 +24272,7 @@ window.renderLiveUsers=function(start){
     w._plc=true; window.showScreen=w;
   }
 
-  function init(){ readLinks(); hookQuiz(); hookNav(); try{ mountHome(); }catch(e){} setTimeout(handlePendingTisch,1500); if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()&&beta()) soundStart(); }catch(e){} }
+  function init(){ readLinks(); hookQuiz(); hookNav(); try{ hookCards(); }catch(e){} try{ mountHome(); }catch(e){} setTimeout(handlePendingTisch,1500); if(!ltTickG) ltTickG=setInterval(function(){ try{ globalTick(); }catch(e){} },1000); try{ if(running()&&beta()) soundStart(); }catch(e){} }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(init,400); });
   else setTimeout(init,400);
 })();
