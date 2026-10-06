@@ -28,3 +28,15 @@ Exit-Code `0` = alle grün, `1` = Test fehlgeschlagen, `2` = Laufzeitfehler.
 - Die App lädt externe Ressourcen (Supabase-CDN, Fonts, GA). Ohne Netz erzeugen sie Konsolenfehler – die **Trial-/Upsell-Logik ist davon unabhängig** (alles client-seitig in `localStorage`).
 - Der Test setzt den Zustand direkt über `localStorage` und ruft `window.plCheckEngagementUpsell()` auf – so werden die Trigger deterministisch geprüft, ohne den kompletten Login-Flow durchklicken zu müssen.
 - Stand: 2026-07-01, verifiziert mit 10/10 bestandenen Checks.
+
+
+## `app-e2e.js` – Kernabläufe (seit 06.10.2026)
+41 Prüfungen in 5 Blöcken, **Backend komplett gemockt** (Supabase-RPCs, KI, Analytics): keine Produktivdaten, keine Secrets, deterministisch.
+1. **Start & Login**: keine JS-Fehler, Token-Prüfung nur per RPC, falscher/gesperrter Code abgelehnt, normaler Nutzer ist kein Admin, Beta-Funktionen unsichtbar.
+2. **Admin & Quiz**: Admin-Flag, Community sichtbar, Quiz startet, Erklärung, Fehler-Orakel, Sprach-Hilfe-Knöpfe, Antwort gezählt.
+3. **Lerntisch**: Szene, Mitlernende, alle 4 Lern-Knöpfe + Rückweg zum Tisch, Mini-Timer, Knöpfe mit zugänglichem Namen.
+4. **Themen-Paket**: Thema „Lunge“ → Themen-Quiz mit Fragen.
+5. **Konto löschen** (Admin = Testmodus, nie echte Löschung) & **Datenschutz-Dialog**.
+
+Lokal: `npm i --no-save playwright @supabase/supabase-js@2`, Server wie oben, dann `node tests/app-e2e.js`.
+Service Worker werden im Test blockiert (sonst lädt die Seite beim ersten Start neu).
