@@ -16946,6 +16946,9 @@ function renderHomeStats() {
    =========================================================================== */
 (function(){
   window.PL_NEU = window.PL_NEU || [
+    { id:'lerntisch', tag:'neu', ziel:function(){ if(window.plcOpenLerntisch) plcOpenLerntisch(); }, titel:'Lerntisch \u2013 gemeinsam lernen', sub:'25 Minuten Fokus mit anderen, Thema des Tages, Gruppentische & Care-Packages', datum:'2026-10' },
+    { id:'eigenekarten', tag:'neu', ziel:'karteikarten', titel:'Eigene Karteikarten & Favoriten', sub:'Karten selbst anlegen, Fragen merken \u2013 auf all deinen Ger\u00e4ten', datum:'2026-10' },
+    { id:'sprachhilfe', tag:'neu', ziel:'quizSelect', titel:'Einfach erkl\u00e4rt & \u00dcbersetzen', sub:'Jede Quizfrage in einfachem Deutsch oder in 9 Sprachen \u2013 Fachbegriffe bleiben deutsch', datum:'2026-10' },
     { id:'gratispdfs', tag:'neu', ziel:function(){ plPdfOpen(); }, titel:'Gratis-PDFs zum Ausdrucken', sub:'11 Lernhilfen \u2013 Reanimation, Laborwerte, Dosierungsrechnen & mehr', datum:'2026-10' },
     { id:'perfusorwissen', tag:'neu', ziel:function(){ openPerfusorwissen(); }, titel:'Perfusor & Infusion (ITS)', sub:'ZVK, Filter, Katecholamine \u2013 Grundlagen der Infusionstherapie', datum:'2026-09' },
     { id:'fachklausuren', tag:'neu', ziel:function(){ openFachklausuren(); }, titel:'Fachklausuren I\u2013V', sub:'Einzelklausuren je Kompetenzbereich \u2013 jetzt mehrere Fälle pro Bereich', datum:'2026-09' },
@@ -21615,7 +21618,8 @@ if (_savedLang !== 'de') {
       +     '<input id="plg-email" type="email" inputmode="email" autocomplete="email" placeholder="deine@email.de" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.13);border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:14px 15px;color:#ddf0fb;font-size:15px;outline:none;font-family:inherit;margin-bottom:10px">'
       +     '<button id="plg-btn" type="button" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:15px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">PDF kostenlos sichern</button>'
       +     '<div id="plg-msg" style="min-height:16px;font-size:12px;text-align:center;margin-top:9px;color:#fca5a5"></div>'
-      +     '<div style="font-size:11px;color:#5b7894;line-height:1.6;margin-top:6px;text-align:center">Mit dem Absenden stimmst du zu, dass wir dir das PDF und gelegentlich Lerntipps per E-Mail senden. Abmeldung jederzeit. Mehr in der <a href="/datenschutz.html" style="color:#7aa6c4">Datenschutzerkl&auml;rung</a>.</div>'
+      +     '<label style="display:flex;gap:9px;align-items:flex-start;text-align:left;font-size:12px;color:#9fb6c9;line-height:1.5;margin-top:8px;cursor:pointer"><input id="plg-nl" type="checkbox" style="margin-top:2px;flex:none;width:16px;height:16px;accent-color:#34d399"> <span>Ja, informiert mich per E-Mail &uuml;ber Neuigkeiten in PLAN (freiwillig, Best&auml;tigung per Link, jederzeit abbestellbar).</span></label>'
+      +     '<div style="font-size:11px;color:#5b7894;line-height:1.6;margin-top:8px;text-align:center">Wir nutzen deine E-Mail, um dir das PDF zu senden. Mehr in der <a href="/datenschutz.html" style="color:#7aa6c4">Datenschutzerkl&auml;rung</a>.</div>'
       +   '</div>'
       + '</div>';
     document.body.appendChild(ov);
@@ -21629,7 +21633,7 @@ if (_savedLang !== 'de') {
       var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!re.test(email)) { msg.style.color='#fca5a5'; msg.textContent='Bitte gib eine g\u00fcltige E-Mail-Adresse ein.'; return; }
       btn.disabled = true; btn.textContent = 'Wird gesendet \u2026';
-      fetch('/api/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, source: 'gratis-'+SL, paket: SL }) })
+      fetch('/api/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, source: 'gratis-'+SL, paket: SL, newsletter: !!(document.getElementById('plg-nl')||{}).checked }) })
         .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { ok:r.ok, j:j }; }); })
         .then(function(res){
           if (res.ok) { success(); }
@@ -23105,7 +23109,7 @@ window.renderWebBesucher=function(force){
 (function(){
   var S=[], i=0, node={}, running=false;
   function persona(){ try{ var p=localStorage.getItem('pl_persona')||''; return (p==='examiniert'||p==='lehrkraft')?p:'azubi'; }catch(e){ return 'azubi'; } }
-  var VERSION={ azubi:'v2', examiniert:'v1', lehrkraft:'v2' };   // hochzaehlen = Tour wird einmal neu gezeigt
+  var VERSION={ azubi:'v3', examiniert:'v2', lehrkraft:'v3' };   // 08.10.2026: Community-Funktionen (Lerntisch, Schicht-Radar, Karteikarten, Sprach-Hilfe) -> alle sehen die Tour einmal neu   // hochzaehlen = Tour wird einmal neu gezeigt
   function KEY(){ var p=persona(); return 'pl_tour_'+(VERSION[p]||'v1')+'_'+p; }
   function done(){ try{ return localStorage.getItem(KEY())==='1'; }catch(e){ return true; } }
   function setDone(){ try{ localStorage.setItem(KEY(),'1'); }catch(e){} }
@@ -23120,6 +23124,9 @@ window.renderWebBesucher=function(force){
   var TOUREN={
   azubi:[
     { id:'bn-heute',  t:'Dein Tagesplan',      x:'Hier siehst du jeden Tag, was ansteht: f\u00e4llige Wiederholungen und neue Fragen.' },
+    { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen Azubis heute geht.' },
+    { id:'plc-lt-entry', screen:'home', t:'NEU: Der Lerntisch', x:'25 Minuten Fokus, gemeinsam mit anderen \u2013 bei dir in der Bibliothek. Such dir ein Thema aus (z. B. \u201eLunge\u201c oder \u201eWas ist ARDS?\u201c), lad Leute an deinen Gruppentisch ein und schick anderen am Tisch einen \u2615 Kaffee oder 💪 Power.' },
+    { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
     { id:'tour-tile-quiz', screen:'ueben', t:'Fragen \u00fcben', x:'Nach Fach, nach Lernmodus oder gezielt deine Schwachstellen.' },
     { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Hier startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen. Darin findest du auch die Fachklausuren pro Fach und die Fallklausur.' },
     { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
@@ -23129,6 +23136,9 @@ window.renderWebBesucher=function(force){
     { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
   ],
   examiniert:[
+    { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen Kolleginnen und Kollegen heute geht.' },
+    { id:'plc-lt-entry', screen:'home', t:'NEU: Der Lerntisch', x:'25 Minuten Fokus, gemeinsam mit anderen \u2013 bei dir in eurem Pausenraum. Such dir ein Thema aus (z. B. \u201eLunge\u201c oder \u201eWas ist ARDS?\u201c), lad Leute an deinen Gruppentisch ein und schick anderen am Tisch einen \u2615 Kaffee oder 💪 Power.' },
+    { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
     { id:'btn-suche', t:'Schnell nachschlagen', x:'Im Dienst z\u00e4hlt Tempo: Medikament, Score oder Krankheitsbild direkt suchen.' },
     { id:'tour-tile-medis', screen:'wissenhub', t:'Medikamente nachschlagen', x:'25 Wirkstoffe nach Fachbereich (An\u00e4sthesie, Intensiv, Notfall) oder nach Organsystem \u2013 jeweils mit Pflege-Hinweis, Dosis und Nebenwirkungen.' },
     { id:'bn-wissen', t:'Der Rest der Bibliothek', x:'Krankheitsbilder, Scores, Notfallmanagement, Taschenkarten und Medizintechnik liegen im selben Hub.' },
@@ -23138,6 +23148,9 @@ window.renderWebBesucher=function(force){
     { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
   ],
   lehrkraft:[
+    { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen heute geht.' },
+    { id:'plc-lt-entry', screen:'home', t:'NEU: Der Lerntisch', x:'25 Minuten Fokus, gemeinsam mit anderen \u2013 bei dir in der Lounge. Such dir ein Thema aus (z. B. \u201eLunge\u201c oder \u201eWas ist ARDS?\u201c), lad Leute an deinen Gruppentisch ein und schick anderen am Tisch einen \u2615 Kaffee oder 💪 Power.' },
+    { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
     { id:'tour-tile-faelle', screen:'ueben', t:'Fallbeispiele f\u00fcr den Unterricht', x:'Fertige Fallsituationen und Gro\u00dff\u00e4lle, direkt im Kurs einsetzbar.' },
     { id:'tour-tile-kurs', screen:'profil', t:'Kurs, Lernstand & Live-Quiz', x:'Im Lehrer-Bereich hat jeder Kurs drei Werkzeuge: Lernstand zeigt den Stand jedes Azubis, Live-Quiz spielt eine Fragerunde \u00fcber den Beamer, Nachrichten sendet Ank\u00fcndigungen an den Kurs.' },
     { id:'ki-fab',    t:'KI-Assistent',    x:'Aufgaben, Pr\u00fcfungsfragen und Fallbeispiele generieren lassen.' },
@@ -23223,7 +23236,9 @@ window.renderWebBesucher=function(force){
     if(++v>40){ clearInterval(w); return; }
     if(done()||running) { clearInterval(w); return; }
     var aktiv=document.querySelector('.page.active');
-    if(window.currentUser && aktiv && aktiv.id==='screen-home' && sichtbar(el('bottom-nav'))){
+    // currentUser ist mit let deklariert und haengt NICHT an window (Fix 08.10.2026: Autostart lief vorher nie)
+    var _cu=null; try{ _cu=(typeof currentUser!=='undefined')?currentUser:null; }catch(e){}
+    if(_cu && aktiv && aktiv.id==='screen-home' && sichtbar(el('bottom-nav'))){
       clearInterval(w);
       setTimeout(function(){ if(!done()) window.plTourStart(false); },1400);
     }
@@ -23236,13 +23251,14 @@ window.renderWebBesucher=function(force){
   var SID; try{ SID=localStorage.getItem('pl_sid'); if(!SID){ SID='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem('pl_sid',SID);} }catch(e){ SID='s'+Math.random().toString(36).slice(2,10); }
   window._plHeartbeat=function(){
     try{
-      if(!window.SB || !window.currentUser) return;
+      var currentUser_=null; try{ currentUser_=(typeof currentUser!=='undefined')?currentUser:null; }catch(e){}
+      if(!window.SB || !currentUser_) return;
       var scr=''; try{ var a=document.querySelector('.page.active'); scr=a?((''+a.id).replace('screen-','')):''; }catch(e){}
-      window.SB.from('presence').upsert({ sid:SID, name:((currentUser.name||'Gast')+'').slice(0,60), email:((currentUser.email||'')+'').slice(0,120), screen:scr.slice(0,40), last_seen:new Date().toISOString() }, { onConflict:'sid', returning:'minimal' });
+      window.SB.from('presence').upsert({ sid:SID, name:((currentUser_.name||'Gast')+'').slice(0,60), email:((currentUser_.email||'')+'').slice(0,120), screen:scr.slice(0,40), last_seen:new Date().toISOString() }, { onConflict:'sid', returning:'minimal' });
     }catch(e){}
   };
   setInterval(function(){ try{ window._plHeartbeat(); }catch(e){} }, 45000);
-  var w=setInterval(function(){ if(window.SB && window.currentUser){ try{ window._plHeartbeat(); }catch(e){} clearInterval(w); } }, 2000);
+  var w=setInterval(function(){ var cu=null; try{ cu=(typeof currentUser!=='undefined')?currentUser:null; }catch(e){} if(window.SB && cu){ try{ window._plHeartbeat(); }catch(e){} clearInterval(w); } }, 2000);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden){ try{ window._plHeartbeat(); }catch(e){} } });
 })();
 window._liveTimer=null;
