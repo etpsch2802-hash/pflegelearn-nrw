@@ -2,7 +2,16 @@ name: reminder-push
 on:
   schedule:
     - cron: '0 14 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      titel:
+        description: 'Einmalige Ankuendigung: Titel (leer = normale Erinnerung)'
+        required: false
+        default: ''
+      text:
+        description: 'Einmalige Ankuendigung: Text (leer = normale Erinnerung)'
+        required: false
+        default: ''
 jobs:
   send:
     runs-on: ubuntu-latest
@@ -18,3 +27,5 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           VAPID_PUBLIC: BET7sC0bTQQxomBNnjb53GFlufCu2iWVgIvUyalI1DD1vNFoOtHsQgIeWURUfav-P9OHNMS9vR5u-QyH4ogLeHY
           VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
+          PUSH_TITEL: ${{ github.event.inputs.titel }}
+          PUSH_TEXT: ${{ github.event.inputs.text }}

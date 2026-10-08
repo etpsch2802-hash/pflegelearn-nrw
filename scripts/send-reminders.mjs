@@ -38,8 +38,11 @@ const TEXTE = [
 ];
 const TITEL = ['Zeit für deinen PLAN', 'Deine tägliche Runde wartet', 'Kurz lernen mit PLAN NRW'];
 const _day = new Date().getDate();
-const text = TEXTE[_day % TEXTE.length];
-const titelBase = TITEL[_day % TITEL.length];
+// Einmalige Ankuendigung: Workflow-Eingaben ueberschreiben den Tagestext (leer = normale Erinnerung)
+const ANK_TITEL = (process.env.PUSH_TITEL || '').trim();
+const ANK_TEXT = (process.env.PUSH_TEXT || '').trim();
+const text = ANK_TEXT || TEXTE[_day % TEXTE.length];
+const titelBase = ANK_TITEL || TITEL[_day % TITEL.length];
 
 let sent = 0, removed = 0, failed = 0;
 for (const r of rows) {
@@ -49,7 +52,7 @@ for (const r of rows) {
     title: name ? `${name}, ${titelBase}` : `${titelBase} · PLAN NRW`,
     body: text,
     url: 'https://plan-nrw.de',
-    tag: 'pl-reminder'
+    tag: ANK_TEXT ? 'pl-ankuendigung' : 'pl-reminder'
   });
   try {
     await webpush.sendNotification(sub, payload);
