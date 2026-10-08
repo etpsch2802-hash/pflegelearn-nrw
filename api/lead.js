@@ -32,7 +32,11 @@ const PAKETE = {
   lernplan: { file: 'PLAN-NRW_8-Wochen-Lernplan.pdf', titel: '8-Wochen-Lernplan', subject: 'Dein 8-Wochen-Lernplan ist da',
     text: 'Acht Wochen Fahrplan zum Pflegeexamen mit Tracker, Lerntipps und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
   praxiseinsatz: { file: 'PLAN-NRW_Praxiseinsatz-Begleiter.pdf', titel: 'Praxiseinsatz-Begleiter', subject: 'Dein Praxiseinsatz-Begleiter ist da',
-    text: 'Checklisten f&uuml;r Erst-, Zwischen- und Abschlussgespr&auml;ch, Lernziele, Reflexionsbogen und Nachweis der Praxisanleitung.' }
+    text: 'Checklisten f&uuml;r Erst-, Zwischen- und Abschlussgespr&auml;ch, Lernziele, Reflexionsbogen und Nachweis der Praxisanleitung.' },
+  zimmerhygiene: { file: 'PLAN-NRW_Zimmerhygiene-Spickzettel.pdf', titel: 'Zimmerhygiene-Spickzettel', subject: 'Dein Zimmerhygiene-Spickzettel ist da',
+    text: 'H&auml;ndehygiene, Schutzausr&uuml;stung, Fl&auml;chen- und Wäschedesinfektion, Isolation. Kompakt nach KRINKO und RKI.' },
+  dekubitus: { file: 'PLAN-NRW_Dekubitus-Spickzettel.pdf', titel: 'Dekubitus-Spickzettel', subject: 'Dein Dekubitus-Spickzettel ist da',
+    text: 'Braden-Skala, Kategorien 1–4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung. Kompakt nach DNQP.' }
 };
 
 function mailHtml(p) {
