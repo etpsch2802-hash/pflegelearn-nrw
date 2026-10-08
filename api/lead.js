@@ -1,5 +1,8 @@
 // PLAN NRW – Lead-Erfassung (Gratis-PDFs) -> Supabase + PDF-Mail via Resend
-// Route: /api/lead   Body: { email, source, paket }
+// Route: /api/lead   Body: { email, source, paket, newsletter }
+// Newsletter: freiwillig + Double-Opt-In (§ 7 UWG). newsletter=true erzeugt einen Bestaetigungslink in der PDF-Mail.
+//   GET /api/lead?nl=<token>      -> Newsletter bestaetigt
+//   GET /api/lead?nl_ab=<token>   -> Newsletter abgemeldet
 // 1) Speichert E-Mail in public.leads (Service Role / Policy).
 // 2) Verschickt das angeforderte Gratis-PDF (paket) als Anhang von kontakt@plan-nrw.de.
 // Beruehrt NICHT: chat.js, vercel.json, Stripe-Button, stripe-webhook.js.
@@ -39,7 +42,15 @@ const PAKETE = {
     text: 'Braden-Skala, Kategorien 1–4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung. Kompakt nach DNQP.' }
 };
 
-function mailHtml(p) {
+function htmlSeite(titel, text) {
+  return '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAN NRW</title></head>'
+    + '<body style="margin:0;background:#06101d;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#cbd9e6;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:20px">'
+    + '<div style="max-width:420px;text-align:center"><div style="color:#22d3ee;font-size:11px;letter-spacing:1.5px;font-weight:700;margin-bottom:10px">PLAN NRW</div>'
+    + '<h1 style="color:#eaf4fb;font-size:22px;margin:0 0 10px">' + titel + '</h1><p style="font-size:15px;line-height:1.6;margin:0 0 20px">' + text + '</p>'
+    + '<a href="https://plan-nrw.de" style="display:inline-block;background:#10b981;color:#04231a;font-weight:800;text-decoration:none;padding:12px 22px;border-radius:10px">Zur App</a></div></body></html>';
+}
+
+function mailHtml(p, nlToken) {
   return [
     '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;background:#0b1f33;border-radius:14px;overflow:hidden">',
       '<div style="background:#0b1f33;padding:26px 24px 18px;text-align:center;border-bottom:3px solid #10b981">',
@@ -50,6 +61,7 @@ function mailHtml(p) {
         '<p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 14px">Hallo,</p>',
         '<p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 14px">im Anhang findest du dein Gratis-PDF <strong style="color:#fff">' + p.titel + '</strong>. ' + p.text + '</p>',
         '<p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 20px">Tipp: Druck es dir aus und h&auml;ng es an deinen Lernplatz.</p>',
+        (nlToken ? '<div style="background:#0b1f33;border:1px solid rgba(34,211,238,.35);border-radius:11px;padding:16px;text-align:center;margin-bottom:18px"><p style="color:#cbd9e6;font-size:14px;line-height:1.6;margin:0 0 12px">Du wolltest Neuigkeiten zu PLAN per E-Mail. Bitte best&auml;tige das noch mit einem Klick. Ohne Best&auml;tigung schreiben wir dir nichts weiter.</p><a href="https://plan-nrw.de/api/lead?nl=' + nlToken + '" style="display:inline-block;background:#22d3ee;color:#04202a;font-weight:800;font-size:14px;text-decoration:none;padding:11px 20px;border-radius:10px">Newsletter best&auml;tigen</a></div>' : ''),
         '<div style="background:#0b1f33;border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:18px;text-align:center;margin-bottom:18px">',
           '<p style="color:#9fb6c9;font-size:13px;line-height:1.6;margin:0 0 12px">In der App PLAN NRW findest du 2.000+ Pr&uuml;fungsfragen mit Erkl&auml;rungen, 400 Lerneinheiten und einen KI-Lernassistenten &ndash; aktuell komplett kostenlos.</p>',
           '<a href="https://plan-nrw.de" style="display:inline-block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;font-size:14px;text-decoration:none;padding:12px 22px;border-radius:10px">Jetzt kostenlos loslegen</a>',
@@ -70,6 +82,24 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   // GET /api/lead?pdf=<slug>: Direkt-Download fuer eingeloggte App-Nutzer (in lead.js, da Vercel-Hobby max. 12 Functions)
   if (req.method === 'GET') {
+    // Newsletter Double-Opt-In / Abmeldung
+    const nl = String((req.query && (req.query.nl || req.query.nl_ab)) || '');
+    if (nl) {
+      const ab = !!(req.query && req.query.nl_ab);
+      const U = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), K = process.env.SUPABASE_SERVICE_ROLE;
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      if (!/^[a-f0-9]{32}$/.test(nl) || !U || !K) { res.status(400).send(htmlSeite('Link ung&uuml;ltig', 'Dieser Link ist nicht (mehr) g&uuml;ltig.')); return; }
+      try {
+        const patch = ab ? { newsletter_abgemeldet_at: new Date().toISOString() } : { newsletter_bestaetigt_at: new Date().toISOString(), newsletter_abgemeldet_at: null };
+        const r = await fetch(U + '/rest/v1/leads?newsletter_token=eq.' + nl, { method: 'PATCH',
+          headers: { 'apikey': K, 'Authorization': 'Bearer ' + K, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }, body: JSON.stringify(patch) });
+        const rows = r.ok ? await r.json() : [];
+        if (!rows.length) { res.status(404).send(htmlSeite('Link ung&uuml;ltig', 'Dieser Link ist nicht (mehr) g&uuml;ltig.')); return; }
+        res.status(200).send(ab ? htmlSeite('Abgemeldet', 'Du bekommst keine Neuigkeiten mehr per E-Mail von uns.')
+          : htmlSeite('Danke, best&auml;tigt!', 'Wir melden uns nur, wenn es in PLAN wirklich etwas Neues gibt. Abmelden kannst du dich jederzeit &uuml;ber den Link in jeder Mail.'));
+      } catch (e) { console.error('[lead] nl', e); res.status(500).send(htmlSeite('Fehler', 'Bitte versuch es sp&auml;ter nochmal.')); }
+      return;
+    }
     const ds = String((req.query && req.query.pdf) || '').toLowerCase();
     const dp = PAKETE[ds];
     if (!dp) { res.status(404).json({ error: 'unbekannt' }); return; }
@@ -100,6 +130,7 @@ export default async function handler(req, res) {
   const source = (body.source ? String(body.source) : 'gratis').slice(0, 60);
   const slug = (body.paket ? String(body.paket) : 'eselsbruecken').toLowerCase();
   const paket = PAKETE[slug] || PAKETE.eselsbruecken;
+  const newsletter = body.newsletter === true;
 
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!re.test(email) || email.length > 200) { res.status(400).json({ error: 'email' }); return; }
@@ -128,6 +159,21 @@ export default async function handler(req, res) {
     return;
   }
 
+  // 1b) Newsletter freiwillig angefragt -> Token fuer Double-Opt-In (nicht fatal)
+  let nlToken = null;
+  if (newsletter) {
+    try {
+      const { randomBytes } = await import('crypto');
+      nlToken = randomBytes(16).toString('hex');
+      const r = await fetch(SB_URL + '/rest/v1/leads?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH',
+        headers: { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ newsletter_angefragt_at: new Date().toISOString(), newsletter_token: nlToken })
+      });
+      if (!r.ok) { console.error('[lead] nl-store', r.status, await r.text()); nlToken = null; }
+    } catch (e) { console.error('[lead] nl', e); nlToken = null; }
+  }
+
   // 2) PDF-Mail via Resend (nicht fatal: Lead ist bereits gespeichert)
   let mail = { sent: false };
   if (RESEND_KEY) {
@@ -148,7 +194,7 @@ export default async function handler(req, res) {
           to: [email],
           reply_to: REPLY_TO,
           subject: paket.subject,
-          html: mailHtml(paket),
+          html: mailHtml(paket, nlToken),
           attachments: [{ filename: paket.file, content: pdfB64 }]
         })
       });

@@ -33,7 +33,9 @@ function rpcMock(fn, body, state) {
 async function newPage(browser, state) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
   // Erststart-Overlays (Cookie-Banner, Onboarding) vorab als erledigt markieren
-  await ctx.addInitScript(() => { try { localStorage.setItem('pl_consent', 'denied'); localStorage.setItem('pl_onboarded', '1'); } catch (e) {} });
+  await ctx.addInitScript(() => { try { localStorage.setItem('pl_consent', 'denied'); localStorage.setItem('pl_onboarded', '1');
+    // Tour als erledigt markieren (sonst faengt ihr Overlay Klicks ab); Block 8 testet die Tour gezielt
+    ['pl_tour_v3_azubi', 'pl_tour_v2_examiniert', 'pl_tour_v3_lehrkraft'].forEach(k => { if (localStorage.getItem('pl_test_tour') !== '1') localStorage.setItem(k, '1'); }); } catch (e) {} });
   const page = await ctx.newPage();
   state.errors = []; state.calls = state.calls || [];
   page.on('pageerror', e => state.errors.push(String(e.message || e)));
@@ -210,6 +212,7 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
     await ctx.addInitScript(() => { try {
       localStorage.setItem('pl_consent', 'denied'); localStorage.setItem('pl_onboarded', '1');
+      ['pl_tour_v3_azubi', 'pl_tour_v2_examiniert', 'pl_tour_v3_lehrkraft'].forEach(k => localStorage.setItem(k, '1'));
       localStorage.setItem('pl_my_cards', JSON.stringify([{ id: 'my_local1', frage: 'Lokale Frage?', antwort: 'Lokal', thema: '', t: 3000 }]));
       const exp = Math.floor(Date.now() / 1000) + 3600;
       localStorage.setItem('sb-tpgverrpznsujvzbntmj-auth-token', JSON.stringify({ access_token: 'test', refresh_token: 'test', token_type: 'bearer', expires_in: 3600, expires_at: exp, user: { id: '00000000-0000-0000-0000-000000000001', email: 'sync@test.de', aud: 'authenticated' } }));
@@ -245,6 +248,33 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     await page.evaluate(() => { plcCardEditor(null); }); await page.waitForTimeout(300);
     await page.evaluate(() => { document.querySelectorAll('#examdate-prompt, #push-modal').forEach(e => e.remove()); const b = document.querySelector('#plc-modal [data-d]'); });
     check('Keine JS-Fehler (Cloud-Sync)', S.errors.length === 0, S.errors.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('8) Tutorial zeigt die neuen Funktionen (je Rolle)');
+  for (const rolle of ['azubi', 'examiniert', 'lehrkraft']) {
+    const { ctx, page } = await newPage(browser, S);
+    // Bestandsnutzer: alte Tour-Version bereits gesehen (azubi v2, examiniert v1, lehrkraft v2)
+    const alt = { azubi: 'v2', examiniert: 'v1', lehrkraft: 'v2' }[rolle];
+    await page.evaluate(([r, v]) => { localStorage.setItem('pl_test_tour', '1'); ['pl_tour_v3_azubi', 'pl_tour_v2_examiniert', 'pl_tour_v3_lehrkraft'].forEach(k => localStorage.removeItem(k)); localStorage.setItem('pl_persona', r); localStorage.setItem('pl_tour_' + v + '_' + r, '1'); }, [rolle, alt]);
+    await login(page, 'TEST-USER');
+    await page.evaluate(() => { document.querySelectorAll('#examdate-prompt, #push-modal').forEach(e => e.remove()); showScreen('home'); });
+    await page.waitForTimeout(600);
+    // Tour muss fuer Bestandsnutzer von selbst erneut starten
+    let auto = false;
+    for (let k = 0; k < 20 && !auto; k++) { await page.waitForTimeout(500); auto = await page.evaluate(() => !!document.getElementById('pl-tour-tip')); }
+    check('Tour ' + rolle + ': startet für Bestandsnutzer automatisch neu', auto);
+    if (!auto) { await page.evaluate(() => plTourStart(true)); await page.waitForTimeout(900); }
+    const titel = [];
+    for (let k = 0; k < 15; k++) {
+      const t = await page.evaluate(() => { const x = document.getElementById('pl-tour-tip'); return x ? x.innerText : null; });
+      if (!t) break;
+      titel.push(t.split('\n')[1] || '');
+      await page.evaluate(() => { const b = document.getElementById('pl-tour-next'); if (b) b.click(); }); await page.waitForTimeout(650);
+    }
+    const alle = titel.join(' | ');
+    check('Tour ' + rolle + ': Schicht-Radar, Lerntisch, Neu beim Üben', /Schicht-Radar/.test(alle) && /Lerntisch/.test(alle) && /beim .ben/.test(alle), alle);
+    check('Keine JS-Fehler (Tour ' + rolle + ')', S.errors.length === 0, S.errors.join(' | '));
     await ctx.close();
   }
 
