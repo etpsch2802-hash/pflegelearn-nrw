@@ -91,7 +91,9 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     check('Gültiger Code meldet an', await isLoggedIn(page));
     check('Normaler Nutzer ist kein Admin', !(await page.evaluate(() => isAdmin())));
     await page.evaluate(() => showScreen('home')); await page.waitForTimeout(500);
-    check('Beta-Funktionen für normale Nutzer unsichtbar', (await page.locator('#plc-home').count()) === 0);
+    // Seit 07.10.2026 freigegeben (PLC_PUBLIC=true): normale Nutzer sehen die Community. Test folgt dem Schalter.
+    const pub = /var PLC_PUBLIC=true/.test(await page.content());
+    check('Community-Bereich gemäß Freigabe-Schalter (' + (pub ? 'öffentlich' : 'nur Admin') + ')', (await page.locator('#plc-home').count()) === (pub ? 1 : 0));
     check('Keine JS-Fehler nach Login', S.errors.length === 0, S.errors.join(' | '));
     await ctx.close();
   }
