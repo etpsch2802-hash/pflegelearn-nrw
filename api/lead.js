@@ -39,7 +39,9 @@ const PAKETE = {
   zimmerhygiene: { file: 'PLAN-NRW_Zimmerhygiene-Spickzettel.pdf', titel: 'Zimmerhygiene-Spickzettel', subject: 'Dein Zimmerhygiene-Spickzettel ist da',
     text: 'H&auml;ndehygiene, Schutzausr&uuml;stung, Fl&auml;chen- und Wäschedesinfektion, Isolation. Kompakt nach KRINKO und RKI.' },
   dekubitus: { file: 'PLAN-NRW_Dekubitus-Spickzettel.pdf', titel: 'Dekubitus-Spickzettel', subject: 'Dein Dekubitus-Spickzettel ist da',
-    text: 'Braden-Skala, Kategorien 1–4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung. Kompakt nach DNQP.' }
+    text: 'Braden-Skala, Kategorien 1–4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung. Kompakt nach DNQP.' },
+  demenz: { file: 'PLAN-NRW_Demenzkarte.pdf', titel: 'Demenzkarte', subject: 'Deine Demenzkarte ist da',
+    text: 'Alzheimer, vaskul&auml;re, Lewy-K&ouml;rper- und frontotemporale Demenz: Ursache, Leitsymptome, Verlauf, Pflege und Examens-Fallen &ndash; plus Abgrenzung zum Delir.' }
 };
 
 function htmlSeite(titel, text) {

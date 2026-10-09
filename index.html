@@ -21470,6 +21470,7 @@ if (_savedLang !== 'de') {
     ['praxiseinsatz','PLAN-NRW_Praxiseinsatz-Begleiter.pdf','🩺','Praxiseinsatz-Begleiter','Checklisten, Lernziele, Reflexion, Nachweis'],
     ['zimmerhygiene','PLAN-NRW_Zimmerhygiene-Spickzettel.pdf','🧼','Zimmerhygiene-Spickzettel','Händehygiene, Schutzausrüstung, Flächen, Isolation nach KRINKO/RKI'],
     ['dekubitus','PLAN-NRW_Dekubitus-Spickzettel.pdf','🛏️','Dekubitus-Spickzettel','Braden-Skala, Kategorien 1–4, Prophylaxe-Maßnahmen nach DNQP'],
+    ['demenz','PLAN-NRW_Demenzkarte.pdf','🧠','Demenzkarte','Die 4 Demenzformen, Vergleich, Delir-Abgrenzung, Kommunikation'],
   ];
   var BLOB={};   // geladene PDFs (slug -> Blob)
   function find(k){ for(var i=0;i<L.length;i++) if(L[i][0]===k) return L[i]; return null; }
@@ -21592,7 +21593,8 @@ if (_savedLang !== 'de') {
     lernplan: { t:'8-Wochen-Lernplan', k:'8-Wochen-Lernplan', d:'Acht Wochen Fahrplan zum Pflegeexamen mit Tracker, Lerntipps und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
     praxiseinsatz: { t:'Praxiseinsatz-Begleiter', k:'Praxiseinsatz-Begleiter', d:'Checklisten f&uuml;r Erst-, Zwischen- und Abschlussgespr&auml;ch, Lernziele, Reflexionsbogen und Nachweis der Praxisanleitung.' },
     zimmerhygiene: { t:'Zimmerhygiene-Spickzettel', k:'Zimmerhygiene-Spickzettel', d:'H&auml;ndehygiene, Schutzausr&uuml;stung, Fl&auml;chen- und W&auml;schedesinfektion, Isolation &ndash; kompakt nach KRINKO und RKI.' },
-    dekubitus: { t:'Dekubitus-Spickzettel', k:'Dekubitus-Spickzettel', d:'Braden-Skala, Kategorien 1&ndash;4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung &ndash; kompakt nach DNQP.' }
+    dekubitus: { t:'Dekubitus-Spickzettel', k:'Dekubitus-Spickzettel', d:'Braden-Skala, Kategorien 1&ndash;4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung &ndash; kompakt nach DNQP.' },
+    demenz: { t:'Demenzkarte', k:'Demenzkarte', d:'Die 4 Demenzformen im Examen: Alzheimer, vaskul&auml;r, Lewy-K&ouml;rper und frontotemporal &ndash; mit Vergleichstabelle, Abgrenzung zum Delir und Kommunikationstipps.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
