@@ -1,0 +1,1699 @@
+{
+ "_info": "Umfragen für den WhatsApp-Kanal „PLAN – Pflegeexamen NRW“. gestellt_am = Datum der Veröffentlichung (null = noch frei). Abruf/Markierung: node scripts/kanal.mjs",
+ "fragen": [
+  {
+   "id": 1,
+   "thema": "Demenz",
+   "frage": "Welche Demenzform beginnt typischerweise mit Persönlichkeitsveränderungen statt Gedächtnisverlust?",
+   "optionen": [
+    "Alzheimer-Demenz",
+    "Vaskuläre Demenz",
+    "Lewy-Körper-Demenz",
+    "Frontotemporale Demenz"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Frontotemporale Demenz ✅\n\nAbbau im Stirn- und Schläfenlappen → zuerst Enthemmung, Taktlosigkeit, Wesensänderung. Das Gedächtnis bleibt anfangs oft erhalten.\n\nAlle 4 Demenzformen als Gratis-PDF: plan-nrw.de/gratis/demenz",
+   "gestellt_am": "2026-10-11"
+  },
+  {
+   "id": 2,
+   "thema": "Hygiene",
+   "frage": "Wie lange dauert die hygienische Händedesinfektion mindestens?",
+   "optionen": [
+    "15 Sekunden",
+    "30 Sekunden",
+    "60 Sekunden",
+    "3 Minuten"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 30 Sekunden ✅\n\nMindestens 30 Sekunden (bzw. nach Herstellerangabe), 3–5 ml Desinfektionsmittel – die Hände müssen die ganze Zeit feucht bleiben.",
+   "gestellt_am": null
+  },
+  {
+   "id": 3,
+   "thema": "Hygiene",
+   "frage": "Welcher gehört NICHT zu den 5 Momenten der Händedesinfektion (WHO)?",
+   "optionen": [
+    "Vor Patientenkontakt",
+    "Nach Kontakt mit potenziell infektiösem Material",
+    "Nach Kontakt mit der Patientenumgebung",
+    "Vor dem Betreten des Stationszimmers"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Vor dem Betreten des Stationszimmers ✅\n\nDie 5 Momente: vor Patientenkontakt, vor aseptischen Tätigkeiten, nach Kontakt mit infektiösem Material, nach Patientenkontakt, nach Kontakt mit der Patientenumgebung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 4,
+   "thema": "Hygiene",
+   "frage": "Was ist bei Clostridioides difficile zusätzlich zur Händedesinfektion wichtig?",
+   "optionen": [
+    "Hände zusätzlich waschen – Sporen sind alkoholresistent",
+    "Doppelte Menge Desinfektionsmittel",
+    "Desinfektion auf 2 Minuten verlängern",
+    "Nichts – Desinfektion reicht"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Hände zusätzlich waschen – Sporen sind alkoholresistent ✅\n\nC.-difficile-Sporen überstehen Alkohol. Darum: Handschuhe + Kittel, nach dem Ausziehen Hände desinfizieren UND waschen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 5,
+   "thema": "Hygiene",
+   "frage": "Welche Reihenfolge stimmt beim ANLEGEN der Schutzausrüstung?",
+   "optionen": [
+    "Handschuhe → Kittel → Maske → Brille",
+    "Maske → Handschuhe → Kittel → Brille",
+    "Brille → Handschuhe → Maske → Kittel",
+    "Kittel → Maske → Brille → Handschuhe"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Kittel → Maske → Brille → Handschuhe ✅\n\nAnlegen: Kittel → Maske → Brille → Handschuhe. Ablegen: Handschuhe → Kittel → Brille → Maske → Händedesinfektion.",
+   "gestellt_am": null
+  },
+  {
+   "id": 6,
+   "thema": "Hygiene",
+   "frage": "Wie wird MRSA im Krankenhaus am häufigsten übertragen?",
+   "optionen": [
+    "Über die Hände (Kontaktübertragung)",
+    "Über die Luft auf weite Strecken",
+    "Über das Essen",
+    "Über Insektenstiche"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Über die Hände (Kontaktübertragung) ✅\n\nHauptübertragungsweg sind die Hände des Personals. Konsequente Händedesinfektion ist die wichtigste Schutzmaßnahme.",
+   "gestellt_am": null
+  },
+  {
+   "id": 7,
+   "thema": "Hygiene",
+   "frage": "Welches Desinfektionsmittel brauchst du bei Noroviren?",
+   "optionen": [
+    "Nur bakterizid",
+    "Levurozid (gegen Hefen)",
+    "Normale Seife reicht",
+    "Viruzid bzw. „begrenzt viruzid PLUS“"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Viruzid bzw. „begrenzt viruzid PLUS“ ✅\n\nNoroviren sind unbehüllt und sehr widerstandsfähig. Normale „begrenzt viruzide“ Mittel reichen nicht – auf die Deklaration achten.",
+   "gestellt_am": null
+  },
+  {
+   "id": 8,
+   "thema": "Hygiene",
+   "frage": "Bei welcher Tätigkeit brauchst du sterile Handschuhe?",
+   "optionen": [
+    "Legen eines transurethralen Blasenkatheters",
+    "Körperpflege am Waschbecken",
+    "Blutdruck messen",
+    "Essen anreichen"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Legen eines transurethralen Blasenkatheters ✅\n\nBlasenkatheter legen ist eine aseptische Tätigkeit: sterile Handschuhe, steriles Material, Non-Touch-Technik.",
+   "gestellt_am": null
+  },
+  {
+   "id": 9,
+   "thema": "Vitalwerte",
+   "frage": "Wie hoch ist der normale Ruhepuls bei Erwachsenen?",
+   "optionen": [
+    "40–60/Min.",
+    "60–100/Min.",
+    "100–120/Min.",
+    "120–140/Min."
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 60–100/Min. ✅\n\n60–100 Schläge pro Minute. Unter 60 = Bradykardie, über 100 = Tachykardie. Immer auch Rhythmus und Qualität beurteilen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 10,
+   "thema": "Vitalwerte",
+   "frage": "Wie hoch ist die normale Atemfrequenz bei Erwachsenen in Ruhe?",
+   "optionen": [
+    "6–10/Min.",
+    "12–20/Min.",
+    "22–30/Min.",
+    "30–40/Min."
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 12–20/Min. ✅\n\n12–20 Atemzüge pro Minute. Eine erhöhte Atemfrequenz ist oft das früheste Warnzeichen einer Verschlechterung – zählen statt schätzen!",
+   "gestellt_am": null
+  },
+  {
+   "id": 11,
+   "thema": "Vitalwerte",
+   "frage": "Ab welchem Blutdruck spricht man bei Erwachsenen von Hypertonie?",
+   "optionen": [
+    "≥ 120/80 mmHg",
+    "≥ 130/85 mmHg",
+    "≥ 140/90 mmHg",
+    "≥ 160/100 mmHg"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: ≥ 140/90 mmHg ✅\n\nAb 140/90 mmHg (Praxismessung). 130–139/85–89 gilt als hochnormal.",
+   "gestellt_am": null
+  },
+  {
+   "id": 12,
+   "thema": "Vitalwerte",
+   "frage": "Welcher SpO₂-Zielbereich gilt bei COPD-Patienten mit Hyperkapnie-Risiko?",
+   "optionen": [
+    "80–84 %",
+    "88–92 %",
+    "94–98 %",
+    "100 %"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 88–92 % ✅\n\n88–92 %. Zu viel Sauerstoff kann bei diesen Patienten die CO₂-Retention verstärken. Ziel immer nach ärztlicher Anordnung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 13,
+   "thema": "Vitalwerte",
+   "frage": "Ab welcher Körperkerntemperatur spricht man von Fieber?",
+   "optionen": [
+    "37,0 °C",
+    "37,5 °C",
+    "38,0 °C",
+    "39,0 °C"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 38,0 °C ✅\n\nAb 38,0 °C spricht man von Fieber, 37,5–38,0 °C ist subfebril. Messort immer dokumentieren.",
+   "gestellt_am": null
+  },
+  {
+   "id": 14,
+   "thema": "Vitalwerte",
+   "frage": "Wie berechnet sich der Schockindex?",
+   "optionen": [
+    "Systolischer ÷ diastolischer Blutdruck",
+    "Atemfrequenz ÷ Puls",
+    "Puls × Atemfrequenz",
+    "Puls ÷ systolischer Blutdruck"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Puls ÷ systolischer Blutdruck ✅\n\nSchockindex = Puls / RR systolisch. Normal ca. 0,5. Über 1 = Schockverdacht (z. B. Puls 120, RR 100/60).",
+   "gestellt_am": null
+  },
+  {
+   "id": 15,
+   "thema": "Vitalwerte",
+   "frage": "Wie hoch ist die normale Herzfrequenz eines Neugeborenen?",
+   "optionen": [
+    "60–80/Min.",
+    "80–100/Min.",
+    "100–120/Min.",
+    "120–160/Min."
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: 120–160/Min. ✅\n\n120–160 Schläge pro Minute. Kinder haben umso höhere Frequenzen, je jünger sie sind.",
+   "gestellt_am": null
+  },
+  {
+   "id": 16,
+   "thema": "Prophylaxen",
+   "frage": "Ab welchem Wert besteht nach der Braden-Skala ein Dekubitusrisiko?",
+   "optionen": [
+    "≤ 18 Punkte",
+    "≥ 18 Punkte",
+    "≤ 25 Punkte",
+    "≥ 23 Punkte"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: ≤ 18 Punkte ✅\n\nAb 18 Punkten und weniger besteht ein Risiko. Achtung: Je NIEDRIGER der Braden-Wert, desto HÖHER das Risiko.",
+   "gestellt_am": null
+  },
+  {
+   "id": 17,
+   "thema": "Prophylaxen",
+   "frage": "Woran erkennst du einen Dekubitus der Kategorie 1?",
+   "optionen": [
+    "Nicht wegdrückbare Rötung bei intakter Haut",
+    "Offene Blase",
+    "Vollhautverlust bis ins Fettgewebe",
+    "Freiliegender Knochen"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Nicht wegdrückbare Rötung bei intakter Haut ✅\n\nFingertest: Rötung mit dem Finger eindrücken – bleibt sie rot, ist es Kategorie 1. Sofort druckentlasten!",
+   "gestellt_am": null
+  },
+  {
+   "id": 18,
+   "thema": "Prophylaxen",
+   "frage": "Welche Lagerung entlastet das Kreuzbein besonders gut?",
+   "optionen": [
+    "90°-Seitenlage",
+    "Flache Rückenlage",
+    "Oberkörper 60° hoch",
+    "30°-Schräglage"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: 30°-Schräglage ✅\n\nDie 30°-Schräglage entlastet Kreuzbein und Trochanter. Die 90°-Seitenlage belastet dagegen den Trochanter stark.",
+   "gestellt_am": null
+  },
+  {
+   "id": 19,
+   "thema": "Prophylaxen",
+   "frage": "Welches Verhalten fördert eine Thrombose?",
+   "optionen": [
+    "Beine übereinanderschlagen",
+    "Fußgymnastik",
+    "Frühmobilisation",
+    "Ausreichend trinken"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Beine übereinanderschlagen ✅\n\nÜbereinandergeschlagene Beine behindern den venösen Rückfluss. Fördernd: Bewegung, Venenpumpe, Flüssigkeit, ggf. MTPS nach AO.",
+   "gestellt_am": null
+  },
+  {
+   "id": 20,
+   "thema": "Prophylaxen",
+   "frage": "Was ist ein typisches Zeichen einer tiefen Beinvenenthrombose?",
+   "optionen": [
+    "Einseitige Schwellung, Wadenschmerz, Überwärmung",
+    "Beidseits kalte, blasse Füße",
+    "Juckreiz an beiden Unterschenkeln",
+    "Plötzliche Taubheit beider Hände"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Einseitige Schwellung, Wadenschmerz, Überwärmung ✅\n\nTypisch einseitig: Schwellung, Spannungsgefühl, Schmerz, Überwärmung. Verdacht sofort melden – Gefahr der Lungenembolie.",
+   "gestellt_am": null
+  },
+  {
+   "id": 21,
+   "thema": "Prophylaxen",
+   "frage": "Was hilft bei der Pneumonieprophylaxe?",
+   "optionen": [
+    "Flache Rückenlage",
+    "Wenig trinken",
+    "Möglichst viel Bettruhe",
+    "Atemübungen und Mobilisation"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Atemübungen und Mobilisation ✅\n\nAtemvertiefende Übungen, Mobilisation, Sekretmanagement und Mundpflege senken das Pneumonierisiko.",
+   "gestellt_am": null
+  },
+  {
+   "id": 22,
+   "thema": "Prophylaxen",
+   "frage": "Was hilft bei der Parotitisprophylaxe?",
+   "optionen": [
+    "Nahrungskarenz",
+    "Mund mit Alkohol spülen",
+    "Kopf tief lagern",
+    "Kauen anregen, z. B. Brotrinde oder Kaugummi"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Kauen anregen, z. B. Brotrinde oder Kaugummi ✅\n\nKauen regt den Speichelfluss an. Bei Nahrungskarenz: Mundpflege und Kaustimulation nach Möglichkeit.",
+   "gestellt_am": null
+  },
+  {
+   "id": 23,
+   "thema": "Prophylaxen",
+   "frage": "Was gehört zur Obstipationsprophylaxe?",
+   "optionen": [
+    "Ballaststoffe, Flüssigkeit, Bewegung",
+    "Strenge Bettruhe",
+    "Weißmehlprodukte",
+    "Flüssigkeitsbeschränkung"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Ballaststoffe, Flüssigkeit, Bewegung ✅\n\nBallaststoffreiche Kost, 1,5–2 l Flüssigkeit (falls erlaubt), Bewegung und feste Toilettenzeiten.",
+   "gestellt_am": null
+  },
+  {
+   "id": 24,
+   "thema": "Prophylaxen",
+   "frage": "Welche Sitzposition schützt beim Essen am besten vor Aspiration?",
+   "optionen": [
+    "Aufrecht sitzen, Kinn leicht zur Brust",
+    "Halb liegend, Kopf überstreckt",
+    "Flache Rückenlage",
+    "Seitenlage mit Kopf tief"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Aufrecht sitzen, Kinn leicht zur Brust ✅\n\nAufrecht (ca. 90°), Kinn leicht Richtung Brust – das schützt die Atemwege. Nach dem Essen 30 Min. aufrecht bleiben.",
+   "gestellt_am": null
+  },
+  {
+   "id": 25,
+   "thema": "Prophylaxen",
+   "frage": "Was hilft bei der Intertrigoprophylaxe?",
+   "optionen": [
+    "Hautfalten dick eincremen",
+    "Hautfalten feucht abdecken",
+    "Puder dick auftragen",
+    "Hautfalten sauber und trocken halten"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Hautfalten sauber und trocken halten ✅\n\nIntertrigo entsteht durch Feuchtigkeit und Reibung in Hautfalten. Trocknen, ggf. Kompresse/Leinen einlegen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 26,
+   "thema": "Prophylaxen",
+   "frage": "Woran erkennst du bei älteren Menschen eine Dehydratation?",
+   "optionen": [
+    "Feuchte, glänzende Zunge",
+    "Häufiges Wasserlassen",
+    "Starker Durst ist immer da",
+    "Trockene Schleimhäute und neue Verwirrtheit"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Trockene Schleimhäute und neue Verwirrtheit ✅\n\nÄltere haben oft kaum Durstgefühl. Warnzeichen: trockene Schleimhäute, wenig konzentrierter Urin, Verwirrtheit, Schwindel.",
+   "gestellt_am": null
+  },
+  {
+   "id": 27,
+   "thema": "Prophylaxen",
+   "frage": "Welcher Expertenstandard regelt die Sturzprophylaxe?",
+   "optionen": [
+    "DNQP-Expertenstandard Sturzprophylaxe",
+    "Infektionsschutzgesetz",
+    "Pflegeberufegesetz",
+    "KRINKO-Empfehlung"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: DNQP-Expertenstandard Sturzprophylaxe ✅\n\nDie Expertenstandards des DNQP (u. a. Sturz, Dekubitus, Schmerz) sind die fachliche Grundlage für Prophylaxen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 28,
+   "thema": "Notfall",
+   "frage": "Welches Verhältnis gilt bei der Reanimation Erwachsener (Laien & Profis)?",
+   "optionen": [
+    "5:1",
+    "15:2",
+    "30:2",
+    "30:1"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 30:2 ✅\n\n30 Kompressionen : 2 Beatmungen. Pausen so kurz wie möglich halten.",
+   "gestellt_am": null
+  },
+  {
+   "id": 29,
+   "thema": "Notfall",
+   "frage": "Wie tief drückst du bei der Herzdruckmassage eines Erwachsenen?",
+   "optionen": [
+    "2–3 cm",
+    "3–4 cm",
+    "5–6 cm",
+    "7–8 cm"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 5–6 cm ✅\n\n5–6 cm tief, Frequenz 100–120/Min., Brustkorb vollständig entlasten.",
+   "gestellt_am": null
+  },
+  {
+   "id": 30,
+   "thema": "Notfall",
+   "frage": "Welche Kompressionsfrequenz gilt bei der Reanimation?",
+   "optionen": [
+    "60–80/Min.",
+    "80–100/Min.",
+    "100–120/Min.",
+    "120–140/Min."
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 100–120/Min. ✅\n\n100–120 pro Minute. Tipp: Der Takt von „Stayin’ Alive“ passt.",
+   "gestellt_am": null
+  },
+  {
+   "id": 31,
+   "thema": "Notfall",
+   "frage": "Welcher Rhythmus ist defibrillierbar?",
+   "optionen": [
+    "Asystolie",
+    "Kammerflimmern",
+    "Pulslose elektrische Aktivität (PEA)",
+    "Sinusbradykardie"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Kammerflimmern ✅\n\nSchockbar sind Kammerflimmern und pulslose ventrikuläre Tachykardie. Asystolie und PEA werden nicht defibrilliert.",
+   "gestellt_am": null
+  },
+  {
+   "id": 32,
+   "thema": "Notfall",
+   "frage": "Wofür steht das „B“ im ABCDE-Schema?",
+   "optionen": [
+    "Breathing – Atmung",
+    "Blutung",
+    "Bewusstsein",
+    "Blutzucker"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Breathing – Atmung ✅\n\nA = Airway, B = Breathing, C = Circulation, D = Disability (Neurologie), E = Exposure (Entkleiden/Umgebung).",
+   "gestellt_am": null
+  },
+  {
+   "id": 33,
+   "thema": "Notfall",
+   "frage": "Was wird beim „D“ im ABCDE-Schema geprüft?",
+   "optionen": [
+    "Durchblutung der Beine",
+    "Neurologie: Bewusstsein, Pupillen, Blutzucker",
+    "Dokumentation",
+    "Diurese"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Neurologie: Bewusstsein, Pupillen, Blutzucker ✅\n\nD = Disability: z. B. AVPU oder GCS, Pupillen, Blutzucker, grobe Motorik.",
+   "gestellt_am": null
+  },
+  {
+   "id": 34,
+   "thema": "Notfall",
+   "frage": "Wann bringst du jemanden in die stabile Seitenlage?",
+   "optionen": [
+    "Bewusstlos ohne normale Atmung",
+    "Wach mit Brustschmerz",
+    "Krampfend im Anfall",
+    "Bewusstlos, aber normale Atmung"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Bewusstlos, aber normale Atmung ✅\n\nKeine normale Atmung = Reanimation. Bewusstlos MIT normaler Atmung = stabile Seitenlage und regelmäßig Atmung kontrollieren.",
+   "gestellt_am": null
+  },
+  {
+   "id": 35,
+   "thema": "Notfall",
+   "frage": "Was ist das Medikament der 1. Wahl bei Anaphylaxie?",
+   "optionen": [
+    "Antihistaminikum als Tablette",
+    "Kortison als Tablette",
+    "Paracetamol",
+    "Adrenalin intramuskulär"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Adrenalin intramuskulär ✅\n\nAdrenalin i. m. in den seitlichen Oberschenkel. Antihistaminika und Kortison sind nur Ergänzung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 36,
+   "thema": "Notfall",
+   "frage": "Bei welchem Schock ist die Beine-hoch-Lagerung kontraindiziert?",
+   "optionen": [
+    "Kardiogener Schock",
+    "Hypovolämischer Schock",
+    "Volumenmangel nach Blutung",
+    "Schock nach Erbrechen und Durchfall"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Kardiogener Schock ✅\n\nBeim kardiogenen Schock würde zusätzliches Volumen das schwache Herz überlasten → Oberkörper hoch.",
+   "gestellt_am": null
+  },
+  {
+   "id": 37,
+   "thema": "Notfall",
+   "frage": "Was tust du bei einem generalisierten Krampfanfall?",
+   "optionen": [
+    "Beißkeil zwischen die Zähne",
+    "Verletzungen verhindern, Zeit stoppen",
+    "Patient festhalten",
+    "Wasser zu trinken geben"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Verletzungen verhindern, Zeit stoppen ✅\n\nGegenstände wegräumen, Kopf schützen, Dauer messen, nichts in den Mund. Nach dem Anfall: stabile Seitenlage.",
+   "gestellt_am": null
+  },
+  {
+   "id": 38,
+   "thema": "Notfall",
+   "frage": "Was tust du bei Fremdkörper-Verlegung, wenn der Erwachsene nicht mehr effektiv husten kann?",
+   "optionen": [
+    "Sofort Wasser trinken lassen",
+    "Mit dem Finger blind ausräumen",
+    "Bis zu 5 Rückenschläge, dann bis zu 5 Oberbauchkompressionen",
+    "Hinlegen und abwarten"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Bis zu 5 Rückenschläge, dann bis zu 5 Oberbauchkompressionen ✅\n\nAbwechselnd 5 Schläge zwischen die Schulterblätter und 5 Oberbauchkompressionen. Wird er bewusstlos: Reanimation.",
+   "gestellt_am": null
+  },
+  {
+   "id": 39,
+   "thema": "Notfall",
+   "frage": "Wofür steht das „A“ im FAST-Test beim Schlaganfall?",
+   "optionen": [
+    "Atmung",
+    "Augen",
+    "Allergie",
+    "Arms – Arme"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Arms – Arme ✅\n\nFace (Gesicht), Arms (Arme), Speech (Sprache), Time (Zeit → sofort 112). Jede Minute zählt.",
+   "gestellt_am": null
+  },
+  {
+   "id": 40,
+   "thema": "Notfall",
+   "frage": "Was bekommt ein Patient mit Verdacht auf Schlaganfall bis zur Abklärung NICHT?",
+   "optionen": [
+    "Essen und Trinken",
+    "Blutzuckermessung",
+    "Oberkörperhochlage ca. 30°",
+    "Sauerstoff bei niedriger Sättigung"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Essen und Trinken ✅\n\nGefahr einer Schluckstörung → Aspiration. Erst nach Schluckscreening darf gegessen und getrunken werden.",
+   "gestellt_am": null
+  },
+  {
+   "id": 41,
+   "thema": "Notfall",
+   "frage": "Ein Diabetiker ist bewusstlos, BZ 35 mg/dl. Was ist richtig?",
+   "optionen": [
+    "Traubenzucker in den Mund legen",
+    "Nichts in den Mund – Notruf, Glukose i. v. bzw. Glukagon nach AO",
+    "Saft einflößen",
+    "Insulin spritzen"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Nichts in den Mund – Notruf, Glukose i. v. bzw. Glukagon nach AO ✅\n\nBewusstlose dürfen nichts oral bekommen (Aspiration). Glukose i. v. oder Glukagon nach ärztlicher Anordnung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 42,
+   "thema": "Notfall",
+   "frage": "Wie viel Prozent der Körperoberfläche macht ein Arm beim Erwachsenen nach der Neunerregel aus?",
+   "optionen": [
+    "1 %",
+    "9 %",
+    "18 %",
+    "27 %"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 9 % ✅\n\nKopf 9 %, jeder Arm 9 %, jedes Bein 18 %, Rumpf vorne 18 %, Rumpf hinten 18 %, Genitalbereich 1 %.",
+   "gestellt_am": null
+  },
+  {
+   "id": 43,
+   "thema": "Medikamente",
+   "frage": "Welches Gegenmittel (Antidot) gibt es bei einer Opioid-Überdosierung?",
+   "optionen": [
+    "Flumazenil",
+    "Protamin",
+    "Naloxon",
+    "Vitamin K"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Naloxon ✅\n\nNaloxon hebt die Opioidwirkung auf. Achtung: Es wirkt kürzer als viele Opioide – Patient weiter überwachen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 44,
+   "thema": "Medikamente",
+   "frage": "Welches Antidot gibt es bei Benzodiazepinen?",
+   "optionen": [
+    "Flumazenil",
+    "Naloxon",
+    "Atropin",
+    "Glukagon"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Flumazenil ✅\n\nFlumazenil hebt die Benzodiazepin-Wirkung auf. Auch hier gilt: kurze Wirkdauer, weiter überwachen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 45,
+   "thema": "Medikamente",
+   "frage": "Womit wird die Wirkung von Phenprocoumon (Marcumar) aufgehoben?",
+   "optionen": [
+    "Protamin",
+    "Vitamin K",
+    "Naloxon",
+    "Calcium"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Vitamin K ✅\n\nVitamin K wirkt verzögert. Bei Blutung schneller: Gerinnungsfaktoren (PPSB) nach ärztlicher Anordnung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 46,
+   "thema": "Medikamente",
+   "frage": "Womit wird die Wirkung von Heparin aufgehoben?",
+   "optionen": [
+    "Vitamin K",
+    "Flumazenil",
+    "Protamin",
+    "Adrenalin"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Protamin ✅\n\nProtamin neutralisiert unfraktioniertes Heparin. Bei niedermolekularen Heparinen wirkt es nur teilweise.",
+   "gestellt_am": null
+  },
+  {
+   "id": 47,
+   "thema": "Medikamente",
+   "frage": "Welche Nebenwirkung ist bei Furosemid typisch?",
+   "optionen": [
+    "Kaliumüberschuss",
+    "Gewichtszunahme",
+    "Verstopfung durch Wassereinlagerung",
+    "Kaliummangel (Hypokaliämie)"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Kaliummangel (Hypokaliämie) ✅\n\nSchleifendiuretika schwemmen Kalium aus → Herzrhythmusstörungen möglich. Kalium und Gewicht kontrollieren.",
+   "gestellt_am": null
+  },
+  {
+   "id": 48,
+   "thema": "Medikamente",
+   "frage": "Welche Nebenwirkung von Morphin bleibt meist dauerhaft bestehen?",
+   "optionen": [
+    "Obstipation",
+    "Übelkeit",
+    "Müdigkeit",
+    "Juckreiz"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Obstipation ✅\n\nÜbelkeit und Müdigkeit lassen oft nach, die Verstopfung nicht. Darum Laxans meist von Anfang an nach AO.",
+   "gestellt_am": null
+  },
+  {
+   "id": 49,
+   "thema": "Medikamente",
+   "frage": "Welches Organ schädigt eine Paracetamol-Überdosierung vor allem?",
+   "optionen": [
+    "Niere",
+    "Leber",
+    "Magen",
+    "Lunge"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Leber ✅\n\nParacetamol ist in hoher Dosis lebertoxisch. Tageshöchstdosis beachten, auch bei Kombipräparaten.",
+   "gestellt_am": null
+  },
+  {
+   "id": 50,
+   "thema": "Medikamente",
+   "frage": "Welche Nebenwirkung ist bei Ibuprofen & Co. (NSAR) typisch?",
+   "optionen": [
+    "Haarausfall",
+    "Blutzuckeranstieg",
+    "Schädigung der Magenschleimhaut",
+    "Atemdepression"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Schädigung der Magenschleimhaut ✅\n\nNSAR können Magengeschwüre und Blutungen verursachen und die Nieren belasten. Ggf. Magenschutz nach AO.",
+   "gestellt_am": null
+  },
+  {
+   "id": 51,
+   "thema": "Medikamente",
+   "frage": "Wie wirkt ASS (Acetylsalicylsäure) in niedriger Dosis?",
+   "optionen": [
+    "Löst bestehende Gerinnsel auf",
+    "Senkt den Blutzucker",
+    "Erweitert die Bronchien",
+    "Hemmt die Thrombozytenaggregation"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Hemmt die Thrombozytenaggregation ✅\n\nASS hemmt das Verklumpen der Blutplättchen – deshalb Blutungsneigung, vor OPs nach Anordnung pausieren.",
+   "gestellt_am": null
+  },
+  {
+   "id": 52,
+   "thema": "Medikamente",
+   "frage": "Woran erkennst du eine Digitalis-Überdosierung?",
+   "optionen": [
+    "Übelkeit, Gelbsehen, langsamer Puls",
+    "Durchfall und Fieber",
+    "Bluthochdruck und Kopfschmerz",
+    "Hautausschlag und Juckreiz"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Übelkeit, Gelbsehen, langsamer Puls ✅\n\nTypisch: Übelkeit, Sehstörungen (Gelb-/Grünsehen), Bradykardie und Rhythmusstörungen. Puls vor Gabe zählen!",
+   "gestellt_am": null
+  },
+  {
+   "id": 53,
+   "thema": "Medikamente",
+   "frage": "Was gehört NICHT zur 6-R-Regel?",
+   "optionen": [
+    "Richtiger Patient",
+    "Richtiger Preis",
+    "Richtige Dosis",
+    "Richtige Dokumentation"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Richtiger Preis ✅\n\nPatient, Arzneimittel, Dosis, Applikationsart, Zeitpunkt, Dokumentation – vor jeder Gabe prüfen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 54,
+   "thema": "Medikamente",
+   "frage": "Wie darf Kalium intravenös NIEMALS gegeben werden?",
+   "optionen": [
+    "Verdünnt über Perfusor",
+    "Als Kurzinfusion nach Anordnung",
+    "Als schnelle Bolusinjektion",
+    "Über einen ZVK nach Anordnung"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Als schnelle Bolusinjektion ✅\n\nEin Kaliumbolus kann tödliche Herzrhythmusstörungen auslösen. Immer verdünnt, langsam, nach Anordnung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 55,
+   "thema": "Medikamente",
+   "frage": "Welche Langzeit-Nebenwirkung ist bei Kortison (Glukokortikoiden) typisch?",
+   "optionen": [
+    "Haarwuchs am Kopf",
+    "Blutzuckersenkung",
+    "Gewichtsverlust",
+    "Osteoporose"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Osteoporose ✅\n\nTypisch: Osteoporose, Blutzuckeranstieg, Infektanfälligkeit, Gewichtszunahme, Hautverdünnung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 56,
+   "thema": "Medikamente",
+   "frage": "Wann ist Nitroglycerin-Spray kontraindiziert?",
+   "optionen": [
+    "Bei systolischem Blutdruck unter 90 mmHg",
+    "Bei Brustschmerz",
+    "Bei Bluthochdruck",
+    "Bei Angina pectoris"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Bei systolischem Blutdruck unter 90 mmHg ✅\n\nNitro senkt den Blutdruck. Kontraindiziert bei Hypotonie und nach Einnahme von PDE-5-Hemmern (z. B. Sildenafil).",
+   "gestellt_am": null
+  },
+  {
+   "id": 57,
+   "thema": "Medikamente",
+   "frage": "Wo werden Betäubungsmittel-Bestände dokumentiert?",
+   "optionen": [
+    "Nur in der Pflegekurve",
+    "Im BtM-Buch bzw. der BtM-Karteikarte",
+    "Im Übergabebuch",
+    "Gar nicht, nur verschlossen lagern"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Im BtM-Buch bzw. der BtM-Karteikarte ✅\n\nJeder Zu- und Abgang wird lückenlos dokumentiert, Bestände regelmäßig geprüft (BtMG).",
+   "gestellt_am": null
+  },
+  {
+   "id": 58,
+   "thema": "Medikamente",
+   "frage": "Verordnet: 1,5 g. Vorhanden: Tabletten à 500 mg. Wie viele Tabletten gibst du?",
+   "optionen": [
+    "1,5",
+    "2",
+    "3",
+    "6"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 3 ✅\n\n1,5 g = 1.500 mg. 1.500 mg ÷ 500 mg = 3 Tabletten. Einheiten immer zuerst angleichen!",
+   "gestellt_am": null
+  },
+  {
+   "id": 59,
+   "thema": "Medikamente",
+   "frage": "Perfusor: 50 mg auf 50 ml. Verordnet: 5 mg/h. Welche Laufrate stellst du ein?",
+   "optionen": [
+    "0,5 ml/h",
+    "1 ml/h",
+    "5 ml/h",
+    "10 ml/h"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 5 ml/h ✅\n\n50 mg / 50 ml = 1 mg/ml. 5 mg/h ÷ 1 mg/ml = 5 ml/h.",
+   "gestellt_am": null
+  },
+  {
+   "id": 60,
+   "thema": "Medikamente",
+   "frage": "1.000 ml sollen in 8 Stunden einlaufen (20 Tropfen = 1 ml). Wie viele Tropfen pro Minute?",
+   "optionen": [
+    "21",
+    "31",
+    "42",
+    "63"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 42 ✅\n\n1.000 ml ÷ 8 h = 125 ml/h. Tropfen/Min. = ml/h ÷ 3 → 125 ÷ 3 ≈ 42 Tropfen pro Minute.",
+   "gestellt_am": null
+  },
+  {
+   "id": 61,
+   "thema": "Medikamente",
+   "frage": "Wofür ist Dantrolen das Gegenmittel?",
+   "optionen": [
+    "Opioid-Überdosierung",
+    "Hypoglykämie",
+    "Maligne Hyperthermie",
+    "Anaphylaxie"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Maligne Hyperthermie ✅\n\nDie maligne Hyperthermie ist eine seltene Narkosekomplikation (Triggersubstanzen). Dantrolen ist das spezifische Antidot.",
+   "gestellt_am": null
+  },
+  {
+   "id": 62,
+   "thema": "Anatomie",
+   "frage": "Wo wird Insulin gebildet?",
+   "optionen": [
+    "In der Leber",
+    "In der Nebenniere",
+    "In der Schilddrüse",
+    "In den Betazellen der Bauchspeicheldrüse"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: In den Betazellen der Bauchspeicheldrüse ✅\n\nDie Betazellen der Langerhans-Inseln im Pankreas bilden Insulin, die Alphazellen Glukagon.",
+   "gestellt_am": null
+  },
+  {
+   "id": 63,
+   "thema": "Anatomie",
+   "frage": "Welche Herzklappe liegt zwischen linkem Vorhof und linker Kammer?",
+   "optionen": [
+    "Trikuspidalklappe",
+    "Aortenklappe",
+    "Pulmonalklappe",
+    "Mitralklappe"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Mitralklappe ✅\n\nLinks: Mitralklappe (2 Segel). Rechts: Trikuspidalklappe (3 Segel). Taschenklappen: Aorten- und Pulmonalklappe.",
+   "gestellt_am": null
+  },
+  {
+   "id": 64,
+   "thema": "Anatomie",
+   "frage": "Aus welcher Herzkammer startet der Lungenkreislauf?",
+   "optionen": [
+    "Rechte Kammer",
+    "Linke Kammer",
+    "Linker Vorhof",
+    "Rechter Vorhof"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Rechte Kammer ✅\n\nRechte Kammer → Lungenarterie → Lunge → Lungenvenen → linker Vorhof.",
+   "gestellt_am": null
+  },
+  {
+   "id": 65,
+   "thema": "Anatomie",
+   "frage": "Was ist die kleinste funktionelle Einheit der Niere?",
+   "optionen": [
+    "Das Alveolum",
+    "Das Nephron",
+    "Das Neuron",
+    "Der Hepatozyt"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Das Nephron ✅\n\nJede Niere hat rund eine Million Nephrone (Nierenkörperchen + Tubulussystem).",
+   "gestellt_am": null
+  },
+  {
+   "id": 66,
+   "thema": "Anatomie",
+   "frage": "Ab welcher Urinmenge in 24 Stunden spricht man von Oligurie?",
+   "optionen": [
+    "unter 100 ml",
+    "unter 500 ml",
+    "unter 1.000 ml",
+    "unter 1.500 ml"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: unter 500 ml ✅\n\nOligurie: unter 500 ml/24 h. Anurie: unter 100 ml/24 h. Bilanz und Gewicht im Blick behalten.",
+   "gestellt_am": null
+  },
+  {
+   "id": 67,
+   "thema": "Anatomie",
+   "frage": "Wie lange lebt ein rotes Blutkörperchen ungefähr?",
+   "optionen": [
+    "7 Tage",
+    "30 Tage",
+    "120 Tage",
+    "365 Tage"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 120 Tage ✅\n\nEtwa 120 Tage. Danach werden die Erythrozyten vor allem in Milz und Leber abgebaut.",
+   "gestellt_am": null
+  },
+  {
+   "id": 68,
+   "thema": "Anatomie",
+   "frage": "Was ist das größte Organ des Menschen?",
+   "optionen": [
+    "Die Leber",
+    "Die Lunge",
+    "Die Haut",
+    "Der Darm"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Die Haut ✅\n\nDie Haut hat beim Erwachsenen ca. 1,5–2 m² Fläche – darum ist Hautbeobachtung so wichtig.",
+   "gestellt_am": null
+  },
+  {
+   "id": 69,
+   "thema": "Anatomie",
+   "frage": "Wo wird die Galle gebildet?",
+   "optionen": [
+    "In der Gallenblase",
+    "In der Leber",
+    "In der Bauchspeicheldrüse",
+    "Im Zwölffingerdarm"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: In der Leber ✅\n\nGebildet in der Leber, gespeichert und eingedickt in der Gallenblase.",
+   "gestellt_am": null
+  },
+  {
+   "id": 70,
+   "thema": "Anatomie",
+   "frage": "Welches Eiweiß transportiert Sauerstoff im Blut?",
+   "optionen": [
+    "Albumin",
+    "Fibrinogen",
+    "Hämoglobin",
+    "Insulin"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Hämoglobin ✅\n\nHämoglobin in den Erythrozyten bindet Sauerstoff – die SpO₂ misst seine Sättigung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 71,
+   "thema": "Anatomie",
+   "frage": "Welche Hormone bildet die Schilddrüse?",
+   "optionen": [
+    "Insulin und Glukagon",
+    "Adrenalin und Noradrenalin",
+    "Östrogen und Progesteron",
+    "T3 und T4 (Thyroxin)"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: T3 und T4 (Thyroxin) ✅\n\nT3 und T4 steuern den Stoffwechsel. Die Schilddrüse bildet außerdem Calcitonin.",
+   "gestellt_am": null
+  },
+  {
+   "id": 72,
+   "thema": "Krankheitsbilder",
+   "frage": "Welches Zeichen spricht für eine LINKSherzinsuffizienz?",
+   "optionen": [
+    "Atemnot und Rasselgeräusche (Lungenstauung)",
+    "Beinödeme",
+    "Gestaute Halsvenen",
+    "Vergrößerte Leber"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Atemnot und Rasselgeräusche (Lungenstauung) ✅\n\nLinks: Rückstau in die Lunge → Dyspnoe, Orthopnoe, Rasselgeräusche. Rechts: Rückstau in den Körper → Ödeme, Halsvenenstauung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 73,
+   "thema": "Krankheitsbilder",
+   "frage": "Wie unterscheiden sich Angina pectoris und Herzinfarkt typischerweise?",
+   "optionen": [
+    "Herzinfarkt dauert nur Sekunden",
+    "Angina-Schmerz bessert sich meist auf Nitro",
+    "Angina tritt nie in Ruhe auf",
+    "Beim Infarkt gibt es nie Atemnot"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Angina-Schmerz bessert sich meist auf Nitro ✅\n\nStabile Angina bessert sich auf Ruhe/Nitro. Anhaltender Schmerz über 20 Min. ohne Besserung → Infarktverdacht, 112!",
+   "gestellt_am": null
+  },
+  {
+   "id": 74,
+   "thema": "Krankheitsbilder",
+   "frage": "Was ist die Ursache von Diabetes Typ 1?",
+   "optionen": [
+    "Übergewicht und Bewegungsmangel",
+    "Zu viel Zucker in der Kindheit",
+    "Autoimmune Zerstörung der Betazellen → Insulinmangel",
+    "Eine Leberentzündung"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Autoimmune Zerstörung der Betazellen → Insulinmangel ✅\n\nTyp 1: absoluter Insulinmangel, Insulin lebenslang nötig. Typ 2: vor allem Insulinresistenz.",
+   "gestellt_am": null
+  },
+  {
+   "id": 75,
+   "thema": "Krankheitsbilder",
+   "frage": "Welche Atmung ist typisch für eine diabetische Ketoazidose?",
+   "optionen": [
+    "Cheyne-Stokes-Atmung",
+    "Schnappatmung",
+    "Flache Schonatmung",
+    "Kußmaul-Atmung (tief und regelmäßig)"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Kußmaul-Atmung (tief und regelmäßig) ✅\n\nDer Körper versucht, die Azidose über die Abatmung von CO₂ auszugleichen. Oft Azetongeruch der Atemluft.",
+   "gestellt_am": null
+  },
+  {
+   "id": 76,
+   "thema": "Krankheitsbilder",
+   "frage": "Was ist die Hauptursache der COPD?",
+   "optionen": [
+    "Rauchen",
+    "Allergien",
+    "Bewegungsmangel",
+    "Herzinsuffizienz"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Rauchen ✅\n\nRund 80–90 % der COPD-Fälle gehen auf das Rauchen zurück. Rauchstopp ist die wichtigste Maßnahme.",
+   "gestellt_am": null
+  },
+  {
+   "id": 77,
+   "thema": "Krankheitsbilder",
+   "frage": "Was hilft Patienten bei Atemnot im Asthmaanfall?",
+   "optionen": [
+    "Flach hinlegen",
+    "Lippenbremse und Kutschersitz",
+    "Schnell und tief durch die Nase atmen",
+    "In eine Tüte atmen"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Lippenbremse und Kutschersitz ✅\n\nLippenbremse verhindert das Zusammenfallen der Bronchien, der Kutschersitz erleichtert die Atemhilfsmuskulatur.",
+   "gestellt_am": null
+  },
+  {
+   "id": 78,
+   "thema": "Krankheitsbilder",
+   "frage": "Welche drei Hauptsymptome hat Morbus Parkinson?",
+   "optionen": [
+    "Fieber, Husten, Atemnot",
+    "Durst, Polyurie, Müdigkeit",
+    "Rigor, Tremor, Akinese",
+    "Kopfschmerz, Erbrechen, Nackensteife"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Rigor, Tremor, Akinese ✅\n\nRigor (Muskelsteifheit), Ruhetremor (Zittern), Akinese/Bradykinese (Bewegungsarmut) – dazu posturale Instabilität.",
+   "gestellt_am": null
+  },
+  {
+   "id": 79,
+   "thema": "Krankheitsbilder",
+   "frage": "Was passiert bei Multipler Sklerose?",
+   "optionen": [
+    "Abbau der Muskelzellen",
+    "Verkalkung der Herzkranzgefäße",
+    "Zerstörung der Leberzellen",
+    "Entzündliche Entmarkung im zentralen Nervensystem"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Entzündliche Entmarkung im zentralen Nervensystem ✅\n\nDie Myelinscheiden im ZNS werden angegriffen – dadurch Seh-, Gefühls- und Bewegungsstörungen, oft in Schüben.",
+   "gestellt_am": null
+  },
+  {
+   "id": 80,
+   "thema": "Krankheitsbilder",
+   "frage": "Was hörst du typischerweise beim paralytischen Ileus?",
+   "optionen": [
+    "Keine Darmgeräusche („Totenstille“)",
+    "Hochgestellte, klingende Darmgeräusche",
+    "Normale Darmgeräusche",
+    "Pfeifen über der Lunge"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Keine Darmgeräusche („Totenstille“) ✅\n\nParalytisch: Darmlähmung → Stille. Mechanisch: anfangs verstärkte, hochgestellte Geräusche.",
+   "gestellt_am": null
+  },
+  {
+   "id": 81,
+   "thema": "Krankheitsbilder",
+   "frage": "Welche Komplikation der Leberzirrhose ist lebensgefährlich?",
+   "optionen": [
+    "Haarausfall",
+    "Blutung aus Ösophagusvarizen",
+    "Juckreiz",
+    "Nagelveränderungen"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Blutung aus Ösophagusvarizen ✅\n\nDer Pfortaderhochdruck führt zu Krampfadern in der Speiseröhre. Bluterbrechen ist ein Notfall.",
+   "gestellt_am": null
+  },
+  {
+   "id": 82,
+   "thema": "Krankheitsbilder",
+   "frage": "Welcher Laborwert zeigt vor allem die Nierenfunktion?",
+   "optionen": [
+    "Troponin",
+    "CRP",
+    "Kreatinin",
+    "Bilirubin"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Kreatinin ✅\n\nKreatinin (und daraus berechnet die eGFR) steigt, wenn die Nieren schlechter filtern.",
+   "gestellt_am": null
+  },
+  {
+   "id": 83,
+   "thema": "Krankheitsbilder",
+   "frage": "Was gehört NICHT zu den qSOFA-Kriterien bei Sepsisverdacht?",
+   "optionen": [
+    "Atemfrequenz ≥ 22/Min.",
+    "Systolischer Blutdruck ≤ 100 mmHg",
+    "Veränderter Bewusstseinszustand",
+    "Fieber über 38 °C"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Fieber über 38 °C ✅\n\nqSOFA: AF ≥ 22, RR systolisch ≤ 100, Bewusstseinsveränderung. Ab 2 Punkten an Sepsis denken – Fieber gehört nicht dazu.",
+   "gestellt_am": null
+  },
+  {
+   "id": 84,
+   "thema": "Krankheitsbilder",
+   "frage": "Was ist typisch für ein Delir?",
+   "optionen": [
+    "Akuter Beginn mit schwankender Aufmerksamkeit",
+    "Schleichender Beginn über Jahre",
+    "Immer gleichbleibender Zustand",
+    "Nur bei jungen Menschen"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Akuter Beginn mit schwankender Aufmerksamkeit ✅\n\nEin Delir beginnt plötzlich, schwankt im Tagesverlauf und ist oft behandelbar (Infekt, Exsikkose, Medikamente). Immer melden!",
+   "gestellt_am": null
+  },
+  {
+   "id": 85,
+   "thema": "Krankheitsbilder",
+   "frage": "Welches Symptom passt zu einer Hypoglykämie?",
+   "optionen": [
+    "Großer Durst und viel Wasserlassen",
+    "Zittern, Schwitzen, Heißhunger",
+    "Azetongeruch und tiefe Atmung",
+    "Trockene, warme Haut"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Zittern, Schwitzen, Heißhunger ✅\n\nHypo: Zittern, kalter Schweiß, Unruhe, Heißhunger bis Bewusstlosigkeit. Durst + Polyurie passen zur Hyperglykämie.",
+   "gestellt_am": null
+  },
+  {
+   "id": 86,
+   "thema": "Krankheitsbilder",
+   "frage": "Welche Hautveränderung ist bei Rechtsherzinsuffizienz typisch?",
+   "optionen": [
+    "Gelbsucht",
+    "Schmetterlingserythem",
+    "Ödeme an Knöcheln und Unterschenkeln",
+    "Petechien am Bauch"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Ödeme an Knöcheln und Unterschenkeln ✅\n\nRückstau ins venöse System → Beinödeme, Gewichtszunahme, Halsvenenstauung. Täglich wiegen!",
+   "gestellt_am": null
+  },
+  {
+   "id": 87,
+   "thema": "Krankheitsbilder",
+   "frage": "In welchem Alter treten Fieberkrämpfe typischerweise auf?",
+   "optionen": [
+    "Unter 3 Monaten",
+    "6 Monate bis 5 Jahre",
+    "6 bis 12 Jahre",
+    "Ab 14 Jahren"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 6 Monate bis 5 Jahre ✅\n\nMeist zwischen 6 Monaten und 5 Jahren bei schnell steigendem Fieber. Erster Anfall immer ärztlich abklären.",
+   "gestellt_am": null
+  },
+  {
+   "id": 88,
+   "thema": "Pflegeprozess",
+   "frage": "Aus wie vielen Schritten besteht der Pflegeprozess nach Fiechter & Meier?",
+   "optionen": [
+    "4",
+    "5",
+    "6",
+    "8"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 6 ✅\n\n1. Informationssammlung, 2. Probleme/Ressourcen, 3. Ziele, 4. Maßnahmen planen, 5. Durchführung, 6. Evaluation.",
+   "gestellt_am": null
+  },
+  {
+   "id": 89,
+   "thema": "Pflegeprozess",
+   "frage": "Wofür steht das „E“ in PESR?",
+   "optionen": [
+    "Evaluation",
+    "Erfahrung",
+    "Entlassung",
+    "Einflussfaktoren (Ätiologie)"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Einflussfaktoren (Ätiologie) ✅\n\nP = Problem, E = Einflussfaktoren/Ursachen, S = Symptome, R = Ressourcen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 90,
+   "thema": "Pflegeprozess",
+   "frage": "Was bedeutet das „M“ bei SMART-Zielen?",
+   "optionen": [
+    "Messbar",
+    "Machbar",
+    "Motivierend",
+    "Medizinisch"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Messbar ✅\n\nSpezifisch, Messbar, Attraktiv/Akzeptiert, Realistisch, Terminiert.",
+   "gestellt_am": null
+  },
+  {
+   "id": 91,
+   "thema": "Recht",
+   "frage": "Welche Aufgabe ist Pflegefachpersonen nach § 4 PflBG vorbehalten?",
+   "optionen": [
+    "Körperpflege durchführen",
+    "Essen anreichen",
+    "Blutdruck messen",
+    "Pflegebedarf erheben und Pflegeprozess steuern"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Pflegebedarf erheben und Pflegeprozess steuern ✅\n\nVorbehaltsaufgaben: Erhebung/Feststellung des Pflegebedarfs, Organisation, Gestaltung und Steuerung des Pflegeprozesses, Analyse/Evaluation der Pflegequalität.",
+   "gestellt_am": null
+  },
+  {
+   "id": 92,
+   "thema": "Recht",
+   "frage": "In welchem Gesetz ist die Schweigepflicht strafrechtlich geregelt?",
+   "optionen": [
+    "§ 203 StGB",
+    "§ 223 StGB",
+    "§ 323c StGB",
+    "§ 1 BGB"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: § 203 StGB ✅\n\n§ 203 StGB: Verletzung von Privatgeheimnissen. § 223 = Körperverletzung, § 323c = Unterlassene Hilfeleistung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 93,
+   "thema": "Recht",
+   "frage": "Was brauchst du für ein Bettgitter bei einem nicht einwilligungsfähigen Patienten (dauerhaft/regelmäßig)?",
+   "optionen": [
+    "Unterschrift der Stationsleitung",
+    "Genehmigung des Betreuungsgerichts",
+    "Zustimmung der Angehörigen",
+    "Nur einen Eintrag in die Doku"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Genehmigung des Betreuungsgerichts ✅\n\nFreiheitsentziehende Maßnahmen brauchen eine Einwilligung oder richterliche Genehmigung. Vorher Alternativen prüfen (z. B. Niederflurbett).",
+   "gestellt_am": null
+  },
+  {
+   "id": 94,
+   "thema": "Recht",
+   "frage": "Wie korrigierst du einen Fehler in der Pflegedokumentation richtig?",
+   "optionen": [
+    "Mit Tipp-Ex überdecken",
+    "Seite herausreißen und neu schreiben",
+    "Durchstreichen, lesbar lassen, Datum + Handzeichen",
+    "Überkleben"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Durchstreichen, lesbar lassen, Datum + Handzeichen ✅\n\nDie ursprüngliche Eintragung muss lesbar bleiben – Dokumentation ist eine Urkunde.",
+   "gestellt_am": null
+  },
+  {
+   "id": 95,
+   "thema": "Recht",
+   "frage": "Wie lange dauert die Ausbildung zur Pflegefachfrau/zum Pflegefachmann in Vollzeit?",
+   "optionen": [
+    "2 Jahre",
+    "3 Jahre",
+    "4 Jahre",
+    "5 Jahre"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: 3 Jahre ✅\n\n3 Jahre in Vollzeit, in Teilzeit bis zu 5 Jahre.",
+   "gestellt_am": null
+  },
+  {
+   "id": 96,
+   "thema": "Recht",
+   "frage": "Wer ist in NRW für die Anerkennung ausländischer Pflegeabschlüsse zuständig?",
+   "optionen": [
+    "Die Bezirksregierung",
+    "Die Ärztekammer",
+    "Die Agentur für Arbeit",
+    "Die Krankenkasse"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Die Bezirksregierung ✅\n\nIn NRW prüfen die Bezirksregierungen die Anerkennung – ggf. mit Kenntnisprüfung oder Anpassungslehrgang.",
+   "gestellt_am": null
+  },
+  {
+   "id": 97,
+   "thema": "Recht",
+   "frage": "Was regelt § 323c StGB?",
+   "optionen": [
+    "Schweigepflicht",
+    "Unterlassene Hilfeleistung",
+    "Körperverletzung",
+    "Datenschutz"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Unterlassene Hilfeleistung ✅\n\nWer bei Unglücksfällen nicht hilft, obwohl es zumutbar ist, macht sich strafbar – auch außerhalb des Dienstes.",
+   "gestellt_am": null
+  },
+  {
+   "id": 98,
+   "thema": "Pflegepraxis",
+   "frage": "Wie prüfst du die Lage einer Magensonde zuverlässig?",
+   "optionen": [
+    "Luft einblasen und abhören",
+    "Sonde in ein Wasserglas halten",
+    "pH-Wert des Aspirats messen (bzw. Röntgen)",
+    "Patient husten lassen"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: pH-Wert des Aspirats messen (bzw. Röntgen) ✅\n\nSaures Aspirat (pH ≤ 5,5) spricht für die Lage im Magen. Die Luftinsufflation gilt als unsicher.",
+   "gestellt_am": null
+  },
+  {
+   "id": 99,
+   "thema": "Pflegepraxis",
+   "frage": "Wo hängt der Urinbeutel eines Blasenkatheters richtig?",
+   "optionen": [
+    "Über dem Blasenniveau",
+    "Auf dem Boden liegend",
+    "Am Bettgitter in Kopfhöhe",
+    "Unterhalb des Blasenniveaus, ohne Bodenkontakt"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Unterhalb des Blasenniveaus, ohne Bodenkontakt ✅\n\nSo kann kein Urin zurückfließen. Das geschlossene System nicht unnötig öffnen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 100,
+   "thema": "Pflegepraxis",
+   "frage": "Welche Injektionsstelle wird für i. m.-Injektionen bevorzugt?",
+   "optionen": [
+    "Ventrogluteal nach Hochstetter",
+    "Dorsoglutealer Quadrant",
+    "Unterarm",
+    "Bauchnabel"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Ventrogluteal nach Hochstetter ✅\n\nVentrogluteal ist sicher, weil dort keine großen Nerven und Gefäße verlaufen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 101,
+   "thema": "Pflegepraxis",
+   "frage": "Was bestimmt der Bedside-Test vor einer Bluttransfusion?",
+   "optionen": [
+    "Den Hämoglobinwert",
+    "Die AB0-Blutgruppe des Empfängers",
+    "Den Rhesusfaktor des Spenders",
+    "Die Gerinnung"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Die AB0-Blutgruppe des Empfängers ✅\n\nDer Bedside-Test erfolgt direkt am Patienten durch den Arzt – letzte Sicherheitskontrolle gegen Verwechslung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 102,
+   "thema": "Pflegepraxis",
+   "frage": "Der Patient bekommt während einer Transfusion Schüttelfrost und Atemnot. Was zuerst?",
+   "optionen": [
+    "Transfusion langsamer laufen lassen",
+    "Paracetamol geben und weiterlaufen lassen",
+    "Transfusion sofort stoppen, Arzt rufen",
+    "Bis zum Ende abwarten"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Transfusion sofort stoppen, Arzt rufen ✅\n\nVerdacht auf Transfusionsreaktion: sofort stoppen, Zugang offen halten, Vitalzeichen, Arzt. Konserve aufbewahren.",
+   "gestellt_am": null
+  },
+  {
+   "id": 103,
+   "thema": "Pflegepraxis",
+   "frage": "Was ist beim diabetischen Fuß wichtig?",
+   "optionen": [
+    "Hornhaut mit Klinge entfernen",
+    "Barfuß laufen zur Abhärtung",
+    "Füße heiß baden",
+    "Füße täglich inspizieren, keine Wärmflaschen"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Füße täglich inspizieren, keine Wärmflaschen ✅\n\nDurch die Neuropathie spüren Betroffene Verletzungen und Hitze kaum. Tägliche Kontrolle, gut sitzende Schuhe.",
+   "gestellt_am": null
+  },
+  {
+   "id": 104,
+   "thema": "Pflegepraxis",
+   "frage": "Welche Wundheilungsphase folgt auf die Exsudationsphase?",
+   "optionen": [
+    "Granulationsphase",
+    "Epithelisierungsphase",
+    "Nekrosephase",
+    "Infektionsphase"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Granulationsphase ✅\n\nExsudation (Reinigung) → Granulation (Gewebeaufbau) → Epithelisierung (Verschluss).",
+   "gestellt_am": null
+  },
+  {
+   "id": 105,
+   "thema": "Pflegepraxis",
+   "frage": "Welches Prinzip gilt heute bei chronischen Wunden?",
+   "optionen": [
+    "Wunde an der Luft austrocknen lassen",
+    "Feuchte Wundheilung",
+    "Mit Puder trocken halten",
+    "Mit Alkohol abtupfen"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Feuchte Wundheilung ✅\n\nEin feuchtes Wundmilieu fördert Zellwanderung und Heilung – z. B. mit Hydrokolloid oder Hydrogel nach Wundstatus.",
+   "gestellt_am": null
+  },
+  {
+   "id": 106,
+   "thema": "Pflegepraxis",
+   "frage": "Was senkt das Risiko einer beatmungsassoziierten Pneumonie (VAP)?",
+   "optionen": [
+    "Flache Rückenlage",
+    "Seltene Mundpflege",
+    "Oberkörperhochlage 30–45°",
+    "Cuff-Druck möglichst niedrig halten"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Oberkörperhochlage 30–45° ✅\n\nOberkörper hoch, Mundpflege, korrekter Cuff-Druck, Sedierung so flach wie möglich.",
+   "gestellt_am": null
+  },
+  {
+   "id": 107,
+   "thema": "Pflegepraxis",
+   "frage": "Wofür steht die Abkürzung PEEP?",
+   "optionen": [
+    "Peak-Exspirations-Effekt-Pumpe",
+    "Pulsoxymetrischer Einstellwert",
+    "Pflege-Evaluations-Protokoll",
+    "Positiver endexspiratorischer Druck"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Positiver endexspiratorischer Druck ✅\n\nPEEP hält die Alveolen am Ende der Ausatmung offen und verbessert so die Oxygenierung.",
+   "gestellt_am": null
+  },
+  {
+   "id": 108,
+   "thema": "Pflegepraxis",
+   "frage": "Bis wann dürfen Erwachsene vor einer geplanten OP in der Regel noch klare Flüssigkeit trinken?",
+   "optionen": [
+    "Bis 30 Min. vorher",
+    "Bis 2 Std. vorher",
+    "Bis 6 Std. vorher",
+    "Bis 12 Std. vorher"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Bis 2 Std. vorher ✅\n\nKlare Flüssigkeit meist bis 2 Std., feste Nahrung bis 6 Std. vor der Narkose – maßgeblich ist die Anordnung der Anästhesie.",
+   "gestellt_am": null
+  },
+  {
+   "id": 109,
+   "thema": "Pflegepraxis",
+   "frage": "Welche Skala erfasst Schmerzen bei beatmeten, sedierten Patienten?",
+   "optionen": [
+    "NRS (Numerische Rating-Skala)",
+    "BPS (Behavioral Pain Scale)",
+    "Braden-Skala",
+    "Barthel-Index"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: BPS (Behavioral Pain Scale) ✅\n\nDie BPS bewertet Gesicht, Arme und Toleranz der Beatmung (3–12 Punkte). In PLAN gibt es einen Rechner dafür.",
+   "gestellt_am": null
+  },
+  {
+   "id": 110,
+   "thema": "Pflegepraxis",
+   "frage": "Welchen Ziel-RASS-Wert haben viele Intensivpatienten ohne besondere Anordnung?",
+   "optionen": [
+    "−5 bis −4",
+    "−3",
+    "0 bis −1",
+    "+2 bis +3"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 0 bis −1 ✅\n\nWach und ruhig bis leicht schläfrig – so flach wie möglich sedieren. Der Zielwert wird ärztlich festgelegt.",
+   "gestellt_am": null
+  },
+  {
+   "id": 111,
+   "thema": "Pflegepraxis",
+   "frage": "Ab welchem NRS-Wert besteht in Ruhe meist Handlungsbedarf?",
+   "optionen": [
+    "ab 1",
+    "ab 4",
+    "ab 7",
+    "erst bei 10"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: ab 4 ✅\n\nAb NRS 4 in Ruhe: Schmerztherapie nach AO, Wirkung nach 30–60 Min. erneut erfassen und dokumentieren.",
+   "gestellt_am": null
+  },
+  {
+   "id": 112,
+   "thema": "Pflegepraxis",
+   "frage": "Welche Werte kann der Barthel-Index annehmen?",
+   "optionen": [
+    "0–10",
+    "0–30",
+    "0–100",
+    "3–15"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: 0–100 ✅\n\n0–100 Punkte. 100 = selbstständig in den Alltagsaktivitäten, 0 = vollständig hilfebedürftig.",
+   "gestellt_am": null
+  },
+  {
+   "id": 113,
+   "thema": "Pflegepraxis",
+   "frage": "Wie berechnet sich der BMI?",
+   "optionen": [
+    "Gewicht (kg) × Körpergröße (m)",
+    "Körpergröße (cm) − 100",
+    "Gewicht (kg) ÷ Körpergröße (m)²",
+    "Gewicht ÷ Alter"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Gewicht (kg) ÷ Körpergröße (m)² ✅\n\nBeispiel: 70 kg, 1,75 m → 70 ÷ 3,06 ≈ 22,9. Bei Älteren ergänzend ein Ernährungsscreening (z. B. MNA).",
+   "gestellt_am": null
+  },
+  {
+   "id": 114,
+   "thema": "Pflegepraxis",
+   "frage": "Zu welchen Zeitpunkten wird der APGAR-Score beim Neugeborenen erhoben?",
+   "optionen": [
+    "Nach 1, 5 und 10 Min.",
+    "Nach 2, 4 und 6 Min.",
+    "Nur direkt nach der Geburt",
+    "Nach 1 und 24 Std."
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Nach 1, 5 und 10 Min. ✅\n\nNach 1, 5 und 10 Minuten: Herzfrequenz, Atmung, Muskeltonus, Reflexe, Hautfarbe (je 0–2 Punkte).",
+   "gestellt_am": null
+  },
+  {
+   "id": 115,
+   "thema": "Kommunikation",
+   "frage": "Auf wen geht die Validation bei Menschen mit Demenz zurück?",
+   "optionen": [
+    "Dorothea Orem",
+    "Monika Krohwinkel",
+    "Erwin Böhm",
+    "Naomi Feil"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Naomi Feil ✅\n\nValidation: Gefühle wahrnehmen und wertschätzen, statt zu korrigieren. Böhm = psychobiografisches Modell.",
+   "gestellt_am": null
+  },
+  {
+   "id": 116,
+   "thema": "Kommunikation",
+   "frage": "Welche Frage solltest du bei Menschen mit Demenz eher vermeiden?",
+   "optionen": [
+    "„Warum haben Sie das gemacht?“",
+    "„Möchten Sie Tee oder Kaffee?“",
+    "„Haben Sie Schmerzen?“",
+    "„Darf ich Ihnen helfen?“"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: „Warum haben Sie das gemacht?“ ✅\n\n„Warum“-Fragen überfordern und wirken vorwurfsvoll. Besser: kurze, geschlossene Fragen und Gefühle aufgreifen.",
+   "gestellt_am": null
+  },
+  {
+   "id": 117,
+   "thema": "Kommunikation",
+   "frage": "Was gehört zum aktiven Zuhören?",
+   "optionen": [
+    "Sofort Lösungen vorschlagen",
+    "Paraphrasieren – mit eigenen Worten wiederholen",
+    "Nebenbei dokumentieren",
+    "Eigene Erfahrungen erzählen"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Paraphrasieren – mit eigenen Worten wiederholen ✅\n\nAktiv zuhören: Blickkontakt, nachfragen, paraphrasieren, Gefühle spiegeln – erst verstehen, dann handeln.",
+   "gestellt_am": null
+  },
+  {
+   "id": 118,
+   "thema": "Kommunikation",
+   "frage": "Wofür steht das „S“ bei der SBAR-Übergabe?",
+   "optionen": [
+    "Symptome",
+    "Sicherheit",
+    "Situation",
+    "Sättigung"
+   ],
+   "richtig": 2,
+   "aufloesung": "Auflösung: Situation ✅\n\nSituation, Background (Hintergrund), Assessment (Einschätzung), Recommendation (Empfehlung).",
+   "gestellt_am": null
+  },
+  {
+   "id": 119,
+   "thema": "Pflegemodelle",
+   "frage": "Wer hat das Modell der fördernden Prozesspflege mit den AEDL entwickelt?",
+   "optionen": [
+    "Nancy Roper",
+    "Liliane Juchli",
+    "Virginia Henderson",
+    "Monika Krohwinkel"
+   ],
+   "richtig": 3,
+   "aufloesung": "Auflösung: Monika Krohwinkel ✅\n\nKrohwinkel: 13 AEDL (heute ABEDL). Roper/Logan/Tierney: 12 AL. Juchli: 12 ATL.",
+   "gestellt_am": null
+  },
+  {
+   "id": 120,
+   "thema": "Pflegemodelle",
+   "frage": "Wer hat die 12 ATL im deutschsprachigen Raum geprägt?",
+   "optionen": [
+    "Liliane Juchli",
+    "Monika Krohwinkel",
+    "Dorothea Orem",
+    "Hildegard Peplau"
+   ],
+   "richtig": 0,
+   "aufloesung": "Auflösung: Liliane Juchli ✅\n\nLiliane Juchli entwickelte die 12 Aktivitäten des täglichen Lebens (ATL).",
+   "gestellt_am": null
+  },
+  {
+   "id": 121,
+   "thema": "Pflegemodelle",
+   "frage": "Wofür ist Dorothea Orem bekannt?",
+   "optionen": [
+    "Validation",
+    "Selbstpflegedefizit-Theorie",
+    "Psychobiografisches Modell",
+    "Basale Stimulation"
+   ],
+   "richtig": 1,
+   "aufloesung": "Auflösung: Selbstpflegedefizit-Theorie ✅\n\nPflege setzt dort an, wo Menschen ihre Selbstpflege nicht mehr ausreichend leisten können.",
+   "gestellt_am": null
+  }
+ ]
+}
