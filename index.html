@@ -24460,5 +24460,138 @@ window.renderLiveUsers=function(start){
   setInterval(showNav,2000); setTimeout(showNav,500);
 })();
 </script>
+<script>
+/* ── Intensiv-Rechner: RASS · BPS · Horowitz (2026-10-11) ─────────────────────
+   Interaktive Rechner oben im Scores-Screen. Additiv: wrappt renderScores(),
+   berührt SCORES-Daten und andere Screens NICHT. Kein neuer pl_*-Key.
+   Beta: nur für Admin sichtbar, bis PL_ICU_PUBLIC=true. */
+(function(){
+  var PL_ICU_PUBLIC=false;
+  function sichtbar(){ if(PL_ICU_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  var tab='rass', rass=null, bps=[0,0,0], hz={pao2:'',fio2:'',einheit:'mmHg'};
+  var RASS=[
+    [4,'Streitlustig','Offen aggressiv oder gewalttätig, unmittelbare Gefahr für das Personal'],
+    [3,'Sehr agitiert','Zieht oder entfernt Schläuche/Katheter, aggressiv'],
+    [2,'Agitiert','Häufige ungezielte Bewegungen, kämpft gegen das Beatmungsgerät'],
+    [1,'Unruhig','Ängstlich, Bewegungen aber nicht aggressiv oder heftig'],
+    [0,'Wach und ruhig','Aufmerksam, ruhig'],
+    [-1,'Schläfrig','Nicht ganz wach, bleibt bei Ansprache wach: Augenöffnen + Blickkontakt > 10 s'],
+    [-2,'Leichte Sedierung','Erwacht kurz bei Ansprache: Blickkontakt < 10 s'],
+    [-3,'Mäßige Sedierung','Bewegung oder Augenöffnen bei Ansprache, aber kein Blickkontakt'],
+    [-4,'Tiefe Sedierung','Keine Reaktion auf Ansprache, aber Bewegung/Augenöffnen auf körperlichen Reiz'],
+    [-5,'Nicht erweckbar','Keine Reaktion auf Ansprache oder körperlichen Reiz']
+  ];
+  var BPS=[
+    ['Gesichtsausdruck',['entspannt','teilweise angespannt (z. B. Brauen gesenkt)','stark angespannt (z. B. Lider zusammengekniffen)','Grimassieren']],
+    ['Obere Extremitäten',['keine Bewegung','teilweise Beugung','vollständige Beugung mit Fingerbeugung','ständig angezogen']],
+    ['Adaptation an die Beatmung',['toleriert die Beatmung','hustet, toleriert aber meistens','kämpft gegen das Beatmungsgerät','kontrollierte Beatmung nicht möglich']]
+  ];
+  var C={card:'background:rgba(255,255,255,.085);border:1px solid rgba(var(--accent-rgb),.3);border-radius:16px;padding:16px;margin-bottom:14px',
+    t:'font-size:12.5px;color:#ddf0fb;line-height:1.45', s:'font-size:11px;color:#9aabc0;line-height:1.45'};
+  function esc(x){ return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function box(farbe,titel,text){ return '<div style="margin-top:12px;border-radius:12px;padding:12px;background:'+farbe+'1f;border:1px solid '+farbe+'66"><div style="font-size:14px;font-weight:800;color:#e0f2fe;margin-bottom:4px">'+titel+'</div><div style="'+C.t+'">'+text+'</div></div>'; }
+  function btn(on,farbe){ return 'display:block;width:100%;text-align:left;font-family:inherit;cursor:pointer;border-radius:10px;padding:9px 11px;margin-bottom:6px;border:1px solid '+(on?farbe:'rgba(255,255,255,.14)')+';background:'+(on?farbe+'2e':'rgba(255,255,255,.04)'); }
+
+  function rassHtml(){
+    var h='<div style="'+C.s+';margin-bottom:10px">1. Beobachten → 2. Mit Namen ansprechen, Augen öffnen lassen → 3. Erst ohne Reaktion: körperlicher Reiz (Schulter rütteln). Dann den passenden Wert antippen.</div>';
+    RASS.forEach(function(r){
+      var on=rass===r[0], f=r[0]>0?'#f87171':(r[0]===0?'#34d399':'#a78bfa');
+      h+='<button data-rass="'+r[0]+'" style="'+btn(on,f)+'"><span style="font-weight:800;color:'+f+';display:inline-block;min-width:30px">'+(r[0]>0?'+':'')+r[0]+'</span><span style="font-weight:700;color:#e0f2fe;font-size:12.5px">'+r[1]+'</span><div style="'+C.s+';margin:2px 0 0 30px">'+r[2]+'</div></button>';
+    });
+    if(rass!==null){
+      var t, f;
+      if(rass>=2){ f='#f87171'; t='Agitation – Gefahr der Selbstgefährdung. Ursache suchen (Schmerz? Delir? Hypoxie? volle Blase?), Arzt informieren, Sicherheit herstellen.'; }
+      else if(rass===1){ f='#fbbf24'; t='Unruhe – Ursachen prüfen, Schmerz mit BPS/NRS erfassen, beruhigen, Orientierung geben.'; }
+      else if(rass>=-1){ f='#34d399'; t='Meist im Zielbereich (häufig RASS 0 bis −1, sofern nicht anders angeordnet). Delir-Screening mit CAM-ICU möglich.'; }
+      else if(rass>=-3){ f='#a78bfa'; t='Sedierung – mit dem ärztlich angeordneten Ziel-RASS vergleichen. CAM-ICU ist ab RASS −3 noch anwendbar.'; }
+      else { f='#818cf8'; t='Tiefe Sedierung / nicht erweckbar – nur bei ausdrücklicher Anordnung gewollt. Sonst Arzt informieren. CAM-ICU nicht anwendbar (RASS −4/−5).'; }
+      h+=box(f,'RASS '+(rass>0?'+':'')+rass,t);
+    }
+    return h;
+  }
+  function bpsHtml(){
+    var h='<div style="'+C.s+';margin-bottom:10px">Für intubierte, beatmete Patienten, die sich nicht selbst äußern können. Pro Bereich einen Wert wählen.</div>';
+    BPS.forEach(function(it,i){
+      h+='<div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin:10px 0 6px">'+it[0]+'</div>';
+      it[1].forEach(function(txt,j){ var on=bps[i]===j+1; h+='<button data-bps="'+i+':'+(j+1)+'" style="'+btn(on,'#38bdf8')+'"><span style="font-weight:800;color:#38bdf8;display:inline-block;min-width:22px">'+(j+1)+'</span><span style="'+C.t+'">'+txt+'</span></button>'; });
+    });
+    if(bps[0]&&bps[1]&&bps[2]){
+      var s=bps[0]+bps[1]+bps[2], f, t;
+      if(s===3){ f='#34d399'; t='Kein Hinweis auf Schmerz. Regelmäßig weiter erfassen.'; }
+      else if(s<=5){ f='#fbbf24'; t='Leichte Schmerzzeichen – beobachten, Ursachen (Lagerung, Absaugen, Tubus) prüfen, nach Maßnahmen erneut erfassen.'; }
+      else { f='#f87171'; t='Behandlungsbedürftiger Schmerz (BPS ≥ 6). Analgesie nach ärztlicher Anordnung, Arzt informieren, Wirkung nach Gabe erneut mit BPS kontrollieren.'; }
+      h+=box(f,'BPS '+s+' von 12',t+'<div style="'+C.s+';margin-top:6px">Merke: Analgesie vor Sedierung. Nicht intubiert? Dann die BPS-NI (Lautäußerung statt Beatmung) verwenden.</div>');
+    } else h+='<div style="'+C.s+';margin-top:8px">Noch '+(3-(bps[0]?1:0)-(bps[1]?1:0)-(bps[2]?1:0))+' Bereich(e) offen.</div>';
+    return h;
+  }
+  function zahl(v){ v=String(v||'').replace(',','.').trim(); var n=parseFloat(v); return isFinite(n)?n:NaN; }
+  function hzHtml(){
+    var inp='width:100%;box-sizing:border-box;font-family:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.2);color:#e0f2fe';
+    var h='<div style="'+C.s+';margin-bottom:10px">Oxygenierungsindex = paO₂ ÷ FiO₂. Werte aus der arteriellen BGA.</div>'
+      +'<div style="display:flex;gap:6px;margin-bottom:10px">'+['mmHg','kPa'].map(function(u){ var on=hz.einheit===u; return '<button data-hz-e="'+u+'" style="flex:1;font-family:inherit;cursor:pointer;border-radius:20px;padding:6px;font-size:12px;font-weight:700;border:1px solid '+(on?'var(--accent)':'rgba(255,255,255,.2)')+';background:'+(on?'var(--accent)':'transparent')+';color:'+(on?'#06121f':'#cbd5e1')+'">paO₂ in '+u+'</button>'; }).join('')+'</div>'
+      +'<label style="'+C.s+'">paO₂ ('+hz.einheit+')</label><input id="icu-hz-p" inputmode="decimal" placeholder="'+(hz.einheit==='kPa'?'z. B. 10,7':'z. B. 80')+'" value="'+esc(hz.pao2)+'" style="'+inp+';margin:4px 0 10px">'
+      +'<label style="'+C.s+'">FiO₂ (in % oder als Dezimalzahl)</label><input id="icu-hz-f" inputmode="decimal" placeholder="z. B. 40 oder 0,4" value="'+esc(hz.fio2)+'" style="'+inp+';margin-top:4px">'
+      +'<div id="icu-hz-out"></div>';
+    return h;
+  }
+  function hzRechnen(){
+    var out=document.getElementById('icu-hz-out'); if(!out) return;
+    var p=zahl(hz.pao2), f=zahl(hz.fio2);
+    if(!isFinite(p)||!isFinite(f)||p<=0||f<=0){ out.innerHTML=''; return; }
+    if(f>1) f=f/100;
+    if(f<0.21||f>1){ out.innerHTML=box('#fbbf24','FiO₂ prüfen','FiO₂ muss zwischen 21 % (0,21) und 100 % (1,0) liegen.'); return; }
+    var mm=hz.einheit==='kPa'?p*7.50062:p, q=Math.round(mm/f), fa, t;
+    if(q>400){ fa='#34d399'; t='Normale Oxygenierung (gesunde Lunge etwa 400–500).'; }
+    else if(q>300){ fa='#a3e635'; t='Leicht eingeschränkte Oxygenierung.'; }
+    else if(q>200){ fa='#fbbf24'; t='Eingeschränkt – entspricht bei passendem Krankheitsbild einem <b>leichten ARDS</b> (200–300).'; }
+    else if(q>100){ fa='#fb923c'; t='Deutlich eingeschränkt – entspricht einem <b>moderaten ARDS</b> (100–200).'; }
+    else { fa='#f87171'; t='Schwer eingeschränkt – entspricht einem <b>schweren ARDS</b> (≤ 100).'; }
+    out.innerHTML=box(fa,'Horowitz-Index '+q+' mmHg',t+'<div style="'+C.s+';margin-top:6px">'+(hz.einheit==='kPa'?'Umgerechnet: '+mm.toFixed(0)+' mmHg ÷ '+f.toFixed(2).replace('.',',')+'. ':'')+'ARDS-Einteilung (Berlin) nur bei PEEP ≥ 5 cmH₂O, akutem Beginn und beidseitigen Infiltraten, die nicht kardial erklärbar sind – die Diagnose stellt der Arzt.</div>');
+  }
+
+  function render(){
+    var root=document.getElementById('icu-rechner'); if(!root) return;
+    if(!sichtbar()){ root.style.display='none'; root.innerHTML=''; return; }
+    root.style.display='';
+    var tabs=[['rass','RASS'],['bps','BPS'],['hz','Horowitz']];
+    var body=tab==='rass'?rassHtml():tab==='bps'?bpsHtml():hzHtml();
+    root.innerHTML='<div style="'+C.card+'">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:20px">🧮</span><div style="font-family:\'DM Serif Display\',serif;font-size:17px;color:#e0f2fe">Intensiv-Rechner</div>'+(PL_ICU_PUBLIC?'':'<span style="margin-left:auto;font-size:10px;font-weight:800;color:#fbbf24;border:1px solid #fbbf2466;border-radius:20px;padding:2px 8px">NUR ADMIN</span>')+'</div>'
+      +'<div style="'+C.s+';margin-bottom:12px">Sedierung, Schmerz bei Beatmung und Oxygenierung – direkt am Bett auswerten.</div>'
+      +'<div style="display:flex;gap:6px;margin-bottom:12px">'+tabs.map(function(x){ var on=tab===x[0]; return '<button data-icu-tab="'+x[0]+'" style="flex:1;font-family:inherit;cursor:pointer;border-radius:20px;padding:7px 4px;font-size:12px;font-weight:800;border:1px solid '+(on?'var(--accent)':'rgba(var(--accent-rgb),.3)')+';background:'+(on?'var(--accent)':'rgba(var(--accent-rgb),.08)')+';color:'+(on?'#06121f':'var(--accent)')+'">'+x[1]+'</button>'; }).join('')+'</div>'
+      +body
+      +'<div style="'+C.s+';margin-top:12px;opacity:.85">Lernhilfe – keine Therapieentscheidung. Zielwerte und Maßnahmen nach ärztlicher Anordnung und Klinikstandard.</div></div>';
+    if(tab==='hz') hzRechnen();
+  }
+  function ensure(){
+    var tabs=document.getElementById('scores-tabs'); if(!tabs) return false;
+    if(!document.getElementById('icu-rechner')){
+      var d=document.createElement('div'); d.id='icu-rechner';
+      tabs.parentNode.insertBefore(d,tabs);
+      d.addEventListener('click',function(e){
+        var b=e.target.closest('button'); if(!b) return;
+        if(b.hasAttribute('data-icu-tab')){ tab=b.getAttribute('data-icu-tab'); render(); }
+        else if(b.hasAttribute('data-rass')){ rass=parseInt(b.getAttribute('data-rass'),10); render(); }
+        else if(b.hasAttribute('data-bps')){ var p=b.getAttribute('data-bps').split(':'); bps[+p[0]]=+p[1]; render(); }
+        else if(b.hasAttribute('data-hz-e')){ hz.einheit=b.getAttribute('data-hz-e'); render(); }
+      });
+      d.addEventListener('input',function(e){
+        if(e.target.id==='icu-hz-p') hz.pao2=e.target.value;
+        else if(e.target.id==='icu-hz-f') hz.fio2=e.target.value;
+        else return;
+        hzRechnen();
+      });
+    }
+    return true;
+  }
+  try{
+    var orig=window.renderScores;
+    if(typeof orig==='function'){
+      window.renderScores=function(){ var r=orig.apply(this,arguments); try{ if(ensure()) render(); }catch(e){} return r; };
+    }
+  }catch(e){}
+  window.plIcuRechner={render:function(){ if(ensure()) render(); }};
+})();
+</script>
 </body>
 </html>
