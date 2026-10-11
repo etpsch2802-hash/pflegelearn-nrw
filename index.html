@@ -24602,7 +24602,7 @@ window.renderLiveUsers=function(start){
    Kein neuer pl_*-Key (PL_NEU-Karte nutzt pl_neu_geoeffnet).
    Beta: nur für Admin sichtbar, bis PL_WA_PUBLIC=true. */
 (function(){
-  var PL_WA_PUBLIC=false;
+  var PL_WA_PUBLIC=true;
   var URL='https://whatsapp.com/channel/0029Vb8hNkdDTkK5OxLzKM2O';
   function sichtbar(){ if(PL_WA_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function oeffnen(){ try{ var w=window.open(URL,'_blank','noopener'); if(!w) location.href=URL; }catch(e){ location.href=URL; } }
