@@ -23428,7 +23428,7 @@ window.renderLiveUsers=function(start){
       var pct=(r&&r.pct)||{}, n=(r&&r.n)||0, woche=r&&r.scope==='woche';
       var mine=pct[me]||0, head;
       if(n<=1) head='Du bist heute die erste Meldung. Schau später nochmal rein.';
-      else head=(woche?'Diese Woche':'Heute')+' sind <b>'+mine+' %</b> der Azubis '+(me==='SCHULE'||me==='FREI'?'':'im ')+ST[me].s+'. Du bist nicht allein.';
+      else head=(woche?'Diese Woche':'Heute')+(me==='FREI'?' haben':' sind')+' <b>'+mine+' %</b> der Azubis '+(me==='SCHULE'||me==='FREI'?'':'im ')+ST[me].s+'. Du bist nicht allein.';
       var bars=Object.keys(ST).map(function(k){ var p=pct[k]||0; return '<div class="plc-bar'+(k===me?' me':'')+'"><b>'+ST[k].e+' '+ST[k].l+'</b><i><span style="width:'+p+'%"></span></i><em>'+p+' %</em></div>'; }).join('');
       box.innerHTML='<div class="plc-card"><div class="plc-h">'+ST[me].e+' Heute: '+ST[me].l+'</div><div class="plc-sub">'+head+'</div>'+bars+'<button class="plc-link" id="plc-radar-edit">Status ändern</button></div>';
       document.getElementById('plc-radar-edit').onclick=openSheet;
