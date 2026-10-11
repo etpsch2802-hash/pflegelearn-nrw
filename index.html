@@ -24595,5 +24595,56 @@ window.renderLiveUsers=function(start){
   window.plIcuRechner={render:function(){ if(ensure()) render(); }};
 })();
 </script>
+<script>
+/* ── WhatsApp-Kanal prominenter (2026-10-11) ─────────────────────────────────
+   1) Karte in „Neu & bald in PLAN“ (Startseite), 2) Hinweis unter dem Quiz-Ergebnis.
+   Additiv: wrappt plNeuRender() und showResult(), berührt deren Logik NICHT.
+   Kein neuer pl_*-Key (PL_NEU-Karte nutzt pl_neu_geoeffnet).
+   Beta: nur für Admin sichtbar, bis PL_WA_PUBLIC=true. */
+(function(){
+  var PL_WA_PUBLIC=false;
+  var URL='https://whatsapp.com/channel/0029Vb8hNkdDTkK5OxLzKM2O';
+  function sichtbar(){ if(PL_WA_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function oeffnen(){ try{ var w=window.open(URL,'_blank','noopener'); if(!w) location.href=URL; }catch(e){ location.href=URL; } }
+  window.plWaKanalOeffnen=oeffnen;
+  // 1) Startseite: PL_NEU-Karte
+  try{
+    var origNeu=window.plNeuRender;
+    if(typeof origNeu==='function'){
+      window.plNeuRender=function(){
+        try{
+          var arr=window.PL_NEU||[], idx=-1;
+          for(var i=0;i<arr.length;i++){ if(arr[i].id==='whatsapp'){ idx=i; break; } }
+          if(sichtbar() && idx<0) arr.unshift({ id:'whatsapp', tag:'neu', ziel:oeffnen, titel:'💬 WhatsApp-Kanal', sub:'Prüfungsfragen zum Mitraten & Tipps vom Fachpfleger', datum:'2026-10' });
+          if(!sichtbar() && idx>=0) arr.splice(idx,1);
+        }catch(e){}
+        return origNeu.apply(this,arguments);
+      };
+    }
+  }catch(e){}
+  // 2) Quiz-Ergebnis: Hinweis unter den Buttons
+  try{
+    var origRes=window.showResult;
+    if(typeof origRes==='function'){
+      window.showResult=function(){
+        var r=origRes.apply(this,arguments);
+        try{
+          var wrap=document.querySelector('#screen-result .result-wrap'); if(!wrap) return r;
+          var d=document.getElementById('pl-wa-result');
+          if(!sichtbar()){ if(d) d.style.display='none'; return r; }
+          if(!d){
+            d=document.createElement('button'); d.id='pl-wa-result'; d.type='button'; d.onclick=oeffnen;
+            d.style.cssText='width:100%;margin-top:14px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;font-family:inherit;background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.38);border-radius:14px;padding:12px 14px';
+            d.innerHTML='<span style="font-size:24px;line-height:1">💬</span><span style="flex:1"><span style="display:block;font-size:13.5px;font-weight:800;color:#e2e8f0">Lust auf mehr Fragen?</span><span style="display:block;font-size:12px;color:#a3bcd0;margin-top:2px">Prüfungsfragen & Tipps im WhatsApp-Kanal</span></span><span style="color:#25d366;font-size:13px;font-weight:800;white-space:nowrap">Folgen ›</span>';
+            wrap.appendChild(d);
+          }
+          d.style.display='flex';
+        }catch(e){}
+        return r;
+      };
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
