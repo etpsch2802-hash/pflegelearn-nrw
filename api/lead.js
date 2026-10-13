@@ -41,7 +41,9 @@ const PAKETE = {
   dekubitus: { file: 'PLAN-NRW_Dekubitus-Spickzettel.pdf', titel: 'Dekubitus-Spickzettel', subject: 'Dein Dekubitus-Spickzettel ist da',
     text: 'Braden-Skala, Kategorien 1–4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung. Kompakt nach DNQP.' },
   demenz: { file: 'PLAN-NRW_Demenzkarte.pdf', titel: 'Demenzkarte', subject: 'Deine Demenzkarte ist da',
-    text: 'Alzheimer, vaskul&auml;re, Lewy-K&ouml;rper- und frontotemporale Demenz: Ursache, Leitsymptome, Verlauf, Pflege und Examens-Fallen &ndash; plus Abgrenzung zum Delir.' }
+    text: 'Alzheimer, vaskul&auml;re, Lewy-K&ouml;rper- und frontotemporale Demenz: Ursache, Leitsymptome, Verlauf, Pflege und Examens-Fallen &ndash; plus Abgrenzung zum Delir.' },
+  wunde: { file: 'PLAN-NRW_Wunddoku-Spickzettel.pdf', titel: 'Wunddoku-Spickzettel', subject: 'Dein Wunddoku-Spickzettel ist da',
+    text: 'Wunden sicher beschreiben, messen und dokumentieren: 12 Doku-Kriterien, Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung.' }
 };
 
 function htmlSeite(titel, text) {
