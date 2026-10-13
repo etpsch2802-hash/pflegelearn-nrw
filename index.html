@@ -24646,5 +24646,148 @@ window.renderLiveUsers=function(start){
   }catch(e){}
 })();
 </script>
+<script>
+/* ── EXAMEN-KOMPASS: Ablauf der staatlichen Prüfung (2026-10-13) ─────────────
+   Wie läuft das Examen Pflegefachfrau/-mann ab? Schriftlich, mündlich, praktisch,
+   Fallvorstellung, Reflexionsgespräch, typische Fehler, Prüfungstag.
+   Grundlage: PflAPrV §§ 13–16. Eigenständiger Inhalt (keine Übernahme fremder Schemata).
+   Einstieg: Kachel im Screen „Üben & prüfen“ + Karte „Neu in PLAN“.
+   Additiv & isoliert, kein neuer pl_*-Key. Beta: nur Admin, bis PL_EXK_PUBLIC=true. */
+(function(){
+  var PL_EXK_PUBLIC=false;
+  function sichtbar(){ if(PL_EXK_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  var T=[
+    { id:'ueberblick', icon:'🧭', titel:'Das Examen im Überblick', kurz:'3 Teile, Vornote, Bestehen',
+      bloecke:[
+        ['Drei Prüfungsteile', ['Schriftlich: 3 Aufsichtsarbeiten à 120 Minuten','Mündlich: 30–45 Minuten anhand einer komplexen Fallsituation','Praktisch: in einer echten Pflegesituation mit mindestens zwei zu pflegenden Menschen']],
+        ['Die Vornote zählt mit', ['Für jeden Teil gibt es eine Vornote aus deinen Jahreszeugnissen.','Sie fließt mit 25 % in die Note des jeweiligen Prüfungsteils ein.','Du erfährst sie spätestens 3 Werktage vor dem ersten Prüfungsteil.']],
+        ['Wann hast du bestanden?', ['Jeder Teil muss mindestens „ausreichend“ sein.','Im schriftlichen Teil muss jede der drei Arbeiten mindestens „ausreichend“ sein.','Jede Leistung bewerten zwei Fachprüfende, die Note ist der Mittelwert.']]
+      ] },
+    { id:'schriftlich', icon:'📝', titel:'Schriftliche Prüfung', kurz:'3 × 120 Minuten, fallbezogen',
+      bloecke:[
+        ['Aufbau', ['Drei Aufsichtsarbeiten mit fallbezogenen Aufgaben, je 120 Minuten.','In der Regel an drei aufeinanderfolgenden Werktagen.','Die Fälle unterscheiden sich in Altersstufe, Umfeld und Versorgungsbereich.']],
+        ['Die drei Themenbereiche', ['1. Pflegeprozess bei akuten und dauerhaften Pflegesituationen (Lebenswelt, Autonomie, Entwicklung)','2. Pflegeprozess bei gesundheitlichen Problemlagen inkl. Prävention, Gesundheitsförderung, Beratung – fachlich begründet','3. Pflegeprozess in kritischen und krisenhaften Situationen inkl. ärztlicher Anordnungen und ethischer Entscheidungen']],
+        ['So holst du Punkte', ['Den Fall zweimal lesen und Schlüsselinfos markieren (Diagnosen, Ressourcen, Risiken).','Immer begründen: „Weil …“ – mit Fachwissen oder Expertenstandard.','Pflegeprozess-Sprache nutzen: Problem, Ressource, Ziel (SMART), Maßnahme, Evaluation.','Zeit einteilen: lieber alle Aufgaben solide als eine perfekt.']]
+      ], ueben:[['Prüfungssimulator schriftlich','examen']] },
+    { id:'muendlich', icon:'🎙️', titel:'Mündliche Prüfung', kurz:'30–45 Min., Fall aus anderem Bereich',
+      bloecke:[
+        ['Aufbau', ['Einzeln oder zu zweit, ca. 30–45 Minuten pro Person.','Vorher bekommst du eine beaufsichtigte Vorbereitungszeit.','Der Fall stammt aus einem anderen Versorgungsbereich und einer anderen Altersstufe als deine praktische Prüfung.']],
+        ['Worum es geht', ['Zusammenarbeit im Team und mit anderen Berufsgruppen','Rechtliche Grundlagen und ethische Leitlinien','Pflegewissenschaft und berufliches Selbstverständnis – deine Rolle als Pflegefachperson']],
+        ['So überzeugst du', ['In der Vorbereitung eine Struktur notieren: Situation – Problem – Handeln – Begründung.','Fachbegriffe nutzen, aber verständlich erklären.','Ethische Fragen abwägen statt eine „richtige“ Antwort zu raten: Was spricht dafür, was dagegen?','Wenn du etwas nicht weißt: laut denken und herleiten statt schweigen.']]
+      ], ueben:[['Mündliche KI-Prüfung','ki'],['Fachgespräch (KI)','fachgespraech']] },
+    { id:'praktisch', icon:'🩺', titel:'Praktische Prüfung', kurz:'Echte Pflegesituation, 4 Bausteine',
+      bloecke:[
+        ['Rahmen', ['In einer realen, komplexen Pflegesituation – möglichst im Bereich deines Vertiefungseinsatzes.','Du versorgst mindestens zwei Menschen, davon einer mit erhöhtem Pflegebedarf.','Im Mittelpunkt stehen die Vorbehaltsaufgaben: Pflegebedarf erheben, Pflegeprozess planen, steuern und evaluieren.']],
+        ['Die 4 Bausteine', ['1. Vorbereitungsteil: Du erstellst vorab unter Aufsicht deinen Pflegeplan.','2. Fallvorstellung: höchstens 20 Minuten.','3. Durchführung der geplanten und der situativ nötigen Pflegemaßnahmen.','4. Reflexionsgespräch: höchstens 20 Minuten.']],
+        ['Dauer', ['Ohne Vorbereitungsteil höchstens 240 Minuten inklusive Reflexionsgespräch.','Eine organisatorische Unterbrechung von höchstens einem Werktag ist möglich.']]
+      ] },
+    { id:'fallvorstellung', icon:'🗣️', titel:'Fallvorstellung strukturieren', kurz:'Roter Faden für max. 20 Minuten',
+      bloecke:[
+        ['Roter Faden', ['Person: Name/Alter, Lebenssituation, wichtige Biografie, Diagnosen.','Aktuelle Situation: Warum ist die Person hier, was hat sich verändert?','Pflegebedarf: wichtigste Probleme UND Ressourcen, Risiken (z. B. Dekubitus, Sturz).','Ziele & Maßnahmen: was du heute tust – und warum (Begründung, Standard).','Ausblick: woran du den Erfolg erkennst, was bei Abweichung dein Plan B ist.']],
+        ['Tipps', ['Nicht vom Blatt ablesen – Stichpunkte reichen.','Prioritäten setzen: das Wichtigste zuerst, nicht alles vollständig.','Die Person als Mensch vorstellen, nicht nur als Diagnose.']]
+      ] },
+    { id:'reflexion', icon:'🔍', titel:'Reflexionsgespräch', kurz:'Was lief, was würdest du ändern?',
+      bloecke:[
+        ['Typische Fragen', ['Was ist dir gut gelungen – und woran machst du das fest?','Wo bist du vom Plan abgewichen und warum?','Was würdest du beim nächsten Mal anders machen?','Wie hast du die Perspektive der zu pflegenden Person einbezogen?']],
+        ['So antwortest du', ['Ehrlich und selbstkritisch – Fehler erkennen zählt mehr als perfekt wirken.','Abweichungen fachlich begründen: Situation hat sich geändert → du hast angepasst.','Konkrete Verbesserung nennen statt „ich würde besser aufpassen“.']]
+      ] },
+    { id:'fehler', icon:'⚠️', titel:'10 typische Fehler im Praxis-Examen', kurz:'Und wie du sie vermeidest',
+      bloecke:[
+        ['Vermeide das', ['1. Händedesinfektion vergessen – vor und nach jedem Kontakt.','2. Identität und Einverständnis nicht geprüft.','3. Dich nicht vorgestellt oder nicht erklärt, was du tust.','4. Den Prüfer statt die zu pflegende Person ansprechen.','5. Maßnahmen ohne Begründung durchführen.','6. Starr am Plan festhalten, obwohl sich die Situation ändert.','7. Sicherheit vergessen: Bett runter, Bremse, Klingel in Reichweite.','8. Beobachtungen (z. B. Haut, Vitalwerte) nicht ansprechen oder nicht dokumentieren.','9. Zeit schlecht eingeteilt – der zweite Patient kommt zu kurz.','10. Dokumentation und Übergabe am Ende fehlen.']]
+      ] },
+    { id:'pruefungstag', icon:'✅', titel:'Checkliste Prüfungstag', kurz:'Material, Kopf, Körper',
+      bloecke:[
+        ['Am Vortag', ['Dienstkleidung, Namensschild, Uhr mit Sekundenzeiger, Stift, Taschenlampe bereitlegen.','Pflegeplan-Unterlagen und Ausweis einpacken.','Früh schlafen – nichts Neues mehr lernen, nur kurz wiederholen.']],
+        ['Am Morgen', ['Frühstücken und trinken, auch wenn du nervös bist.','Früh da sein, kurz durchatmen.']],
+        ['Gegen Nervosität', ['Ruhig atmen: 4 Sekunden ein, 6 Sekunden aus.','Nervosität ist normal – die Prüfenden kennen das.','Bei einem Blackout: kurz innehalten, laut zusammenfassen, Schritt für Schritt weiter.']]
+      ] }
+  ];
+
+  function close(){ var o=document.getElementById('pl-exk'); if(o) o.remove(); }
+  function shell(inner){
+    close();
+    var ov=document.createElement('div'); ov.id='pl-exk';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1200;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto';
+    ov.innerHTML='<div style="background:linear-gradient(160deg,#122031,#08131f);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px;padding:20px;width:100%;max-width:480px;margin:auto">'+inner+'</div>';
+    ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
+    document.body.appendChild(ov); return ov;
+  }
+  var KOPF='<div style="font-size:11px;color:var(--accent);font-weight:800;letter-spacing:1px">EXAMEN-KOMPASS</div>';
+  var ZU='<button data-exk-close style="background:none;border:none;color:#8ba0b4;font-size:22px;cursor:pointer;line-height:1">×</button>';
+  var QUELLE='<div style="font-size:10.5px;color:#7d93a8;line-height:1.5;margin-top:14px">Grundlage: Pflegeberufe-Ausbildungs- und Prüfungsverordnung (PflAPrV) §§ 13–16, Pflegefachfrau/-mann. Organisation und Termine regelt deine Pflegeschule bzw. der Prüfungsausschuss.</div>';
+
+  function liste(){
+    var rows=T.map(function(t){
+      return '<button data-exk-open="'+t.id+'" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 13px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:inherit">'
+        +'<span style="font-size:22px">'+t.icon+'</span><span style="flex:1"><span style="display:block;font-size:13.5px;color:#e0f2fe;font-weight:700">'+esc(t.titel)+'</span><span style="display:block;font-size:11.5px;color:#8ba0b4;margin-top:2px">'+esc(t.kurz)+'</span></span><span style="color:var(--accent);font-size:18px">›</span></button>';
+    }).join('');
+    var ov=shell('<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div>'+KOPF+'<div style="font-size:19px;font-weight:800;color:#fff;margin-top:3px">So läuft dein Examen ab</div><div style="font-size:12px;color:#9fb6c9;margin-top:3px">Schriftlich, mündlich, praktisch – Schritt für Schritt</div></div>'+ZU+'</div>'+rows+QUELLE);
+    ov.querySelector('[data-exk-close]').onclick=close;
+    Array.prototype.forEach.call(ov.querySelectorAll('[data-exk-open]'),function(b){ b.onclick=function(){ detail(b.getAttribute('data-exk-open')); }; });
+  }
+  function ueben(u){
+    return '<div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">'+u.map(function(x){ return '<button data-exk-ueben="'+x[1]+'" style="width:100%;background:linear-gradient(135deg,rgba(var(--accent-rgb),.22),rgba(var(--accent-rgb),.08));border:1px solid rgba(var(--accent-rgb),.4);border-radius:12px;padding:12px;color:#e0f2fe;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit">▶ Jetzt üben: '+esc(x[0])+'</button>'; }).join('')+'</div>';
+  }
+  function starte(was){
+    close();
+    try{
+      if(was==='ki' && typeof openKIChooser==='function') return openKIChooser();
+      if(was==='fachgespraech' && typeof openExamPicker==='function') return openExamPicker('fachgespraech');
+      if(was==='examen' && typeof openExamenIntro==='function') return openExamenIntro();
+    }catch(e){}
+  }
+  function detail(id){
+    var t=null; for(var i=0;i<T.length;i++) if(T[i].id===id) t=T[i]; if(!t) return;
+    var body=t.bloecke.map(function(b){
+      return '<div style="margin-top:12px"><div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">'+esc(b[0])+'</div><ul style="margin:0;padding-left:18px;color:#dbe7f2;font-size:13px;line-height:1.5">'+b[1].map(function(p){ return '<li style="margin-bottom:6px">'+esc(p)+'</li>'; }).join('')+'</ul></div>';
+    }).join('');
+    var ov=shell('<div style="display:flex;justify-content:space-between;align-items:flex-start"><div>'+KOPF+'<div style="font-size:18px;font-weight:800;color:#fff;margin-top:3px">'+t.icon+' '+esc(t.titel)+'</div></div>'+ZU+'</div>'
+      +body+(t.ueben?ueben(t.ueben):'')
+      +'<button data-exk-back style="margin-top:14px;width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:11px;color:#cbd5e1;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">← Alle Themen</button>'+QUELLE);
+    ov.querySelector('[data-exk-close]').onclick=close;
+    ov.querySelector('[data-exk-back]').onclick=liste;
+    Array.prototype.forEach.call(ov.querySelectorAll('[data-exk-ueben]'),function(b){ b.onclick=function(){ starte(b.getAttribute('data-exk-ueben')); }; });
+  }
+  window.plExamenKompass=liste;
+
+  // Einstieg 1: Kachel im Screen „Üben & prüfen“
+  function kachel(){
+    try{
+      var scr=document.getElementById('screen-ueben'); if(!scr) return;
+      var grid=scr.querySelector('div[style*="grid-template-columns"]'); if(!grid) return;
+      var k=document.getElementById('pl-exk-tile');
+      if(!sichtbar()){ if(k) k.remove(); return; }
+      if(k) return;
+      k=document.createElement('button'); k.id='pl-exk-tile'; k.type='button'; k.onclick=liste;
+      k.style.cssText='grid-column:1/-1;background:linear-gradient(135deg,rgba(var(--accent-rgb),.16),rgba(var(--accent-rgb),.05));border:1px solid rgba(var(--accent-rgb),.35);border-radius:14px;padding:15px 13px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:inherit;text-align:left';
+      k.innerHTML='<span style="font-size:24px">🧭</span><span style="flex:1"><span style="display:block;font-size:13.5px;font-weight:800;color:#e2e8f0">Examen-Kompass</span><span style="display:block;font-size:11.5px;color:#a3bcd0;margin-top:2px">So läuft deine Prüfung ab – schriftlich, mündlich, praktisch</span></span><span style="color:var(--accent);font-size:18px">›</span>';
+      grid.insertBefore(k,grid.firstChild);
+    }catch(e){}
+  }
+  try{
+    var origShow=window.showScreen;
+    if(typeof origShow==='function'){
+      window.showScreen=function(n){ var r=origShow.apply(this,arguments); if(n==='ueben') kachel(); return r; };
+    }
+  }catch(e){}
+  // Einstieg 2: Karte „Neu in PLAN“
+  try{
+    var origNeu=window.plNeuRender;
+    if(typeof origNeu==='function'){
+      window.plNeuRender=function(){
+        try{
+          var arr=window.PL_NEU||[], idx=-1;
+          for(var i=0;i<arr.length;i++){ if(arr[i].id==='examenkompass'){ idx=i; break; } }
+          if(sichtbar() && idx<0) arr.unshift({ id:'examenkompass', tag:'neu', ziel:liste, titel:'🧭 Examen-Kompass', sub:'So läuft deine Prüfung ab – mit typischen Fehlern & Checkliste', datum:'2026-10' });
+          if(!sichtbar() && idx>=0) arr.splice(idx,1);
+        }catch(e){}
+        return origNeu.apply(this,arguments);
+      };
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
