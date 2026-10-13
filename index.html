@@ -21472,6 +21472,7 @@ if (_savedLang !== 'de') {
     ['zimmerhygiene','PLAN-NRW_Zimmerhygiene-Spickzettel.pdf','🧼','Zimmerhygiene-Spickzettel','Händehygiene, Schutzausrüstung, Flächen, Isolation nach KRINKO/RKI'],
     ['dekubitus','PLAN-NRW_Dekubitus-Spickzettel.pdf','🛏️','Dekubitus-Spickzettel','Braden-Skala, Kategorien 1–4, Prophylaxe-Maßnahmen nach DNQP'],
     ['demenz','PLAN-NRW_Demenzkarte.pdf','🧠','Demenzkarte','Die 4 Demenzformen, Vergleich, Delir-Abgrenzung, Kommunikation'],
+    ['wunde','PLAN-NRW_Wunddoku-Spickzettel.pdf','🩹','Wunddoku-Spickzettel','Messen, Wundgrund, Exsudat, TIME-Prinzip, Musterformulierung'],
   ];
   var BLOB={};   // geladene PDFs (slug -> Blob)
   function find(k){ for(var i=0;i<L.length;i++) if(L[i][0]===k) return L[i]; return null; }
@@ -21595,7 +21596,8 @@ if (_savedLang !== 'de') {
     praxiseinsatz: { t:'Praxiseinsatz-Begleiter', k:'Praxiseinsatz-Begleiter', d:'Checklisten f&uuml;r Erst-, Zwischen- und Abschlussgespr&auml;ch, Lernziele, Reflexionsbogen und Nachweis der Praxisanleitung.' },
     zimmerhygiene: { t:'Zimmerhygiene-Spickzettel', k:'Zimmerhygiene-Spickzettel', d:'H&auml;ndehygiene, Schutzausr&uuml;stung, Fl&auml;chen- und W&auml;schedesinfektion, Isolation &ndash; kompakt nach KRINKO und RKI.' },
     dekubitus: { t:'Dekubitus-Spickzettel', k:'Dekubitus-Spickzettel', d:'Braden-Skala, Kategorien 1&ndash;4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung &ndash; kompakt nach DNQP.' },
-    demenz: { t:'Demenzkarte', k:'Demenzkarte', d:'Die 4 Demenzformen im Examen: Alzheimer, vaskul&auml;r, Lewy-K&ouml;rper und frontotemporal &ndash; mit Vergleichstabelle, Abgrenzung zum Delir und Kommunikationstipps.' }
+    demenz: { t:'Demenzkarte', k:'Demenzkarte', d:'Die 4 Demenzformen im Examen: Alzheimer, vaskul&auml;r, Lewy-K&ouml;rper und frontotemporal &ndash; mit Vergleichstabelle, Abgrenzung zum Delir und Kommunikationstipps.' },
+    wunde: { t:'Wunddoku-Spickzettel', k:'Wunddoku-Spickzettel', d:'Wunden sicher beschreiben, messen und dokumentieren &ndash; Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung nach DNQP.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
@@ -24654,7 +24656,7 @@ window.renderLiveUsers=function(start){
    Einstieg: Kachel im Screen „Üben & prüfen“ + Karte „Neu in PLAN“.
    Additiv & isoliert, kein neuer pl_*-Key. Beta: nur Admin, bis PL_EXK_PUBLIC=true. */
 (function(){
-  var PL_EXK_PUBLIC=false;
+  var PL_EXK_PUBLIC=true;
   function sichtbar(){ if(PL_EXK_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 
