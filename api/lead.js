@@ -43,7 +43,9 @@ const PAKETE = {
   demenz: { file: 'PLAN-NRW_Demenzkarte.pdf', titel: 'Demenzkarte', subject: 'Deine Demenzkarte ist da',
     text: 'Alzheimer, vaskul&auml;re, Lewy-K&ouml;rper- und frontotemporale Demenz: Ursache, Leitsymptome, Verlauf, Pflege und Examens-Fallen &ndash; plus Abgrenzung zum Delir.' },
   wunde: { file: 'PLAN-NRW_Wunddoku-Spickzettel.pdf', titel: 'Wunddoku-Spickzettel', subject: 'Dein Wunddoku-Spickzettel ist da',
-    text: 'Wunden sicher beschreiben, messen und dokumentieren: 12 Doku-Kriterien, Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung.' }
+    text: 'Wunden sicher beschreiben, messen und dokumentieren: 12 Doku-Kriterien, Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung.' },
+  praxisexamen: { file: 'PLAN-NRW_Praxis-Examen-Spickzettel.pdf', titel: 'Praxis-Examen-Spickzettel', subject: 'Dein Praxis-Examen-Spickzettel ist da',
+    text: 'So l&auml;uft die praktische Pr&uuml;fung ab: 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' }
 };
 
 function htmlSeite(titel, text) {
