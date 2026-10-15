@@ -23328,7 +23328,7 @@ window.renderLiveUsers=function(start){
     FREI:{e:'🛋️',l:'Frei',s:'frei'}
   };
   /* Kern-/Zwischendienst (15.10.2026): erst nur Admin, PLC_SHIFT2_PUBLIC=true schaltet fuer alle frei */
-  var PLC_SHIFT2_PUBLIC=false;
+  var PLC_SHIFT2_PUBLIC=true;
   function stKeys(pct){ var adm=false; try{ adm=typeof isAdmin==='function'&&!!isAdmin(); }catch(e){}
     return Object.keys(ST).filter(function(k){ return !ST[k].neu||PLC_SHIFT2_PUBLIC||adm||(pct&&pct[k]>0); }); }
 
