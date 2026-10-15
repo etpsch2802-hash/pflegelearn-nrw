@@ -23320,11 +23320,17 @@ window.renderLiveUsers=function(start){
 
   var ST = {
     FRUEHDIENST:{e:'🏥',l:'Frühdienst',s:'Frühdienst'},
+    KERNDIENST:{e:'☀️',l:'Kerndienst',s:'Kerndienst',neu:1},
+    ZWISCHENDIENST:{e:'⏱️',l:'Zwischendienst',s:'Zwischendienst',neu:1},
     SPAETDIENST:{e:'🌙',l:'Spätdienst',s:'Spätdienst'},
     NACHTDIENST:{e:'🦇',l:'Nachtdienst',s:'Nachtdienst'},
     SCHULE:{e:'📚',l:'Schultag',s:'in der Schule'},
     FREI:{e:'🛋️',l:'Frei',s:'frei'}
   };
+  /* Kern-/Zwischendienst (15.10.2026): erst nur Admin, PLC_SHIFT2_PUBLIC=true schaltet fuer alle frei */
+  var PLC_SHIFT2_PUBLIC=false;
+  function stKeys(pct){ var adm=false; try{ adm=typeof isAdmin==='function'&&!!isAdmin(); }catch(e){}
+    return Object.keys(ST).filter(function(k){ return !ST[k].neu||PLC_SHIFT2_PUBLIC||adm||(pct&&pct[k]>0); }); }
 
   /* ── CSS ── */
   var css = document.createElement('style');
@@ -23333,7 +23339,7 @@ window.renderLiveUsers=function(start){
     '.plc-h{font-size:14px;font-weight:700;color:#e8f1f8;margin:0 0 4px;display:flex;align-items:center;gap:8px}',
     '.plc-sub{font-size:12px;color:#93b9d1;line-height:1.45}',
     '.plc-bar{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:7px}',
-    '.plc-bar b{width:118px;flex:none;font-weight:600;color:#c3d4e4;white-space:nowrap}',
+    '.plc-bar b{width:128px;flex:none;font-weight:600;color:#c3d4e4;white-space:nowrap}',
     '.plc-bar i{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;display:block}',
     '.plc-bar i span{display:block;height:100%;background:var(--accent);border-radius:5px;transition:width .5s}',
     '.plc-bar.me b{color:#fff}.plc-bar.me i span{background:#34d399}',
@@ -23411,7 +23417,7 @@ window.renderLiveUsers=function(start){
     var bg=document.createElement('div'); bg.className='plc-sheet-bg';
     var sh=document.createElement('div'); sh.className='plc-sheet'; sh.setAttribute('role','dialog'); sh.setAttribute('aria-label','Dein Tag heute');
     sh.innerHTML='<div class="plc-h" style="font-size:16px">Wie sieht dein Tag heute aus?</div><div class="plc-sub">Ein Tipp. Du siehst danach, wie es den anderen geht.</div><div class="plc-chips">'
-      + Object.keys(ST).map(function(k){ return '<button class="plc-chip" data-s="'+k+'">'+ST[k].e+' '+ST[k].l+'</button>'; }).join('') + '</div>';
+      + stKeys().map(function(k){ return '<button class="plc-chip" data-s="'+k+'">'+ST[k].e+' '+ST[k].l+'</button>'; }).join('') + '</div>';
     document.body.appendChild(bg); document.body.appendChild(sh);
     setTimeout(function(){ bg.classList.add('in'); sh.classList.add('in'); },20);
     function close(){ sh.classList.remove('in'); bg.classList.remove('in'); setTimeout(function(){sh.remove();bg.remove();},300); }
@@ -23433,7 +23439,7 @@ window.renderLiveUsers=function(start){
       var mine=pct[me]||0, head;
       if(n<=1) head='Du bist heute die erste Meldung. Schau später nochmal rein.';
       else head=(woche?'Diese Woche':'Heute')+(me==='FREI'?' haben':' sind')+' <b>'+mine+' %</b> der Azubis '+(me==='SCHULE'||me==='FREI'?'':'im ')+ST[me].s+'. Du bist nicht allein.';
-      var bars=Object.keys(ST).map(function(k){ var p=pct[k]||0; return '<div class="plc-bar'+(k===me?' me':'')+'"><b>'+ST[k].e+' '+ST[k].l+'</b><i><span style="width:'+p+'%"></span></i><em>'+p+' %</em></div>'; }).join('');
+      var bars=stKeys(pct).map(function(k){ var p=pct[k]||0; return '<div class="plc-bar'+(k===me?' me':'')+'"><b>'+ST[k].e+' '+ST[k].l+'</b><i><span style="width:'+p+'%"></span></i><em>'+p+' %</em></div>'; }).join('');
       box.innerHTML='<div class="plc-card"><div class="plc-h">'+ST[me].e+' Heute: '+ST[me].l+'</div><div class="plc-sub">'+head+'</div>'+bars+'<button class="plc-link" id="plc-radar-edit">Status ändern</button></div>';
       document.getElementById('plc-radar-edit').onclick=openSheet;
     }).catch(function(){ var s=box.querySelector('.plc-sub'); if(s) s.textContent='Gerade offline. Dein Status ist gespeichert.'; });
