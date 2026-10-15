@@ -16950,7 +16950,7 @@ function renderHomeStats() {
     { id:'lerntisch', tag:'neu', ziel:function(){ if(window.plcOpenLerntisch) plcOpenLerntisch(); }, titel:'Lerntisch \u2013 gemeinsam lernen', sub:'25 Minuten Fokus mit anderen, Thema des Tages, Gruppentische & Care-Packages', datum:'2026-10' },
     { id:'eigenekarten', tag:'neu', ziel:'karteikarten', titel:'Eigene Karteikarten & Favoriten', sub:'Karten selbst anlegen, Fragen merken \u2013 auf all deinen Ger\u00e4ten', datum:'2026-10' },
     { id:'sprachhilfe', tag:'neu', ziel:'quizSelect', titel:'Einfach erkl\u00e4rt & \u00dcbersetzen', sub:'Jede Quizfrage in einfachem Deutsch oder in 9 Sprachen \u2013 Fachbegriffe bleiben deutsch', datum:'2026-10' },
-    { id:'gratispdfs', tag:'neu', ziel:function(){ plPdfOpen(); }, titel:'Gratis-PDFs zum Ausdrucken', sub:'11 Lernhilfen \u2013 Reanimation, Laborwerte, Dosierungsrechnen & mehr', datum:'2026-10' },
+    { id:'gratispdfs', tag:'neu', ziel:function(){ plPdfOpen(); }, titel:'Gratis-PDFs zum Ausdrucken', sub:'16 Lernhilfen \u2013 Praxis-Examen, Demenz, Wunddoku, Reanimation & mehr', datum:'2026-10' },
     { id:'perfusorwissen', tag:'neu', ziel:function(){ openPerfusorwissen(); }, titel:'Perfusor & Infusion (ITS)', sub:'ZVK, Filter, Katecholamine \u2013 Grundlagen der Infusionstherapie', datum:'2026-09' },
     { id:'fachklausuren', tag:'neu', ziel:function(){ openFachklausuren(); }, titel:'Fachklausuren I\u2013V', sub:'Einzelklausuren je Kompetenzbereich \u2013 jetzt mehrere Fälle pro Bereich', datum:'2026-09' },
     { id:'berufseinstieg', tag:'neu', ziel:'berufseinstieg', titel:'Berufseinstieg \u2013 Erste 100 Tage',
@@ -21473,6 +21473,7 @@ if (_savedLang !== 'de') {
     ['dekubitus','PLAN-NRW_Dekubitus-Spickzettel.pdf','🛏️','Dekubitus-Spickzettel','Braden-Skala, Kategorien 1–4, Prophylaxe-Maßnahmen nach DNQP'],
     ['demenz','PLAN-NRW_Demenzkarte.pdf','🧠','Demenzkarte','Die 4 Demenzformen, Vergleich, Delir-Abgrenzung, Kommunikation'],
     ['wunde','PLAN-NRW_Wunddoku-Spickzettel.pdf','🩹','Wunddoku-Spickzettel','Messen, Wundgrund, Exsudat, TIME-Prinzip, Musterformulierung'],
+    ['praxisexamen','PLAN-NRW_Praxis-Examen-Spickzettel.pdf','🩺','Praxis-Examen-Spickzettel','Ablauf, Fallvorstellung, Reflexion, 10 Fehler, Checkliste'],
   ];
   var BLOB={};   // geladene PDFs (slug -> Blob)
   function find(k){ for(var i=0;i<L.length;i++) if(L[i][0]===k) return L[i]; return null; }
@@ -21597,7 +21598,8 @@ if (_savedLang !== 'de') {
     zimmerhygiene: { t:'Zimmerhygiene-Spickzettel', k:'Zimmerhygiene-Spickzettel', d:'H&auml;ndehygiene, Schutzausr&uuml;stung, Fl&auml;chen- und W&auml;schedesinfektion, Isolation &ndash; kompakt nach KRINKO und RKI.' },
     dekubitus: { t:'Dekubitus-Spickzettel', k:'Dekubitus-Spickzettel', d:'Braden-Skala, Kategorien 1&ndash;4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung &ndash; kompakt nach DNQP.' },
     demenz: { t:'Demenzkarte', k:'Demenzkarte', d:'Die 4 Demenzformen im Examen: Alzheimer, vaskul&auml;r, Lewy-K&ouml;rper und frontotemporal &ndash; mit Vergleichstabelle, Abgrenzung zum Delir und Kommunikationstipps.' },
-    wunde: { t:'Wunddoku-Spickzettel', k:'Wunddoku-Spickzettel', d:'Wunden sicher beschreiben, messen und dokumentieren &ndash; Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung nach DNQP.' }
+    wunde: { t:'Wunddoku-Spickzettel', k:'Wunddoku-Spickzettel', d:'Wunden sicher beschreiben, messen und dokumentieren &ndash; Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung nach DNQP.' },
+    praxisexamen: { t:'Praxis-Examen-Spickzettel', k:'Praxis-Examen-Spickzettel', d:'So l&auml;uft die praktische Pr&uuml;fung ab &ndash; 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
