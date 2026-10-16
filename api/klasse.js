@@ -25,7 +25,8 @@ function genCode(n) {
 }
 
 function sbHeaders(SB_SERVICE, extra) {
-  var h = { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE };
+  // Content-Type immer setzen: ohne ihn liest PostgREST RPC-Aufrufe (stats, fehler, live_punkt) als Text -> 404 PGRST202
+  var h = { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE, 'Content-Type': 'application/json' };
   if (extra) for (var k in extra) h[k] = extra[k];
   return h;
 }
