@@ -113,7 +113,9 @@ r = await call(lead, 'POST', { email: 'kein-mail', zweck: 'app' });
 check('Ungueltige E-Mail wird abgelehnt (400)', r.code === 400);
 r = await call(lead, 'POST', { email: 'azubi@example.com', source: 'app-pdf', zweck: 'app' });
 check('Ohne Mailversand meldet die Freischaltung keinen Erfolg (kein Fake-OK)', r.code === 502 && r.body.ok === false, r);
-routes = [{ test: u => u.includes('raw.githubusercontent.com'), reply: () => new Response(new Uint8Array([37, 80, 68, 70]), { status: 200 }) }];
+calls = [];
+routes = [{ test: u => u.includes('/storage/v1/object/authenticated/gratis-pdfs/'), reply: () => new Response(new Uint8Array([37, 80, 68, 70]), { status: 200 }) },
+          { test: u => u.includes('raw.githubusercontent.com'), reply: () => new Response('nein', { status: 404 }) }];
 r = await call(lead, 'GET', null, { pdf: 'unbekannt' });
 check('Unbekanntes PDF liefert 404', r.code === 404);
 r = await call(lead, 'GET', null, { pdf: 'demenz' });
@@ -124,6 +126,7 @@ check('Gefaelschter Freischalt-Schluessel gesperrt (401)', r.code === 401, r.cod
   const em = 'azubi@example.com', key = Buffer.from(em).toString('base64url') + '.' + createHmac('sha256', 'service-test:pdf').update(em).digest('hex').slice(0, 32);
   r = await call(lead, 'GET', null, { pdf: 'demenz', k: key });
   check('Gueltiger Freischalt-Schluessel liefert das PDF (200)', r.code === 200, r.code); }
+check('PDF kommt aus dem privaten Supabase-Speicher, nicht aus GitHub', calls.some(c => c.url.includes('/storage/v1/object/authenticated/gratis-pdfs/PLAN-NRW_Demenzkarte.pdf')) && !calls.some(c => c.url.includes('raw.githubusercontent.com')));
 
 console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
 process.exit(fail ? 1 : 0);

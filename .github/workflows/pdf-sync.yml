@@ -1,0 +1,30 @@
+name: pdf-sync
+# Laedt die Gratis-PDFs aus private/gratis-pdfs/ in den PRIVATEN Supabase-Speicher (Bucket gratis-pdfs).
+# api/lead.js liefert sie von dort nur bei bestaetigter E-Mail aus. Der Ordner wird per .vercelignore
+# NICHT auf plan-nrw.de ausgeliefert.
+on:
+  push:
+    branches: [main]
+    paths: ['private/gratis-pdfs/**', '.github/workflows/pdf-sync.yml']
+  workflow_dispatch:
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PDFs hochladen (upsert)
+        env:
+          SB_URL: https://tpgverrpznsujvzbntmj.supabase.co
+          SB_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          set -e
+          n=0
+          for f in private/gratis-pdfs/*.pdf; do
+            name=$(basename "$f")
+            code=$(curl -s -o /tmp/resp.txt -w "%{http_code}" -X POST "$SB_URL/storage/v1/object/gratis-pdfs/$name" \
+              -H "Authorization: Bearer $SB_KEY" -H "apikey: $SB_KEY" \
+              -H "Content-Type: application/pdf" -H "x-upsert: true" --data-binary @"$f")
+            if [ "$code" != "200" ]; then echo "FEHLER $name: $code $(cat /tmp/resp.txt)"; exit 1; fi
+            echo "OK $name"; n=$((n+1))
+          done
+          echo "$n PDFs synchronisiert"
