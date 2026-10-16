@@ -21476,16 +21476,61 @@ if (_savedLang !== 'de') {
     ['praxisexamen','PLAN-NRW_Praxis-Examen-Spickzettel.pdf','🩺','Praxis-Examen-Spickzettel','Ablauf, Fallvorstellung, Reflexion, 10 Fehler, Checkliste'],
   ];
   var BLOB={};   // geladene PDFs (slug -> Blob)
+  /* E-Mail-Pflicht (16.10.2026): PDFs nur mit bestaetigter E-Mail – Freischalt-Link aus der Mail
+     (pl_pdf_key) oder Magic-Link-Anmeldung. PL_PDF_GATE_PUBLIC=true schaltet fuer alle scharf, vorher nur Admin. */
+  var PL_PDF_GATE_PUBLIC=false;
+  function gateOn(){ if(PL_PDF_GATE_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function pkey(){ try{ return localStorage.getItem('pl_pdf_key')||''; }catch(e){ return ''; } }
+  var AT='';   // Supabase-Access-Token bestaetigter Nutzer
+  function refreshAt(){ try{ if(window.SB&&SB.auth) return SB.auth.getSession().then(function(r){ var s=r&&r.data&&r.data.session; AT=(s&&s.user&&s.user.email&&(s.user.email_confirmed_at||s.user.confirmed_at))?s.access_token:''; return AT; }).catch(function(){ return ''; }); }catch(e){} return Promise.resolve(''); }
+  function unlocked(){ return !gateOn() || !!pkey() || !!AT; }
+  function src(k){ var u='/api/lead?pdf='+k; if(pkey()) u+='&k='+encodeURIComponent(pkey()); else if(AT) u+='&at='+encodeURIComponent(AT); return u; }
+  // Freischalt-Link aus der Mail: plan-nrw.de/?pdfkey=...
+  (function(){ try{ var m=/[?&]pdfkey=([^&#]+)/.exec(location.search); if(!m) return; var k=decodeURIComponent(m[1]);
+    if(/^[A-Za-z0-9_-]{4,300}\.[a-f0-9]{32}$/.test(k)){ localStorage.setItem('pl_pdf_key',k); setTimeout(function(){ toast('\u2705 E-Mail best\u00e4tigt \u2013 alle Gratis-PDFs sind freigeschaltet.'); },1200); }
+    history.replaceState(null,'',location.pathname+location.search.replace(/[?&]pdfkey=[^&#]+/,'').replace(/^&/,'?')+location.hash); }catch(e){} })();
+  refreshAt();
+  function gateSheet(){
+    plPdfClose();
+    var ov=document.createElement('div'); ov.id='pl-pdf-ov';
+    ov.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(2,8,16,.82);display:flex;align-items:flex-end;justify-content:center';
+    ov.onclick=function(e){ if(e.target===ov) plPdfClose(); };
+    ov.innerHTML='<div role="dialog" aria-label="Gratis-PDFs freischalten" style="width:100%;max-width:520px;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(52,211,153,.25);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))">'
+      +'<div style="display:flex;align-items:center;margin-bottom:6px"><span style="font-size:17px;font-weight:800;color:#e0f2fe">\uD83D\uDCC4 '+L.length+' Gratis-PDFs freischalten</span><button onclick="plPdfClose()" aria-label="Schlie\u00dfen" style="margin-left:auto;width:36px;height:36px;background:none;border:none;color:#8ab4d0;font-size:20px;cursor:pointer">\u00d7</button></div>'
+      +'<div style="font-size:13px;color:#9fc3da;line-height:1.55;margin-bottom:12px">Gib deine E-Mail ein. Du bekommst einen Link \u2013 einmal antippen, dann sind alle PDFs in der App offen.</div>'
+      +'<input id="pl-pdf-mail" type="email" inputmode="email" autocomplete="email" placeholder="deine@email.de" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.1);border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:13px 14px;color:#ddf0fb;font-size:15px;outline:none;font-family:inherit;margin-bottom:10px">'
+      +'<button id="pl-pdf-go" type="button" style="width:100%;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:11px;padding:14px;color:#04231a;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">Link schicken</button>'
+      +'<div id="pl-pdf-msg" style="min-height:16px;font-size:12.5px;text-align:center;margin-top:9px;color:#fca5a5"></div>'
+      +'<div style="font-size:11px;color:#6b8aa3;line-height:1.6;margin-top:6px;text-align:center">Wir nutzen deine E-Mail nur f\u00fcr die Freischaltung. Mehr in der <a href="/datenschutz.html" style="color:#7aa6c4">Datenschutzerkl\u00e4rung</a>.</div></div>';
+    document.body.appendChild(ov);
+    var inp=document.getElementById('pl-pdf-mail'), b=document.getElementById('pl-pdf-go'), msg=document.getElementById('pl-pdf-msg');
+    try{ var pre=localStorage.getItem('pl_trial_email')||localStorage.getItem('pl_sub_email')||''; if(pre) inp.value=pre; }catch(e){}
+    b.onclick=function(){
+      var em=(inp.value||'').trim().toLowerCase();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ msg.style.color='#fca5a5'; msg.textContent='Bitte gib eine g\u00fcltige E-Mail-Adresse ein.'; return; }
+      b.disabled=true; b.textContent='Wird gesendet \u2026';
+      fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'app-pdf',zweck:'app'})})
+        .then(function(r){ if(!r.ok) throw new Error('http'); ga('pdf_gate_mail');
+          b.style.display='none'; inp.style.display='none'; msg.style.color='#bff3dd';
+          msg.innerHTML='\u2709\uFE0F Link ist unterwegs an <b>'+em.replace(/[<>&"]/g,'')+'</b>.<br>Tippe ihn auf diesem Handy an \u2013 und schau auch im Spam-Ordner nach.'; })
+        .catch(function(){ b.disabled=false; b.textContent='Link schicken'; msg.style.color='#fca5a5'; msg.textContent='Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; });
+    };
+    ga('pdf_gate_view');
+  }
   function find(k){ for(var i=0;i<L.length;i++) if(L[i][0]===k) return L[i]; return null; }
   function ga(n,p){ try{ if(typeof gaEvent==='function') gaEvent(n,p||{}); }catch(e){} }
   function toast(m){ try{ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1700;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); },3200); }catch(e){} }
   function load(k){
     if(BLOB[k]) return Promise.resolve(BLOB[k]);
-    return fetch('/api/lead?pdf='+k).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.blob(); })
+    return fetch(src(k)).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.blob(); })
       .then(function(b){ BLOB[k]=b; return b; });
   }
   window.plPdfClose=function(){ ['pl-pdf-ov','pl-pdf-act','pl-pdf-view'].forEach(function(id){ var o=document.getElementById(id); if(o) o.remove(); }); };
   window.plPdfOpen=function(){
+    if(gateOn() && !pkey()){ return refreshAt().then(function(){ if(unlocked()) listOpen(); else gateSheet(); }); }
+    listOpen();
+  };
+  function listOpen(){
     plPdfClose();
     var rows=L.map(function(p){
       return '<button onclick="plPdfAct(\''+p[0]+'\')" style="width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:12px;margin-bottom:9px;cursor:pointer;font-family:inherit">'
@@ -21501,10 +21546,11 @@ if (_savedLang !== 'de') {
       +'<div style="font-size:12px;color:#9fc3da;line-height:1.55;margin-bottom:14px">Direkt in der App ansehen oder mit einer anderen App öffnen – z. B. Word, Drive oder zum Drucken.</div>'
       +rows+'<div style="font-size:11px;color:#6b8aa3;line-height:1.5;margin-top:6px;text-align:center">Lernhilfen für Ausbildung und Prüfung · Es gelten die Standards deiner Einrichtung.</div></div>';
     document.body.appendChild(ov); ga('pdf_list_open');
-  };
+  }
   // Aktionsauswahl: Ansehen · Öffnen mit/Teilen · Speichern
   window.plPdfAct=function(k){
     var p=find(k); if(!p) return;
+    if(!unlocked()){ gateSheet(); return; }
     var o=document.getElementById('pl-pdf-act'); if(o) o.remove();
     var canShare=!!(navigator.canShare && window.File && navigator.canShare({files:[new File([''],'t.pdf',{type:'application/pdf'})]}));
     var btn=function(on,ic,t,s,main){ return '<button onclick="'+on+'" style="width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:'+(main?'linear-gradient(135deg,#34d399,#10b981)':'rgba(255,255,255,.06)')+';border:1px solid '+(main?'transparent':'rgba(255,255,255,.12)')+';border-radius:13px;padding:13px 14px;margin-bottom:9px;cursor:pointer;font-family:inherit"><span style="font-size:22px">'+ic+'</span><span><span style="display:block;font-size:14px;font-weight:800;color:'+(main?'#04231a':'#e2e8f0')+'">'+t+'</span><span style="display:block;font-size:11.5px;color:'+(main?'#064e3b':'#9fb8cc')+'">'+s+'</span></span></button>'; };
@@ -21522,7 +21568,7 @@ if (_savedLang !== 'de') {
   };
   window.plPdfSave=function(k){
     var p=find(k); ga('pdf_download',{paket:k,weg:'speichern'});
-    var a=document.createElement('a'); a.href='/api/lead?pdf='+k; a.download=p[1]; document.body.appendChild(a); a.click(); a.remove();
+    var a=document.createElement('a'); a.href=src(k); a.download=p[1]; document.body.appendChild(a); a.click(); a.remove();
     toast('Gespeichert in „Downloads" – Tipp: über „Ansehen" geht es schneller.');
   };
   window.plPdfShare=function(k){
