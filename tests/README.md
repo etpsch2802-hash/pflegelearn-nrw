@@ -40,3 +40,11 @@ Exit-Code `0` = alle grün, `1` = Test fehlgeschlagen, `2` = Laufzeitfehler.
 
 Lokal: `npm i --no-save playwright @supabase/supabase-js@2`, Server wie oben, dann `node tests/app-e2e.js`.
 Service Worker werden im Test blockiert (sonst lädt die Seite beim ersten Start neu).
+
+## `quiz-e2e.js` – Quiz-Logik & Punktestand (seit 16.10.2026)
+9 Prüfungen im Browser: Fortschritt (gezählt/richtig, Doppel-Tipp zählt nur einmal), Notenschlüssel der Examen-Simulation (92/81/67/50/30), Fehleranalyse (Kategorie, falsche Frage, Krankheitsbild-Erkennung, Obergrenze 150). Supabase wird abgefangen.
+Lokal: Server wie oben, dann `node tests/quiz-e2e.js`.
+
+## `api-test.mjs` – Server-Logik ohne Browser (seit 16.10.2026)
+23 Prüfungen, reines Node mit gemocktem `fetch`: Live-Quiz-Punkte (nur erste richtige Antwort, abschaltbar, keine Antwort nach Auflösung, fremde Person 403), Lernstand-Quoten und Klassenschnitt, Fehleranalyse-Aggregation, Gratis-PDF-Freischaltung (kein Fake-OK ohne Mailversand).
+Lokal: `node tests/api-test.mjs`.

@@ -63,3 +63,7 @@ jobs:
         run: BASE_URL=http://127.0.0.1:8099 node tests/app-e2e.js
       - name: E2E Trial-Upsell (trial-e2e.js)
         run: BASE_URL=http://127.0.0.1:8099 node tests/trial-e2e.js
+      - name: Quiz-Logik & Punktestand (quiz-e2e.js, blockierend)
+        run: BASE_URL=http://127.0.0.1:8099 node tests/quiz-e2e.js
+      - name: API-Tests Live-Quiz, Lernstand, Fehleranalyse, PDF (api-test.mjs, blockierend)
+        run: node tests/api-test.mjs
