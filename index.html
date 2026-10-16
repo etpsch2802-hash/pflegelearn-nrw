@@ -11856,9 +11856,23 @@ var PL_GRAFIK = (function(){
   };
 })();
 
+/* Offline-Vorrat (16.10.2026): Wissensdatenbank + Medikamente landen nach jedem erfolgreichen Laden
+   in IndexedDB (plan-offline) und werden ohne Netz von dort gelesen. Eigene DB, weil der Service Worker
+   beim Update alle fremden Caches loescht. Kein neuer pl_*-Key. */
+var plOffline = (function(){
+  var dbp=null;
+  function db(){ if(dbp) return dbp; dbp=new Promise(function(res,rej){ try{ var r=indexedDB.open('plan-offline',1);
+    r.onupgradeneeded=function(){ r.result.createObjectStore('daten'); }; r.onsuccess=function(){ res(r.result); }; r.onerror=function(){ rej(r.error); };
+  }catch(e){ rej(e); } }); dbp.catch(function(){ dbp=null; }); return dbp; }
+  function put(k,v){ return db().then(function(d){ return new Promise(function(res){ try{ var tx=d.transaction('daten','readwrite'); tx.objectStore('daten').put({t:Date.now(),v:v},k); tx.oncomplete=function(){res(true);}; tx.onerror=function(){res(false);}; }catch(e){ res(false); } }); }).catch(function(){ return false; }); }
+  function get(k){ return db().then(function(d){ return new Promise(function(res){ try{ var q=d.transaction('daten').objectStore('daten').get(k); q.onsuccess=function(){ res(q.result||null); }; q.onerror=function(){ res(null); }; }catch(e){ res(null); } }); }).catch(function(){ return null; }); }
+  return { put:put, get:get };
+})();
 async function loadWissensDB(force){
   if (_wdbData && !force) return _wdbData;
-  if (!window.SB) return null;
+  if (!window.SB || navigator.onLine===false) {
+    var o = await plOffline.get('wdb'); if (o && o.v) { _wdbData=o.v; return _wdbData; } return null;
+  }
   try {
     const { data, error } = await window.SB
       .from('lerninhalte')
@@ -11866,10 +11880,11 @@ async function loadWissensDB(force){
       .eq('aktiv', true)
       .order('kategorie', { ascending:true })
       .order('titel', { ascending:true });
-    if (error) { console.warn('[wdb]', error); return null; }
+    if (error) { console.warn('[wdb]', error); var o1=await plOffline.get('wdb'); if(o1&&o1.v){ _wdbData=o1.v; return _wdbData; } return null; }
     _wdbData = data || [];
+    if (_wdbData.length) plOffline.put('wdb', _wdbData);
     return _wdbData;
-  } catch(e){ console.warn('[wdb]', e); return null; }
+  } catch(e){ console.warn('[wdb]', e); var o2=await plOffline.get('wdb'); if(o2&&o2.v){ _wdbData=o2.v; return _wdbData; } return null; }
 }
 // ─── MEDIKAMENTE NACHSCHLAGEN (Supabase medikamente, durchsuchbar) ───────────
 var _medapoData = null;
@@ -11879,7 +11894,8 @@ function _medQ(){ var el=document.getElementById('medapo-search'); return el ? e
 async function loadMedikamente(force){
   var box=document.getElementById('medapo-container');
   if (_medapoData && !force){ renderMedApo(_medQ()); return _medapoData; }
-  if (!window.SB){ if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Keine Verbindung zur Datenbank.</div>'; return null; }
+  async function _medOff(){ var o=await plOffline.get('med'); if(o&&o.v){ _medapoData=o.v; renderMedApo(_medQ()); return _medapoData; } return null; }
+  if (!window.SB || navigator.onLine===false){ var off=await _medOff(); if(off) return off; if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Keine Verbindung zur Datenbank.</div>'; return null; }
   if (box) box.innerHTML='<div style="color:#8ab4d0;padding:12px">Lade Medikamente…</div>';
   try{
     const { data, error } = await window.SB
@@ -11887,12 +11903,13 @@ async function loadMedikamente(force){
       .select('wirkstoff,handelsnamen,wirkstoffklasse,atc,indikation,wirkweise,wirkdauer,einnahmezeitpunkt,nebenwirkungen,kontraindik,lagerung,darreichung,teilbar,moerserbar,msr,retard,sondengaengig,btm,pflegehinweis,antidot,such_tags,quelle,stand')
       .eq('aktiv', true)
       .order('wirkstoff', { ascending:true });
-    if (error){ console.warn('[medapo]', error); if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
+    if (error){ console.warn('[medapo]', error); var off1=await _medOff(); if(off1) return off1; if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
     _medapoData = data || [];
+    if (_medapoData.length) plOffline.put('med', _medapoData);
     renderMedApo(_medQ());
     try{ var _ls=document.getElementById('lib-search'); if(_ls && _ls.value && typeof renderHomeLibrary==='function'){ renderHomeLibrary(); } }catch(e){}
     return _medapoData;
-  } catch(e){ console.warn('[medapo]', e); if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
+  } catch(e){ console.warn('[medapo]', e); var off2=await _medOff(); if(off2) return off2; if(box) box.innerHTML='<div style="color:#fca5a5;padding:12px">Fehler beim Laden.</div>'; return null; }
 }
 function _medFlagColor(txt){
   var t=String(txt||'').toLowerCase();
@@ -24843,6 +24860,31 @@ window.renderLiveUsers=function(start){
       };
     }
   }catch(e){}
+})();
+</script>
+<!-- PLAN NRW: Offline-Vorrat im Hintergrund fuellen (16.10.2026) – laedt Wissensdatenbank + Medikamente
+     einmal pro Tag still vor, damit sie auch ohne Netz (Pause, Bahn, Station) da sind. Beruehrt keine Anzeige. -->
+<script>
+(function(){
+  function warm(){
+    try{
+      if(navigator.onLine===false || !window.SB || typeof plOffline==='undefined') return;
+      plOffline.get('wdb').then(function(o){
+        if(o && Date.now()-o.t < 864e5) return;
+        window.SB.from('lerninhalte').select('kategorie,titel,slug,daten,quelle,stand,geprueft_von,geprueft_am').eq('aktiv',true)
+          .order('kategorie',{ascending:true}).order('titel',{ascending:true})
+          .then(function(r){ if(r && !r.error && r.data && r.data.length) plOffline.put('wdb', r.data); });
+      });
+      plOffline.get('med').then(function(o){
+        if(o && Date.now()-o.t < 864e5) return;
+        window.SB.from('medikamente').select('wirkstoff,handelsnamen,wirkstoffklasse,atc,indikation,wirkweise,wirkdauer,einnahmezeitpunkt,nebenwirkungen,kontraindik,lagerung,darreichung,teilbar,moerserbar,msr,retard,sondengaengig,btm,pflegehinweis,antidot,such_tags,quelle,stand')
+          .eq('aktiv',true).order('wirkstoff',{ascending:true})
+          .then(function(r){ if(r && !r.error && r.data && r.data.length) plOffline.put('med', r.data); });
+      });
+    }catch(e){}
+  }
+  function later(){ if('requestIdleCallback' in window) requestIdleCallback(warm,{timeout:15000}); else setTimeout(warm,9000); }
+  if(document.readyState==='complete') setTimeout(later,6000); else window.addEventListener('load',function(){ setTimeout(later,6000); });
 })();
 </script>
 </body>
