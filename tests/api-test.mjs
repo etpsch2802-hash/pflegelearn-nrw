@@ -1,0 +1,119 @@
+// API-Tests PLAN NRW – Live-Quiz-Punkte, Lernstand, Fehleranalyse, Gratis-PDF-Freischaltung
+// Reines Node (kein Framework, keine Abhaengigkeiten). Supabase/Resend werden ueber ein gemocktes fetch simuliert.
+// Lokal: node tests/api-test.mjs
+process.env.SUPABASE_URL = 'https://sb.test';
+process.env.SUPABASE_SERVICE_ROLE = 'service-test';
+delete process.env.RESEND_API_KEY;
+
+let pass = 0, fail = 0;
+function check(name, cond, extra) {
+  if (cond) { pass++; console.log('  ✅ ' + name); }
+  else { fail++; console.log('  ❌ ' + name + (extra !== undefined ? '  → ' + JSON.stringify(extra).slice(0, 300) : '')); if (process.env.GITHUB_ACTIONS) console.log('::error title=API-Test::' + name); }
+}
+
+// ── fetch-Mock ───────────────────────────────────────────────────────────────
+let routes = [], calls = [];
+function json(body, status) { return new Response(JSON.stringify(body), { status: status || 200, headers: { 'Content-Type': 'application/json' } }); }
+globalThis.fetch = async (url, opt) => {
+  url = String(url); calls.push({ url, body: opt && opt.body ? String(opt.body) : '' });
+  for (const r of routes) if (r.test(url, opt)) return r.reply(url, opt);
+  return json([], 200);
+};
+function call(handler, method, body, query) {
+  return new Promise((resolve) => {
+    const res = { code: 200, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.code = c; return this; },
+      json(b) { resolve({ code: this.code, body: b }); }, send(b) { resolve({ code: this.code, body: b }); }, end() { resolve({ code: this.code }); } };
+    handler({ method, body, query: query || {}, headers: {} }, res);
+  });
+}
+
+const klasse = (await import('../api/klasse.js')).default;
+const lead = (await import('../api/lead.js')).default;
+
+// ── 1) Live-Quiz: Punkte ─────────────────────────────────────────────────────
+console.log('\n[1] Live-Quiz – Antworten und Punktestand');
+function liveSetup(sess, neuAntwort) {
+  calls = [];
+  routes = [
+    { test: u => u.includes('/live_sessions?code='), reply: () => json([sess]) },
+    { test: u => u.includes('/live_answers'), reply: () => json(neuAntwort ? [{ id: 1 }] : []) },
+    { test: u => u.includes('/rpc/live_punkt'), reply: () => json(null) }
+  ];
+}
+const punktCalls = () => calls.filter(c => c.url.includes('/rpc/live_punkt'));
+const SESS = { id: 's1', status: 'frage', runde: 2, frage: { k: 2 }, punkte_an: true, lehrer_email: 'l@schule.de' };
+
+liveSetup(SESS, true);
+let r = await call(klasse, 'POST', { action: 'live_answer', code: 'abc123', teilnehmer: 'Lena', antwort: 2 });
+check('Richtige Antwort wird als richtig erkannt', r.body.ok && r.body.richtig === true, r.body);
+check('Richtige erste Antwort gibt genau 1 Punkt', punktCalls().length === 1 && JSON.parse(punktCalls()[0].body).p_delta === 1, punktCalls());
+
+liveSetup(SESS, true);
+r = await call(klasse, 'POST', { action: 'live_answer', code: 'ABC123', teilnehmer: 'Lena', antwort: 1 });
+check('Falsche Antwort: richtig=false, kein Punkt', r.body.richtig === false && punktCalls().length === 0, r.body);
+
+liveSetup(SESS, false);
+r = await call(klasse, 'POST', { action: 'live_answer', code: 'ABC123', teilnehmer: 'Lena', antwort: 2 });
+check('Zweite Antwort derselben Runde gibt keinen weiteren Punkt', r.body.richtig === true && punktCalls().length === 0);
+
+liveSetup(Object.assign({}, SESS, { punkte_an: false }), true);
+r = await call(klasse, 'POST', { action: 'live_answer', code: 'ABC123', teilnehmer: 'Lena', antwort: 2 });
+check('Punktestand von der Lehrkraft abgeschaltet: kein Punkt', punktCalls().length === 0);
+
+liveSetup(SESS, true);
+r = await call(klasse, 'POST', { action: 'live_answer', code: 'ABC123', teilnehmer: 'Lena', antwort: 9 });
+check('Ungueltige Antwortnummer wird abgelehnt (400)', r.code === 400);
+
+liveSetup(Object.assign({}, SESS, { status: 'aufgeloest' }), true);
+r = await call(klasse, 'POST', { action: 'live_answer', code: 'ABC123', teilnehmer: 'Lena', antwort: 2 });
+check('Nach dem Aufloesen keine Antwort mehr', r.body.ok === false && r.body.error === 'keine_frage');
+
+liveSetup(SESS, true);
+r = await call(klasse, 'POST', { action: 'live_punkte', code: 'ABC123', lehrer_email: 'fremd@x.de', an: false });
+check('Fremde Person darf den Punktestand nicht umschalten (403)', r.code === 403);
+
+// ── 2) Lernstand ─────────────────────────────────────────────────────────────
+console.log('\n[2] Lernstand der Klasse');
+routes = [{ test: u => u.includes('/rpc/klasse_stats'), reply: () => json([
+  { name: 'Lena', quiz_total: 40, quiz_correct: 30, streak: 3, letzte: new Date().toISOString() },
+  { name: 'Tom', quiz_total: 10, quiz_correct: 5, streak: 0, letzte: new Date(Date.now() - 10 * 864e5).toISOString() },
+  { name: 'Neu', quiz_total: 0, quiz_correct: 0, streak: 0, letzte: null }]) }];
+r = await call(klasse, 'POST', { action: 'stats', klasse_id: 'k1', lehrer_email: 'l@schule.de' });
+const lena = r.body.mitglieder.find(m => m.name === 'Lena');
+check('Quote pro Azubi = richtig / beantwortet (75 %)', lena.quote === 75, lena);
+check('Ohne Antworten keine Quote (null statt 0 %)', r.body.mitglieder.find(m => m.name === 'Neu').quote === null);
+check('Klassenschnitt gewichtet nach Fragen (35/50 = 70 %)', r.body.schnitt.quote === 70, r.body.schnitt);
+check('Aktiv in 7 Tagen zaehlt nur Lena', r.body.schnitt.aktiv_7d === 1, r.body.schnitt);
+r = await call(klasse, 'POST', { action: 'stats', klasse_id: 'k1', lehrer_email: 'keine-mail' });
+check('Lernstand ohne gueltige Lehrkraft-Mail abgelehnt (400)', r.code === 400);
+
+// ── 3) Fehleranalyse ─────────────────────────────────────────────────────────
+console.log('\n[3] Fehleranalyse');
+routes = [{ test: u => u.includes('/rpc/klasse_fehler'), reply: () => json([
+  { name: 'Lena', daten: { kats: { its_beatmung: { c: 4, t: 12 }, innere: { c: 9, t: 10 } }, begriffe: { Furosemid: 3, Herzinsuffizienz: 1 }, falsch: { q1: { t: 'Was ist PEEP?', kat: 'its_beatmung', n: 2 } } } },
+  { name: 'Tom', daten: { kats: { its_beatmung: { c: 2, t: 6 } }, begriffe: { Furosemid: 2 }, falsch: { q1: { t: 'Was ist PEEP?', kat: 'its_beatmung', n: 1 } } } },
+  { name: 'Ohne', daten: null }]) }];
+r = await call(klasse, 'POST', { action: 'fehler', klasse_id: 'k1', lehrer_email: 'l@schule.de' });
+const K = r.body.klasse;
+check('Schwaechstes Klassenthema steht oben (Beatmung 6/18 = 33 %)', K.themen[0] && K.themen[0].kat === 'its_beatmung' && K.themen[0].quote === 33, K.themen);
+check('Themen mit unter 10 Antworten werden nicht gewertet', !K.themen.some(t => t.kat === 'innere' && t.fragen < 10) && K.themen.length === 2, K.themen);
+check('Begriff mit den meisten betroffenen Azubis zuerst (Furosemid, 2 Azubis)', K.begriffe[0].name === 'Furosemid' && K.begriffe[0].azubis === 2, K.begriffe);
+check('Gleiche falsche Frage wird ueber Azubis zusammengezaehlt', K.fragen[0].falsch === 3 && K.fragen[0].azubis === 2, K.fragen);
+const ra = r.body.azubis.find(a => a.name === 'Lena');
+check('Pro Azubi: schwaechstes Thema mit Quote', ra.schwach[0].kat === 'its_beatmung' && ra.schwach[0].quote === 33, ra);
+check('Pro Azubi: Thema mit unter 5 Antworten nicht als Schwaeche', r.body.azubis.find(a => a.name === 'Tom').schwach.length === 1);
+check('Azubi ohne Daten wird als solcher markiert', r.body.azubis.find(a => a.name === 'Ohne').hat_daten === false);
+
+// ── 4) Gratis-PDF: Freischaltung ─────────────────────────────────────────────
+console.log('\n[4] Gratis-PDFs – E-Mail-Pflicht');
+routes = [{ test: u => u.includes('/rest/v1/leads'), reply: () => json([], 201) }];
+r = await call(lead, 'POST', { email: 'kein-mail', zweck: 'app' });
+check('Ungueltige E-Mail wird abgelehnt (400)', r.code === 400);
+r = await call(lead, 'POST', { email: 'azubi@example.com', source: 'app-pdf', zweck: 'app' });
+check('Ohne Mailversand meldet die Freischaltung keinen Erfolg (kein Fake-OK)', r.code === 502 && r.body.ok === false, r);
+routes = [{ test: u => u.includes('raw.githubusercontent.com'), reply: () => new Response(new Uint8Array([37, 80, 68, 70]), { status: 200 }) }];
+r = await call(lead, 'GET', null, { pdf: 'unbekannt' });
+check('Unbekanntes PDF liefert 404', r.code === 404);
+
+console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
+process.exit(fail ? 1 : 0);
