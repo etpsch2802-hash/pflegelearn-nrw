@@ -20012,6 +20012,7 @@ async function plEnableReminders(){
           endpoint: sub.endpoint,
           sub: JSON.parse(JSON.stringify(sub)),
           name: localStorage.getItem('pl_user') || null,
+          examen_datum: plPushExamDatum(),
           updated_at: new Date().toISOString()
         }, { onConflict:'endpoint' });
         if (res && res.error) { console.warn('[push] Speichern fehlgeschlagen:', res.error.message); return false; }
@@ -20023,6 +20024,10 @@ async function plEnableReminders(){
   }catch(e){ return false; }
 }
 
+/* Examensdatum fuer die Push-Erinnerungen (16.10.2026): scripts/send-reminders.mjs staffelt die Texte nach Tagen bis zum Examen */
+function plPushExamDatum(){ try{ var d=localStorage.getItem('pl_examen_datum')||localStorage.getItem('pl_pruefungsdatum')||''; return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:null; }catch(e){ return null; } }
+(function(){ function chk(){ try{ if(localStorage.getItem('pl_push_on')!=='1') return; var d=plPushExamDatum()||''; if(d!==(localStorage.getItem('pl_push_exam_sync')||'')) plResyncPush(); }catch(e){} }
+  setTimeout(chk,8000); document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden') chk(); }); })();
 async function plResyncPush(){
   try{
     if(!plPushAvailable()) return;
@@ -20037,9 +20042,11 @@ async function plResyncPush(){
       endpoint: sub.endpoint,
       sub: JSON.parse(JSON.stringify(sub)),
       name: localStorage.getItem('pl_user') || null,
+      examen_datum: plPushExamDatum(),
       updated_at: new Date().toISOString()
     }, { onConflict:'endpoint' });
     if (res && res.error) { console.warn('[push] Resync fehlgeschlagen:', res.error.message); return; }
+    try{ localStorage.setItem('pl_push_exam_sync', plPushExamDatum()||''); }catch(e){}
     try{ localStorage.setItem('pl_push_on','1'); }catch(e){}
   }catch(e){}
 }
