@@ -1678,6 +1678,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <input id="kb-name" type="text" placeholder="Dein Vorname" style="width:100%;background:rgba(255,255,255,.13);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:12px 14px;color:#ddf0fb;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:16px" aria-label="Dein Vorname">
     <button id="kb-btn" onclick="plKlasseBeitreten()" style="width:100%;background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));border:none;border-radius:12px;padding:15px;color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">Kurs beitreten</button>
     <div id="kb-msg" style="font-size:12px;margin-top:12px;text-align:center;line-height:1.5"></div>
+    <div style="font-size:11px;color:#8ab4d0;margin-top:10px;text-align:center;line-height:1.5">Mit Online-Konto sieht deine Lehrkraft deinen Lernstand und deine Fehleranalyse. <a href="/datenschutz.html#kurse" style="color:#7dd3fc">Mehr dazu</a></div>
   </div>
   <div style="text-align:center;margin-top:16px">
     <button onclick="showScreen('home')" style="background:none;border:none;color:#8ab4d0;font-size:12px;font-family:inherit;cursor:pointer">← Zurück</button>
@@ -21502,7 +21503,7 @@ if (_savedLang !== 'de') {
   var BLOB={};   // geladene PDFs (slug -> Blob)
   /* E-Mail-Pflicht (16.10.2026): PDFs nur mit bestaetigter E-Mail – Freischalt-Link aus der Mail
      (pl_pdf_key) oder Magic-Link-Anmeldung. PL_PDF_GATE_PUBLIC=true schaltet fuer alle scharf, vorher nur Admin. */
-  var PL_PDF_GATE_PUBLIC=false;
+  var PL_PDF_GATE_PUBLIC=true;
   function gateOn(){ if(PL_PDF_GATE_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function pkey(){ try{ return localStorage.getItem('pl_pdf_key')||''; }catch(e){ return ''; } }
   var AT='';   // Supabase-Access-Token bestaetigter Nutzer
@@ -24901,7 +24902,7 @@ window.renderLiveUsers=function(start){
      PL_FEHLER_PUBLIC=false: Lehrkraft-Ansicht vorerst nur fuer Admin. Wrappt pickAnswer/finishExamen additiv. -->
 <script>
 (function(){
-  var PL_FEHLER_PUBLIC=false, KEY='pl_fehler_v1', MAXQ=150;
+  var PL_FEHLER_PUBLIC=true, KEY='pl_fehler_v1', MAXQ=150;
   function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function read(){ try{ var o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o&&typeof o==='object') return o; }catch(e){} return {kats:{},begriffe:{},falsch:{}}; }

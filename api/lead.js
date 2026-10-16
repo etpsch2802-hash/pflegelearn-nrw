@@ -16,7 +16,7 @@ const REPLY_TO = 'pflegelearn.nrw@gmail.com';
 // Direkt-Download (GET ?pdf=) nur mit Freischalt-Schluessel aus der Mail (&k=) oder
 // bestaetigter Supabase-Anmeldung (&at=<access token>). PDF_GATE=false laesst noch alles durch
 // (Uebergang, bis P. Schenkelberger freigibt); Schluessel werden trotzdem schon verschickt.
-const PDF_GATE = false;
+const PDF_GATE = true;
 async function hmac(s) {
   const { createHmac } = await import('crypto');
   return createHmac('sha256', String(process.env.SUPABASE_SERVICE_ROLE || 'x') + ':pdf').update(s).digest('hex').slice(0, 32);
