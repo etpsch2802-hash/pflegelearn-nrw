@@ -128,5 +128,35 @@ check('Gefaelschter Freischalt-Schluessel gesperrt (401)', r.code === 401, r.cod
   check('Gueltiger Freischalt-Schluessel liefert das PDF (200)', r.code === 200, r.code); }
 check('PDF kommt aus dem privaten Supabase-Speicher, nicht aus GitHub', calls.some(c => c.url.includes('/storage/v1/object/authenticated/gratis-pdfs/PLAN-NRW_Demenzkarte.pdf')) && !calls.some(c => c.url.includes('raw.githubusercontent.com')));
 
+// ── 5) Missbrauchsschutz ─────────────────────────────────────────────────────
+console.log('\n[5] Gratis-PDFs – Schutz vor Massenversand');
+function limitSetup(proMail, proIp, gesamt) {
+  calls = [];
+  routes = [
+    { test: u => u.includes('/rest/v1/lead_limits?select=email') && u.includes('&email=eq.'), reply: () => json(proMail) },
+    { test: u => u.includes('/rest/v1/lead_limits?select=email') && u.includes('&ip_hash=eq.'), reply: () => json(proIp) },
+    { test: u => u.includes('/rest/v1/lead_limits?select=id'), reply: () => new Response('[]', { status: 200, headers: { 'content-range': '0-0/' + gesamt } }) },
+    { test: u => u.includes('/rest/v1/lead_limits'), reply: () => json(null, 201) },
+    { test: u => u.includes('/rest/v1/leads'), reply: () => json([], 201) }
+  ];
+}
+const req5 = (b) => call(lead, 'POST', b);
+limitSetup([{ email: 'a@x.de' }, { email: 'a@x.de' }, { email: 'a@x.de' }], [], 0);
+r = await req5({ email: 'a@x.de', zweck: 'app' });
+check('4. Mail an dieselbe Adresse in 24 h wird gestoppt (429)', r.code === 429 && r.body.grund === 'email', r);
+limitSetup([], ['b@x.de', 'c@x.de', 'd@x.de', 'e@x.de', 'f@x.de'].map(e => ({ email: e })), 0);
+r = await req5({ email: 'neu@x.de', zweck: 'app' });
+check('6. fremde Adresse vom selben Geraet in 24 h wird gestoppt (429)', r.code === 429 && r.body.grund === 'ip', r);
+limitSetup([], [], 300);
+r = await req5({ email: 'neu@x.de', zweck: 'app' });
+check('Tagesobergrenze 300 Mails insgesamt greift (429)', r.code === 429 && r.body.grund === 'gesamt', r);
+limitSetup([], [{ email: 'b@x.de' }], 10);
+r = await req5({ email: 'neu@x.de', zweck: 'app' });
+check('Normale Anfrage geht durch und wird gezaehlt', r.code !== 429 && calls.some(c => c.url.endsWith('/rest/v1/lead_limits') && c.body.includes('neu@x.de')), r);
+check('IP wird nur als Hash gespeichert, nicht im Klartext', !calls.some(c => /\d+\.\d+\.\d+\.\d+/.test(c.body)));
+limitSetup([], [], 0); routes.unshift({ test: u => u.includes('/rest/v1/lead_limits?select=email'), reply: () => json({ message: 'kaputt' }, 500) });
+r = await req5({ email: 'neu@x.de', zweck: 'app' });
+check('Faellt die Zaehlung aus, wird der Versand nicht blockiert', r.code !== 429, r);
+
 console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
 process.exit(fail ? 1 : 0);
