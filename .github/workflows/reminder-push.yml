@@ -29,3 +29,4 @@ jobs:
           VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
           PUSH_TITEL: ${{ github.event.inputs.titel }}
           PUSH_TEXT: ${{ github.event.inputs.text }}
+          PUSH_EXAM_PUBLIC: '1'

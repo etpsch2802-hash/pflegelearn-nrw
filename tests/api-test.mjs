@@ -114,6 +114,14 @@ check('Ohne Mailversand meldet die Freischaltung keinen Erfolg (kein Fake-OK)', 
 routes = [{ test: u => u.includes('raw.githubusercontent.com'), reply: () => new Response(new Uint8Array([37, 80, 68, 70]), { status: 200 }) }];
 r = await call(lead, 'GET', null, { pdf: 'unbekannt' });
 check('Unbekanntes PDF liefert 404', r.code === 404);
+r = await call(lead, 'GET', null, { pdf: 'demenz' });
+check('PDF ohne bestaetigte E-Mail gesperrt (401)', r.code === 401, r.code);
+r = await call(lead, 'GET', null, { pdf: 'demenz', k: 'YUBiLmRl.00000000000000000000000000000000' });
+check('Gefaelschter Freischalt-Schluessel gesperrt (401)', r.code === 401, r.code);
+{ const { createHmac } = await import('node:crypto');
+  const em = 'azubi@example.com', key = Buffer.from(em).toString('base64url') + '.' + createHmac('sha256', 'service-test:pdf').update(em).digest('hex').slice(0, 32);
+  r = await call(lead, 'GET', null, { pdf: 'demenz', k: key });
+  check('Gueltiger Freischalt-Schluessel liefert das PDF (200)', r.code === 200, r.code); }
 
 console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
 process.exit(fail ? 1 : 0);
