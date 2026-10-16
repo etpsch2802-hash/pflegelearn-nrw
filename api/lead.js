@@ -12,6 +12,42 @@ const BASE = 'https://raw.githubusercontent.com/etpsch2802-hash/plan-nrw-gratis-
 const FROM = 'PLAN NRW <kontakt@plan-nrw.de>';
 const REPLY_TO = 'pflegelearn.nrw@gmail.com';
 
+// E-Mail-Pflicht fuer Gratis-PDFs in der App (16.10.2026):
+// Direkt-Download (GET ?pdf=) nur mit Freischalt-Schluessel aus der Mail (&k=) oder
+// bestaetigter Supabase-Anmeldung (&at=<access token>). PDF_GATE=false laesst noch alles durch
+// (Uebergang, bis P. Schenkelberger freigibt); Schluessel werden trotzdem schon verschickt.
+const PDF_GATE = false;
+async function hmac(s) {
+  const { createHmac } = await import('crypto');
+  return createHmac('sha256', String(process.env.SUPABASE_SERVICE_ROLE || 'x') + ':pdf').update(s).digest('hex').slice(0, 32);
+}
+async function pdfKey(email) { return Buffer.from(email).toString('base64url') + '.' + (await hmac(email)); }
+async function keyOk(k) {
+  const m = /^([A-Za-z0-9_-]{4,300})\.([a-f0-9]{32})$/.exec(String(k || ''));
+  if (!m) return false;
+  let email = ''; try { email = Buffer.from(m[1], 'base64url').toString('utf8'); } catch (e) { return false; }
+  return !!email && (await hmac(email)) === m[2];
+}
+async function sessionOk(at) {
+  const U = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), K = process.env.SUPABASE_SERVICE_ROLE;
+  if (!at || !U || !K || at.length > 4000) return false;
+  try {
+    const r = await fetch(U + '/auth/v1/user', { headers: { 'apikey': K, 'Authorization': 'Bearer ' + at } });
+    if (!r.ok) return false;
+    const u = await r.json();
+    return !!(u && u.email && (u.email_confirmed_at || u.confirmed_at));
+  } catch (e) { return false; }
+}
+function freischaltHtml(key) {
+  return '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;background:#0b1f33;border-radius:14px;overflow:hidden">'
+    + '<div style="padding:26px 24px 18px;text-align:center;border-bottom:3px solid #10b981"><div style="color:#22d3ee;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px">PLAN NRW &middot; Bestehen ist planbar.</div>'
+    + '<div style="color:#eaf4fb;font-size:21px;font-weight:800">Deine Gratis-PDFs freischalten</div></div>'
+    + '<div style="background:#0f2942;padding:24px"><p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 18px">Hallo,<br><br>tippe auf den Button, dann sind alle Gratis-PDFs in der App PLAN NRW f&uuml;r dich offen &ndash; zum Ansehen, Speichern und Drucken.</p>'
+    + '<div style="text-align:center;margin-bottom:18px"><a href="https://plan-nrw.de/?pdfkey=' + key + '" style="display:inline-block;background:linear-gradient(135deg,#34d399,#10b981);color:#04231a;font-weight:800;font-size:15px;text-decoration:none;padding:13px 24px;border-radius:10px">PDFs freischalten</a></div>'
+    + '<p style="color:#5b7894;font-size:12px;line-height:1.6;margin:0">Den Link am besten auf dem Handy &ouml;ffnen, auf dem du PLAN nutzt.<br>Patrick Schenkelberger &middot; Fachpfleger An&auml;sthesie &amp; Intensivmedizin, Praxisanleiter</p></div>'
+    + '<div style="padding:14px 24px;text-align:center"><p style="color:#475569;font-size:11px;margin:0">Du erh&auml;ltst diese Mail, weil du in der App Gratis-PDFs angefordert hast. Nicht du? Dann ignoriere sie einfach.</p></div></div>';
+}
+
 // Gratis-Pakete: Schluessel = Slug aus plan-nrw.de/gratis/<slug>
 const PAKETE = {
   eselsbruecken: { file: 'PLAN-NRW_12-Eselsbruecken.pdf', titel: '12 Eselsbr&uuml;cken f&uuml;rs Pflegeexamen', subject: 'Deine 12 Eselsbr\u00fccken f\u00fcrs Pflegeexamen',
@@ -56,7 +92,7 @@ function htmlSeite(titel, text) {
     + '<a href="https://plan-nrw.de" style="display:inline-block;background:#10b981;color:#04231a;font-weight:800;text-decoration:none;padding:12px 22px;border-radius:10px">Zur App</a></div></body></html>';
 }
 
-function mailHtml(p, nlToken) {
+function mailHtml(p, nlToken, key) {
   return [
     '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;background:#0b1f33;border-radius:14px;overflow:hidden">',
       '<div style="background:#0b1f33;padding:26px 24px 18px;text-align:center;border-bottom:3px solid #10b981">',
@@ -67,6 +103,7 @@ function mailHtml(p, nlToken) {
         '<p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 14px">Hallo,</p>',
         '<p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 14px">im Anhang findest du dein Gratis-PDF <strong style="color:#fff">' + p.titel + '</strong>. ' + p.text + '</p>',
         '<p style="color:#cbd9e6;font-size:15px;line-height:1.6;margin:0 0 20px">Tipp: Druck es dir aus und h&auml;ng es an deinen Lernplatz.</p>',
+        (key ? '<p style="color:#cbd9e6;font-size:14px;line-height:1.6;margin:0 0 20px">Alle weiteren Gratis-PDFs schaltest du mit einem Tipp in der App frei: <a href="https://plan-nrw.de/?pdfkey=' + key + '" style="color:#34d399;font-weight:700">Gratis-PDFs in der App freischalten</a></p>' : ''),
         (nlToken ? '<div style="background:#0b1f33;border:1px solid rgba(34,211,238,.35);border-radius:11px;padding:16px;text-align:center;margin-bottom:18px"><p style="color:#cbd9e6;font-size:14px;line-height:1.6;margin:0 0 12px">Du wolltest Neuigkeiten zu PLAN per E-Mail. Bitte best&auml;tige das noch mit einem Klick. Ohne Best&auml;tigung schreiben wir dir nichts weiter.</p><a href="https://plan-nrw.de/api/lead?nl=' + nlToken + '" style="display:inline-block;background:#22d3ee;color:#04202a;font-weight:800;font-size:14px;text-decoration:none;padding:11px 20px;border-radius:10px">Newsletter best&auml;tigen</a></div>' : ''),
         '<div style="background:#0b1f33;border:1px solid rgba(52,211,153,.3);border-radius:11px;padding:18px;text-align:center;margin-bottom:18px">',
           '<p style="color:#9fb6c9;font-size:13px;line-height:1.6;margin:0 0 12px">In der App PLAN NRW findest du 2.000+ Pr&uuml;fungsfragen mit Erkl&auml;rungen, 400 Lerneinheiten und einen KI-Lernassistenten &ndash; aktuell komplett kostenlos.</p>',
@@ -109,6 +146,10 @@ export default async function handler(req, res) {
     const ds = String((req.query && req.query.pdf) || '').toLowerCase();
     const dp = PAKETE[ds];
     if (!dp) { res.status(404).json({ error: 'unbekannt' }); return; }
+    if (PDF_GATE) {
+      const ok = (await keyOk(req.query && req.query.k)) || (await sessionOk(String((req.query && req.query.at) || '')));
+      if (!ok) { res.status(401).json({ error: 'email' }); return; }
+    }
     try {
       const r = await fetch(BASE + dp.file);
       if (!r.ok) { res.status(502).json({ error: 'quelle', status: r.status }); return; }
@@ -116,7 +157,7 @@ export default async function handler(req, res) {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Length', String(buf.length));
       res.setHeader('Content-Disposition', 'attachment; filename="' + dp.file + '"');
-      res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+      res.setHeader('Cache-Control', PDF_GATE ? 'private, max-age=3600' : 'public, max-age=3600, s-maxage=86400');
       res.status(200).send(buf);
     } catch (e) { console.error('[lead] pdf', e); res.status(500).json({ error: 'server' }); }
     return;
@@ -137,6 +178,7 @@ export default async function handler(req, res) {
   const slug = (body.paket ? String(body.paket) : 'eselsbruecken').toLowerCase();
   const paket = PAKETE[slug] || PAKETE.eselsbruecken;
   const newsletter = body.newsletter === true;
+  const nurFreischalten = body.zweck === 'app';   // App: nur Freischalt-Mail, kein Anhang
 
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!re.test(email) || email.length > 200) { res.status(400).json({ error: 'email' }); return; }
@@ -182,7 +224,18 @@ export default async function handler(req, res) {
 
   // 2) PDF-Mail via Resend (nicht fatal: Lead ist bereits gespeichert)
   let mail = { sent: false };
-  if (RESEND_KEY) {
+  let key = null; try { key = await pdfKey(email); } catch (e) { key = null; }
+  if (RESEND_KEY && nurFreischalten && key) {
+    try {
+      const send = await fetch('https://api.resend.com/emails', { method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: FROM, to: [email], reply_to: REPLY_TO, subject: 'Deine Gratis-PDFs in PLAN freischalten', html: freischaltHtml(key) }) });
+      if (send.ok) mail.sent = true; else { mail.error = (await send.text() || '').slice(0, 300); console.error('[lead] resend-app', send.status, mail.error); }
+    } catch (e) { console.error('[lead] mail-app', e); mail.error = String(e && e.message || e).slice(0, 200); }
+    res.status(mail.sent ? 200 : 502).json({ ok: mail.sent, mail });
+    return;
+  }
+  if (RESEND_KEY && !nurFreischalten) {
     try {
       const pdfResp = await fetch(BASE + paket.file);
       if (!pdfResp.ok) throw new Error('pdf fetch ' + pdfResp.status);
@@ -200,7 +253,7 @@ export default async function handler(req, res) {
           to: [email],
           reply_to: REPLY_TO,
           subject: paket.subject,
-          html: mailHtml(paket, nlToken),
+          html: mailHtml(paket, nlToken, key),
           attachments: [{ filename: paket.file, content: pdfB64 }]
         })
       });
@@ -232,5 +285,6 @@ export default async function handler(req, res) {
     mail.error = 'no RESEND_API_KEY';
   }
 
+  if (nurFreischalten) { res.status(502).json({ ok: false, mail }); return; }
   res.status(200).json({ ok: true, paket: PAKETE[slug] ? slug : 'eselsbruecken', mail });
 }
