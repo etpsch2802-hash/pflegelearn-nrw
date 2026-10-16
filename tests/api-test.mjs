@@ -15,7 +15,7 @@ function check(name, cond, extra) {
 let routes = [], calls = [];
 function json(body, status) { return new Response(JSON.stringify(body), { status: status || 200, headers: { 'Content-Type': 'application/json' } }); }
 globalThis.fetch = async (url, opt) => {
-  url = String(url); calls.push({ url, body: opt && opt.body ? String(opt.body) : '' });
+  url = String(url); calls.push({ url, body: opt && opt.body ? String(opt.body) : '', headers: (opt && opt.headers) || {} });
   for (const r of routes) if (r.test(url, opt)) return r.reply(url, opt);
   return json([], 200);
 };
@@ -74,6 +74,7 @@ check('Fremde Person darf den Punktestand nicht umschalten (403)', r.code === 40
 
 // ── 2) Lernstand ─────────────────────────────────────────────────────────────
 console.log('\n[2] Lernstand der Klasse');
+calls = [];
 routes = [{ test: u => u.includes('/rpc/klasse_stats'), reply: () => json([
   { name: 'Lena', quiz_total: 40, quiz_correct: 30, streak: 3, letzte: new Date().toISOString() },
   { name: 'Tom', quiz_total: 10, quiz_correct: 5, streak: 0, letzte: new Date(Date.now() - 10 * 864e5).toISOString() },
@@ -82,6 +83,7 @@ r = await call(klasse, 'POST', { action: 'stats', klasse_id: 'k1', lehrer_email:
 const lena = r.body.mitglieder.find(m => m.name === 'Lena');
 check('Quote pro Azubi = richtig / beantwortet (75 %)', lena.quote === 75, lena);
 check('Ohne Antworten keine Quote (null statt 0 %)', r.body.mitglieder.find(m => m.name === 'Neu').quote === null);
+check('RPC-Aufruf sendet Content-Type JSON (sonst 404 PGRST202)', calls.some(c => c.url.includes('/rpc/klasse_stats') && /application\/json/.test(c.headers['Content-Type'] || '')), calls.map(c => c.headers));
 check('Klassenschnitt gewichtet nach Fragen (35/50 = 70 %)', r.body.schnitt.quote === 70, r.body.schnitt);
 check('Aktiv in 7 Tagen zaehlt nur Lena', r.body.schnitt.aktiv_7d === 1, r.body.schnitt);
 r = await call(klasse, 'POST', { action: 'stats', klasse_id: 'k1', lehrer_email: 'keine-mail' });
