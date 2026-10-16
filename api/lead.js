@@ -7,8 +7,23 @@
 // 2) Verschickt das angeforderte Gratis-PDF (paket) als Anhang von kontakt@plan-nrw.de.
 // Beruehrt NICHT: chat.js, vercel.json, Stripe-Button, stripe-webhook.js.
 
-// Gratis-PDFs liegen in einem eigenen oeffentlichen Repo, damit das Haupt-Repo privat sein kann.
+// Gratis-PDFs (seit 16.10.2026): privater Supabase-Speicher, Bucket 'gratis-pdfs' (befuellt von
+// .github/workflows/pdf-sync.yml aus private/gratis-pdfs/). Kein oeffentlicher Link mehr.
+// BASE (altes oeffentliches Repo) bleibt nur als Notfall-Fallback, solange es erreichbar ist.
 const BASE = 'https://raw.githubusercontent.com/etpsch2802-hash/plan-nrw-gratis-pdfs/main/';
+async function ladePdf(file) {
+  const U = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), K = process.env.SUPABASE_SERVICE_ROLE;
+  if (U && K) {
+    try {
+      const r = await fetch(U + '/storage/v1/object/authenticated/gratis-pdfs/' + encodeURIComponent(file), { headers: { 'apikey': K, 'Authorization': 'Bearer ' + K } });
+      if (r.ok) return Buffer.from(await r.arrayBuffer());
+      console.error('[lead] storage', r.status);
+    } catch (e) { console.error('[lead] storage', e); }
+  }
+  const g = await fetch(BASE + file);
+  if (!g.ok) throw new Error('pdf ' + g.status);
+  return Buffer.from(await g.arrayBuffer());
+}
 const FROM = 'PLAN NRW <kontakt@plan-nrw.de>';
 const REPLY_TO = 'pflegelearn.nrw@gmail.com';
 
@@ -151,9 +166,8 @@ export default async function handler(req, res) {
       if (!ok) { res.status(401).json({ error: 'email' }); return; }
     }
     try {
-      const r = await fetch(BASE + dp.file);
-      if (!r.ok) { res.status(502).json({ error: 'quelle', status: r.status }); return; }
-      const buf = Buffer.from(await r.arrayBuffer());
+      let buf;
+      try { buf = await ladePdf(dp.file); } catch (e) { res.status(502).json({ error: 'quelle' }); return; }
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Length', String(buf.length));
       res.setHeader('Content-Disposition', 'attachment; filename="' + dp.file + '"');
@@ -237,9 +251,7 @@ export default async function handler(req, res) {
   }
   if (RESEND_KEY && !nurFreischalten) {
     try {
-      const pdfResp = await fetch(BASE + paket.file);
-      if (!pdfResp.ok) throw new Error('pdf fetch ' + pdfResp.status);
-      const buf = Buffer.from(await pdfResp.arrayBuffer());
+      const buf = await ladePdf(paket.file);
       const pdfB64 = buf.toString('base64');
 
       const send = await fetch('https://api.resend.com/emails', {
