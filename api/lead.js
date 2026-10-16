@@ -53,6 +53,36 @@ async function sessionOk(at) {
     return !!(u && u.email && (u.email_confirmed_at || u.confirmed_at));
   } catch (e) { return false; }
 }
+// Missbrauchsschutz (17.10.2026): niemand soll ueber das Formular massenhaft Mails an fremde Adressen ausloesen.
+// Grenzen je 24 h: pro E-Mail-Adresse 3 Mails, pro Geraet/Netz (IP, nur als HMAC-Hash gespeichert) 5 verschiedene
+// Adressen, insgesamt 300 Mails. Eintraege in public.lead_limits werden nach 2 Tagen geloescht.
+const LIMIT_EMAIL = 3, LIMIT_IP = 5, LIMIT_GESAMT = 300;
+async function limitPruefen(req, email) {
+  const U = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), K = process.env.SUPABASE_SERVICE_ROLE;
+  if (!U || !K) return { ok: true };
+  const H = { 'apikey': K, 'Authorization': 'Bearer ' + K, 'Content-Type': 'application/json' };
+  const ip = String((req.headers && (req.headers['x-forwarded-for'] || req.headers['x-real-ip'])) || '').split(',')[0].trim() || 'unbekannt';
+  const ipHash = await hmac('ip:' + ip);
+  const seit = new Date(Date.now() - 864e5).toISOString();
+  async function zaehle(filter) {
+    const r = await fetch(U + '/rest/v1/lead_limits?select=email&created_at=gte.' + encodeURIComponent(seit) + filter, { headers: H });
+    if (!r.ok) throw new Error('limit ' + r.status);
+    return r.json();
+  }
+  try {
+    const proMail = await zaehle('&email=eq.' + encodeURIComponent(email));
+    if (proMail.length >= LIMIT_EMAIL) return { ok: false, grund: 'email' };
+    const proIp = await zaehle('&ip_hash=eq.' + ipHash);
+    const andere = new Set(proIp.map(x => x.email)); andere.delete(email);
+    if (andere.size >= LIMIT_IP) return { ok: false, grund: 'ip' };
+    const r = await fetch(U + '/rest/v1/lead_limits?select=id&created_at=gte.' + encodeURIComponent(seit), { headers: Object.assign({ 'Prefer': 'count=exact', 'Range': '0-0' }, H) });
+    const gesamt = parseInt(String(r.headers.get('content-range') || '').split('/')[1] || '0', 10) || 0;
+    if (gesamt >= LIMIT_GESAMT) return { ok: false, grund: 'gesamt' };
+    await fetch(U + '/rest/v1/lead_limits', { method: 'POST', headers: Object.assign({ 'Prefer': 'return=minimal' }, H), body: JSON.stringify({ ip_hash: ipHash, email }) });
+    if (Math.random() < 0.05) fetch(U + '/rest/v1/lead_limits?created_at=lt.' + encodeURIComponent(new Date(Date.now() - 2 * 864e5).toISOString()), { method: 'DELETE', headers: H }).catch(() => {});
+    return { ok: true };
+  } catch (e) { console.error('[lead] limit', e); return { ok: true }; }   // Schutz darf den Versand nicht lahmlegen
+}
 function freischaltHtml(key) {
   return '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;background:#0b1f33;border-radius:14px;overflow:hidden">'
     + '<div style="padding:26px 24px 18px;text-align:center;border-bottom:3px solid #10b981"><div style="color:#22d3ee;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px">PLAN NRW &middot; Bestehen ist planbar.</div>'
@@ -196,6 +226,10 @@ export default async function handler(req, res) {
 
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!re.test(email) || email.length > 200) { res.status(400).json({ error: 'email' }); return; }
+
+  // 0) Missbrauchsschutz vor jedem Mailversand
+  const lim = await limitPruefen(req, email);
+  if (!lim.ok) { res.status(429).json({ error: 'limit', grund: lim.grund }); return; }
 
   // 1) Lead speichern
   try {

@@ -21535,10 +21535,10 @@ if (_savedLang !== 'de') {
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ msg.style.color='#fca5a5'; msg.textContent='Bitte gib eine g\u00fcltige E-Mail-Adresse ein.'; return; }
       b.disabled=true; b.textContent='Wird gesendet \u2026';
       fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'app-pdf',zweck:'app'})})
-        .then(function(r){ if(!r.ok) throw new Error('http'); ga('pdf_gate_mail');
+        .then(function(r){ if(r.status===429){ var e=new Error('limit'); e.limit=true; throw e; } if(!r.ok) throw new Error('http'); ga('pdf_gate_mail');
           b.style.display='none'; inp.style.display='none'; msg.style.color='#bff3dd';
           msg.innerHTML='\u2709\uFE0F Link ist unterwegs an <b>'+em.replace(/[<>&"]/g,'')+'</b>.<br>Tippe ihn auf diesem Handy an \u2013 und schau auch im Spam-Ordner nach.'; })
-        .catch(function(){ b.disabled=false; b.textContent='Link schicken'; msg.style.color='#fca5a5'; msg.textContent='Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; });
+        .catch(function(e){ b.disabled=false; b.textContent='Link schicken'; msg.style.color=e&&e.limit?'#fcd34d':'#fca5a5'; msg.textContent=e&&e.limit?'Für heute wurden schon genug Links angefordert. Bitte versuch es morgen wieder.':'Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; });
     };
     ga('pdf_gate_view');
   }
@@ -21717,6 +21717,7 @@ if (_savedLang !== 'de') {
         .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { ok:r.ok, j:j }; }); })
         .then(function(res){
           if (res.ok) { success(); }
+          else if (res.j && res.j.error==='limit') { btn.disabled=false; btn.textContent='PDF kostenlos sichern'; msg.style.color='#fcd34d'; msg.textContent='Für heute wurden schon genug PDFs angefordert. Bitte versuch es morgen wieder.'; }
           else { btn.disabled=false; btn.textContent='PDF kostenlos sichern'; msg.style.color='#fca5a5'; msg.textContent='Etwas ist schiefgelaufen. Bitte versuch es nochmal.'; }
         })
         .catch(function(){ btn.disabled=false; btn.textContent='PDF kostenlos sichern'; msg.style.color='#fca5a5'; msg.textContent='Keine Verbindung. Bitte versuch es gleich nochmal.'; });
