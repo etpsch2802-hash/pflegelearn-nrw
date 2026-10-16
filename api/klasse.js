@@ -300,6 +300,40 @@ export default async function handler(req, res) {
       return;
     }
 
+    // ── Fehleranalyse einer Klasse (nur eigene Lehrkraft): Themen, Krankheitsbilder/Medikamente,
+    //    haeufig falsche Fragen – je Azubi und fuer die ganze Klasse. Daten: progress.modul='fehler_v1'.
+    if (action === 'fehler') {
+      var fkid = (body.klasse_id ? String(body.klasse_id) : '').trim();
+      var fle = (body.lehrer_email ? String(body.lehrer_email) : '').trim().toLowerCase();
+      if (!fkid || !emailRe.test(fle)) { res.status(400).json({ error: 'parameter' }); return; }
+      var fr = await fetch(SB_URL + '/rest/v1/rpc/klasse_fehler', {
+        method: 'POST', headers: sbHeaders(SB_SERVICE), body: JSON.stringify({ p_klasse: fkid, p_lehrer: fle })
+      });
+      if (!fr.ok) { var ft = await fr.text(); console.error('[klasse] fehler', fr.status, ft); res.status(500).json({ error: 'fehler' }); return; }
+      var frows = await fr.json(); if (!Array.isArray(frows)) frows = [];
+      var kSum = {}, bSum = {}, qSum = {};
+      function top(obj, n, fn) { return Object.keys(obj).map(function (k) { return fn(k, obj[k]); }).sort(function (a, b) { return b.sort - a.sort; }).slice(0, n).map(function (x) { delete x.sort; return x; }); }
+      var azubis = frows.map(function (r) {
+        var d = (r && r.daten && typeof r.daten === 'object') ? r.daten : {};
+        var ks = d.kats || {}, bs = d.begriffe || {}, qs = d.falsch || {};
+        Object.keys(ks).forEach(function (k) { var v = ks[k] || {}; kSum[k] = kSum[k] || { c: 0, t: 0, n: 0 }; kSum[k].c += +v.c || 0; kSum[k].t += +v.t || 0; kSum[k].n++; });
+        Object.keys(bs).forEach(function (k) { bSum[k] = bSum[k] || { n: 0, p: 0 }; bSum[k].n += +bs[k] || 0; bSum[k].p++; });
+        Object.keys(qs).forEach(function (k) { var v = qs[k] || {}; qSum[k] = qSum[k] || { t: String(v.t || '').slice(0, 140), kat: v.kat || '', n: 0, p: 0 }; qSum[k].n += +v.n || 0; qSum[k].p++; });
+        var schwach = top(ks, 3, function (k, v) { var t = +v.t || 0, c = +v.c || 0; return { kat: k, quote: t ? Math.round(c / t * 100) : null, fragen: t, sort: t >= 5 ? (1 - c / t) * 100 + t / 1000 : -1 }; }).filter(function (x) { return x.fragen >= 5; });
+        var begriffe = top(bs, 4, function (k, v) { return { name: k, falsch: +v || 0, sort: +v || 0 }; });
+        return { name: r.name || '', hat_daten: !!(r && r.daten), letzte: r.letzte || null, schwach: schwach, begriffe: begriffe };
+      });
+      res.status(200).json({
+        ok: true, azubis: azubis,
+        klasse: {
+          themen: top(kSum, 6, function (k, v) { return { kat: k, quote: v.t ? Math.round(v.c / v.t * 100) : null, fragen: v.t, azubis: v.n, sort: v.t >= 10 ? (1 - v.c / v.t) * 100 : -1 }; }).filter(function (x) { return x.fragen >= 10; }),
+          begriffe: top(bSum, 8, function (k, v) { return { name: k, falsch: v.n, azubis: v.p, sort: v.p * 1000 + v.n }; }),
+          fragen: top(qSum, 5, function (k, v) { return { frage: v.t, kat: v.kat, falsch: v.n, azubis: v.p, sort: v.p * 1000 + v.n }; })
+        }
+      });
+      return;
+    }
+
     // ── Live-Quiz ────────────────────────────────────────────────────────────
     async function liveSession(code) {
       var r = await fetch(SB_URL + '/rest/v1/live_sessions?code=eq.' + encodeURIComponent(code) + '&select=*&limit=1', { headers: sbHeaders(SB_SERVICE) });
