@@ -24887,5 +24887,117 @@ window.renderLiveUsers=function(start){
   if(document.readyState==='complete') setTimeout(later,6000); else window.addEventListener('load',function(){ setTimeout(later,6000); });
 })();
 </script>
+<!-- PLAN NRW: Fehleranalyse pro Azubi (16.10.2026)
+     Erfasst lokal, welche Themen, Krankheitsbilder und Medikamente wiederholt falsch sind (pl_fehler_v1).
+     Cloud-Sync NUR fuer angemeldete Azubis in einem Kurs (progress.modul='fehler_v1'), erst ab PL_FEHLER_PUBLIC.
+     Lehrkraft: Button "Fehleranalyse" im Lernstand (api/klasse action 'fehler').
+     PL_FEHLER_PUBLIC=false: Lehrkraft-Ansicht vorerst nur fuer Admin. Wrappt pickAnswer/finishExamen additiv. -->
+<script>
+(function(){
+  var PL_FEHLER_PUBLIC=false, KEY='pl_fehler_v1', MAXQ=150;
+  function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function read(){ try{ var o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o&&typeof o==='object') return o; }catch(e){} return {kats:{},begriffe:{},falsch:{}}; }
+  function write(o){ try{ localStorage.setItem(KEY,JSON.stringify(o)); dirty=true; }catch(e){} }
+  function hash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return 'q'+(h>>>0).toString(36); }
+  var TERMS=null;
+  function terms(){
+    if(TERMS) return TERMS; TERMS=[];
+    function add(n,typ){ n=String(n||'').replace(/\s*\(.*$/,'').trim(); if(n.length>=5 && TERMS.every(function(x){return x.n!==n;})) TERMS.push({n:n,l:n.toLowerCase(),typ:typ}); }
+    try{ if(typeof KRANKHEITSBILDER!=='undefined') Object.keys(KRANKHEITSBILDER).forEach(function(k){ (KRANKHEITSBILDER[k].bilder||[]).forEach(function(b){ add(b.name,'kb'); }); }); }catch(e){}
+    [typeof MEDIKAMENTE!=='undefined'?MEDIKAMENTE:null, typeof MEDIKAMENTE_NEU!=='undefined'?MEDIKAMENTE_NEU:null].forEach(function(M){
+      try{ if(M) Object.keys(M).forEach(function(k){ (Array.isArray(M[k])?M[k]:[]).forEach(function(m){ add(m.name,'med'); }); }); }catch(e){} });
+    return TERMS;
+  }
+  function rec(frage, kat, richtig, loesung){
+    if(!frage) return;
+    var o=read(); o.kats=o.kats||{}; o.begriffe=o.begriffe||{}; o.falsch=o.falsch||{};
+    if(kat){ var k=o.kats[kat]||(o.kats[kat]={c:0,t:0}); k.t++; if(richtig) k.c++; }
+    if(!richtig){
+      var id=hash(frage), f=o.falsch[id]||(o.falsch[id]={t:String(frage).slice(0,140),kat:kat||'',n:0});
+      f.n++; f.d=Date.now();
+      var txt=(String(frage)+' '+String(loesung||'')).toLowerCase();
+      terms().forEach(function(x){ if(txt.indexOf(x.l)!==-1) o.begriffe[x.n]=(o.begriffe[x.n]||0)+1; });
+      var ids=Object.keys(o.falsch);
+      if(ids.length>MAXQ){ ids.sort(function(a,b){ return (o.falsch[a].n-o.falsch[b].n)||((o.falsch[a].d||0)-(o.falsch[b].d||0)); }); ids.slice(0,ids.length-MAXQ).forEach(function(x){ delete o.falsch[x]; }); }
+    }
+    write(o);
+  }
+  window.plFehlerData=read;
+  // Quiz
+  var _pick=window.pickAnswer;
+  if(typeof _pick==='function'){ window.pickAnswer=function(i){
+    var vorher=(typeof quizAnswers!=='undefined')?quizAnswers.length:-1;
+    var r=_pick.apply(this,arguments);
+    try{ if(typeof quizAnswers!=='undefined' && quizAnswers.length>vorher){ var a=quizAnswers[quizAnswers.length-1], q=a&&a.q; if(q) rec(q.frage,q.kat,a.sel===q.k,(q.opt||[])[q.k]); } }catch(e){}
+    return r; }; }
+  // Examen-Simulation
+  var _fin=window.finishExamen;
+  if(typeof _fin==='function'){ window.finishExamen=function(){
+    try{ var st=(typeof _examState!=='undefined')?_examState:null;
+      if(st && !st.finished && st.questions) st.questions.forEach(function(q,i){ var s=st.answers[i]; if(s===null||s===undefined) return; rec(q.frage,q.kat,s===q.correctIdx,(q.opts||[])[q.correctIdx]); }); }catch(e){}
+    return _fin.apply(this,arguments); }; }
+  // Cloud-Sync nur fuer angemeldete Kursmitglieder
+  var dirty=true, last='';
+  function inKurs(){ try{ return !!localStorage.getItem('pl_klasse_code'); }catch(e){ return false; } }
+  function push(){
+    if(!(PL_FEHLER_PUBLIC||adm())) return;   // Sync erst nach Freigabe + Datenschutz-Ergaenzung; lokal wird schon gesammelt
+    if(!dirty || !inKurs() || !window.SB || !SB.auth) return;
+    SB.auth.getSession().then(function(r){ var s=r&&r.data&&r.data.session; if(!s||!s.user) return;
+      var d=read(), j=JSON.stringify(d); if(j===last){ dirty=false; return; }
+      SB.from('progress').upsert({user_id:s.user.id,modul:'fehler_v1',daten:d,updated_at:new Date().toISOString()},{onConflict:'user_id,modul'})
+        .then(function(u){ if(!u.error){ last=j; dirty=false; } }); }).catch(function(){});
+  }
+  setInterval(push,20000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden') push(); });
+  window.addEventListener('pagehide',push);
+  // Lehrkraft-Ansicht
+  function katLabel(id){ try{ for(var i=0;i<KATS.length;i++) if(KATS[i].id===id) return KATS[i].label; }catch(e){} return id; }
+  function farbe(q){ return q==null?'#8ab4d0':(q>=75?'#34d399':(q>=55?'#fcd34d':'#fb7185')); }
+  var SEK='background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);color:#cfe3f3;border-radius:12px;padding:12px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer';
+  function chip(t,sub){ return '<span style="display:inline-block;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:#fecdd3;border-radius:14px;padding:5px 10px;font-size:12px;margin:0 6px 6px 0">'+esc(t)+(sub?' <b style="color:#fda4af">'+esc(sub)+'</b>':'')+'</span>'; }
+  window.plFehlerOpen=function(kid){
+    var alt=document.getElementById('pl-fehler'); if(alt) alt.remove();
+    var ov=document.createElement('div'); ov.id='pl-fehler';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.9);z-index:1310;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto';
+    ov.innerHTML='<div id="pl-fehler-in" style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(251,113,133,.3);border-radius:20px;padding:20px;width:100%;max-width:560px;margin:auto;color:#dbe7f1"><div style="color:#8ab4d0;font-size:13px">Fehleranalyse wird geladen…</div></div>';
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    document.body.appendChild(ov);
+    var el=document.getElementById('pl-fehler-in'), le=''; try{ le=localStorage.getItem('pl_lehrer_email')||''; }catch(e){}
+    fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'fehler',klasse_id:kid,lehrer_email:le})})
+      .then(function(r){ return r.json(); }).then(function(d){
+        if(!d||!d.ok) throw new Error('x');
+        var K=d.klasse||{}, h='<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;margin-bottom:4px">Fehleranalyse</div>'
+          +'<div style="font-size:12px;color:#8ab4d0;margin-bottom:14px">Was im Kurs wiederholt falsch beantwortet wird. Nur Azubis mit Online-Konto liefern Daten.</div>';
+        h+='<div style="font-size:12px;font-weight:800;color:#fda4af;letter-spacing:.5px;text-transform:uppercase;margin:4px 0 8px">Schwächste Themen</div>';
+        h+=(K.themen&&K.themen.length)?K.themen.map(function(x){ return '<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px"><span>'+esc(katLabel(x.kat))+' <span style="color:#8ab4d0;font-size:11px">· '+x.fragen+' Antworten, '+x.azubis+' Azubis</span></span><b style="color:'+farbe(x.quote)+'">'+x.quote+'%</b></div>'; }).join(''):'<div style="font-size:12.5px;color:#8ab4d0">Noch zu wenige Antworten.</div>';
+        h+='<div style="font-size:12px;font-weight:800;color:#fda4af;letter-spacing:.5px;text-transform:uppercase;margin:16px 0 8px">Krankheitsbilder &amp; Medikamente</div>';
+        h+=(K.begriffe&&K.begriffe.length)?K.begriffe.map(function(x){ return chip(x.name, x.azubis+' Azubis'); }).join(''):'<div style="font-size:12.5px;color:#8ab4d0">Noch keine Häufungen.</div>';
+        h+='<div style="font-size:12px;font-weight:800;color:#fda4af;letter-spacing:.5px;text-transform:uppercase;margin:16px 0 8px">Häufig falsche Fragen</div>';
+        h+=(K.fragen&&K.fragen.length)?K.fragen.map(function(x){ return '<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:9px 11px;margin-bottom:7px;font-size:12.5px;line-height:1.45">'+esc(x.frage)+'<div style="font-size:11px;color:#8ab4d0;margin-top:3px">'+esc(katLabel(x.kat))+' · '+x.falsch+'× falsch, '+x.azubis+' Azubis</div></div>'; }).join(''):'<div style="font-size:12.5px;color:#8ab4d0">Noch keine Daten.</div>';
+        h+='<div style="font-size:12px;font-weight:800;color:#fda4af;letter-spacing:.5px;text-transform:uppercase;margin:16px 0 8px">Pro Azubi</div>';
+        h+=(d.azubis||[]).map(function(a){
+          var inh=a.hat_daten?((a.schwach.length?a.schwach.map(function(s){ return chip(katLabel(s.kat), s.quote+'%'); }).join(''):'')+(a.begriffe.length?a.begriffe.map(function(b){ return chip(b.name, b.falsch+'×'); }).join(''):'')||'<span style="font-size:12px;color:#86efac">Keine auffälligen Schwächen</span>'):'<span style="font-size:12px;color:#8ab4d0">Noch keine Daten (kein Online-Konto oder noch nicht geübt)</span>';
+          return '<div style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div style="font-size:14px;font-weight:700;color:#e0f2fe;margin-bottom:6px">'+esc(a.name||'ohne Namen')+'</div>'+inh+'</div>'; }).join('')||'<div style="font-size:12.5px;color:#8ab4d0">Noch keine Azubis im Kurs.</div>';
+        h+='<button onclick="document.getElementById(\'pl-fehler\').remove()" style="width:100%;margin-top:14px;'+SEK+'">Schließen</button>';
+        el.innerHTML=h;
+      }).catch(function(){ el.innerHTML='<div style="color:#fb7185;font-size:13px">Fehleranalyse konnte nicht geladen werden.</div><button onclick="document.getElementById(\'pl-fehler\').remove()" style="width:100%;margin-top:12px;'+SEK+'">Schließen</button>'; });
+  };
+  // Button im Lernstand-Fenster ergaenzen
+  var _st=window.plStatsOpen;
+  if(typeof _st==='function'){ window.plStatsOpen=function(kid){
+    var r=_st.apply(this,arguments);
+    if(!(PL_FEHLER_PUBLIC||adm())) return r;
+    var n=0, iv=setInterval(function(){ n++; var el=document.getElementById('pl-stats-in'); if(!el||n>60){ clearInterval(iv); return; }
+      if(el.innerHTML.indexOf('Lernstand der Klasse')!==-1 && !document.getElementById('pl-fehler-btn')){
+        var b=document.createElement('button'); b.id='pl-fehler-btn'; b.type='button';
+        b.textContent='🔍 Fehleranalyse: was wiederholt falsch ist';
+        b.style.cssText='width:100%;margin:0 0 10px;background:rgba(251,113,133,.14);border:1px solid rgba(251,113,133,.45);color:#fecdd3;border-radius:12px;padding:12px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer';
+        b.onclick=function(){ plFehlerOpen(kid); };
+        var close=el.querySelector('button[onclick="plStatsClose()"]'); if(close) el.insertBefore(b,close); else el.appendChild(b);
+        clearInterval(iv); } },150);
+    return r; }; }
+})();
+</script>
 </body>
 </html>
