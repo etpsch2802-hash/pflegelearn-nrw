@@ -17494,7 +17494,7 @@ Regeln: fachlich korrekt nach DNQP-Expertenstandards, S3-Leitlinien, KRINKO, NVL
       +'<div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#7dd3fc;margin:4px 2px 9px">Vorlagen & Ablauf</div>'
       + VOR.map(vorCard).join('')
       +'<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:11px 13px;margin-top:8px">'
-        +'<div style="font-size:11.5px;color:#fcd34d;line-height:1.55"><strong>Hinweis NRW:</strong> Praxisanleitende müssen jährlich 24 h berufspädagogische Pflichtfortbildung nachweisen (\u00A74 Abs.3 PflAPrV). Asynchrone digitale Lernformen sind dafür in NRW nicht anrechenbar. Dieses Toolkit ist eine Arbeitshilfe \u2013 kein anrechenbarer Fortbildungsnachweis.</div></div>'
+        +'<div style="font-size:11.5px;color:#fcd34d;line-height:1.55"><strong>Hinweis NRW:</strong> Praxisanleitende müssen jährlich mindestens 24 Stunden insbesondere berufspädagogische Fortbildung nachweisen (\u00A74 Abs.3 PflAPrV). Asynchrone digitale Lernformen sind dafür in NRW nicht anrechenbar. Dieses Toolkit ist eine Arbeitshilfe \u2013 kein anrechenbarer Fortbildungsnachweis.</div></div>'
       +'<div style="font-size:10.5px;color:#6b8ba3;line-height:1.5;margin-top:12px;text-align:center">KI-generierte Aufgaben vor Einsatz fachlich prüfen und an die eigene Einrichtung anpassen.</div>';
   };
 
@@ -25005,6 +25005,89 @@ window.renderLiveUsers=function(start){
         b.onclick=function(){ plFehlerOpen(kid); };
         var close=el.querySelector('button[onclick="plStatsClose()"]'); if(close) el.insertBefore(b,close); else el.appendChild(b);
         clearInterval(iv); } },150);
+    return r; }; }
+})();
+</script>
+<!-- PLAN NRW: Nachweis-Export für Einrichtungen (17.10.2026)
+     Im Lernstand-Fenster: Lernstand + Fehleranalyse eines Kurses als CSV (Excel) oder als druckbares PDF.
+     Nutzt nur api/klasse (list, stats, fehler). PL_EXPORT_PUBLIC=false: vorerst nur Admin. Kein neuer pl_*-Key. -->
+<script>
+(function(){
+  var PL_EXPORT_PUBLIC=false;
+  function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function le(){ try{ return localStorage.getItem('pl_lehrer_email')||''; }catch(e){ return ''; } }
+  function post(b){ return fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){ return r.json(); }); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function katLabel(id){ try{ for(var i=0;i<KATS.length;i++) if(KATS[i].id===id) return KATS[i].label; }catch(e){} return id; }
+  function datum(d){ try{ return d?new Date(d).toLocaleDateString('de-DE'):''; }catch(e){ return ''; } }
+  function heute(){ return new Date().toLocaleDateString('de-DE'); }
+  function laden(kid){
+    return Promise.all([ post({action:'list',lehrer_email:le()}), post({action:'stats',klasse_id:kid,lehrer_email:le()}), post({action:'fehler',klasse_id:kid,lehrer_email:le()}).catch(function(){ return null; }) ])
+      .then(function(r){
+        var k=((r[0]&&r[0].klassen)||[]).filter(function(x){ return x.id===kid; })[0]||{};
+        if(!r[1]||!r[1].ok) throw new Error('stats');
+        var fe={}; ((r[2]&&r[2].azubis)||[]).forEach(function(a){ fe[a.name]=a; });
+        var zeilen=(r[1].mitglieder||[]).map(function(m){
+          var f=fe[m.name]||{};
+          return { name:m.name||'ohne Namen', fragen:m.fragen||0, richtig:m.richtig||0, quote:m.quote, serie:m.streak||0, letzte:m.letzte,
+            schwach:(f.schwach||[]).map(function(s){ return katLabel(s.kat)+' ('+s.quote+' %)'; }).join('; '),
+            begriffe:(f.begriffe||[]).map(function(b){ return b.name+' ('+b.falsch+'x)'; }).join('; ') };
+        });
+        return { kurs:k.name||'Kurs', schule:k.schule||'', schnitt:r[1].schnitt||{}, zeilen:zeilen, themen:(r[2]&&r[2].klasse&&r[2].klasse.themen)||[] };
+      });
+  }
+  function csv(d){
+    function c(v){ v=String(v==null?'':v); return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
+    var rows=[['Lernstand-Nachweis PLAN NRW'],['Kurs',d.kurs],['Schule/Einrichtung',d.schule],['Stand',heute()],[],
+      ['Name','Beantwortete Fragen','Davon richtig','Quote %','Lernserie (Tage)','Letzte Aktivität','Schwächste Themen','Häufig falsch (Krankheitsbilder/Medikamente)']];
+    d.zeilen.forEach(function(z){ rows.push([z.name,z.fragen,z.richtig,z.quote==null?'':z.quote,z.serie,datum(z.letzte),z.schwach,z.begriffe]); });
+    rows.push([]); rows.push(['Hinweis','Lernstand aus der App PLAN NRW. Kein Fortbildungs- oder Teilnahmezertifikat.']);
+    var s='﻿'+rows.map(function(r){ return r.map(c).join(';'); }).join('\r\n');
+    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([s],{type:'text/csv;charset=utf-8'}));
+    a.download='PLAN-Lernstand_'+d.kurs.replace(/[^A-Za-z0-9ÄÖÜäöüß_-]+/g,'-')+'_'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1000);
+  }
+  function pdf(d,w){
+    w=w||window.open('','_blank'); if(!w){ alert('Bitte Pop-ups erlauben, um den Nachweis zu drucken.'); return; }
+    var s=d.schnitt||{};
+    var rows=d.zeilen.map(function(z){ return '<tr><td>'+esc(z.name)+'</td><td class="n">'+z.fragen+'</td><td class="n">'+(z.quote==null?'–':z.quote+' %')+'</td><td class="n">'+z.serie+'</td><td>'+esc(datum(z.letzte))+'</td><td>'+esc(z.schwach||'–')+'</td></tr>'; }).join('')||'<tr><td colspan="6">Noch keine Azubis im Kurs.</td></tr>';
+    var th=(d.themen||[]).map(function(x){ return '<li>'+esc(katLabel(x.kat))+': '+x.quote+' % richtig ('+x.fragen+' Antworten)</li>'; }).join('');
+    w.document.write('<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Lernstand '+esc(d.kurs)+'</title><style>'
+      +'body{font-family:Arial,Helvetica,sans-serif;color:#0b1a35;margin:28px;font-size:12px}h1{font-size:20px;margin:0 0 4px}.sub{color:#475569;margin-bottom:16px}'
+      +'.kpi{display:flex;gap:12px;margin:12px 0 18px}.kpi div{border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px}.kpi b{display:block;font-size:18px}'
+      +'table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e2e8f0;padding:6px 5px;text-align:left;vertical-align:top}th{background:#0b1a35;color:#fff;font-size:11px}td.n{text-align:right}'
+      +'.fuss{margin-top:22px;font-size:10px;color:#64748b}h2{font-size:14px;margin:18px 0 6px}@media print{button{display:none}}</style></head><body>'
+      +'<button onclick="window.print()" style="float:right;padding:8px 14px">Drucken / als PDF speichern</button>'
+      +'<h1>Lernstand-Nachweis</h1><div class="sub">Kurs: <b>'+esc(d.kurs)+'</b>'+(d.schule?' · '+esc(d.schule):'')+' · Stand: '+heute()+'</div>'
+      +'<div class="kpi"><div><b>'+(s.teilnehmer||0)+'</b>Azubis</div><div><b>'+(s.aktiv_7d||0)+'</b>aktiv (7 Tage)</div><div><b>'+(s.fragen||0)+'</b>beantwortete Fragen</div><div><b>'+(s.quote==null?'–':s.quote+' %')+'</b>Quote gesamt</div></div>'
+      +'<table><thead><tr><th>Name</th><th>Fragen</th><th>Quote</th><th>Serie</th><th>Zuletzt aktiv</th><th>Schwächste Themen</th></tr></thead><tbody>'+rows+'</tbody></table>'
+      +(th?'<h2>Schwächste Themen im Kurs</h2><ul>'+th+'</ul>':'')
+      +'<div class="fuss">Erstellt mit PLAN NRW (plan-nrw.de). Der Lernstand stammt aus der App und gilt nicht als Fortbildungs- oder Teilnahmezertifikat. Daten nur von Azubis mit Online-Konto.</div>'
+      +'</body></html>');
+    w.document.close();
+  }
+  function knopf(kid){
+    var el=document.getElementById('pl-stats-in'); if(!el||document.getElementById('pl-export-row')) return false;
+    if(el.innerHTML.indexOf('Lernstand der Klasse')===-1) return false;
+    var row=document.createElement('div'); row.id='pl-export-row'; row.style.cssText='display:flex;gap:8px;margin:0 0 10px';
+    var st='flex:1;background:rgba(20,184,166,.14);border:1px solid rgba(20,184,166,.45);color:#99f6e4;border-radius:12px;padding:11px;font-weight:800;font-size:13px;font-family:inherit;cursor:pointer';
+    row.innerHTML='<button type="button" style="'+st+'" data-x="csv">⬇️ Nachweis als CSV</button><button type="button" style="'+st+'" data-x="pdf">🖨️ Nachweis als PDF</button>';
+    row.querySelectorAll('button').forEach(function(b){ b.onclick=function(){
+      var art=b.getAttribute('data-x'), alt=b.textContent; b.disabled=true; b.textContent='Wird erstellt …';
+      var w=null; if(art==='pdf'){ try{ w=window.open('','_blank'); if(w) w.document.write('<p style="font-family:Arial;padding:30px">Nachweis wird erstellt …</p>'); }catch(e){} }  // sofort öffnen, sonst blockt der Browser das Pop-up
+      laden(kid).then(function(d){ if(art==='csv') csv(d); else { if(w){ try{ w.document.open(); }catch(e){} } pdf(d,w); } try{ if(typeof gaEvent==='function') gaEvent('lernstand_export',{art:art}); }catch(e){} })
+        .catch(function(){ alert('Der Nachweis konnte nicht erstellt werden. Bitte versuch es gleich nochmal.'); })
+        .then(function(){ b.disabled=false; b.textContent=alt; });
+    }; });
+    var close=el.querySelector('button[onclick="plStatsClose()"]'); if(close) el.insertBefore(row,close); else el.appendChild(row);
+    return true;
+  }
+  window.plExportNachweis=function(kid,art){ return laden(kid).then(function(d){ return art==='csv'?(csv(d),d):art==='pdf'?(pdf(d),d):d; }); };
+  var _st=window.plStatsOpen;
+  if(typeof _st==='function'){ window.plStatsOpen=function(kid){
+    var r=_st.apply(this,arguments);
+    if(!(PL_EXPORT_PUBLIC||adm())) return r;
+    var n=0, iv=setInterval(function(){ n++; if(knopf(kid)||n>80) clearInterval(iv); },150);
     return r; }; }
 })();
 </script>
