@@ -160,7 +160,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 9. PWA, Service Worker & Web Push
 
-**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v96` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
+**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v97` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
 - **Network-first für alles** (HTML mit `cache: 'no-store'`); Cache nur als Offline-Fallback. Es werden **nur same-origin OK-Antworten** gecacht (niemals Stripe/Drittanbieter).
 - **Web Push:** `push` → `showNotification`, `notificationclick` → App fokussieren/öffnen.
 - **Regel:** Bei Änderungen an gecachten Assets oder SW-Verhalten **`CACHE`-Konstante hochzählen**, sonst aktualisieren Clients nicht.

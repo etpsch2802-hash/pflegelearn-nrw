@@ -24549,7 +24549,7 @@ window.renderLiveUsers=function(start){
    berührt SCORES-Daten und andere Screens NICHT. Kein neuer pl_*-Key.
    Beta: nur für Admin sichtbar, bis PL_ICU_PUBLIC=true. */
 (function(){
-  var PL_ICU_PUBLIC=false;
+  var PL_ICU_PUBLIC=true;
   function sichtbar(){ if(PL_ICU_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   var tab='rass', rass=null, bps=[0,0,0], hz={pao2:'',fio2:'',einheit:'mmHg'};
   var RASS=[
