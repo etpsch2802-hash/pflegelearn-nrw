@@ -2,7 +2,10 @@
 // Aufruf: node scripts/validate-quiz.mjs
 import { readFileSync } from 'node:fs';
 
-const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+// Seit dem File-Split liegen die Fragen in data/quiz-fragen.js; index.html bleibt Fallback.
+let html = '';
+try { html = readFileSync(new URL('../data/quiz-fragen.js', import.meta.url), 'utf8'); } catch (e) {}
+if (!/const QUIZ_FRAGEN\s*=/.test(html)) html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
 // QUIZ_FRAGEN-Array-Literal extrahieren und als JS auswerten (trailing commas erlaubt)
 const m = html.match(/const QUIZ_FRAGEN\s*=\s*(\[[\s\S]*?\n\s*\]);/);
@@ -12,7 +15,7 @@ try { FRAGEN = Function('return ' + m[1])(); }
 catch (e) { console.error('❌ Array nicht auswertbar (Syntaxfehler in QUIZ_FRAGEN):', e.message); process.exit(1); }
 
 const VALID_KATS = new Set(['ana_herz','ana_atmung','ana_niere','ana_hormone','ana_verdauung','ana_nerven','ana_bewegung','ana_sinne','ana_blut','ana_grundlagen','pflegeplanung','altenpflege','anerkennung','gpa','an_atemweg','an_regional','an_awr','an_notfall','an_monitoring','an_medikamente','an_grundlagen',
-  'psychiatrie','paediatrie','pflegehelfer','ata_beruf','ata_atemweg','ata_monitoring','ata_medikamente','ata_sicherheit','ata_periop','ata_narkose','its_beatmung','its_haemo','its_sepsis','its_neuro','its_organersatz','its_medikamente','its_elyt','its_pflege','ota_steril','ota_aufbereitung','ota_instrumente','ota_op_technik','ota_naht','ota_lagerung','ota_sicherheit','rehabilitation','palliation',
+  'psychiatrie','paediatrie','pflegehelfer','ata_beruf','ata_atemweg','ata_monitoring','ata_medikamente','ata_sicherheit','ata_periop','ata_narkose','its_beatmung','its_haemo','its_sepsis','its_neuro','its_organersatz','its_medikamente','its_elyt','its_pflege','ota_steril','ota_aufbereitung','ota_instrumente','ota_op_technik','ota_naht','ota_lagerung','ota_sicherheit','rehabilitation','palliation','gynaekologie',
   'praevention','innere','chirurgie','psychologie','notfall','mobilitaet']);
 const VALID_S = new Set(['leicht','mittel','schwer']);
 

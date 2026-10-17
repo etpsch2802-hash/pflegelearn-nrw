@@ -25091,5 +25091,72 @@ window.renderLiveUsers=function(start){
     return r; }; }
 })();
 </script>
+<!-- PLAN NRW: Entwurf Langzeitpflege & ambulant (17.10.2026)
+     Lädt /data/entwurf/langzeitpflege.js NUR für Admin (isAdmin()) und hängt die Fragen als Kategorie 'lzp_entwurf' an.
+     Für alle anderen wird nichts geladen. Freigabe erst nach fachlicher Prüfung (P. Schenkelberger / Jessica). Kein neuer pl_*-Key. -->
+<script>
+(function(){
+  var fertig=false, versuche=0;
+  function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function einhaengen(){
+    try{
+      var neu=window.PL_LZP_ENTWURF||[]; if(!neu.length) return;
+      if(!KATS.some(function(k){ return k.id==='lzp_entwurf'; }))
+        KATS.push({id:'lzp_entwurf',label:'Langzeitpflege & ambulant (Entwurf)',icon:'<svg class="ic" style="width:1.05em;height:1.05em;vertical-align:-.15em" viewBox="0 0 24 24"><use href="#i-wheelchair"/></svg>',color:'#f59e0b'});
+      if(!QUIZ_FRAGEN.some(function(q){ return q.kat==='lzp_entwurf'; })) neu.forEach(function(q){ QUIZ_FRAGEN.push(q); });
+      try{ if(typeof renderQuizSelect==='function') renderQuizSelect(); }catch(e){}
+    }catch(e){}
+  }
+  function laden(){
+    if(fertig) return; fertig=true;
+    var s=document.createElement('script'); s.src='/data/entwurf/langzeitpflege.js?v=1'; s.onload=einhaengen; s.onerror=function(){ fertig=false; };
+    document.head.appendChild(s);
+  }
+  function pruefen(){ if(fertig) return; if(adm()){ laden(); return; } if(++versuche<300) setTimeout(pruefen,2000); }
+  setTimeout(pruefen,1500);
+})();
+</script>
+<!-- PLAN NRW: Warteliste Pflegefachassistenz 2027 (17.10.2026)
+     Karte im Screen Ausbildungswege: E-Mail eintragen → POST /api/lead {zweck:'warteliste'} (nur speichern, KEINE Mail; leads.warteliste_pfa_at).
+     PL_PFA_WL_PUBLIC=false: vorerst nur Admin. Vor Freigabe Datenschutzerklärung ergänzen. Kein neuer pl_*-Key. -->
+<script>
+(function(){
+  var PL_PFA_WL_PUBLIC=false;
+  function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function an(){ return PL_PFA_WL_PUBLIC||adm(); }
+  function karte(){
+    if(!an()||document.getElementById('pl-pfa-wl')) return;
+    var liste=document.getElementById('ausb-list'); if(!liste||!liste.parentNode) return;
+    var d=document.createElement('div'); d.id='pl-pfa-wl';
+    d.style.cssText='background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px';
+    d.innerHTML='<div style="font-weight:800;color:#34d399;margin-bottom:4px">Neu ab 1.1.2027: Pflegefachassistenz bundesweit'+(PL_PFA_WL_PUBLIC?'':' <span style="font-size:11px;color:#fcd34d">(Admin-Vorschau)</span>')+'</div>'
+      +'<div style="font-size:13px;color:var(--text2);margin-bottom:10px">18 Monate in Vollzeit, Einsätze in Akutpflege, stationärer Langzeitpflege und ambulanter Pflege. Wir bauen das Lernpaket für die neue Ausbildung. Trag dich ein, dann sagen wir dir einmal Bescheid, sobald es da ist.</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="pl-pfa-mail" type="email" placeholder="deine@email.de" autocomplete="email" style="flex:1;min-width:180px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.2);color:inherit;font-family:inherit">'
+      +'<button id="pl-pfa-btn" style="padding:10px 16px;border-radius:10px;border:0;background:#34d399;color:#04121f;font-weight:800;cursor:pointer;font-family:inherit">Eintragen</button></div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:8px">Nur für diese eine Nachricht. Austragen jederzeit per Mail an kontakt@plan-nrw.de. <a href="/datenschutz.html" style="color:inherit">Datenschutz</a></div>'
+      +'<div id="pl-pfa-msg" style="font-size:13px;margin-top:8px"></div>';
+    liste.parentNode.insertBefore(d,liste);
+    document.getElementById('pl-pfa-btn').onclick=function(){
+      var m=(document.getElementById('pl-pfa-mail').value||'').trim(), msg=document.getElementById('pl-pfa-msg');
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){ msg.style.color='#fca5a5'; msg.textContent='Bitte eine gültige E-Mail eingeben.'; return; }
+      this.disabled=true; msg.style.color='var(--text2)'; msg.textContent='Wird gespeichert …';
+      var b=this;
+      fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:m,source:'warteliste-pfa',zweck:'warteliste'})})
+        .then(function(r){ return r.json().then(function(j){ return {c:r.status,j:j}; }); })
+        .then(function(x){
+          if(x.c===200&&x.j.ok){ msg.style.color='#34d399'; msg.textContent='Eingetragen. Wir melden uns, sobald das Paket bereit ist.'; }
+          else if(x.c===429){ msg.style.color='#fcd34d'; msg.textContent='Zu viele Versuche. Bitte morgen noch einmal.'; b.disabled=false; }
+          else { msg.style.color='#fca5a5'; msg.textContent='Hat nicht geklappt. Bitte später noch einmal.'; b.disabled=false; }
+        }).catch(function(){ msg.style.color='#fca5a5'; msg.textContent='Keine Verbindung. Bitte später noch einmal.'; b.disabled=false; });
+    };
+  }
+  try{
+    var orig=window.showScreen;
+    if(typeof orig==='function'){
+      window.showScreen=function(n){ var r=orig.apply(this,arguments); if(n==='ausbildungswege') setTimeout(karte,50); return r; };
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
