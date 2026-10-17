@@ -27,7 +27,7 @@ Auslieferung als:
 
 **Entwickelt von** P. Schenkelberger (Ausbilder & Fachpfleger für Anästhesie/Intensivmedizin) – dies ist ein wiederkehrendes Vertrauenssignal in der App und in den Lead-Mails.
 
-**Wichtigste Kennzahlen (im Code referenziert):** Quiz-Array `QUIZ_FRAGEN` ca. 1.441 Fragen (Stand 2026-10-03; Verlauf 627 → 1075 → 1107 → 1214 → 1441) – **Marketing-Zahl inkl. Wissensdatenbank: 2.000+ Prüfungsfragen (siehe verbindliche Regel oben)**, **59 Quiz-Kategorien** (`KATS`; nach dem Themen-Split der 5 großen Kategorien, siehe Decision Log 2026-07-10), 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege. **Die Fragenzahl ist nicht mehr hart kodiert**, sondern wird via `.pl-fragen-count`-Spans + `plSyncFragenCount()` sowie `QUIZ_FRAGEN.length` an allen UI-Stellen gespiegelt; SEO/Meta-Texte tragen „über 1050".
+**Wichtigste Kennzahlen (im Code referenziert):** Quiz-Array `QUIZ_FRAGEN` ca. 1.517 Fragen (Stand 2026-10-17; Verlauf 627 → 1075 → 1107 → 1214 → 1441 → 1517) – **Marketing-Zahl inkl. Wissensdatenbank: 2.000+ Prüfungsfragen (siehe verbindliche Regel oben)**, **59 Quiz-Kategorien** (`KATS`; nach dem Themen-Split der 5 großen Kategorien, siehe Decision Log 2026-07-10), 11 CE (Curriculare Einheiten), alle 7 Ausbildungswege. **Die Fragenzahl ist nicht mehr hart kodiert**, sondern wird via `.pl-fragen-count`-Spans + `plSyncFragenCount()` sowie `QUIZ_FRAGEN.length` an allen UI-Stellen gespiegelt; SEO/Meta-Texte tragen „über 1050".
 
 ### Business-Kontext
 - **Geschäftsmodell:** Freemium mit 21-Tage-Trial (Sprint 1.5: von 7 auf 21 Tage verlängert) und kostenpflichtigen Laufzeit-Tarifen (siehe Abschnitt „Stripe / Monetarisierung").
@@ -160,7 +160,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 9. PWA, Service Worker & Web Push
 
-**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v100` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
+**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v101` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
 - **Network-first für alles** (HTML mit `cache: 'no-store'`); Cache nur als Offline-Fallback. Es werden **nur same-origin OK-Antworten** gecacht (niemals Stripe/Drittanbieter).
 - **Web Push:** `push` → `showNotification`, `notificationclick` → App fokussieren/öffnen.
 - **Regel:** Bei Änderungen an gecachten Assets oder SW-Verhalten **`CACHE`-Konstante hochzählen**, sonst aktualisieren Clients nicht.
@@ -256,6 +256,13 @@ Die CLAUDE.md ist die zentrale, **lebende** Dokumentation. Nach jeder wichtigen 
 
 Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). Bei neuen Entscheidungen hier ergänzen.
 
+- **Go-Freigabe Fachgebiete (2026-10-17 vormittags, Go P. Schenkelberger)** – Alle Punkte des Nachtlaufs freigegeben:
+  - `PL_EXPORT_PUBLIC=true` (Nachweis-Export für alle Lehrkräfte), `PL_PFA_WL_PUBLIC=true` (Warteliste für alle) + Datenschutzerklärung Abschnitt **3b „Warteliste Pflegefachassistenz"** (`#warteliste`, Einwilligung, **Löschung nach Benachrichtigung, spätestens Ende 2027** → beim Start des Pakets einlösen).
+  - **Langzeitpflege live:** 77 Fragen in `data/quiz-fragen.js`, neue Kategorie `langzeitpflege` („Langzeitpflege & ambulant") in `KATS`, `VALID_KATS` und allen `quiz_kats`, die `altenpflege` enthalten. 3 Dubletten zu Bestandsfragen nicht übernommen; Admin-Loader und `data/entwurf/` entfernt. Gesamt `QUIZ_FRAGEN` 1517.
+  - Dublette „Validation nach Naomi Feil" (#970) gelöscht.
+  - `AUSBILDUNGEN` `pflegehelfer` auf Bundesrecht 2027 umgestellt (18 Monate, ≥ 1.050 h + 1.280 h, PflFAssG/PflFAssAPrV, Übergang NRW-Recht bis 31.12.2026).
+  - **Landingpages live:** `fach/<slug>.html` (9 Seiten, indexierbar, Canonical mit `.html`), eigene `sitemap-fach.xml` im Sitemap-Index. Neu erzeugen: `node scripts/landingpages.mjs --live` (schreibt Seiten + Sitemap).
+  - **Einstieg `?fach=<id>`:** merkt Ziel in `sessionStorage` (`plan_fach_ziel`, kein `pl_*`-Key), GA-Event `landing_fach`, öffnet nach Login den Bereich (Praxisanleitung → `lehrer`, Langzeitpflege → `quizSelect`, Fachweiterbildungen/Assistenz/Anerkennung → `ausbildungswege`). SW-Cache v101.
 - **Fachgebiete-Strategie „eine App, viele Module" (2026-10-17, Nachtlauf ohne Bezahlmodus, alles admin-only/Vorschau)** – Grundlage: Recherche 17.10. (Google Play „Repetitive Content", Apple 4.3, je neue App 12-Tester-Closed-Test → **keine eigenen Store-Apps pro Fachgebiet**).
   1. `data/fachgebiete.json`: zentrale Konfiguration (9 Fachgebiete: id, Ausbildungsweg, Farbe, `status` live/entwurf, Landingpage-Texte).
   2. `scripts/landingpages.mjs`: erzeugt SEO-Landingpages nach `private/landing/` (noindex, nicht ausgeliefert); nach Go `--live` → `fach/<slug>.html`. **Offen:** CTA nutzt `?fach=<id>`, die App wertet den Parameter noch nicht aus.

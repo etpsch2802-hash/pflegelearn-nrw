@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Zentrale Fachgebiets-Konfiguration (17.10.2026). Grundlage für 'eine App, viele Module': welches Fachgebiet welchen Ausbildungsweg nutzt, wie es heißt, welche Farbe es hat und welche Landingpage es bekommt. Strategie: KEINE eigenen Store-Apps pro Fachgebiet (Google-Play-Regel 'Repetitive Content', Apple 4.3), sondern Module in einer App + Landingpages für Google. status: live = in der App für alle, entwurf = nur Admin, geplant = noch nicht gebaut. ausbildungsweg = id aus AUSBILDUNGEN in index.html. Landingpages erzeugt scripts/landingpages.mjs nach private/landing/ (Vorschau, nicht ausgeliefert).",
+  "_hinweis": "Zentrale Fachgebiets-Konfiguration (17.10.2026). Grundlage für 'eine App, viele Module': welches Fachgebiet welchen Ausbildungsweg nutzt, wie es heißt, welche Farbe es hat und welche Landingpage es bekommt. Strategie: KEINE eigenen Store-Apps pro Fachgebiet (Google-Play-Regel 'Repetitive Content', Apple 4.3), sondern Module in einer App + Landingpages für Google. status: live = in der App für alle, entwurf = nur Admin, geplant = noch nicht gebaut. ausbildungsweg = id aus AUSBILDUNGEN in index.html. Landingpages: scripts/landingpages.mjs --live → fach/<slug>.html (seit 17.10.2026 live).",
   "version": 1,
   "fachgebiete": [
     {
@@ -14,7 +14,12 @@
         "slug": "pflegeexamen",
         "titel": "Pflegeexamen sicher bestehen",
         "untertitel": "Prüfungsvorbereitung für die generalistische Pflegeausbildung – schriftlich, mündlich und praktisch.",
-        "vorteile": ["2.000+ Prüfungsfragen mit Erklärungen", "Examen-Simulation mit Note", "KI-Prüfer für die mündliche Prüfung", "Examen-Kompass für die praktische Prüfung"],
+        "vorteile": [
+          "2.000+ Prüfungsfragen mit Erklärungen",
+          "Examen-Simulation mit Note",
+          "KI-Prüfer für die mündliche Prüfung",
+          "Examen-Kompass für die praktische Prüfung"
+        ],
         "keywords": "Pflegeexamen, Generalistik, Pflegefachfrau, Pflegefachmann, Prüfungsvorbereitung, PflAPrV"
       }
     },
@@ -30,7 +35,11 @@
         "slug": "pflegefachassistenz",
         "titel": "Pflegefachassistenz: gut vorbereitet",
         "untertitel": "Lernen und üben für die Pflegefachassistenz-Ausbildung.",
-        "vorteile": ["Grundpflege, Behandlungspflege und Hygiene verständlich erklärt", "Prüfungsfragen mit Erklärungen", "Einfach erklärt und Übersetzen für Lernende mit anderer Muttersprache"],
+        "vorteile": [
+          "Grundpflege, Behandlungspflege und Hygiene verständlich erklärt",
+          "Prüfungsfragen mit Erklärungen",
+          "Einfach erklärt und Übersetzen für Lernende mit anderer Muttersprache"
+        ],
         "keywords": "Pflegefachassistenz, Pflegeassistenz, Pflegehelfer, Ausbildung, Prüfung"
       }
     },
@@ -46,7 +55,11 @@
         "slug": "anerkennung-pflege",
         "titel": "Anerkennung in der Pflege",
         "untertitel": "Vorbereitung auf Kenntnisprüfung und Anpassungslehrgang – mit Fachsprache und einfacher Erklärung.",
-        "vorteile": ["Fachbegriffe einfach erklärt", "Übersetzen in 9 Sprachen, Fachbegriffe bleiben deutsch", "Prüfungsfragen und Fälle aus dem deutschen Pflegealltag"],
+        "vorteile": [
+          "Fachbegriffe einfach erklärt",
+          "Übersetzen in 9 Sprachen, Fachbegriffe bleiben deutsch",
+          "Prüfungsfragen und Fälle aus dem deutschen Pflegealltag"
+        ],
         "keywords": "Anerkennung Pflege, Kenntnisprüfung, Anpassungslehrgang, ausländische Pflegekräfte"
       }
     },
@@ -62,7 +75,11 @@
         "slug": "intensivpflege",
         "titel": "Intensivpflege lernen",
         "untertitel": "Beatmung, Hämodynamik, Perfusoren und Scores – für die Fachweiterbildung und den Alltag auf der ITS.",
-        "vorteile": ["Intensiv-Rechner: RASS, BPS, Horowitz-Index", "Perfusor- und Infusionswissen", "Prüfungsfragen zu Beatmung, Sepsis und Hämodynamik"],
+        "vorteile": [
+          "Intensiv-Rechner: RASS, BPS, Horowitz-Index",
+          "Perfusor- und Infusionswissen",
+          "Prüfungsfragen zu Beatmung, Sepsis und Hämodynamik"
+        ],
         "keywords": "Intensivpflege, Fachweiterbildung Intensiv, Beatmung, ITS, RASS, BPS"
       }
     },
@@ -78,7 +95,11 @@
         "slug": "anaesthesiepflege",
         "titel": "Anästhesiepflege lernen",
         "untertitel": "Atemwegsmanagement, Narkose-Medikamente und Überwachung – kompakt für Fachweiterbildung und Praxis.",
-        "vorteile": ["Fragen zu Atemweg, Pharmakologie und Monitoring", "Notfallkarten Anästhesie & Intensiv", "Von einem Fachpfleger für Anästhesie & Intensivmedizin"],
+        "vorteile": [
+          "Fragen zu Atemweg, Pharmakologie und Monitoring",
+          "Notfallkarten Anästhesie & Intensiv",
+          "Von einem Fachpfleger für Anästhesie & Intensivmedizin"
+        ],
         "keywords": "Anästhesiepflege, Fachweiterbildung Anästhesie, Narkose, Atemwegsmanagement"
       }
     },
@@ -94,7 +115,11 @@
         "slug": "ata-ausbildung",
         "titel": "ATA-Ausbildung: Prüfung vorbereiten",
         "untertitel": "Lernen für die Anästhesietechnische Assistenz.",
-        "vorteile": ["Prüfungsfragen nach Themen sortiert", "Narkosevorbereitung, Medikamente, Hygiene", "Lernen in kurzen Einheiten"],
+        "vorteile": [
+          "Prüfungsfragen nach Themen sortiert",
+          "Narkosevorbereitung, Medikamente, Hygiene",
+          "Lernen in kurzen Einheiten"
+        ],
         "keywords": "ATA Ausbildung, Anästhesietechnische Assistenz, Prüfung"
       }
     },
@@ -110,7 +135,11 @@
         "slug": "ota-ausbildung",
         "titel": "OTA-Ausbildung: Prüfung vorbereiten",
         "untertitel": "Lernen für die Operationstechnische Assistenz.",
-        "vorteile": ["Prüfungsfragen nach Themen sortiert", "Instrumente, Sterilgut, OP-Hygiene", "Lernen in kurzen Einheiten"],
+        "vorteile": [
+          "Prüfungsfragen nach Themen sortiert",
+          "Instrumente, Sterilgut, OP-Hygiene",
+          "Lernen in kurzen Einheiten"
+        ],
         "keywords": "OTA Ausbildung, Operationstechnische Assistenz, Prüfung"
       }
     },
@@ -121,13 +150,17 @@
       "zielgruppe": "Auszubildende mit Vertiefung stationäre Langzeitpflege oder ambulante Pflege; Einrichtungen der Altenpflege und ambulante Dienste",
       "ausbildungsweg": "gpa",
       "farbe": "#f59e0b",
-      "status": "entwurf",
-      "quiz_kat": "lzp_entwurf",
+      "status": "live",
+      "quiz_kat": "langzeitpflege",
       "landing": {
         "slug": "langzeitpflege",
         "titel": "Langzeitpflege und ambulante Pflege",
         "untertitel": "Prüfungsvorbereitung und Praxiswissen für Pflegeheim und Tour.",
-        "vorteile": ["Fälle aus Pflegeheim und häuslicher Pflege", "Expertenstandards, Prophylaxen und Demenz", "Für Azubis mit Vertiefungseinsatz in der Langzeitpflege"],
+        "vorteile": [
+          "Fälle aus Pflegeheim und häuslicher Pflege",
+          "Expertenstandards, Prophylaxen und Demenz",
+          "Für Azubis mit Vertiefungseinsatz in der Langzeitpflege"
+        ],
         "keywords": "Langzeitpflege, Altenpflege, ambulante Pflege, Vertiefungseinsatz, Pflegeheim"
       }
     },
@@ -144,7 +177,11 @@
         "slug": "praxisanleitung",
         "titel": "Werkzeuge für die Praxisanleitung",
         "untertitel": "Kurse anlegen, Aufgaben verteilen, Lernstand und Fehleranalyse Ihrer Azubis sehen.",
-        "vorteile": ["Lernstand und Fehleranalyse pro Azubi", "Live-Quiz im Unterricht", "Nachweis-Export als CSV und PDF"],
+        "vorteile": [
+          "Lernstand und Fehleranalyse pro Azubi",
+          "Live-Quiz im Unterricht",
+          "Nachweis-Export als CSV und PDF"
+        ],
         "keywords": "Praxisanleitung, Praxisanleiter, Pflegeausbildung, Lernstand, Ausbildungsnachweis"
       }
     }

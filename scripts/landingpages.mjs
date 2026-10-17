@@ -17,7 +17,7 @@ const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/fachgebiete.json'),
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function seite(f) {
-  const L = f.landing, url = 'https://plan-nrw.de/' + (LIVE ? 'fach/' : '') + L.slug;
+  const L = f.landing, url = 'https://plan-nrw.de/' + (LIVE ? 'fach/' + L.slug + '.html' : L.slug);
   const app = 'https://plan-nrw.de/?fach=' + encodeURIComponent(f.id) + '&utm_source=landing&utm_campaign=' + encodeURIComponent(L.slug);
   const hinweis = f.hinweis_recht ? `<p class="recht">${esc(f.hinweis_recht)}</p>` : '';
   const ld = { '@context': 'https://schema.org', '@type': 'MobileApplication', name: f.name, applicationCategory: 'EducationalApplication', operatingSystem: 'Android, Web',
@@ -88,5 +88,12 @@ for (const f of cfg.fachgebiete) {
   fs.writeFileSync(path.join(OUT, f.landing.slug + '.html'), seite(f));
   console.log('OK ' + path.relative(ROOT, path.join(OUT, f.landing.slug + '.html')) + (f.status !== 'live' ? '  (' + f.status + ')' : ''));
   n++;
+}
+if (LIVE) {   // eigene Sitemap für die Landingpages (im Sitemap-Index sitemap.xml eingetragen)
+  const heute = new Date().toISOString().slice(0, 10);
+  const urls = cfg.fachgebiete.filter(f => f.landing && f.landing.slug && f.status === 'live')
+    .map(f => `  <url><loc>https://plan-nrw.de/fach/${f.landing.slug}.html</loc><lastmod>${heute}</lastmod></url>`).join('\n');
+  fs.writeFileSync(path.join(ROOT, 'sitemap-fach.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+  console.log('OK sitemap-fach.xml');
 }
 console.log(n + ' Landingpages erzeugt' + (LIVE ? ' (LIVE)' : ' (Vorschau, nicht ausgeliefert)'));
