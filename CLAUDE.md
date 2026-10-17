@@ -160,7 +160,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 9. PWA, Service Worker & Web Push
 
-**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v101` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
+**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v102` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
 - **Network-first für alles** (HTML mit `cache: 'no-store'`); Cache nur als Offline-Fallback. Es werden **nur same-origin OK-Antworten** gecacht (niemals Stripe/Drittanbieter).
 - **Web Push:** `push` → `showNotification`, `notificationclick` → App fokussieren/öffnen.
 - **Regel:** Bei Änderungen an gecachten Assets oder SW-Verhalten **`CACHE`-Konstante hochzählen**, sonst aktualisieren Clients nicht.
@@ -256,6 +256,7 @@ Die CLAUDE.md ist die zentrale, **lebende** Dokumentation. Nach jeder wichtigen 
 
 Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). Bei neuen Entscheidungen hier ergänzen.
 
+- **Kursraum statt Lerntisch für Lehrkräfte (2026-10-17, Entscheidung P. Schenkelberger)** – Lehrkräfte brauchen den Lerntisch nicht: In `mountHome()` (Community-IIFE) zeigt `#plc-lt-entry` bei `pl_persona='lehrkraft'` die Kachel **„Kursraum“** (→ `showLehrer()`), sonst weiter den Lerntisch (`data-art` kurs/lt, wechselt live mit der Rolle). Lerntisch-Hinweis in der NEU-Liste für Lehrkräfte ausgeblendet, Profil-Kachel „Kurs & Lehrer“ → „Kursraum“, Tour-Schritt Lehrkraft angepasst. Begriff bewusst „Kursraum“ (nicht „Klassenzimmer“), damit Praxisanleitung/Fachweiterbildung sich angesprochen fühlen. SW-Cache v102.
 - **Go-Freigabe Fachgebiete (2026-10-17 vormittags, Go P. Schenkelberger)** – Alle Punkte des Nachtlaufs freigegeben:
   - `PL_EXPORT_PUBLIC=true` (Nachweis-Export für alle Lehrkräfte), `PL_PFA_WL_PUBLIC=true` (Warteliste für alle) + Datenschutzerklärung Abschnitt **3b „Warteliste Pflegefachassistenz"** (`#warteliste`, Einwilligung, **Löschung nach Benachrichtigung, spätestens Ende 2027** → beim Start des Pakets einlösen).
   - **Langzeitpflege live:** 77 Fragen in `data/quiz-fragen.js`, neue Kategorie `langzeitpflege` („Langzeitpflege & ambulant") in `KATS`, `VALID_KATS` und allen `quiz_kats`, die `altenpflege` enthalten. 3 Dubletten zu Bestandsfragen nicht übernommen; Admin-Loader und `data/entwurf/` entfernt. Gesamt `QUIZ_FRAGEN` 1517.
