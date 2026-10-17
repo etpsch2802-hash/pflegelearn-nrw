@@ -160,7 +160,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 9. PWA, Service Worker & Web Push
 
-**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v102` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
+**Service Worker (`sw.js`)** – Cache-Name aktuell `pflegelearn-v103` (bei jeder Asset-/Verhaltensänderung hochzählen – siehe Historie: v6 → v37 durch die Content-/UI-Sprints 2026-07):
 - **Network-first für alles** (HTML mit `cache: 'no-store'`); Cache nur als Offline-Fallback. Es werden **nur same-origin OK-Antworten** gecacht (niemals Stripe/Drittanbieter).
 - **Web Push:** `push` → `showNotification`, `notificationclick` → App fokussieren/öffnen.
 - **Regel:** Bei Änderungen an gecachten Assets oder SW-Verhalten **`CACHE`-Konstante hochzählen**, sonst aktualisieren Clients nicht.
@@ -256,6 +256,7 @@ Die CLAUDE.md ist die zentrale, **lebende** Dokumentation. Nach jeder wichtigen 
 
 Wichtige Architektur- und Produktentscheidungen (chronologisch, neueste oben). Bei neuen Entscheidungen hier ergänzen.
 
+- **Test-Link mit Zugangscode (2026-10-17)** – `plan-nrw.de/?zugang=<CODE>&fach=langzeitpflege` meldet über den normalen `checkPW()`-Weg an (Code-Prüfung per RPC `plc_lookup_token`, Fallback `TOKEN_DB`), entfernt den Parameter aus der URL, merkt ihn nur kurz in `sessionStorage` (`plan_zugang`) und zeigt einmal den Hinweis „Testzugang – Was testen? / Feedback geben“. `?fach=langzeitpflege` springt in der Quiz-Auswahl zur Kategorie. Erster Code: `TEST-LZP-2026-A1` (externe Altenpflegerin, bis 30.11.2026, in Supabase `tokens` + `TOKEN_DB`). Weitere Testerinnen: neuen Code in `tokens` anlegen, Link gleich aufbauen. SW-Cache v103.
 - **Etsy als zusätzlicher Vertriebsweg (2026-10-17, Entwurf, Entscheidung P. Schenkelberger)** – Anlass: Konkurrentin „Vivihappyness“ (Etsy, 627 Verkäufe, PDF-Lernkarten 6–60 €). Drei Fragenhefte aus `data/quiz-fragen.js` im PLAN-Design (`scripts/pdf/etsy.py` → `private/etsy/`, per `.vercelignore` nicht ausgeliefert): Langzeitpflege & ambulant (77 Fragen, 4,99 €), Intensiv & Anästhesie (290, 9,99 €), Examen 300 (9,99 €). Artikeltexte, Tags, Bilder (4:3) in `private/etsy/ARTIKELTEXTE.md`/`bilder/`. Etsy-Regeln: KI-Nutzung in der Beschreibung offenlegen, kein Kauf-Aufruf außerhalb von Etsy (Gebührenumgehung). **Vor Start:** fachliche Endkontrolle, Steuer-Kurzcheck, Shop mit Impressum/Widerruf.
 - **Kursraum statt Lerntisch für Lehrkräfte (2026-10-17, Entscheidung P. Schenkelberger)** – Lehrkräfte brauchen den Lerntisch nicht: In `mountHome()` (Community-IIFE) zeigt `#plc-lt-entry` bei `pl_persona='lehrkraft'` die Kachel **„Kursraum“** (→ `showLehrer()`), sonst weiter den Lerntisch (`data-art` kurs/lt, wechselt live mit der Rolle). Lerntisch-Hinweis in der NEU-Liste für Lehrkräfte ausgeblendet, Profil-Kachel „Kurs & Lehrer“ → „Kursraum“, Tour-Schritt Lehrkraft angepasst. Begriff bewusst „Kursraum“ (nicht „Klassenzimmer“), damit Praxisanleitung/Fachweiterbildung sich angesprochen fühlen. SW-Cache v102.
 - **Go-Freigabe Fachgebiete (2026-10-17 vormittags, Go P. Schenkelberger)** – Alle Punkte des Nachtlaufs freigegeben:

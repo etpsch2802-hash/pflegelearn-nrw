@@ -7464,6 +7464,7 @@ const TOKEN_DB = {
   "TEST-PFLEGE-2026-T001":{ name:"Tester 1", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T002":{ name:"Tester 2", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-PFLEGE-2026-T003":{ name:"Tester 3", bereich:"alle", ablauf:"2099-12-31", aktiv:true },
+  "TEST-LZP-2026-A1":     { name:"Testerin Langzeitpflege", bereich:"alle", ablauf:"2026-11-30", aktiv:true },   // 17.10.2026 externe Testerin (Langzeitpflege), auch in Supabase tokens
   "TEST-WUZ5J":{ name:"Tester1",  bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-DGJU3":{ name:"Tester2",  bereich:"alle", ablauf:"2099-12-31", aktiv:true },
   "TEST-QK1U2":{ name:"Tester3",  bereich:"alle", ablauf:"2099-12-31", aktiv:true },
@@ -25173,8 +25174,63 @@ window.renderLiveUsers=function(start){
     try{ sessionStorage.removeItem('plan_fach_ziel'); }catch(e){}
     var z=ZIEL[f]; if(z==='home') return;
     try{ showScreen(z); }catch(e){}
+    /* Langzeitpflege: in der Quiz-Auswahl direkt zur Kategorie springen und kurz hervorheben */
+    if(f==='langzeitpflege') setTimeout(function(){ try{
+      var b=document.querySelector('#quiz-select-list button[onclick*="langzeitpflege"]');
+      if(b){ b.scrollIntoView({block:'center',behavior:'smooth'}); b.style.outline='3px solid #f59e0b'; b.style.outlineOffset='2px'; setTimeout(function(){ b.style.outline=''; },4000); }
+    }catch(e){} },400);
   }
   setTimeout(los,1200);
+})();
+</script>
+<!-- PLAN NRW: Test-Link mit Zugangscode ?zugang=<CODE> (17.10.2026)
+     Für externe Testerinnen: plan-nrw.de/?zugang=CODE&fach=langzeitpflege meldet mit dem Code an (normaler checkPW-Weg,
+     Code-Prüfung per Supabase-RPC) und zeigt einmal einen Hinweis „Was testen? / Feedback geben“. Code nur kurz in sessionStorage,
+     Parameter wird aus der URL entfernt. Kein neuer pl_*-Key. -->
+<script>
+(function(){
+  var code=null;
+  try{ code=new URLSearchParams(location.search).get('zugang'); }catch(e){}
+  try{
+    if(code){
+      code=String(code).trim().toUpperCase().slice(0,40);
+      sessionStorage.setItem('plan_zugang',code);
+      var u=new URL(location.href); u.searchParams.delete('zugang'); history.replaceState(null,'',u.pathname+(u.search||'')+u.hash);
+    }
+    code=sessionStorage.getItem('plan_zugang');
+  }catch(e){ return; }
+  if(!code||!/^[A-Z0-9-]{4,40}$/.test(code)) return;
+  var n=0, versucht=false;
+  function hinweis(){
+    if(document.getElementById('pl-zugang-hint')) return;
+    var o=document.createElement('div'); o.id='pl-zugang-hint';
+    o.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.85);z-index:1400;display:flex;align-items:center;justify-content:center;padding:18px';
+    o.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(245,158,11,.45);border-radius:18px;padding:20px;max-width:420px;width:100%;color:#ddf0fb;font-family:inherit">'
+      +'<div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#f59e0b;text-transform:uppercase;margin-bottom:6px">Testzugang</div>'
+      +'<div style="font-size:19px;font-weight:800;margin-bottom:8px">Danke, dass du testest!</div>'
+      +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6;margin-bottom:14px">Neu ist das Thema <b style="color:#fff">Langzeitpflege &amp; ambulant</b> (77 Fragen). Bitte achte vor allem darauf: Stimmt die Fachlichkeit? Passen die Fragen zum Alltag im Heim und in der ambulanten Pflege? Was fehlt dir?<br><br>Du hast vollen Zugriff auf die ganze App.</div>'
+      +'<button id="pl-zh-go" style="width:100%;padding:13px;border:0;border-radius:12px;background:#f59e0b;color:#04121f;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin-bottom:8px">Zu den Fragen</button>'
+      +'<button id="pl-zh-fb" style="width:100%;padding:11px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:none;color:#ddf0fb;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Feedback geben (geht auch später über das Menü)</button></div>';
+    document.body.appendChild(o);
+    document.getElementById('pl-zh-go').onclick=function(){ o.remove(); try{ if(typeof startQuiz==='function') startQuiz('langzeitpflege'); }catch(e){} };
+    document.getElementById('pl-zh-fb').onclick=function(){ o.remove(); try{ if(typeof showFeedback==='function') showFeedback(); }catch(e){} };
+  }
+  function los(){
+    try{
+      if(typeof currentUser!=='undefined'&&currentUser&&currentUser.token===code){
+        sessionStorage.removeItem('plan_zugang'); try{ sessionStorage.removeItem('plan_fach_ziel'); }catch(e){}
+        setTimeout(hinweis,900); return;
+      }
+      var inp=document.getElementById('pw-input');
+      if(!versucht&&typeof checkPW==='function'&&inp&&(window.SB||n>=6)){
+        versucht=true; inp.value=code;
+        var rm=document.getElementById('remember-me'); if(rm) rm.checked=true;
+        checkPW();
+      }
+    }catch(e){}
+    if(++n<40) setTimeout(los,800);
+  }
+  setTimeout(los,1000);
 })();
 </script>
 </body>
