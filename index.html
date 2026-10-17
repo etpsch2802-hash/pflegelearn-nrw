@@ -1080,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     <button onclick="showScreen('support')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-lifebuoy"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Über mich &amp; Hilfe</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Der Autor · Support · FAQ</span></button>
     <button onclick="showScreen('preise')" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-card"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Plan &amp; Preise</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Zugang verwalten</span></button>
-    <button onclick="openSchuleChooser()" id="tour-tile-kurs" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-cap"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kurs &amp; Lehrer</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Beitreten · Dashboard</span></button>
+    <button onclick="openSchuleChooser()" id="tour-tile-kurs" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-cap"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Kursraum</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Beitreten · Dashboard</span></button>
     <button onclick="showScreen('ausbildungswege')" id="tour-tile-wege" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-compass"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Ausbildungswege</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">GPA · ATA · OTA · Fachpflege</span></button>
     <button onclick="openPersonaChooser()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-user"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Mein Bereich</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Azubi · Fachkraft · Lehrkraft</span></button>
     <button onclick="showThemePicker()" style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left"><svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-palette"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Mein Theme</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Farbwelt wählen</span></button>
@@ -17015,7 +17015,8 @@ function renderHomeStats() {
   window.plNeuRender = function(){
     var el=document.getElementById('home-neu'); if(!el) return;
     var _auf=geoeffnet();
-    var items=(PL_NEU||[]).filter(function(x){ return _auf.indexOf(x.id)<0; });
+    var _lk=false; try{ _lk=localStorage.getItem('pl_persona')==='lehrkraft'; }catch(e){}
+    var items=(PL_NEU||[]).filter(function(x){ return _auf.indexOf(x.id)<0 && !(_lk&&x.id==='lerntisch'); });   // Lehrkräfte: kein Lerntisch-Hinweis (17.10.2026)
     if(!items.length){ el.innerHTML=''; return; }
     var rows=items.map(function(it){
       var isBald = it.tag==='bald';
@@ -23232,7 +23233,7 @@ window.renderWebBesucher=function(force){
   ],
   lehrkraft:[
     { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen heute geht.' },
-    { id:'plc-lt-entry', screen:'home', t:'NEU: Der Lerntisch', x:'25 Minuten Fokus, gemeinsam mit anderen \u2013 bei dir in der Lounge. Such dir ein Thema aus (z. B. \u201eLunge\u201c oder \u201eWas ist ARDS?\u201c), lad Leute an deinen Gruppentisch ein und schick anderen am Tisch einen \u2615 Kaffee oder 💪 Power.' },
+    { id:'plc-lt-entry', screen:'home', t:'Dein Kursraum', x:'Hier legst du Kurse an, verteilst Aufgaben, siehst Lernstand und Fehleranalyse deiner Azubis und startest das Live-Quiz.' },
     { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
     { id:'tour-tile-faelle', screen:'ueben', t:'Fallbeispiele f\u00fcr den Unterricht', x:'Fertige Fallsituationen und Gro\u00dff\u00e4lle, direkt im Kurs einsetzbar.' },
     { id:'tour-tile-kurs', screen:'profil', t:'Kurs, Lernstand & Live-Quiz', x:'Im Lehrer-Bereich hat jeder Kurs drei Werkzeuge: Lernstand zeigt den Stand jedes Azubis, Live-Quiz spielt eine Fragerunde \u00fcber den Beamer, Nachrichten sendet Ank\u00fcndigungen an den Kurs.' },
@@ -24410,6 +24411,20 @@ window.renderLiveUsers=function(start){
       if(anchor&&anchor.parentNode) anchor.parentNode.insertBefore(w,anchor.nextSibling); else home.appendChild(w);
       document.getElementById('plc-lt-entry').onclick=openLerntisch;
     }
+    /* 17.10.2026: Lehrkräfte brauchen den Lerntisch nicht -> an derselben Stelle die Kachel "Kursraum" (Kurse, Aufgaben, Lernstand). */
+    try{
+      var ent=document.getElementById('plc-lt-entry');
+      if(ent){
+        var lk=persona()==='lehrkraft', soll=lk?'kurs':'lt';
+        if(ent.getAttribute('data-art')!==soll){
+          ent.setAttribute('data-art',soll);
+          ent.innerHTML=lk
+            ?'<span style="font-size:24px">🏫</span><span style="flex:1"><span class="plc-h" style="margin:0">Kursraum</span><span class="plc-sub" style="display:block">Kurse, Aufgaben, Lernstand &amp; Live-Quiz</span></span><span style="color:#7dd3fc;font-size:18px">›</span>'
+            :'<span style="font-size:24px">☕</span><span style="flex:1"><span class="plc-h" style="margin:0">Lerntisch</span><span class="plc-sub" style="display:block">25 Minuten Fokus, gemeinsam mit anderen</span></span><span style="color:#7dd3fc;font-size:18px">›</span>';
+          ent.onclick=lk?function(){ try{ if(typeof showLehrer==='function') showLehrer(); else showScreen('lehrer'); }catch(e){} }:openLerntisch;
+        }
+      }
+    }catch(e){}
     renderRadar(); renderPolls();
     var loggedIn=false; try{ loggedIn=!!currentUser; }catch(e){}
     if(loggedIn&&!myStatus()&&home.classList.contains('active')) setTimeout(function(){ if(!myStatus()&&home.classList.contains('active')&&!document.getElementById('plc-lt')) openSheet(); },1500);
