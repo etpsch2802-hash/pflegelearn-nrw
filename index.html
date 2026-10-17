@@ -25149,6 +25149,28 @@ window.renderLiveUsers=function(start){
   }catch(e){}
 })();
 </script>
+<!-- PLAN NRW: Hinweis „Neu: Langzeitpflege & ambulant“ (17.10.2026) – genutzt vom ?fach-Einstieg und vom ?zugang-Testlink.
+     Einmal pro Gerät: pl_lzp_hint_shown='1'. -->
+<script>
+window.plLzpHinweis=function(kicker,titel,test){
+  if(document.getElementById('pl-zugang-hint')) return;
+  try{ localStorage.setItem('pl_lzp_hint_shown','1'); }catch(e){}
+  var o=document.createElement('div'); o.id='pl-zugang-hint';
+  o.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.85);z-index:1400;display:flex;align-items:center;justify-content:center;padding:18px';
+  o.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(245,158,11,.45);border-radius:18px;padding:20px;max-width:420px;width:100%;color:#ddf0fb;font-family:inherit">'
+    +'<div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#f59e0b;text-transform:uppercase;margin-bottom:6px">'+kicker+'</div>'
+    +'<div style="font-size:19px;font-weight:800;margin-bottom:8px">'+titel+'</div>'
+    +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6;margin-bottom:14px">'+(test?'Neu ist das Thema <b style="color:#fff">Langzeitpflege &amp; ambulant</b>. ':'')
+    +'77 Prüfungsfragen mit Erklärungen für Pflegeheim und ambulante Pflege: Pflegegrade, Expertenstandards, Demenz, Recht, Palliativpflege und Fallbeispiele.<br><br>Fehlt dir etwas oder stimmt eine Frage nicht? Sag es mir – ich lese jede Nachricht.</div>'
+    +'<button id="pl-zh-go" style="width:100%;padding:13px;border:0;border-radius:12px;background:#f59e0b;color:#04121f;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin-bottom:8px">Zu den Fragen</button>'
+    +'<button id="pl-zh-fb" style="width:100%;padding:11px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:none;color:#ddf0fb;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Feedback geben (geht auch später über das Menü)</button>'
+    +'<button id="pl-zh-x" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:4px">Schließen</button></div>';
+  document.body.appendChild(o);
+  document.getElementById('pl-zh-go').onclick=function(){ o.remove(); try{ if(typeof startQuiz==='function') startQuiz('langzeitpflege'); }catch(e){} };
+  document.getElementById('pl-zh-fb').onclick=function(){ o.remove(); try{ if(typeof showFeedback==='function') showFeedback(); }catch(e){} };
+  document.getElementById('pl-zh-x').onclick=function(){ o.remove(); };
+};
+</script>
 <!-- PLAN NRW: Landingpage-Einstieg ?fach=<id> (17.10.2026)
      Die Seiten unter /fach/<slug>.html verlinken auf plan-nrw.de/?fach=<id>. Nach dem Login/Onboarding wird der passende Bereich geöffnet,
      GA-Event 'landing_fach'. Ziel nur in sessionStorage (kein pl_*-Key), Parameter wird aus der URL entfernt. -->
@@ -25173,6 +25195,9 @@ window.renderLiveUsers=function(start){
     try{ sessionStorage.removeItem('plan_fach_ziel'); }catch(e){}
     var z=ZIEL[f]; if(z==='home') return;
     try{ showScreen(z); }catch(e){}
+    /* Langzeitpflege: einmaliger Hinweis pro Gerät (pl_lzp_hint_shown), auch ohne Testcode */
+    if(f==='langzeitpflege'){ var gezeigt=false; try{ gezeigt=localStorage.getItem('pl_lzp_hint_shown')==='1'; }catch(e){}
+      if(!gezeigt) setTimeout(function(){ try{ window.plLzpHinweis('Neu in PLAN','Langzeitpflege &amp; ambulant',false); }catch(e){} },1500); }
     /* Langzeitpflege: in der Quiz-Auswahl direkt zur Kategorie springen und kurz hervorheben */
     if(f==='langzeitpflege') setTimeout(function(){ try{
       var b=document.querySelector('#quiz-select-list button[onclick*="langzeitpflege"]');
@@ -25200,20 +25225,7 @@ window.renderLiveUsers=function(start){
   }catch(e){ return; }
   if(!code||!/^[A-Z0-9-]{4,40}$/.test(code)) return;
   var n=0, versucht=false;
-  function hinweis(){
-    if(document.getElementById('pl-zugang-hint')) return;
-    var o=document.createElement('div'); o.id='pl-zugang-hint';
-    o.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.85);z-index:1400;display:flex;align-items:center;justify-content:center;padding:18px';
-    o.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(245,158,11,.45);border-radius:18px;padding:20px;max-width:420px;width:100%;color:#ddf0fb;font-family:inherit">'
-      +'<div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#f59e0b;text-transform:uppercase;margin-bottom:6px">Testzugang</div>'
-      +'<div style="font-size:19px;font-weight:800;margin-bottom:8px">Danke, dass du testest!</div>'
-      +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6;margin-bottom:14px">Neu ist das Thema <b style="color:#fff">Langzeitpflege &amp; ambulant</b> (77 Fragen). Bitte achte vor allem darauf: Stimmt die Fachlichkeit? Passen die Fragen zum Alltag im Heim und in der ambulanten Pflege? Was fehlt dir?<br><br>Du hast vollen Zugriff auf die ganze App.</div>'
-      +'<button id="pl-zh-go" style="width:100%;padding:13px;border:0;border-radius:12px;background:#f59e0b;color:#04121f;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin-bottom:8px">Zu den Fragen</button>'
-      +'<button id="pl-zh-fb" style="width:100%;padding:11px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:none;color:#ddf0fb;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Feedback geben (geht auch später über das Menü)</button></div>';
-    document.body.appendChild(o);
-    document.getElementById('pl-zh-go').onclick=function(){ o.remove(); try{ if(typeof startQuiz==='function') startQuiz('langzeitpflege'); }catch(e){} };
-    document.getElementById('pl-zh-fb').onclick=function(){ o.remove(); try{ if(typeof showFeedback==='function') showFeedback(); }catch(e){} };
-  }
+  function hinweis(){ try{ if(window.plLzpHinweis) window.plLzpHinweis('Testzugang','Danke, dass du testest!',true); }catch(e){} }
   function los(){
     try{
       if(typeof currentUser!=='undefined'&&currentUser&&currentUser.token===code){
