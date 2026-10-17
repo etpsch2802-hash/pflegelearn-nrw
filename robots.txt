@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /data/entwurf/
 
 Sitemap: https://plan-nrw.de/sitemap.xml

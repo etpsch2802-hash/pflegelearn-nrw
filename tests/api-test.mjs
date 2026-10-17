@@ -158,5 +158,16 @@ limitSetup([], [], 0); routes.unshift({ test: u => u.includes('/rest/v1/lead_lim
 r = await req5({ email: 'neu@x.de', zweck: 'app' });
 check('Faellt die Zaehlung aus, wird der Versand nicht blockiert', r.code !== 429, r);
 
+// ── 6) Warteliste Pflegefachassistenz 2027 ──────────────────────────────────
+console.log('\n[6] Warteliste Pflegefachassistenz');
+limitSetup([], [], 0);
+process.env.RESEND_API_KEY = 'test-resend';
+routes.push({ test: u => u.includes('api.resend.com'), reply: () => json({ id: 'x' }) });
+r = await req5({ email: 'pfa@x.de', source: 'warteliste-pfa', zweck: 'warteliste' });
+check('Warteliste: Eintrag wird gespeichert (200)', r.code === 200 && r.body.warteliste === true, r);
+check('Warteliste: Zeitstempel wird gesetzt', calls.some(c => c.url.includes('/rest/v1/leads?email=eq.pfa%40x.de') && String(c.body).includes('warteliste_pfa_at')));
+check('Warteliste: es wird KEINE Mail verschickt', !calls.some(c => c.url.includes('api.resend.com')));
+delete process.env.RESEND_API_KEY;
+
 console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
 process.exit(fail ? 1 : 0);

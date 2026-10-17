@@ -255,6 +255,20 @@ export default async function handler(req, res) {
     return;
   }
 
+  // 1a) Warteliste Pflegefachassistenz 2027 (17.10.2026): nur Zeitstempel setzen, KEINE Mail
+  if (body.zweck === 'warteliste') {
+    try {
+      const r = await fetch(SB_URL + '/rest/v1/leads?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH',
+        headers: { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ warteliste_pfa_at: new Date().toISOString() })
+      });
+      if (!r.ok) { console.error('[lead] warteliste', r.status, await r.text()); res.status(500).json({ error: 'store' }); return; }
+    } catch (e) { console.error('[lead] warteliste', e); res.status(500).json({ error: 'server' }); return; }
+    res.status(200).json({ ok: true, warteliste: true });
+    return;
+  }
+
   // 1b) Newsletter freiwillig angefragt -> Token fuer Double-Opt-In (nicht fatal)
   let nlToken = null;
   if (newsletter) {
