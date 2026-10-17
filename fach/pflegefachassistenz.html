@@ -12,6 +12,17 @@
 <meta property="og:image" content="https://plan-nrw.de/icon-512.png">
 <link rel="icon" href="/favicon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"MobileApplication","name":"PLAN Assistenz","applicationCategory":"EducationalApplication","operatingSystem":"Android, Web","description":"Lernen und üben für die Pflegefachassistenz-Ausbildung.","url":"https://plan-nrw.de/fach/pflegefachassistenz.html","inLanguage":"de","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"author":{"@type":"Person","name":"Patrick Schenkelberger","jobTitle":"Fachpfleger Anästhesie & Intensivmedizin, Praxisanleiter NRW"}}</script>
+<!-- Google tag (gtag.js) – identisch zur App, Consent Mode v2, Einwilligung pl_consent -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YJLC762MTC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','wait_for_update':500});
+  try { if (localStorage.getItem('pl_consent') === 'granted') gtag('consent', 'update', {'analytics_storage':'granted'}); } catch(e) {}
+  gtag('js', new Date());
+  gtag('config', 'G-YJLC762MTC');
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,900&family=DM+Serif+Display&display=swap');
 :root{--navy:#0b1a35;--text:#ddf0fb;--muted:#9fb6c9;--akzent:#34d399}
@@ -48,7 +59,31 @@ footer{font-size:12px;color:var(--muted);margin-top:30px}footer a{color:var(--mu
   <div class="autor"><b>Wer dahinter steht</b>Patrick Schenkelberger · Fachpfleger Anästhesie &amp; Intensivmedizin · Praxisanleiter NRW</div>
   <p class="lead" style="font-size:15px">Für: Auszubildende in der Pflegefachassistenz (ab 1.1.2027 bundeseinheitlich nach Pflegefachassistenzgesetz).</p>
   <a class="cta" href="https://plan-nrw.de/?fach=assistenz&utm_source=landing&utm_campaign=pflegefachassistenz">Jetzt kostenlos loslegen</a>
-  <footer><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · PLAN Digital</footer>
+  <footer><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · <a href="#" onclick="window.plOpenConsent&&plOpenConsent();return false">Cookie-Einstellungen</a> · PLAN Digital</footer>
 </div>
+<!-- Einwilligungs-Banner (gleicher Key pl_consent wie die App) + CTA-Klick-Messung -->
+<div id="pl-consent" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:520px;margin:0 auto;background:#0f1d33;color:#cbd5e1;border:1px solid #334155;border-radius:14px;padding:14px 16px;font:13px/1.5 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.4)">
+  <div style="margin-bottom:10px">Wir nutzen Google Analytics nur mit deiner Einwilligung, um PLAN zu verbessern. <a href="/datenschutz.html" style="color:#38bdf8">Datenschutz</a></div>
+  <div style="display:flex;gap:8px">
+    <button id="pl-consent-yes" style="flex:1;background:#0284c7;color:#fff;border:none;border-radius:10px;padding:10px;font-weight:700;cursor:pointer">Akzeptieren</button>
+    <button id="pl-consent-no" style="flex:1;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:10px;padding:10px;font-weight:600;cursor:pointer">Ablehnen</button>
+  </div>
+</div>
+<script>
+(function(){
+  function set(v){ try{localStorage.setItem('pl_consent',v);}catch(e){} if(v==='granted'&&typeof gtag==='function') gtag('consent','update',{'analytics_storage':'granted'}); var b=document.getElementById('pl-consent'); if(b) b.style.display='none'; }
+  var c=null; try{ c=localStorage.getItem('pl_consent'); }catch(e){}
+  var y=document.getElementById('pl-consent-yes'), n=document.getElementById('pl-consent-no');
+  if(y) y.onclick=function(){set('granted');}; if(n) n.onclick=function(){set('denied');};
+  window.plOpenConsent=function(){ var b=document.getElementById('pl-consent'); if(b) b.style.display='block'; };
+  if(!c) window.plOpenConsent();
+  // Klicks Richtung App / Play Store messen
+  document.addEventListener('click',function(e){
+    var a=e.target&&e.target.closest?e.target.closest('a[href]'):null; if(!a) return;
+    var h=a.getAttribute('href')||''; if(!/plan-nrw\.de\/?(\?|$)|^\/?\?|play\.google|^\/$/.test(h)) return;
+    try{ if(typeof gtag==='function') gtag('event','cta_click',{seite:location.pathname,ziel:h.slice(0,100),transport_type:'beacon'}); }catch(err){}
+  },true);
+})();
+</script>
 </body>
 </html>
