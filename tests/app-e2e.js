@@ -273,7 +273,8 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
       await page.evaluate(() => { const b = document.getElementById('pl-tour-next'); if (b) b.click(); }); await page.waitForTimeout(650);
     }
     const alle = titel.join(' | ');
-    check('Tour ' + rolle + ': Schicht-Radar, Lerntisch, Neu beim Üben', /Schicht-Radar/.test(alle) && /Lerntisch/.test(alle) && /beim .ben/.test(alle), alle);
+    const zweit = rolle === 'lehrkraft' ? /Kursraum/ : /Lerntisch/;   // 17.10.2026: Lehrkräfte bekommen den Kursraum statt Lerntisch
+    check('Tour ' + rolle + ': Schicht-Radar, ' + (rolle === 'lehrkraft' ? 'Kursraum' : 'Lerntisch') + ', Neu beim Üben', /Schicht-Radar/.test(alle) && zweit.test(alle) && /beim .ben/.test(alle), alle);
     check('Keine JS-Fehler (Tour ' + rolle + ')', S.errors.length === 0, S.errors.join(' | '));
     await ctx.close();
   }
