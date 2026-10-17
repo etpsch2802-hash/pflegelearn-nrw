@@ -6,4 +6,7 @@
   <sitemap>
     <loc>https://plan-nrw.de/api/sitemap</loc>
   </sitemap>
+  <sitemap>
+    <loc>https://plan-nrw.de/sitemap-fach.xml</loc>
+  </sitemap>
 </sitemapindex>

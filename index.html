@@ -1989,14 +1989,14 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const AUSBILDUNGEN = [
-  { id:"pflegehelfer", nr:"01", title:"Pflegefachassistenz", subtitle:"1-jährige Ausbildung · NRW", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hand\"/></svg>", color:"#34d399",
-    dauer:"1 Jahr (Vollzeit)", stunden:"700h Theorie + 950h Praxis", abschluss:"Staatl. anerk. Pflegefachassistent/in",
-    rechtsgrundlage:"PflfachassAPrV NRW (seit 01.01.2021)", zugang:"Hauptschulabschluss Kl. 9 (auch ohne Abschluss bei Eignungsnachweis)",
-    beschreibung:"Löst Altenpflegehilfe & Krankenpflegeassistenz ab. Einstieg in 3-jährige GPA-Ausbildung mit bis zu 1 Jahr Verkürzung möglich.",
+  { id:"pflegehelfer", nr:"01", title:"Pflegefachassistenz", subtitle:"18 Monate · bundeseinheitlich ab 2027", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-hand\"/></svg>", color:"#34d399",
+    dauer:"18 Monate (Vollzeit), Teilzeit bis 36 Monate", stunden:"mind. 1.050h Unterricht + 1.280h Praxis", abschluss:"Staatl. anerk. Pflegefachassistent/in",
+    rechtsgrundlage:"PflFAssG + PflFAssAPrV (Bund, ab 01.01.2027); Beginn nach NRW-Recht noch bis 31.12.2026", zugang:"In der Regel Hauptschulabschluss (ohne Abschluss mit positiver Prognose der Pflegeschule)",
+    beschreibung:"Ab 2027 bundesweit einheitlich: Einsätze in Akutpflege, stationärer Langzeitpflege und ambulanter Pflege. Die einjährige Ausbildung nach NRW-Recht kann noch bis 31.12.2026 beginnen. Danach Einstieg in die Pflegefachausbildung mit bis zu 1 Jahr Verkürzung möglich.",
     inhalte:["Grundpflege & Körperpflege","Behandlungspflege LG 1–3","Pflegeprozess mitgestalten","Dokumentation","Hygiene & Infektionsschutz","Kommunikation","Anatomie Grundlagen","Ernährung & Mobilisation"],
     pruefung:"Schriftlich + mündlich + praktisch",
     besonderheit:"Ausbildungsvergütung! Einstieg auch ohne Schulabschluss möglich.",
-    weiterfuehrend:"→ 3-jährige GPA mit Verkürzung um bis zu 1 Jahr" },
+    weiterfuehrend:"→ Pflegefachfrau/-mann mit Verkürzung um bis zu 1 Jahr" },
 
   { id:"anerkennung", nr:"02", title:"Anerkennungsschüler", subtitle:"Ausländische Pflegekräfte · NRW", icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-globe\"/></svg>", color:"#60a5fa",
     dauer:"3–18 Monate (je nach Defizitbescheid)", stunden:"Individuell nach Defizitbescheid", abschluss:"Berufsurkunde Pflegefachmann/Pflegefachfrau DE",
@@ -2136,6 +2136,7 @@ const KATS = [
   {id:"psychiatrie",label:"Psychiatrie",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bulb\"/></svg>",color:"#818cf8"},
   {id:"paediatrie",label:"Pädiatrie",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-user\"/></svg>",color:"#f472b6"},
   {id:"altenpflege",label:"Altenpflege",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-user\"/></svg>",color:"#fb923c"},
+  {id:"langzeitpflege",label:"Langzeitpflege & ambulant",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-wheelchair\"/></svg>",color:"#f59e0b"},
   {id:"innere",label:"Innere Medizin",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-pulse\"/></svg>",color:"#f43f5e"},
   {id:"chirurgie",label:"Chirurgie & Orthopädie",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-bone\"/></svg>",color:"#f97316"},
   {id:"gynaekologie",label:"Gynäkologie & Geburtshilfe",icon:"<svg class=\"ic\" style=\"width:1.05em;height:1.05em;vertical-align:-.15em\" viewBox=\"0 0 24 24\"><use href=\"#i-user\"/></svg>",color:"#f472b6"},
@@ -7494,7 +7495,7 @@ const BEREICH_CONFIG = {
     icon: "🏥",
     farbe: "var(--accent)",
     ausbildungen: ["pflegehelfer","anerkennung","gpa","anaesthesie","ata","intensiv","ota"],
-    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall","gynaekologie"],
+    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","langzeitpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall","gynaekologie"],
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: true,
@@ -7505,7 +7506,7 @@ const BEREICH_CONFIG = {
     icon: "🎓",
     farbe: "#a78bfa",
     ausbildungen: ["pflegehelfer","anerkennung","gpa"],
-    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall","gynaekologie"],
+    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","langzeitpflege","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall","gynaekologie"],
     medizintechnik: false,
     medikamente: true,
     ki_unbegrenzt: true,
@@ -7596,7 +7597,7 @@ const BEREICH_CONFIG = {
     icon: "🎓",
     farbe: "#34d399",
     ausbildungen: ["gpa"],
-    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall"],
+    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","pflegehelfer","anerkennung","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","langzeitpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","innere","chirurgie","psychologie","mobilitaet","praevention","rehabilitation","palliation","notfall"],
     medizintechnik: true,      // NACHSCHLAGEN FREI – baut tägliche Gewohnheit auf
     medikamente: true,         // NACHSCHLAGEN FREI – der Moment im Frühdienst
     ki_unbegrenzt: false,
@@ -7611,7 +7612,7 @@ const BEREICH_CONFIG = {
     icon: "👨‍⚕️",
     farbe: "var(--accent)",
     ausbildungen: ["gpa","anaesthesie","ata","intensiv","ota"],
-    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","mobilitaet","praevention","rehabilitation","palliation","notfall"],
+    quiz_kats: ["alle","ana_herz","ana_atmung","ana_niere","ana_hormone","ana_verdauung","ana_nerven","ana_bewegung","ana_sinne","ana_blut","ana_grundlagen","gpa","pflegeplanung","psychiatrie","paediatrie","altenpflege","langzeitpflege","an_atemweg","an_regional","an_awr","an_notfall","an_monitoring","an_medikamente","an_grundlagen","ata_beruf","ata_atemweg","ata_monitoring","ata_medikamente","ata_sicherheit","ata_periop","ata_narkose","its_beatmung","its_haemo","its_sepsis","its_neuro","its_organersatz","its_medikamente","its_elyt","its_pflege","ota_steril","ota_aufbereitung","ota_instrumente","ota_op_technik","ota_naht","ota_lagerung","ota_sicherheit","mobilitaet","praevention","rehabilitation","palliation","notfall"],
     medizintechnik: true,
     medikamente: true,
     ki_unbegrenzt: false,
@@ -25010,10 +25011,10 @@ window.renderLiveUsers=function(start){
 </script>
 <!-- PLAN NRW: Nachweis-Export für Einrichtungen (17.10.2026)
      Im Lernstand-Fenster: Lernstand + Fehleranalyse eines Kurses als CSV (Excel) oder als druckbares PDF.
-     Nutzt nur api/klasse (list, stats, fehler). PL_EXPORT_PUBLIC=false: vorerst nur Admin. Kein neuer pl_*-Key. -->
+     Nutzt nur api/klasse (list, stats, fehler). PL_EXPORT_PUBLIC=true seit 17.10.2026 (Go P. Schenkelberger). Kein neuer pl_*-Key. -->
 <script>
 (function(){
-  var PL_EXPORT_PUBLIC=false;
+  var PL_EXPORT_PUBLIC=true;
   function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function le(){ try{ return localStorage.getItem('pl_lehrer_email')||''; }catch(e){ return ''; } }
   function post(b){ return fetch('/api/klasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){ return r.json(); }); }
@@ -25091,37 +25092,12 @@ window.renderLiveUsers=function(start){
     return r; }; }
 })();
 </script>
-<!-- PLAN NRW: Entwurf Langzeitpflege & ambulant (17.10.2026)
-     Lädt /data/entwurf/langzeitpflege.js NUR für Admin (isAdmin()) und hängt die Fragen als Kategorie 'lzp_entwurf' an.
-     Für alle anderen wird nichts geladen. Freigabe erst nach fachlicher Prüfung (P. Schenkelberger / Jessica). Kein neuer pl_*-Key. -->
-<script>
-(function(){
-  var fertig=false, versuche=0;
-  function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
-  function einhaengen(){
-    try{
-      var neu=window.PL_LZP_ENTWURF||[]; if(!neu.length) return;
-      if(!KATS.some(function(k){ return k.id==='lzp_entwurf'; }))
-        KATS.push({id:'lzp_entwurf',label:'Langzeitpflege & ambulant (Entwurf)',icon:'<svg class="ic" style="width:1.05em;height:1.05em;vertical-align:-.15em" viewBox="0 0 24 24"><use href="#i-wheelchair"/></svg>',color:'#f59e0b'});
-      if(!QUIZ_FRAGEN.some(function(q){ return q.kat==='lzp_entwurf'; })) neu.forEach(function(q){ QUIZ_FRAGEN.push(q); });
-      try{ if(typeof renderQuizSelect==='function') renderQuizSelect(); }catch(e){}
-    }catch(e){}
-  }
-  function laden(){
-    if(fertig) return; fertig=true;
-    var s=document.createElement('script'); s.src='/data/entwurf/langzeitpflege.js?v=1'; s.onload=einhaengen; s.onerror=function(){ fertig=false; };
-    document.head.appendChild(s);
-  }
-  function pruefen(){ if(fertig) return; if(adm()){ laden(); return; } if(++versuche<300) setTimeout(pruefen,2000); }
-  setTimeout(pruefen,1500);
-})();
-</script>
 <!-- PLAN NRW: Warteliste Pflegefachassistenz 2027 (17.10.2026)
      Karte im Screen Ausbildungswege: E-Mail eintragen → POST /api/lead {zweck:'warteliste'} (nur speichern, KEINE Mail; leads.warteliste_pfa_at).
-     PL_PFA_WL_PUBLIC=false: vorerst nur Admin. Vor Freigabe Datenschutzerklärung ergänzen. Kein neuer pl_*-Key. -->
+     PL_PFA_WL_PUBLIC=true seit 17.10.2026 (Go), Datenschutz Abschnitt 3b. Kein neuer pl_*-Key. -->
 <script>
 (function(){
-  var PL_PFA_WL_PUBLIC=false;
+  var PL_PFA_WL_PUBLIC=true;
   function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function an(){ return PL_PFA_WL_PUBLIC||adm(); }
   function karte(){
@@ -25133,7 +25109,7 @@ window.renderLiveUsers=function(start){
       +'<div style="font-size:13px;color:var(--text2);margin-bottom:10px">18 Monate in Vollzeit, Einsätze in Akutpflege, stationärer Langzeitpflege und ambulanter Pflege. Wir bauen das Lernpaket für die neue Ausbildung. Trag dich ein, dann sagen wir dir einmal Bescheid, sobald es da ist.</div>'
       +'<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="pl-pfa-mail" type="email" placeholder="deine@email.de" autocomplete="email" style="flex:1;min-width:180px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.2);color:inherit;font-family:inherit">'
       +'<button id="pl-pfa-btn" style="padding:10px 16px;border-radius:10px;border:0;background:#34d399;color:#04121f;font-weight:800;cursor:pointer;font-family:inherit">Eintragen</button></div>'
-      +'<div style="font-size:11px;color:var(--text3);margin-top:8px">Nur für diese eine Nachricht. Austragen jederzeit per Mail an kontakt@plan-nrw.de. <a href="/datenschutz.html" style="color:inherit">Datenschutz</a></div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:8px">Nur für diese eine Nachricht. Austragen jederzeit per Mail an kontakt@plan-nrw.de. <a href="/datenschutz.html#warteliste" style="color:inherit">Datenschutz</a></div>'
       +'<div id="pl-pfa-msg" style="font-size:13px;margin-top:8px"></div>';
     liste.parentNode.insertBefore(d,liste);
     document.getElementById('pl-pfa-btn').onclick=function(){
@@ -25156,6 +25132,34 @@ window.renderLiveUsers=function(start){
       window.showScreen=function(n){ var r=orig.apply(this,arguments); if(n==='ausbildungswege') setTimeout(karte,50); return r; };
     }
   }catch(e){}
+})();
+</script>
+<!-- PLAN NRW: Landingpage-Einstieg ?fach=<id> (17.10.2026)
+     Die Seiten unter /fach/<slug>.html verlinken auf plan-nrw.de/?fach=<id>. Nach dem Login/Onboarding wird der passende Bereich geöffnet,
+     GA-Event 'landing_fach'. Ziel nur in sessionStorage (kein pl_*-Key), Parameter wird aus der URL entfernt. -->
+<script>
+(function(){
+  var ZIEL={examen:'home',assistenz:'ausbildungswege',anerkennung:'ausbildungswege',intensiv:'ausbildungswege',anaesthesie:'ausbildungswege',ata:'ausbildungswege',ota:'ausbildungswege',langzeitpflege:'quizSelect',praxisanleitung:'lehrer'};
+  var f=null;
+  try{ f=new URLSearchParams(location.search).get('fach'); }catch(e){}
+  try{
+    if(f&&ZIEL[f]){
+      sessionStorage.setItem('plan_fach_ziel',f);
+      try{ if(typeof gtag==='function') gtag('event','landing_fach',{fach:f}); }catch(e){}
+      var u=new URL(location.href); u.searchParams.delete('fach'); history.replaceState(null,'',u.pathname+(u.search||'')+u.hash);
+    }
+    f=sessionStorage.getItem('plan_fach_ziel');
+  }catch(e){ return; }
+  if(!f||!ZIEL[f]) return;
+  var n=0;
+  function bereit(){ try{ return typeof currentUser!=='undefined'&&currentUser&&typeof showScreen==='function'; }catch(e){ return false; } }
+  function los(){
+    if(!bereit()){ if(++n<120) setTimeout(los,1000); return; }
+    try{ sessionStorage.removeItem('plan_fach_ziel'); }catch(e){}
+    var z=ZIEL[f]; if(z==='home') return;
+    try{ showScreen(z); }catch(e){}
+  }
+  setTimeout(los,1200);
 })();
 </script>
 </body>
