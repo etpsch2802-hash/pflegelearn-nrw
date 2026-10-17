@@ -13,6 +13,9 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LIVE = process.argv.includes('--live');
 const OUT = path.join(ROOT, LIVE ? 'fach' : 'private/landing');
 const MITENTWURF = process.argv.includes('--alle');   // auch status 'entwurf'
+// Google Analytics + Einwilligung (gleich wie App), nur in der Live-Version
+const GA_HEAD = fs.readFileSync(new URL('./snippets/ga-head.html', import.meta.url), 'utf8');
+const GA_BODY = fs.readFileSync(new URL('./snippets/ga-body.html', import.meta.url), 'utf8');
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/fachgebiete.json'), 'utf8'));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -37,7 +40,7 @@ ${LIVE ? '' : '<meta name="robots" content="noindex">\n'}<meta property="og:titl
 <meta property="og:image" content="https://plan-nrw.de/icon-512.png">
 <link rel="icon" href="/favicon.png">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
-<style>
+${LIVE ? GA_HEAD + '<script defer src="/_vercel/insights/script.js"></script>\n' : ''}<style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,900&family=DM+Serif+Display&display=swap');
 :root{--navy:#0b1a35;--text:#ddf0fb;--muted:#9fb6c9;--akzent:${f.farbe}}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -73,9 +76,9 @@ footer{font-size:12px;color:var(--muted);margin-top:30px}footer a{color:var(--mu
   <div class="autor"><b>Wer dahinter steht</b>Patrick Schenkelberger · Fachpfleger Anästhesie &amp; Intensivmedizin · Praxisanleiter NRW</div>
   <p class="lead" style="font-size:15px">Für: ${esc(f.zielgruppe)}.</p>
   <a class="cta" href="${app}">Jetzt kostenlos loslegen</a>
-  <footer><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · PLAN Digital</footer>
+  <footer><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · <a href="#" onclick="window.plOpenConsent&&plOpenConsent();return false">Cookie-Einstellungen</a> · PLAN Digital</footer>
 </div>
-</body>
+${LIVE ? GA_BODY : ''}</body>
 </html>
 `;
 }
