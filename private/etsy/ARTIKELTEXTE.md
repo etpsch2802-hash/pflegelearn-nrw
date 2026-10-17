@@ -115,6 +115,232 @@ Pflegeexamen · Prüfungsfragen · Pflegeausbildung · Generalistik · Pflegefac
 
 ---
 
+---
+
+# Teil 2 (18.10.2026) – weitere Produkte
+
+## 4) Probeklausur Pflegeexamen
+
+**Preis:** 7,99 €  ·  **Datei:** `PLAN-NRW_Probeklausur-Pflegeexamen.pdf` (24 Seiten, 68 Aufgaben)
+
+**Titel:**
+Probeklausur Pflegeexamen | 68 fallbezogene Aufgaben mit Lösungen | Großfälle wie im Examen | Pflegefachfrau PDF
+
+**Beschreibung:**
+Im Examen wird nicht mehr nur Wissen abgefragt – du bekommst eine Situation und musst richtig handeln. Genau das übst du mit dieser Probeklausur.
+
+Das steckt drin:
+• Teil A: 8 Fallsituationen aus Krankenhaus, Pflegeheim und ambulanter Pflege mit je mehreren Aufgaben
+• Teil B: 3 Großfälle, die sich über Aufnahme, Verlauf und Entlassung entwickeln
+• Lösungen mit Begründung – auch warum die anderen Antworten nicht passen
+• Auswertungsbogen zum Eintragen
+
+So ist es aufgebaut:
+✓ 68 Aufgaben, Schwierigkeit leicht / mittel / schwer
+✓ Lösungsteil getrennt am Ende – ehrlich testen ohne Spoiler
+✓ A4, druckfertig, auch am Tablet nutzbar
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Lernhilfe zur Prüfungsvorbereitung – maßgeblich sind deine Lehrinhalte, aktuelle Leitlinien und die Standards deiner Einrichtung.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+Probeklausur · Pflegeexamen · Prüfungsfragen · Fallbeispiele Pflege · Generalistik · Pflegefachfrau · Pflegefachmann · Examensvorbereitung · Pflegeausbildung · Pflege Azubi · Lernzettel Pflege · Pflegeschule · Examen Pflege
+
+---
+
+## 5) 92 Fallbeispiele für die Pflege
+
+**Preis:** 12,99 €  ·  **Datei:** `PLAN-NRW_92-Fallbeispiele.pdf` (129 Seiten)
+
+**Titel:**
+92 Fallbeispiele Pflege mit Auflösung | Klinische Fälle Pflegeexamen | Priorisierung Notfall | Praxisanleitung PDF
+
+**Beschreibung:**
+92 klinische Fälle aus 13 Fachgebieten – zum Üben fürs Examen, für Lerngruppen und für die Praxisanleitung.
+
+Jeder Fall beginnt mit einer kurzen Situation. An mehreren Entscheidungspunkten wählst du die beste Handlung. Die Auflösung bewertet jede Antwort als RICHTIG, VERTRETBAR oder FALSCH – mit Begründung und einem Merksatz zum Fall.
+
+Fachgebiete:
+Innere Medizin · Chirurgie · Intensivmedizin · Anästhesie · Pädiatrie · Psychiatrie · Neurologie · Onkologie · Urologie · Gynäkologie · HNO · Orthopädie · Pflegegrundlagen
+
+So ist es aufgebaut:
+✓ 92 Fälle mit Schweregrad und Ausbildungsjahr
+✓ Auflösung mit Bewertung jeder Antwort und Merksatz
+✓ A4, druckfertig – ideal zum Vorlesen im Unterricht
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Lernhilfe zur Prüfungsvorbereitung – maßgeblich sind deine Lehrinhalte, aktuelle Leitlinien und die Standards deiner Einrichtung.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+Fallbeispiele Pflege · Pflegeexamen · Praxisanleitung · Fallarbeit · Pflegeausbildung · Notfall Pflege · Priorisierung · Pflegefachfrau · Lerngruppe · Pflege Azubi · Examensvorbereitung · Pflegeschule · Intensivpflege
+
+---
+
+## 6) Krankheitsbilder & Pflegeplanung
+
+**Preis:** 12,99 €  ·  **Datei:** `PLAN-NRW_Krankheitsbilder-Pflegeplanung.pdf` (100 Seiten, 107 Krankheitsbilder)
+
+**Titel:**
+Krankheitsbilder & Pflegeplanung | 107 Krankheitsbilder mit ICD | Mündliche Prüfung Pflegeexamen | Lernzettel PDF
+
+**Beschreibung:**
+107 Krankheitsbilder aus 10 Fachgebieten – genau so aufbereitet, wie in der mündlichen Prüfung gefragt wird.
+
+Zu jedem Krankheitsbild:
+• Definition und ICD-10
+• Symptome, Diagnostik, Therapie
+• Fertige Pflegeplanung: Pflegeproblem (PESR), Ressourcen, Pflegeziel, Maßnahmen, Evaluation
+• Bei vielen Krankheitsbildern: Kontrollfragen mit Lösung
+
+Fachgebiete: Innere Medizin · Chirurgie · Psychologie für Pflege · Gynäkologie · Urologie · Neurologie · HNO · Onkologie · Pädiatrie · Orthopädie
+
+✓ 100 Seiten, A4, druckfertig, auch am Tablet nutzbar
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Lernhilfe zur Prüfungsvorbereitung – maßgeblich sind deine Lehrinhalte, aktuelle Leitlinien und die Standards deiner Einrichtung.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+Krankheitsbilder · Pflegeplanung · Mündliche Prüfung · Pflegeexamen · Krankheitslehre · Pflegeausbildung · Lernzettel Pflege · Pflegefachfrau · Pflegefachmann · Pflege Azubi · Examensvorbereitung · Pflegediagnose · Lernkarten Pflege
+
+---
+
+## 7) Medikamente kompakt
+
+**Preis:** 5,99 €  ·  **Datei:** `PLAN-NRW_Medikamente-kompakt.pdf` (16 Seiten, 43 Wirkstoffe)
+
+**Titel:**
+Medikamente kompakt für die Pflege | 43 Wirkstoffe mit Pflegehinweisen | Pharmakologie Pflegeexamen | PDF Lernhilfe
+
+**Beschreibung:**
+43 Wirkstoffe, die du in Ausbildung und Praxis wirklich brauchst – aus Pflegealltag, Notfall, Anästhesie und Intensivmedizin.
+
+Zu jedem Wirkstoff: Wirkstoffgruppe, Indikation bzw. Dosis-Orientierung, Wirkung, Nebenwirkungen, Kontraindikationen und der wichtigste Pflegehinweis.
+
+Gruppen: Anästhesie · Intensivmedizin · Notfall · Pflegealltag · Herz & Kreislauf · Antikoagulation · Schmerz · Neurologie & Psychiatrie · Diabetes
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Dosierungen nur als Orientierung – verbindlich sind ärztliche Anordnung, Fachinformation und Klinikstandard.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+Medikamente Pflege · Pharmakologie · Pflegeexamen · Arzneimittel · Pflegeausbildung · Notfallmedikamente · Intensivpflege · Anästhesie · Lernzettel Pflege · Pflege Azubi · Pflegefachfrau · Wirkstoffe · Medikamentenlehre
+
+---
+
+## 8) Taschenkarten-Set (bisher KDP-Buch)
+
+**Preis:** 7,99 €  ·  **Datei:** `PLAN-NRW_Taschenkarten-Set_40-Karten.pdf` (11 Seiten, 40 Karten)
+
+**Titel:**
+Taschenkarten Pflege 40 Karten zum Ausdrucken | Kitteltasche Hygiene Prophylaxen Notfall Scores | PDF Pflegeausbildung
+
+**Beschreibung:**
+40 Kitteltaschen-Karten mit dem wichtigsten Praxis- und Prüfungswissen: ausdrucken, ausschneiden, laminieren – fertig.
+
+Themen u. a.: Händedesinfektion, Handschuhwechsel, Prophylaxen (Dekubitus, Sturz, Thrombose, Pneumonie …), Notfall, Scores, Intensiv, Recht.
+
+✓ 2 Karten pro Zeile, Schnittlinien gestrichelt
+✓ Tipp: auf 160 g/m² drucken und laminieren
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Lernhilfe zur Prüfungsvorbereitung – maßgeblich sind deine Lehrinhalte, aktuelle Leitlinien und die Standards deiner Einrichtung.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+Taschenkarten Pflege · Kitteltasche · Pflege Spickzettel · Prophylaxen · Pflegeausbildung · Hygiene Pflege · Notfall Pflege · Pflege Azubi · Lernkarten Pflege · Pflegefachfrau · Praxiseinsatz · Pflege Geschenk · Laminieren
+
+---
+
+## 9) ATA & OTA Fragenkatalog (ersetzt KDP-Buch „OP & Intensiv“)
+
+**Preis:** 9,99 €  ·  **Datei:** `PLAN-NRW_ATA-OTA_Fragenkatalog.pdf` (46 Seiten)
+
+**Titel:**
+ATA OTA Fragenkatalog mit Lösungen | Anästhesietechnische & Operationstechnische Assistenz | Prüfung PDF
+
+**Beschreibung:**
+Prüfungsfragen mit Erklärungen für die ATA- und OTA-Ausbildung – nach Themen sortiert.
+
+ATA: Beruf & Recht · Perioperative Versorgung · Narkose · Atemweg · Monitoring · Medikamente · Patientensicherheit
+OTA: Sterilität & Hygiene · Aufbereitung · Instrumente · OP-Technik · Naht & Wundverschluss · Lagerung · Sicherheit im OP
+
+✓ Lösungsschlüssel mit Begründung am Ende
+✓ A4, druckfertig, auch am Tablet nutzbar
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Lernhilfe zur Prüfungsvorbereitung – maßgeblich sind deine Lehrinhalte, aktuelle Leitlinien und die Standards deiner Einrichtung.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+ATA Ausbildung · OTA Ausbildung · Anästhesie · OP Pflege · Prüfungsfragen · Operationstechnik · Sterilgut · Instrumentenkunde · Narkose · Fragenkatalog · OP Lagerung · ATA Prüfung · OTA Prüfung
+
+---
+
+## 10) Pflegeexamen-Komplettpaket (bisher KDP-Buch, neu zusammengestellt)
+
+**Preis:** 29,99 € (Einzelpreise zusammen 57,94 €)  ·  **Datei:** `PLAN-NRW_Pflegeexamen-Komplettpaket.pdf` (375 Seiten, mit Lesezeichen)
+
+**Titel:**
+Pflegeexamen Komplettpaket 375 Seiten | 300 Prüfungsfragen Probeklausur 92 Fälle Krankheitsbilder Medikamente PDF
+
+**Beschreibung:**
+Alles fürs Pflegeexamen in einem PDF – schriftlich, mündlich und praktisch.
+
+Enthalten (je mit eigenem Deckblatt, Lesezeichen zum Springen):
+1. Pflegeexamen: 300 Prüfungsfragen mit Erklärungen
+2. Probeklausur mit 68 fallbezogenen Aufgaben
+3. 92 Fallbeispiele mit Auflösung
+4. Krankheitsbilder & Pflegeplanung (107 Krankheitsbilder)
+5. Medikamente kompakt (43 Wirkstoffe)
+6. Taschenkarten-Set (40 Karten)
+Bonus: Prophylaxen-Kompendium, Reanimations-Algorithmen, Laborwerte kompakt, Examens-Spickzettel (die Bonus-Lernhilfen gibt es auch einzeln kostenlos in der PLAN-App)
+
+Du sparst fast die Hälfte gegenüber dem Einzelkauf.
+
+Wer dahinter steht: Patrick Schenkelberger, Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.
+
+Hinweis: Mit KI-Unterstützung erstellt, fachlich geprüft. Lernhilfe zur Prüfungsvorbereitung – maßgeblich sind deine Lehrinhalte, aktuelle Leitlinien und die Standards deiner Einrichtung.
+
+Digitaler Download – es wird nichts verschickt. Nur für den persönlichen Gebrauch, Weitergabe und Weiterverkauf nicht gestattet.
+
+**Tags:**
+Pflegeexamen · Komplettpaket · Prüfungsvorbereitung · Pflegeausbildung · Prüfungsfragen · Probeklausur · Krankheitsbilder · Fallbeispiele Pflege · Pflegefachfrau · Pflegefachmann · Examensvorbereitung · Lernpaket Pflege · Pflege Azubi
+
+---
+
+## Preisübersicht (Stand 18.10.2026)
+| Artikel | Preis |
+|---|---|
+| Langzeitpflege & ambulant | 4,99 € |
+| Medikamente kompakt | 5,99 € |
+| Probeklausur | 7,99 € |
+| Taschenkarten-Set | 7,99 € |
+| Examen 300 Fragen | 9,99 € |
+| Intensiv & Anästhesie | 9,99 € |
+| ATA & OTA | 9,99 € |
+| 92 Fallbeispiele | 12,99 € |
+| Krankheitsbilder & Pflegeplanung | 12,99 € |
+| **Komplettpaket** | **29,99 €** |
+
+**KDP-Bücher:** Vor dem Etsy-Start entscheiden, ob die Amazon-Bücher (Komplettpaket, Taschenkarten, OP & Intensiv) offline genommen oder parallel weitergeführt werden. Bei paralleler Führung: KDP-Exklusivität (KDP Select/Kindle Unlimited) prüfen – digitale Exklusivbindung würde den Etsy-Verkauf derselben Inhalte verbieten.
+
+---
+
 ## Shop-Grunddaten (Vorschlag)
 
 - **Shopname:** PLANPflege (Alternativen: PlanNRW, PLANLernhilfen – Verfügbarkeit bei Anmeldung prüfen)
