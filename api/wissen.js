@@ -73,7 +73,8 @@ async function sb(query) {
 
 /* ---------- Layout ---------- */
 
-const CSS = `*{box-sizing:border-box}body{margin:0;background:#050c18;color:#e2e8f0;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+const CSS = `.tw{overflow-x:auto;margin:10px 0 18px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid rgba(56,189,248,.2);padding:8px 10px;text-align:left;vertical-align:top}th{background:rgba(56,189,248,.1);color:#e8f3fb}
+*{box-sizing:border-box}body{margin:0;background:#050c18;color:#e2e8f0;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:#7dd3fc}main{max-width:760px;margin:0 auto;padding:20px 18px 64px}
 header{border-bottom:1px solid rgba(56,189,248,.18);background:rgba(255,255,255,.03)}
 header .in{max-width:760px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -185,15 +186,27 @@ const SEO = {
   'infusionsberechnung': { t: 'Tropfenformel & Perfusor berechnen | PLAN', d: 'Infusionen berechnen: Tropfenformel mit Tropffaktor 20 und Perfusorlaufrate aus Dosis und Konzentration. Mit Merksatz und Prüfungsfragen.' },
   'resistance': { t: 'Resistance (Atemwegswiderstand) einfach erklärt | PLAN', d: 'Resistance = Atemwegswiderstand: Er steigt bei verengten Bronchien wie bei Asthma und COPD. Prüfungswissen, Merksatz und Prüfungsfragen.' },
   'frank-starling-mechanismus': { t: 'Frank-Starling-Mechanismus einfach erklärt | PLAN', d: 'Frank-Starling-Mechanismus: Mehr Füllung (Vorlast) ergibt mehr Schlagvolumen – bis zur Grenze. Bedeutung bei Herzinsuffizienz, mit Prüfungsfragen.' },
+  'entzuendungswerte': { t: 'Entzündungswerte Tabelle: CRP, PCT, Leukozyten | PLAN', d: 'Entzündungswerte mit Normwert-Tabelle: CRP, PCT, Leukozyten, BSG und IL-6 – was erhöhte Werte bedeuten und was die Pflege beobachtet.' },
+  'nierenwerte': { t: 'Nierenwerte: Kreatinin, eGFR, Harnstoff Normwerte | PLAN', d: 'Nierenwerte mit Normwert-Tabelle: Kreatinin, eGFR, Harnstoff, Kalium, Cystatin C, GFR-Stadien nach KDIGO und Pflegeaufgaben.' },
+  'lungenfunktion': { t: 'Lungenfunktion: Spirometrie, FEV1 & Tiffeneau | PLAN', d: 'Spirometrie verständlich: VC, FEV1, Tiffeneau-Index und Peak-Flow, obstruktiv oder restriktiv, GOLD-Stadien und Pflegeaufgaben.' },
+  'gasaustausch': { t: 'Gasaustausch der Lunge: BGA-Normwerte & Störungen | PLAN', d: 'Wo findet der Gasaustausch statt? Alveolen, BGA-Normwerte (pO2, pCO2, pH), Störungen wie Shunt und V/Q-Missverhältnis, Pflege.' },
   'ventilations-perfusions-verhaeltnis': { t: 'Ventilations-Perfusions-Verhältnis erklärt | PLAN', d: 'Ventilations-Perfusions-Verhältnis: Belüftung und Durchblutung der Lunge müssen zusammenpassen, z. B. gestört bei Lungenembolie. Mit Prüfungsfragen.' }
 };
 /* Vollständig öffentliche Seiten (Go P. Schenkelberger, 19.10.2026): Fachwissen frei lesbar,
    Prüfungsfragen/Fälle/KI bleiben in der App. Auswahl = meistgesehene Seiten mit umfangreichem Inhalt (GSC 18.10.). */
 const OFFEN = new Set(['lagerungsarten', 'blasenkatheter', 'magnesium-notfall', 'tee', 'lumbalpunktion', 'niv-einstellung',
   'infusionsberechnung', 'stomaversorgung', 'injektion-subkutan', 'ace-hemmer', 'peg', 'weitere-antibiotika-praxis',
-  'peripherer-venenzugang', 'verbandwechsel', 'orale-antidiabetika']);
-const OFFEN_REIHE = ['aufbau', 'funktion', 'physiologie', 'wirkkette', 'indikation', 'kontraindikation', 'material',
+  'peripherer-venenzugang', 'verbandwechsel', 'orale-antidiabetika',
+  /* neu geschrieben mit Normwert-Tabellen (19.10.2026, Freigabe P. Schenkelberger) */
+  'entzuendungswerte', 'nierenwerte', 'lungenfunktion', 'gasaustausch']);
+const OFFEN_REIHE = ['einteilung', 'aufbau', 'funktion', 'physiologie', 'wirkkette', 'indikation', 'kontraindikation', 'material',
   'vorbereitung', 'durchfuehrung', 'nachsorge', 'komplikationen', 'pflegeschwerpunkt', 'klinische_relevanz'];
+function tabelleHTML(t) {
+  if (!t || !Array.isArray(t.kopf) || !Array.isArray(t.zeilen)) return '';
+  return '<div class="tw"><table><thead><tr>' + t.kopf.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + t.zeilen.map(function (z) { return '<tr>' + z.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('')
+    + '</tbody></table></div>';
+}
 function absaetze(t) {
   return String(t).trim().split(/\n+/).filter(Boolean).map(function (x) { return '<p>' + esc(x.trim()) + '</p>'; }).join('');
 }
@@ -214,7 +227,7 @@ const FELD_LABEL = {
   indikation: 'Indikationen', kontraindikation: 'Kontraindikationen', material: 'Material',
   vorbereitung: 'Vorbereitung', durchfuehrung: 'Durchführung', nachsorge: 'Nachsorge',
   komplikationen: 'Komplikationen', pflegeschwerpunkt: 'Pflegeschwerpunkt',
-  klinische_relevanz: 'Klinische Relevanz'
+  klinische_relevanz: 'Klinische Relevanz', einteilung: 'Einteilung'
 };
 
 function renderDetail(e, geschwister) {
@@ -263,6 +276,7 @@ function renderDetail(e, geschwister) {
   b += `<nav class="bc"><a href="${urlIndex()}">Wissensdatenbank</a> › <a href="${urlKat(kat)}">${esc(kat)}</a></nav>`;
   b += `<h1>${esc(e.titel)}</h1>`;
   if (definition) b += `<p class="lead">${esc(definition)}</p>`;
+  if (offen && d.tabelle) b += `<h2>Normwerte im Überblick</h2>` + tabelleHTML(d.tabelle);
   if (pw) b += `<h3>Prüfungswissen</h3><p>${esc(pw)}</p>`;
   if (d.merksatz) b += `<div class="merk"><b>Merksatz</b>${esc(d.merksatz)}</div>`;
   if (rel) b += `<h3>Warum es in der Prüfung vorkommt</h3><p>${esc(rel)}</p>`;
