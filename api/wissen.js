@@ -172,6 +172,30 @@ function faqPairs(d) {
   return out.slice(0, 3);
 }
 
+/* ---------- SEO: eigene Titel/Beschreibungen für Seiten mit Ranking-Chance (GSC-Auswertung 18.10.2026) ----------
+   Nur Aussagen, die die Seite auch enthält. Titel ≤ 60 Zeichen, Beschreibung ≤ 155 Zeichen. */
+const SEO = {
+  'zvd-messung': { t: 'ZVD Normwert & Messung: Nullpunkt, Werte | PLAN', d: 'ZVD-Normwert ca. 2–8 mmHg, Nullpunkt in der mittleren Axillarlinie, Einfluss von PEEP. Prüfungswissen, Merksatz und Prüfungsfragen für die Pflege.' },
+  'gcs': { t: 'GCS: Glasgow Coma Scale & ab wann intubieren | PLAN', d: 'Glasgow Coma Scale von 3 bis 15 Punkten: ab GCS 8 oder darunter in der Regel Intubation. Prüfungswissen, Merksatz und Prüfungsfragen für die Pflege.' },
+  'pflegeevaluation': { t: 'Pflegeevaluation: Bedeutung einfach erklärt | PLAN', d: 'Was bedeutet Evaluation in der Pflege? Die Pflegeevaluation prüft, ob Pflegeziele erreicht wurden. Mit Merksatz und Prüfungsfragen – kostenlos.' },
+  'zystitisprophylaxe': { t: 'Zystitisprophylaxe bei Dauerkatheter (DK) | PLAN', d: 'Zystitisprophylaxe bei Blasendauerkatheter: geschlossenes System, tiefe Beutellage, Liegedauer minimieren. Prüfungswissen und Prüfungsfragen.' },
+  'aufwachraum': { t: 'Aufwachraum: Aldrete-Score & Verlegungskriterien | PLAN', d: 'Aldrete-Score im Aufwachraum: Aktivität, Atmung, Kreislauf, Bewusstsein, SpO2. Überwachung, PONV und Verlegung – mit Prüfungsfragen für die Pflege.' },
+  'fluessigkeitsbilanz': { t: 'Flüssigkeitsbilanz: Was ist eine positive Bilanz? | PLAN', d: 'Positive Bilanz = mehr Einfuhr als Ausfuhr, negative Bilanz das Gegenteil. Bilanzierung, tägliches Wiegen und Prüfungsfragen für die Pflege.' },
+  'magnesium-notfall': { t: 'Magnesium im Notfall: Torsade, Überwachung, Antidot | PLAN', d: 'Magnesium bei Torsade de pointes: Überwachung von Reflexen, Atemfrequenz und Urin, Antidot Calciumgluconat. Prüfungswissen für die Pflege.' },
+  'infusionsberechnung': { t: 'Tropfenformel & Perfusor berechnen | PLAN', d: 'Infusionen berechnen: Tropfenformel mit Tropffaktor 20 und Perfusorlaufrate aus Dosis und Konzentration. Mit Merksatz und Prüfungsfragen.' },
+  'resistance': { t: 'Resistance (Atemwegswiderstand) einfach erklärt | PLAN', d: 'Resistance = Atemwegswiderstand: Er steigt bei verengten Bronchien wie bei Asthma und COPD. Prüfungswissen, Merksatz und Prüfungsfragen.' },
+  'frank-starling-mechanismus': { t: 'Frank-Starling-Mechanismus einfach erklärt | PLAN', d: 'Frank-Starling-Mechanismus: Mehr Füllung (Vorlast) ergibt mehr Schlagvolumen – bis zur Grenze. Bedeutung bei Herzinsuffizienz, mit Prüfungsfragen.' },
+  'ventilations-perfusions-verhaeltnis': { t: 'Ventilations-Perfusions-Verhältnis erklärt | PLAN', d: 'Ventilations-Perfusions-Verhältnis: Belüftung und Durchblutung der Lunge müssen zusammenpassen, z. B. gestört bei Lungenembolie. Mit Prüfungsfragen.' }
+};
+/* Beschreibung für alle übrigen Seiten: Definition + Nutzen, max. 155 Zeichen */
+function seoDesc(basis, teile) {
+  const b = String(basis || '').trim().replace(/\s+/g, ' ');
+  const t = teile.length > 1 ? teile.slice(0, -1).join(', ') + ' und ' + teile[teile.length - 1] : (teile[0] || 'Prüfungswissen');
+  const zus = [' Mit ' + t + ' – kostenlos für die Pflegeausbildung.', ' Mit ' + t + ' – kostenlos.', ' Prüfungswissen für die Pflege – kostenlos.'];
+  for (let i = 0; i < zus.length; i++) if ((b + zus[i]).length <= 155) return b + zus[i];
+  return anriss(b, 155);
+}
+
 /* ---------- Detailseite ---------- */
 
 const FELD_LABEL = {
@@ -191,7 +215,9 @@ function renderDetail(e, geschwister) {
   const rel = anriss(d.klinische_relevanz || d.pflegeschwerpunkt, 220);
   const faqs = faqPairs(d);
 
-  const desc = anriss(definition || pw || (kat + ': ' + e.titel), 155);
+  const seo = SEO[e.slug] || {};
+  const teile = [pw && 'Prüfungswissen', d.merksatz && 'Merksatz', faqs.length && 'Prüfungsfragen'].filter(Boolean);
+  const desc = seo.d || seoDesc(definition || pw || (kat + ': ' + e.titel), teile);
 
   // Felder, die es gibt, hier aber bewusst nicht ausgespielt werden
   const mehr = Object.keys(FELD_LABEL)
@@ -259,7 +285,7 @@ function renderDetail(e, geschwister) {
   }
 
   return page({
-    title: e.titel + ' – Prüfungswissen Pflege | PLAN NRW',
+    title: seo.t || (e.titel + ' – Prüfungswissen Pflege | PLAN NRW'),
     desc: desc,
     canonical: url,
     ld: ld,

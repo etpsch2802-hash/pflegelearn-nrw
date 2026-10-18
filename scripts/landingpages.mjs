@@ -59,6 +59,7 @@ ul.v li{background:rgba(13,33,53,.8);border:1px solid rgba(56,189,248,.15);borde
 .autor{background:rgba(13,33,53,.8);border:1px solid rgba(56,189,248,.15);border-radius:14px;padding:16px;margin:28px 0}
 .autor b{display:block;margin-bottom:4px}
 .recht{font-size:13px;color:#fcd34d;border:1px solid rgba(252,211,77,.35);border-radius:10px;padding:10px 12px;margin:18px 0}
+h2.wh{font-family:'DM Serif Display',serif;font-size:24px;margin:30px 0 10px}ul.wl{list-style:none;display:flex;flex-wrap:wrap;gap:8px}ul.wl a{display:inline-block;color:var(--text);text-decoration:none;border:1px solid rgba(56,189,248,.25);border-radius:20px;padding:6px 12px;font-size:14px}ul.wl a:hover{border-color:var(--akzent)}.klein a{color:var(--muted)}
 footer{font-size:12px;color:var(--muted);margin-top:30px}footer a{color:var(--muted)}
 </style>
 </head>
@@ -73,6 +74,7 @@ footer{font-size:12px;color:var(--muted);margin-top:30px}footer a{color:var(--mu
   <ul class="v">${L.vorteile.map(v => `<li>${esc(v)}</li>`).join('')}</ul>
   <div class="zahlen"><span>2.000+ Prüfungsfragen</span><span>400 Lerneinheiten</span><span>80+ Wirkstoffe</span><span>KI-Lernassistent</span></div>
   ${hinweis}
+  ${(f.wissen || []).length ? `<h2 class="wh">Kostenlos nachlesen</h2><ul class="wl">${f.wissen.map(w => `<li><a href="/wissen/${esc(w[0])}">${esc(w[1])}</a></li>`).join('')}</ul><p class="klein"><a href="/wissen">Alle Lerneinheiten der Wissensdatenbank →</a></p>` : ''}
   <div class="autor"><b>Wer dahinter steht</b>Patrick Schenkelberger · Fachpfleger Anästhesie &amp; Intensivmedizin · Praxisanleiter NRW</div>
   <p class="lead" style="font-size:15px">Für: ${esc(f.zielgruppe)}.</p>
   <a class="cta" href="${app}">Jetzt kostenlos loslegen</a>

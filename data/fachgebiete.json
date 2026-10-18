@@ -21,7 +21,45 @@
           "Examen-Kompass für die praktische Prüfung"
         ],
         "keywords": "Pflegeexamen, Generalistik, Pflegefachfrau, Pflegefachmann, Prüfungsvorbereitung, PflAPrV"
-      }
+      },
+      "wissen": [
+        [
+          "pflegeprozess",
+          "Pflegeprozess"
+        ],
+        [
+          "pflegeevaluation",
+          "Pflegeevaluation"
+        ],
+        [
+          "uebergabe-sbar",
+          "Übergabe nach SBAR"
+        ],
+        [
+          "6-r-regel-medikamente",
+          "6-R-Regel der Medikamentengabe"
+        ],
+        [
+          "infusionsberechnung",
+          "Infusionsberechnung & Tropfenformel"
+        ],
+        [
+          "zystitisprophylaxe",
+          "Zystitisprophylaxe"
+        ],
+        [
+          "aspirationsprophylaxe",
+          "Aspirationsprophylaxe"
+        ],
+        [
+          "gcs",
+          "Glasgow Coma Scale (GCS)"
+        ],
+        [
+          "reanimation-bls",
+          "Basisreanimation (BLS)"
+        ]
+      ]
     },
     {
       "id": "assistenz",
@@ -41,7 +79,33 @@
           "Einfach erklärt und Übersetzen für Lernende mit anderer Muttersprache"
         ],
         "keywords": "Pflegefachassistenz, Pflegeassistenz, Pflegehelfer, Ausbildung, Prüfung"
-      }
+      },
+      "wissen": [
+        [
+          "6-r-regel-medikamente",
+          "6-R-Regel der Medikamentengabe"
+        ],
+        [
+          "aspirationsprophylaxe",
+          "Aspirationsprophylaxe"
+        ],
+        [
+          "zystitisprophylaxe",
+          "Zystitisprophylaxe"
+        ],
+        [
+          "obstipationsprophylaxe",
+          "Obstipationsprophylaxe"
+        ],
+        [
+          "sturzrisiko-assessment",
+          "Sturzrisiko-Assessment"
+        ],
+        [
+          "uebergabe-sbar",
+          "Übergabe nach SBAR"
+        ]
+      ]
     },
     {
       "id": "anerkennung",
@@ -61,7 +125,29 @@
           "Prüfungsfragen und Fälle aus dem deutschen Pflegealltag"
         ],
         "keywords": "Anerkennung Pflege, Kenntnisprüfung, Anpassungslehrgang, ausländische Pflegekräfte"
-      }
+      },
+      "wissen": [
+        [
+          "pflegeprozess",
+          "Pflegeprozess"
+        ],
+        [
+          "uebergabe-sbar",
+          "Übergabe nach SBAR"
+        ],
+        [
+          "6-r-regel-medikamente",
+          "6-R-Regel der Medikamentengabe"
+        ],
+        [
+          "sgb-v-sgb-xi",
+          "SGB V und SGB XI"
+        ],
+        [
+          "delegation",
+          "Delegation in der Pflege"
+        ]
+      ]
     },
     {
       "id": "intensiv",
@@ -81,7 +167,45 @@
           "Prüfungsfragen zu Beatmung, Sepsis und Hämodynamik"
         ],
         "keywords": "Intensivpflege, Fachweiterbildung Intensiv, Beatmung, ITS, RASS, BPS"
-      }
+      },
+      "wissen": [
+        [
+          "zvd-messung",
+          "ZVD-Messung & Normwert"
+        ],
+        [
+          "gcs",
+          "Glasgow Coma Scale (GCS)"
+        ],
+        [
+          "beatmungsmodi",
+          "Beatmungsmodi"
+        ],
+        [
+          "kapnografie",
+          "Kapnografie (etCO2)"
+        ],
+        [
+          "arterielle-druckkurve",
+          "Arterielle Druckkurve"
+        ],
+        [
+          "fluessigkeitsbilanz",
+          "Flüssigkeitsbilanz"
+        ],
+        [
+          "high-flow",
+          "High-Flow-Sauerstofftherapie"
+        ],
+        [
+          "perfusor-katecholamine",
+          "Perfusor & Katecholamine"
+        ],
+        [
+          "magnesium-notfall",
+          "Magnesium im Notfall"
+        ]
+      ]
     },
     {
       "id": "anaesthesie",
@@ -101,7 +225,41 @@
           "Von einem Fachpfleger für Anästhesie & Intensivmedizin"
         ],
         "keywords": "Anästhesiepflege, Fachweiterbildung Anästhesie, Narkose, Atemwegsmanagement"
-      }
+      },
+      "wissen": [
+        [
+          "aufwachraum",
+          "Aufwachraum & Aldrete-Score"
+        ],
+        [
+          "propofol",
+          "Propofol"
+        ],
+        [
+          "narkosearten",
+          "Narkosearten"
+        ],
+        [
+          "atemwegssicherung",
+          "Atemwegssicherung"
+        ],
+        [
+          "relaxometrie",
+          "Relaxometrie (TOF)"
+        ],
+        [
+          "sedierung",
+          "Sedierung"
+        ],
+        [
+          "notfallintubation-rsi",
+          "Notfallintubation (RSI)"
+        ],
+        [
+          "kapnografie",
+          "Kapnografie (etCO2)"
+        ]
+      ]
     },
     {
       "id": "ata",
@@ -121,7 +279,33 @@
           "Lernen in kurzen Einheiten"
         ],
         "keywords": "ATA Ausbildung, Anästhesietechnische Assistenz, Prüfung"
-      }
+      },
+      "wissen": [
+        [
+          "narkosearten",
+          "Narkosearten"
+        ],
+        [
+          "aufwachraum",
+          "Aufwachraum & Aldrete-Score"
+        ],
+        [
+          "atemwegssicherung",
+          "Atemwegssicherung"
+        ],
+        [
+          "praeoperative-vorbereitung",
+          "Präoperative Vorbereitung"
+        ],
+        [
+          "postoperative-ueberwachung",
+          "Postoperative Überwachung"
+        ],
+        [
+          "isolationsmassnahmen",
+          "Isolationsmaßnahmen"
+        ]
+      ]
     },
     {
       "id": "ota",
@@ -141,7 +325,33 @@
           "Lernen in kurzen Einheiten"
         ],
         "keywords": "OTA Ausbildung, Operationstechnische Assistenz, Prüfung"
-      }
+      },
+      "wissen": [
+        [
+          "praeoperative-vorbereitung",
+          "Präoperative Vorbereitung"
+        ],
+        [
+          "postoperative-ueberwachung",
+          "Postoperative Überwachung"
+        ],
+        [
+          "isolationsmassnahmen",
+          "Isolationsmaßnahmen"
+        ],
+        [
+          "mrsa",
+          "MRSA"
+        ],
+        [
+          "narkosearten",
+          "Narkosearten"
+        ],
+        [
+          "aufwachraum",
+          "Aufwachraum & Aldrete-Score"
+        ]
+      ]
     },
     {
       "id": "langzeitpflege",
@@ -162,7 +372,41 @@
           "Für Azubis mit Vertiefungseinsatz in der Langzeitpflege"
         ],
         "keywords": "Langzeitpflege, Altenpflege, ambulante Pflege, Vertiefungseinsatz, Pflegeheim"
-      }
+      },
+      "wissen": [
+        [
+          "demenz-alzheimer",
+          "Alzheimer-Demenz"
+        ],
+        [
+          "sterbebegleitung",
+          "Sterbebegleitung"
+        ],
+        [
+          "sturzrisiko-assessment",
+          "Sturzrisiko-Assessment"
+        ],
+        [
+          "norton-skala",
+          "Norton-Skala"
+        ],
+        [
+          "dekubitus-vertieft",
+          "Dekubitusprophylaxe"
+        ],
+        [
+          "fem",
+          "Freiheitsentziehende Maßnahmen (FEM)"
+        ],
+        [
+          "sgb-v-sgb-xi",
+          "SGB V und SGB XI"
+        ],
+        [
+          "obstipationsprophylaxe",
+          "Obstipationsprophylaxe"
+        ]
+      ]
     },
     {
       "id": "praxisanleitung",
@@ -183,7 +427,29 @@
           "Nachweis-Export als CSV und PDF"
         ],
         "keywords": "Praxisanleitung, Praxisanleiter, Pflegeausbildung, Lernstand, Ausbildungsnachweis"
-      }
+      },
+      "wissen": [
+        [
+          "pflegeprozess",
+          "Pflegeprozess"
+        ],
+        [
+          "pflegeevaluation",
+          "Pflegeevaluation"
+        ],
+        [
+          "delegation",
+          "Delegation in der Pflege"
+        ],
+        [
+          "uebergabe-sbar",
+          "Übergabe nach SBAR"
+        ],
+        [
+          "6-r-regel-medikamente",
+          "6-R-Regel der Medikamentengabe"
+        ]
+      ]
     }
   ]
 }
