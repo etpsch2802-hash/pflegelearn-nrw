@@ -187,6 +187,17 @@ const SEO = {
   'frank-starling-mechanismus': { t: 'Frank-Starling-Mechanismus einfach erklärt | PLAN', d: 'Frank-Starling-Mechanismus: Mehr Füllung (Vorlast) ergibt mehr Schlagvolumen – bis zur Grenze. Bedeutung bei Herzinsuffizienz, mit Prüfungsfragen.' },
   'ventilations-perfusions-verhaeltnis': { t: 'Ventilations-Perfusions-Verhältnis erklärt | PLAN', d: 'Ventilations-Perfusions-Verhältnis: Belüftung und Durchblutung der Lunge müssen zusammenpassen, z. B. gestört bei Lungenembolie. Mit Prüfungsfragen.' }
 };
+/* Vollständig öffentliche Seiten (Go P. Schenkelberger, 19.10.2026): Fachwissen frei lesbar,
+   Prüfungsfragen/Fälle/KI bleiben in der App. Auswahl = meistgesehene Seiten mit umfangreichem Inhalt (GSC 18.10.). */
+const OFFEN = new Set(['lagerungsarten', 'blasenkatheter', 'magnesium-notfall', 'tee', 'lumbalpunktion', 'niv-einstellung',
+  'infusionsberechnung', 'stomaversorgung', 'injektion-subkutan', 'ace-hemmer', 'peg', 'weitere-antibiotika-praxis',
+  'peripherer-venenzugang', 'verbandwechsel', 'orale-antidiabetika']);
+const OFFEN_REIHE = ['aufbau', 'funktion', 'physiologie', 'wirkkette', 'indikation', 'kontraindikation', 'material',
+  'vorbereitung', 'durchfuehrung', 'nachsorge', 'komplikationen', 'pflegeschwerpunkt', 'klinische_relevanz'];
+function absaetze(t) {
+  return String(t).trim().split(/\n+/).filter(Boolean).map(function (x) { return '<p>' + esc(x.trim()) + '</p>'; }).join('');
+}
+
 /* Beschreibung für alle übrigen Seiten: Definition + Nutzen, max. 155 Zeichen */
 function seoDesc(basis, teile) {
   const b = String(basis || '').trim().replace(/\s+/g, ' ');
@@ -211,8 +222,9 @@ function renderDetail(e, geschwister) {
   const kat = e.kategorie || 'Sonstiges';
   const url = urlSlug(e.slug);
   const definition = String(d.definition || '').trim();
-  const pw = anriss(d.pruefungswissen, 300);
-  const rel = anriss(d.klinische_relevanz || d.pflegeschwerpunkt, 220);
+  const offen = OFFEN.has(e.slug);
+  const pw = offen ? String(d.pruefungswissen || '').trim() : anriss(d.pruefungswissen, 300);
+  const rel = offen ? '' : anriss(d.klinische_relevanz || d.pflegeschwerpunkt, 220);
   const faqs = faqPairs(d);
 
   const seo = SEO[e.slug] || {};
@@ -254,6 +266,11 @@ function renderDetail(e, geschwister) {
   if (pw) b += `<h3>Prüfungswissen</h3><p>${esc(pw)}</p>`;
   if (d.merksatz) b += `<div class="merk"><b>Merksatz</b>${esc(d.merksatz)}</div>`;
   if (rel) b += `<h3>Warum es in der Prüfung vorkommt</h3><p>${esc(rel)}</p>`;
+  if (offen) {
+    OFFEN_REIHE.forEach(function (k) {
+      if (typeof d[k] === 'string' && d[k].trim().length > 20) b += `<h2>${esc(FELD_LABEL[k])}</h2>` + absaetze(d[k]);
+    });
+  }
 
   if (faqs.length) {
     b += '<h2>Häufige Prüfungsfragen zu ' + esc(e.titel) + '</h2>';
@@ -262,13 +279,16 @@ function renderDetail(e, geschwister) {
     });
   }
 
-  if (mehr.length) {
+  if (offen) {
+    b += `<div class="box mehr">Wissen gelesen? Jetzt prüfen: In der App warten <b>Prüfungsfragen mit Erklärung</b>`
+      + `, <b>Fallbeispiele</b> und der <b>KI-Lernassistent</b> zu ${esc(e.titel)}.</div>`;
+  } else if (mehr.length) {
     b += `<div class="box mehr">In der App vollständig enthalten: <b>${esc(mehr.join(' · '))}</b>`
       + (Array.isArray(d.mcq) && d.mcq.length ? ` · <b>${d.mcq.length} Prüfungsfragen mit Erklärung</b>` : '')
       + `.</div>`;
   }
 
-  b += ctaBlock('„' + e.titel + '" vollständig in der App lernen');
+  b += ctaBlock(offen ? 'Teste dich zu „' + e.titel + '“ in der App' : '„' + e.titel + '" vollständig in der App lernen');
 
   const q = [];
   if (e.quelle) q.push('Quelle: ' + esc(e.quelle));
