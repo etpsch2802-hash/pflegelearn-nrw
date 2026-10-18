@@ -73,7 +73,7 @@ async function sb(query) {
 
 /* ---------- Layout ---------- */
 
-const CSS = `.tw{overflow-x:auto;margin:10px 0 18px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid rgba(56,189,248,.2);padding:8px 10px;text-align:left;vertical-align:top}th{background:rgba(56,189,248,.1);color:#e8f3fb}
+const CSS = `.tw{overflow-x:auto;margin:10px 0 18px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid rgba(56,189,248,.2);padding:8px 10px;text-align:left;vertical-align:top}th{background:rgba(56,189,248,.1);color:#e8f3fb}tbody th{width:28%;white-space:nowrap}td ul{margin:0;padding-left:18px}.klein{font-size:13px;color:#9fb6c9}
 *{box-sizing:border-box}body{margin:0;background:#050c18;color:#e2e8f0;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:#7dd3fc}main{max-width:760px;margin:0 auto;padding:20px 18px 64px}
 header{border-bottom:1px solid rgba(56,189,248,.18);background:rgba(255,255,255,.03)}
@@ -190,6 +190,10 @@ const SEO = {
   'nierenwerte': { t: 'Nierenwerte: Kreatinin, eGFR, Harnstoff Normwerte | PLAN', d: 'Nierenwerte mit Normwert-Tabelle: Kreatinin, eGFR, Harnstoff, Kalium, Cystatin C, GFR-Stadien nach KDIGO und Pflegeaufgaben.' },
   'lungenfunktion': { t: 'Lungenfunktion: Spirometrie, FEV1 & Tiffeneau | PLAN', d: 'Spirometrie verständlich: VC, FEV1, Tiffeneau-Index und Peak-Flow, obstruktiv oder restriktiv, GOLD-Stadien und Pflegeaufgaben.' },
   'gasaustausch': { t: 'Gasaustausch der Lunge: BGA-Normwerte & Störungen | PLAN', d: 'Wo findet der Gasaustausch statt? Alveolen, BGA-Normwerte (pO2, pCO2, pH), Störungen wie Shunt und V/Q-Missverhältnis, Pflege.' },
+  'dekubitus-vertieft': { t: 'Dekubitus: Kategorien 1–4 & Prophylaxe nach DNQP | PLAN', d: 'Dekubitus-Kategorien 1–4 nach EPUAP/NPIAP als Tabelle, Risikofaktoren, Prädilektionsstellen und Dekubitusprophylaxe nach DNQP-Expertenstandard.' },
+  'beatmungsmodi': { t: 'Beatmungsmodi: VCV, PCV, BIPAP, CPAP im Vergleich | PLAN', d: 'Beatmungsmodi einfach erklärt: volumen- und druckkontrolliert, BIPAP, SIMV, PSV/ASB und CPAP im Vergleich, Richtwerte und Pflege.' },
+  'pleuraerguss': { t: 'Pleuraerguss: Ursachen, Transsudat vs. Exsudat | PLAN', d: 'Pleuraerguss: Ursachen, Unterschied Transsudat und Exsudat als Tabelle, Symptome, Pleurapunktion und Pflege – Prüfungswissen kostenlos.' },
+  'delir': { t: 'Delir: Formen, Delir vs. Demenz, Screening | PLAN', d: 'Delir erkennen: hyperaktiv, hypoaktiv, gemischt, Unterschied zur Demenz als Tabelle, Risikofaktoren, Screening (4AT, CAM) und Pflege.' },
   'ventilations-perfusions-verhaeltnis': { t: 'Ventilations-Perfusions-Verhältnis erklärt | PLAN', d: 'Ventilations-Perfusions-Verhältnis: Belüftung und Durchblutung der Lunge müssen zusammenpassen, z. B. gestört bei Lungenembolie. Mit Prüfungsfragen.' }
 };
 /* Vollständig öffentliche Seiten (Go P. Schenkelberger, 19.10.2026): Fachwissen frei lesbar,
@@ -198,7 +202,10 @@ const OFFEN = new Set(['lagerungsarten', 'blasenkatheter', 'magnesium-notfall', 
   'infusionsberechnung', 'stomaversorgung', 'injektion-subkutan', 'ace-hemmer', 'peg', 'weitere-antibiotika-praxis',
   'peripherer-venenzugang', 'verbandwechsel', 'orale-antidiabetika',
   /* neu geschrieben mit Normwert-Tabellen (19.10.2026, Freigabe P. Schenkelberger) */
-  'entzuendungswerte', 'nierenwerte', 'lungenfunktion', 'gasaustausch']);
+  'entzuendungswerte', 'nierenwerte', 'lungenfunktion', 'gasaustausch',
+  'dekubitus-vertieft', 'gcs', 'beatmungsmodi', 'pleuraerguss', 'delir']);
+/* Pflegeplanung-Seiten (Kategorie „Pflegeplanung“, Slug pflegeplanung-…) sind immer vollständig öffentlich */
+function istOffen(slug) { return OFFEN.has(slug) || /^pflegeplanung-/.test(String(slug || '')); }
 const OFFEN_REIHE = ['einteilung', 'aufbau', 'funktion', 'physiologie', 'wirkkette', 'indikation', 'kontraindikation', 'material',
   'vorbereitung', 'durchfuehrung', 'nachsorge', 'komplikationen', 'pflegeschwerpunkt', 'klinische_relevanz'];
 function tabelleHTML(t) {
@@ -206,6 +213,24 @@ function tabelleHTML(t) {
   return '<div class="tw"><table><thead><tr>' + t.kopf.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>'
     + t.zeilen.map(function (z) { return '<tr>' + z.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('')
     + '</tbody></table></div>';
+}
+function pflegeplanungHTML(d) {
+  let h = '';
+  if (typeof d.symptome === 'string' && d.symptome.trim()) h += '<h2>Symptome</h2><p>' + esc(d.symptome) + '</p>';
+  if (!Array.isArray(d.pflegeplanung) || !d.pflegeplanung.length) return h;
+  h += '<h2>Beispiel-Pflegeplanung</h2>';
+  d.pflegeplanung.forEach(function (p, i) {
+    const liste = function (a) { return Array.isArray(a) && a.length ? '<ul>' + a.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; };
+    h += '<h3>Pflegeproblem ' + (i + 1) + '</h3><div class="tw"><table><tbody>'
+      + '<tr><th>Pflegeproblem</th><td>' + esc(p.problem || '') + '</td></tr>'
+      + (Array.isArray(p.ressourcen) && p.ressourcen.length ? '<tr><th>Ressourcen</th><td>' + liste(p.ressourcen) + '</td></tr>' : '')
+      + '<tr><th>Pflegeziel</th><td>' + esc(p.ziel || '') + '</td></tr>'
+      + '<tr><th>Maßnahmen</th><td>' + liste(p.massnahmen) + '</td></tr>'
+      + (p.evaluation ? '<tr><th>Evaluation</th><td>' + esc(p.evaluation) + '</td></tr>' : '')
+      + '</tbody></table></div>';
+  });
+  h += '<p class="klein">Muster-Pflegeplanung für Ausbildung und Prüfung – immer an den einzelnen Menschen anpassen.</p>';
+  return h;
 }
 function absaetze(t) {
   return String(t).trim().split(/\n+/).filter(Boolean).map(function (x) { return '<p>' + esc(x.trim()) + '</p>'; }).join('');
@@ -235,12 +260,17 @@ function renderDetail(e, geschwister) {
   const kat = e.kategorie || 'Sonstiges';
   const url = urlSlug(e.slug);
   const definition = String(d.definition || '').trim();
-  const offen = OFFEN.has(e.slug);
+  const offen = istOffen(e.slug);
   const pw = offen ? String(d.pruefungswissen || '').trim() : anriss(d.pruefungswissen, 300);
   const rel = offen ? '' : anriss(d.klinische_relevanz || d.pflegeschwerpunkt, 220);
   const faqs = faqPairs(d);
 
-  const seo = SEO[e.slug] || {};
+  let seo = SEO[e.slug] || {};
+  if (!seo.t && /^pflegeplanung-/.test(e.slug)) {
+    const t1 = e.titel + ': Beispiel mit Ziel & Maßnahmen | PLAN';
+    seo = { t: t1.length <= 60 ? t1 : e.titel + ' – Beispiel | PLAN NRW',
+      d: anriss(e.titel + ': Muster mit Pflegeproblem, Ressourcen, Ziel, Maßnahmen und Evaluation – kostenlos für die Pflegeausbildung.', 155) };
+  }
   const teile = [pw && 'Prüfungswissen', d.merksatz && 'Merksatz', faqs.length && 'Prüfungsfragen'].filter(Boolean);
   const desc = seo.d || seoDesc(definition || pw || (kat + ': ' + e.titel), teile);
 
@@ -277,6 +307,7 @@ function renderDetail(e, geschwister) {
   b += `<h1>${esc(e.titel)}</h1>`;
   if (definition) b += `<p class="lead">${esc(definition)}</p>`;
   if (offen && d.tabelle) b += `<h2>Normwerte im Überblick</h2>` + tabelleHTML(d.tabelle);
+  if (offen) b += pflegeplanungHTML(d);
   if (pw) b += `<h3>Prüfungswissen</h3><p>${esc(pw)}</p>`;
   if (d.merksatz) b += `<div class="merk"><b>Merksatz</b>${esc(d.merksatz)}</div>`;
   if (rel) b += `<h3>Warum es in der Prüfung vorkommt</h3><p>${esc(rel)}</p>`;
@@ -302,7 +333,7 @@ function renderDetail(e, geschwister) {
       + `.</div>`;
   }
 
-  b += ctaBlock(offen ? 'Teste dich zu „' + e.titel + '“ in der App' : '„' + e.titel + '" vollständig in der App lernen');
+  b += ctaBlock(/^pflegeplanung-/.test(e.slug) ? 'Weitere Pflegeplanungen und Prüfungsfragen in der App' : offen ? 'Teste dich zu „' + e.titel + '“ in der App' : '„' + e.titel + '" vollständig in der App lernen');
 
   const q = [];
   if (e.quelle) q.push('Quelle: ' + esc(e.quelle));

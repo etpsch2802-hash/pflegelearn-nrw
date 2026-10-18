@@ -12081,7 +12081,7 @@ async function renderWissensDB(){
   host.innerHTML = '<div style="color:#b3c4d6;font-size:13px;text-align:center;padding:24px">Lädt…</div>';
   const data = await loadWissensDB(false);
   if (!data){ host.innerHTML = '<div style="color:#b3c4d6;font-size:13px;text-align:center;padding:24px">Konnte nicht geladen werden. Bitte später erneut versuchen.</div>'; return; }
-  const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', wirkkette:'Wirkkette \u2013 warum wirkt es?', physiologie:'Physiologie', indikation:'Indikation', kontraindikation:'Kontraindikationen', material:'Material', vorbereitung:'Vorbereitung', durchfuehrung:'Durchführung', nachsorge:'Nachsorge', komplikationen:'Komplikationen', pflegeschwerpunkt:'Pflegeschwerpunkt', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage', einteilung:'Einteilung' };
+  const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', wirkkette:'Wirkkette \u2013 warum wirkt es?', physiologie:'Physiologie', indikation:'Indikation', kontraindikation:'Kontraindikationen', material:'Material', vorbereitung:'Vorbereitung', durchfuehrung:'Durchführung', nachsorge:'Nachsorge', komplikationen:'Komplikationen', pflegeschwerpunkt:'Pflegeschwerpunkt', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage', einteilung:'Einteilung', symptome:'Symptome' };
   const order = ['definition','funktion','wirkkette','aufbau','physiologie','indikation','kontraindikation','material','vorbereitung','durchfuehrung','nachsorge','komplikationen','pflegeschwerpunkt','klinische_relevanz','merksatz','pruefungswissen','haeufige_pruefungsfrage'];
   const groups = {};
   data.forEach(function(e){ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
@@ -12105,6 +12105,19 @@ async function renderWissensDB(){
       order.forEach(function(k){
         body += _wdbFeld(k, labels[k]||k);
         if (k === 'definition' && d.grafik && PL_GRAFIK.has(d.grafik)) body += PL_GRAFIK.render(d.grafik);
+        // Beispiel-Pflegeplanung (19.10.2026): d.pflegeplanung = [{problem, ressourcen[], ziel, massnahmen[], evaluation}]
+        if (k === 'definition' && Array.isArray(d.pflegeplanung)) {
+          try {
+            d.pflegeplanung.forEach(function(pp, i){
+              var _l = function(a){ return Array.isArray(a) ? a.map(function(x){ return '• '+_wdbEsc(x); }).join('<br>') : ''; };
+              var _r = function(t, v){ return v ? '<div style="margin-top:4px"><b style="color:#e2e8f0">'+t+':</b> '+v+'</div>' : ''; };
+              body += '<div style="margin:6px 0 10px;padding:10px;border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;font-size:13px;color:#cbd5e1;line-height:1.5">'
+                + '<div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase">Pflegeproblem '+(i+1)+'</div>'
+                + _r('Problem', _wdbEsc(pp.problem||'')) + _r('Ressourcen', _l(pp.ressourcen)) + _r('Ziel', _wdbEsc(pp.ziel||'')) + _r('Maßnahmen', _l(pp.massnahmen)) + _r('Evaluation', _wdbEsc(pp.evaluation||''))
+                + '</div>';
+            });
+          } catch(err){}
+        }
         // Normwert-Tabelle (19.10.2026): d.tabelle = {kopf:[…], zeilen:[[…]]}
         if (k === 'definition' && d.tabelle && Array.isArray(d.tabelle.kopf) && Array.isArray(d.tabelle.zeilen)) {
           try {

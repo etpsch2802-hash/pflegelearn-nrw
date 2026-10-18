@@ -58,6 +58,26 @@
         [
           "reanimation-bls",
           "Basisreanimation (BLS)"
+        ],
+        [
+          "pflegeplanung-herzinsuffizienz",
+          "Pflegeplanung Herzinsuffizienz"
+        ],
+        [
+          "pflegeplanung-copd",
+          "Pflegeplanung COPD"
+        ],
+        [
+          "pflegeplanung-diabetes-typ-2",
+          "Pflegeplanung Diabetes Typ 2"
+        ],
+        [
+          "pflegeplanung-pneumonie",
+          "Pflegeplanung Pneumonie"
+        ],
+        [
+          "pflegeplanung-schlaganfall",
+          "Pflegeplanung Schlaganfall"
         ]
       ]
     },
@@ -104,6 +124,14 @@
         [
           "uebergabe-sbar",
           "Übergabe nach SBAR"
+        ],
+        [
+          "pflegeplanung-demenz",
+          "Pflegeplanung Demenz"
+        ],
+        [
+          "pflegeplanung-diabetes-typ-2",
+          "Pflegeplanung Diabetes Typ 2"
         ]
       ]
     },
@@ -204,6 +232,14 @@
         [
           "magnesium-notfall",
           "Magnesium im Notfall"
+        ],
+        [
+          "delir",
+          "Delir"
+        ],
+        [
+          "pleuraerguss",
+          "Pleuraerguss"
         ]
       ]
     },
@@ -405,6 +441,18 @@
         [
           "obstipationsprophylaxe",
           "Obstipationsprophylaxe"
+        ],
+        [
+          "pflegeplanung-demenz",
+          "Pflegeplanung Demenz"
+        ],
+        [
+          "pflegeplanung-parkinson",
+          "Pflegeplanung Parkinson"
+        ],
+        [
+          "pflegeplanung-schenkelhalsfraktur",
+          "Pflegeplanung Schenkelhalsfraktur"
         ]
       ]
     },
@@ -448,6 +496,14 @@
         [
           "6-r-regel-medikamente",
           "6-R-Regel der Medikamentengabe"
+        ],
+        [
+          "pflegeplanung-herzinsuffizienz",
+          "Pflegeplanung Herzinsuffizienz"
+        ],
+        [
+          "pflegeplanung-schlaganfall",
+          "Pflegeplanung Schlaganfall"
         ]
       ]
     }
