@@ -12081,7 +12081,7 @@ async function renderWissensDB(){
   host.innerHTML = '<div style="color:#b3c4d6;font-size:13px;text-align:center;padding:24px">Lädt…</div>';
   const data = await loadWissensDB(false);
   if (!data){ host.innerHTML = '<div style="color:#b3c4d6;font-size:13px;text-align:center;padding:24px">Konnte nicht geladen werden. Bitte später erneut versuchen.</div>'; return; }
-  const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', wirkkette:'Wirkkette \u2013 warum wirkt es?', physiologie:'Physiologie', indikation:'Indikation', kontraindikation:'Kontraindikationen', material:'Material', vorbereitung:'Vorbereitung', durchfuehrung:'Durchführung', nachsorge:'Nachsorge', komplikationen:'Komplikationen', pflegeschwerpunkt:'Pflegeschwerpunkt', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage' };
+  const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', wirkkette:'Wirkkette \u2013 warum wirkt es?', physiologie:'Physiologie', indikation:'Indikation', kontraindikation:'Kontraindikationen', material:'Material', vorbereitung:'Vorbereitung', durchfuehrung:'Durchführung', nachsorge:'Nachsorge', komplikationen:'Komplikationen', pflegeschwerpunkt:'Pflegeschwerpunkt', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage', einteilung:'Einteilung' };
   const order = ['definition','funktion','wirkkette','aufbau','physiologie','indikation','kontraindikation','material','vorbereitung','durchfuehrung','nachsorge','komplikationen','pflegeschwerpunkt','klinische_relevanz','merksatz','pruefungswissen','haeufige_pruefungsfrage'];
   const groups = {};
   data.forEach(function(e){ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
@@ -12105,6 +12105,16 @@ async function renderWissensDB(){
       order.forEach(function(k){
         body += _wdbFeld(k, labels[k]||k);
         if (k === 'definition' && d.grafik && PL_GRAFIK.has(d.grafik)) body += PL_GRAFIK.render(d.grafik);
+        // Normwert-Tabelle (19.10.2026): d.tabelle = {kopf:[…], zeilen:[[…]]}
+        if (k === 'definition' && d.tabelle && Array.isArray(d.tabelle.kopf) && Array.isArray(d.tabelle.zeilen)) {
+          try {
+            var _tc = 'border:1px solid rgba(var(--accent-rgb),.2);padding:6px 8px;text-align:left;vertical-align:top';
+            body += '<div style="overflow-x:auto;margin:4px 0 10px"><table style="border-collapse:collapse;width:100%;font-size:12px;color:#cbd5e1"><tr>'
+              + d.tabelle.kopf.map(function(h){ return '<th style="'+_tc+';color:#e2e8f0;background:rgba(var(--accent-rgb),.1)">'+_wdbEsc(h)+'</th>'; }).join('') + '</tr>'
+              + d.tabelle.zeilen.map(function(z){ return '<tr>'+z.map(function(c){ return '<td style="'+_tc+'">'+_wdbEsc(c)+'</td>'; }).join('')+'</tr>'; }).join('')
+              + '</table></div>';
+          } catch(err){}
+        }
       });
       // Zusatzfelder, die nicht in der festen Reihenfolge stehen, trotzdem anzeigen
       Object.keys(d).forEach(function(k){
