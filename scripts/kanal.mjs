@@ -6,6 +6,11 @@
 //   node scripts/kanal.mjs gestellt <id> [JJJJ-MM-TT]  → Frage als gestellt markieren (Standard: heute)
 //   node scripts/kanal.mjs frei <id>        → Markierung zurücknehmen
 //   node scripts/kanal.mjs status           → Übersicht
+//   node scripts/kanal.mjs heute            → Format des Tages + Material (Wochenplan, 18.10.2026)
+//   node scripts/kanal.mjs log <format> <thema…>  → anderen Beitrag (Eselsbrücke, Fall …) protokollieren
+//
+// Wochenplan: Mo Umfrage · Di Auflösung + Eselsbrücke · Mi Mini-Fall · Do Praxisanleiter-Tipp
+// (Sprachnachricht) · Fr Spickzettel · Sa/So App-Funktion oder Gratis-PDF. Protokoll: daten.log
 //
 // Auswahl der nächsten Frage: niedrigste freie ID, deren Thema nicht unter den
 // letzten 3 gestellten Themen ist (damit nicht 5x Medikamente hintereinander kommt).
@@ -46,6 +51,25 @@ if (!cmd) {
   q.gestellt_am = cmd === 'gestellt' ? (datum || heute()) : null;
   speichern();
   console.log(cmd === 'gestellt' ? `#${q.id} als gestellt markiert (${q.gestellt_am}).` : `#${q.id} wieder freigegeben.`);
+} else if (cmd === 'heute') {
+  const PLAN = { 1: 'umfrage', 2: 'aufloesung+eselsbruecke', 3: 'minifall', 4: 'praxistipp', 5: 'spickzettel', 6: 'app', 0: 'app' };
+  const wt = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin' })).getDay();
+  const tage = d => Math.round((new Date(heute()) - new Date(d)) / 864e5);
+  const letzte = F.filter(q => q.gestellt_am).sort((a, b) => a.gestellt_am.localeCompare(b.gestellt_am)).pop();
+  let fmt = PLAN[wt];
+  console.log(`HEUTE (${heute()}): ${fmt}`);
+  if (fmt === 'umfrage' && letzte && tage(letzte.gestellt_am) <= 2) {
+    console.log(`Hinweis: Umfrage #${letzte.id} wurde schon am ${letzte.gestellt_am} gestellt → heute KEINE neue Umfrage.`);
+  } else if (fmt === 'umfrage') { const q = naechste(); if (q) zeige(q); }
+  if (fmt.startsWith('aufloesung') && letzte) console.log(`\nAUFLÖSUNG zu #${letzte.id} (gestellt ${letzte.gestellt_am}):\n${letzte.frage}\n\n${letzte.aufloesung}`);
+  const log = (daten.log || []).slice(-15);
+  console.log('\nZuletzt gepostet (nicht wiederholen):');
+  log.forEach(l => console.log(`  ${l.datum}  ${l.format}  ${l.thema}`));
+} else if (cmd === 'log') {
+  const thema = process.argv.slice(4).join(' ');
+  if (!arg || !thema) { console.error('Aufruf: log <format> <thema>'); process.exit(1); }
+  (daten.log = daten.log || []).push({ datum: heute(), format: arg, thema });
+  speichern(); console.log(`Protokolliert: ${arg} – ${thema}`);
 } else if (cmd === 'status') {
   const g = F.filter(q => q.gestellt_am).length;
   console.log(`${g} von ${F.length} gestellt, ${F.length - g} frei.`);
