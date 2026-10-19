@@ -25507,16 +25507,42 @@ window.plLzpHinweis=function(kicker,titel,test){
 
   /* ---------- Fotos / Handschrift (bis 5 Fotos, Abschrift über POST /api/wissen?ocr=1) ---------- */
   var MAX_FOTOS = 5;
-  window.plUploadFotoStart = function(){
-    W().innerHTML = kopf('Foto von Notizen')
-      + '<p>Fotografiere deine Mitschrift, Lernzettel oder Tafelbilder – auch Handschrift. Bis zu ' + MAX_FOTOS + ' Fotos auf einmal.</p>'
+  /* Fotos sammeln (20.10.2026): „Foto aufnehmen“ öffnet direkt die Kamera (capture, ein Foto pro Aufnahme –
+     mit „multiple“ zeigt Android oft nur die Galerie), „Aus Galerie wählen“ erlaubt mehrere. Bis MAX_FOTOS sammeln, dann abschreiben. */
+  var sammlung = [];
+  window.plUploadFotoStart = function(neu){
+    if(neu !== false) sammlung = [];
+    var ok = sammlung.length > 0 || (document.getElementById('plup-ok') || {}).checked;
+    var h = kopf('Foto von Notizen')
+      + '<p>Fotografiere deine Mitschrift, Lernzettel oder Tafelbilder – auch Handschrift. Bis zu ' + MAX_FOTOS + ' Fotos.</p>'
       + '<div class="warn"><b>Fotos können wir vorher nicht prüfen.</b> Das Bild geht zum Abschreiben an unseren KI-Dienst. Fotografiere deshalb nie Patientenakten, Kurven, Übergabezettel oder Praxisaufträge mit echten Patientendaten.</div>'
-      + '<label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#cde8f7;margin:6px 0 4px"><input type="checkbox" id="plup-ok" style="width:20px;height:20px;margin-top:2px"> Auf meinen Fotos stehen keine Patientendaten.</label>'
-      + '<button class="btn" onclick="if(!document.getElementById(\'plup-ok\').checked){alert(\'Bitte zuerst bestätigen.\');return;}document.getElementById(\'plup-foto\').click()">Fotos auswählen oder aufnehmen</button>'
-      + '<input type="file" id="plup-foto" accept="image/*" multiple style="display:none" onchange="plUploadFotos(this.files)">'
+      + '<label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#cde8f7;margin:6px 0 4px"><input type="checkbox" id="plup-ok" style="width:20px;height:20px;margin-top:2px"' + (ok ? ' checked' : '') + '> Auf meinen Fotos stehen keine Patientendaten.</label>';
+    if(sammlung.length){
+      h += '<div class="box" style="margin-top:10px"><b>' + sammlung.length + ' von ' + MAX_FOTOS + ' Fotos</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
+        + sammlung.map(function(f, k){ return '<div style="position:relative"><img src="' + URL.createObjectURL(f) + '" style="width:64px;height:84px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.2)"><button onclick="plUploadFotoWeg(' + k + ')" aria-label="Foto entfernen" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:#ef4444;color:#fff;font-size:12px;cursor:pointer">✕</button></div>'; }).join('')
+        + '</div></div>';
+    }
+    if(sammlung.length < MAX_FOTOS){
+      h += '<button class="btn" onclick="plUploadFotoWahl(\'kamera\')">📷 ' + (sammlung.length ? 'Weiteres Foto aufnehmen' : 'Foto aufnehmen') + '</button>'
+        + '<button class="btn g" onclick="plUploadFotoWahl(\'galerie\')">🖼️ Aus Galerie wählen</button>';
+    }
+    if(sammlung.length) h += '<button class="btn" style="background:linear-gradient(135deg,#059669,#34d399)" onclick="plUploadFotos(plUploadSammlung())">Fertig – Text erkennen (' + sammlung.length + ')</button>';
+    h += '<input type="file" id="plup-kamera" accept="image/*" capture="environment" style="display:none" onchange="plUploadFotoDazu(this.files)">'
+      + '<input type="file" id="plup-foto" accept="image/*" multiple style="display:none" onchange="plUploadFotoDazu(this.files)">'
       + '<p class="klein" style="margin-top:10px">Tipp: Gerade von oben, gutes Licht, eine Seite pro Foto.</p>'
       + '<button class="btn g" onclick="plUploadOeffnen()">Zurück</button>';
+    W().innerHTML = h;
   };
+  window.plUploadFotoWahl = function(art){
+    if(!(document.getElementById('plup-ok') || {}).checked){ alert('Bitte zuerst bestätigen, dass keine Patientendaten auf den Fotos stehen.'); return; }
+    var el = document.getElementById(art === 'kamera' ? 'plup-kamera' : 'plup-foto'); if(el) el.click();
+  };
+  window.plUploadFotoDazu = function(liste){
+    Array.prototype.slice.call(liste || []).forEach(function(f){ if(/^image\//.test(f.type) && sammlung.length < MAX_FOTOS) sammlung.push(f); });
+    window.plUploadFotoStart(false);
+  };
+  window.plUploadFotoWeg = function(k){ sammlung.splice(k, 1); window.plUploadFotoStart(false); };
+  window.plUploadSammlung = function(){ return sammlung.slice(); };
   function verkleinern(f){
     return new Promise(function(res, rej){
       var url = URL.createObjectURL(f), img = new Image();
