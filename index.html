@@ -25195,11 +25195,11 @@ window.plLzpHinweis=function(kicker,titel,test){
 };
 </script>
 <!-- PLAN NRW: Landingpage-Einstieg ?fach=<id> (17.10.2026)
-     Die Seiten unter /fach/<slug>.html verlinken auf plan-nrw.de/?fach=<id>. Nach dem Login/Onboarding wird der passende Bereich geöffnet,
+     Die Seiten unter /fach/<slug>.html verlinken auf plan-nrw.de/?fach=<id>. ?fach=pflegeplanung (19.10.2026, Wissensseiten) öffnet Krankheitsbilder mit Pflegeplanung. Nach dem Login/Onboarding wird der passende Bereich geöffnet,
      GA-Event 'landing_fach'. Ziel nur in sessionStorage (kein pl_*-Key), Parameter wird aus der URL entfernt. -->
 <script>
 (function(){
-  var ZIEL={examen:'home',assistenz:'ausbildungswege',anerkennung:'ausbildungswege',intensiv:'ausbildungswege',anaesthesie:'ausbildungswege',ata:'ausbildungswege',ota:'ausbildungswege',langzeitpflege:'quizSelect',praxisanleitung:'lehrer'};
+  var ZIEL={examen:'home',assistenz:'ausbildungswege',anerkennung:'ausbildungswege',intensiv:'ausbildungswege',anaesthesie:'ausbildungswege',ata:'ausbildungswege',ota:'ausbildungswege',langzeitpflege:'quizSelect',praxisanleitung:'lehrer',pflegeplanung:'krankheitsbilder'};
   var f=null;
   try{ f=new URLSearchParams(location.search).get('fach'); }catch(e){}
   try{

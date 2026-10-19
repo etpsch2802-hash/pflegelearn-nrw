@@ -179,6 +179,12 @@ section {
 .feat-card-icon { font-size: 28px; margin-bottom: 12px; }
 .feat-card-title { font-size: 15px; font-weight: 700; color: #e0f2fe; margin-bottom: 6px; }
 .feat-card-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+a.feat-card { display: block; text-decoration: none; }
+.feat-card.hl { border: 2px solid var(--sky); background: rgba(56,189,248,.08); }
+.feat-card-link { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--sky); }
+.wissen-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.wissen-btns a { font-size: 13px; font-weight: 700; text-decoration: none; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--sky); color: var(--sky); }
+.wissen-btns a.voll { background: linear-gradient(135deg, #0369a1, var(--sky)); color: #fff; border: 0; }
 .split-row { display: flex; gap: 18px; margin-top: 8px; flex-wrap: wrap; }
 .split-half { flex: 1; min-width: 180px; }
 .split-half-title { font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 5px; }
@@ -529,13 +535,51 @@ footer {
 
 <hr class="full-divider">
 
+<!-- KOSTENLOS NACHLESEN (19.10.2026): Wissensseiten + Hinweis, dass alle Pflegeplanungen in der App stehen -->
+<section id="wissen">
+  <div class="section-tag">Kostenlos nachlesen</div>
+  <div class="section-title">Pflegeplanungen &amp; Normwerte</div>
+  <div class="section-sub">Ausgewählte Inhalte sind frei im Web lesbar – der komplette Umfang steht in der App.</div>
+  <div class="feature-grid">
+    <div class="feat-card hl">
+      <div class="feat-card-icon"><svg class="fic"><use href="#x-clipboard"/></svg></div>
+      <div class="feat-card-title">Alle Pflegeplanungen in der App</div>
+      <div class="feat-card-text">Fertige Pflegeplanungen zu <b>106 Krankheitsbildern</b> aus 10 Fachgebieten – mit Pflegeproblem, Ressourcen, Pflegeziel und Maßnahmen. 10 Beispiele kannst du kostenlos online lesen.</div>
+      <div class="wissen-btns">
+        <a class="voll" href="https://plan-nrw.de/?fach=pflegeplanung" target="_blank" rel="noopener">In der App öffnen</a>
+        <a href="https://plan-nrw.de/wissen/kategorie/pflegeplanung">10 Beispiele lesen</a>
+      </div>
+    </div>
+    <a class="feat-card" href="https://plan-nrw.de/wissen/entzuendungswerte">
+      <div class="feat-card-icon"><svg class="fic"><use href="#x-activity"/></svg></div>
+      <div class="feat-card-title">Normwert-Tabellen</div>
+      <div class="feat-card-text">Entzündungswerte, Nierenwerte, Lungenfunktion und Blutgase – mit Normbereich und Pflegebezug.</div>
+      <span class="feat-card-link">Tabellen ansehen →</span>
+    </a>
+    <a class="feat-card" href="https://plan-nrw.de/wissen">
+      <div class="feat-card-icon"><svg class="fic"><use href="#x-quiz"/></svg></div>
+      <div class="feat-card-title">Wissensdatenbank</div>
+      <div class="feat-card-text">400 Lerneinheiten von Anatomie bis Intensivpflege – Definition, Prüfungswissen und Merksatz.</div>
+      <span class="feat-card-link">Zur Wissensdatenbank →</span>
+    </a>
+    <a class="feat-card" href="https://plan-nrw.de/fach/langzeitpflege.html">
+      <div class="feat-card-icon"><svg class="fic"><use href="#x-users"/></svg></div>
+      <div class="feat-card-title">Langzeitpflege &amp; ambulant</div>
+      <div class="feat-card-text">Neue Quiz-Kategorie für Pflegeheim und ambulante Pflege.</div>
+      <span class="feat-card-link">Mehr erfahren →</span>
+    </a>
+  </div>
+</section>
+
+<hr class="full-divider">
+
 <!-- AUSBILDUNGSWEGE -->
 <section>
   <div class="section-tag">Für wen?</div>
   <div class="section-title">Alle 7 Ausbildungswege in NRW</div>
   <div class="section-sub">Jeder Ausbildungsweg hat eigene Quiz-Kategorien und spezifische Lerninhalte.</div>
   <div class="ausb-grid">
-    <div class="ausb-pill"><div class="ausb-num">01</div><div><div class="ausb-name">Pflegefachassistenz</div><div class="ausb-sub-text">1-jährige Ausbildung · NRW</div></div></div>
+    <div class="ausb-pill"><div class="ausb-num">01</div><div><div class="ausb-name">Pflegefachassistenz</div><div class="ausb-sub-text">18 Monate · bundeseinheitlich ab 2027</div></div></div>
     <div class="ausb-pill"><div class="ausb-num">02</div><div><div class="ausb-name">Anerkennungsschüler</div><div class="ausb-sub-text">Ausländische Pflegekräfte</div></div></div>
     <div class="ausb-pill"><div class="ausb-num">03</div><div><div class="ausb-name">Generalistische Pflege</div><div class="ausb-sub-text">3 Jahre · PflBG · GPA</div></div></div>
     <div class="ausb-pill"><div class="ausb-num">04</div><div><div class="ausb-name">Fachpflege Anästhesie</div><div class="ausb-sub-text">Fachweiterbildung · 2 Jahre</div></div></div>
