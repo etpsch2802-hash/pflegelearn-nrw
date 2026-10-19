@@ -25316,8 +25316,20 @@ window.plLzpHinweis=function(kicker,titel,test){
 <div id="plup" role="dialog" aria-modal="true" aria-label="Eigene Unterlagen"><div class="w" id="plup-w"></div></div>
 <script>
 (function(){
-  window.PL_UPLOAD_PUBLIC = false;
+  window.PL_UPLOAD_PUBLIC = true; /* Go P. Schenkelberger 19.10.2026 – Datenschutzerklärung 3c (#unterlagen) */
   var KEY = 'pl_upload_decks_v1';
+  /* Tageslimit gegen KI-Kosten: 3 Durchläufe (Datei, Text oder Fotos) pro Tag und Gerät, Admin ausgenommen */
+  var LIMIT_KEY = 'pl_upload_limit_v1', TAGESLIMIT = 3;
+  function heute(){ return new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' }); }
+  function limitStand(){ try{ var o = JSON.parse(localStorage.getItem(LIMIT_KEY) || '{}'); return o && o.d === heute() ? (o.n | 0) : 0; }catch(e){ return 0; } }
+  function istAdmin(){ try{ return typeof isAdmin === 'function' && isAdmin(); }catch(e){ return false; } }
+  function limitRest(){ return istAdmin() ? 99 : Math.max(0, TAGESLIMIT - limitStand()); }
+  function limitZaehlen(){
+    if(istAdmin()) return true;
+    if(limitRest() <= 0){ fehler('F\u00fcr heute hast du alle ' + TAGESLIMIT + ' Uploads genutzt. Morgen geht es weiter \u2013 deine Karten kannst du jederzeit lernen.'); ga('upload_limit'); return false; }
+    try{ localStorage.setItem(LIMIT_KEY, JSON.stringify({ d: heute(), n: limitStand() + 1 })); }catch(e){}
+    return true;
+  }
   var MAX_ZEICHEN = 24000, ABSCHNITT = 3000, MAX_DECKS = 20;
   var W = function(){ return document.getElementById('plup-w'); };
   function erlaubt(){ try{ return window.PL_UPLOAD_PUBLIC === true || (typeof isAdmin === 'function' && isAdmin()); }catch(e){ return false; } }
@@ -25363,7 +25375,7 @@ window.plLzpHinweis=function(kicker,titel,test){
     h += '<div class="box"><button class="btn" onclick="document.getElementById(\'plup-file\').click()">Datei wählen (PDF, PowerPoint, Text)</button>'
       + '<input type="file" id="plup-file" accept=".pdf,.pptx,.txt,.md,application/pdf" style="display:none" onchange="plUploadDatei(this.files[0])">'
       + '<button class="btn g" onclick="plUploadFotoStart()">Foto von Notizen (auch Handschrift)</button>'
-      + '<p class="klein" style="margin:10px 0 0">Die Datei wird auf deinem Gerät ausgelesen. Nur der Text geht zur Kartenerstellung an unseren KI-Dienst. Deine Karten bleiben privat auf diesem Gerät.</p></div>';
+      + '<p class="klein" style="margin:10px 0 0">Die Datei wird auf deinem Gerät ausgelesen. Nur der Text geht zur Kartenerstellung an unseren KI-Dienst. Deine Karten bleiben privat auf diesem Gerät. <a href="/datenschutz.html#unterlagen" target="_blank" style="color:#7dd3fc">Datenschutz</a></p>' + (istAdmin() ? '' : '<p class="klein" style="margin:6px 0 0">Heute noch ' + limitRest() + ' von ' + TAGESLIMIT + ' Uploads frei.</p>') + '</div>';
     h += '<div class="box"><textarea id="plup-text" placeholder="… oder Text aus deinen Unterlagen hier einfügen"></textarea><button class="btn g" onclick="plUploadText()">Aus Text erstellen</button></div>';
     if(decks.length){
       h += '<h2 style="font-size:18px;margin-top:18px">Deine Stapel</h2>';
@@ -25405,6 +25417,8 @@ window.plLzpHinweis=function(kicker,titel,test){
     if(!f) return;
     var name = f.name.replace(/\.[^.]+$/, '');
     if(f.size > 40 * 1024 * 1024){ fehler('Die Datei ist größer als 40 MB. Bitte teile sie auf.'); return; }
+    if(/^image\//.test(f.type)){ window.plUploadFotoStart(); return; }
+    if(!limitZaehlen()) return;
     laufen(name, 0);
     schritt(0, 'Datei wird gelesen …');
     if(/^image\//.test(f.type)){ window.plUploadFotoStart(); return; }
@@ -25419,6 +25433,7 @@ window.plLzpHinweis=function(kicker,titel,test){
   window.plUploadText = function(){
     var t = (document.getElementById('plup-text') || {}).value || '';
     if(t.trim().length < 200){ alert('Bitte mindestens ein paar Sätze einfügen.'); return; }
+    if(!limitZaehlen()) return;
     laufen('Eigener Text', 0);
     weiter('Eigener Text', t.split(/\n{2,}/), 'Abschnitte');
   };
@@ -25459,6 +25474,7 @@ window.plLzpHinweis=function(kicker,titel,test){
     var fotos = Array.prototype.slice.call(liste || []).filter(function(f){ return /^image\//.test(f.type); });
     if(!fotos.length) return;
     if(fotos.length > MAX_FOTOS){ alert('Höchstens ' + MAX_FOTOS + ' Fotos auf einmal. Die ersten ' + MAX_FOTOS + ' werden verwendet.'); fotos = fotos.slice(0, MAX_FOTOS); }
+    if(!limitZaehlen()) return;
     var name = 'Notizen ' + new Date().toLocaleDateString('de-DE');
     laufen(name, 0); balken(3);
     var seiten = [], fehlgeschlagen = 0, p = Promise.resolve();
