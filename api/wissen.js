@@ -430,7 +430,51 @@ function renderIndex(rows) {
 
 /* ---------- Handler ---------- */
 
+
+/* ---------- Handschrift/Foto → Text (19.10.2026, für „Eigene Unterlagen“ in der App) ----------
+   POST /api/wissen?ocr=1  { bild: "data:image/jpeg;base64,…" }  →  { text }
+   Eigener Zweig statt neuer Datei (Vercel-Limit 12 Funktionen). api/chat.js bleibt unberührt.
+   Modell: Groq qwen/qwen3.8-27b (Vision, laut Groq-Doku Okt. 2026). Personenbezogene Angaben werden
+   bereits bei der Abschrift durch Platzhalter ersetzt; der Client prüft den Text danach zusätzlich. */
+const OCR_MODELL = 'qwen/qwen3.8-27b';
+const OCR_PROMPT = 'Du schreibst Lernnotizen aus der Pflegeausbildung ab. Gib den Text auf dem Foto wortgetreu als reinen Text wieder, '
+  + 'auch Handschrift, Stichpunkte und Pfeile (als ->). Ersetze Personennamen durch [Name], Geburtsdaten durch [Datum] und Zimmer- oder Bettnummern durch [Zimmer]. '
+  + 'Unleserliche Stellen kennzeichnest du mit [unleserlich]. Keine Erklärungen, keine Einleitung, nur der abgeschriebene Text. '
+  + 'Steht auf dem Foto kein Text, antworte nur mit: KEIN_TEXT';
+async function ocrHandler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  const KEY = process.env.GROQ_API_KEY;
+  if (!KEY) return res.status(500).end(JSON.stringify({ error: 'config' }));
+  let body = req.body;
+  if (typeof body === 'string') { try { body = JSON.parse(body || '{}'); } catch (e) { body = {}; } }
+  const bild = body && typeof body.bild === 'string' ? body.bild : '';
+  if (!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(bild)) return res.status(400).end(JSON.stringify({ error: 'bild' }));
+  if (bild.length > 6000000) return res.status(413).end(JSON.stringify({ error: 'zu_gross' }));
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + KEY },
+      body: JSON.stringify({
+        model: OCR_MODELL, temperature: 0.1, max_tokens: 2048,
+        messages: [{ role: 'user', content: [{ type: 'text', text: OCR_PROMPT }, { type: 'image_url', image_url: { url: bild } }] }]
+      })
+    });
+    if (!r.ok) { const t = await r.text(); console.error('[wissen/ocr] Groq', r.status, t.slice(0, 300)); return res.status(502).end(JSON.stringify({ error: 'ki', status: r.status })); }
+    const d = await r.json();
+    let text = String((d && d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '');
+    text = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    if (/^KEIN_TEXT\b/.test(text)) text = '';
+    return res.status(200).end(JSON.stringify({ text: text.slice(0, 20000) }));
+  } catch (e) {
+    console.error('[wissen/ocr]', e);
+    return res.status(500).end(JSON.stringify({ error: 'server' }));
+  }
+}
+
 export default async function handler(req, res) {
+  if (req.method === 'OPTIONS' && /[?&]ocr=1/.test(String(req.url || ''))) { res.setHeader('Access-Control-Allow-Origin', '*'); res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); res.statusCode = 200; return res.end(); }
+  if (req.method === 'POST' && /[?&]ocr=1/.test(String(req.url || ''))) return ocrHandler(req, res);
   try {
     const raw = String(req.url || '');
     const qs = raw.indexOf('?') >= 0 ? raw.slice(raw.indexOf('?') + 1) : '';

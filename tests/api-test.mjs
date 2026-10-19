@@ -169,5 +169,34 @@ check('Warteliste: Zeitstempel wird gesetzt', calls.some(c => c.url.includes('/r
 check('Warteliste: es wird KEINE Mail verschickt', !calls.some(c => c.url.includes('api.resend.com')));
 delete process.env.RESEND_API_KEY;
 
+// ── 7) Foto/Handschrift → Text (POST /api/wissen?ocr=1) ─────────────────────
+console.log('\n[7] Foto-Abschrift (Eigene Unterlagen)');
+const wissen = (await import('../api/wissen.js')).default;
+function ocrCall(body) {
+  return new Promise((resolve) => {
+    const res = { code: 200, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.code = c; return this; },
+      end(b) { let j = null; try { j = JSON.parse(b || 'null'); } catch (e) {} resolve({ code: this.code, body: j }); } };
+    wissen({ method: 'POST', url: '/api/wissen?ocr=1', body, query: { ocr: '1' }, headers: {} }, res);
+  });
+}
+process.env.GROQ_API_KEY = 'groq-test';
+routes = [{ test: u => u.includes('api.groq.com'), reply: () => json({ choices: [{ message: { content: '<think>überlegen</think>Herzinsuffizienz: Dyspnoe, Ödeme -> NYHA I–IV' } }] }) }];
+calls = [];
+r = await ocrCall({ bild: 'kein-bild' });
+check('OCR: ungültiges Bild wird abgelehnt (400)', r.code === 400, r);
+check('OCR: bei ungültigem Bild kein KI-Aufruf', !calls.some(c => c.url.includes('api.groq.com')));
+r = await ocrCall({ bild: 'data:image/jpeg;base64,' + 'A'.repeat(6000001) });
+check('OCR: zu großes Bild wird abgelehnt (413)', r.code === 413, r);
+r = await ocrCall(JSON.stringify({ bild: 'data:image/jpeg;base64,QUJD' }));
+check('OCR: gültiges Bild liefert Text (200)', r.code === 200 && /Herzinsuffizienz/.test(r.body.text), r);
+check('OCR: Denkschritte des Modells werden entfernt', r.body && !/überlegen|<think>/.test(r.body.text), r);
+const ocrReq = calls.find(c => c.url.includes('api.groq.com'));
+check('OCR: Vision-Modell und Bild werden gesendet', !!ocrReq && /qwen\/qwen3\.8-27b/.test(ocrReq.body) && /image_url/.test(ocrReq.body), ocrReq && ocrReq.body.slice(0, 200));
+check('OCR: Platzhalter für Patientendaten im Auftrag', !!ocrReq && /\[Name\]/.test(ocrReq.body));
+routes = [{ test: u => u.includes('api.groq.com'), reply: () => json({ choices: [{ message: { content: 'KEIN_TEXT' } }] }) }];
+r = await ocrCall({ bild: 'data:image/png;base64,QUJD' });
+check('OCR: Foto ohne Text liefert leeren Text', r.code === 200 && r.body.text === '', r);
+delete process.env.GROQ_API_KEY;
+
 console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
 process.exit(fail ? 1 : 0);
