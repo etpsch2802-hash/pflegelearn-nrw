@@ -148,7 +148,7 @@ ${o.body}
 
 function ctaBlock(t) {
   return `<a class="cta" href="${SITE}/">${esc(t || 'Vollständigen Inhalt in der App öffnen')}</a>
-<p class="cta-sub">Über 2.000 Prüfungsfragen · 429 Lerneinheiten · 159 Krankheitsbilder · 92 Fallbeispiele – 7 Tage kostenlos.</p>`;
+<p class="cta-sub">Über 2.000 Prüfungsfragen · 429 Lerneinheiten · über 150 Krankheitsbilder · 92 Fallbeispiele – aktuell kostenlos.</p>`;
 }
 
 /* ---------- FAQ aus den Fragen bauen ---------- */
@@ -233,11 +233,11 @@ function pflegeplanungHTML(d) {
   h += ppAppBox();
   return h;
 }
-/* Hinweis: vollständige Pflegeplanungen stehen in der App (Zahlen aus KRANKHEITSBILDER in index.html, Stand 19.10.2026) */
+/* Hinweis: vollständige Pflegeplanungen stehen in der App (Zahlen aus KRANKHEITSBILDER + KB_EXTRA/KB_ADDITIONS in index.html: 123 eindeutige mit Pflegeplanung, Stand 19.10.2026) */
 const PP_APP = 'https://plan-nrw.de/?fach=pflegeplanung';
 function ppAppBox() {
   return '<div class="ppbox"><strong>Alle Pflegeplanungen in der App</strong>'
-    + '<p>In PLAN stehen fertige Pflegeplanungen zu <b>106 Krankheitsbildern</b> aus 10 Fachgebieten – Innere Medizin, Chirurgie, Neurologie, Pädiatrie, Gynäkologie, Urologie, Onkologie, Orthopädie, HNO und Psychologie. '
+    + '<p>In PLAN stehen fertige Pflegeplanungen zu <b>über 120 Krankheitsbildern</b> aus 10 Fachgebieten – Innere Medizin, Chirurgie, Neurologie, Pädiatrie, Gynäkologie, Urologie, Onkologie, Orthopädie, HNO und Psychologie. '
     + 'Jeweils mit Pflegeproblem, Ressourcen, Pflegeziel und Maßnahmen, dazu Symptome, Diagnostik, Therapie und Prüfungsfragen.</p>'
     + '<a class="cta" href="' + PP_APP + '">Alle Pflegeplanungen in der App öffnen</a></div>';
 }
@@ -315,7 +315,7 @@ function renderDetail(e, geschwister) {
   b += `<nav class="bc"><a href="${urlIndex()}">Wissensdatenbank</a> › <a href="${urlKat(kat)}">${esc(kat)}</a></nav>`;
   b += `<h1>${esc(e.titel)}</h1>`;
   if (definition) b += `<p class="lead">${esc(definition)}</p>`;
-  if (/^pflegeplanung-/.test(e.slug)) b += '<p class="pphint">Dies ist ein Beispiel. <a href="' + PP_APP + '">Alle Pflegeplanungen zu 106 Krankheitsbildern stehen in der App →</a></p>';
+  if (/^pflegeplanung-/.test(e.slug)) b += '<p class="pphint">Dies ist ein Beispiel. <a href="' + PP_APP + '">Alle Pflegeplanungen zu über 120 Krankheitsbildern stehen in der App →</a></p>';
   if (offen && d.tabelle) b += `<h2>Normwerte im Überblick</h2>` + tabelleHTML(d.tabelle);
   if (offen) b += pflegeplanungHTML(d);
   if (pw) b += `<h3>Prüfungswissen</h3><p>${esc(pw)}</p>`;

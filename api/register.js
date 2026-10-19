@@ -10,6 +10,8 @@
 const FROM = 'PLAN NRW <kontakt@plan-nrw.de>';
 const REPLY_TO = 'pflegelearn.nrw@gmail.com';
 const APP_URL = 'https://plan-nrw.de';
+// Gratis-Modus (19.10.2026): wie PL_PAYMENTS_ON in index.html. Beim Reaktivieren der Zahlungen auf true setzen.
+const ZAHLUNG_AKTIV = false;
 
 function rnd(n, upper) {
   const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
@@ -28,7 +30,7 @@ function mailHtml(name, link) {
   </div>
   <div style="background:#ffffff;border-radius:0 0 16px 16px;padding:26px 24px;line-height:1.6;font-size:15px">
     <p style="margin:0 0 14px">${hi},</p>
-    <p style="margin:0 0 18px">nur noch ein Klick und dein <b>7-Tage-Vollzugang</b> ist aktiv. Die 7 Tage z&auml;hlen nur an Tagen, an denen du wirklich lernst.</p>
+    <p style="margin:0 0 18px">nur noch ein Klick und dein ${ZAHLUNG_AKTIV ? '<b>7-Tage-Vollzugang</b> ist aktiv. Die 7 Tage z&auml;hlen nur an Tagen, an denen du wirklich lernst.' : '<b>kostenloser Zugang</b> ist aktiv. PLAN ist aktuell komplett kostenlos.'}</p>
     <p style="margin:0 0 24px;text-align:center">
       <a href="${link}" style="display:inline-block;background:#059669;color:#ffffff;text-decoration:none;font-weight:800;font-size:16px;padding:14px 30px;border-radius:12px">Zugang aktivieren</a>
     </p>
