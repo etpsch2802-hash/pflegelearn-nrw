@@ -35,7 +35,7 @@ async function newPage(browser, state) {
   // Erststart-Overlays (Cookie-Banner, Onboarding) vorab als erledigt markieren
   await ctx.addInitScript(() => { try { localStorage.setItem('pl_consent', 'denied'); localStorage.setItem('pl_onboarded', '1');
     // Tour als erledigt markieren (sonst faengt ihr Overlay Klicks ab); Block 8 testet die Tour gezielt
-    ['pl_tour_v3_azubi', 'pl_tour_v2_examiniert', 'pl_tour_v3_lehrkraft'].forEach(k => { if (localStorage.getItem('pl_test_tour') !== '1') localStorage.setItem(k, '1'); }); } catch (e) {} });
+    ['pl_tour_v4_azubi', 'pl_tour_v3_examiniert', 'pl_tour_v4_lehrkraft'].forEach(k => { if (localStorage.getItem('pl_test_tour') !== '1') localStorage.setItem(k, '1'); }); } catch (e) {} });
   const page = await ctx.newPage();
   state.errors = []; state.calls = state.calls || [];
   page.on('pageerror', e => state.errors.push(String(e.message || e)));
@@ -212,7 +212,7 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
     await ctx.addInitScript(() => { try {
       localStorage.setItem('pl_consent', 'denied'); localStorage.setItem('pl_onboarded', '1');
-      ['pl_tour_v3_azubi', 'pl_tour_v2_examiniert', 'pl_tour_v3_lehrkraft'].forEach(k => localStorage.setItem(k, '1'));
+      ['pl_tour_v4_azubi', 'pl_tour_v3_examiniert', 'pl_tour_v4_lehrkraft'].forEach(k => localStorage.setItem(k, '1'));
       localStorage.setItem('pl_my_cards', JSON.stringify([{ id: 'my_local1', frage: 'Lokale Frage?', antwort: 'Lokal', thema: '', t: 3000 }]));
       const exp = Math.floor(Date.now() / 1000) + 3600;
       localStorage.setItem('sb-tpgverrpznsujvzbntmj-auth-token', JSON.stringify({ access_token: 'test', refresh_token: 'test', token_type: 'bearer', expires_in: 3600, expires_at: exp, user: { id: '00000000-0000-0000-0000-000000000001', email: 'sync@test.de', aud: 'authenticated' } }));
@@ -254,9 +254,9 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
   console.log('8) Tutorial zeigt die neuen Funktionen (je Rolle)');
   for (const rolle of ['azubi', 'examiniert', 'lehrkraft']) {
     const { ctx, page } = await newPage(browser, S);
-    // Bestandsnutzer: alte Tour-Version bereits gesehen (azubi v2, examiniert v1, lehrkraft v2)
-    const alt = { azubi: 'v2', examiniert: 'v1', lehrkraft: 'v2' }[rolle];
-    await page.evaluate(([r, v]) => { localStorage.setItem('pl_test_tour', '1'); ['pl_tour_v3_azubi', 'pl_tour_v2_examiniert', 'pl_tour_v3_lehrkraft'].forEach(k => localStorage.removeItem(k)); localStorage.setItem('pl_persona', r); localStorage.setItem('pl_tour_' + v + '_' + r, '1'); }, [rolle, alt]);
+    // Bestandsnutzer: alte Tour-Version bereits gesehen (azubi v3, examiniert v2, lehrkraft v3)
+    const alt = { azubi: 'v3', examiniert: 'v2', lehrkraft: 'v3' }[rolle];
+    await page.evaluate(([r, v]) => { localStorage.setItem('pl_test_tour', '1'); ['pl_tour_v4_azubi', 'pl_tour_v3_examiniert', 'pl_tour_v4_lehrkraft'].forEach(k => localStorage.removeItem(k)); localStorage.setItem('pl_persona', r); localStorage.setItem('pl_tour_' + v + '_' + r, '1'); }, [rolle, alt]);
     await login(page, 'TEST-USER');
     await page.evaluate(() => { document.querySelectorAll('#examdate-prompt, #push-modal').forEach(e => e.remove()); showScreen('home'); });
     await page.waitForTimeout(600);
@@ -275,6 +275,7 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     const alle = titel.join(' | ');
     const zweit = rolle === 'lehrkraft' ? /Kursraum/ : /Lerntisch/;   // 17.10.2026: Lehrkräfte bekommen den Kursraum statt Lerntisch
     check('Tour ' + rolle + ': Schicht-Radar, ' + (rolle === 'lehrkraft' ? 'Kursraum' : 'Lerntisch') + ', Neu beim Üben', /Schicht-Radar/.test(alle) && zweit.test(alle) && /beim .ben/.test(alle), alle);
+    check('Tour ' + rolle + ': zeigt NEU Eigene Unterlagen', /Eigene Unterlagen/.test(alle), alle);
     check('Keine JS-Fehler (Tour ' + rolle + ')', S.errors.length === 0, S.errors.join(' | '));
     await ctx.close();
   }

@@ -441,6 +441,31 @@ const OCR_PROMPT = 'Du schreibst Lernnotizen aus der Pflegeausbildung ab. Gib de
   + 'auch Handschrift, Stichpunkte und Pfeile (als ->). Ersetze Personennamen durch [Name], Geburtsdaten durch [Datum] und Zimmer- oder Bettnummern durch [Zimmer]. '
   + 'Unleserliche Stellen kennzeichnest du mit [unleserlich]. Keine Erklärungen, keine Einleitung, nur der abgeschriebene Text. '
   + 'Steht auf dem Foto kein Text, antworte nur mit: KEIN_TEXT';
+/* Server-Limit (19.10.2026): je IP-Hash höchstens OCR_PRO_IP Fotos in 24 h (3 Uploads × 5 Fotos), insgesamt OCR_GESAMT.
+   Tabelle ocr_limits (docs/sql/2026-10-19_ocr_limits.sql, nur service_role). Fällt die Zählung aus (z. B. Tabelle fehlt),
+   wird nicht blockiert – wie beim Lead-Limit. */
+const OCR_PRO_IP = 15, OCR_GESAMT = 1500;
+async function ocrLimit(req) {
+  const U = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), K = process.env.SUPABASE_SERVICE_ROLE;
+  if (!U || !K) return { ok: true };
+  const H = { apikey: K, Authorization: 'Bearer ' + K, 'Content-Type': 'application/json' };
+  try {
+    const crypto = await import('node:crypto');
+    const ip = String((req.headers && (req.headers['x-forwarded-for'] || req.headers['x-real-ip'])) || '').split(',')[0].trim() || 'unbekannt';
+    const ipHash = crypto.createHmac('sha256', K).update('ocr:' + ip).digest('hex').slice(0, 32);
+    const seit = encodeURIComponent(new Date(Date.now() - 864e5).toISOString());
+    const zaehl = async (filter) => {
+      const r = await fetch(U + '/rest/v1/ocr_limits?select=id&created_at=gte.' + seit + filter, { headers: Object.assign({ Prefer: 'count=exact', Range: '0-0' }, H) });
+      if (!r.ok) throw new Error('limit ' + r.status);
+      return parseInt(String(r.headers.get('content-range') || '').split('/')[1] || '0', 10) || 0;
+    };
+    if (await zaehl('&ip_hash=eq.' + ipHash) >= OCR_PRO_IP) return { ok: false, grund: 'ip' };
+    if (await zaehl('') >= OCR_GESAMT) return { ok: false, grund: 'gesamt' };
+    await fetch(U + '/rest/v1/ocr_limits', { method: 'POST', headers: Object.assign({ Prefer: 'return=minimal' }, H), body: JSON.stringify({ ip_hash: ipHash }) });
+    if (Math.random() < 0.05) fetch(U + '/rest/v1/ocr_limits?created_at=lt.' + encodeURIComponent(new Date(Date.now() - 2 * 864e5).toISOString()), { method: 'DELETE', headers: H }).catch(() => {});
+    return { ok: true };
+  } catch (e) { console.error('[wissen/ocr] limit', e); return { ok: true }; }
+}
 async function ocrHandler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -451,6 +476,8 @@ async function ocrHandler(req, res) {
   const bild = body && typeof body.bild === 'string' ? body.bild : '';
   if (!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(bild)) return res.status(400).end(JSON.stringify({ error: 'bild' }));
   if (bild.length > 6000000) return res.status(413).end(JSON.stringify({ error: 'zu_gross' }));
+  const lim = await ocrLimit(req);
+  if (!lim.ok) return res.status(429).end(JSON.stringify({ error: 'limit', grund: lim.grund }));
   try {
     const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',

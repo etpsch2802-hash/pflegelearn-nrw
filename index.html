@@ -6648,6 +6648,60 @@ Object.keys(KB_EXTRA).forEach(function(fach) {
   }
 });
 
+// Doppelte Krankheitsbilder zusammenführen (19.10.2026): Durch KB_ADDITIONS/KB_EXTRA standen 8 Bilder doppelt.
+// Gleicher Name = ein Bild. Inhalte werden vereint (Symptome, Diagnostik, Therapie, Pflegeplanung, Fragen ohne Dubletten).
+// Im selben Fach bleibt nur ein Eintrag; über Fächer hinweg (z. B. Mammakarzinom in Gynäkologie und Onkologie)
+// bleibt das Bild in beiden Fächern sichtbar, beide zeigen denselben vollständigen Inhalt.
+(function(){
+  try{
+    function key(x){ return String(x == null ? '' : (typeof x === 'object' ? (x.problem || x.frage || x.f || JSON.stringify(x)) : x)).toLowerCase().replace(/[^a-z0-9äöüß]/g, ''); }
+    function vereine(a, b){
+      if(!Array.isArray(a)) return Array.isArray(b) ? b.slice() : a;
+      if(!Array.isArray(b)) return a;
+      var seen = {}; a.forEach(function(x){ seen[key(x)] = 1; });
+      return a.concat(b.filter(function(x){ var k = key(x); if(seen[k]) return false; seen[k] = 1; return true; }));
+    }
+    // Einheitliches Format (19.10.2026): fehlende fragen/pflegeplanung ließen openKrankheitsbild() abstürzen (59 Bilder ließen sich nicht öffnen);
+    // Kurzformat {p,a,z,m} aus KB_EXTRA wird ins Standardformat {problem, ressourcen, ziel, massnahmen, evaluation} übertragen.
+    Object.keys(KRANKHEITSBILDER).forEach(function(f){
+      (KRANKHEITSBILDER[f].bilder || []).forEach(function(b){
+        if(!b) return;
+        ['symptome','diagnostik','therapie'].forEach(function(k){ if(!Array.isArray(b[k])) b[k] = b[k] ? [String(b[k])] : []; });
+        if(!Array.isArray(b.fragen)) b.fragen = [];
+        if(!Array.isArray(b.pflegeplanung)) b.pflegeplanung = [];
+        b.pflegeplanung = b.pflegeplanung.map(function(pp){
+          if(!pp || pp.problem) return pp;
+          return { problem: String(pp.p || '') + (pp.a ? ' (Ursache: ' + pp.a + ')' : ''), ressourcen: [], ziel: pp.z || '', massnahmen: Array.isArray(pp.m) ? pp.m : (pp.m ? [pp.m] : []), evaluation: pp.e || '' };
+        }).filter(function(pp){ return pp && pp.problem; });
+        b.pflegeplanung.forEach(function(pp){ if(!Array.isArray(pp.massnahmen)) pp.massnahmen = []; });
+      });
+    });
+    var erst = {};
+    Object.keys(KRANKHEITSBILDER).forEach(function(f){
+      var liste = KRANKHEITSBILDER[f].bilder || [], neu = [];
+      liste.forEach(function(b){
+        var n = String(b && b.name || '').trim().toLowerCase();
+        var h = erst[n];
+        if(!h){ erst[n] = { b: b, faecher: [f] }; neu.push(b); return; }
+        var z = h.b;
+        // Symptome/Diagnostik/Therapie: die zweite Fassung ist eine kürzere Umformulierung derselben Punkte -> nur übernehmen, wenn sie beim Erhalt fehlen
+        ['symptome','diagnostik','therapie'].forEach(function(k){ if((!Array.isArray(z[k]) || !z[k].length) && Array.isArray(b[k])) z[k] = b[k].slice(); });
+        // Pflegeplanung und Fragen: eigenständige Einträge -> ohne Dubletten anhängen
+        // Pflegeproblem nur übernehmen, wenn es ein anderes Thema ist (gleiches Kernwort, z. B. „Lymphödem“ = schon vorhanden)
+        var kern = function(t){ return String(t || '').split(/ r\/t | \(Ursache| infolge /)[0].toLowerCase().match(/[a-zäöüß]{6,}/g) || []; };
+        var alt = []; (z.pflegeplanung || []).forEach(function(pp){ alt = alt.concat(kern(pp.problem)); });
+        var gleich = function(w){ return alt.some(function(v){ return v.indexOf(w) >= 0 || w.indexOf(v) >= 0 || v.slice(0, 7) === w.slice(0, 7); }); };
+        var neuePP = (b.pflegeplanung || []).filter(function(pp){ return !kern(pp.problem).some(gleich); });
+        z.pflegeplanung = vereine(z.pflegeplanung || [], neuePP);
+        if(b.fragen !== undefined) z.fragen = vereine(z.fragen, b.fragen);
+        ['pflege','merksatz','definition','icd'].forEach(function(k){ if((z[k] === undefined || z[k] === '' || z[k] === '–') && b[k] !== undefined) z[k] = b[k]; });
+        if(h.faecher.indexOf(f) < 0){ h.faecher.push(f); neu.push(z); }  // anderes Fach: gleiches (vereintes) Bild behalten
+      });
+      KRANKHEITSBILDER[f].bilder = neu;
+    });
+  }catch(e){}
+})();
+
 // Krankheitsbilder Screen initialisieren
 let currentKBFach = 'innere';
 let currentKBBild = null;
@@ -6730,6 +6784,14 @@ function openKrankheitsbild(fachId, bildIdx) {
         ${b.therapie.map(t => `<div style="font-size:12px;color:var(--text2);padding:2px 0;display:flex;gap:6px"><span style="color:#34d399">→</span>${t}</div>`).join('')}
       </div>
 
+      ${(Array.isArray(b.pflege) && b.pflege.length) ? `
+      <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:11px;padding:13px;margin-bottom:10px">
+        <div style="font-size:11px;color:#38bdf8;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px">🩺 Pflege</div>
+        ${b.pflege.map(t => `<div style="font-size:12px;color:var(--text2);padding:2px 0;display:flex;gap:6px"><span style="color:#38bdf8">→</span>${t}</div>`).join('')}
+      </div>` : ''}
+      ${(typeof b.merksatz === 'string' && b.merksatz) ? `
+      <div style="background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.22);border-radius:11px;padding:12px;margin-bottom:10px;font-size:12.5px;color:#fde68a;line-height:1.5">💡 <b>Merksatz:</b> ${b.merksatz}</div>` : ''}
+
       ${b.pflegeplanung.length > 0 ? `
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:${fach.farbe};font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📋 PFLEGEPLANUNG</div>
@@ -6738,10 +6800,10 @@ function openKrankheitsbild(fachId, bildIdx) {
             <div style="font-size:11px;color:${fach.farbe};margin-bottom:6px;font-weight:700">Pflegeproblem ${ppi+1}</div>
             <div style="font-size:12px;color:#e0f2fe;font-weight:600;margin-bottom:10px;line-height:1.5">${pp.problem}</div>
             <div style="display:grid;gap:7px">
-              <div style="background:rgba(255,255,255,.085);border-radius:8px;padding:10px">
+              ${(pp.ressourcen && pp.ressourcen.length) ? `<div style="background:rgba(255,255,255,.085);border-radius:8px;padding:10px">
                 <div style="font-size:10.5px;color:#34d399;font-weight:700;letter-spacing:1px;margin-bottom:4px">💚 RESSOURCEN</div>
                 ${pp.ressourcen.map(r => `<div style="font-size:11px;color:var(--text2)">• ${r}</div>`).join('')}
-              </div>
+              </div>` : ''}
               <div style="background:rgba(var(--accent-rgb),.06);border-radius:8px;padding:10px">
                 <div style="font-size:10.5px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:4px">🎯 PFLEGEZIEL (SMART)</div>
                 <div style="font-size:12px;color:#bae6fd;line-height:1.5">${pp.ziel}</div>
@@ -6750,10 +6812,10 @@ function openKrankheitsbild(fachId, bildIdx) {
                 <div style="font-size:10.5px;color:#facc15;font-weight:700;letter-spacing:1px;margin-bottom:4px">⚡ PFLEGEMASSNAHMEN</div>
                 ${pp.massnahmen.map(m => `<div style="font-size:11px;color:var(--text2);padding:1px 0">→ ${m}</div>`).join('')}
               </div>
-              <div style="background:rgba(167,139,250,.05);border-radius:8px;padding:10px">
+              ${pp.evaluation ? `<div style="background:rgba(167,139,250,.05);border-radius:8px;padding:10px">
                 <div style="font-size:10.5px;color:#a78bfa;font-weight:700;letter-spacing:1px;margin-bottom:4px">🔄 EVALUATION</div>
                 <div style="font-size:11px;color:var(--text2)">${pp.evaluation}</div>
-              </div>
+              </div>` : ''}
             </div>
           </div>`).join('')}
       </div>` : ''}
@@ -23221,7 +23283,7 @@ window.renderWebBesucher=function(force){
 (function(){
   var S=[], i=0, node={}, running=false;
   function persona(){ try{ var p=localStorage.getItem('pl_persona')||''; return (p==='examiniert'||p==='lehrkraft')?p:'azubi'; }catch(e){ return 'azubi'; } }
-  var VERSION={ azubi:'v3', examiniert:'v2', lehrkraft:'v3' };   // 08.10.2026: Community-Funktionen (Lerntisch, Schicht-Radar, Karteikarten, Sprach-Hilfe) -> alle sehen die Tour einmal neu   // hochzaehlen = Tour wird einmal neu gezeigt
+  var VERSION={ azubi:'v4', examiniert:'v3', lehrkraft:'v4' };   // 19.10.2026: NEU Eigene Unterlagen (Folien/Handschrift -> Karteikarten) -> alle sehen die Tour einmal neu   // 08.10.2026: Community-Funktionen (Lerntisch, Schicht-Radar, Karteikarten, Sprach-Hilfe) -> alle sehen die Tour einmal neu   // hochzaehlen = Tour wird einmal neu gezeigt
   function KEY(){ var p=persona(); return 'pl_tour_'+(VERSION[p]||'v1')+'_'+p; }
   function done(){ try{ return localStorage.getItem(KEY())==='1'; }catch(e){ return true; } }
   function setDone(){ try{ localStorage.setItem(KEY(),'1'); }catch(e){} }
@@ -23239,6 +23301,7 @@ window.renderWebBesucher=function(force){
     { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen Azubis heute geht.' },
     { id:'plc-lt-entry', screen:'home', t:'NEU: Der Lerntisch', x:'25 Minuten Fokus, gemeinsam mit anderen \u2013 bei dir in der Bibliothek. Such dir ein Thema aus (z. B. \u201eLunge\u201c oder \u201eWas ist ARDS?\u201c), lad Leute an deinen Gruppentisch ein und schick anderen am Tisch einen \u2615 Kaffee oder 💪 Power.' },
     { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
+    { id:'plup-tile', screen:'ueben', t:'NEU: Eigene Unterlagen', x:'Lade deine Unterrichtsfolien (PDF, PowerPoint) hoch oder fotografiere deine Mitschrift \u2013 auch Handschrift. PLAN macht daraus Karteikarten und zeigt dir passende gepr\u00fcfte Pflegeplanungen und Pr\u00fcfungsfragen.' },
     { id:'tour-tile-quiz', screen:'ueben', t:'Fragen \u00fcben', x:'Nach Fach, nach Lernmodus oder gezielt deine Schwachstellen.' },
     { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Hier startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen. Darin findest du auch die Fachklausuren pro Fach und die Fallklausur.' },
     { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
@@ -23251,6 +23314,7 @@ window.renderWebBesucher=function(force){
     { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen Kolleginnen und Kollegen heute geht.' },
     { id:'plc-lt-entry', screen:'home', t:'NEU: Der Lerntisch', x:'25 Minuten Fokus, gemeinsam mit anderen \u2013 bei dir in eurem Pausenraum. Such dir ein Thema aus (z. B. \u201eLunge\u201c oder \u201eWas ist ARDS?\u201c), lad Leute an deinen Gruppentisch ein und schick anderen am Tisch einen \u2615 Kaffee oder 💪 Power.' },
     { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
+    { id:'plup-tile', screen:'ueben', t:'NEU: Eigene Unterlagen', x:'Fortbildungsfolien, Skripte oder Fotos deiner Notizen hochladen \u2013 auch Handschrift. PLAN macht daraus Karteikarten und zeigt passende gepr\u00fcfte Inhalte.' },
     { id:'btn-suche', t:'Schnell nachschlagen', x:'Im Dienst z\u00e4hlt Tempo: Medikament, Score oder Krankheitsbild direkt suchen.' },
     { id:'tour-tile-medis', screen:'wissenhub', t:'Medikamente nachschlagen', x:'25 Wirkstoffe nach Fachbereich (An\u00e4sthesie, Intensiv, Notfall) oder nach Organsystem \u2013 jeweils mit Pflege-Hinweis, Dosis und Nebenwirkungen.' },
     { id:'bn-wissen', t:'Der Rest der Bibliothek', x:'Krankheitsbilder, Scores, Notfallmanagement, Taschenkarten und Medizintechnik liegen im selben Hub.' },
@@ -23263,6 +23327,7 @@ window.renderWebBesucher=function(force){
     { id:'plc-radar', screen:'home', t:'NEU: Schicht-Radar', x:'Ein Tipp, wie dein Tag aussieht: Fr\u00fch-, Sp\u00e4t-, Nachtdienst, Schule oder frei. Danach siehst du, wie es den anderen heute geht.' },
     { id:'plc-lt-entry', screen:'home', t:'Dein Kursraum', x:'Hier legst du Kurse an, verteilst Aufgaben, siehst Lernstand und Fehleranalyse deiner Azubis und startest das Live-Quiz.' },
     { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
+    { id:'plup-tile', screen:'ueben', t:'NEU: Eigene Unterlagen', x:'Deine Unterrichtsfolien hochladen \u2013 PLAN macht daraus Karteikarten und zeigt passende gepr\u00fcfte Pr\u00fcfungsfragen. Gut zum Ausprobieren, bevor du es deinem Kurs empfiehlst.' },
     { id:'tour-tile-faelle', screen:'ueben', t:'Fallbeispiele f\u00fcr den Unterricht', x:'Fertige Fallsituationen und Gro\u00dff\u00e4lle, direkt im Kurs einsetzbar.' },
     { id:'tour-tile-kurs', screen:'profil', t:'Kurs, Lernstand & Live-Quiz', x:'Im Lehrer-Bereich hat jeder Kurs drei Werkzeuge: Lernstand zeigt den Stand jedes Azubis, Live-Quiz spielt eine Fragerunde \u00fcber den Beamer, Nachrichten sendet Ank\u00fcndigungen an den Kurs.' },
     { id:'ki-fab',    t:'KI-Assistent',    x:'Aufgaben, Pr\u00fcfungsfragen und Fallbeispiele generieren lassen.' },
@@ -25204,7 +25269,7 @@ window.plLzpHinweis=function(kicker,titel,test){
      GA-Event 'landing_fach'. Ziel nur in sessionStorage (kein pl_*-Key), Parameter wird aus der URL entfernt. -->
 <script>
 (function(){
-  var ZIEL={examen:'home',assistenz:'ausbildungswege',anerkennung:'ausbildungswege',intensiv:'ausbildungswege',anaesthesie:'ausbildungswege',ata:'ausbildungswege',ota:'ausbildungswege',langzeitpflege:'quizSelect',praxisanleitung:'lehrer',pflegeplanung:'krankheitsbilder'};
+  var ZIEL={examen:'home',assistenz:'ausbildungswege',anerkennung:'ausbildungswege',intensiv:'ausbildungswege',anaesthesie:'ausbildungswege',ata:'ausbildungswege',ota:'ausbildungswege',langzeitpflege:'quizSelect',praxisanleitung:'lehrer',pflegeplanung:'krankheitsbilder',upload:'ueben'};
   var f=null;
   try{ f=new URLSearchParams(location.search).get('fach'); }catch(e){}
   try{
@@ -25223,6 +25288,8 @@ window.plLzpHinweis=function(kicker,titel,test){
     try{ sessionStorage.removeItem('plan_fach_ziel'); }catch(e){}
     var z=ZIEL[f]; if(z==='home') return;
     try{ showScreen(z); }catch(e){}
+    /* Eigene Unterlagen (19.10.2026): ?fach=upload öffnet direkt das Upload-Fenster */
+    if(f==='upload') setTimeout(function(){ try{ if(typeof window.plUploadOeffnen==='function') window.plUploadOeffnen(); }catch(e){} },500);
     /* Langzeitpflege: einmaliger Hinweis pro Gerät (pl_lzp_hint_shown), auch ohne Testcode */
     if(f==='langzeitpflege'){ var gezeigt=false; try{ gezeigt=localStorage.getItem('pl_lzp_hint_shown')==='1'; }catch(e){}
       if(!gezeigt) setTimeout(function(){ try{ window.plLzpHinweis('Neu in PLAN','Langzeitpflege &amp; ambulant',false); }catch(e){} },1500); }
@@ -25468,7 +25535,7 @@ window.plLzpHinweis=function(kicker,titel,test){
   function abschreiben(daten){
     var ctl = new AbortController(), to = setTimeout(function(){ ctl.abort(); }, 60000);
     return fetch('/api/wissen?ocr=1', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bild: daten }), signal: ctl.signal })
-      .then(function(r){ clearTimeout(to); return r.json().then(function(j){ if(!r.ok) throw new Error(j && j.error || 'HTTP ' + r.status); return String(j.text || ''); }); });
+      .then(function(r){ clearTimeout(to); return r.json().then(function(j){ if(r.status === 429){ var e = new Error('limit'); e.limit = true; throw e; } if(!r.ok) throw new Error(j && j.error || 'HTTP ' + r.status); return String(j.text || ''); }); });
   }
   window.plUploadFotos = function(liste){
     var fotos = Array.prototype.slice.call(liste || []).filter(function(f){ return /^image\//.test(f.type); });
@@ -25477,16 +25544,18 @@ window.plLzpHinweis=function(kicker,titel,test){
     if(!limitZaehlen()) return;
     var name = 'Notizen ' + new Date().toLocaleDateString('de-DE');
     laufen(name, 0); balken(3);
-    var seiten = [], fehlgeschlagen = 0, p = Promise.resolve();
+    var seiten = [], fehlgeschlagen = 0, limitErreicht = false, p = Promise.resolve();
     fotos.forEach(function(f, i){
       p = p.then(function(){
         schritt(0, 'Foto ' + (i + 1) + ' von ' + fotos.length + ' wird gelesen …');
-        return verkleinern(f).then(abschreiben).then(function(t){ if(t.trim()) seiten.push(t); else fehlgeschlagen++; }).catch(function(){ fehlgeschlagen++; })
+        if(limitErreicht) return;
+        return verkleinern(f).then(abschreiben).then(function(t){ if(t.trim()) seiten.push(t); else fehlgeschlagen++; }).catch(function(e){ if(e && e.limit) limitErreicht = true; fehlgeschlagen++; })
           .then(function(){ balken(3 + 7 * (i + 1) / fotos.length); });
       });
     });
     p.then(function(){
       ga('upload_fotos', { fotos: fotos.length, ohne_text: fehlgeschlagen });
+      if(limitErreicht && !seiten.length){ fehler('F\u00fcr heute ist das Limit f\u00fcr Foto-Abschriften erreicht. Morgen geht es weiter \u2013 PDF, PowerPoint und Text funktionieren weiterhin.'); return; }
       if(!seiten.length){ fehler('Auf den Fotos konnte kein Text erkannt werden. Versuch es mit besserem Licht und gerade von oben.'); return; }
       var gesamt = seiten.join('\n');
       if(gesamt.replace(/\[unleserlich\]/g, '').trim().length < 120){ fehler('Es war kaum lesbarer Text auf den Fotos. Versuch es mit besserem Licht und gerade von oben.'); return; }
