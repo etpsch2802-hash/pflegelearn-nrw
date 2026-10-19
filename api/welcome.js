@@ -26,7 +26,7 @@ function mailHtml() {
     <p style="margin:0 0 14px">Hi,</p>
     <p style="margin:0 0 14px">sch&ouml;n, dass du dabei bist. PLAN begleitet dich durch die Pflegeausbildung &ndash; hier das Wichtigste auf einen Blick:</p>
     <p style="margin:0 0 6px"><b>Was drin ist</b></p>
-    <p style="margin:0 0 16px;color:#475569">&uuml;ber 2.200 Pr&uuml;fungsfragen, 429 Lerneinheiten, 159 Krankheitsbilder, Fallbeispiele, Karteikarten und ein KI-Lernassistent, der dir Fragen erkl&auml;rt.</p>
+    <p style="margin:0 0 16px;color:#475569">&uuml;ber 2.200 Pr&uuml;fungsfragen, 429 Lerneinheiten, &uuml;ber 150 Krankheitsbilder, Fallbeispiele, Karteikarten und ein KI-Lernassistent, der dir Fragen erkl&auml;rt.</p>
     <p style="margin:0 0 6px"><b>Dein Fortschritt</b></p>
     <p style="margin:0 0 16px;color:#475569">Solange du angemeldet bist, wird dein Lernstand gesichert und ist auf jedem Ger&auml;t verf&uuml;gbar.</p>
     <p style="margin:0 0 6px"><b>Aktuell kostenlos</b></p>

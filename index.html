@@ -55,7 +55,7 @@
   "@type": "WebApplication",
   "name": "PLAN – Pflege Learn App NRW",
   "url": "https://plan-nrw.de",
-  "description": "Lern-App für die generalistische Pflegeausbildung nach PflBG 2020. Mit über 2000 Prüfungsfragen, 159 Krankheitsbildern, einer Wissensdatenbank mit 400 Lerneinheiten, Assessment-Scores, Pflegeplanungen und KI-Assistent.",
+  "description": "Lern-App für die generalistische Pflegeausbildung nach PflBG 2020. Mit über 2000 Prüfungsfragen, über 150 Krankheitsbildern, einer Wissensdatenbank mit 400 Lerneinheiten, Assessment-Scores, Pflegeplanungen und KI-Assistent.",
   "applicationCategory": "EducationApplication",
   "operatingSystem": "Web, Android, iOS",
   "offers": {
@@ -7809,6 +7809,9 @@ function toggleLoginBox(){
    Gibt {expired, used, max, rest} zurueck oder null (= kein Trial-Token). */
 async function plTrialInfo(token, code){
   if(!token || token.trial_max == null) return null;
+  /* Gratis-Modus (PL_PAYMENTS_ON === false, 19.10.2026): Test-Tage laufen nicht ab, sonst würden Nutzer trotz "kostenlos" nach 7 Tagen ausgesperrt.
+     Beim Reaktivieren der Zahlungen gilt automatisch wieder der 7-Tage-Zähler. */
+  if(window.PL_PAYMENTS_ON === false) return null;
   // Server-seitig zaehlen (nicht manipulierbar): DB-Funktion trial_touch
   try{
     if(window.SB){
@@ -19014,7 +19017,7 @@ function startAusbChat(id) {
     d.innerHTML = `
       <div style="margin-bottom:14px">
         <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#e0f2fe;margin-bottom:4px">🃏 Karteikarten</div>
-        <div style="font-size:11px;color:#8ab4d0"><span class="pl-z-krankheitsbilder">159</span> Krankheitsbilder · Spaced Repetition · SM-2 Algorithmus</div>
+        <div style="font-size:11px;color:#8ab4d0"><span class="pl-z-krankheitsbilder">158</span> Krankheitsbilder · Spaced Repetition · SM-2 Algorithmus</div>
       </div>
       <div id="sr-content"></div>`;
     document.body.appendChild(d);
@@ -19225,6 +19228,7 @@ window.plFreeLimitInfo = function(){
         +'<div style="font-size:15px;font-weight:800;color:#86efac;margin-bottom:8px">Komplett kostenlos nutzbar</div>'
         +'<div style="font-size:13px;color:#b3c4d6;line-height:1.65">Prüfungsquiz, Krankheitsbilder, Medikamenten-Trainer, KI-Prüfer und mehr – ohne Kosten. Viel Erfolg beim Lernen!</div></div>';
     }
+    try{ var rg=document.querySelector('#screen-registrierung .hero'); if(rg && rg.getAttribute('data-free-txt')!=='1'){ rg.setAttribute('data-free-txt','1'); var h1=rg.querySelector('h1'), pp=rg.querySelector('p'); if(h1) h1.innerHTML='Aktuell <span>kostenlos</span>'; if(pp) pp.textContent='Voller Zugang · Keine Kreditkarte · Sofort starten'; } }catch(e){}
     try{ var hb=document.querySelector('[onclick="showTrialStart()"]'); if(hb && hb.getAttribute('data-free-txt')!=='1'){ hb.setAttribute('data-free-txt','1'); hb.innerHTML=hb.innerHTML.replace('7 Tage kostenlos testen','Jetzt kostenlos loslegen'); } }catch(e){}
   }
   function run(){ try{ apply(); }catch(e){} }
@@ -19656,8 +19660,9 @@ function plZahl(key){
     case 'fragen':          return plZahl('quiz') + plZahl('wdbfragen');
     case 'fragenGerundet':  return Math.floor(plZahl('fragen')/100)*100;
     case 'krankheitsbilder':return n(function(){
-                              var c=0; for(var f in KRANKHEITSBILDER){ var g=KRANKHEITSBILDER[f];
-                                c += Array.isArray(g) ? g.length : Object.keys(g||{}).length; } return c; });
+                              /* 19.10.2026: zählt eindeutige Krankheitsbilder (vorher Objekt-Schlüssel je Fach = falsche 40) */
+                              var s={}, c=0; for(var f in KRANKHEITSBILDER){ var g=KRANKHEITSBILDER[f]; var l=(g&&Array.isArray(g.bilder))?g.bilder:(Array.isArray(g)?g:[]);
+                                l.forEach(function(b){ var k=b&&b.name; if(k&&!s[k]){ s[k]=1; c++; } }); } return c; });
     case 'faelle':          return n(function(){ return FAELLE.length; });
     case 'taschenkarten':   return n(function(){ return TASCHENKARTEN.length; });
     case 'scores':          return n(function(){ return SCORES.length; });
