@@ -25648,7 +25648,7 @@ window.plLzpHinweis=function(kicker,titel,test){
       if(!karten.length){ fehler('Aus diesem Material konnten keine Karten erstellt werden. Versuch es mit einem anderen Abschnitt.'); return; }
       schritt(1, karten.length + ' Konzepte gefunden', true);
       var t = treffer(karten);
-      schritt(2, t.kb.length + ' passende Krankheitsbilder · ' + t.fragen.length + ' geprüfte Prüfungsfragen', true); balken(95);
+      schritt(2, t.kb.length + (t.kb.length === 1 ? ' passendes Krankheitsbild · ' : ' passende Krankheitsbilder · ') + t.fragen.length + (t.fragen.length === 1 ? ' geprüfte Prüfungsfrage' : ' geprüfte Prüfungsfragen'), true); balken(95);
       var decks = laden();
       decks.unshift({ id: Date.now(), titel: name.slice(0, 60), datum: new Date().toISOString().slice(0, 10), karten: karten.map(function(k){ return { b: k.b, f: k.f, a: k.a, box: 0, due: 0 }; }) });
       if(!speichern(decks)){ fehler('Speicher voll. Lösche bitte einen alten Stapel.'); return; }
