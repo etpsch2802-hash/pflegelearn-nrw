@@ -25272,5 +25272,325 @@ window.plLzpHinweis=function(kicker,titel,test){
   setTimeout(los,1000);
 })();
 </script>
+<!-- PLAN NRW: Eigene Unterlagen → Karteikarten (19.10.2026, Entwurf, nur Admin bis „Go“)
+     Azubis laden Folien/PDF/PPTX/Text hoch. Der Text wird im Browser ausgelesen (Datei verlässt das Gerät nicht),
+     auf Patientendaten geprüft (Warnung + Unkenntlichmachen) und in Abschnitten an /api/chat (unverändert) geschickt.
+     Die KI erstellt Karteikarten nur aus dem Material; jede Karte wird mit geprüften PLAN-Inhalten abgeglichen
+     (Krankheitsbilder mit Pflegeplanung, Prüfungsfragen). Decks bleiben privat auf dem Gerät (Urheberrecht: kein Teilen).
+     Speicher: localStorage pl_upload_decks_v1 (neuer Key). Schalter: PL_UPLOAD_PUBLIC (false = nur isAdmin()).
+     Berührt NICHT: api/chat.js, Quiz-Daten, Karteikarten-Modul, Paywall. -->
+<style>
+#plup{position:fixed;inset:0;z-index:3000;background:#050c18;color:#e0f2fe;overflow-y:auto;font-family:'DM Sans',sans-serif;display:none}
+#plup.on{display:block}
+#plup .w{max-width:560px;margin:0 auto;padding:18px 16px 60px}
+#plup .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+#plup .x{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e0f2fe;border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer}
+#plup h2{font-family:'DM Serif Display',serif;font-size:24px;margin:0 0 6px}
+#plup p{color:#b3c4d6;font-size:14px;line-height:1.6;margin:0 0 12px}
+#plup .box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px;margin-bottom:12px}
+#plup .warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.4);border-radius:12px;padding:12px;font-size:13px;color:#fde68a;line-height:1.55;margin-bottom:12px}
+#plup .btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font:700 15px 'DM Sans',sans-serif;cursor:pointer;margin-top:8px;background:linear-gradient(135deg,#0369a1,#38bdf8);color:#fff}
+#plup .btn.g{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e0f2fe}
+#plup textarea{width:100%;box-sizing:border-box;min-height:110px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#e0f2fe;padding:10px;font:14px 'DM Sans',sans-serif}
+#plup .deck{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);margin-bottom:8px}
+#plup .deck b{display:block;font-size:14px}#plup .deck span{font-size:12px;color:#9fb6c9}
+#plup .deck button{background:none;border:0;color:#7dd3fc;font:600 13px 'DM Sans',sans-serif;cursor:pointer;padding:6px}
+#plup .prog{height:8px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden;margin:16px 0}
+#plup .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0369a1,#38bdf8);transition:width .4s}
+#plup .steps div{font-size:14px;color:#9fb6c9;padding:6px 0;display:flex;gap:8px;align-items:center}
+#plup .steps div.ok{color:#86efac}
+#plup .ico{position:relative;height:150px;margin:10px 0}
+#plup .ico span{position:absolute;font-size:30px;animation:plupF 3s ease-in-out infinite}
+@keyframes plupF{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@media (prefers-reduced-motion:reduce){#plup .ico span{animation:none}}
+#plup .card{min-height:200px;border-radius:18px;padding:22px;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(56,189,248,.3);cursor:pointer;display:flex;flex-direction:column;justify-content:center;text-align:center}
+#plup .card .b{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#38bdf8;margin-bottom:10px}
+#plup .card .q{font-size:18px;line-height:1.5}
+#plup .card .a{font-size:15px;line-height:1.6;color:#cde8f7;margin-top:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}
+#plup .row{display:flex;gap:8px}#plup .row .btn{flex:1}
+#plup .tag{display:inline-block;font-size:11px;border-radius:20px;padding:3px 9px;margin-top:12px}
+#plup .tag.ok{background:rgba(52,211,153,.15);color:#86efac}#plup .tag.ki{background:rgba(245,158,11,.12);color:#fde68a}
+#plup .hit{display:block;width:100%;text-align:left;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:10px 12px;color:#e0f2fe;font:14px 'DM Sans',sans-serif;cursor:pointer;margin-bottom:6px}
+#plup .klein{font-size:12px;color:#8aa4b8}
+</style>
+<div id="plup" role="dialog" aria-modal="true" aria-label="Eigene Unterlagen"><div class="w" id="plup-w"></div></div>
+<script>
+(function(){
+  window.PL_UPLOAD_PUBLIC = false;
+  var KEY = 'pl_upload_decks_v1';
+  var MAX_ZEICHEN = 24000, ABSCHNITT = 3000, MAX_DECKS = 20;
+  var W = function(){ return document.getElementById('plup-w'); };
+  function erlaubt(){ try{ return window.PL_UPLOAD_PUBLIC === true || (typeof isAdmin === 'function' && isAdmin()); }catch(e){ return false; } }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function laden(){ try{ var d = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(d) ? d : []; }catch(e){ return []; } }
+  function speichern(d){ try{ localStorage.setItem(KEY, JSON.stringify(d.slice(0, MAX_DECKS))); return true; }catch(e){ return false; } }
+  function ga(n, p){ try{ if(typeof gtag === 'function') gtag('event', n, p || {}); }catch(e){} }
+
+  /* ---------- Kachel im Üben-Bereich (nur wenn erlaubt) ---------- */
+  function kachel(){
+    try{
+      if(!erlaubt() || document.getElementById('plup-tile')) return;
+      var grid = document.querySelector('#screen-ueben div[style*="grid-template-columns"]');
+      if(!grid) return;
+      var b = document.createElement('button');
+      b.id = 'plup-tile';
+      b.setAttribute('onclick', 'plUploadOeffnen()');
+      b.style.cssText = 'background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.45);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left';
+      b.innerHTML = '<span style="font-size:22px">📄</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Eigene Unterlagen</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Folien → Karteikarten' + (window.PL_UPLOAD_PUBLIC ? '' : ' · Admin') + '</span>';
+      grid.insertBefore(b, grid.firstChild);
+    }catch(e){}
+  }
+  try{
+    var _ss = window.showScreen;
+    if(typeof _ss === 'function' && !window._plUpWrapped){
+      window._plUpWrapped = true;
+      window.showScreen = function(n){ var r = _ss.apply(this, arguments); if(n === 'ueben') setTimeout(kachel, 0); return r; };
+    }
+  }catch(e){}
+  window.addEventListener('load', function(){ setTimeout(kachel, 1500); });
+
+  /* ---------- Overlay ---------- */
+  window.plUploadOeffnen = function(){ if(!erlaubt()) return; document.getElementById('plup').classList.add('on'); start(); ga('upload_open'); };
+  function zu(){ document.getElementById('plup').classList.remove('on'); }
+  window.plUploadZu = zu;
+  function kopf(t){ return '<div class="top"><span class="klein">PLAN · Eigene Unterlagen</span><button class="x" onclick="plUploadZu()">Schließen</button></div>' + (t ? '<h2>' + t + '</h2>' : ''); }
+
+  function start(){
+    var decks = laden();
+    var h = kopf('Folien → Karteikarten');
+    h += '<p>Lade deine Unterrichtsfolien hoch. PLAN macht daraus Karteikarten und zeigt dir dazu passende <b>geprüfte</b> Inhalte aus der App: Pflegeplanungen und Prüfungsfragen.</p>';
+    h += '<div class="warn"><b>Keine Patientendaten hochladen.</b> Namen, Geburtsdaten oder Zimmernummern aus Praxisaufträgen gehören nicht in die App. PLAN prüft das zusätzlich und warnt dich.</div>';
+    h += '<div class="box"><button class="btn" onclick="document.getElementById(\'plup-file\').click()">Datei wählen (PDF, PowerPoint, Text)</button>'
+      + '<input type="file" id="plup-file" accept=".pdf,.pptx,.txt,.md,application/pdf" style="display:none" onchange="plUploadDatei(this.files[0])">'
+      + '<p class="klein" style="margin:10px 0 0">Die Datei wird auf deinem Gerät ausgelesen. Nur der Text geht zur Kartenerstellung an unseren KI-Dienst. Deine Karten bleiben privat auf diesem Gerät.</p></div>';
+    h += '<div class="box"><textarea id="plup-text" placeholder="… oder Text aus deinen Unterlagen hier einfügen"></textarea><button class="btn g" onclick="plUploadText()">Aus Text erstellen</button></div>';
+    if(decks.length){
+      h += '<h2 style="font-size:18px;margin-top:18px">Deine Stapel</h2>';
+      decks.forEach(function(d, i){
+        var faellig = d.karten.filter(function(k){ return (k.due || 0) <= Date.now(); }).length;
+        h += '<div class="deck"><div style="flex:1"><b>' + esc(d.titel) + '</b><span>' + d.karten.length + ' Karten · ' + faellig + ' fällig</span></div>'
+          + '<button onclick="plUploadLernen(' + i + ')">Lernen</button><button onclick="plUploadTreffer(' + i + ')">PLAN-Inhalte</button><button onclick="plUploadLoeschen(' + i + ')" aria-label="Stapel löschen">✕</button></div>';
+      });
+    }
+    W().innerHTML = h;
+  }
+
+  /* ---------- Text auslesen ---------- */
+  function skript(url, test){
+    if(test()) return Promise.resolve();
+    return new Promise(function(res, rej){ var s = document.createElement('script'); s.src = url; s.onload = function(){ res(); }; s.onerror = function(){ rej(new Error('Laden fehlgeschlagen')); }; document.head.appendChild(s); });
+  }
+  function pdfText(buf){
+    return skript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', function(){ return !!window.pdfjsLib; }).then(function(){
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      return window.pdfjsLib.getDocument({ data: buf }).promise;
+    }).then(function(doc){
+      var seiten = [], p = Promise.resolve();
+      for(var i = 1; i <= doc.numPages; i++){ (function(n){ p = p.then(function(){ return doc.getPage(n).then(function(pg){ return pg.getTextContent(); }).then(function(tc){ seiten.push(tc.items.map(function(it){ return it.str; }).join(' ')); }); }); })(i); }
+      return p.then(function(){ return seiten; });
+    });
+  }
+  function pptxText(buf){
+    return skript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', function(){ return !!window.JSZip; }).then(function(){ return window.JSZip.loadAsync(buf); }).then(function(zip){
+      var namen = Object.keys(zip.files).filter(function(n){ return /^ppt\/slides\/slide\d+\.xml$/.test(n); })
+        .sort(function(a, b){ return parseInt(a.match(/\d+/)[0], 10) - parseInt(b.match(/\d+/)[0], 10); });
+      return Promise.all(namen.map(function(n){ return zip.file(n).async('string').then(function(x){
+        var m = x.match(/<a:t>([^<]*)<\/a:t>/g) || [];
+        return m.map(function(t){ return t.replace(/<\/?a:t>/g, ''); }).join(' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      }); }));
+    });
+  }
+  window.plUploadDatei = function(f){
+    if(!f) return;
+    var name = f.name.replace(/\.[^.]+$/, '');
+    if(f.size > 40 * 1024 * 1024){ fehler('Die Datei ist größer als 40 MB. Bitte teile sie auf.'); return; }
+    laufen(name, 0);
+    schritt(0, 'Datei wird gelesen …');
+    var ext = (f.name.split('.').pop() || '').toLowerCase();
+    var p;
+    if(ext === 'pdf') p = f.arrayBuffer().then(pdfText);
+    else if(ext === 'pptx') p = f.arrayBuffer().then(pptxText);
+    else if(ext === 'txt' || ext === 'md') p = f.text().then(function(t){ return t.split(/\n{2,}/); });
+    else { fehler('Dieses Format geht noch nicht. Möglich sind PDF, PowerPoint (.pptx) und Text. Fotos von Notizen folgen später.'); return; }
+    p.then(function(seiten){ weiter(name, seiten, ext === 'pptx' ? 'Folien' : 'Seiten'); }).catch(function(){ fehler('Die Datei konnte nicht gelesen werden. Ist sie passwortgeschützt oder ein reiner Scan? Dann füge den Text bitte ein.'); });
+  };
+  window.plUploadText = function(){
+    var t = (document.getElementById('plup-text') || {}).value || '';
+    if(t.trim().length < 200){ alert('Bitte mindestens ein paar Sätze einfügen.'); return; }
+    laufen('Eigener Text', 0);
+    weiter('Eigener Text', t.split(/\n{2,}/), 'Abschnitte');
+  };
+
+  /* ---------- Patientendaten-Prüfung ---------- */
+  var MUSTER = [
+    { re: /\b(?:Herr|Frau|Hr\.|Fr\.)\s+[A-ZÄÖÜ][a-zäöüß]{2,}(?:\s+[A-ZÄÖÜ][a-zäöüß]{2,})?/g, ers: '[Name]' },
+    { re: /\b(?:Patient(?:in)?|Pat\.|Bewohner(?:in)?)\s+[A-ZÄÖÜ][a-zäöüß]{2,}\b/g, ers: '[Name]' },
+    { re: /\bgeb(?:oren|\.)?\s*(?:am\s*)?\d{1,2}\.\s?\d{1,2}\.\s?\d{2,4}/gi, ers: '[Geburtsdatum]' },
+    { re: /\b(?:Zimmer|Zi\.|Bett)\s*(?:Nr\.?\s*)?\d{1,4}[a-z]?\b/gi, ers: '[Zimmer]' },
+    { re: /\b[A-Z]\d{9}\b/g, ers: '[Versichertennummer]' }
+  ];
+  var ALLGEMEIN = /\b(?:Herr|Frau)\s+(?:Müller|Mustermann|Musterfrau|Schmidt|Meier|Mayer|Meyer|X|Y|Z)\b/;
+  function pruefen(text){
+    var funde = [];
+    MUSTER.forEach(function(m){ (text.match(m.re) || []).forEach(function(t){ if(!ALLGEMEIN.test(t) && funde.indexOf(t) < 0) funde.push(t); }); });
+    return funde;
+  }
+  function schwaerzen(text){ MUSTER.forEach(function(m){ text = text.replace(m.re, function(t){ return ALLGEMEIN.test(t) ? t : m.ers; }); }); return text; }
+
+  function weiter(name, seiten, einheit){
+    seiten = seiten.map(function(s){ return String(s || '').replace(/\s+/g, ' ').trim(); });
+    var text = seiten.filter(Boolean).join('\n');
+    if(text.length < 200){ fehler('In der Datei steht kaum Text (vermutlich Bilder oder ein Scan). Füge den Text bitte ein.'); return; }
+    var funde = pruefen(text);
+    if(funde.length){
+      W().innerHTML = kopf('Mögliche Patientendaten gefunden')
+        + '<div class="warn">In deinen Unterlagen stehen Angaben, die wie Patientendaten aussehen:<br><b>' + funde.slice(0, 6).map(esc).join(' · ') + (funde.length > 6 ? ' …' : '') + '</b></div>'
+        + '<p>Echte Patientendaten unterliegen der Schweigepflicht und dürfen nicht in Lern-Apps. PLAN kann diese Stellen vor dem Weiterverarbeiten unkenntlich machen.</p>'
+        + '<button class="btn" id="plup-mask">Unkenntlich machen und weiter</button><button class="btn g" onclick="plUploadOeffnen()">Abbrechen</button>';
+      document.getElementById('plup-mask').onclick = function(){ ga('upload_maskiert', { anzahl: funde.length }); laufen(name, 1); verarbeiten(name, seiten.length, einheit, schwaerzen(text)); };
+      return;
+    }
+    verarbeiten(name, seiten.length, einheit, text);
+  }
+
+  /* ---------- Fortschritt ---------- */
+  var SCHRITTE = ['', '', '', ''];
+  function laufen(name, _){
+    W().innerHTML = kopf('') + '<h2>' + esc(name) + '</h2><div class="ico"><span style="left:8%;top:30px">🧠</span><span style="left:30%;top:80px;animation-delay:.6s">🫁</span><span style="left:52%;top:20px;animation-delay:1.2s">🫀</span><span style="left:74%;top:70px;animation-delay:.3s">💉</span><span style="left:88%;top:15px;animation-delay:.9s">📋</span></div>'
+      + '<div class="prog"><i id="plup-bar"></i></div><div class="steps" id="plup-steps"></div>';
+    SCHRITTE = ['', '', '', ''];
+  }
+  function schritt(i, t, ok){ SCHRITTE[i] = (ok ? '<div class="ok">✔ ' : '<div>⏳ ') + t + '</div>'; var e = document.getElementById('plup-steps'); if(e) e.innerHTML = SCHRITTE.join(''); }
+  function balken(p){ var e = document.getElementById('plup-bar'); if(e) e.style.width = Math.round(p) + '%'; }
+  function fehler(t){ W().innerHTML = kopf('Das hat nicht geklappt') + '<p>' + esc(t) + '</p><button class="btn" onclick="plUploadOeffnen()">Zurück</button>'; }
+
+  /* ---------- KI ---------- */
+  var SYS = 'Du bist Pflegepädagoge für die generalistische Pflegeausbildung in Deutschland. '
+    + 'Erstelle aus dem folgenden Unterrichtsmaterial Karteikarten. Regeln: Nur Inhalte verwenden, die im Material stehen, nichts erfinden. '
+    + 'Höchstens 6 Karten, nur prüfungsrelevante Fachinhalte (keine Organisatorisches, keine Literaturangaben). '
+    + 'Antwort kurz (höchstens 2 Sätze). Keine Personennamen. '
+    + 'Antworte ausschließlich mit einem JSON-Array ohne weiteren Text: [{"b":"Fachbegriff, höchstens 4 Wörter","f":"Frage","a":"Antwort"}]';
+  function kiAbschnitt(t){
+    var anfrage = function(){ return callKI([{ role: 'user', content: 'Unterrichtsmaterial:\n' + t }], SYS); };
+    var parse = function(r){ var a = String(r).indexOf('['), z = String(r).lastIndexOf(']'); if(a < 0 || z < a) throw new Error('kein JSON'); var j = JSON.parse(String(r).slice(a, z + 1)); return (Array.isArray(j) ? j : []).filter(function(k){ return k && k.f && k.a; }).slice(0, 6).map(function(k){ return { b: String(k.b || '').slice(0, 60), f: String(k.f).slice(0, 300), a: String(k.a).slice(0, 500) }; }); };
+    return anfrage().then(parse).catch(function(){ return anfrage().then(parse).catch(function(){ return []; }); });
+  }
+  function abschnitte(text){
+    text = text.slice(0, MAX_ZEICHEN);
+    var out = [], zeilen = text.split('\n'), cur = '';
+    zeilen.forEach(function(z){ if((cur + '\n' + z).length > ABSCHNITT && cur){ out.push(cur); cur = ''; } cur += (cur ? '\n' : '') + z; while(cur.length > ABSCHNITT){ out.push(cur.slice(0, ABSCHNITT)); cur = cur.slice(ABSCHNITT); } });
+    if(cur.trim()) out.push(cur);
+    return out;
+  }
+
+  function verarbeiten(name, anzahl, einheit, text){
+    schritt(0, anzahl + ' ' + einheit + ' gelesen', true); balken(10);
+    var teile = abschnitte(text), karten = [], p = Promise.resolve();
+    schritt(1, 'Konzepte werden erkannt …');
+    teile.forEach(function(t, i){ p = p.then(function(){ return kiAbschnitt(t).then(function(k){ karten = karten.concat(k); schritt(1, karten.length + ' Konzepte gefunden', i === teile.length - 1); balken(10 + 70 * (i + 1) / teile.length); }); }); });
+    p.then(function(){
+      var gesehen = {};
+      karten = karten.filter(function(k){ var s = (k.b + '|' + k.f).toLowerCase(); if(gesehen[s]) return false; gesehen[s] = 1; return true; });
+      if(!karten.length){ fehler('Aus diesem Material konnten keine Karten erstellt werden. Versuch es mit einem anderen Abschnitt.'); return; }
+      schritt(1, karten.length + ' Konzepte gefunden', true);
+      var t = treffer(karten);
+      schritt(2, t.kb.length + ' passende Krankheitsbilder · ' + t.fragen.length + ' geprüfte Prüfungsfragen', true); balken(95);
+      var decks = laden();
+      decks.unshift({ id: Date.now(), titel: name.slice(0, 60), datum: new Date().toISOString().slice(0, 10), karten: karten.map(function(k){ return { b: k.b, f: k.f, a: k.a, box: 0, due: 0 }; }) });
+      if(!speichern(decks)){ fehler('Speicher voll. Lösche bitte einen alten Stapel.'); return; }
+      schritt(3, karten.length + ' Karteikarten erstellt', true); balken(100);
+      ga('upload_deck', { seiten: anzahl, karten: karten.length });
+      setTimeout(function(){ window.plUploadTreffer(0); }, 900);
+    });
+  }
+
+  /* ---------- Abgleich mit geprüften PLAN-Inhalten ---------- */
+  function norm(s){ return String(s || '').toLowerCase().replace(/[^a-zäöüß0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function treffer(karten){
+    var begriffe = karten.map(function(k){ return norm(k.b); }).filter(function(b){ return b.length >= 4; });
+    var kb = [], fragen = [];
+    try{
+      Object.keys(KRANKHEITSBILDER).forEach(function(f){ (KRANKHEITSBILDER[f].bilder || []).forEach(function(b, i){
+        var n = norm(b.name);
+        if(n.length >= 4 && begriffe.some(function(x){ return x.indexOf(n) >= 0 || n.indexOf(x) >= 0; }) && !kb.some(function(e){ return e.name === b.name; }))
+          kb.push({ fach: f, idx: i, name: b.name, pp: !!(b.pflegeplanung && b.pflegeplanung.length) });
+      }); });
+    }catch(e){}
+    try{
+      var worte = begriffe.filter(function(b){ return b.length >= 5; });
+      QUIZ_FRAGEN.forEach(function(q, i){ var f = norm(q.frage); if(worte.some(function(w){ return f.indexOf(w) >= 0; })) fragen.push(i); });
+    }catch(e){}
+    return { kb: kb.slice(0, 12), fragen: fragen.slice(0, 40) };
+  }
+  function geprueft(k, kb){ var b = norm(k.b); return b.length >= 4 && kb.some(function(e){ var n = norm(e.name); return b.indexOf(n) >= 0 || n.indexOf(b) >= 0; }); }
+
+  window.plUploadTreffer = function(i){
+    var d = laden()[i]; if(!d) return start();
+    var t = treffer(d.karten);
+    var h = kopf(esc(d.titel));
+    h += '<p>' + d.karten.length + ' Karteikarten aus deinen Unterlagen. Dazu passende geprüfte Inhalte aus PLAN:</p>';
+    h += '<button class="btn" onclick="plUploadLernen(' + i + ')">Karteikarten lernen</button>';
+    if(t.fragen.length) h += '<button class="btn g" onclick="plUploadQuiz(' + i + ')">' + t.fragen.length + ' geprüfte Prüfungsfragen zu deinen Themen</button>';
+    if(t.kb.length){
+      h += '<h2 style="font-size:18px;margin-top:18px">Krankheitsbilder in PLAN</h2>';
+      t.kb.forEach(function(e){ h += '<button class="hit" onclick="plUploadZu();openKrankheitsbild(\'' + e.fach + '\',' + e.idx + ')">' + esc(e.name) + (e.pp ? ' <span class="tag ok" style="margin:0 0 0 6px">mit Pflegeplanung</span>' : '') + '</button>'; });
+    }
+    if(!t.kb.length && !t.fragen.length) h += '<p class="klein" style="margin-top:12px">Zu diesen Themen gibt es in PLAN noch keine direkt passenden Inhalte.</p>';
+    h += '<p class="klein" style="margin-top:16px">Die Karten erstellt eine KI nur aus deinem Material. Prüfe sie mit deinem Unterricht – Bei Karten mit „Thema geprüft in PLAN“ findest du das Thema zusätzlich fachlich geprüft in der App – vergleiche die Antwort damit.</p>';
+    h += '<button class="btn g" onclick="plUploadOeffnen()">Zur Übersicht</button>';
+    W().innerHTML = h;
+  };
+  window.plUploadQuiz = function(i){
+    var d = laden()[i]; if(!d) return;
+    var idx = treffer(d.karten).fragen; if(!idx.length) return;
+    try{
+      quizCE = null; quizKat = 'alle';
+      quizList = idx.map(function(n){ return QUIZ_FRAGEN[n]; }).sort(function(){ return Math.random() - 0.5; }).slice(0, 20).map(function(q){
+        var o = q.opt.map(function(t, j){ return { t: t, r: j === q.k }; }).sort(function(){ return Math.random() - 0.5; });
+        var c = {}; for(var key in q) c[key] = q[key];
+        c.opt = o.map(function(x){ return x.t; }); c.k = o.findIndex(function(x){ return x.r; }); return c;
+      });
+      quizIdx = 0; quizAnswers = []; selectedAns = null; window.showExp = false;
+      zu(); showScreen('quiz'); renderQuestion(); ga('upload_quiz', { fragen: quizList.length });
+    }catch(e){ fehler('Das Quiz konnte nicht gestartet werden.'); }
+  };
+  window.plUploadLoeschen = function(i){ if(!confirm('Stapel löschen?')) return; var d = laden(); d.splice(i, 1); speichern(d); start(); };
+
+  /* ---------- Lernen (Leitner: 0,1,3,7,14 Tage) ---------- */
+  var TAGE = [0, 1, 3, 7, 14, 30], lern = null;
+  window.plUploadLernen = function(i){
+    var decks = laden(), d = decks[i]; if(!d) return start();
+    var jetzt = Date.now();
+    var reihe = d.karten.map(function(k, j){ return j; }).filter(function(j){ return (d.karten[j].due || 0) <= jetzt; });
+    if(!reihe.length) reihe = d.karten.map(function(k, j){ return j; });
+    lern = { deck: i, reihe: reihe.sort(function(){ return Math.random() - 0.5; }), pos: 0, gewusst: 0 };
+    zeigen(false);
+  };
+  function zeigen(offen){
+    var decks = laden(), d = decks[lern.deck];
+    if(!d || lern.pos >= lern.reihe.length){
+      W().innerHTML = kopf('Runde geschafft') + '<p>' + lern.gewusst + ' von ' + lern.reihe.length + ' Karten gewusst. Die anderen kommen bald wieder.</p><button class="btn" onclick="plUploadTreffer(' + lern.deck + ')">Passende PLAN-Inhalte</button><button class="btn g" onclick="plUploadOeffnen()">Zur Übersicht</button>';
+      return;
+    }
+    var k = d.karten[lern.reihe[lern.pos]], ok = geprueft(k, treffer([k]).kb);
+    var h = kopf('') + '<p class="klein">' + esc(d.titel) + ' · Karte ' + (lern.pos + 1) + '/' + lern.reihe.length + '</p>';
+    h += '<div class="card" onclick="plUploadUmdrehen()"><div class="b">' + esc(k.b) + '</div><div class="q">' + esc(k.f) + '</div>'
+      + (offen ? '<div class="a">' + esc(k.a) + '</div>' : '<div class="klein" style="margin-top:14px">Tippen zum Umdrehen</div>')
+      + '<div><span class="tag ' + (ok ? 'ok">✔ Thema geprüft in PLAN' : 'ki">KI aus deiner Folie') + '</span></div></div>';
+    if(offen) h += '<div class="row"><button class="btn g" onclick="plUploadBewerten(false)">Nochmal</button><button class="btn" onclick="plUploadBewerten(true)">Gewusst</button></div>';
+    W().innerHTML = h;
+  }
+  window.plUploadUmdrehen = function(){ zeigen(true); };
+  window.plUploadBewerten = function(gut){
+    var decks = laden(), d = decks[lern.deck]; if(!d) return;
+    var k = d.karten[lern.reihe[lern.pos]];
+    k.box = gut ? Math.min((k.box || 0) + 1, TAGE.length - 1) : 0;
+    k.due = Date.now() + TAGE[k.box] * 86400000;
+    if(gut) lern.gewusst++;
+    speichern(decks); lern.pos++; zeigen(false);
+  };
+})();
+</script>
+
 </body>
 </html>
