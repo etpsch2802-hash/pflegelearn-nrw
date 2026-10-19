@@ -196,6 +196,31 @@ check('OCR: Platzhalter für Patientendaten im Auftrag', !!ocrReq && /\[Name\]/.
 routes = [{ test: u => u.includes('api.groq.com'), reply: () => json({ choices: [{ message: { content: 'KEIN_TEXT' } }] }) }];
 r = await ocrCall({ bild: 'data:image/png;base64,QUJD' });
 check('OCR: Foto ohne Text liefert leeren Text', r.code === 200 && r.body.text === '', r);
+// Server-Limit Foto-Abschrift
+function zaehlAntwort(n) { return new Response('[]', { status: 200, headers: { 'Content-Type': 'application/json', 'content-range': '0-0/' + n } }); }
+routes = [
+  { test: u => u.includes('/rest/v1/ocr_limits') && u.includes('ip_hash=eq.'), reply: () => zaehlAntwort(15) },
+  { test: u => u.includes('api.groq.com'), reply: () => json({ choices: [{ message: { content: 'Text' } }] }) }
+];
+calls = [];
+r = await ocrCall({ bild: 'data:image/jpeg;base64,QUJD' });
+check('OCR-Limit: ab 15 Fotos pro IP und Tag gesperrt (429)', r.code === 429 && r.body.error === 'limit', r);
+check('OCR-Limit: bei Sperre kein KI-Aufruf', !calls.some(c => c.url.includes('api.groq.com')));
+routes = [
+  { test: u => u.includes('/rest/v1/ocr_limits') && u.includes('ip_hash=eq.'), reply: () => zaehlAntwort(3) },
+  { test: u => u.includes('/rest/v1/ocr_limits?select'), reply: () => zaehlAntwort(10) },
+  { test: u => u.includes('api.groq.com'), reply: () => json({ choices: [{ message: { content: 'Text' } }] }) }
+];
+calls = [];
+r = await ocrCall({ bild: 'data:image/jpeg;base64,QUJD' });
+check('OCR-Limit: unter dem Limit erlaubt und gezählt', r.code === 200 && calls.some(c => c.url.endsWith('/rest/v1/ocr_limits') && /ip_hash/.test(c.body)), r);
+check('OCR-Limit: IP wird nur als Hash gespeichert', calls.filter(c => c.url.endsWith('/rest/v1/ocr_limits')).every(c => !/\d+\.\d+\.\d+\.\d+/.test(c.body)));
+routes = [
+  { test: u => u.includes('/rest/v1/ocr_limits'), reply: () => json({ message: 'relation does not exist' }, 404) },
+  { test: u => u.includes('api.groq.com'), reply: () => json({ choices: [{ message: { content: 'Text' } }] }) }
+];
+r = await ocrCall({ bild: 'data:image/jpeg;base64,QUJD' });
+check('OCR-Limit: fehlt die Tabelle, wird nicht blockiert', r.code === 200, r);
 delete process.env.GROQ_API_KEY;
 
 console.log('\n==== ERGEBNIS: ' + pass + ' bestanden, ' + fail + ' fehlgeschlagen ====');
