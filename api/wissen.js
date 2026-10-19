@@ -73,7 +73,7 @@ async function sb(query) {
 
 /* ---------- Layout ---------- */
 
-const CSS = `.tw{overflow-x:auto;margin:10px 0 18px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid rgba(56,189,248,.2);padding:8px 10px;text-align:left;vertical-align:top}th{background:rgba(56,189,248,.1);color:#e8f3fb}tbody th{width:28%;white-space:nowrap}td ul{margin:0;padding-left:18px}.klein{font-size:13px;color:#9fb6c9}
+const CSS = `.tw{overflow-x:auto;margin:10px 0 18px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid rgba(56,189,248,.2);padding:8px 10px;text-align:left;vertical-align:top}th{background:rgba(56,189,248,.1);color:#e8f3fb}tbody th{width:28%;white-space:nowrap}td ul{margin:0;padding-left:18px}.klein{font-size:13px;color:#9fb6c9}.ppbox{border:2px solid #38bdf8;background:rgba(56,189,248,.08);border-radius:14px;padding:16px 18px;margin:22px 0}.ppbox strong{font-size:17px;color:#e8f3fb}.ppbox p{margin:8px 0 0}.ppbox .cta{margin:14px 0 0}.pphint{background:rgba(56,189,248,.1);border-left:4px solid #38bdf8;padding:10px 14px;border-radius:8px;font-size:14px}.pphint a{color:#7dd3fc;font-weight:700}
 *{box-sizing:border-box}body{margin:0;background:#050c18;color:#e2e8f0;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:#7dd3fc}main{max-width:760px;margin:0 auto;padding:20px 18px 64px}
 header{border-bottom:1px solid rgba(56,189,248,.18);background:rgba(255,255,255,.03)}
@@ -230,7 +230,16 @@ function pflegeplanungHTML(d) {
       + '</tbody></table></div>';
   });
   h += '<p class="klein">Muster-Pflegeplanung für Ausbildung und Prüfung – immer an den einzelnen Menschen anpassen.</p>';
+  h += ppAppBox();
   return h;
+}
+/* Hinweis: vollständige Pflegeplanungen stehen in der App (Zahlen aus KRANKHEITSBILDER in index.html, Stand 19.10.2026) */
+const PP_APP = 'https://plan-nrw.de/?fach=pflegeplanung';
+function ppAppBox() {
+  return '<div class="ppbox"><strong>Alle Pflegeplanungen in der App</strong>'
+    + '<p>In PLAN stehen fertige Pflegeplanungen zu <b>106 Krankheitsbildern</b> aus 10 Fachgebieten – Innere Medizin, Chirurgie, Neurologie, Pädiatrie, Gynäkologie, Urologie, Onkologie, Orthopädie, HNO und Psychologie. '
+    + 'Jeweils mit Pflegeproblem, Ressourcen, Pflegeziel und Maßnahmen, dazu Symptome, Diagnostik, Therapie und Prüfungsfragen.</p>'
+    + '<a class="cta" href="' + PP_APP + '">Alle Pflegeplanungen in der App öffnen</a></div>';
 }
 function absaetze(t) {
   return String(t).trim().split(/\n+/).filter(Boolean).map(function (x) { return '<p>' + esc(x.trim()) + '</p>'; }).join('');
@@ -306,6 +315,7 @@ function renderDetail(e, geschwister) {
   b += `<nav class="bc"><a href="${urlIndex()}">Wissensdatenbank</a> › <a href="${urlKat(kat)}">${esc(kat)}</a></nav>`;
   b += `<h1>${esc(e.titel)}</h1>`;
   if (definition) b += `<p class="lead">${esc(definition)}</p>`;
+  if (/^pflegeplanung-/.test(e.slug)) b += '<p class="pphint">Dies ist ein Beispiel. <a href="' + PP_APP + '">Alle Pflegeplanungen zu 106 Krankheitsbildern stehen in der App →</a></p>';
   if (offen && d.tabelle) b += `<h2>Normwerte im Überblick</h2>` + tabelleHTML(d.tabelle);
   if (offen) b += pflegeplanungHTML(d);
   if (pw) b += `<h3>Prüfungswissen</h3><p>${esc(pw)}</p>`;
@@ -380,6 +390,7 @@ function renderKategorie(kat, items, alleKats) {
   b += '<ul class="links">';
   items.forEach(function (it) { b += `<li><a href="${urlSlug(it.slug)}">${esc(it.titel)}</a></li>`; });
   b += '</ul>';
+  if (kat === 'Pflegeplanung') b += ppAppBox();
   b += ctaBlock('Alle Inhalte in der App öffnen');
   if (alleKats && alleKats.length) {
     b += '<h2>Weitere Bereiche</h2><div class="tags">';

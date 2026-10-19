@@ -74,7 +74,7 @@ footer{font-size:12px;color:var(--muted);margin-top:30px}footer a{color:var(--mu
   <ul class="v">${L.vorteile.map(v => `<li>${esc(v)}</li>`).join('')}</ul>
   <div class="zahlen"><span>2.000+ Prüfungsfragen</span><span>400 Lerneinheiten</span><span>80+ Wirkstoffe</span><span>KI-Lernassistent</span></div>
   ${hinweis}
-  ${(f.wissen || []).length ? `<h2 class="wh">Kostenlos nachlesen</h2><ul class="wl">${f.wissen.map(w => `<li><a href="/wissen/${esc(w[0])}">${esc(w[1])}</a></li>`).join('')}</ul><p class="klein"><a href="/wissen">Alle Lerneinheiten der Wissensdatenbank →</a></p>` : ''}
+  ${(f.wissen || []).length ? `<h2 class="wh">Kostenlos nachlesen</h2><ul class="wl">${f.wissen.map(w => `<li><a href="/wissen/${esc(w[0])}">${esc(w[1])}</a></li>`).join('')}</ul><p class="klein"><a href="/wissen">Alle Lerneinheiten der Wissensdatenbank →</a></p>${f.wissen.some(w => /^pflegeplanung-/.test(w[0])) ? `<p class="klein"><a href="/?fach=pflegeplanung"><b>Alle Pflegeplanungen zu 106 Krankheitsbildern stehen in der App →</b></a></p>` : ''}` : ''}
   <div class="autor"><b>Wer dahinter steht</b>Patrick Schenkelberger · Fachpfleger Anästhesie &amp; Intensivmedizin · Praxisanleiter NRW</div>
   <p class="lead" style="font-size:15px">Für: ${esc(f.zielgruppe)}.</p>
   <a class="cta" href="${app}">Jetzt kostenlos loslegen</a>
