@@ -1701,6 +1701,11 @@
    "datum": "2026-10-19",
    "format": "eselsbruecke",
    "thema": "Vitalwerte Puls 60-100"
+  },
+  {
+   "datum": "2026-10-20",
+   "format": "aufloesung+eselsbruecke",
+   "thema": "Puls: Frequenz-Rhythmus-Qualität, Messdauer"
   }
  ]
 }
