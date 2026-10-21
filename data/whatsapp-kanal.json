@@ -1706,6 +1706,11 @@
    "datum": "2026-10-20",
    "format": "aufloesung+eselsbruecke",
    "thema": "Puls: Frequenz-Rhythmus-Qualität, Messdauer"
+  },
+  {
+   "datum": "2026-10-21",
+   "format": "minifall",
+   "thema": "Hypoglykämie bei Bewohnerin mit Insulin"
   }
  ]
 }
