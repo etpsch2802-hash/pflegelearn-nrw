@@ -1740,6 +1740,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
       <button onclick="adminTab('liste')" id="atab-liste" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-clipboard"/></svg> Token Liste</button>
       <button onclick="adminTab('stats')" id="atab-stats" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-chart"/></svg> Statistiken</button>
       <button onclick="adminTab('live')" id="atab-live" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit;cursor:pointer">🟢 Live<span id="atab-live-badge" style="display:none;margin-left:6px;background:#16a34a;color:#fff;border-radius:9px;padding:1px 6px;font-size:10px;font-weight:900">0</span></button>
+      <button onclick="adminTab('nutzung')" id="atab-nutzung" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit;cursor:pointer">📈 Nutzung</button>
       <button onclick="adminTab('meldungen')" id="atab-meldungen" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:12px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit;cursor:pointer">Meldungen<span id="atab-meldungen-badge" style="display:none;margin-left:6px;background:#dc2626;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:1px 6px;font-size:10px;font-weight:900">0</span></button>
       <button onclick="adminTab('nachricht')" id="atab-nachricht" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg> WhatsApp Vorlage</button>
       <button onclick="adminTab('nutzer')" id="atab-nutzer" style="border-radius:20px;border:1px solid rgba(var(--accent-rgb),.3);padding:6px 14px;font-size:11px;font-weight:600;background:rgba(var(--accent-rgb),.1);color:var(--accent);font-family:inherit"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Nutzer</button>
@@ -1748,6 +1749,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     </div>
 
     <!-- TAB: TOKEN GENERATOR -->
+    <div id="admin-nutzung" class="admin-tab-content" style="display:none"><div id="nutzung-box" style="padding:4px 0"></div></div>
     <div id="admin-live" class="admin-tab-content" style="display:none"><div id="live-users-box" style="padding:4px 0"><div style="color:var(--text3);font-size:13px">Lade …</div></div></div>
     <div id="admin-generator" class="admin-tab-content" style="display:block">
       <div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:18px;margin-bottom:12px">
@@ -3456,6 +3458,7 @@ function adminTab(tab) {
   if (tab === "nachricht") renderVorlagen();
   if (tab === "meldungen") { renderFeedbackListe("offen"); plAdminPushState(); }
   if (tab === "live") renderLiveUsers(true);
+  if (tab === "nutzung" && window.plNutzungAnzeigen) window.plNutzungAnzeigen();
 }
 
 function genToken() {
@@ -25786,5 +25789,73 @@ window.plLzpHinweis=function(kicker,titel,test){
 })();
 </script>
 
+<script>
+/* ── NUTZUNGSZÄHLER (2026-10-21) ─────────────────────────────────────────────
+   Ein Ping pro App-Start an POST /api/presence {action:'ping'} – ohne Cookie,
+   ohne Geräte-ID im Speicher, ohne personenbezogene Daten. Der Server bildet eine
+   Tageskennung aus IP+Browser (HMAC, täglich neuer Schlüssel), speichert keine IP.
+   Modus: app = Android-App (Play Store/TWA), installiert = PWA vom Startbildschirm,
+   browser = normaler Browser. Admin-Ansicht: Tab „Nutzung“. Berührt NICHT: Login, Sync, Paywall. */
+(function(){
+  function modus(){
+    try{ if((document.referrer||'').indexOf('android-app://com.pflegelearn.nrw')===0 || localStorage.getItem('pl_is_twa')==='1') return 'app'; }catch(e){}
+    try{ if((window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true) return 'installiert'; }catch(e){}
+    return 'browser';
+  }
+  function angemeldet(){ try{ return typeof currentUser!=='undefined' && !!currentUser; }catch(e){ return false; } }
+  var gesendet={};
+  function ping(){
+    var a=angemeldet(); var k=a?'a':'g'; if(gesendet[k]) return; gesendet[k]=1;
+    try{ fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping',modus:modus(),angemeldet:a}),keepalive:true}).catch(function(){}); }catch(e){}
+  }
+  setTimeout(ping,3000);
+  var w=setInterval(function(){ if(angemeldet()){ ping(); clearInterval(w); } },5000);
+  setTimeout(function(){ clearInterval(w); },600000);
+
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function zahl(v){ return (v==null?'–':String(v).replace('.',',')); }
+  window.plNutzungAnzeigen=function(){
+    var box=document.getElementById('nutzung-box'); if(!box) return;
+    if(!window._adminSecret){ try{ window._adminSecret=(prompt('Admin-Passwort eingeben:')||'').trim(); }catch(e){} }
+    if(!window._adminSecret){ box.innerHTML='<div style="color:var(--text3);font-size:13px">Kein Admin-Passwort eingegeben.</div>'; return; }
+    box.innerHTML='<div style="color:var(--text3);font-size:13px">Lade Nutzungszahlen …</div>';
+    fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json','x-admin-secret':window._adminSecret},body:JSON.stringify({action:'nutzung'})}).then(function(r){return r.json();}).then(function(d){
+      if(d&&d.error==='unauthorized'){ window._adminSecret=null; box.innerHTML='<div style="color:#f87171;font-size:13px">Passwort stimmt nicht. Tab erneut öffnen.</div>'; return; }
+      if(!d||!d.ok){ box.innerHTML='<div style="color:#facc15;font-size:13px;line-height:1.5">Noch keine Nutzungsdaten'+(d&&d.error==='tabelle'?' – die Tabelle app_nutzung fehlt (SQL ausführen).':'.')+'</div>'; return; }
+      function karte(l,v,sub){ return '<div style="background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">'+esc(zahl(v))+'</div><div style="font-size:11px;color:var(--text2);margin-top:2px">'+esc(l)+'</div>'+(sub?'<div style="font-size:10px;color:var(--text3);margin-top:2px">'+esc(sub)+'</div>':'')+'</div>'; }
+      var h=d.heute||{}, g=d.gestern||{};
+      var max=1; (d.tage||[]).slice(-14).forEach(function(t){ if(t.gesamt>max) max=t.gesamt; });
+      var balken=(d.tage||[]).slice(-14).map(function(t){
+        var hoch=function(v){ return Math.round(v/max*90); };
+        return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="font-size:9px;color:var(--text3)">'+t.gesamt+'</div>'
+          +'<div style="width:100%;height:90px;display:flex;flex-direction:column;justify-content:flex-end;border-radius:4px;overflow:hidden">'
+          +'<div title="Browser" style="height:'+hoch(t.browser)+'px;background:#64748b"></div>'
+          +'<div title="Installiert" style="height:'+hoch(t.installiert)+'px;background:#a78bfa"></div>'
+          +'<div title="Android-App" style="height:'+hoch(t.app)+'px;background:var(--accent)"></div></div>'
+          +'<div style="font-size:9px;color:var(--text3)">'+esc(t.tag.slice(8,10)+'.'+t.tag.slice(5,7))+'</div></div>';
+      }).join('');
+      var leg=function(f,t){ return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="width:9px;height:9px;border-radius:2px;background:'+f+'"></span>'+t+'</span>'; };
+      box.innerHTML='<div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:16px">'
+        +'<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">📈 Wer nutzt PLAN wirklich?</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+        +karte('Geräte heute',h.gesamt,'gestern '+(g.gesamt==null?'–':g.gesamt))
+        +karte('Ø pro Tag (7 T.)',d.schnitt7.gesamt)
+        +karte('Ø pro Tag (30 T.)',d.schnitt30.gesamt)+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">Heute nach Art</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+        +karte('Android-App',h.app,'Ø 7 T.: '+zahl(d.schnitt7.app))
+        +karte('Installiert (Startbildschirm)',h.installiert,'Ø 7 T.: '+zahl(d.schnitt7.installiert))
+        +karte('Browser',h.browser,'Ø 7 T.: '+zahl(d.schnitt7.browser))+'</div>'
+        +'<div style="font-size:12px;color:var(--text2);margin-top:8px">Davon angemeldet heute: <b>'+esc(h.angemeldet||0)+'</b></div>'
+        +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">Letzte 14 Tage</div>'
+        +'<div style="display:flex;gap:3px;align-items:flex-end">'+balken+'</div>'
+        +'<div style="font-size:10.5px;color:var(--text3);margin-top:6px">'+leg('var(--accent)','Android-App')+leg('#a78bfa','Installiert')+leg('#64748b','Browser')+'</div>'
+        +'<div style="font-size:10.5px;color:var(--text3);line-height:1.5;margin-top:12px">Gezählt wird jedes Gerät, das die App an einem Tag öffnet – einmal pro Tag, ohne Cookie und ohne Namen. Dieselbe Person an zwei Tagen zählt an beiden Tagen. Wie oft die Android-App insgesamt installiert wurde, zeigt die Google Play Console (Statistiken → Installationen).</div>'
+        +'<button onclick="window.plNutzungAnzeigen()" style="margin-top:12px;width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:9px;color:var(--text2);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">↻ Aktualisieren</button>'
+        +'</div>';
+    }).catch(function(){ box.innerHTML='<div style="color:#f87171;font-size:13px">Fehler beim Laden.</div>'; });
+  };
+})();
+</script>
 </body>
 </html>
