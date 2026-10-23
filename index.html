@@ -2420,21 +2420,44 @@ function maybeShowOnboarding() {
     const ov = document.createElement('div');
     ov.id = 'onboarding-overlay';
     ov.style.cssText = 'position:fixed;inset:0;z-index:1200;background:rgba(3,9,18,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:24px;';
-    ov.innerHTML = ''
-      + '<div style="max-width:360px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
-      +   '<div style="font-size:34px;text-align:center;margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hand"/></svg></div>'
-      +   '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;text-align:center;margin-bottom:16px">Willkommen bei PLAN</div>'
+    document.body.appendChild(ov);
+    plOnboardingInhalt();
+  } catch (e) {}
+}
+/* 23.10.2026 (Wunsch P. Schenkelberger): Erst die Rolle klären – den Einstufungstest bekommen nur Azubis.
+   Examinierte und Lehrkräfte bekommen stattdessen einen passenden Einstieg. Rolle = pl_persona (setPersona). */
+function plOnboardingInhalt() {
+  const ov = document.getElementById('onboarding-overlay'); if (!ov) return;
+  let rolle = ''; try { rolle = localStorage.getItem('pl_persona') || ''; } catch (e) {}
+  const KOPF = '<div style="max-width:360px;width:100%;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
+    + '<div style="font-size:34px;text-align:center;margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-hand"/></svg></div>'
+    + '<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;text-align:center;margin-bottom:16px">Willkommen bei PLAN</div>';
+  const KNOPF = 'width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;padding:14px;color:#04121f;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer';
+  const LEISE = 'width:100%;background:none;border:none;color:#7fa6c2;font-size:13px;font-family:inherit;cursor:pointer;margin-top:10px';
+  if (rolle !== 'azubi' && rolle !== 'examiniert' && rolle !== 'lehrkraft') {
+    const w = (id, ico, t, sub) => '<button onclick="try{setPersona(\'' + id + '\')}catch(e){try{localStorage.setItem(\'pl_persona\',\'' + id + '\')}catch(_){}} plOnboardingInhalt()" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;font-family:inherit;margin-bottom:9px"><span style="font-size:24px">' + ico + '</span><span><span style="display:block;font-size:15px;font-weight:800;color:#e0f2fe">' + t + '</span><span style="display:block;font-size:12px;color:#9fb8cc;margin-top:2px">' + sub + '</span></span></button>';
+    ov.innerHTML = KOPF
+      + '<div style="font-size:14px;color:#cbd9e6;text-align:center;line-height:1.5;margin-bottom:14px">Damit PLAN zu dir passt: <b>Wer bist du?</b></div>'
+      + w('azubi', '🎓', 'Auszubildende/r', 'Examensvorbereitung, Quiz, KI-Prüfer')
+      + w('examiniert', '🩺', 'Examiniert', 'Nachschlagen, Auffrischen, Fachweiterbildung')
+      + w('lehrkraft', '📋', 'Lehrkraft / Praxisanleitung', 'Kurse, Aufgaben, Lernstand, Live-Quiz')
+      + '<div style="font-size:11.5px;color:#7fa6c2;text-align:center;margin-top:6px">Änderbar jederzeit im Profil.</div></div>';
+    return;
+  }
+  let text, knopf, aktion;
+  if (rolle === 'azubi') { text = 'Lass uns kurz herausfinden, wo du stehst \u2013 dann bekommst du gezielte Empfehlungen.'; knopf = 'Wissensstand testen (3 Min.)'; aktion = 'dismissOnboarding(); try{ startEinstufung(); }catch(e){}'; }
+  else if (rolle === 'examiniert') { text = 'Kein Einstufungstest n\u00f6tig \u2013 starte direkt mit Nachschlagen, Medikamenten oder deiner Fachweiterbildung.'; knopf = 'Los geht\u2019s'; aktion = 'dismissOnboarding()'; }
+  else { text = 'Kein Einstufungstest n\u00f6tig \u2013 leg als N\u00e4chstes deinen ersten Kurs an oder schau dir die Fallbeispiele an.'; knopf = 'Los geht\u2019s'; aktion = 'dismissOnboarding()'; }
+  ov.innerHTML = KOPF
       +   '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">'
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px">⬅️</span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Mit der <b>Zurück-Geste</b> deines Handys gehst du jederzeit einen Schritt zurück.</div></div>'
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-phone"/></svg></span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Unten ist die <b>Navigationsleiste</b>: Start, Fälle, Quiz, Suche und Menü.</div></div>'
       +     '<div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:20px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><div style="font-size:13px;color:#cbd9e6;line-height:1.5">Über die <b>Suche</b> findest du Krankheitsbilder, Quizfragen und Themen sofort.</div></div>'
       +   '</div>'
-      +   '<div style="font-size:12.5px;color:#9fb8cc;text-align:center;line-height:1.5;margin-bottom:14px">Lass uns kurz herausfinden, wo du stehst \u2013 dann bekommst du gezielte Empfehlungen.</div>'
-      + '<button onclick="dismissOnboarding(); try{ startEinstufung(); }catch(e){}" style="width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;padding:14px;color:#04121f;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer">In 3 Minuten: Wo stehe ich?</button>'
-      + '<button onclick="dismissOnboarding()" style="width:100%;background:none;border:none;color:#7fa6c2;font-size:13px;font-family:inherit;cursor:pointer;margin-top:10px">Erstmal umschauen</button>'
+      + '<div style="font-size:12.5px;color:#9fb8cc;text-align:center;line-height:1.5;margin-bottom:14px">' + text + '</div>'
+      + '<button onclick="' + aktion + '" style="' + KNOPF + '">' + knopf + '</button>'
+      + (rolle === 'azubi' ? '<button onclick="dismissOnboarding()" style="' + LEISE + '">Erstmal umschauen</button>' : '')
       + '</div>';
-    document.body.appendChild(ov);
-  } catch (e) {}
 }
 function dismissOnboarding() {
   try { localStorage.setItem('pl_onboarded', '1'); } catch (e) {}
@@ -16824,6 +16847,17 @@ function coachCardHTML() {
   var tage = coachExamTage();
 
   // 1) Erstnutzer – sanfter Einstieg
+  var _rolle = ''; try { _rolle = localStorage.getItem('pl_persona') || ''; } catch (e) {}
+  if (istNeu && _rolle === 'examiniert') {
+    return _coachCard({ tone: 'green', emoji: '🩺', kicker: 'Willkommen',
+      msg: 'Schön, dass du da bist' + an + '. Schnell nachschlagen, Medikamente auffrischen oder für die Fachweiterbildung lernen – alles an einem Ort.',
+      cta: 'Medikamente öffnen', onclick: "try{openMedChooser()}catch(e){navGo('wissenhub')}" });
+  }
+  if (istNeu && _rolle === 'lehrkraft') {
+    return _coachCard({ tone: 'green', emoji: '📋', kicker: 'Willkommen',
+      msg: 'Schön, dass du da bist' + an + '. Leg deinen ersten Kurs an – deine Azubis treten per Code bei, du verteilst Aufgaben und siehst den Lernstand.',
+      cta: 'Kurs anlegen', onclick: "try{openSchuleChooser()}catch(e){}" });
+  }
   if (istNeu) {
     return _coachCard({ tone: 'green', emoji: '👋', kicker: 'Willkommen',
       msg: 'Schön, dass du da bist' + an + '. Lass uns in <b>3 Minuten</b> herausfinden, wo du stehst – ein paar kurze Fragen, ganz entspannt.',
