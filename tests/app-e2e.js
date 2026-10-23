@@ -267,6 +267,8 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     if (!auto) { await page.evaluate(() => plTourStart(true)); await page.waitForTimeout(900); }
     const titel = [];
     for (let k = 0; k < 15; k++) {
+      // 23.10.2026: Tipp wird erst gezeigt, wenn das Ziel ruhig steht → auf Sichtbarkeit warten
+      for (let w = 0; w < 40; w++) { const ok = await page.evaluate(() => { const x = document.getElementById('pl-tour-tip'); return !x || x.style.opacity !== '0'; }); if (ok) break; await page.waitForTimeout(100); }
       const t = await page.evaluate(() => { const x = document.getElementById('pl-tour-tip'); return x ? x.innerText : null; });
       if (!t) break;
       titel.push(t.split('\n')[1] || '');

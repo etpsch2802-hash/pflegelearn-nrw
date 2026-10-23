@@ -23405,7 +23405,7 @@ window.renderWebBesucher=function(force){
     if((s.oeffneMenu||s.brauchtMenu)&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} warte=Math.max(warte,260); }
     // 23.10.2026 (Meldung Xiaomi): Auf langsamen Geräten war der Bildschirmwechsel nach 420 ms noch nicht fertig →
     // Ring zeigte auf die falsche Stelle. Jetzt warten, bis Zielbildschirm aktiv und Ziel ruhig steht, dann ggf. ins Bild scrollen.
-    if(node.ring){ node.ring.style.opacity='0'; node.tip.style.opacity='0'; }
+    if(node.ring){ node.ring.style.opacity='0'; node.tip.style.opacity='0'; node.tip.style.pointerEvents='none'; }
     var nr=i, start=Date.now(), letzt=null;
     (function pruefe(){
       if(!running||nr!==i) return;
@@ -23414,10 +23414,10 @@ window.renderWebBesucher=function(force){
       if(ziel && screenOk && sichtbar(ziel)){
         var r=ziel.getBoundingClientRect(), k=Math.round(r.top)+'|'+Math.round(r.left)+'|'+Math.round(r.width);
         if(r.top<60 || r.bottom>window.innerHeight-60){ try{ ziel.scrollIntoView({block:'center'}); }catch(e){} letzt=null; }
-        else if(k===letzt){ zeichne(); if(node.ring){ node.ring.style.opacity='1'; node.tip.style.opacity='1'; } return; }
+        else if(k===letzt){ zeichne(); if(node.ring){ node.ring.style.opacity='1'; node.tip.style.opacity='1'; node.tip.style.pointerEvents='auto'; } return; }
         else letzt=k;
       }
-      if(Date.now()-start>3500){ zeichne(); if(node.ring){ node.ring.style.opacity='1'; node.tip.style.opacity='1'; } return; }
+      if(Date.now()-start>3500){ zeichne(); if(node.ring){ node.ring.style.opacity='1'; node.tip.style.opacity='1'; node.tip.style.pointerEvents='auto'; } return; }
       setTimeout(pruefe, 120);
     })();
   }
