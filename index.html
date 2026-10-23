@@ -2623,7 +2623,23 @@ function appendMsg(role, text, accentColor) {
   const msgs = document.getElementById("messages");
   const div = document.createElement("div");
   div.className = `msg ${role}`;
-  const formatted = text.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
+  let _t = text;
+  // Markdown-Tabellen (| a | b |) als echte Tabelle zeigen (23.10.2026)
+  if (role === 'ai' && /\n\s*\|.*\|\s*\n\s*\|[\s:|-]+\|/.test('\n' + _t)) {
+    try {
+      _t = _t.replace(/(^|\n)((?:[ \t]*\|.*\|[ \t]*(?:\n|$))+)/g, function(m, vor, blk){
+        var zeilen = blk.trim().split('\n').map(function(z){ return z.trim().replace(/^\||\|$/g,'').split('|').map(function(c){ return c.trim(); }); });
+        var h = '<div style="overflow-x:auto;margin:6px 0"><table style="border-collapse:collapse;font-size:12px;min-width:100%">';
+        zeilen.forEach(function(z, i){
+          if (z.every(function(c){ return /^:?-{2,}:?$/.test(c); })) return;
+          var tag = i === 0 ? 'th' : 'td';
+          h += '<tr>' + z.map(function(c){ return '<' + tag + ' style="border:1px solid rgba(255,255,255,.18);padding:5px 7px;text-align:left;vertical-align:top' + (i===0?';background:rgba(var(--accent-rgb),.14)':'') + '">' + c + '</' + tag + '>'; }).join('') + '</tr>';
+        });
+        return vor + h + '</table></div>';
+      });
+    } catch(e) { _t = text; }
+  }
+  const formatted = _t.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>").replace(/<\/table><\/div><br>/g,'</table></div>');
   const aiLabel = role === "ai" ? `<div class="ai-label" style="color:${accentColor||"var(--accent)"}">🤖 PFLEGELEARN NRW</div>` : "";
   div.innerHTML = `<div class="bubble ${role}">${aiLabel}<span>${formatted}</span></div>`;
   msgs.appendChild(div);
@@ -3144,6 +3160,18 @@ async function sendMsg(text) {
       isLoading = false;
       document.getElementById('send-btn').disabled = false;
       return;
+    }
+    // Feste, fachlich geprüfte Tabellen statt KI-Zahlen (z. B. Opioid-Umrechnung, 23.10.2026)
+    if (!examMode && typeof window.plFesteAntwort === 'function') {
+      const fest = window.plFesteAntwort(txt);
+      if (fest) {
+        removeTyping();
+        chatHistory.push({ role:'assistant', content: fest.text });
+        appendMsg('ai', fest.html, a?.color);
+        isLoading = false;
+        document.getElementById('send-btn').disabled = false;
+        return;
+      }
     }
     let activeSys = SYS;
     if (examMode === 'muendlich') activeSys = SYS_EXAM_MUENDLICH;
@@ -25972,6 +26000,68 @@ window.plLzpHinweis=function(kicker,titel,test){
     if(typeof sp==='function') window.setPersona=function(){ var r=sp.apply(this,arguments); try{ anwenden(); }catch(e){} return r; };
   }catch(e){}
   try{ if(document.readyState!=='loading') anwenden(); else document.addEventListener('DOMContentLoaded',anwenden); }catch(e){}
+})();
+</script>
+
+<script>
+/* ── FESTE KI-ANTWORT: OPIOID-UMRECHNUNGSTABELLE (23.10.2026, Wunsch P. Schenkelberger) ──
+   Fragt jemand im KI-Chat nach Opioid-/Opiat-Umrechnung, Äquivalenzdosen oder Opioidrotation,
+   zeigt PLAN eine FESTE Tabelle statt KI-generierter Zahlen (Sprachmodelle rechnen hier
+   unzuverlässig). Werte = übliche Orientierungswerte (orale Morphin-Äquivalenz), fachliche
+   Endkontrolle durch P. Schenkelberger. Schalter PL_OPIOID_PUBLIC: false = nur Admin.
+   Berührt NICHT api/chat.js. */
+var PL_OPIOID_PUBLIC = false;
+(function(){
+  function darf(){ if(PL_OPIOID_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  var ZEILEN=[
+    ['Morphin','oral','30 mg','1'],
+    ['Morphin','s.c.','15 mg','2'],
+    ['Morphin','i.v.','10 mg','3'],
+    ['Tramadol','oral','300 mg','0,1'],
+    ['Tilidin/Naloxon','oral','300 mg','0,1'],
+    ['Tapentadol','oral','75 mg','0,4'],
+    ['Oxycodon','oral','15 mg','2'],
+    ['Hydromorphon','oral','4 mg','7,5'],
+    ['Piritramid','i.v.','15 mg','2'],
+    ['Fentanyl','transdermal','12 µg/h','–'],
+    ['Buprenorphin','transdermal','ca. 17,5 µg/h','–']
+  ];
+  var REGELN=[
+    'Bei Wechsel auf ein anderes Opioid (Rotation) die errechnete Dosis um <b>25–50 % reduzieren</b> (unvollständige Kreuztoleranz).',
+    'Bedarfsmedikation: ca. <b>1/6 bis 1/10 der Tagesdosis</b> als schnell wirksames Opioid.',
+    'Pflaster: Wirkbeginn nach 12–24 h, nach Entfernen wirkt es noch bis zu 24 h nach – Übergang ärztlich planen.',
+    'Fentanyl-Pflaster: 25 µg/h ≈ 60 mg Morphin oral/Tag. Buprenorphin-Pflaster: 35 µg/h ≈ 60–80 mg Morphin oral/Tag.',
+    'Piritramid i.v.: 15 mg ≈ 10 mg Morphin i.v.',
+    'Levomethadon/Methadon nicht nach Tabelle umrechnen – nur durch Erfahrene.',
+    'Alter, Nieren-/Leberinsuffizienz und Atemdepression beachten; nach Umstellung engmaschig Schmerz (NRS), Vigilanz und Atmung beobachten.'
+  ];
+  function html(){
+    var td='border:1px solid rgba(255,255,255,.18);padding:5px 7px;text-align:left;vertical-align:top';
+    var t='<b>💊 Opioid-Umrechnung – Orientierungstabelle</b><br><span style="font-size:11.5px;color:#a9cbe0">Gleich stark wie <b>30 mg Morphin oral pro Tag</b> (24 h)</span>'
+      +'<div style="overflow-x:auto;margin:8px 0"><table style="border-collapse:collapse;font-size:11.5px;width:100%"><tr>'
+      +['Wirkstoff','Weg','pro Tag','Faktor*'].map(function(h){ return '<th style="'+td+';background:rgba(var(--accent-rgb),.14)">'+h+'</th>'; }).join('')+'</tr>'
+      +ZEILEN.map(function(z){ return '<tr>'+z.map(function(c){ return '<td style="'+td+'">'+c+'</td>'; }).join('')+'</tr>'; }).join('')
+      +'</table></div><span style="font-size:11px;color:#a9cbe0">*Faktor = wie viel stärker als Morphin oral. Beispiel: 60 mg Morphin oral/Tag ≈ 30 mg Oxycodon oral/Tag (vor Reduktion).</span>'
+      +'<br><br><b>Merke</b><br>'+REGELN.map(function(r){ return '• '+r; }).join('<br>')
+      +'<div style="margin-top:9px;padding:8px 10px;border-radius:9px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);font-size:11.5px;color:#fecaca">⚠️ Lern- und Orientierungshilfe. Umstellung und Dosis nur nach ärztlicher Anordnung und hausinternem Standard – kein Rat für reale Patienten.</div>';
+    return t;
+  }
+  function text(){
+    return 'Opioid-Umrechnung (Orientierung, gleich stark wie 30 mg Morphin oral/24 h): '
+      + ZEILEN.map(function(z){ return z[0]+' '+z[1]+' '+z[2]; }).join('; ')
+      + '. Rotation: Dosis um 25–50 % reduzieren. Bedarf 1/6–1/10 der Tagesdosis. Nur nach ärztlicher Anordnung.';
+  }
+  window.plFesteAntwort=function(frage){
+    try{
+      if(!darf()) return null;
+      var f=String(frage||'').toLowerCase();
+      var stoff=/opioid|opiat|morphin|fentanyl|oxycodon|hydromorphon|tapentadol|tramadol|tilidin|buprenorphin|piritramid/.test(f);
+      var umr=/umrechn|äquival|aequival|äquianalg|aequianalg|rotation|umstell|umsetz|tabelle|entspricht|wie viel .* (sind|entspricht)|faktor/.test(f);
+      if(!(stoff&&umr)) return null;
+      try{ if(typeof gtag==='function') gtag('event','ki_feste_antwort',{thema:'opioid'}); }catch(e){}
+      return { html: html(), text: text() };
+    }catch(e){ return null; }
+  };
 })();
 </script>
 </body>
