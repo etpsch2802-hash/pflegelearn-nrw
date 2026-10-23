@@ -26064,5 +26064,125 @@ var PL_OPIOID_PUBLIC = false;
   };
 })();
 </script>
+
+<script>
+/* ── DOSISRECHNER MIT EIGENEN WERTEN (23.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ──
+   Im Medikamenten-Trainer: Knopf „Rechner mit eigenen Werten“. Zwei Rechner:
+   (1) Perfusor: Gewicht + Wirkstoff (mg in ml) + Dosis (µg/kg/min, µg/kg/h, mg/kg/h, mg/h, µg/min) → Laufrate ml/h,
+       und umgekehrt Laufrate → Dosis. (2) Einzeldosis nach Gewicht: mg/kg oder µg/kg → Gesamtdosis, ml aufziehen.
+   Immer mit Rechenweg. Reine Arithmetik, keine Dosisempfehlung. Wrappt renderMedTrainer additiv.
+   Schalter PL_RECHNER_PUBLIC: false = nur Admin. */
+var PL_RECHNER_PUBLIC = false;
+(function(){
+  function darf(){ if(PL_RECHNER_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function nf(x){ if(!isFinite(x)) return '–'; var r=Math.round(x*100)/100; if(Math.abs(x)<1) r=Math.round(x*1000)/1000; return (''+r).replace('.',','); }
+  function zahl(id){ var e=document.getElementById(id); if(!e) return NaN; var v=String(e.value||'').trim().replace(',','.'); return v===''?NaN:parseFloat(v); }
+  var IN='width:100%;box-sizing:border-box;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.30);border-radius:10px;padding:10px 11px;color:#e6eef7;font-size:15px;font-family:inherit';
+  var LB='display:block;font-size:11.5px;color:#9fb8cc;font-weight:700;margin:0 0 4px';
+  var CARD='background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:16px;padding:15px;margin-bottom:12px';
+  function feld(id,label,ph,einheit){ return '<label style="flex:1;min-width:0"><span style="'+LB+'">'+label+(einheit?' <span style="font-weight:500">('+einheit+')</span>':'')+'</span><input id="'+id+'" inputmode="decimal" autocomplete="off" placeholder="'+ph+'" style="'+IN+'"></label>'; }
+  // Faktoren: Dosis-Einheit → µg/min (gewichtsbezogen: × kg)
+  var EINH={ 'ug_kg_min':{t:'µg/kg/min',kg:true,f:1}, 'ug_kg_h':{t:'µg/kg/h',kg:true,f:1/60}, 'mg_kg_h':{t:'mg/kg/h',kg:true,f:1000/60}, 'mg_h':{t:'mg/h',kg:false,f:1000/60}, 'ug_min':{t:'µg/min',kg:false,f:1} };
+  function html(){
+    var opts=Object.keys(EINH).map(function(k){ return '<option value="'+k+'">'+EINH[k].t+'</option>'; }).join('');
+    return '<div style="'+CARD+'">'
+      +'<div style="font-size:14.5px;font-weight:800;color:#e6eef7;margin-bottom:3px">💉 Perfusor: Dosis → Laufrate</div>'
+      +'<div style="font-size:11.5px;color:#9fb8cc;margin-bottom:11px">z. B. Noradrenalin 5 mg in 50 ml, 0,1 µg/kg/min</div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:9px">'+feld('dr-kg','Gewicht','70','kg')+feld('dr-mg','Wirkstoff','5','mg')+feld('dr-ml','in','50','ml')+'</div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:9px">'+feld('dr-dosis','Dosis','0,1','')
+        +'<label style="flex:1;min-width:0"><span style="'+LB+'">Einheit</span><select id="dr-einh" style="'+IN+';padding:10px 6px">'+opts+'</select></label></div>'
+      +'<div id="dr-erg1"></div>'
+      +'<div style="border-top:1px dashed rgba(255,255,255,.15);margin:12px 0 10px"></div>'
+      +'<div style="font-size:12.5px;font-weight:800;color:#c3d4e4;margin-bottom:7px">Umgekehrt: Laufrate → Dosis</div>'
+      +'<div style="display:flex;gap:8px">'+feld('dr-rate','Laufrate','4,2','ml/h')+'<span style="flex:1"></span></div>'
+      +'<div id="dr-erg2"></div>'
+      +'</div>'
+      +'<div style="'+CARD+'">'
+      +'<div style="font-size:14.5px;font-weight:800;color:#e6eef7;margin-bottom:3px">⚖️ Einzeldosis nach Gewicht</div>'
+      +'<div style="font-size:11.5px;color:#9fb8cc;margin-bottom:11px">z. B. 1 µg/kg Fentanyl, Ampulle 0,5 mg in 10 ml</div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:9px">'+feld('ed-kg','Gewicht','70','kg')+feld('ed-dosis','Dosis','1','')
+        +'<label style="flex:1;min-width:0"><span style="'+LB+'">pro kg</span><select id="ed-einh" style="'+IN+';padding:10px 6px"><option value="ug">µg/kg</option><option value="mg">mg/kg</option></select></label></div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:9px">'+feld('ed-mg','Ampulle (optional)','0,5','mg')+feld('ed-ml','in','10','ml')+'</div>'
+      +'<div id="ed-erg"></div>'
+      +'</div>'
+      +'<div style="font-size:10.5px;color:#fca5a5;line-height:1.5;text-align:center;margin:4px 6px 0">⚠️ Rechenhilfe – keine Dosisempfehlung. Es gelten ärztliche Anordnung, Fachinformation und Hausstandard. Ergebnis immer im Vier-Augen-Prinzip prüfen.</div>'
+      +'<button onclick="renderMedTrainer()" style="width:100%;margin-top:12px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.17);border-radius:11px;padding:11px;color:#e2e8f0;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer">← Zurück zu den Übungsaufgaben</button>';
+  }
+  function box(zeilen,haupt,warn){
+    return '<div style="margin-top:11px;background:rgba(var(--accent-rgb),.08);border-radius:11px;padding:11px 12px">'
+      +(haupt?'<div style="font-size:19px;font-weight:900;color:var(--accent);margin-bottom:6px">'+haupt+'</div>':'')
+      +zeilen.map(function(z,i){ return '<div style="font-size:12px;color:#c3d4e4;line-height:1.5"><span style="color:var(--accent);font-weight:800">'+(i+1)+'.</span> '+z+'</div>'; }).join('')
+      +(warn?'<div style="margin-top:6px;font-size:11.5px;color:#fbbf24">'+warn+'</div>':'')
+      +'</div>';
+  }
+  function plaus(kg){ return (isFinite(kg)&&(kg<0.3||kg>300))?'Gewicht bitte prüfen.':''; }
+  function rechnen(){
+    try{
+      var kg=zahl('dr-kg'), mg=zahl('dr-mg'), ml=zahl('dr-ml'), d=zahl('dr-dosis'), r=zahl('dr-rate');
+      var ek=(document.getElementById('dr-einh')||{}).value||'ug_kg_min', E=EINH[ek];
+      var e1=document.getElementById('dr-erg1'), e2=document.getElementById('dr-erg2');
+      var konz=(mg>0&&ml>0)?mg*1000/ml:NaN;   // µg/ml
+      var kgOk=!E.kg||kg>0;
+      if(e1){
+        if(isFinite(konz)&&isFinite(d)&&d>=0&&kgOk){
+          var ugMin=d*E.f*(E.kg?kg:1), ugH=ugMin*60, rate=ugH/konz;
+          e1.innerHTML=box([
+            'Konzentration = '+nf(mg)+' mg ÷ '+nf(ml)+' ml = '+nf(mg/ml)+' mg/ml = '+nf(konz)+' µg/ml',
+            (E.kg?nf(d)+' '+E.t+' × '+nf(kg)+' kg':nf(d)+' '+E.t)+' = '+nf(ugMin)+' µg/min = '+nf(ugH)+' µg/h',
+            'Laufrate = '+nf(ugH)+' µg/h ÷ '+nf(konz)+' µg/ml = '+nf(rate)+' ml/h'
+          ],'Laufrate: '+nf(rate)+' ml/h', E.kg?plaus(kg):'');
+        } else e1.innerHTML='<div style="margin-top:9px;font-size:11.5px;color:#6b8ba3">'+(E.kg?'Gewicht, ':'')+'Wirkstoff, Volumen und Dosis eintragen.</div>';
+      }
+      if(e2){
+        if(isFinite(konz)&&isFinite(r)&&r>=0&&kgOk){
+          var ugH2=r*konz, ugMin2=ugH2/60, dos=ugMin2/E.f/(E.kg?kg:1);
+          e2.innerHTML=box([
+            nf(r)+' ml/h × '+nf(konz)+' µg/ml = '+nf(ugH2)+' µg/h = '+nf(ugMin2)+' µg/min',
+            E.kg?nf(ugMin2)+' µg/min ÷ '+nf(kg)+' kg, umgerechnet in '+E.t+' = '+nf(dos)+' '+E.t:'umgerechnet in '+E.t+' = '+nf(dos)+' '+E.t
+          ],'Dosis: '+nf(dos)+' '+E.t,'');
+        } else e2.innerHTML='';
+      }
+      var kg2=zahl('ed-kg'), d2=zahl('ed-dosis'), am=zahl('ed-mg'), aml=zahl('ed-ml');
+      var eu=(document.getElementById('ed-einh')||{}).value||'ug', e3=document.getElementById('ed-erg');
+      if(e3){
+        if(kg2>0&&isFinite(d2)&&d2>=0){
+          var ges=d2*kg2, gesMg=eu==='ug'?ges/1000:ges, z=[nf(d2)+' '+(eu==='ug'?'µg':'mg')+'/kg × '+nf(kg2)+' kg = '+nf(ges)+' '+(eu==='ug'?'µg':'mg')+(eu==='ug'?' = '+nf(gesMg)+' mg':'')];
+          var haupt='Gesamtdosis: '+nf(ges)+' '+(eu==='ug'?'µg':'mg');
+          if(am>0&&aml>0){ var k=am/aml, vol=gesMg/k; z.push('Konzentration = '+nf(am)+' mg ÷ '+nf(aml)+' ml = '+nf(k)+' mg/ml'); z.push('Aufziehen = '+nf(gesMg)+' mg ÷ '+nf(k)+' mg/ml = '+nf(vol)+' ml'); haupt+=' → '+nf(vol)+' ml'; }
+          e3.innerHTML=box(z,haupt,plaus(kg2));
+        } else e3.innerHTML='<div style="margin-top:9px;font-size:11.5px;color:#6b8ba3">Gewicht und Dosis pro kg eintragen.</div>';
+      }
+    }catch(e){}
+  }
+  window.plDosisRechner=function(){
+    var card=document.getElementById('medt-card'); if(!card) return;
+    var st=document.getElementById('medt-stats'); if(st) st.style.display='none';
+    var kn=document.getElementById('medt-rechner-btn'); if(kn) kn.style.display='none';
+    card.innerHTML=html();
+    ['dr-kg','dr-mg','dr-ml','dr-dosis','dr-einh','dr-rate','ed-kg','ed-dosis','ed-einh','ed-mg','ed-ml'].forEach(function(id){ var e=document.getElementById(id); if(e){ e.oninput=rechnen; e.onchange=rechnen; } });
+    rechnen();
+    try{ if(typeof gtag==='function') gtag('event','dosisrechner_open'); }catch(e){}
+  };
+  function knopf(){
+      try{
+        if(darf()){
+          var st=document.getElementById('medt-stats');
+          if(st && !document.getElementById('medt-rechner-btn')){
+            var b=document.createElement('button'); b.id='medt-rechner-btn'; b.type='button'; b.onclick=window.plDosisRechner;
+            b.style.cssText='width:100%;margin-bottom:12px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.16),rgba(var(--accent-rgb),.05));border:1px solid rgba(var(--accent-rgb),.35);border-radius:13px;padding:12px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;font-family:inherit;text-align:left';
+            b.innerHTML='<span style="font-size:22px">🧮</span><span style="flex:1"><span style="display:block;font-size:13.5px;font-weight:800;color:#e2e8f0">Rechner mit eigenen Werten</span><span style="display:block;font-size:11.5px;color:#a3bcd0;margin-top:2px">µg/kg/min → ml/h, Dosis nach Gewicht, ml aufziehen</span></span><span style="color:var(--accent);font-size:18px">›</span>';
+            st.parentNode.insertBefore(b,st);
+          }
+        }
+      }catch(e){}
+  }
+  try{
+    var orig=window.renderMedTrainer;
+    if(typeof orig==='function') window.renderMedTrainer=function(){ var r=orig.apply(this,arguments); knopf(); return r; };
+    var os=window.showScreen;
+    if(typeof os==='function') window.showScreen=function(n){ var r=os.apply(this,arguments); if(n==='medtrainer') knopf(); return r; };
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
