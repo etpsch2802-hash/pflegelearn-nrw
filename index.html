@@ -23403,7 +23403,23 @@ window.renderWebBesucher=function(force){
     }
     if(!s.screen && menuOffen() && !s.brauchtMenu && !s.oeffneMenu){ try{ toggleNavMenu(); }catch(e){} }
     if((s.oeffneMenu||s.brauchtMenu)&&!menuOffen()){ try{ toggleNavMenu(); }catch(e){} warte=Math.max(warte,260); }
-    setTimeout(zeichne,warte);
+    // 23.10.2026 (Meldung Xiaomi): Auf langsamen Geräten war der Bildschirmwechsel nach 420 ms noch nicht fertig →
+    // Ring zeigte auf die falsche Stelle. Jetzt warten, bis Zielbildschirm aktiv und Ziel ruhig steht, dann ggf. ins Bild scrollen.
+    if(node.ring){ node.ring.style.opacity='0'; node.tip.style.opacity='0'; }
+    var nr=i, start=Date.now(), letzt=null;
+    (function pruefe(){
+      if(!running||nr!==i) return;
+      var ziel=el(s.id), akt=document.querySelector('.page.active');
+      var screenOk=!s.screen || (akt && akt.id==='screen-'+s.screen);
+      if(ziel && screenOk && sichtbar(ziel)){
+        var r=ziel.getBoundingClientRect(), k=Math.round(r.top)+'|'+Math.round(r.left)+'|'+Math.round(r.width);
+        if(r.top<60 || r.bottom>window.innerHeight-60){ try{ ziel.scrollIntoView({block:'center'}); }catch(e){} letzt=null; }
+        else if(k===letzt){ zeichne(); if(node.ring){ node.ring.style.opacity='1'; node.tip.style.opacity='1'; } return; }
+        else letzt=k;
+      }
+      if(Date.now()-start>3500){ zeichne(); if(node.ring){ node.ring.style.opacity='1'; node.tip.style.opacity='1'; } return; }
+      setTimeout(pruefe, 120);
+    })();
   }
   window.plTourStart=function(manuell){
     if(running) return;
@@ -23413,6 +23429,7 @@ window.renderWebBesucher=function(force){
     try{ if(menuOffen()&&typeof toggleNavMenu==='function') toggleNavMenu(); }catch(e){}
     node.back.onclick=function(){};
     window.addEventListener('resize',zeichne); window.addEventListener('scroll',zeichne,true);
+    var nach=setInterval(function(){ if(!running){ clearInterval(nach); return; } if(node.ring && node.ring.style.opacity!=='0') zeichne(); },700);
     track('tour_start',{manuell:manuell?1:0,rolle:persona()});
     naechster();
   };
