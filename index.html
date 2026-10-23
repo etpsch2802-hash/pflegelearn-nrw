@@ -26011,7 +26011,7 @@ window.plLzpHinweis=function(kicker,titel,test){
    unzuverlässig). Werte = übliche Orientierungswerte (orale Morphin-Äquivalenz), fachliche
    Endkontrolle durch P. Schenkelberger. Schalter PL_OPIOID_PUBLIC: false = nur Admin.
    Berührt NICHT api/chat.js. */
-var PL_OPIOID_PUBLIC = false;
+var PL_OPIOID_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026 (Werte geprüft)
 (function(){
   function darf(){ if(PL_OPIOID_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   var ZEILEN=[
