@@ -13706,11 +13706,12 @@ function renderSchwaechenRadar(){
   var host=document.getElementById('profil-radar'); if(!host) return;
   if(!currentUser){ host.innerHTML=''; return; }
   var pr=computePruefungsreife();
+  var _ex=false; try{ _ex=localStorage.getItem('pl_persona')==='examiniert'; }catch(e){}   // Examinierte: Wissensstand statt Prüfungsreife (23.10.2026)
   var head='<div style="display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,'+pr.col+'1a,'+pr.col+'08);border:1px solid '+pr.col+'3a;border-radius:16px;padding:14px 16px;margin-bottom:10px">'
     +'<div style="font-size:29px;font-weight:800;color:'+pr.col+';line-height:1">'+pr.score+'%</div>'
-    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800;color:#e2e8f0">Prüfungsreife: '+pr.label+'</div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800;color:#e2e8f0">'+(_ex?'Dein Wissensstand':'Prüfungsreife: '+pr.label)+'</div>'
     +'<div style="font-size:11px;color:#a3bcd0;margin-top:2px">'+pr.assessed+' von '+pr.total+' Themen mit Daten</div></div>'
-    +'<button onclick="showPruefungsreife()" style="background:rgba(255,255,255,.13);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:8px 11px;color:#7dd3fc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">Details ›</button></div>';
+    +(_ex?'</div>':'')+'<button onclick="showPruefungsreife()" style="background:rgba(255,255,255,.13);border:1px solid rgba(var(--accent-rgb),.3);border-radius:10px;padding:8px 11px;color:#7dd3fc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">Details ›</button></div>';
   var body;
   if(pr.assessed===0){
     body='<div style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:16px;text-align:center">'
@@ -13726,10 +13727,10 @@ function renderSchwaechenRadar(){
         +'<div style="font-size:12px;font-weight:800;color:'+bc+';width:34px;text-align:right">'+k.acc+'%</div>'
         +'<button onclick="startQuiz(\''+k.id+'\')" style="background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:9px;padding:6px 10px;color:#7dd3fc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">Üben ›</button></div>';
     }).join('');
-    body='<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;margin:2px 2px 4px;font-weight:700">Deine größten Lücken</div>'
+    body='<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;margin:2px 2px 4px;font-weight:700">'+(_ex?'Hier lohnt sich Auffrischen':'Deine größten Lücken')+'</div>'
       +'<div style="background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:2px 14px">'+rows+'</div>';
   }
-  host.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin:2px 2px 8px"><svg class="ic" viewBox="0 0 24 24" style="width:13px;height:13px;color:#8ab4d0"><use href="#i-target"/></svg><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;font-weight:700">Schwächen-Radar</span></div>'+head+body;
+  host.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin:2px 2px 8px"><svg class="ic" viewBox="0 0 24 24" style="width:13px;height:13px;color:#8ab4d0"><use href="#i-target"/></svg><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8ab4d0;font-weight:700">'+(_ex?'Wissens-Radar':'Schwächen-Radar')+'</span></div>'+(_ex?head.split('<button onclick="showPruefungsreife()"')[0]:head)+body;
 }
 
 function showPruefungsreife() {
@@ -26072,7 +26073,7 @@ var PL_OPIOID_PUBLIC = false;
        und umgekehrt Laufrate → Dosis. (2) Einzeldosis nach Gewicht: mg/kg oder µg/kg → Gesamtdosis, ml aufziehen.
    Immer mit Rechenweg. Reine Arithmetik, keine Dosisempfehlung. Wrappt renderMedTrainer additiv.
    Schalter PL_RECHNER_PUBLIC: false = nur Admin. */
-var PL_RECHNER_PUBLIC = false;
+var PL_RECHNER_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026
 (function(){
   function darf(){ if(PL_RECHNER_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function nf(x){ if(!isFinite(x)) return '–'; var r=Math.round(x*100)/100; if(Math.abs(x)<1) r=Math.round(x*1000)/1000; return (''+r).replace('.',','); }
