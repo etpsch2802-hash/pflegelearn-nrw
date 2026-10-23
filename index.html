@@ -2654,6 +2654,8 @@ function removeTyping() { const t = document.getElementById("typing"); if (t) t.
 
 // Auswahl: Chat oder Prüfung
 function openKIChooser() {
+  // Examinierte: keine Prüfungssimulation, stattdessen Praxis-Werkzeuge (23.10.2026)
+  var _kiEx = false; try { _kiEx = localStorage.getItem('pl_persona') === 'examiniert'; } catch(e) {}
   const ov = document.createElement('div');
   ov.id = 'ki-chooser';
   ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)";
@@ -2672,10 +2674,16 @@ function openKIChooser() {
         <button onclick="document.getElementById('ki-chooser').remove()" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:5px 9px;color:#b3c4d6;font-size:14px;cursor:pointer;font-family:inherit">✕</button>
       </div>
       ${opt('💬','KI-Chat','Jede Frage · sofort beantwortet',"startChat(null,'Hallo! Ich bin dein KI-Lernassistent für Pflege NRW 🩺 Stelle mir jede Frage zu Pflege, Medizintechnik oder Ausbildung!')",'#22d3ee')}
-      ${opt('🎓','Mündliche Prüfung','KI-Prüfer · Fragen · Note',"openExamPicker('muendlich')",'var(--accent)')}
-      ${opt('🗣️','Fachgespräch zum Fall','Reflexion einer Pflegesituation',"openExamPicker('fachgespraech')",'#2dd4bf')}
-      ${opt('✍️','Schriftliche Prüfung','Aufgabe · Punkte · Korrektur',"openExamPicker('schriftlich')",'#a78bfa')}
-      ${opt('📊','Prüfungs-Verlauf','Deine absolvierten Prüfungen','showExamHistory()','#b3c4d6')}
+      ${_kiEx ? (
+        opt('🗣️','Fallbesprechung','Pflegesituation mit der KI durchsprechen',"openExamPicker('fachgespraech')",'#2dd4bf')
+      + opt('💊','Medikamenten-Trainer','Dosis & Infusionen rechnen',"navGo('medtrainer')",'var(--accent)')
+      + opt('🚨','Notfall-Training ABCDE','Akutsituation Schritt für Schritt',"startABCDE()",'#f87171')
+      ) : (
+        opt('🎓','Mündliche Prüfung','KI-Prüfer · Fragen · Note',"openExamPicker('muendlich')",'var(--accent)')
+      + opt('🗣️','Fachgespräch zum Fall','Reflexion einer Pflegesituation',"openExamPicker('fachgespraech')",'#2dd4bf')
+      + opt('✍️','Schriftliche Prüfung','Aufgabe · Punkte · Korrektur',"openExamPicker('schriftlich')",'#a78bfa')
+      + opt('📊','Prüfungs-Verlauf','Deine absolvierten Prüfungen','showExamHistory()','#b3c4d6')
+      )}
       <button onclick="document.getElementById('ki-chooser').remove()" style="width:100%;background:transparent;border:none;color:#9aabc0;font-size:12px;margin-top:6px;font-family:inherit;cursor:pointer">Abbrechen</button>
     </div>`;
   document.body.appendChild(ov);
@@ -17146,7 +17154,8 @@ function renderHomeStats() {
     var el=document.getElementById('home-neu'); if(!el) return;
     var _auf=geoeffnet();
     var _lk=false; try{ _lk=localStorage.getItem('pl_persona')==='lehrkraft'; }catch(e){}
-    var items=(PL_NEU||[]).filter(function(x){ return _auf.indexOf(x.id)<0 && !(_lk&&x.id==='lerntisch'); });   // Lehrkräfte: kein Lerntisch-Hinweis (17.10.2026)
+    var _ex=false; try{ _ex=localStorage.getItem('pl_persona')==='examiniert'; }catch(e){}
+    var items=(PL_NEU||[]).filter(function(x){ return _auf.indexOf(x.id)<0 && !(_lk&&x.id==='lerntisch') && !(_ex&&x.id==='examenkompass'); });   // Lehrkräfte: kein Lerntisch-Hinweis (17.10.2026); Examinierte: kein Examen-Kompass (23.10.2026)
     if(!items.length){ el.innerHTML=''; return; }
     var rows=items.map(function(it){
       var isBald = it.tag==='bald';
@@ -25906,6 +25915,63 @@ window.plLzpHinweis=function(kicker,titel,test){
         +'</div>';
     }).catch(function(){ box.innerHTML='<div style="color:#f87171;font-size:13px">Fehler beim Laden.</div>'; });
   };
+})();
+</script>
+
+<script>
+/* ── ÜBEN FÜR EXAMINIERTE (23.10.2026, Wunsch P. Schenkelberger) ─────────────
+   Examinierte brauchen keinen Prüfungssimulator, keine Fachklausuren, keine
+   Kompetenzbereiche nach §53 PflBG und keinen Examen-Kompass. Diese Kacheln im
+   Üben-Bereich werden für pl_persona='examiniert' durch Praxis-Werkzeuge ersetzt;
+   bei Rollenwechsel kommt das Original zurück. Menüpunkt „Prüfungssimulator“
+   wird ausgeblendet. Rein additiv, berührt NICHT die Prüfungslogik selbst. */
+(function(){
+  function istEx(){ try{ return localStorage.getItem('pl_persona')==='examiniert'; }catch(e){ return false; } }
+  var TAUSCH={
+    "openExamenIntro()":  ['startABCDE()','🚨','Notfall-Training','ABCDE-Szenario durchspielen'],
+    "openFachklausuren()":["navGo('ausbildungswege')",'🎓','Fachweiterbildung','Intensiv, Anästhesie, OP'],
+    "openCEHub()":        ["navGo('scores')",'📊','Scores & Skalen','GCS, NRS, Braden & Co.'],
+    "openExamPicker('fachgespraech')":["navGo('taschenkarten')",'🗂️','Taschenkarten','Wissen für die Kitteltasche']
+  };
+  function anwenden(){
+    try{
+      var ex=istEx();
+      var scr=document.getElementById('screen-ueben');
+      if(scr){
+        var btns=scr.querySelectorAll('button');
+        for(var i=0;i<btns.length;i++){
+          var b=btns[i], orig=b.getAttribute('data-ex-orig')||b.getAttribute('onclick')||'';
+          var t=TAUSCH[orig]; if(!t) continue;
+          if(ex && !b.getAttribute('data-ex-orig')){
+            b.setAttribute('data-ex-orig',orig); b.setAttribute('data-ex-html',b.innerHTML);
+            b.setAttribute('onclick',t[0]);
+            b.innerHTML='<span style="font-size:22px;line-height:1">'+t[1]+'</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">'+t[2]+'</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">'+t[3]+'</span>';
+          } else if(!ex && b.getAttribute('data-ex-orig')){
+            b.setAttribute('onclick',orig); b.innerHTML=b.getAttribute('data-ex-html')||b.innerHTML;
+            b.removeAttribute('data-ex-orig'); b.removeAttribute('data-ex-html');
+          }
+        }
+        var k=document.getElementById('pl-exk-tile'); if(k) k.style.display=ex?'none':'';
+      }
+      // Große KI-Kachel: nur den Text tauschen (Ziel openKIChooser bleibt, zeigt für Examinierte eigene Optionen)
+      var kb=scr?scr.querySelector('button[onclick="openKIChooser()"]'):null, sp=kb?kb.querySelectorAll('span span'):[];
+      if(sp.length>=2){
+        if(!kb.getAttribute('data-ex-t1')){ kb.setAttribute('data-ex-t1',sp[0].textContent); kb.setAttribute('data-ex-t2',sp[1].textContent); }
+        sp[0].textContent=ex?'KI-Assistent':kb.getAttribute('data-ex-t1');
+        sp[1].textContent=ex?'Fachfragen, Fallbesprechung, Notfall-Training':kb.getAttribute('data-ex-t2');
+      }
+      var nav=document.querySelectorAll('#nav-dropdown button[onclick="startExam()"]');
+      for(var j=0;j<nav.length;j++) nav[j].style.display=ex?'none':'';
+    }catch(e){}
+  }
+  window.plUebenRolle=anwenden;
+  try{
+    var o=window.showScreen;
+    if(typeof o==='function') window.showScreen=function(n){ var r=o.apply(this,arguments); try{ anwenden(); }catch(e){} return r; };
+    var sp=window.setPersona;
+    if(typeof sp==='function') window.setPersona=function(){ var r=sp.apply(this,arguments); try{ anwenden(); }catch(e){} return r; };
+  }catch(e){}
+  try{ if(document.readyState!=='loading') anwenden(); else document.addEventListener('DOMContentLoaded',anwenden); }catch(e){}
 })();
 </script>
 </body>
