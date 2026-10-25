@@ -714,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div id="pl-socialproof" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
 
   <!-- Login einklappbar (wiederkehrende Nutzer) -->
-  <button onclick="toggleLoginBox()" id="login-toggle" style="display:none;margin:18px auto 0;background:none;border:none;padding:6px;color:#7fa6c2;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon einen Zugangscode? Anmelden</button>
+  <button onclick="toggleLoginBox()" id="login-toggle" style="display:none;margin:18px auto 0;background:none;border:none;padding:6px;color:#7fa6c2;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon ein Passwort? Anmelden</button>
   <div id="login-collapse" style="display:none;width:100%;max-width:340px;margin:10px auto 0">
   <div class="pw-box" id="pl-mail-login">
     <div style="font-size:15px;font-weight:800;color:#eaf4ff;margin-bottom:3px">Mit E-Mail anmelden</div>
@@ -728,11 +728,11 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <button class="pw-btn" style="margin-top:12px" onclick="plEmailLogin()">Anmelden →</button>
     <div class="pw-error" id="ml-error" style="display:none"></div>
   </div>
-  <div style="text-align:center;font-size:12px;color:#9dbdd2;margin:16px 0 8px;font-weight:700">Oder mit Zugangscode (Schule, Tester)</div>
+  <div style="text-align:center;font-size:12px;color:#9dbdd2;margin:16px 0 8px;font-weight:700">Oder mit Passwort (Schule, Tester)</div>
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Dein Name</div>
     <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" data-i18n-ph="ph_name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()" aria-label="Vor- und Nachname">
-    <div class="pw-label"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Persönlicher Zugangscode</div>
+    <div class="pw-label"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Passwort</div>
     <input class="pw-input" id="pw-input" type="text" placeholder="Dein Passwort" data-i18n-ph="ph_pw" onkeydown="if(event.key==='Enter')checkPW()" aria-label="Dein Passwort">
     <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;font-size:12px;color:#b3c4d6;font-family:'DM Sans',sans-serif">
       <input type="checkbox" id="remember-me" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer">
@@ -743,9 +743,9 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   </div>
   <div style="margin-top:12px;background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.15);border-radius:10px;padding:11px;width:100%;max-width:320px;text-align:center">
     <div style="font-size:11px;color:#8ab4d0;line-height:1.7">
-      <span data-i18n="no_code"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Noch kein Zugangscode?</span><br>
+      <span data-i18n="no_code"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Noch kein Passwort?</span><br>
       <span style="color:var(--accent)">kontakt@plan-nrw.de</span><br>
-      Codes sind personalisiert & nicht übertragbar.
+      Passwörter sind persönlich & nicht übertragbar.
     </div>
   </div>
   </div>
@@ -3620,7 +3620,7 @@ ${t.preis ? "Preis: " + t.preis : ""}
 So geht's:
 1️⃣ App/Link öffnen
 2️⃣ Deinen Namen eingeben
-3️⃣ Zugangscode eingeben → Anmelden
+3️⃣ Passwort eingeben → Anmelden
 4️⃣ Los lernen! 📚
 
 ⚠️ Dieser Code ist NUR für dich persönlich.
@@ -3847,7 +3847,7 @@ Dein persönlicher Zugangscode für PLAN:
 So geht's:
 1️⃣ Link/Datei öffnen
 2️⃣ Deinen Namen eingeben  
-3️⃣ Zugangscode eingeben → Anmelden
+3️⃣ Passwort eingeben → Anmelden
 4️⃣ Los lernen! 
 
 ⚠️ Dieser Code ist NUR für dich persönlich.
@@ -8010,14 +8010,14 @@ async function checkPW() {
   const err = document.getElementById("pw-error");
 
   if (!tokenInput) {
-    showError("Bitte Zugangscode eingeben.");
+    showError("Bitte Passwort eingeben.");
     return;
   }
 
   const token = await plLookupToken(tokenInput);
 
   if (!token) {
-    showError("❌ Unbekannter Zugangscode. Bitte prüfen.");
+    showError("❌ Unbekanntes Passwort. Bitte prüfen.");
     return;
   }
   if (!token.aktiv) {
@@ -8037,7 +8037,7 @@ async function checkPW() {
     }
     try{ localStorage.removeItem('pl_trial_expired'); }catch(e){}
   } else if (token.ablauf !== "2099-12-31" && today > token.ablauf) {
-    showError("⏰ Zugangscode abgelaufen. Bitte erneuern.");
+    showError("⏰ Passwort abgelaufen. Bitte erneuern.");
     return;
   }
 
@@ -18661,7 +18661,7 @@ function plResumeRender(){
     var cta=document.getElementById('pw-hero-cta'); if(!cta || cta.getAttribute('data-resume')==='1') return;
     var vn=String(L.name).trim().split(/\s+/)[0].replace(/[<>&"']/g,'');
     cta.setAttribute('data-resume','1'); cta.removeAttribute('onclick'); cta.onclick=plResumeClick;
-    cta.innerHTML='Weiter lernen, '+vn+' →<br><span style="font-size:11px;font-weight:700;opacity:.85">'+(L.typ==='gratis'?'Ein Tipp – du bist sofort wieder drin':'Nur noch deinen Zugangscode eingeben')+'</span>';
+    cta.innerHTML='Weiter lernen, '+vn+' →<br><span style="font-size:11px;font-weight:700;opacity:.85">'+(L.typ==='gratis'?'Ein Tipp – du bist sofort wieder drin':'Nur noch dein Passwort eingeben')+'</span>';
     if(!document.getElementById('pl-resume-new')){
       cta.insertAdjacentHTML('afterend','<button id="pl-resume-new" onclick="plResumeForget()" style="background:none;border:none;color:#7fa6c2;font-size:12px;margin-top:10px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Nicht '+vn+'? Neu starten</button>');
     }
@@ -21019,7 +21019,7 @@ window.I18N = {
     btn_free: 'Gratis starten',
     btn_free_sub: 'eingeschränkte Version',
     btn_unlock: 'Direkt Vollzugriff freischalten',
-    no_code: '🔑 Noch kein Zugangscode?',
+    no_code: '🔑 Noch kein Passwort?',
     copyright: '© PLAN NRW · Alle Rechte vorbehalten<br>Unbefugte Weitergabe führt zur Sperrung.',
     btn_back: '← Zurück',
     btn_logout: 'Abmelden',
