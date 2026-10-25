@@ -26271,5 +26271,153 @@ var PL_RECHNER_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026
   };
 })();
 </script>
+
+<script>
+/* ── FACHBEREICH FÜR EXAMINIERTE (25.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ──
+   Examinierte wählen zusätzlich ihren Arbeitsbereich (Key pl_fachbereich). Danach:
+   Startseite „Dein Bereich“ mit Direkt-Knöpfen (Quiz, Krankheitsbilder, Medikamente),
+   Quiz-Auswahl zeigt die eigenen Kategorien zuerst. Keine neuen Inhalte – nur Verknüpfung
+   bestehender KATS / KRANKHEITSBILDER / MEDIKAMENTE / MEDIKAMENTE_NEU.
+   Hängt sich additiv an plOnboardingInhalt, setPersona, renderPersonaBanner, renderQuizSelect.
+   Schalter PL_BEREICH_PUBLIC: false = nur Admin. */
+var PL_BEREICH_PUBLIC = false;
+(function(){
+  function darf(){ if(PL_BEREICH_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+  function istEx(){ return lsGet('pl_persona')==='examiniert'; }
+  // kat: Quiz-Kategorien (Reihenfolge = Anzeige), kb: Fach in KRANKHEITSBILDER, med: [art, kategorie]
+  var B={
+    alten:     {l:'Altenpflege / Langzeitpflege', i:'🏡', kat:['langzeitpflege','altenpflege','palliation','mobilitaet'], kb:'neurologie', med:['neu','herz']},
+    ambulant:  {l:'Ambulante Pflege',              i:'🚗', kat:['langzeitpflege','praevention','altenpflege','innere'],  kb:'innere',     med:['neu','diabetes']},
+    innere:    {l:'Krankenhaus – Innere',          i:'🫀', kat:['innere','ana_herz','ana_atmung','ana_hormone'],         kb:'innere',     med:['neu','herz']},
+    chirurgie: {l:'Krankenhaus – Chirurgie',       i:'🦴', kat:['chirurgie','ana_bewegung','an_awr','ana_verdauung'],    kb:'chirurgie',  med:['neu','schmerz']},
+    intensiv:  {l:'Intensiv / Anästhesie',         i:'🫁', kat:['its_beatmung','its_haemo','its_sepsis','its_neuro','its_organersatz','its_medikamente','its_elyt','its_pflege','an_medikamente','an_atemweg','an_regional','an_monitoring','an_grundlagen','an_notfall','an_awr'], kb:'innere', med:['fach','intensiv']},
+    op:        {l:'OP',                            i:'🩻', kat:['ota_steril','ota_aufbereitung','ota_instrumente','ota_op_technik','ota_naht','ota_lagerung','ota_sicherheit'], kb:'chirurgie', med:['fach','anaesthesie']},
+    psychiatrie:{l:'Psychiatrie',                  i:'🧠', kat:['psychiatrie','psychologie'],                            kb:'psychologie',med:['neu','neuropsych']},
+    kinder:    {l:'Kinder / Pädiatrie',            i:'🧸', kat:['paediatrie','gynaekologie'],                            kb:'paediatrie', med:null},
+    notaufnahme:{l:'Notaufnahme',                  i:'🚑', kat:['notfall','its_sepsis','an_notfall','innere'],           kb:'innere',     med:['fach','notfall']},
+    anders:    {l:'Anderer Bereich',               i:'✳️', kat:[], kb:null, med:null}
+  };
+  window.PL_FACHBEREICHE=B;
+  function bereich(){ var b=lsGet('pl_fachbereich'); return B[b]?b:''; }
+  function setzen(id){ try{ localStorage.setItem('pl_fachbereich',id); }catch(e){} try{ if(typeof gtag==='function') gtag('event','fachbereich_gewaehlt',{bereich:id}); }catch(e){}
+    try{ renderPersonaBanner(); }catch(e){} }
+  function knoepfe(onclickFn){
+    return Object.keys(B).map(function(id){ var b=B[id];
+      return '<button onclick="'+onclickFn+'(\''+id+'\')" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;margin-bottom:7px">'
+        +'<span style="font-size:20px;width:26px;text-align:center">'+b.i+'</span><span style="font-size:13.5px;font-weight:700;color:#e2e8f0">'+b.l+'</span></button>';
+    }).join('');
+  }
+  // ── Onboarding: zweite Frage für Examinierte
+  window.plBereichOnb=function(id){ setzen(id); try{ plOnboardingInhalt(); }catch(e){} };
+  try{
+    var origOnb=window.plOnboardingInhalt;
+    if(typeof origOnb==='function') window.plOnboardingInhalt=function(){
+      var ov=document.getElementById('onboarding-overlay');
+      if(ov && darf() && istEx() && !bereich()){
+        ov.innerHTML='<div style="max-width:360px;width:100%;max-height:92vh;overflow:auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
+          +'<div style="font-family:\'DM Serif Display\',serif;font-size:20px;color:#e0f2fe;text-align:center;margin-bottom:4px">In welchem Bereich arbeitest du?</div>'
+          +'<div style="font-size:12.5px;color:#9fb8cc;text-align:center;line-height:1.5;margin-bottom:14px">Dann zeigt dir PLAN dein Fachwissen zuerst – ohne Suchen.</div>'
+          +knoepfe('plBereichOnb')
+          +'<div style="font-size:11.5px;color:#7fa6c2;text-align:center;margin-top:4px">Änderbar jederzeit auf der Startseite.</div></div>';
+        return;
+      }
+      return origOnb.apply(this,arguments);
+    };
+  }catch(e){}
+  // ── Auswahl-Fenster (Startseite „ändern“, Rollenwechsel zu Examiniert)
+  window.plBereichWahl=function(id){ setzen(id); var o=document.getElementById('pl-bereich-modal'); if(o) o.remove(); };
+  window.plBereichOeffnen=function(){
+    if(document.getElementById('pl-bereich-modal')) return;
+    var o=document.createElement('div'); o.id='pl-bereich-modal'; o.className='pl-ov';
+    o.style.cssText='position:fixed;inset:0;z-index:1300;background:rgba(3,9,18,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px';
+    o.innerHTML='<div style="max-width:360px;width:100%;max-height:92vh;overflow:auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.25);border-radius:20px;padding:20px">'
+      +'<div style="font-size:17px;font-weight:800;color:#e0f2fe;text-align:center;margin-bottom:12px">Dein Arbeitsbereich</div>'
+      +knoepfe('plBereichWahl')
+      +'<button onclick="document.getElementById(\'pl-bereich-modal\').remove()" style="width:100%;background:none;border:none;color:#7fa6c2;font-size:12px;font-family:inherit;cursor:pointer;padding:6px">Später</button></div>';
+    o.addEventListener('click',function(e){ if(e.target===o) o.remove(); });
+    document.body.appendChild(o);
+  };
+  try{
+    var origSP=window.setPersona;
+    if(typeof origSP==='function') window.setPersona=function(id){
+      var r=origSP.apply(this,arguments);
+      try{ if(id==='examiniert' && darf() && !bereich() && !document.getElementById('onboarding-overlay')) setTimeout(plBereichOeffnen,250); }catch(e){}
+      return r;
+    };
+  }catch(e){}
+  // ── Direkt-Knöpfe
+  window.plBereichQuiz=function(){
+    var b=B[bereich()]; if(!b||!b.kat.length) return;
+    try{ navGo('quizSelect'); }catch(e){ try{ showScreen('quizSelect'); }catch(_){} }
+    setTimeout(function(){ try{ var el=document.getElementById('pl-bereich-quiz'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){} },250);
+  };
+  window.plBereichKB=function(){
+    var b=B[bereich()]; if(!b||!b.kb) return;
+    try{ if(typeof KRANKHEITSBILDER!=='undefined' && KRANKHEITSBILDER[b.kb]) currentKBFach=b.kb; }catch(e){}
+    try{ navGo('krankheitsbilder'); }catch(e){}
+  };
+  window.plBereichMed=function(){
+    var b=B[bereich()]; if(!b) return;
+    try{
+      if(!b.med){ navGo('notfallmanagement'); return; }
+      if(b.med[0]==='fach'){ showScreen('medikamente'); setTimeout(function(){ try{ showMedKat(b.med[1]); }catch(e){} },60); }
+      else { showScreen('medNeu'); setTimeout(function(){ try{ renderMedNeu(b.med[1]); }catch(e){} },60); }
+    }catch(e){}
+  };
+  // ── Startseite: Karte unter dem Rollen-Banner
+  function karte(){
+    try{
+      var el=document.getElementById('home-persona'); if(!el) return;
+      var alt=document.getElementById('pl-bereich-karte'); if(alt) alt.remove();
+      if(!darf() || !istEx()) return;
+      var id=bereich(), d=document.createElement('div'); d.id='pl-bereich-karte';
+      var KN='background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.32);border-radius:10px;padding:9px 10px;color:#e2e8f0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;flex:1;min-width:0';
+      if(!id){
+        d.innerHTML='<button onclick="plBereichOeffnen()" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px dashed rgba(var(--accent-rgb),.45);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;margin-bottom:14px">'
+          +'<span style="font-size:20px">🏥</span><span style="flex:1"><span style="display:block;font-size:13px;font-weight:800;color:#e2e8f0">In welchem Bereich arbeitest du?</span><span style="display:block;font-size:11.5px;color:#9fb8cc;margin-top:2px">Dann zeigt dir PLAN dein Fachwissen zuerst.</span></span><span style="color:var(--accent);font-size:18px">›</span></button>';
+      } else {
+        var b=B[id], k=[];
+        if(b.kat.length) k.push('<button onclick="plBereichQuiz()" style="'+KN+'">📝 Quiz</button>');
+        if(b.kb) k.push('<button onclick="plBereichKB()" style="'+KN+'">🩺 Krankheitsbilder</button>');
+        k.push('<button onclick="plBereichMed()" style="'+KN+'">'+(b.med?'💊 Medikamente':'🚨 Notfall')+'</button>');
+        d.innerHTML='<div style="background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.25);border-radius:14px;padding:13px 14px;margin-bottom:14px">'
+          +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:20px">'+b.i+'</span><span style="flex:1"><span style="display:block;font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--accent)">Dein Bereich</span><span style="display:block;font-size:14px;font-weight:800;color:#e2e8f0">'+b.l+'</span></span>'
+          +'<button onclick="plBereichOeffnen()" style="background:none;border:none;color:#9fb8cc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:underline">ändern</button></div>'
+          +(id==='anders'?'<div style="font-size:12px;color:#9fb8cc">Alle Bereiche stehen dir offen – nutze die Suche oben.</div>':'<div style="display:flex;gap:7px">'+k.join('')+'</div>')
+          +'</div>';
+      }
+      el.appendChild(d);
+    }catch(e){}
+  }
+  try{
+    var origPB=window.renderPersonaBanner;
+    if(typeof origPB==='function') window.renderPersonaBanner=function(){ var r=origPB.apply(this,arguments); karte(); return r; };
+    var os=window.showScreen;
+    if(typeof os==='function') window.showScreen=function(n){ var r=os.apply(this,arguments); if(n==='home') karte(); if(n==='quizSelect' && darf() && istEx() && bereich()){ try{ renderQuizSelect(); }catch(e){} } return r; };
+  }catch(e){}
+  // ── Quiz-Auswahl: eigene Kategorien zuerst
+  try{
+    var origQS=window.renderQuizSelect;
+    if(typeof origQS==='function') window.renderQuizSelect=function(){
+      var r=origQS.apply(this,arguments);
+      try{
+        var b=B[bereich()]; if(!darf()||!istEx()||!b||!b.kat.length) return r;
+        var el=document.getElementById('quiz-select-list'); if(!el) return r;
+        var btns=[].slice.call(el.querySelectorAll('button.qs-btn')), first=btns[0]; if(!first) return r;
+        var kopf=document.createElement('div'); kopf.id='pl-bereich-quiz';
+        kopf.style.cssText='font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin:4px 2px 8px';
+        kopf.textContent=b.i+' Dein Bereich: '+b.l;
+        el.insertBefore(kopf,first);
+        b.kat.forEach(function(k){ var hit=btns.filter(function(x){ return (x.getAttribute('onclick')||'').indexOf("startQuiz('"+k+"')")===0; })[0]; if(hit) el.insertBefore(hit,first); });
+        var rest=document.createElement('div');
+        rest.style.cssText='font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#8ab4d0;margin:14px 2px 8px';
+        rest.textContent='Alle Kategorien'; el.insertBefore(rest,first);
+      }catch(e){}
+      return r;
+    };
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
