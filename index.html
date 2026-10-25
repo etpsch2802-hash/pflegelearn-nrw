@@ -25913,7 +25913,9 @@ window.plLzpHinweis=function(kicker,titel,test){
   }
   function angemeldet(){ try{ return typeof currentUser!=='undefined' && !!currentUser; }catch(e){ return false; } }
   var gesendet={};
+  function eigenesGeraet(){ try{ return localStorage.getItem('pl_nicht_zaehlen')==='1'; }catch(e){ return false; } }   // 25.10.2026: Admin-Geräte nicht mitzählen
   function ping(){
+    if(eigenesGeraet()) return;
     var a=angemeldet(); var k=a?'a':'g'; if(gesendet[k]) return; gesendet[k]=1;
     try{ fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping',modus:modus(),angemeldet:a}),keepalive:true}).catch(function(){}); }catch(e){}
   }
@@ -25933,34 +25935,54 @@ window.plLzpHinweis=function(kicker,titel,test){
       if(!d||!d.ok){ box.innerHTML='<div style="color:#facc15;font-size:13px;line-height:1.5">Noch keine Nutzungsdaten'+(d&&d.error==='tabelle'?' – die Tabelle app_nutzung fehlt (SQL ausführen).':'.')+'</div>'; return; }
       function karte(l,v,sub){ return '<div style="background:rgba(var(--accent-rgb),.06);border:1px solid rgba(var(--accent-rgb),.18);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">'+esc(zahl(v))+'</div><div style="font-size:11px;color:var(--text2);margin-top:2px">'+esc(l)+'</div>'+(sub?'<div style="font-size:10px;color:var(--text3);margin-top:2px">'+esc(sub)+'</div>':'')+'</div>'; }
       var h=d.heute||{}, g=d.gestern||{};
-      var max=1; (d.tage||[]).slice(-14).forEach(function(t){ if(t.gesamt>max) max=t.gesamt; });
-      var balken=(d.tage||[]).slice(-14).map(function(t){
+      // 25.10.2026: Tage vor Messbeginn (0) nicht mitrechnen, heutigen (laufenden) Tag nicht in den Schnitt
+      var alle=(d.tage||[]), erst=-1; for(var i0=0;i0<alle.length;i0++){ if(alle[i0].gesamt>0){ erst=i0; break; } }
+      var gemessen=erst<0?[]:alle.slice(erst), heuteTag=new Date().toISOString().slice(0,10);
+      var voll=gemessen.filter(function(t){ return t.tag!==heuteTag; });
+      function schnitt(arr,feld){ if(!arr.length) return null; var s0=0; arr.forEach(function(t){ s0+=(t[feld]||0); }); return Math.round(s0/arr.length*10)/10; }
+      var v7=voll.slice(-7), s7=schnitt(v7,'gesamt'), sAlle=schnitt(voll,'gesamt');
+      d.schnitt7={gesamt:s7,app:schnitt(v7,'app'),installiert:schnitt(v7,'installiert'),browser:schnitt(v7,'browser')};
+      d.schnitt30={gesamt:sAlle};
+      var beginn=gemessen.length?gemessen[0].tag:null, ZIEL=50, ueber=voll.filter(function(t){ return t.gesamt>=ZIEL; }).length;
+      var proz=Math.min(100,Math.round((s7||0)/ZIEL*100));
+      var zielHTML='<div style="margin-top:12px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:11px 12px">'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#a7f3d0"><span>Ziel für Bezahlung: 50 Geräte jeden Tag</span><span>'+zahl(s7)+' / 50</span></div>'
+        +'<div style="height:8px;background:rgba(255,255,255,.1);border-radius:5px;margin-top:7px;overflow:hidden"><div style="height:100%;width:'+proz+'%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>'
+        +'<div style="font-size:11px;color:var(--text3);margin-top:6px">Ø der letzten '+v7.length+' vollen Tage · Tage mit ≥ 50: '+ueber+' von '+voll.length+'</div></div>';
+      var eigen=false; try{ if(localStorage.getItem('pl_nicht_zaehlen')==null) localStorage.setItem('pl_nicht_zaehlen','1'); eigen=localStorage.getItem('pl_nicht_zaehlen')==='1'; }catch(e){}
+      var eigenHTML='<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" '+(eigen?'checked':'')+' onchange="try{localStorage.setItem(\'pl_nicht_zaehlen\',this.checked?\'1\':\'0\')}catch(e){}" style="width:16px;height:16px;accent-color:var(--accent)"> Dieses Gerät nicht mitzählen (deine eigenen Aufrufe)</label>';
+      var reihe=gemessen.slice(-14);
+      var max=1; reihe.forEach(function(t){ if(t.gesamt>max) max=t.gesamt; }); if(max<ZIEL) max=Math.max(max,Math.ceil(max*1.15));
+      var balken=reihe.map(function(t){
         var hoch=function(v){ return Math.round(v/max*90); };
-        return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="font-size:9px;color:var(--text3)">'+t.gesamt+'</div>'
+        var heute=t.tag===heuteTag;
+        return '<div style="flex:1;max-width:46px;display:flex;flex-direction:column;align-items:center;gap:3px;'+(heute?'opacity:.55':'')+'"><div style="font-size:10px;color:var(--text2);font-weight:700">'+t.gesamt+'</div>'
           +'<div style="width:100%;height:90px;display:flex;flex-direction:column;justify-content:flex-end;border-radius:4px;overflow:hidden">'
           +'<div title="Browser" style="height:'+hoch(t.browser)+'px;background:#64748b"></div>'
           +'<div title="Installiert" style="height:'+hoch(t.installiert)+'px;background:#a78bfa"></div>'
           +'<div title="Android-App" style="height:'+hoch(t.app)+'px;background:var(--accent)"></div></div>'
-          +'<div style="font-size:9px;color:var(--text3)">'+esc(t.tag.slice(8,10)+'.'+t.tag.slice(5,7))+'</div></div>';
+          +'<div style="font-size:9px;color:var(--text3)">'+(heute?'heute':esc(t.tag.slice(8,10)+'.'+t.tag.slice(5,7)))+'</div></div>';
       }).join('');
       var leg=function(f,t){ return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="width:9px;height:9px;border-radius:2px;background:'+f+'"></span>'+t+'</span>'; };
       box.innerHTML='<div style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.2);border-radius:14px;padding:16px">'
         +'<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">📈 Wer nutzt PLAN wirklich?</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
         +karte('Geräte heute',h.gesamt,'gestern '+(g.gesamt==null?'–':g.gesamt))
-        +karte('Ø pro Tag (7 T.)',d.schnitt7.gesamt)
-        +karte('Ø pro Tag (30 T.)',d.schnitt30.gesamt)+'</div>'
+        +karte('Ø pro Tag (7 T.)',d.schnitt7.gesamt,'nur volle Tage')
+        +karte('Ø seit Messbeginn',d.schnitt30.gesamt,beginn?('seit '+beginn.slice(8,10)+'.'+beginn.slice(5,7)+'.'):'–')+'</div>'
+        +zielHTML
         +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">Heute nach Art</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
         +karte('Android-App',h.app,'Ø 7 T.: '+zahl(d.schnitt7.app))
         +karte('Installiert (Startbildschirm)',h.installiert,'Ø 7 T.: '+zahl(d.schnitt7.installiert))
         +karte('Browser',h.browser,'Ø 7 T.: '+zahl(d.schnitt7.browser))+'</div>'
         +'<div style="font-size:12px;color:var(--text2);margin-top:8px">Davon angemeldet heute: <b>'+esc(h.angemeldet||0)+'</b></div>'
-        +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">Letzte 14 Tage</div>'
-        +'<div style="display:flex;gap:3px;align-items:flex-end">'+balken+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">'+(reihe.length<14?'Seit Messbeginn':'Letzte 14 Tage')+'</div>'
+        +'<div style="display:flex;gap:4px;align-items:flex-end;justify-content:flex-start">'+balken+'</div>'
         +'<div style="font-size:10.5px;color:var(--text3);margin-top:6px">'+leg('var(--accent)','Android-App')+leg('#a78bfa','Installiert')+leg('#64748b','Browser')+'</div>'
         +'<div style="font-size:10.5px;color:var(--text3);line-height:1.5;margin-top:12px">Gezählt wird jedes Gerät, das die App an einem Tag öffnet – einmal pro Tag, ohne Cookie und ohne Namen. Dieselbe Person an zwei Tagen zählt an beiden Tagen. Wie oft die Android-App insgesamt installiert wurde, zeigt die Google Play Console (Statistiken → Installationen).</div>'
-        +'<button onclick="window.plNutzungAnzeigen()" style="margin-top:12px;width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:9px;color:var(--text2);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">↻ Aktualisieren</button>'
+        +eigenHTML
+        +'<button onclick="window.plNutzungAnzeigen()" style="margin-top:12px;margin-bottom:70px;width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:9px;color:var(--text2);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">↻ Aktualisieren</button>'
         +'</div>';
     }).catch(function(){ box.innerHTML='<div style="color:#f87171;font-size:13px">Fehler beim Laden.</div>'; });
   };
