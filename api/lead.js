@@ -53,6 +53,20 @@ async function sessionOk(at) {
     return !!(u && u.email && (u.email_confirmed_at || u.confirmed_at));
   } catch (e) { return false; }
 }
+// Admin-Kontrollzentrum (25.10.2026): Admin-Passwort im Header x-plan-admin -> PDF ohne E-Mail-Schluessel.
+// Geprueft gegen public.tokens (aktiv + admin) mit Service-Role; Passwort steht nie in der URL (Logs).
+async function adminOk(t) {
+  const U = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), K = process.env.SUPABASE_SERVICE_ROLE;
+  t = String(t || '');
+  if (!t || t.length > 120 || !U || !K) return false;
+  try {
+    const r = await fetch(U + '/rest/v1/tokens?select=token&admin=eq.true&aktiv=eq.true&token=eq.' + encodeURIComponent(t),
+      { headers: { 'apikey': K, 'Authorization': 'Bearer ' + K } });
+    if (!r.ok) return false;
+    const rows = await r.json();
+    return Array.isArray(rows) && rows.length === 1;
+  } catch (e) { return false; }
+}
 // Missbrauchsschutz (17.10.2026): niemand soll ueber das Formular massenhaft Mails an fremde Adressen ausloesen.
 // Grenzen je 24 h: pro E-Mail-Adresse 3 Mails, pro Geraet/Netz (IP, nur als HMAC-Hash gespeichert) 5 verschiedene
 // Adressen, insgesamt 300 Mails. Eintraege in public.lead_limits werden nach 2 Tagen geloescht.
@@ -166,7 +180,7 @@ function mailHtml(p, nlToken, key) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-plan-admin');
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   // GET /api/lead?pdf=<slug>: Direkt-Download fuer eingeloggte App-Nutzer (in lead.js, da Vercel-Hobby max. 12 Functions)
   if (req.method === 'GET') {
@@ -192,7 +206,7 @@ export default async function handler(req, res) {
     const dp = PAKETE[ds];
     if (!dp) { res.status(404).json({ error: 'unbekannt' }); return; }
     if (PDF_GATE) {
-      const ok = (await keyOk(req.query && req.query.k)) || (await sessionOk(String((req.query && req.query.at) || '')));
+      const ok = (await keyOk(req.query && req.query.k)) || (await sessionOk(String((req.query && req.query.at) || ''))) || (await adminOk(req.headers && req.headers['x-plan-admin']));
       if (!ok) { res.status(401).json({ error: 'email' }); return; }
     }
     try {
