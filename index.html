@@ -728,7 +728,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <button class="pw-btn" style="margin-top:12px" onclick="plEmailLogin()">Anmelden →</button>
     <div class="pw-error" id="ml-error" style="display:none"></div>
   </div>
-  <div style="text-align:center;font-size:12px;color:#9dbdd2;margin:16px 0 8px;font-weight:700">Oder mit Passwort (Schule, Tester)</div>
+  <div style="text-align:center;font-size:12px;color:#9dbdd2;margin:16px 0 8px;font-weight:700">Oder mit Passwort – Schulen: Zugangscode</div>
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Dein Name</div>
     <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" data-i18n-ph="ph_name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()" aria-label="Vor- und Nachname">
@@ -1176,7 +1176,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     </div>
 
     <div class="faq-item" style="background:var(--card,rgba(255,255,255,.10));border:1px solid var(--border,rgba(255,255,255,.1));border-radius:12px;margin-bottom:8px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Mein Zugangscode funktioniert nicht</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
+      <div onclick="toggleFaq(this)" style="padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text,#e0f2fe)"><span><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Mein Passwort funktioniert nicht</span><span class="faq-arrow" style="color:var(--accent);transition:transform .2s">▾</span></div>
       <div class="faq-answer" style="display:none;padding:0 14px 14px;font-size:13px;color:var(--text2,#b3c4d6);line-height:1.6">Achte auf die exakte Schreibweise – Groß-/Kleinschreibung und Bindestriche genau wie erhalten. Aktualisiere zuerst die App (Menü → App aktualisieren) und versuche es erneut. Klappt es weiterhin nicht, schreib an kontakt@plan-nrw.de und nenne deinen Code.</div>
     </div>
 
@@ -1632,7 +1632,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <a href="mailto:kontakt@plan-nrw.de?subject=Schullizenz%20PLAN%20NRW" style="display:block;text-align:center;background:rgba(var(--accent-rgb),.14);border:1px solid rgba(var(--accent-rgb),.4);border-radius:11px;padding:13px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;text-decoration:none">Anfrage senden</a>
   </div>
 
-  <div style="font-size:11px;color:#8ab4d0;text-align:center;line-height:1.6;margin-bottom:8px">Codes sind personalisiert &amp; nicht &uuml;bertragbar. K&uuml;ndigung jederzeit zum Laufzeitende.</div>
+  <div style="font-size:11px;color:#8ab4d0;text-align:center;line-height:1.6;margin-bottom:8px">Passw&ouml;rter sind pers&ouml;nlich &amp; nicht &uuml;bertragbar. K&uuml;ndigung jederzeit zum Laufzeitende.</div>
 </div>
 
 <!-- TESTER-PROGRAMM -->
@@ -3609,7 +3609,7 @@ function copyWhatsApp() {
   const text =
 `Hallo ${t.name}! 🎓
 
-Dein persönlicher Zugangscode für PLAN:
+Dein persönliches Passwort für PLAN:
 
 🔑 ${t.token}
 
@@ -3623,7 +3623,7 @@ So geht's:
 3️⃣ Passwort eingeben → Anmelden
 4️⃣ Los lernen! 📚
 
-⚠️ Dieser Code ist NUR für dich persönlich.
+⚠️ Dieses Passwort ist NUR für dich persönlich.
 Bei Weitergabe wird er sofort gesperrt.
 
 Bei Fragen: kontakt@plan-nrw.de
@@ -3837,7 +3837,7 @@ function renderVorlagen() {
     // Einzellizenz
     `Hallo [NAME]! 🎓
 
-Dein persönlicher Zugangscode für PLAN:
+Dein persönliches Passwort für PLAN:
 
 🔑 [TOKEN EINFÜGEN]
 
@@ -3850,7 +3850,7 @@ So geht's:
 3️⃣ Passwort eingeben → Anmelden
 4️⃣ Los lernen! 
 
-⚠️ Dieser Code ist NUR für dich persönlich.
+⚠️ Dieses Passwort ist NUR für dich persönlich.
 Bei Weitergabe wird er sofort gesperrt.
 
 Bei Fragen: kontakt@plan-nrw.de
@@ -3875,7 +3875,7 @@ Mit freundlichen Grüßen`,
     `Hallo [NAME]! 👋
 
 Teste PLAN kostenlos – 
-dein persönlicher Demo-Zugangscode:
+dein persönliches Demo-Passwort:
 
 🔑 [TOKEN EINFÜGEN]
 
@@ -8425,7 +8425,7 @@ function showTesterInfo() {
         <div style="font-size:12px;color:#b3c4d6;line-height:1.7">
           📧 Feedback direkt an:<br>
           <strong style="color:var(--accent)">kontakt@plan-nrw.de</strong><br>
-          <span style="font-size:11px;color:#8ab4d0">Dein Zugangscode ist personalisiert · Nicht weitergeben</span>
+          <span style="font-size:11px;color:#8ab4d0">Dein Passwort ist persönlich · Nicht weitergeben</span>
         </div>
       </div>
 
@@ -17960,14 +17960,14 @@ function toggleFaq(head) {
   ans.style.display = open ? 'none' : 'block';
   if (arr) arr.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
 }
-const SUPPORT_SYSTEM_PROMPT = `Du bist der SUPPORT-ASSISTENT der Lern-App "PLAN NRW". Du hilfst AUSSCHLIESSLICH bei Fragen zur App, zum Konto, zum Zugangscode, zur Zahlung, zur Kündigung und zur Installation.
+const SUPPORT_SYSTEM_PROMPT = `Du bist der SUPPORT-ASSISTENT der Lern-App "PLAN NRW". Du hilfst AUSSCHLIESSLICH bei Fragen zur App, zum Konto, zum Passwort (Schulen: Zugangscode), zur Zahlung, zur Kündigung und zur Installation.
 
 REGELN:
 - Beantworte NUR App-, Konto- und Zahlungsfragen.
 - Bei Pflege-, Medizin- oder Prüfungs-Fachfragen antworte NICHT inhaltlich, sondern sage freundlich: "Fachfragen beantwortet dir der KI-Assistent auf der Startseite – ich bin nur für App- und Konto-Hilfe da."
 - Nenne KEINE konkreten Preise oder Beträge. Verweise für Preise und Laufzeiten immer auf „Plan & Preise" im Menü.
 - Erfinde keine Regeln zu Erstattungen oder Rückbuchungen. Verweise dafür auf kontakt@plan-nrw.de.
-- Zugangscode-Probleme: exakte Schreibweise prüfen, App aktualisieren (Menü → App aktualisieren), sonst kontakt@plan-nrw.de.
+- Passwort-Probleme (bei Schulen: Zugangscode): exakte Schreibweise prüfen, App aktualisieren (Menü → App aktualisieren), sonst kontakt@plan-nrw.de.
 - Kündigung: über den Button „Abo kündigen" im Menü; der Zugang endet nach dem bezahlten Zeitraum und ist jederzeit reaktivierbar.
 - Antworte kurz, freundlich und auf Deutsch. Wenn du etwas nicht lösen kannst, verweise auf kontakt@plan-nrw.de.`;
 window.gaEvent = function(n, p) { try { if (typeof gtag === 'function') gtag('event', n, p || {}); } catch (e) {} };
@@ -19269,7 +19269,7 @@ function showAGB() {
         ${S('§ 8 Widerrufsrecht')}<br>
         Verbrauchern steht ein 14-tägiges Widerrufsrecht zu (siehe Widerrufsbelehrung unten). Bei digitalen Inhalten kann es vorzeitig erlöschen, wenn der Nutzer ausdrücklich dem sofortigen Beginn zustimmt und den Verlust des Widerrufsrechts bestätigt.<br><br>
         ${S('§ 9 Nutzungsrechte / Urheberrecht')}<br>
-        Alle Inhalte sind urheberrechtlich geschützt. Der Nutzer erhält ein einfaches, nicht übertragbares Nutzungsrecht zu persönlichen, nicht-kommerziellen Lernzwecken. Untersagt sind Scraping, Vervielfältigung, Weitergabe, öffentliche Zugänglichmachung, kommerzielle Verwertung und abgeleitete Werke. Zugangscodes sind personalisiert und nicht übertragbar.<br><br>
+        Alle Inhalte sind urheberrechtlich geschützt. Der Nutzer erhält ein einfaches, nicht übertragbares Nutzungsrecht zu persönlichen, nicht-kommerziellen Lernzwecken. Untersagt sind Scraping, Vervielfältigung, Weitergabe, öffentliche Zugänglichmachung, kommerzielle Verwertung und abgeleitete Werke. Passwörter und Schul-Zugangscodes sind personalisiert und nicht übertragbar.<br><br>
         ${S('§ 10 Haftung')}<br>
         Unbeschränkte Haftung bei Vorsatz/grober Fahrlässigkeit und bei Verletzung von Leben, Körper, Gesundheit. Bei einfacher Fahrlässigkeit nur bei Verletzung wesentlicher Vertragspflichten, begrenzt auf den vorhersehbaren Schaden.<br><br>
         ${S('§ 11 Medizinischer Hinweis')}<br>
@@ -21081,7 +21081,7 @@ window.I18N = {
     btn_free: 'Start for free',
     btn_free_sub: 'limited version',
     btn_unlock: 'Unlock full access now',
-    no_code: '🔑 No access code yet?',
+    no_code: '🔑 No password yet?',
     copyright: '© PLAN – Nursing Learning App NRW · All rights reserved<br>Unauthorized sharing will result in suspension.',
     btn_back: '← Back',
     btn_logout: 'Sign Out',
@@ -21143,7 +21143,7 @@ window.I18N = {
     btn_free: 'Ücretsiz başla',
     btn_free_sub: 'sınırlı sürüm',
     btn_unlock: 'Tam erişimi şimdi aç',
-    no_code: '🔑 Henüz erişim kodunuz yok mu?',
+    no_code: '🔑 Henüz şifreniz yok mu?',
     copyright: '© PLAN – Hemşirelik Öğrenim Uygulaması NRW · Tüm hakları saklıdır',
     btn_back: '← Geri',
     btn_logout: 'Çıkış Yap',
@@ -21205,7 +21205,7 @@ window.I18N = {
     btn_free: 'ابدأ مجاناً',
     btn_free_sub: 'نسخة محدودة',
     btn_unlock: 'فعّل الوصول الكامل الآن',
-    no_code: '🔑 ليس لديك رمز وصول؟',
+    no_code: '🔑 ليس لديك كلمة مرور؟',
     copyright: '© PLAN – تطبيق تعليم التمريض · جميع الحقوق محفوظة',
     btn_back: 'رجوع →',
     btn_logout: 'تسجيل الخروج',
@@ -21267,7 +21267,7 @@ window.I18N = {
     btn_free: 'Начать бесплатно',
     btn_free_sub: 'ограниченная версия',
     btn_unlock: 'Открыть полный доступ',
-    no_code: '🔑 Нет кода доступа?',
+    no_code: '🔑 Нет пароля?',
     copyright: '© PLAN – Учебное приложение по уходу · Все права защищены',
     btn_back: '← Назад',
     btn_logout: 'Выйти',
@@ -21329,7 +21329,7 @@ window.I18N = {
     btn_free: 'Zacznij za darmo',
     btn_free_sub: 'wersja ograniczona',
     btn_unlock: 'Odblokuj pełny dostęp',
-    no_code: '🔑 Nie masz kodu dostępu?',
+    no_code: '🔑 Nie masz hasła?',
     copyright: '© PLAN – Aplikacja do Nauki Pielęgniarstwa · Wszelkie prawa zastrzeżone',
     btn_back: '← Wstecz',
     btn_logout: 'Wyloguj się',
@@ -21391,7 +21391,7 @@ window.I18N = {
     btn_free: 'Почати безкоштовно',
     btn_free_sub: 'обмежена версія',
     btn_unlock: 'Відкрити повний доступ',
-    no_code: '🔑 Немає коду доступу?',
+    no_code: '🔑 Немає пароля?',
     copyright: '© PLAN – Навчальний додаток з догляду · Всі права захищені',
     btn_back: '← Назад',
     btn_logout: 'Вийти',
@@ -21453,7 +21453,7 @@ window.I18N = {
     btn_free: 'Începe gratuit',
     btn_free_sub: 'versiune limitată',
     btn_unlock: 'Deblochează accesul complet',
-    no_code: '🔑 Nu ai cod de acces?',
+    no_code: '🔑 Nu ai parolă?',
     copyright: '© PLAN – Aplicație de Învățare Nursing · Toate drepturile rezervate',
     btn_back: '← Înapoi',
     btn_logout: 'Deconectare',
@@ -21515,7 +21515,7 @@ window.I18N = {
     btn_free: 'Empezar gratis',
     btn_free_sub: 'versión limitada',
     btn_unlock: 'Desbloquear acceso completo',
-    no_code: '🔑 ¿Sin código de acceso?',
+    no_code: '🔑 ¿Sin contraseña?',
     copyright: '© PLAN – App de Aprendizaje de Enfermería · Todos los derechos reservados',
     btn_back: '← Atrás',
     btn_logout: 'Cerrar sesión',
@@ -24717,7 +24717,7 @@ window.renderLiveUsers=function(start){
       +li('Lernfortschritt in der Cloud, Profil, Bewertungen und Zugangsdaten')
       +(n.klassen_mitglied?li('Mitgliedschaft in '+n.klassen_mitglied+' Klasse'+(n.klassen_mitglied>1?'n':'')+' samt Aufgaben-Status'):'')
       +(n.eigene_klassen?li('<b>'+n.eigene_klassen+' eigene Klasse'+(n.eigene_klassen>1?'n':'')+' als Lehrkraft</b>. Deine Schülerinnen und Schüler verlieren den Zugang zu diesen Klassen.'):'')
-      +(n.zugangscodes?li(n.zugangscodes+' Zugangscode'+(n.zugangscodes>1?'s':'')+'. Ein noch laufender Zugang endet damit.'):'')
+      +(n.zugangscodes?li(n.zugangscodes+' Passw'+(n.zugangscodes>1?'örter':'ort')+'. Ein noch laufender Zugang endet damit.'):'')
       +li('Community-Daten (Lerntisch, Schicht-Radar, Umfragen, Care-Packages, Einladungslink)')
       +li('Alle Daten auf diesem Gerät');
     var aboBox=abo?'<div style="background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.35);border-radius:10px;padding:10px 12px;margin:12px 0;color:#fde68a;font-size:12.5px"><b>Laufendes Abo</b>'+(abo.bis?' (bezahlt bis '+new Date(abo.bis).toLocaleDateString('de-DE')+')':'')+': Mit der Löschung kündigen wir es zum Ende des bezahlten Zeitraums. Danach wird nichts mehr abgebucht.</div>':'';
@@ -24746,7 +24746,7 @@ window.renderLiveUsers=function(start){
     var b=document.getElementById('pl-del-body'); if(!b) return; var test=admin();
     b.innerHTML=(test?TEST:'')+'<p>Du bist mit keinem Online-Konto angemeldet. Dein Lernstand liegt nur auf diesem Gerät.</p>'
       +'<p style="margin-top:8px">Hier kannst du alle Daten auf diesem Gerät löschen, inklusive deiner Community-Daten auf dem Server.</p>'
-      +'<p style="font-size:12px;color:#8ab4d0;margin-top:8px">Du hast einen Zugangscode gekauft oder ein Online-Konto auf einem anderen Gerät? Dann <a href="/konto-loeschen.html" target="_blank" rel="noopener" style="color:#38bdf8">frag die Löschung per E-Mail an</a>.</p>'
+      +'<p style="font-size:12px;color:#8ab4d0;margin-top:8px">Du hast ein Passwort gekauft oder ein Online-Konto auf einem anderen Gerät? Dann <a href="/konto-loeschen.html" target="_blank" rel="noopener" style="color:#38bdf8">frag die Löschung per E-Mail an</a>.</p>'
       +'<button id="pl-del-local" style="'+RED+'">Alle Daten auf diesem Gerät löschen</button><button style="'+GREY+'" data-c>Abbrechen</button>';
     b.querySelector('[data-c]').onclick=close;
     b.querySelector('#pl-del-local').onclick=function(){
