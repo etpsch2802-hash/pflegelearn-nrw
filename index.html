@@ -18037,7 +18037,7 @@ function renderMerksaetze(filter) {
 // ═══════════════════════════════════════════════════════════════════════════
 // FEATURE 2: ONBOARDING TOUR
 // ═══════════════════════════════════════════════════════════════════════════
-var PL_FOLIEN_PUBLIC = false;
+var PL_FOLIEN_PUBLIC = true;
 function showOnboarding() {
   if (localStorage.getItem('pl_onboarded')) return;
 
@@ -26448,7 +26448,7 @@ var PL_BEREICH_PUBLIC = true;
      Keine neuen Inhalte. Neuer Key pl_auffrisch_v1 {min, done:{<Wochenschlüssel>:1}}. Original-Lernplan bleibt
      unberührt (wird nur ausgeblendet). Schalter PL_AUFFRISCH_PUBLIC: false = nur Admin. -->
 <script>
-var PL_AUFFRISCH_PUBLIC = false;
+var PL_AUFFRISCH_PUBLIC = true;
 (function(){
   function darf(){ if(PL_AUFFRISCH_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
