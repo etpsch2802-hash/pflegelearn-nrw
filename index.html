@@ -26280,7 +26280,7 @@ var PL_RECHNER_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026
    bestehender KATS / KRANKHEITSBILDER / MEDIKAMENTE / MEDIKAMENTE_NEU.
    Hängt sich additiv an plOnboardingInhalt, setPersona, renderPersonaBanner, renderQuizSelect.
    Schalter PL_BEREICH_PUBLIC: false = nur Admin. */
-var PL_BEREICH_PUBLIC = false;
+var PL_BEREICH_PUBLIC = true;
 (function(){
   function darf(){ if(PL_BEREICH_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
