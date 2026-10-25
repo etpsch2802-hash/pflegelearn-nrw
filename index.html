@@ -703,6 +703,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <button id="pw-hero-cta" onclick="try{if(typeof gaEvent==='function')gaEvent('trial_start_click',{});}catch(e){};startHeroCTA()" style="width:100%;max-width:340px;background:linear-gradient(135deg,#34d399,#10b981);border:none;border-radius:14px;padding:17px;color:#04221a;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 22px rgba(16,185,129,.35)">
     <svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-gift"/></svg> Jetzt kostenlos loslegen<br><span style="font-size:11px;font-weight:700;opacity:.85">Voller Zugriff · ohne Kosten · sofort startklar</span>
   </button>
+  <!-- Anmelden gleich prominent wie Registrieren (25.10.2026) -->
+  <button id="pl-login-btn" type="button" onclick="plOpenLogin()" style="width:100%;max-width:340px;margin-top:10px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.38);border-radius:14px;padding:15px;color:#eaf4ff;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit">Ich habe schon ein Konto – Anmelden</button>
 
   <!-- Sekundär: Gratis schnuppern -->
   <button onclick="try{if(typeof gaEvent==='function')gaEvent('gratis_start_click',{});}catch(e){};showGratisStart()" style="display:none;background:none;border:none;color:#7fa6c2;font-size:13px;margin-top:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Oder erst gratis reinschnuppern</button>
@@ -712,8 +714,21 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <div id="pl-socialproof" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
 
   <!-- Login einklappbar (wiederkehrende Nutzer) -->
-  <button onclick="toggleLoginBox()" id="login-toggle" style="margin:18px auto 0;background:none;border:none;padding:6px;color:#7fa6c2;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon einen Zugangscode? Anmelden</button>
+  <button onclick="toggleLoginBox()" id="login-toggle" style="display:none;margin:18px auto 0;background:none;border:none;padding:6px;color:#7fa6c2;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-key"/></svg> Schon einen Zugangscode? Anmelden</button>
   <div id="login-collapse" style="display:none;width:100%;max-width:340px;margin:10px auto 0">
+  <div class="pw-box" id="pl-mail-login">
+    <div style="font-size:15px;font-weight:800;color:#eaf4ff;margin-bottom:3px">Mit E-Mail anmelden</div>
+    <div style="font-size:11.5px;color:#9dbdd2;line-height:1.5;margin-bottom:10px">Für alle, die sich kostenlos mit Name und E-Mail registriert haben.</div>
+    <input class="pw-input" id="ml-name" type="text" placeholder="Dein Vorname" autocomplete="given-name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('ml-mail').focus()" aria-label="Vorname">
+    <input class="pw-input" id="ml-mail" type="email" inputmode="email" placeholder="deine@email.de" autocomplete="email" style="letter-spacing:0" onkeydown="if(event.key==='Enter')plEmailLogin()" aria-label="E-Mail">
+    <label style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;cursor:pointer;font-size:12px;color:#b3c4d6;line-height:1.45;font-family:'DM Sans',sans-serif">
+      <input type="checkbox" id="ml-sync" checked style="width:16px;height:16px;margin-top:1px;accent-color:var(--accent);cursor:pointer">
+      <span>Gesicherten Lernfortschritt holen (Link per E-Mail)</span>
+    </label>
+    <button class="pw-btn" style="margin-top:12px" onclick="plEmailLogin()">Anmelden →</button>
+    <div class="pw-error" id="ml-error" style="display:none"></div>
+  </div>
+  <div style="text-align:center;font-size:12px;color:#9dbdd2;margin:16px 0 8px;font-weight:700">Oder mit Zugangscode (Schule, Tester)</div>
   <div class="pw-box">
     <div class="pw-label" style="margin-bottom:6px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-user"/></svg> Dein Name</div>
     <input class="pw-input" id="pw-name" type="text" placeholder="Vor- und Nachname" data-i18n-ph="ph_name" style="letter-spacing:0;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('pw-input').focus()" aria-label="Vor- und Nachname">
@@ -7930,7 +7945,6 @@ function toggleLoginBox(){
     setTimeout(function(){ try{c.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){} },80);
   } else {
     c.style.display='none';
-    if(t) t.style.display='block';
   }
 }
 /* ══ TOKEN-SYSTEM: Supabase-first, TOKEN_DB als Fallback ═══════════════════ */
@@ -20708,8 +20722,13 @@ window.addEventListener('load', () => {
 </script>
 <!-- Supabase Cloud-Sync + Magic-Link (Phase 1, additiv, ohne Login-Zwang) -->
 <script>
-(function(){
-  if(!window.SB){ console.warn('[Cloud] kein Supabase-Client'); return; }
+(function _plCloudStart(){
+  // 25.10.2026: Supabase wird per defer geladen -> window.SB existiert hier beim Parsen noch nicht.
+  // Ohne diesen Nachstart lief der Cloud-Sync seit August nicht mehr (letzter progress-Eintrag 16.08.2026).
+  if(!window.SB){
+    if(!_plCloudStart._wartet){ _plCloudStart._wartet=1; document.addEventListener('DOMContentLoaded',function(){ try{ if(window._plInitSB) _plInitSB(); }catch(e){} _plCloudStart(); }); return; }
+    console.warn('[Cloud] kein Supabase-Client'); return;
+  }
   var SB=window.SB, PKEY='pl_progress_v2', session=null, lastPushed='', statusEl=null;
 
   function readLocal(){ try{return JSON.parse(localStorage.getItem(PKEY)||'{}')}catch(e){return{}} }
@@ -20821,7 +20840,7 @@ window.addEventListener('load', () => {
   if(document.readyState!=='loading') injectMenuBtn();
   else document.addEventListener('DOMContentLoaded',injectMenuBtn);
 
-  window.PLCloud={pull:pull,push:push,open:openModal,signOut:signOut};
+  window.PLCloud={pull:pull,push:push,open:openModal,signOut:signOut,sendLink:sendMagicLink};
 })();
 </script>
 <!-- Auto-Freischaltung per aktivem Abo (Supabase subscriptions) - additiv, ohne Token-Resend -->
@@ -20915,8 +20934,9 @@ window.addEventListener('load', () => {
 
 <script>
 /* L3 – Geraeteuebergreifender Zugang: Trial/Paid folgen dem Supabase-Auth-Konto (additiv) */
-(function(){
-  if(!window.SB) return;
+(function _plL3Start(){
+  // 25.10.2026: Supabase per defer -> beim Parsen noch kein window.SB; nach DOMContentLoaded nachstarten
+  if(!window.SB){ if(!_plL3Start._w){ _plL3Start._w=1; document.addEventListener('DOMContentLoaded',function(){ try{ if(window._plInitSB) _plInitSB(); }catch(e){} _plL3Start(); }); } return; }
   function today(){ return new Date().toISOString().split('T')[0]; }
   function later(a,b){ if(!a) return b||null; if(!b) return a; return a>=b?a:b; }
   async function syncAccess(session){
@@ -26183,6 +26203,50 @@ var PL_RECHNER_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026
     var os=window.showScreen;
     if(typeof os==='function') window.showScreen=function(n){ var r=os.apply(this,arguments); if(n==='medtrainer') knopf(); return r; };
   }catch(e){}
+})();
+</script>
+
+<script>
+/* ── ANMELDEN FÜR RÜCKKEHRER (25.10.2026, Wunsch P. Schenkelberger) ─────────
+   „Ich habe schon ein Konto – Anmelden“ ist so groß wie „Jetzt kostenlos loslegen“.
+   Gratis-Nutzer (nur Name + E-Mail, kein Code) melden sich per E-Mail an –
+   gleicher Weg wie plResumeGratis(), optional Magic-Link zum Laden des
+   Cloud-Fortschritts (PLCloud.sendLink). Code-Anmeldung bleibt darunter. */
+(function(){
+  window.plOpenLogin=function(){
+    try{
+      var c=document.getElementById('login-collapse');
+      if(c && (c.style.display==='none'||!c.style.display)) toggleLoginBox();
+      var L=null; try{ L=JSON.parse(localStorage.getItem('pl_last_login')||'null'); }catch(e){}
+      var n=document.getElementById('ml-name'), m=document.getElementById('ml-mail');
+      if(L && L.typ==='gratis'){ if(n&&L.name&&!n.value) n.value=String(L.name).split(/\s+/)[0]; if(m&&L.email&&!m.value) m.value=L.email; }
+      setTimeout(function(){ try{ var box=document.getElementById('pl-mail-login'); if(box) box.scrollIntoView({behavior:'smooth',block:'center'}); if(n) n.focus(); }catch(e){} },120);
+      try{ if(typeof gaEvent==='function') gaEvent('login_open',{}); }catch(e){}
+    }catch(e){}
+  };
+  window.plEmailLogin=function(){
+    var err=document.getElementById('ml-error');
+    function fehler(t){ if(err){ err.textContent=t; err.style.display='block'; } }
+    var name=((document.getElementById('ml-name')||{}).value||'').trim();
+    var mail=((document.getElementById('ml-mail')||{}).value||'').trim().toLowerCase();
+    if(!name){ fehler('Bitte deinen Vornamen eingeben.'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ fehler('Bitte eine gültige E-Mail-Adresse eingeben.'); return; }
+    if(err) err.style.display='none';
+    var L={typ:'gratis',name:name,email:mail};
+    try{ localStorage.setItem('pl_last_login', JSON.stringify(L)); }catch(e){}
+    var sync=document.getElementById('ml-sync'), mitLink=!!(sync&&sync.checked);
+    try{ plResumeGratis(L); }catch(e){ fehler('Anmelden hat nicht geklappt – bitte erneut versuchen.'); return; }
+    try{ if(typeof gaEvent==='function') gaEvent('login',{method:'email'+(mitLink?'_link':'')}); }catch(e){}
+    if(mitLink && window.PLCloud && typeof PLCloud.sendLink==='function'){
+      try{ PLCloud.sendLink(mail,false); }catch(e){}
+      try{
+        var t=document.createElement('div');
+        t.textContent='Link gesendet – öffne die E-Mail, um deinen Fortschritt zu laden (auch im Spam schauen).';
+        t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:3000;max-width:330px;width:calc(100% - 40px);background:rgba(6,18,30,.97);color:#e6eef7;border:1px solid rgba(var(--accent-rgb),.4);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.45)';
+        document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); },6000);
+      }catch(e){}
+    }
+  };
 })();
 </script>
 </body>
