@@ -18037,6 +18037,7 @@ function renderMerksaetze(filter) {
 // ═══════════════════════════════════════════════════════════════════════════
 // FEATURE 2: ONBOARDING TOUR
 // ═══════════════════════════════════════════════════════════════════════════
+var PL_FOLIEN_PUBLIC = false;
 function showOnboarding() {
   if (localStorage.getItem('pl_onboarded')) return;
 
@@ -18064,6 +18065,21 @@ function showOnboarding() {
     ? { ...saisonSlides[saisonEmoji], saisonBg: saison.bg, saisonBorder: saison.border, saisonColor: saison.color }
     : null;
 
+  // Gekürzt 25.10.2026 (Wunsch P. Schenkelberger): 3 Folien statt 6–7, Saison-Gruß als Hinweis auf Folie 1
+  const saisonPill = saisonSlide
+    ? '<div style="display:inline-block;background:'+saisonSlide.saisonBg+';border:1px solid '+saisonSlide.saisonBorder+';color:'+(saisonSlide.saisonColor||'#e0f2fe')+';border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;margin-bottom:14px">'+saisonSlide.icon+' '+saisonSlide.title+'</div><br>'
+    : '';
+  const liste = function (z) { return '<div style="text-align:left;display:flex;flex-direction:column;gap:9px">' + z.map(function (x) { return '<div><span style="margin-right:8px">'+x[0]+'</span>'+x[1]+'</div>'; }).join('') + '</div>'; };
+  const slidesNeu = [
+    { icon:'🎓', title:'Willkommen bei PLAN!', text: saisonPill + 'Von Patrick – Fachpfleger für Anästhesie & Intensivmedizin und Praxisanleiter in NRW.<br><br><strong style="color:#e0f2fe">Alles, was ich sonst im Frühdienst zwischen Tür und Angel erkläre. Nur eben sortiert.</strong>' },
+    { icon:'📚', title:'Alles an einem Ort', text: liste([
+        ['📝','<strong style="color:#e0f2fe">2.000+ Prüfungsfragen</strong> und Prüfungssimulator'],
+        ['🃏','<strong style="color:#e0f2fe">'+plZahl('krankheitsbilder')+' Krankheitsbilder</strong> mit Karteikarten'],
+        ['📊','<strong style="color:#e0f2fe">'+plZahl('scores')+' Scores</strong> und '+plZahl('taschenkarten')+' Taschenkarten für die Station'],
+        ['🤖','KI-Lernassistent für deine Fragen']
+      ]) },
+    { icon:'🔥', title:'Jeden Tag ein bisschen', text:'Dein Fortschritt und deine Lernserie werden gespeichert. Gleich noch eine kurze Frage zu dir – dann geht’s los.' },
+  ];
   const baseSlides = [
     { icon:'🎓', title:'Willkommen bei PLAN!', text:'Das Prüfungs-Portal für alle 7 Pflegeausbildungswege in NRW.' },
     { icon:'👋', title:'Hi, ich bin Patrick.', text:'Fachpfleger für Anästhesie & Intensivmedizin. Praxisanleiter in NRW.<br><br>Ich begleite seit Jahren Azubis durch ihr Examen – und ich weiß, was Prüfer wirklich fragen.<br><br><strong style="color:#e0f2fe">Diese App ist alles, was ich sonst im Frühdienst zwischen Tür und Angel erkläre. Nur eben sortiert.</strong>' },
@@ -18074,7 +18090,10 @@ function showOnboarding() {
   ];
 
   // Saisonales Slide als erste Karte einfügen
-  const slides = saisonSlide ? [saisonSlide, ...baseSlides] : baseSlides;
+  const slidesAlt = saisonSlide ? [saisonSlide, ...baseSlides] : baseSlides;
+  // Schalter PL_FOLIEN_PUBLIC (25.10.2026): false = neue 3 Folien nur für Admin, alle anderen sehen die bisherigen
+  let _neu = (typeof PL_FOLIEN_PUBLIC !== 'undefined' && PL_FOLIEN_PUBLIC); try { if (!_neu && typeof isAdmin === 'function' && isAdmin()) _neu = true; } catch(e){}
+  const slides = _neu ? slidesNeu : slidesAlt;
 
   let current = 0;
   const overlay = document.createElement('div');
@@ -18083,7 +18102,7 @@ function showOnboarding() {
 
   function render() {
     const s = slides[current];
-    const isSaison = current === 0 && saisonSlide;
+    const isSaison = !_neu && current === 0 && saisonSlide;
     const cardBg = isSaison ? s.saisonBg.replace('.06','.15').replace('.08','.15') : 'linear-gradient(160deg,#0b1a2e,#0d2135)';
     const cardBorder = isSaison ? s.saisonBorder.replace('.12','.4').replace('.2','.4').replace('.18','.4') : 'rgba(var(--accent-rgb),.25)';
     overlay.innerHTML = `
@@ -18098,6 +18117,7 @@ function showOnboarding() {
           ${current < slides.length-1 ? 'Weiter →' : '🚀 App starten!'}
         </button>
         ${current > 0 ? `<button onclick="prevOnboarding()" style="margin-top:10px;background:none;border:none;color:#8ab4d0;font-size:13px;font-family:inherit;cursor:pointer">← Zurück</button>` : ''}
+        ${_neu && current < slides.length-1 ? `<button onclick="skipOnboarding()" style="display:block;margin:6px auto 0;background:none;border:none;color:#6b8ba3;font-size:12px;font-family:inherit;cursor:pointer">Überspringen</button>` : ''}
       </div>`;
   }
 
@@ -18106,6 +18126,7 @@ function showOnboarding() {
     else { localStorage.setItem('pl_onboarded', '1'); overlay.remove(); }
   };
   window.prevOnboarding = function() { if (current > 0) { current--; render(); } };
+  window.skipOnboarding = function() { localStorage.setItem('pl_onboarded', '1'); overlay.remove(); };
 
   render();
   document.body.appendChild(overlay);
@@ -21692,6 +21713,7 @@ if (_savedLang !== 'de') {
     ['wunde','PLAN-NRW_Wunddoku-Spickzettel.pdf','🩹','Wunddoku-Spickzettel','Messen, Wundgrund, Exsudat, TIME-Prinzip, Musterformulierung'],
     ['praxisexamen','PLAN-NRW_Praxis-Examen-Spickzettel.pdf','🩺','Praxis-Examen-Spickzettel','Ablauf, Fallvorstellung, Reflexion, 10 Fehler, Checkliste'],
   ];
+  window.PL_PDF_LISTE=L;   // für das Admin-Kontrollzentrum (25.10.2026)
   var BLOB={};   // geladene PDFs (slug -> Blob)
   /* E-Mail-Pflicht (16.10.2026): PDFs nur mit bestaetigter E-Mail – Freischalt-Link aus der Mail
      (pl_pdf_key) oder Magic-Link-Anmeldung. PL_PDF_GATE_PUBLIC=true schaltet fuer alle scharf, vorher nur Admin. */
@@ -26416,6 +26438,233 @@ var PL_BEREICH_PUBLIC = true;
       }catch(e){}
       return r;
     };
+  }catch(e){}
+})();
+</script>
+<!-- PLAN NRW: Auffrisch-Plan für Examinierte (25.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go)
+     Der Lernplan baut auf einem Prüfungsdatum auf – für Examinierte sinnlos. Bei pl_persona='examiniert' zeigt
+     der Screen lernplan stattdessen einen Wochenplan: jede Woche ein Quiz-Thema aus dem eigenen Fachbereich
+     (window.PL_FACHBEREICHE, pl_fachbereich), dazu ein Krankheitsbild der Woche und die Medikamente des Bereichs.
+     Keine neuen Inhalte. Neuer Key pl_auffrisch_v1 {min, done:{<Wochenschlüssel>:1}}. Original-Lernplan bleibt
+     unberührt (wird nur ausgeblendet). Schalter PL_AUFFRISCH_PUBLIC: false = nur Admin. -->
+<script>
+var PL_AUFFRISCH_PUBLIC = false;
+(function(){
+  function darf(){ if(PL_AUFFRISCH_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+  function aktiv(){ return darf() && lsGet('pl_persona')==='examiniert'; }
+  function lade(){ try{ var d=JSON.parse(localStorage.getItem('pl_auffrisch_v1')||'{}'); if(!d.done) d.done={}; if(!d.min) d.min=30; return d; }catch(e){ return {min:30,done:{}}; } }
+  function speichere(d){ try{ localStorage.setItem('pl_auffrisch_v1',JSON.stringify(d)); }catch(e){} }
+  function wochenNr(t){ var d=new Date(t||Date.now()); d.setHours(0,0,0,0); var mo=new Date(d); mo.setDate(d.getDate()-((d.getDay()+6)%7)); return Math.floor(mo.getTime()/(7*86400000)); }
+  function montag(off){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)+7*off); return d; }
+  function datum(d){ return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function katLabel(id){ try{ for(var i=0;i<KATS.length;i++) if(KATS[i].id===id) return KATS[i].label; }catch(e){} return id; }
+  function katGibt(id){ try{ return QUIZ_FRAGEN.some(function(q){ return q.kat===id; }); }catch(e){ return false; } }
+  function themen(b){
+    var k=(b&&b.kat&&b.kat.length)?b.kat:['innere','chirurgie','notfall','hygiene','psychiatrie','palliation','praevention','paediatrie'];
+    return k.filter(katGibt);
+  }
+  function kbListe(b){ try{ if(!b||!b.kb||!KRANKHEITSBILDER[b.kb]) return []; return KRANKHEITSBILDER[b.kb].bilder||[]; }catch(e){ return []; } }
+
+  window.plAuffrischMin=function(v){ var d=lade(); d.min=parseInt(v,10)||30; speichere(d); render(); };
+  window.plAuffrischDone=function(key){ var d=lade(); if(d.done[key]) delete d.done[key]; else d.done[key]=1; speichere(d);
+    try{ if(typeof gtag==='function') gtag('event','auffrisch_erledigt',{woche:key}); }catch(e){} render(); };
+  window.plAuffrischQuiz=function(kat){ try{ startQuiz(kat); }catch(e){ try{ navGo('quizSelect'); }catch(_){} } };
+  window.plAuffrischKB=function(fach,idx){ try{ openKrankheitsbild(fach,idx); }catch(e){ try{ navGo('krankheitsbilder'); }catch(_){} } };
+
+  function render(){
+    var scr=document.getElementById('screen-lernplan'); if(!scr) return;
+    var box=document.getElementById('pl-auffrisch');
+    var an=aktiv();
+    Array.prototype.forEach.call(scr.children,function(c){ if(c.id!=='pl-auffrisch') c.style.display=an?'none':''; });
+    var out=document.getElementById('lernplan-output'); if(!an && out && !out.innerHTML) out.style.display='none';
+    if(!an){ if(box) box.remove(); return; }
+    if(!box){ box=document.createElement('div'); box.id='pl-auffrisch'; scr.appendChild(box); }
+    var B=window.PL_FACHBEREICHE||{}, bid=lsGet('pl_fachbereich'), b=B[bid];
+    var d=lade(), th=themen(b), kb=kbListe(b), w=wochenNr();
+    var karte='background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;margin-bottom:12px';
+    var knopf='width:100%;border:none;border-radius:11px;padding:12px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer';
+    var h='<div class="hero" style="margin-bottom:14px"><div class="hero-icon">🔄</div><h1>Mein <span>Auffrisch-Plan</span></h1>'
+      +'<p>Jede Woche ein Thema aus deinem Bereich – ohne Prüfungsdruck</p></div>';
+    h+='<div style="'+karte+';display:flex;align-items:center;gap:10px">'
+      +'<span style="font-size:22px">'+(b?b.i:'✳️')+'</span><div style="flex:1"><div style="font-size:11px;color:#8ab4d0;text-transform:uppercase;letter-spacing:1px">Dein Bereich</div>'
+      +'<div style="font-size:14px;font-weight:700;color:#e0f2fe">'+(b?esc(b.l):'Noch nicht gewählt')+'</div></div>'
+      +'<button onclick="plBereichOeffnen()" style="background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">'+(b?'ändern':'wählen')+'</button></div>';
+    if(!th.length){ box.innerHTML=h+'<div style="'+karte+';color:#b3c4d6;font-size:13px">Für diesen Bereich gibt es noch keine Quiz-Themen.</div>'; return; }
+    var tKat=th[w%th.length], key='w'+w, fertig=!!d.done[key];
+    var runden=Math.max(1,Math.round(d.min/15));
+    var kbI=kb.length?(w%kb.length):-1, kbB=kbI>=0?kb[kbI]:null;
+    h+='<div style="'+karte+';border-color:rgba(var(--accent-rgb),.35);background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(14,165,233,.05))">'
+      +'<div style="font-size:11px;color:#8ab4d0;text-transform:uppercase;letter-spacing:1px">Diese Woche · ab '+datum(montag(0))+'</div>'
+      +'<div style="font-size:18px;font-weight:800;color:#e0f2fe;margin:4px 0 10px">'+esc(katLabel(tKat))+'</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+      +'<span style="background:rgba(var(--accent-rgb),.12);border-radius:8px;padding:5px 10px;font-size:11.5px;color:var(--accent)">📝 '+runden+' Quiz-Runde'+(runden>1?'n':'')+'</span>'
+      +'<span style="background:rgba(52,211,153,.12);border-radius:8px;padding:5px 10px;font-size:11.5px;color:#34d399">⏱️ ca. '+d.min+' Min. pro Woche</span></div>'
+      +'<button onclick="plAuffrischQuiz(\''+tKat+'\')" style="'+knopf+';background:linear-gradient(135deg,var(--accent-d1),var(--accent-d2));color:#fff;margin-bottom:8px">Quiz zum Thema starten</button>'
+      +(kbB?'<button onclick="plAuffrischKB(\''+b.kb+'\','+kbI+')" style="'+knopf+';background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e2e8f0;margin-bottom:8px">🩺 Krankheitsbild der Woche: '+esc(kbB.name)+'</button>':'')
+      +(b&&b.med?'<button onclick="plBereichMed()" style="'+knopf+';background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e2e8f0;margin-bottom:8px">💊 Medikamente deines Bereichs</button>':'')
+      +'<button onclick="plAuffrischDone(\''+key+'\')" style="'+knopf+';background:'+(fertig?'rgba(52,211,153,.18)':'none')+';border:1px dashed '+(fertig?'#34d399':'rgba(255,255,255,.25)')+';color:'+(fertig?'#34d399':'#b3c4d6')+'">'+(fertig?'✅ Diese Woche erledigt':'Als erledigt markieren')+'</button>'
+      +'</div>';
+    h+='<div style="'+karte+'"><div style="font-size:13px;font-weight:700;color:#e0f2fe;margin-bottom:10px">Die nächsten Wochen</div>';
+    for(var i=1;i<=4;i++){ var k2=th[(w+i)%th.length];
+      h+='<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid rgba(255,255,255,.07);font-size:12.5px">'
+        +'<span style="color:#cbd5e1">'+esc(katLabel(k2))+'</span><span style="color:#7fa6c2;white-space:nowrap">ab '+datum(montag(i))+'</span></div>'; }
+    h+='</div>';
+    var erledigt=0; for(var j=0;j<8;j++) if(d.done['w'+(w-j)]) erledigt++;
+    h+='<div style="'+karte+'"><div style="font-size:11px;color:#8ab4d0;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Zeit pro Woche</div>'
+      +'<select onchange="plAuffrischMin(this.value)" style="width:100%;background:#0b1c2e;border:1px solid rgba(var(--accent-rgb),.2);border-radius:9px;padding:11px;color:#ddf0fb;font-size:13px;font-family:inherit">'
+      +[15,30,60,90].map(function(m){ return '<option value="'+m+'"'+(m===d.min?' selected':'')+'>'+m+' Minuten</option>'; }).join('')+'</select>'
+      +'<div style="font-size:12px;color:#9fb8cc;margin-top:10px">Erledigt in den letzten 8 Wochen: <strong style="color:#e0f2fe">'+erledigt+' von 8</strong></div></div>';
+    box.innerHTML=h;
+  }
+  window.plAuffrischRender=render;
+  try{
+    var orig=window.showScreen;
+    if(typeof orig==='function') window.showScreen=function(n){ var r=orig.apply(this,arguments); try{ if(n==='lernplan') render(); }catch(e){} return r; };
+  }catch(e){}
+  try{
+    var origP=window.setPersona;
+    if(typeof origP==='function') window.setPersona=function(){ var r=origP.apply(this,arguments); try{ var s=document.getElementById('screen-lernplan'); if(s&&s.classList.contains('active')) render(); }catch(e){} return r; };
+  }catch(e){}
+})();
+</script>
+
+<!-- PLAN NRW: Admin-Kontrollzentrum (25.10.2026, Wunsch P. Schenkelberger)
+     Neuer Admin-Tab „🧭 Kontrolle“: alle öffentlichen Seiten, Fach-Landingpages, App-Bildschirme,
+     Wissensseiten (aus lerninhalte, mit geprueft_am) und Gratis-PDFs an einem Ort zum Öffnen und Abhaken.
+     PDFs: GET /api/lead?pdf=<slug> mit Admin-Passwort im Header x-plan-admin (nie in der URL).
+     Abhak-Status lokal in pl_kontrolle_v1 {id:{d:'JJJJ-MM-TT'}} – gilt pro Gerät. Nur für Admins sichtbar. -->
+<script>
+(function(){
+  function istAdmin(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function lade(){ try{ return JSON.parse(localStorage.getItem('pl_kontrolle_v1')||'{}')||{}; }catch(e){ return {}; } }
+  function speichere(d){ try{ localStorage.setItem('pl_kontrolle_v1',JSON.stringify(d)); }catch(e){} }
+  var nurOffen=false, wissen=null, wissenFehler='';
+
+  var SEITEN=[
+    ['landingpage.html','Landingpage'],['links.html','Link-Seite (Social Media)'],['impressum.html','Impressum'],
+    ['datenschutz.html','Datenschutzerklärung'],['konto-loeschen.html','Konto löschen'],['flyer-pflegelearn.html','Flyer'],
+    ['testernachrichten.html','Testernachrichten'],['k.html','Kurzlink-Seite (k.html)'],['agent.html','PLAN Agent (intern)'],
+    ['wissen','Wissensdatenbank – Übersicht'],['sitemap.xml','Sitemap'],['robots.txt','robots.txt']
+  ];
+  var FACH=[
+    ['pflegeexamen','Pflegeexamen'],['langzeitpflege','Langzeitpflege & ambulant'],['intensivpflege','Intensivpflege'],
+    ['anaesthesiepflege','Anästhesiepflege'],['ata-ausbildung','ATA-Ausbildung'],['ota-ausbildung','OTA-Ausbildung'],
+    ['pflegefachassistenz','Pflegefachassistenz'],['anerkennung-pflege','Anerkennung Pflege'],['praxisanleitung','Praxisanleitung']
+  ];
+  var SCREENS=[
+    ['home','Startseite'],['quizSelect','Quiz – Auswahl'],['ueben','Üben & Prüfen'],['faelle','Fallbeispiele'],['chat','KI-Chat'],
+    ['merksaetze','Merksätze'],['krankheitsbilder','Krankheitsbilder'],['medikamente','Medikamente'],['medapo','Medikamente (Apotheke)'],
+    ['anatomie','Anatomie'],['medizintechnik','Medizintechnik'],['notfallmanagement','Notfallmanagement'],['lernplan','Lernplan / Auffrisch-Plan'],
+    ['ce','Curriculare Einheiten'],['ausbildungswege','Ausbildungswege'],['wissenhub','Wissen & Praxis'],['wissensdb','Wissensdatenbank (App)'],
+    ['grafiken','Grafiken'],['profil','Profil'],['preise','Preise'],['registrierung','Registrierung'],['support','Über mich & Hilfe'],
+    ['tester','Tester-Seite'],['lehrer','Kursraum (Lehrkraft)'],['klasse-beitreten','Kurs beitreten']
+  ];
+
+  function zeile(id,titel,aktion,extra){
+    var d=lade(), ok=!!d[id];
+    if(nurOffen&&ok) return '';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07)">'
+      +'<input type="checkbox" '+(ok?'checked':'')+' onchange="plKontrolleHaken(\''+esc(id)+'\')" style="width:18px;height:18px;accent-color:#34d399;flex:none;cursor:pointer">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#e2e8f0;overflow:hidden;text-overflow:ellipsis">'+esc(titel)+'</div>'
+      +'<div style="font-size:11px;color:#7fa6c2">'+(ok?'✅ geprüft am '+esc(d[id].d.split('-').reverse().join('.')):'noch nicht geprüft')+(extra?' · '+extra:'')+'</div></div>'
+      +aktion+'</div>';
+  }
+  function knopf(onclick,txt){ return '<button onclick="'+onclick+'" style="flex:none;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);border-radius:9px;padding:6px 11px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">'+txt+'</button>'; }
+  function link(href,txt){ return '<a href="'+esc(href)+'" target="_blank" rel="noopener" style="flex:none;text-decoration:none;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);border-radius:9px;padding:6px 11px;font-size:12px;font-weight:700">'+txt+'</a>'; }
+  function gruppe(id,titel,ids,inhalt){
+    var d=lade(), n=ids.filter(function(x){ return d[x]; }).length;
+    return '<details style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:12px 14px;margin-bottom:10px"'+(window._plKoOffen&&window._plKoOffen[id]?' open':'')+' ontoggle="(window._plKoOffen=window._plKoOffen||{})[\''+id+'\']=this.open">'
+      +'<summary style="cursor:pointer;font-size:14px;font-weight:800;color:#e0f2fe;display:flex;justify-content:space-between;gap:8px;list-style:none">'
+      +'<span>'+titel+'</span><span style="color:'+(n===ids.length&&ids.length?'#34d399':'#8ab4d0')+';font-size:12.5px">'+n+' / '+ids.length+'</span></summary>'
+      +'<div style="margin-top:8px">'+(inhalt||'<div style="font-size:12px;color:#7fa6c2;padding:8px 0">Alles geprüft.</div>')+'</div></details>';
+  }
+
+  window.plKontrolleHaken=function(id){ var d=lade(); if(d[id]) delete d[id]; else d[id]={d:new Date().toISOString().slice(0,10)}; speichere(d); render(); };
+  window.plKontrolleFilter=function(v){ nurOffen=!!v; render(); };
+  window.plKontrolleScreen=function(n){ try{ navGo(n); }catch(e){ try{ showScreen(n); }catch(_){} } };
+  window.plKontrolleFolien=function(){ try{ localStorage.removeItem('pl_onboarded'); showOnboarding(); }catch(e){} };
+  window.plKontrolleReset=function(){ if(!confirm('Alle Haken zurücksetzen?')) return; speichere({}); render(); };
+  window.plKontrollePdf=function(slug,datei,btn){
+    var t=''; try{ t=(currentUser&&currentUser.token)||''; }catch(e){}
+    var w=window.open('','_blank');
+    if(btn){ btn.disabled=true; btn.textContent='lädt …'; }
+    fetch('/api/lead?pdf='+encodeURIComponent(slug),{headers:{'x-plan-admin':t}}).then(function(r){
+      if(!r.ok) throw new Error(String(r.status)); return r.blob();
+    }).then(function(bl){
+      var u=URL.createObjectURL(bl);
+      if(w) w.location=u; else { var a=document.createElement('a'); a.href=u; a.download=datei; document.body.appendChild(a); a.click(); a.remove(); }
+    }).catch(function(e){ if(w) w.close(); alert('PDF konnte nicht geladen werden ('+e.message+').'); })
+      .then(function(){ if(btn){ btn.disabled=false; btn.textContent='öffnen'; } });
+  };
+
+  function ladeWissen(){
+    if(wissen||!window.SB) return;
+    wissen=[];
+    try{
+      window.SB.from('lerninhalte').select('slug,titel,kategorie,geprueft_von,geprueft_am').eq('aktiv',true).order('kategorie').order('titel').limit(2000)
+        .then(function(r){ if(r.error){ wissenFehler=r.error.message; } else wissen=r.data||[]; render(); });
+    }catch(e){ wissenFehler=String(e); }
+  }
+
+  function render(){
+    var box=document.getElementById('kontrolle-box'); if(!box) return;
+    if(!istAdmin()){ box.innerHTML='<div style="color:#facc15;font-size:13px">Nur für Admins.</div>'; return; }
+    ladeWissen();
+    var d=lade();
+    var h='<div style="font-size:12.5px;color:#9fb8cc;line-height:1.5;margin-bottom:10px">Alle Seiten, Bildschirme und PDFs an einem Ort. Öffnen, ansehen, abhaken. Die Haken gelten nur auf diesem Gerät.</div>'
+      +'<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#cbd5e1;margin-bottom:12px;cursor:pointer"><input type="checkbox" '+(nurOffen?'checked':'')+' onchange="plKontrolleFilter(this.checked)" style="accent-color:var(--accent)"> Nur Ungeprüftes zeigen</label>';
+    var ids, inh;
+    ids=SEITEN.map(function(s){ return 'seite:'+s[0]; });
+    inh=SEITEN.map(function(s){ return zeile('seite:'+s[0],s[1],link('/'+s[0],'öffnen')); }).join('');
+    h+=gruppe('seiten','🌐 Öffentliche Seiten',ids,inh);
+    ids=FACH.map(function(s){ return 'fach:'+s[0]; });
+    inh=FACH.map(function(s){ return zeile('fach:'+s[0],s[1],link('/fach/'+s[0]+'.html','öffnen')); }).join('');
+    h+=gruppe('fach','🎯 Fach-Landingpages',ids,inh);
+    ids=SCREENS.map(function(s){ return 'app:'+s[0]; }).concat(['app:folien']);
+    inh=zeile('app:folien','Willkommensfolien (Erststart)',knopf('plKontrolleFolien()','ansehen'))
+      +SCREENS.map(function(s){ return document.getElementById('screen-'+s[0])?zeile('app:'+s[0],s[1],knopf("plKontrolleScreen('"+s[0]+"')",'öffnen')):''; }).join('');
+    h+=gruppe('app','📱 App-Bildschirme',ids,inh);
+    var L=window.PL_PDF_LISTE||[];
+    ids=L.map(function(p){ return 'pdf:'+p[0]; });
+    inh=L.map(function(p){ return zeile('pdf:'+p[0],p[2]+' '+p[3],'<button onclick="plKontrollePdf(\''+p[0]+'\',\''+p[1]+'\',this)" style="flex:none;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);border-radius:9px;padding:6px 11px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">öffnen</button>',esc(p[1])); }).join('');
+    h+=gruppe('pdf','📄 Gratis-PDFs',ids,inh);
+    if(wissenFehler){ h+='<div style="color:#facc15;font-size:12.5px;margin-bottom:10px">Wissensseiten konnten nicht geladen werden: '+esc(wissenFehler)+'</div>'; }
+    else if(wissen&&wissen.length){
+      var kats={}; wissen.forEach(function(w){ (kats[w.kategorie||'Sonstiges']=kats[w.kategorie||'Sonstiges']||[]).push(w); });
+      var alleIds=wissen.map(function(w){ return 'wissen:'+w.slug; });
+      var innen=Object.keys(kats).map(function(k){
+        var zs=kats[k].map(function(w){ var db=w.geprueft_am?('fachlich geprüft '+esc(String(w.geprueft_am).slice(0,10).split('-').reverse().join('.'))+(w.geprueft_von?' ('+esc(w.geprueft_von)+')':'')):'';
+          return zeile('wissen:'+w.slug,w.titel||w.slug,link('/wissen/'+w.slug,'öffnen'),db); }).join('');
+        if(!zs) return '';
+        var n=kats[k].filter(function(w){ return d['wissen:'+w.slug]; }).length;
+        return '<div style="font-size:11.5px;color:#8ab4d0;text-transform:uppercase;letter-spacing:1px;margin:12px 0 2px">'+esc(k)+' · '+n+'/'+kats[k].length+'</div>'+zs;
+      }).join('');
+      h+=gruppe('wissen','📚 Wissensseiten ('+wissen.length+')',alleIds,innen);
+    } else h+='<div style="color:#7fa6c2;font-size:12.5px;margin-bottom:10px">Wissensseiten werden geladen …</div>';
+    var alle=Object.keys(d).length;
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 70px;font-size:12px;color:#7fa6c2"><span>Insgesamt abgehakt: '+alle+'</span>'
+      +'<button onclick="plKontrolleReset()" style="background:none;border:1px solid rgba(255,255,255,.18);color:#9fb8cc;border-radius:9px;padding:6px 11px;font-size:12px;font-family:inherit;cursor:pointer">Haken zurücksetzen</button></div>';
+    box.innerHTML=h;
+  }
+  window.plKontrolleAnzeigen=render;
+
+  function einbauen(){
+    if(document.getElementById('atab-kontrolle')) return;
+    var vorbild=document.getElementById('atab-videos'); if(!vorbild) return;
+    var b=document.createElement('button'); b.id='atab-kontrolle'; b.setAttribute('onclick',"adminTab('kontrolle')");
+    b.style.cssText=vorbild.style.cssText; b.textContent='🧭 Kontrolle';
+    vorbild.parentNode.insertBefore(b,vorbild.parentNode.firstChild);
+    var c=document.createElement('div'); c.id='admin-kontrolle'; c.className='admin-tab-content'; c.style.display='none';
+    c.innerHTML='<div id="kontrolle-box" style="padding:4px 0"></div>';
+    var ref=document.getElementById('admin-nutzung'); if(ref) ref.parentNode.insertBefore(c,ref);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',einbauen); else einbauen();
+  try{
+    var orig=window.adminTab;
+    if(typeof orig==='function') window.adminTab=function(tab){ einbauen(); var r=orig.apply(this,arguments); try{ if(tab==='kontrolle') render(); }catch(e){} return r; };
   }catch(e){}
 })();
 </script>
