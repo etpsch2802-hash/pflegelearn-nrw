@@ -2223,7 +2223,7 @@ const KAT_ZU_CE = {
 let quizCE = null; // aktive CE im Quiz (Retry/Progress)
 
 const SYS = `Du bist PLAN – Lernassistent für alle 7 Pflegeausbildungswege in NRW und Medizintechnik:
-1. Pflegefachassistenz (1J, PflfachassAPrV NRW 2021)
+1. Pflegefachassistenz (Beginn bis 31.12.2026: 1J nach NRW-Recht; ab 01.01.2027 bundeseinheitlich 18 Monate, PflFAssG/PflFAssAPrV)
 2. Anerkennungsschüler (PflBG §66a, Pflegekammer NRW seit 2024)
 3. Generalistische Pflegeausbildung GPA (PflBG/PflAPrV 2020, CE 01–11)
 4. Fachpflege Anästhesie (2J Weiterbildung, DKG)
@@ -2239,7 +2239,16 @@ MEDIZINTECHNIK-WISSEN:
 - Philips IntelliVue Monitor (MX800, MP60): Bedienung, IBP-Nullung, Alarmmanagement, Normwerte
 - Dräger Evita / Hamilton C6 Beatmung: Modi (VC-SIMV, PSV, BIPAP, APRV, NIV), Einstellungen, Alarme, Weaning
 - B.Braun Infusomat Space / Fresenius Volumat: Bedienung, Alarme, Unterschied Perfusor vs. Infusomat
-Antworte auf Deutsch, korrekt, didaktisch, mit Merkhilfen. Kein Rat für reale Patienten.`;
+Antworte auf Deutsch, korrekt, didaktisch, mit Merkhilfen. Kein Rat für reale Patienten.
+
+ANTWORTREGELN:
+- Kontext ist immer Pflege und Klinik in Deutschland. Lies Abkürzungen IMMER in ihrer pflegerisch-medizinischen Bedeutung (z. B. DK = Dauerkatheter/transurethraler Blasenverweilkatheter, SPK = suprapubischer Katheter, ZVK = zentraler Venenkatheter). Ist eine Abkürzung mehrdeutig, nenne zuerst die im Pflegealltag häufigste Bedeutung und die Alternative in einem Halbsatz. Erfinde keine Bedeutungen – kennst du eine Abkürzung nicht sicher, frag nach.
+- Aufbau: zuerst 1–2 Sätze Kernaussage, dann Details in kurzen Stichpunkten, zum Schluss „Merke:“ mit Eselsbrücke oder Prüfungstipp. Normalerweise höchstens ca. 250 Wörter, außer der Nutzer möchte mehr.
+- Fachlich nach aktuellen Standards (DNQP-Expertenstandards, KRINKO-Empfehlungen, S3-Leitlinien, ERC-Reanimationsleitlinien). Dosierungen und Normwerte als Richtwerte kennzeichnen: Hausstandard und ärztliche Anordnung gehen vor.
+- Bist du unsicher, sag das ehrlich, statt zu raten.
+- Akuter Notfall bei einem echten Menschen: sofort auf Notruf 112 bzw. Reanimationsteam verweisen.
+- Frage keine Patientendaten ab und verarbeite keine.
+- Sprich den Nutzer mit „du“ an.`;
 
 // ─── PRÜFUNGS-SIMULATION (System-Prompts) ────────────────────────────────────
 const SYS_EXAM_MUENDLICH = `Du bist ein erfahrener, fairer aber anspruchsvoller PRÜFER für die mündliche staatliche Prüfung in der Pflegeausbildung NRW (PflBG/PflAPrV bzw. die jeweilige APrV des Ausbildungswegs).
@@ -3091,11 +3100,16 @@ const LOKAL_WISSEN = {
 };
 
 function checkLokalWissen(frage) {
-  const f = frage.toLowerCase();
+  // 26.10.2026: nur ganze Wörter (vorher Teilwort-Treffer: „fast alles“ → FAST-Schlaganfalltest, „Universität“ → RSI).
+  // Kurze Abkürzungen (≤ 4 Zeichen) zählen nur in Großschreibung oder wenn die Frage nur aus dem Begriff besteht.
+  const roh = String(frage || '');
+  const f = roh.toLowerCase();
+  const kurzFrage = f.replace(/^(was (ist|sind|bedeutet|heißt|heisst)( ein| eine| der| die| das)?|erkläre?( mir)?)\s*/, '').replace(/[?!. ]+$/, '').trim();
   for (const [key, antwort] of Object.entries(LOKAL_WISSEN)) {
-    if (f.includes(key)) {
-      return antwort;
-    }
+    const esc = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!new RegExp('(^|[^a-zäöüß0-9])' + esc + '($|[^a-zäöüß0-9])').test(f)) continue;
+    if (key.length <= 4 && kurzFrage !== key && !new RegExp('(^|[^A-Za-zÄÖÜäöüß0-9])' + esc.toUpperCase() + '($|[^A-Za-zÄÖÜäöüß0-9])').test(roh)) continue;
+    return antwort;
   }
   return null;
 }
@@ -3197,7 +3211,9 @@ async function sendMsg(text) {
     if (examMode && a) activeSys += `\n\nAKTUELLER AUSBILDUNGSWEG: ${a.nr} · ${a.title} (${a.subtitle}). Richte Fragen/Aufgaben und Niveau exakt an diesem Ausbildungsweg aus.`;
     if (examMode) activeSys += `\n\n${examLevelText(examLevel)}`;
     if (examMode && examTopic) activeSys += `\n\nPRÜFUNGSTHEMA: Halte die Prüfung thematisch beim Thema "${examTopic}".`;
-    const reply = await callKI(chatHistory, activeSys);
+    // Normaler Chat: Abkürzungen + Nutzerprofil ergänzen, nur die letzten 16 Nachrichten senden (Groq-Kontingent, 26.10.2026)
+    if (!examMode && typeof window.plChatKontext === 'function') { try { activeSys += window.plChatKontext(txt); } catch (_) {} }
+    const reply = await callKI(examMode ? chatHistory : chatHistory.slice(-16), activeSys);
     removeTyping();
     chatHistory.push({ role:"assistant", content: reply });
     appendMsg("ai", reply, a?.color);
@@ -26909,6 +26925,114 @@ var PL_MAILPFLICHT_PUBLIC = false;
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(einrichten, 50); });
   else setTimeout(einrichten, 50);
+})();
+</script>
+
+<script>
+/* ── KI-CHAT: PFLEGE-ABKÜRZUNGEN + NUTZERPROFIL (26.10.2026, Meldung P. Schenkelberger: „DK“ wurde als
+   „Durchführungskontrolle“ erklärt) ────────────────────────────────────────────────────────────────
+   window.plChatKontext(txt) liefert einen Zusatz für den System-Prompt (nur normaler Chat, nicht Prüfungen):
+   1) Bedeutung aller im Text erkannten Abkürzungen aus PL_ABK (Pflege-/Klinikkontext Deutschland),
+   2) Nutzerprofil aus pl_persona / pl_fachbereich (Antwortniveau).
+   Mehrdeutige Abkürzungen stehen mit beiden Bedeutungen in der Liste. Einträge in GROSS werden nur in
+   Großschreibung erkannt, weil sie kleingeschrieben normale Wörter sind (na, ca, am …).
+   Berührt NICHT: api/chat.js, callKI, Prüfungsmodi. Fachliche Endkontrolle der Liste: P. Schenkelberger. */
+(function(){
+  var A = {
+    'DK':'Dauerkatheter = transurethraler Blasenverweilkatheter (Harnableitung über die Harnröhre)',
+    'SPK':'suprapubischer Katheter (Blasenkatheter durch die Bauchdecke)',
+    'ZVK':'zentraler Venenkatheter','PVK':'peripherer Venenverweilkatheter (Viggo/Braunüle)',
+    'PICC':'peripher eingeführter zentraler Venenkatheter','PORT':'Portkatheter (implantiertes Venenzugangssystem)',
+    'PEG':'perkutane endoskopische Gastrostomie (Ernährungssonde durch die Bauchdecke)','PEJ':'perkutane endoskopische Jejunostomie',
+    'PDK':'Periduralkatheter (rückenmarksnahe Schmerztherapie)','SPA':'Spinalanästhesie',
+    'PCA':'patientenkontrollierte Analgesie (Schmerzpumpe)','TIVA':'total intravenöse Anästhesie',
+    'ITN':'Intubationsnarkose','LAMA':'Larynxmaske',
+    'AZ':'Allgemeinzustand','EZ':'Ernährungszustand','RR':'Blutdruck (nach Riva-Rocci)','HF':'Herzfrequenz','AF':'Atemfrequenz',
+    'SPO2':'periphere Sauerstoffsättigung (Pulsoxymetrie)','BZ':'Blutzucker','BMI':'Body-Mass-Index',
+    'GCS':'Glasgow Coma Scale','NRS':'Numerische Rating-Skala (Schmerz 0–10)','VAS':'Visuelle Analogskala (Schmerz)',
+    'BI':'Barthel-Index','MNA':'Mini Nutritional Assessment',
+    'I.V.':'intravenös','I.M.':'intramuskulär','S.C.':'subkutan','P.O.':'per os (über den Mund)','S.L.':'sublingual (unter der Zunge)',
+    'B.B.':'bei Bedarf','NW':'Nebenwirkung','WW':'Wechselwirkung','BTM':'Betäubungsmittel (BtMG)',
+    'ASS':'Acetylsalicylsäure','NSAR':'nichtsteroidale Antirheumatika','PONV':'postoperative Übelkeit und Erbrechen',
+    'ASA':'ASA-Klassifikation (Narkoserisiko I–VI) – seltener: Acetylsalicylsäure',
+    'AWR':'Aufwachraum','ITS':'Intensivstation','IMC':'Intermediate Care','ZNA':'Zentrale Notaufnahme','OP':'Operation bzw. Operationssaal',
+    'RTW':'Rettungswagen','NEF':'Notarzteinsatzfahrzeug','HLW':'Herz-Lungen-Wiederbelebung','CPR':'kardiopulmonale Reanimation',
+    'AED':'automatisierter externer Defibrillator','ROSC':'Wiedereinsetzen des Spontankreislaufs',
+    'ACS':'akutes Koronarsyndrom','STEMI':'ST-Hebungsinfarkt','NSTEMI':'Herzinfarkt ohne ST-Hebung','KHK':'koronare Herzkrankheit',
+    'HI':'Herzinsuffizienz (umgangssprachlich selten auch Herzinfarkt)','VHF':'Vorhofflimmern','TAA':'Tachyarrhythmia absoluta',
+    'AP':'Angina pectoris – im Stoma-Kontext: Anus praeter (künstlicher Darmausgang)',
+    'AHT':'arterielle Hypertonie','PAVK':'periphere arterielle Verschlusskrankheit','TVT':'tiefe Venenthrombose','LAE':'Lungenarterienembolie',
+    'COPD':'chronisch obstruktive Lungenerkrankung','ARDS':'akutes Lungenversagen','DM':'Diabetes mellitus',
+    'NI':'Niereninsuffizienz','ANV':'akutes Nierenversagen','HWI':'Harnwegsinfektion','CAUTI':'katheterassoziierte Harnwegsinfektion',
+    'SHT':'Schädel-Hirn-Trauma','ICB':'intrazerebrale Blutung','SAB':'Subarachnoidalblutung','TIA':'transitorische ischämische Attacke',
+    'MS':'Multiple Sklerose – seltener: Magensonde','ALS':'amyotrophe Lateralsklerose','PNP':'Polyneuropathie',
+    'DD':'Differenzialdiagnose','V.A.':'Verdacht auf','Z.N.':'Zustand nach','O.B.':'ohne Befund',
+    'HB':'Hämoglobin','HK':'Hämatokrit','CRP':'C-reaktives Protein','PCT':'Procalcitonin','INR':'International Normalized Ratio (Gerinnung)',
+    'PTT':'partielle Thromboplastinzeit','GFR':'glomeruläre Filtrationsrate','KREA':'Kreatinin','BB':'Blutbild',
+    'BGA':'Blutgasanalyse','EKG':'Elektrokardiogramm','EEG':'Elektroenzephalogramm','CT':'Computertomografie','MRT':'Magnetresonanztomografie',
+    'ZVD':'zentraler Venendruck','MAP':'mittlerer arterieller Druck','ICP':'intrakranieller Druck (Hirndruck)',
+    'PEEP':'positiver endexspiratorischer Druck','FIO2':'inspiratorische Sauerstofffraktion','NIV':'nichtinvasive Beatmung',
+    'CPAP':'kontinuierlicher positiver Atemwegsdruck','ECMO':'extrakorporale Membranoxygenierung',
+    'EK':'Erythrozytenkonzentrat','TK':'Thrombozytenkonzentrat','FFP':'Fresh Frozen Plasma (Blutprodukt) – nicht verwechseln mit FFP2-Maske',
+    'MRSA':'Methicillin-resistenter Staphylococcus aureus','MRGN':'multiresistente gramnegative Erreger (3MRGN/4MRGN)',
+    'VRE':'Vancomycin-resistente Enterokokken','ESBL':'Extended-Spectrum-Beta-Laktamase-Bildner',
+    'HD':'hygienische Händedesinfektion – im Nieren-Kontext: Hämodialyse',
+    'PSA':'persönliche Schutzausrüstung – im Labor/Urologie: prostataspezifisches Antigen',
+    'MNS':'Mund-Nasen-Schutz','KRINKO':'Kommission für Krankenhaushygiene und Infektionsprävention (RKI)','RKI':'Robert Koch-Institut',
+    'IFSG':'Infektionsschutzgesetz','DNQP':'Deutsches Netzwerk für Qualitätsentwicklung in der Pflege (Expertenstandards)',
+    'ATL':'Aktivitäten des täglichen Lebens (Juchli)','AEDL':'Aktivitäten und existenzielle Erfahrungen des Lebens (Krohwinkel)',
+    'ABEDL':'Aktivitäten, Beziehungen und existenzielle Erfahrungen des Lebens (Krohwinkel)',
+    'SIS':'Strukturierte Informationssammlung (Entbürokratisierung der Pflegedokumentation)',
+    'PG':'Pflegegrad','MD':'Medizinischer Dienst (früher MDK)','PDL':'Pflegedienstleitung','WBL':'Wohnbereichsleitung',
+    'PA':'Praxisanleitung bzw. Praxisanleiter:in','PFK':'Pflegefachkraft','PFA':'Pflegefachassistenz',
+    'PFLBG':'Pflegeberufegesetz','PFLAPRV':'Pflegeberufe-Ausbildungs- und Prüfungsverordnung','CE':'curriculare Einheit (Rahmenlehrplan)',
+    'SAPV':'spezialisierte ambulante Palliativversorgung','PV':'Patientenverfügung','VV':'Vorsorgevollmacht',
+    'FEM':'freiheitsentziehende Maßnahmen','DNR':'keine Reanimation („do not resuscitate“)',
+    'TEP':'Totalendoprothese','SHF':'Schenkelhalsfraktur','HWS':'Halswirbelsäule','BWS':'Brustwirbelsäule','LWS':'Lendenwirbelsäule',
+    'BE':'Blutentnahme – in der Diabetologie: Broteinheit','KE':'Kohlenhydrateinheit','IE':'Internationale Einheiten',
+    'SSW':'Schwangerschaftswoche','KG':'Körpergewicht – auch: Krankengymnastik','NA':'Notarzt – in Perfusor-Kontext: Noradrenalin',
+    'SR':'Sinusrhythmus','VES':'ventrikuläre Extrasystole','GI':'gastrointestinal (Magen-Darm-Trakt)',
+    'KI':'Kontraindikation (im Arzneimittel-Kontext) – sonst: künstliche Intelligenz','SBAR':'strukturierte Übergabe (Situation, Background, Assessment, Recommendation)',
+    'ISBAR':'strukturierte Übergabe (Identifikation, Situation, Background, Assessment, Recommendation)'
+  };
+  window.PL_ABK = A;
+  // Nur in Großschreibung erkennen (kleingeschrieben normale Wörter oder zu unspezifisch)
+  var GROSS = {NA:1,BE:1,PA:1,AP:1,MS:1,HD:1,DD:1,MD:1,PG:1,PV:1,VV:1,KG:1,IE:1,KE:1,SR:1,TK:1,EK:1,CE:1,BB:1,HI:1,KI:1,OP:1,PSA:1,AZ:1,EZ:1,HF:1,AF:1,DM:1,NI:1,GI:1,BI:1,HB:1,HK:1,ASS:1,SIS:1,MAP:1,PORT:1,LAMA:1,FEM:1,TAA:1,SAB:1,ALS:1,ATL:1,SHF:1};
+
+  function treffer(txt){
+    var t=String(txt||''), gef={}, out=[];
+    var re=/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß0-9]*(?:\.[A-Za-z]\.?)?/g, m;
+    while((m=re.exec(t))){
+      var roh=m[0], up=roh.toUpperCase();
+      if(!A[up]) continue;
+      if(GROSS[up] && roh!==up) continue;
+      if(!gef[up]){ gef[up]=1; out.push(up); }
+    }
+    return out.slice(0,12);
+  }
+  window.plAbkTreffer = treffer;
+
+  function profil(){
+    var p='', f='', txt='';
+    try{ p=localStorage.getItem('pl_persona')||''; f=localStorage.getItem('pl_fachbereich')||''; }catch(e){}
+    if(p==='azubi') txt='NUTZERPROFIL: Auszubildende:r in der Pflege. Prüfungsnah erklären, Fachbegriffe kurz übersetzen, Bezug zu Examen und Praxiseinsatz.';
+    else if(p==='examiniert'){
+      var fb=''; try{ fb=(window.PL_FACHBEREICHE&&window.PL_FACHBEREICHE[f]&&window.PL_FACHBEREICHE[f].l)||''; }catch(e){}
+      txt='NUTZERPROFIL: examinierte Pflegefachperson'+(fb?(' im Bereich '+fb):'')+'. Praxisnah und kompakt, aktueller Wissensstand, keine Grundlagen-Erklärungen ohne Nachfrage.';
+    }
+    else if(p==='lehrkraft') txt='NUTZERPROFIL: Lehrkraft bzw. Praxisanleitung. Didaktisch aufbereiten, gern mit Ideen für Anleitung, Unterricht oder Prüfungsfragen.';
+    return txt;
+  }
+
+  window.plChatKontext = function(txt){
+    var teile=[], abk=treffer(txt);
+    if(abk.length){
+      teile.push('ABKÜRZUNGEN IN DER FRAGE (verbindlich, Pflegekontext Deutschland – genau diese Bedeutung verwenden; bei zwei Bedeutungen die zum Satz passende wählen und die andere kurz erwähnen):\n'
+        + abk.map(function(k){ return '- '+k+' = '+A[k]; }).join('\n'));
+    }
+    var pr=profil(); if(pr) teile.push(pr);
+    return teile.length ? '\n\n'+teile.join('\n\n') : '';
+  };
 })();
 </script>
 
