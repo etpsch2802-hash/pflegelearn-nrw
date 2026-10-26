@@ -1,0 +1,59 @@
+# PLAN NRW – tägliche Datenbank-Sicherung (26.10.2026)
+# Supabase Free hat keine automatischen Backups. Dieser Job sichert die Schemas public, auth und storage
+# mit pg_dump, verschlüsselt die Datei (AES-256, Passwort nur als GitHub-Secret) und legt sie 90 Tage
+# als Artefakt ab. Benötigte Repo-Secrets:
+#   SUPABASE_DB_URL   = Supabase → Connect → „Session pooler“-URI (mit DB-Passwort)
+#   BACKUP_PASSWORT   = frei gewähltes, langes Passwort (sicher notieren – ohne es ist das Backup wertlos)
+# Wiederherstellen: siehe docs/backup.md
+name: db-backup
+on:
+  schedule:
+    - cron: '43 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Secrets prüfen
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PW: ${{ secrets.BACKUP_PASSWORT }}
+        run: |
+          if [ -z "$DB_URL" ] || [ -z "$PW" ]; then
+            echo "::error::Secrets SUPABASE_DB_URL und/oder BACKUP_PASSWORT fehlen (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+      - name: pg_dump 17 installieren
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
+      - name: Sichern und verschlüsseln
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSWORT: ${{ secrets.BACKUP_PASSWORT }}
+        run: |
+          set -euo pipefail
+          STAMP=$(date -u +%Y-%m-%d)
+          /usr/lib/postgresql/17/bin/pg_dump "$DB_URL" -Fc --no-owner --no-privileges \
+            --schema=public --schema=auth --schema=storage -f plan.dump
+          SIZE=$(stat -c%s plan.dump)
+          echo "Dump-Größe: $SIZE Bytes"
+          if [ "$SIZE" -lt 100000 ]; then echo "::error::Dump verdächtig klein ($SIZE Bytes)"; exit 1; fi
+          /usr/lib/postgresql/17/bin/pg_restore -l plan.dump > /dev/null
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 200000 -pass env:BACKUP_PASSWORT -in plan.dump -out "plan-db-$STAMP.dump.enc"
+          rm -f plan.dump
+          sha256sum "plan-db-$STAMP.dump.enc" > "plan-db-$STAMP.sha256"
+          echo "STAMP=$STAMP" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plan-db-${{ env.STAMP }}
+          path: |
+            plan-db-*.dump.enc
+            plan-db-*.sha256
+          retention-days: 90
+          if-no-files-found: error

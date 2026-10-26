@@ -3128,7 +3128,9 @@ async function callKI(messages, systemPrompt) {
     let errData = {};
     try { errData = await response.json(); } catch (_) {}
     const msg = errData.error || `HTTP ${response.status}`;
-    throw new Error(msg);
+    const fe = new Error(msg);
+    if (response.status === 429) fe.kiLimit = true; // Tageslimit /api/chat (26.10.2026)
+    throw fe;
   }
 
   let data;
@@ -3205,6 +3207,8 @@ async function sendMsg(text) {
     let errMsg = '⚠️ KI-Assistent nicht erreichbar.';
     if (e.message && e.message.includes('API-Key')) {
       errMsg = '🔑 API-Key fehlt. Bitte in Vercel → Settings → Environment Variables → GROQ_API_KEY eintragen.';
+    } else if (e.kiLimit) {
+      errMsg = '⏳ ' + e.message;
     } else if (e.message) {
       errMsg = '⚠️ Fehler: ' + e.message;
     }
@@ -6926,6 +6930,18 @@ function openKrankheitsbild(fachId, bildIdx) {
   try{ loadKBVideos(b.name, fachId); }catch(e){}
   showScreen('kb-detail');
 }
+/* Sicherheit (26.10.2026): Schreibzugriffe auf videos/fragen_feedback/push_subs laufen über RPCs
+   (docs/sql/2026-10-26_haertung_teil1.sql). Fehlt die RPC noch (vor dem SQL-Lauf), greift der alte Tabellenweg. */
+function _plAdmTok(){ try{ return (typeof currentUser!=='undefined' && currentUser && currentUser.token) || ''; }catch(e){ return ''; } }
+function _plRpcFehlt(r){ var e=r&&r.error; return !!(e && /PGRST202|Could not find the function|does not exist/i.test(String(e.code||'')+' '+String(e.message||''))); }
+async function _plRpc(name, args, alt){
+  var r; try{ r=await window.SB.rpc(name, args); }catch(e){ r={ error:{ message:String(e&&e.message||e) } }; }
+  if(_plRpcFehlt(r) && typeof alt==='function') return { alt:true, res: await alt() };
+  if(r && r.error) return { error:r.error };
+  var d=r?r.data:null;
+  if(d && d.ok===false) return { error:{ message:d.err||'abgelehnt' } };
+  return { data:d };
+}
 function _vidKey(name){ return String(name||'').toLowerCase().trim(); }
 function _vEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 async function loadKBVideos(name, fachId){
@@ -6970,7 +6986,9 @@ async function plVideoSave(){
   if(!window.SB){ if(st){st.textContent='Keine Verbindung zur Datenbank.';st.style.color='#fca5a5';} return; }
   var parts=val.split('|'), fid=parts[0], name=parts.slice(1).join('|');
   try{
-    var res=await window.SB.from('videos').insert({ kb_key:_vidKey(name), kb_name:name, fach:fid, titel:(titel&&titel.value.trim())||null, tiktok_url:u, aktiv:true });
+    var row={ kb_key:_vidKey(name), kb_name:name, fach:fid, titel:(titel&&titel.value.trim())||null, tiktok_url:u, aktiv:true };
+    var rr=await _plRpc('admin_videos', { p_admin:_plAdmTok(), p_aktion:'insert', p_row:row }, function(){ return window.SB.from('videos').insert(row); });
+    var res=rr.alt ? rr.res : rr;
     if(res && res.error){ if(st){st.textContent='Fehler: '+res.error.message;st.style.color='#fca5a5';} return; }
     if(url) url.value=''; if(titel) titel.value='';
     if(st){ st.textContent='Gespeichert für '+name+'.'; st.style.color='#6ee7b7'; }
@@ -6982,8 +7000,9 @@ async function plVideoLoadListe(){
   if(!window.SB){ box.innerHTML=''; return; }
   box.innerHTML='<div style="font-size:12px;color:#8ab4d0">lädt …</div>';
   try{
-    var res=await window.SB.from('videos').select('*').order('created_at',{ascending:false});
-    var rows=(res&&res.data)||[];
+    var rr=await _plRpc('admin_videos', { p_admin:_plAdmTok(), p_aktion:'list' }, function(){ return window.SB.from('videos').select('*').order('created_at',{ascending:false}); });
+    if(rr.error) throw rr.error;
+    var rows=(rr.alt ? (rr.res&&rr.res.data) : (rr.data&&rr.data.data)) || [];
     if(!rows.length){ box.innerHTML='<div style="font-size:12px;color:#8ab4d0">Noch keine Videos zugeordnet.</div>'; return; }
     box.innerHTML=rows.map(function(v){
       return '<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 11px;margin-bottom:6px">'
@@ -6994,8 +7013,8 @@ async function plVideoLoadListe(){
     }).join('');
   }catch(e){ box.innerHTML='<div style="font-size:12px;color:#fca5a5">Fehler beim Laden.</div>'; }
 }
-async function plVideoToggle(id, aktiv){ if(!window.SB) return; try{ await window.SB.from('videos').update({aktiv:aktiv}).eq('id', id); plVideoLoadListe(); }catch(e){} }
-async function plVideoDelete(id){ if(!window.SB) return; if(!confirm('Dieses Video wirklich löschen?')) return; try{ await window.SB.from('videos').delete().eq('id', id); plVideoLoadListe(); }catch(e){} }
+async function plVideoToggle(id, aktiv){ if(!window.SB) return; try{ await _plRpc('admin_videos', { p_admin:_plAdmTok(), p_aktion:'aktiv', p_id:id, p_row:{aktiv:aktiv} }, function(){ return window.SB.from('videos').update({aktiv:aktiv}).eq('id', id); }); plVideoLoadListe(); }catch(e){} }
+async function plVideoDelete(id){ if(!window.SB) return; if(!confirm('Dieses Video wirklich löschen?')) return; try{ await _plRpc('admin_videos', { p_admin:_plAdmTok(), p_aktion:'delete', p_id:id }, function(){ return window.SB.from('videos').delete().eq('id', id); }); plVideoLoadListe(); }catch(e){} }
 
 
 // ─── KB-FRAGEN SHUFFLE ──────────────────────────────────────────────────────
@@ -19471,11 +19490,11 @@ async function renderFeedbackListe(status){
   if(!window.SB){ host.innerHTML='<div style="color:#fb7185;font-size:12px;text-align:center;padding:18px">Keine Verbindung.</div>'; return; }
   host.innerHTML='<div style="color:#8ab4d0;font-size:12px;text-align:center;padding:18px">Lädt…</div>';
   try{
-    var res = await window.SB.from('fragen_feedback')
-      .select('id,kategorie,frage,grund,kommentar,nutzer,status,created_at')
-      .eq('status', _ffFilter).order('created_at', { ascending:false }).limit(100);
-    if(res.error) throw res.error;
-    var rows = res.data || [];
+    var rr = await _plRpc('admin_feedback', { p_admin:_plAdmTok(), p_aktion:'list', p_status:_ffFilter }, function(){
+      return window.SB.from('fragen_feedback').select('id,kategorie,frage,grund,kommentar,nutzer,status,created_at')
+        .eq('status', _ffFilter).order('created_at', { ascending:false }).limit(100); });
+    if(rr.error || (rr.alt && rr.res && rr.res.error)) throw (rr.error || rr.res.error);
+    var rows = (rr.alt ? rr.res.data : (rr.data && rr.data.data)) || [];
     plFfBadge();
     if(!rows.length){
       host.innerHTML='<div style="color:#8ab4d0;font-size:12.5px;text-align:center;padding:22px">'
@@ -19503,8 +19522,8 @@ async function renderFeedbackListe(status){
 async function plFfSetStatus(id, status, btn){
   if(btn){ btn.disabled=true; btn.textContent='…'; }
   try{
-    var res = await window.SB.from('fragen_feedback').update({ status:status }).eq('id', id);
-    if(res.error) throw res.error;
+    var rr = await _plRpc('admin_feedback', { p_admin:_plAdmTok(), p_aktion:'status', p_id:id, p_status:status }, function(){ return window.SB.from('fragen_feedback').update({ status:status }).eq('id', id); });
+    if(rr.error || (rr.alt && rr.res && rr.res.error)) throw (rr.error || rr.res.error);
     renderFeedbackListe(_ffFilter);
   }catch(e){ if(btn){ btn.disabled=false; btn.textContent='Fehler – nochmal'; } }
 }
@@ -19513,8 +19532,8 @@ function plFfWiederOeffnen(id, btn){ plFfSetStatus(id,'offen',btn); }
 async function plFfBadge(){
   try{
     if(!window.SB) return;
-    var res = await window.SB.from('fragen_feedback').select('id', { count:'exact', head:true }).eq('status','offen');
-    var n = (res && typeof res.count === 'number') ? res.count : 0;
+    var rr = await _plRpc('admin_feedback', { p_admin:_plAdmTok(), p_aktion:'count' }, function(){ return window.SB.from('fragen_feedback').select('id', { count:'exact', head:true }).eq('status','offen'); });
+    var n = rr.alt ? ((rr.res && typeof rr.res.count === 'number') ? rr.res.count : 0) : ((rr.data && rr.data.count) || 0);
     var b=document.getElementById('atab-meldungen-badge'); if(!b) return;
     if(n>0){ b.textContent=n; b.style.display='inline-block'; } else { b.style.display='none'; }
   }catch(e){}
@@ -19527,8 +19546,8 @@ async function plAdminPushState(){
     var reg=await navigator.serviceWorker.ready;
     var sub=await reg.pushManager.getSubscription();
     if(!sub){ btn.textContent='Aktivieren'; msg.textContent='Noch nicht aktiv auf diesem Gerät.'; return; }
-    var res=await window.SB.from('push_subs').select('admin').eq('endpoint', sub.endpoint).maybeSingle();
-    var on = !!(res && res.data && res.data.admin);
+    var rr=await _plRpc('push_admin', { p_admin:_plAdmTok(), p_endpoint:sub.endpoint }, function(){ return window.SB.from('push_subs').select('admin').eq('endpoint', sub.endpoint).maybeSingle(); });
+    var on = !!(rr.alt ? (rr.res && rr.res.data && rr.res.data.admin) : (rr.data && rr.data.admin));
     btn.textContent = on ? 'Aktiv – deaktivieren' : 'Aktivieren';
     msg.textContent = on ? 'Dieses Gerät bekommt neue Meldungen als Push.' : 'Noch nicht aktiv auf diesem Gerät.';
   }catch(e){ msg.textContent='Status konnte nicht geprüft werden.'; }
@@ -19543,10 +19562,10 @@ async function plAdminPushToggle(){
     var reg=await navigator.serviceWorker.ready;
     var sub=await reg.pushManager.getSubscription();
     if(!sub){ msg.textContent='Kein Push-Abo auf diesem Gerät.'; btn.disabled=false; btn.textContent=alt; return; }
-    var cur=await window.SB.from('push_subs').select('admin').eq('endpoint', sub.endpoint).maybeSingle();
-    var neu = !(cur && cur.data && cur.data.admin);
-    var res=await window.SB.from('push_subs').update({ admin: neu }).eq('endpoint', sub.endpoint);
-    if(res.error) throw res.error;
+    var cur=await _plRpc('push_admin', { p_admin:_plAdmTok(), p_endpoint:sub.endpoint }, function(){ return window.SB.from('push_subs').select('admin').eq('endpoint', sub.endpoint).maybeSingle(); });
+    var neu = !(cur.alt ? (cur.res && cur.res.data && cur.res.data.admin) : (cur.data && cur.data.admin));
+    var rr=await _plRpc('push_admin', { p_admin:_plAdmTok(), p_endpoint:sub.endpoint, p_on:neu }, function(){ return window.SB.from('push_subs').update({ admin: neu }).eq('endpoint', sub.endpoint); });
+    if(rr.error || (rr.alt && rr.res && rr.res.error)) throw (rr.error || rr.res.error);
     msg.style.color = neu ? '#86efac' : '#8ab4d0';
     msg.textContent = neu ? 'Aktiv. Neue Meldungen kommen als Push auf dieses Gerät.' : 'Deaktiviert.';
     btn.textContent = neu ? 'Aktiv – deaktivieren' : 'Aktivieren';
@@ -20216,13 +20235,7 @@ async function plEnableReminders(){
     }
     try{
       if(window.SB){
-        var res = await window.SB.from('push_subs').upsert({
-          endpoint: sub.endpoint,
-          sub: JSON.parse(JSON.stringify(sub)),
-          name: localStorage.getItem('pl_user') || null,
-          examen_datum: plPushExamDatum(),
-          updated_at: new Date().toISOString()
-        }, { onConflict:'endpoint' });
+        var res = await plPushSpeichern(sub);
         if (res && res.error) { console.warn('[push] Speichern fehlgeschlagen:', res.error.message); return false; }
       }
     }catch(e){ console.warn('[push]', e); return false; }
@@ -20232,6 +20245,12 @@ async function plEnableReminders(){
   }catch(e){ return false; }
 }
 
+/* Push-Abo speichern (26.10.2026): über RPC push_save (setzt nie das admin-Flag); Fallback alter Tabellenweg. Rückgabe { error } */
+async function plPushSpeichern(sub){
+  var o={ endpoint: sub.endpoint, sub: JSON.parse(JSON.stringify(sub)), name: localStorage.getItem('pl_user') || null, examen_datum: plPushExamDatum(), updated_at: new Date().toISOString() };
+  var rr=await _plRpc('push_save', { p_endpoint:o.endpoint, p_sub:o.sub, p_name:o.name, p_examen:o.examen_datum }, function(){ return window.SB.from('push_subs').upsert(o, { onConflict:'endpoint' }); });
+  return rr.alt ? rr.res : rr;
+}
 /* Examensdatum fuer die Push-Erinnerungen (16.10.2026): scripts/send-reminders.mjs staffelt die Texte nach Tagen bis zum Examen */
 function plPushExamDatum(){ try{ var d=localStorage.getItem('pl_examen_datum')||localStorage.getItem('pl_pruefungsdatum')||''; return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:null; }catch(e){ return null; } }
 (function(){ function chk(){ try{ if(localStorage.getItem('pl_push_on')!=='1') return; var d=plPushExamDatum()||''; if(d!==(localStorage.getItem('pl_push_exam_sync')||'')) plResyncPush(); }catch(e){} }
@@ -20246,13 +20265,7 @@ async function plResyncPush(){
     if(!sub){
       try{ sub=await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:_plB64ToU8(PL_VAPID_PUBLIC) }); }catch(e){ return; }
     }
-    var res = await window.SB.from('push_subs').upsert({
-      endpoint: sub.endpoint,
-      sub: JSON.parse(JSON.stringify(sub)),
-      name: localStorage.getItem('pl_user') || null,
-      examen_datum: plPushExamDatum(),
-      updated_at: new Date().toISOString()
-    }, { onConflict:'endpoint' });
+    var res = await plPushSpeichern(sub);
     if (res && res.error) { console.warn('[push] Resync fehlgeschlagen:', res.error.message); return; }
     try{ localStorage.setItem('pl_push_exam_sync', plPushExamDatum()||''); }catch(e){}
     try{ localStorage.setItem('pl_push_on','1'); }catch(e){}
@@ -20277,7 +20290,7 @@ async function plToggleReminders(){
         var reg=await navigator.serviceWorker.ready;
         var sub=await reg.pushManager.getSubscription();
         if(sub){
-          if(window.SB){ await window.SB.from('push_subs').delete().eq('endpoint', sub.endpoint); }
+          if(window.SB){ await _plRpc('push_delete', { p_endpoint:sub.endpoint }, function(){ return window.SB.from('push_subs').delete().eq('endpoint', sub.endpoint); }); }
           await sub.unsubscribe();
         }
       }catch(e){}
