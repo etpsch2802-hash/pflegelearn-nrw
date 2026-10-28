@@ -12249,11 +12249,11 @@ async function renderWissensDB(){
   const labels = { definition:'Definition', aufbau:'Aufbau', funktion:'Funktion', wirkkette:'Wirkkette \u2013 warum wirkt es?', physiologie:'Physiologie', indikation:'Indikation', kontraindikation:'Kontraindikationen', material:'Material', vorbereitung:'Vorbereitung', durchfuehrung:'Durchführung', nachsorge:'Nachsorge', komplikationen:'Komplikationen', pflegeschwerpunkt:'Pflegeschwerpunkt', klinische_relevanz:'Klinische Relevanz', merksatz:'Merksatz', pruefungswissen:'Prüfungswissen', haeufige_pruefungsfrage:'Häufige Prüfungsfrage', einteilung:'Einteilung', symptome:'Symptome' };
   const order = ['definition','funktion','wirkkette','aufbau','physiologie','indikation','kontraindikation','material','vorbereitung','durchfuehrung','nachsorge','komplikationen','pflegeschwerpunkt','klinische_relevanz','merksatz','pruefungswissen','haeufige_pruefungsfrage'];
   const groups = {};
-  data.forEach(function(e){ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
+  data.forEach(function(e){ if (e.kategorie === 'Ausbildung meistern') return; /* eigener Bildschirm */ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
   const cats = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b,'de'); });
   var html = '';
   html += '<input id="wdb-search" oninput="_wdbFilter()" placeholder="Suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.12);border:1px solid rgba(var(--accent-rgb),.25);border-radius:12px;padding:11px 13px;color:#e2e8f0;font-size:14px;font-family:inherit;margin-bottom:6px">';
-  html += '<div id="wdb-count" style="font-size:11px;color:#9aabc0;margin-bottom:6px">'+data.length+' Lerneinheiten in '+cats.length+' Kategorien</div>';
+  html += '<div id="wdb-count" style="font-size:11px;color:#9aabc0;margin-bottom:6px">'+cats.reduce(function(n,c){ return n+groups[c].length; },0)+' Lerneinheiten in '+cats.length+' Kategorien</div>';
   html += '<button onclick="startWdbQuiz(null)" style="width:100%;background:linear-gradient(135deg,var(--accent),var(--accent));border:none;border-radius:12px;padding:12px;color:#04121f;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-play"/></svg> Alle Fragen üben</button>';
   cats.forEach(function(cat){
     var items = groups[cat];
@@ -21729,6 +21729,7 @@ if (_savedLang !== 'de') {
     ['wunde','PLAN-NRW_Wunddoku-Spickzettel.pdf','🩹','Wunddoku-Spickzettel','Messen, Wundgrund, Exsudat, TIME-Prinzip, Musterformulierung'],
     ['praxisexamen','PLAN-NRW_Praxis-Examen-Spickzettel.pdf','🩺','Praxis-Examen-Spickzettel','Ablauf, Fallvorstellung, Reflexion, 10 Fehler, Checkliste'],
     ['intubiert','PLAN-NRW_Intubierter-Patient.pdf','🫁','Pflege beim intubierten Patienten','Tubus, Cuffdruck, VAP-Bündel, DOPES, Pflegeplanung'],
+    ['ausbildung-meistern','PLAN-NRW_Ausbildung-meistern.pdf','🧭','Ausbildung meistern','12 Tipps: Praxisanleitung, Prüfungsstress, Konflikte, Rechte'],
   ];
   window.PL_PDF_LISTE=L;   // für das Admin-Kontrollzentrum (25.10.2026)
   var BLOB={};   // geladene PDFs (slug -> Blob)
@@ -21902,7 +21903,8 @@ if (_savedLang !== 'de') {
     demenz: { t:'Demenzkarte', k:'Demenzkarte', d:'Die 4 Demenzformen im Examen: Alzheimer, vaskul&auml;r, Lewy-K&ouml;rper und frontotemporal &ndash; mit Vergleichstabelle, Abgrenzung zum Delir und Kommunikationstipps.' },
     wunde: { t:'Wunddoku-Spickzettel', k:'Wunddoku-Spickzettel', d:'Wunden sicher beschreiben, messen und dokumentieren &ndash; Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung nach DNQP.' },
     praxisexamen: { t:'Praxis-Examen-Spickzettel', k:'Praxis-Examen-Spickzettel', d:'So l&auml;uft die praktische Pr&uuml;fung ab &ndash; 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
-    intubiert: { t:'Pflege beim intubierten Patienten', k:'Intubierter Patient', d:'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' }
+    intubiert: { t:'Pflege beim intubierten Patienten', k:'Intubierter Patient', d:'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' },
+    'ausbildung-meistern': { t:'Ausbildung meistern &ndash; 12 Tipps f&uuml;r Pflege-Azubis', k:'Ausbildung meistern', d:'Wenn die Praxisanleitung keine Zeit hat, Blackout in der Pr&uuml;fung, Kritik, fordernde Angeh&ouml;rige, erster Todesfall &ndash; 12 Tipps aus der Praxis plus deine Rechte.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
