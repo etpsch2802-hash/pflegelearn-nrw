@@ -142,7 +142,9 @@ const PAKETE = {
   praxisexamen: { file: 'PLAN-NRW_Praxis-Examen-Spickzettel.pdf', titel: 'Praxis-Examen-Spickzettel', subject: 'Dein Praxis-Examen-Spickzettel ist da',
     text: 'So l&auml;uft die praktische Pr&uuml;fung ab: 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
   intubiert: { file: 'PLAN-NRW_Intubierter-Patient.pdf', titel: 'Pflege beim intubierten Patienten', subject: 'Deine Lernhilfe zum intubierten Patienten ist da',
-    text: 'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und der Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' }
+    text: 'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und der Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' },
+  'ausbildung-meistern': { file: 'PLAN-NRW_Ausbildung-meistern.pdf', titel: 'Ausbildung meistern', subject: 'Deine 12 Tipps f\u00fcr die Pflegeausbildung sind da',
+    text: '12 Tipps aus der Praxis: wenn die Praxisanleitung keine Zeit hat, bei Pr&uuml;fungsstress, schwierigen Gespr&auml;chen und Belastung &ndash; plus deine Rechte.' }
 };
 
 function htmlSeite(titel, text) {

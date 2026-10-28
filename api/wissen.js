@@ -205,7 +205,12 @@ const OFFEN = new Set(['lagerungsarten', 'blasenkatheter', 'magnesium-notfall', 
   'entzuendungswerte', 'nierenwerte', 'lungenfunktion', 'gasaustausch',
   'dekubitus-vertieft', 'gcs', 'beatmungsmodi', 'pleuraerguss', 'delir']);
 /* Pflegeplanung-Seiten (Kategorie „Pflegeplanung“, Slug pflegeplanung-…) sind immer vollständig öffentlich */
-function istOffen(slug) { return OFFEN.has(slug) || /^pflegeplanung-/.test(String(slug || '')); }
+function istOffen(slug) { return OFFEN.has(slug) || /^(pflegeplanung|ausbildung)-/.test(String(slug || '')); }
+/* Tipp-Seiten „Ausbildung meistern“ (Slug ausbildung-…, 29.10.2026): Situation = definition, was_hilft[], gut_zu_wissen, merksatz, hilfe */
+const AUSB_HILFE = '<div class="box" style="border-color:#38bdf8"><b>Wenn es dir gerade nicht gut geht, bist du nicht allein.</b><br>'
+  + 'Akute Gefahr: <b>112</b> · TelefonSeelsorge, rund um die Uhr, kostenlos und anonym: <b>0800 111 0 111</b> oder <b>0800 111 0 222</b> · '
+  + 'krisenchat für junge Menschen bis 25: <a href="https://krisenchat.de" rel="noopener">krisenchat.de</a> · Nummer gegen Kummer: <b>116 111</b> · '
+  + 'Probleme mit dem Ausbildungsbetrieb: deine Pflegeschule oder die Ombudsstelle Pflegeausbildung NRW (Bezirksregierung Münster).</div>';
 const OFFEN_REIHE = ['einteilung', 'aufbau', 'funktion', 'physiologie', 'wirkkette', 'indikation', 'kontraindikation', 'material',
   'vorbereitung', 'durchfuehrung', 'nachsorge', 'komplikationen', 'pflegeschwerpunkt', 'klinische_relevanz'];
 function tabelleHTML(t) {
@@ -275,6 +280,9 @@ function renderDetail(e, geschwister) {
   const faqs = faqPairs(d);
 
   let seo = SEO[e.slug] || {};
+  if (!seo.t && /^ausbildung-/.test(e.slug)) {
+    seo = { t: e.titel.length <= 52 ? e.titel + ' | PLAN' : e.titel, d: seoDesc(definition, ['Tipps aus der Praxis']) };
+  }
   if (!seo.t && /^pflegeplanung-/.test(e.slug)) {
     const t1 = e.titel + ': Beispiel mit Ziel & Maßnahmen | PLAN';
     seo = { t: t1.length <= 60 ? t1 : e.titel + ' – Beispiel | PLAN NRW',
@@ -318,8 +326,14 @@ function renderDetail(e, geschwister) {
   if (/^pflegeplanung-/.test(e.slug)) b += '<p class="pphint">Dies ist ein Beispiel. <a href="' + PP_APP + '">Alle Pflegeplanungen zu über 120 Krankheitsbildern stehen in der App →</a></p>';
   if (offen && d.tabelle) b += `<h2>Normwerte im Überblick</h2>` + tabelleHTML(d.tabelle);
   if (offen) b += pflegeplanungHTML(d);
+  const ausb = /^ausbildung-/.test(e.slug);
+  if (ausb && Array.isArray(d.was_hilft)) {
+    b += '<h2>Was hilft</h2><ul>' + d.was_hilft.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+    if (d.gut_zu_wissen) b += '<div class="box"><b>Gut zu wissen:</b> ' + esc(d.gut_zu_wissen) + '</div>';
+  }
   if (pw) b += `<h3>Prüfungswissen</h3><p>${esc(pw)}</p>`;
-  if (d.merksatz) b += `<div class="merk"><b>Merksatz</b>${esc(d.merksatz)}</div>`;
+  if (d.merksatz) b += `<div class="merk"><b>${ausb ? 'Zum Mitnehmen' : 'Merksatz'}</b>${esc(d.merksatz)}</div>`;
+  if (ausb && d.hilfe) b += AUSB_HILFE;
   if (rel) b += `<h3>Warum es in der Prüfung vorkommt</h3><p>${esc(rel)}</p>`;
   if (offen) {
     OFFEN_REIHE.forEach(function (k) {
@@ -334,7 +348,10 @@ function renderDetail(e, geschwister) {
     });
   }
 
-  if (offen) {
+  if (ausb) {
+    b += `<div class="box mehr">Alle 12 Tipps zum Ausdrucken: <a href="${SITE}/gratis/ausbildung-meistern"><b>Gratis-PDF „Ausbildung meistern“</b></a>`
+      + ` – und in der App unter Wissen → „Ausbildung meistern“, zusammen mit 2.000+ Prüfungsfragen fürs Examen.</div>`;
+  } else if (offen) {
     b += `<div class="box mehr">Wissen gelesen? Jetzt prüfen: In der App warten <b>Prüfungsfragen mit Erklärung</b>`
       + `, <b>Fallbeispiele</b> und der <b>KI-Lernassistent</b> zu ${esc(e.titel)}.</div>`;
   } else if (mehr.length) {
@@ -343,7 +360,7 @@ function renderDetail(e, geschwister) {
       + `.</div>`;
   }
 
-  b += ctaBlock(/^pflegeplanung-/.test(e.slug) ? 'Weitere Pflegeplanungen und Prüfungsfragen in der App' : offen ? 'Teste dich zu „' + e.titel + '“ in der App' : '„' + e.titel + '" vollständig in der App lernen');
+  b += ctaBlock(ausb ? 'Alle Tipps für deine Ausbildung kostenlos in der App' : /^pflegeplanung-/.test(e.slug) ? 'Weitere Pflegeplanungen und Prüfungsfragen in der App' : offen ? 'Teste dich zu „' + e.titel + '“ in der App' : '„' + e.titel + '" vollständig in der App lernen');
 
   const q = [];
   if (e.quelle) q.push('Quelle: ' + esc(e.quelle));
