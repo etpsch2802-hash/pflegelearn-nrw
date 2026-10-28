@@ -27051,6 +27051,121 @@ var PL_MAILPFLICHT_PUBLIC = false;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<script>
+/* ══ AUSBILDUNG MEISTERN (28.10.2026, Idee Jessica; Texte fachlich geprüft und freigegeben von P. Schenkelberger) ══
+   Redaktionelle Tipp-Karten (keine Nutzerbeiträge). Eigener Screen #screen-ausbildung,
+   Kachel im Wissen-Raster (erscheint in den Kachel-Gruppen einzeln). Kein neuer pl_*-Key.
+   Quelle: Docs-Entwurf „Ausbildung meistern – 12 Tipp-Karten“. */
+(function(){
+  var HILFE = '<div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.35);border-radius:14px;padding:14px;margin:12px 0 4px">'
+    +'<div style="font-size:13px;font-weight:800;color:#e0f2fe;margin-bottom:8px">Wenn es dir gerade nicht gut geht, bist du nicht allein.</div>'
+    +'<div style="font-size:12.5px;color:#cbd5e1;line-height:1.6">'
+    +'• Akute Gefahr: <a href="tel:112" style="color:var(--accent);font-weight:700">112</a><br>'
+    +'• TelefonSeelsorge, rund um die Uhr, kostenlos und anonym: <a href="tel:08001110111" style="color:var(--accent);font-weight:700">0800 111 0 111</a> oder <a href="tel:08001110222" style="color:var(--accent);font-weight:700">0800 111 0 222</a><br>'
+    +'• krisenchat für junge Menschen bis 25, rund um die Uhr per Chat: <a href="https://krisenchat.de" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">krisenchat.de</a><br>'
+    +'• Nummer gegen Kummer für Jugendliche: <a href="tel:116111" style="color:var(--accent);font-weight:700">116 111</a><br>'
+    +'• Probleme mit dem Ausbildungsbetrieb: deine Pflegeschule oder die Ombudsstelle Pflegeausbildung NRW (Bezirksregierung Münster)'
+    +'</div><div style="font-size:11px;color:#94a3b8;margin-top:8px">PLAN ist kein Krisendienst – hier antwortet niemand in Echtzeit.</div></div>';
+  var RUBRIKEN = [
+    {t:'Ausbildung', k:[
+      {t:'Der erste Tag im neuen Einsatz', s:'Neue Station, neue Gesichter, niemand hat Zeit für dich – und du weißt nicht mal, wo die Handschuhe liegen.',
+       h:['Stell dich jedem kurz vor: Name, Ausbildungsjahr, wie lange du bleibst.','Frag gleich am ersten Tag: „Wer ist meine Praxisanleitung und wann können wir das Erstgespräch machen?“','Nimm einen kleinen Block mit: Abläufe, Telefonnummern, Fragen – alles ohne Patientennamen.','Lies deine Lernziele für den Einsatz vorher und bring sie mit.'],
+       m:'Du musst am ersten Tag nichts können – nur fragen, zuhören und dich zeigen.'},
+      {t:'Wenn die Praxisanleitung keine Zeit hat', s:'Seit Wochen keine geplante Anleitung. Du läufst einfach mit und hast das Gefühl, nichts zu lernen.',
+       h:['Schlag selbst einen Termin vor: „Können wir am Donnerstag 30 Minuten für meinen Praxisauftrag einplanen?“','Mach es konkret: ein Thema, eine Tätigkeit, ein Patient – statt „irgendwann mal“.','Schreib dir auf, wann Anleitung stattfand und wann nicht (das ist für dich gedacht und nicht zum Anklagen).','Ändert sich nichts: Sprich deine Leitende Praxisanleitung oder deine Lehrkraft in der Pflegeschule an. Sie begleiten dich auch in der Praxis.','Bedenke aber auch, dass Praxisanleiter im Stationsdienst voll eingebunden sind und sich meistens um mehrere Auszubildende kümmern müssen.'],
+       g:'Mindestens 10 % der Zeit in jedem Einsatz muss geplante und strukturierte Praxisanleitung sein (§ 4 PflAPrV).',
+       m:'Wer einen konkreten Termin vorschlägt, bekommt häufiger einen.'},
+      {t:'Den Praxisauftrag richtig ansprechen', s:'Die Schule hat dir einen Praxisauftrag mitgegeben. Auf Station weiß niemand, was das ist.',
+       h:['Zeig den Auftrag in der ersten Woche, nicht am letzten Tag.','Erkläre in einem Satz, was du üben sollst und was du dafür brauchst.','Frag, welcher Patient oder welche Situation dafür passt.','Plane eine kurze Nachbesprechung ein – dort lernst du am meisten.'],
+       m:'Ein Praxisauftrag ist kein Zusatzaufwand für die Station – er ist deine Anleitung auf Papier.'}
+    ]},
+    {t:'Prüfungsstress', k:[
+      {t:'Lernen trotz Schichtdienst', s:'Früh, Spät, Nacht – und dazwischen sollst du fürs Examen lernen. Feste Lernzeiten klappen nie.',
+       h:['Plane nach Schicht, nicht nach Wochentag: Frühdienst = nachmittags 30 Minuten, Spätdienst = vormittags, nach dem Nachtdienst = nichts.','Kleine Einheiten statt Marathon: 15 Minuten Quiz in der Bahn zählen.','Freie Tage für die großen Themen, Arbeitstage für Wiederholung.','Schlaf geht vor: Müde gelernt bleibt kaum hängen.'],
+       m:'Jeden Tag ein bisschen schlägt einmal die Woche alles.'},
+      {t:'Blackout in der mündlichen Prüfung', s:'Die Frage ist einfach – und plötzlich ist alles weg.',
+       h:['Atme ein- bis dreimal tief ein und langsam aus, bevor du antwortest. Eine kurze Pause ist erlaubt.','Sag es offen: „Einen Moment, ich sortiere meine Gedanken.“','Fang beim Bekannten an: Was sehe ich beim Patienten? Was wäre mein erster Schritt?','Frag nach, wenn du die Frage nicht verstehst. Das ist kein Minuspunkt.'],
+       m:'Prüfer wollen sehen, wie du denkst – nicht, wie schnell du sprichst.'},
+      {t:'Die Nacht vor dem Examen', s:'Morgen ist es so weit. Du liegst wach und gehst zum zehnten Mal deine Karteikarten durch.',
+       h:['Am Vorabend nichts Neues mehr lernen – nur noch kurz überfliegen, was du schon kannst.','Tasche, Ausweis, Unterlagen und Weg schon abends fertig machen.','Etwas Normales tun: essen, spazieren, eine Serie.','Kannst du nicht schlafen: Liegen und ruhen ist auch Erholung.'],
+       m:'Was du bis heute gelernt hast, nimmt dir keine schlaflose Nacht mehr weg.'}
+    ]},
+    {t:'Schwierige Gespräche', k:[
+      {t:'Kritik annehmen, ohne einzubrechen', s:'Vor dem Patienten oder im Dienstzimmer: „Das war falsch.“ Du fühlst dich klein und willst dich nur rechtfertigen.',
+       h:['Erst zuhören, nicht sofort erklären. Dann: „Was genau soll ich beim nächsten Mal anders machen?“','Trenne Sache und Ton: Die Kritik kann berechtigt sein, auch wenn der Ton es nicht ist.','War es vor Patienten oder unfair: Sprich es später unter vier Augen an – ruhig und mit einem Beispiel.','Schreib dir den Punkt auf. Beim nächsten Mal zeigen, dass du ihn umgesetzt hast.'],
+       m:'Kritik an deinem Handeln ist keine Kritik an dir als Mensch.'},
+      {t:'Wenn eine Kollegin dich immer wieder runtermacht', s:'Eine Person im Team korrigiert dich vor anderen, macht Sprüche oder ignoriert dich. Es passiert nicht einmal, sondern ständig.',
+       h:['Beschreibe das Verhalten, nicht den Menschen: „Wenn du mich vor dem Patienten korrigierst, verunsichert mich das. Kannst du es mir danach sagen?“','Notiere Datum, was passiert ist und wer dabei war – ohne Patientendaten.','Hol dir Unterstützung: Praxisanleitung, Stationsleitung, Lehrkraft oder die Jugend- und Auszubildendenvertretung (JAV).','Bleib nicht allein damit. Wiederholte Herabsetzung ist kein „so ist das halt in der Pflege“.'],
+       m:'Du darfst Grenzen setzen – auch als Azubi.'},
+      {t:'Fordernde Angehörige', s:'Ein Angehöriger steht laut im Flur und will sofort wissen, warum seine Mutter noch nicht gewaschen ist.',
+       h:['Ruhig bleiben und Sorge anerkennen: „Ich verstehe, dass Sie sich Sorgen machen.“','Nur sagen, was du sicher weißt – Diagnosen und Befunde erklärt die Ärztin oder der Arzt.','Hol die zuständige Pflegefachperson dazu, wenn es über deine Aufgabe hinausgeht.','Wird es bedrohlich: Abstand halten, Hilfe holen, nicht allein bleiben.'],
+       m:'Hinter Lautstärke steckt meistens Angst um einen Menschen.'}
+    ]},
+    {t:'Belastung', k:[
+      {t:'Der erste Todesfall', s:'Ein Patient, den du gepflegt hast, ist gestorben. Vielleicht warst du dabei. Du funktionierst weiter – und zu Hause kommt alles hoch.',
+       h:['Alle Gefühle sind normal: Traurigkeit, Leere, auch gar nichts zu fühlen.','Sprich mit jemandem aus dem Team darüber, der das kennt. Frag ruhig: „Wie gehst du damit um?“','Ein kleines Abschiedsritual kann helfen: kurz im Zimmer bleiben, ein Gedanke, ein Fenster öffnen.','Lass dir Zeit. Wenn es dich nach Wochen noch stark belastet, hol dir Unterstützung.'],
+       m:'Dass es dich berührt, zeigt, dass du gut pflegst.', hilfe:true},
+      {t:'Gewalt oder Übergriffe durch Patienten', s:'Ein Patient schlägt, kratzt, beleidigt dich oder fasst dich an, wo er nicht soll. Hinterher heißt es vielleicht: „Der ist halt verwirrt.“',
+       h:['Deine Sicherheit geht vor: Abstand, Hilfe holen, nicht allein ins Zimmer.','Es ist nicht deine Schuld – auch nicht, wenn der Patient krank oder verwirrt ist.','Melde jeden Vorfall bei der Leitung. Bei Verletzungen: Durchgangsarzt bzw. Unfallversicherung – es kann ein Arbeitsunfall sein.','Sprich danach mit jemandem darüber, auch wenn „zum Glück nichts passiert ist“.'],
+       m:'„Gehört zum Job“ gilt nicht für Gewalt. Melden schützt dich und die anderen.', hilfe:true}
+    ]},
+    {t:'Deine Rechte', k:[
+      {t:'Pausen, Überstunden und wer dir hilft', s:'Die Pause fällt schon wieder aus, und „kannst du noch eine Stunde bleiben?“ hörst du fast jeden Tag.',
+       h:['Pausen: Erwachsene mehr als 6 Stunden Arbeit = mindestens 30 Minuten, mehr als 9 Stunden = 45 Minuten (§ 4 ArbZG). Unter 18: mehr als 4,5 Stunden = 30 Minuten, mehr als 6 Stunden = 60 Minuten (§ 11 JArbSchG).','Überstunden: Nur ausnahmsweise erlaubt und müssen extra bezahlt oder in Freizeit ausgeglichen werden (§ 19 PflBG).','Ansprechpartner im Betrieb: Praxisanleitung, Stationsleitung, Jugend- und Auszubildendenvertretung (JAV) oder Betriebs-/Personalrat.','Klärt sich nichts: Pflegeschule und die Ombudsstelle für die Pflegeausbildung NRW bei der Bezirksregierung Münster – sie vermittelt bei Konflikten mit dem Ausbildungsbetrieb.'],
+       m:'Deine Ausbildung hat Regeln – und die gelten auch, wenn die Station voll ist.'}
+    ]}
+  ];
+  window.PL_AUSBILDUNG_KARTEN = RUBRIKEN;
+  function esc(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function karteHTML(k,nr){
+    return '<details style="background:rgba(255,255,255,.085);border:1px solid rgba(var(--accent-rgb),.18);border-radius:14px;padding:14px;margin-bottom:10px">'
+      +'<summary style="cursor:pointer;list-style:none;font-size:14px;font-weight:700;color:#e2e8f0;display:flex;gap:10px;align-items:center"><span style="color:var(--accent);font-weight:800;min-width:22px">'+nr+'</span><span style="flex:1">'+esc(k.t)+'</span><span style="color:var(--accent)">›</span></summary>'
+      +'<div style="margin-top:12px;font-size:13px;line-height:1.6;color:#cbd5e1">'
+      +'<div style="font-size:11px;font-weight:800;color:#fb7185;letter-spacing:.4px;margin-bottom:4px">SITUATION</div><div style="margin-bottom:12px">'+esc(k.s)+'</div>'
+      +'<div style="font-size:11px;font-weight:800;color:#34d399;letter-spacing:.4px;margin-bottom:4px">WAS HILFT</div>'
+      +k.h.map(function(x){ return '<div style="padding:3px 0 3px 16px;position:relative"><span style="position:absolute;left:2px;color:var(--accent)">•</span>'+esc(x)+'</div>'; }).join('')
+      +(k.g?'<div style="margin-top:10px;background:rgba(250,204,21,.08);border-radius:10px;padding:10px"><b style="color:#facc15">Gut zu wissen:</b> '+esc(k.g)+'</div>':'')
+      +'<div style="margin-top:12px;background:rgba(var(--accent-rgb),.10);border-left:3px solid var(--accent);border-radius:8px;padding:10px;color:#e0f2fe;font-weight:600">'+esc(k.m)+'</div>'
+      +(k.hilfe?HILFE:'')
+      +'</div></details>';
+  }
+  function render(){
+    var box=document.getElementById('ausbildung-content'); if(!box) return;
+    var nr=0, h='';
+    RUBRIKEN.forEach(function(r){
+      h+='<div style="font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.6px;text-transform:uppercase;margin:18px 0 8px">'+esc(r.t)+'</div>';
+      r.k.forEach(function(k){ nr++; h+=karteHTML(k,nr); });
+    });
+    h+='<div style="margin-top:22px">'+HILFE+'</div>';
+    h+='<div style="font-size:11px;color:#94a3b8;margin:12px 0 30px;text-align:center">Tipps aus der Praxis von P. Schenkelberger, Fachpfleger Anästhesie & Intensivmedizin · Praxisanleiter NRW</div>';
+    box.innerHTML=h;
+    try{ box.querySelectorAll('details').forEach(function(d,i){ d.addEventListener('toggle',function(){ if(d.open && typeof gtag==='function') gtag('event','ausbildung_karte',{nr:i+1}); }); }); }catch(e){}
+  }
+  function bauen(){
+    if(!document.getElementById('screen-ausbildung')){
+      var d=document.createElement('div'); d.id='screen-ausbildung'; d.className='page';
+      d.innerHTML='<div class="hero" style="margin-bottom:14px"><div class="hero-icon"><svg class="ic" viewBox="0 0 24 24" style="width:1em;height:1em"><use href="#i-lifebuoy"/></svg></div><h1>Ausbildung<span> meistern</span></h1><p>Tipps für Praxis, Prüfungsstress und schwierige Situationen</p></div><div id="ausbildung-content"></div>';
+      var ref=document.getElementById('screen-wissenhub');
+      if(ref && ref.parentNode) ref.parentNode.insertBefore(d, ref.nextSibling); else document.body.appendChild(d);
+    }
+    var wh=document.getElementById('screen-wissenhub');
+    var anker=wh && wh.querySelector('button[onclick^="navGo(\'wissensdb\')"]');
+    if(anker && !document.getElementById('pl-ausb-tile')){
+      var b=anker.cloneNode(false); b.id='pl-ausb-tile'; b.setAttribute('onclick',"showScreen('ausbildung')");
+      b.innerHTML='<svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-lifebuoy"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Ausbildung meistern</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">Praxis · Prüfungsstress · Konflikte</span>';
+      anker.parentNode.appendChild(b);
+    }
+  }
+  function start(){
+    try{ bauen(); }catch(e){}
+    if(typeof window.showScreen==='function'){
+      var orig=window.showScreen;
+      window.showScreen=function(n){ if(n==='ausbildung'){ try{ bauen(); render(); }catch(e){} } return orig.apply(this,arguments); };
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 
 </body>
 </html>
