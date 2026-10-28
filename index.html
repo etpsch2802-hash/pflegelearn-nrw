@@ -23443,7 +23443,7 @@ window.renderWebBesucher=function(force){
     { id:'bn-ueben', t:'NEU beim \u00dcben', x:'Nach jeder Antwort: \u2606 Merken f\u00fcr deine Favoriten, 🗂️ als eigene Karteikarte speichern, 🗣️ einfach erkl\u00e4rt oder 🌍 in deine Sprache \u00fcbersetzt. Eigene Karten legst du unter Karteikarten an.' },
     { id:'plup-tile', screen:'ueben', t:'NEU: Eigene Unterlagen', x:'Lade deine Unterrichtsfolien (PDF, PowerPoint) hoch oder fotografiere deine Mitschrift \u2013 auch Handschrift. PLAN macht daraus Karteikarten und zeigt dir passende gepr\u00fcfte Pflegeplanungen und Pr\u00fcfungsfragen.' },
     { id:'tour-tile-quiz', screen:'ueben', t:'Fragen \u00fcben', x:'Nach Fach, nach Lernmodus oder gezielt deine Schwachstellen.' },
-    { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Hier startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen. Darin findest du auch die Fachklausuren pro Fach und die Fallklausur.' },
+    { id:'tour-tile-examen', screen:'ueben', t:'Examen & Klausuren', x:'Unter \u201ePr\u00fcfung\u201c startest du die Examens-Simulation unter echten Pr\u00fcfungsbedingungen, die Fachklausuren pro Kompetenzbereich und das Lernen nach \u00a753.' },
     { id:'ki-fab',    t:'KI-Assistent',        x:'Fragst du dich, warum eine Antwort richtig ist? Der Assistent erkl\u00e4rt es dir.' },
     { id:'home-aufgaben', screen:'home', t:'Aufgaben aus deinem Kurs', x:'Hier stehen offene Aufgaben mit Frist. Erledigtes hakst du selbst ab, deine Lehrkraft sieht den Stand.' },
     { id:'home-nachrichten', screen:'home', t:'Nachrichten deiner Lehrkraft', x:'Ank\u00fcndigungen landen hier. Dort kannst du auch privat eine Frage stellen \u2013 die sieht nur deine Lehrkraft.' },
@@ -23458,7 +23458,7 @@ window.renderWebBesucher=function(force){
     { id:'btn-suche', t:'Schnell nachschlagen', x:'Im Dienst z\u00e4hlt Tempo: Medikament, Score oder Krankheitsbild direkt suchen.' },
     { id:'tour-tile-medis', screen:'wissenhub', t:'Medikamente nachschlagen', x:'25 Wirkstoffe nach Fachbereich (An\u00e4sthesie, Intensiv, Notfall) oder nach Organsystem \u2013 jeweils mit Pflege-Hinweis, Dosis und Nebenwirkungen.' },
     { id:'bn-wissen', t:'Der Rest der Bibliothek', x:'Krankheitsbilder, Scores, Notfallmanagement, Taschenkarten und Medizintechnik liegen im selben Hub.' },
-    { id:'tour-tile-wege', screen:'profil', t:'Fachweiterbildung', x:'An\u00e4sthesie, Intensiv, OP: Wege, Voraussetzungen und Lernstoff f\u00fcr die Weiterbildung.' },
+    { id:'tour-tile-wege', screen:'wissenhub', t:'Fachweiterbildung', x:'Unter \u201eBeruf & Recht\u201c: An\u00e4sthesie, Intensiv, OP \u2013 Wege, Voraussetzungen und Lernstoff f\u00fcr die Weiterbildung.' },
     { id:'ki-fab',    t:'KI-Assistent',         x:'Fachfragen im Klartext beantwortet, mit Bezug auf die Pflegepraxis.' },
     { id:'btn-hamburger', t:'Das Men\u00fc',   x:'Alles Weitere steckt hier: Wissen, Einstellungen und Feedback.', oeffneMenu:true },
     { id:'nav-feedback-btn', t:'Feedback & Fehler melden', x:'Falsche Frage entdeckt oder eine Idee? Sag es mir hier. Ich lese jede Nachricht.', brauchtMenu:true }
@@ -26921,9 +26921,9 @@ var PL_MAILPFLICHT_PUBLIC = false;
    Fasst die Kacheln in Wissen, Üben und Profil zu Gruppen zusammen. Additiv:
    Original-Kacheln bleiben im DOM (nur ausgeblendet), Gruppen-Fenster klicken die
    Original-Kachel an → Rollen-Tausch (plUebenRolle), Zähler und Direktlinks bleiben gleich.
-   Kein neuer pl_*-Key. Go = PL_GRUPPEN_PUBLIC=true (vorher Tour-Ziele anpassen). */
+   Kein neuer pl_*-Key. Tour-IDs (tour-tile-*, plup-tile) wandern auf die sichtbare Gruppen-Kachel. */
 (function(){
-  var PL_GRUPPEN_PUBLIC = false;
+  var PL_GRUPPEN_PUBLIC = true;   // Go P. Schenkelberger 28.10.2026
   function aktiv(){ try{ return PL_GRUPPEN_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function persona(){ try{ return localStorage.getItem('pl_persona')||''; }catch(e){ return ''; } }
   var AUFBAU = {
@@ -26956,6 +26956,19 @@ var PL_MAILPFLICHT_PUBLIC = false;
     for(var i=0;i<l.length;i++){ var o=l[i].getAttribute('data-ex-orig')||l[i].getAttribute('onclick');
       if(o.indexOf(k)===0 && !l[i].hasAttribute('data-plg')) return l[i]; }
     return null;
+  }
+  /* Tour-Ziel-IDs von der (ausgeblendeten) Original-Kachel auf die neue Kachel übertragen */
+  function tourIds(kachel, quellen){
+    quellen.forEach(function(q){
+      if(!q) return; var id=q.id||q.getAttribute('data-plg-id');
+      if(!id || !/^(tour-tile-|plup-tile$)/.test(id)) return;
+      q.setAttribute('data-plg-id',id); q.removeAttribute('id');
+      if(!kachel.id) kachel.id=id;
+    });
+  }
+  function idsZurueck(raster){
+    Array.prototype.forEach.call(raster.querySelectorAll('[data-plg-id]'),function(q){
+      var id=q.getAttribute('data-plg-id'), d=document.getElementById(id); if(d && d!==q) d.removeAttribute('id'); q.id=id; });
   }
   function sichtbar(b){ return b && b.style.display!=='none' && !b.hidden; }
   function wortSpans(b){ var sp=b.querySelectorAll(':scope > span'); if(!sp.length) sp=b.querySelectorAll('span');
@@ -26998,7 +27011,7 @@ var PL_MAILPFLICHT_PUBLIC = false;
     if(!raster) return;
     if(!raster.hasAttribute('data-plg-orig')) raster.setAttribute('data-plg-disp', raster.style.display||'');
     var disp=raster.getAttribute('data-plg-disp')||'';
-    if(!aktiv()){ raster.style.display=disp; raster.removeAttribute('data-plg-orig'); return; }
+    if(!aktiv()){ idsZurueck(raster); raster.style.display=disp; raster.removeAttribute('data-plg-orig'); return; }
     var ex=persona()==='examiniert', vergeben=[], neu=raster.cloneNode(false);
     neu.setAttribute('data-plg-neu','1'); neu.removeAttribute('id'); neu.removeAttribute('data-plg-orig'); neu.removeAttribute('data-plg-disp'); neu.style.display=disp;
     A.gruppen.forEach(function(g0){
@@ -27009,7 +27022,8 @@ var PL_MAILPFLICHT_PUBLIC = false;
       for(i=0;i<g.k.length && !erste;i++){ b=finde(g.k[i],raster); if(b && b.style.display!=='none') erste=b; }
       for(i=0;i<g.k.length && !erste;i++){ b=finde(g.k[i],scr)||finde(g.k[i]); if(b && b.style.display!=='none') erste=b; }
       if(!erste) return;
-      var kachel=erste.cloneNode(true); kachel.removeAttribute('id'); kachel.removeAttribute('onclick'); kachel.setAttribute('data-plg','1');
+      var kachel=erste.cloneNode(true); kachel.removeAttribute('id'); kachel.removeAttribute('data-plg-id'); kachel.removeAttribute('onclick'); kachel.setAttribute('data-plg','1');
+      tourIds(kachel, g.k.map(function(k){ return finde(k,scr)||finde(k); }));
       if(g.einzeln){ kachel.onclick=function(){ erste.click(); }; }
       else {
         var titel=(ex&&g.tEx)||g.t, sub=(ex&&g.sEx)||g.s;
@@ -27021,8 +27035,8 @@ var PL_MAILPFLICHT_PUBLIC = false;
     /* Nicht zugeordnete Kacheln (z. B. später per JS eingefügte) bleiben einzeln sichtbar */
     Array.prototype.forEach.call(raster.children,function(c){
       if(vergeben.indexOf(c)>=0 || c.style.display==='none') return;
-      var k=c.cloneNode(true); k.removeAttribute('id'); k.removeAttribute('onclick'); k.removeAttribute('href'); k.setAttribute('data-plg','1');
-      k.onclick=function(ev){ ev.preventDefault(); c.click(); }; neu.appendChild(k);
+      var k=c.cloneNode(true); k.removeAttribute('id'); k.removeAttribute('data-plg-id'); k.removeAttribute('onclick'); k.removeAttribute('href'); k.setAttribute('data-plg','1');
+      tourIds(k,[c]); k.onclick=function(ev){ ev.preventDefault(); c.click(); }; neu.appendChild(k);
     });
     raster.style.display='none'; raster.setAttribute('data-plg-orig','1');
     raster.parentNode.insertBefore(neu, raster.nextSibling);
