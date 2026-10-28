@@ -26916,6 +26916,127 @@ var PL_MAILPFLICHT_PUBLIC = false;
   else setTimeout(einrichten, 50);
 })();
 </script>
+<script>
+/* ══ KACHEL-GRUPPEN (28.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   Fasst die Kacheln in Wissen, Üben und Profil zu Gruppen zusammen. Additiv:
+   Original-Kacheln bleiben im DOM (nur ausgeblendet), Gruppen-Fenster klicken die
+   Original-Kachel an → Rollen-Tausch (plUebenRolle), Zähler und Direktlinks bleiben gleich.
+   Kein neuer pl_*-Key. Go = PL_GRUPPEN_PUBLIC=true (vorher Tour-Ziele anpassen). */
+(function(){
+  var PL_GRUPPEN_PUBLIC = false;
+  function aktiv(){ try{ return PL_GRUPPEN_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function persona(){ try{ return localStorage.getItem('pl_persona')||''; }catch(e){ return ''; } }
+  var AUFBAU = {
+    wissenhub: { anker:"navGo('wissensdb')", gruppen:[
+      {t:'Krankheitsbilder & Pflegeplanung', s:'Krankheitsbilder · AEDL · Maßnahmenplan', k:["navGo('krankheitsbilder')","navGo('atl')","navGo('massnahmenplan')"]},
+      {t:'Medikamente', s:'Wirkstoffe · Perfusor · Rechnen', k:["openMedChooser()","openPerfusorwissen()","navGo('medtrainer')","RECHNER"]},
+      {t:'Körper & Grafiken', s:'Anatomie · EKG · Beatmung', k:["navGo('anatomie')","navGo('grafiken')"]},
+      {t:'Notfall & Scores', s:'ABCDE · Reanimation · Braden · GCS', k:["navGo('notfallmanagement')","navGo('scores')"]},
+      {t:'Pflegetechniken', s:'Prophylaxen · Wunden · Kinästhetik · Bobath · Geräte', k:["navGo('prophylaxen')","navGo('wundversorgung')","navGo('kinaesthetik')","navGo('bobath')","navGo('medizintechnik')"]},
+      {t:'Schnell nachschlagen', s:'Taschenkarten · Merksätze', k:["navGo('taschenkarten')","navGo('merksaetze')"]},
+      {t:'Wissensdatenbank', s:'', k:["navGo('wissensdb')"], einzeln:true},
+      {t:'Beruf & Recht', s:'Berufseinstieg · BEEP 2026 · PFA 2027 · Ausbildungswege', k:["navGo('berufseinstieg')","navGo('befugnis2026')","navGo('pfa2027')","showScreen('ausbildungswege')","navGo('praxisanleiter')"]}
+    ]},
+    ueben: { anker:"navGo('quizSelect')", gruppen:[
+      {t:'Quiz', k:["navGo('quizSelect')"], einzeln:true},
+      {t:'Prüfung', tEx:'Training', s:'Simulator · Fachklausuren · §53', sEx:'Notfall · Fachweiterbildung · Scores', k:["openExamenIntro()","openFachklausuren()","openCEHub()"]},
+      {t:'Karteikarten', k:["navGo('karteikarten')"], einzeln:true},
+      {t:'Fallbeispiele', k:["navGo('faelle')"], einzeln:true},
+      {t:'KI-Training', s:'Mündliche Prüfung · Fachgespräch', k:["openKIChooser()","openExamPicker('fachgespraech')"], kEx:[]},
+      {t:'', k:["navGo('medtrainer')"], weg:true}
+    ]},
+    profil: { anker:"showThemePicker()", gruppen:[
+      {t:'Ansicht', s:'Design · Hell / Dunkel', k:["showThemePicker()","toggleDarkMode()"]},
+      {t:'', k:["showScreen('ausbildungswege')"], weg:true}
+    ]}
+  };
+  function finde(k, wurzel){
+    if(k==='RECHNER') return null;
+    var l=(wurzel||document).querySelectorAll('button[onclick]');
+    for(var i=0;i<l.length;i++){ var o=l[i].getAttribute('data-ex-orig')||l[i].getAttribute('onclick');
+      if(o.indexOf(k)===0 && !l[i].hasAttribute('data-plg')) return l[i]; }
+    return null;
+  }
+  function sichtbar(b){ return b && b.style.display!=='none' && !b.hidden; }
+  function wortSpans(b){ var sp=b.querySelectorAll(':scope > span'); if(!sp.length) sp=b.querySelectorAll('span');
+    return Array.prototype.filter.call(sp,function(x){ return /[A-Za-zÄÖÜäöü]/.test(x.textContent); }); }
+  function texte(b){ var sp=wortSpans(b);
+    return {t:sp[0]?sp[0].textContent.trim():b.textContent.trim(), s:sp[1]?sp[1].textContent.trim():''}; }
+  function eintraege(g,scr){
+    var out=[];
+    g.k.forEach(function(k){
+      if(k==='RECHNER'){ if(typeof window.plDosisRechner==='function') out.push({t:'Dosisrechner',s:'Perfusor & Einzeldosis mit eigenen Werten',ic:'#i-pill',fn:function(){ window.plDosisRechner(); }}); return; }
+      var b=finde(k,scr)||finde(k); if(!b || b.style.display==='none') return;
+      var x=texte(b), u=b.querySelector('use'); out.push({t:x.t,s:x.s,ic:u?u.getAttribute('href'):'',fn:function(){ b.click(); }});
+    });
+    return out;
+  }
+  function blatt(titel, liste){
+    var ov=document.createElement('div'); ov.setAttribute('data-plg-blatt','1');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(6,14,26,.92);z-index:99998;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(6px)';
+    var box=document.createElement('div');
+    box.style.cssText='width:100%;max-width:430px;max-height:86vh;overflow:auto;background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(var(--accent-rgb),.28);border-radius:20px;padding:20px';
+    box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-size:16px;font-weight:800;color:#e0f2fe"></div><button type="button" aria-label="Schließen" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 10px;color:#b3c4d6;font-size:14px;cursor:pointer">✕</button></div>';
+    box.firstChild.firstChild.textContent=titel;
+    box.querySelector('button').onclick=function(){ ov.remove(); };
+    liste.forEach(function(e){
+      var b=document.createElement('button'); b.type='button';
+      b.style.cssText='width:100%;text-align:left;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.22);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px';
+      b.innerHTML=(e.ic?'<svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px;color:#7dd3fc;flex:none"><use href="'+e.ic+'"/></svg>':'')
+        +'<span style="flex:1"><span style="display:block;font-size:13.5px;font-weight:700;color:#e2e8f0"></span><span style="display:block;font-size:11px;color:#a3bcd0;margin-top:2px"></span></span><span style="color:var(--accent);font-size:16px">›</span>';
+      var sp=b.querySelectorAll('span span'); sp[0].textContent=e.t; sp[1].textContent=e.s;
+      b.onclick=function(){ ov.remove(); try{ e.fn(); }catch(x){} };
+      box.appendChild(b);
+    });
+    ov.appendChild(box); document.body.appendChild(ov);
+    ov.addEventListener('click',function(ev){ if(ev.target===ov) ov.remove(); });
+  }
+  function aufbauen(name){
+    var A=AUFBAU[name], scr=document.getElementById('screen-'+name); if(!A||!scr) return;
+    var alt=scr.querySelector('[data-plg-neu]'); if(alt) alt.remove();
+    var anker=finde(A.anker, scr); var raster=anker&&anker.parentNode;
+    if(!raster) return;
+    if(!raster.hasAttribute('data-plg-orig')) raster.setAttribute('data-plg-disp', raster.style.display||'');
+    var disp=raster.getAttribute('data-plg-disp')||'';
+    if(!aktiv()){ raster.style.display=disp; raster.removeAttribute('data-plg-orig'); return; }
+    var ex=persona()==='examiniert', vergeben=[], neu=raster.cloneNode(false);
+    neu.setAttribute('data-plg-neu','1'); neu.removeAttribute('id'); neu.removeAttribute('data-plg-orig'); neu.removeAttribute('data-plg-disp'); neu.style.display=disp;
+    A.gruppen.forEach(function(g0){
+      var g=g0; if(ex && g0.kEx){ g={}; for(var z in g0) g[z]=g0[z]; g.k=g0.kEx; }
+      g.k.forEach(function(k){ var b=finde(k,scr); if(b) vergeben.push(b); });
+      if(g.weg) return;
+      var erste=null, i, b;
+      for(i=0;i<g.k.length && !erste;i++){ b=finde(g.k[i],raster); if(b && b.style.display!=='none') erste=b; }
+      for(i=0;i<g.k.length && !erste;i++){ b=finde(g.k[i],scr)||finde(g.k[i]); if(b && b.style.display!=='none') erste=b; }
+      if(!erste) return;
+      var kachel=erste.cloneNode(true); kachel.removeAttribute('id'); kachel.removeAttribute('onclick'); kachel.setAttribute('data-plg','1');
+      if(g.einzeln){ kachel.onclick=function(){ erste.click(); }; }
+      else {
+        var titel=(ex&&g.tEx)||g.t, sub=(ex&&g.sEx)||g.s;
+        var sp=wortSpans(kachel); if(sp[0]) sp[0].textContent=titel; if(sp[1]) sp[1].textContent=sub;
+        kachel.onclick=function(){ var l=eintraege(g,scr); if(l.length===1) l[0].fn(); else blatt(titel,l); };
+      }
+      neu.appendChild(kachel);
+    });
+    /* Nicht zugeordnete Kacheln (z. B. später per JS eingefügte) bleiben einzeln sichtbar */
+    Array.prototype.forEach.call(raster.children,function(c){
+      if(vergeben.indexOf(c)>=0 || c.style.display==='none') return;
+      var k=c.cloneNode(true); k.removeAttribute('id'); k.removeAttribute('onclick'); k.removeAttribute('href'); k.setAttribute('data-plg','1');
+      k.onclick=function(ev){ ev.preventDefault(); c.click(); }; neu.appendChild(k);
+    });
+    raster.style.display='none'; raster.setAttribute('data-plg-orig','1');
+    raster.parentNode.insertBefore(neu, raster.nextSibling);
+  }
+  function nach(name){ if(!AUFBAU[name]) return; setTimeout(function(){ try{ aufbauen(name); }catch(e){} },0); setTimeout(function(){ try{ aufbauen(name); }catch(e){} },350); }
+  function start(){
+    if(typeof window.showScreen!=='function') return;
+    var orig=window.showScreen;
+    window.showScreen=function(n){ var r=orig.apply(this,arguments); nach(n); return r; };
+    ['wissenhub','ueben','profil'].forEach(function(n){ var s=document.getElementById('screen-'+n); if(s&&s.classList.contains('active')) nach(n); });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 
 </body>
 </html>
