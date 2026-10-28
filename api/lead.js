@@ -140,7 +140,9 @@ const PAKETE = {
   wunde: { file: 'PLAN-NRW_Wunddoku-Spickzettel.pdf', titel: 'Wunddoku-Spickzettel', subject: 'Dein Wunddoku-Spickzettel ist da',
     text: 'Wunden sicher beschreiben, messen und dokumentieren: 12 Doku-Kriterien, Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung.' },
   praxisexamen: { file: 'PLAN-NRW_Praxis-Examen-Spickzettel.pdf', titel: 'Praxis-Examen-Spickzettel', subject: 'Dein Praxis-Examen-Spickzettel ist da',
-    text: 'So l&auml;uft die praktische Pr&uuml;fung ab: 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' }
+    text: 'So l&auml;uft die praktische Pr&uuml;fung ab: 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
+  intubiert: { file: 'PLAN-NRW_Intubierter-Patient.pdf', titel: 'Pflege beim intubierten Patienten', subject: 'Deine Lernhilfe zum intubierten Patienten ist da',
+    text: 'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und der Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' }
 };
 
 function htmlSeite(titel, text) {

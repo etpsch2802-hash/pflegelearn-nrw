@@ -21725,6 +21725,7 @@ if (_savedLang !== 'de') {
     ['demenz','PLAN-NRW_Demenzkarte.pdf','🧠','Demenzkarte','Die 4 Demenzformen, Vergleich, Delir-Abgrenzung, Kommunikation'],
     ['wunde','PLAN-NRW_Wunddoku-Spickzettel.pdf','🩹','Wunddoku-Spickzettel','Messen, Wundgrund, Exsudat, TIME-Prinzip, Musterformulierung'],
     ['praxisexamen','PLAN-NRW_Praxis-Examen-Spickzettel.pdf','🩺','Praxis-Examen-Spickzettel','Ablauf, Fallvorstellung, Reflexion, 10 Fehler, Checkliste'],
+    ['intubiert','PLAN-NRW_Intubierter-Patient.pdf','🫁','Pflege beim intubierten Patienten','Tubus, Cuffdruck, VAP-Bündel, DOPES, Pflegeplanung'],
   ];
   window.PL_PDF_LISTE=L;   // für das Admin-Kontrollzentrum (25.10.2026)
   var BLOB={};   // geladene PDFs (slug -> Blob)
@@ -21897,7 +21898,8 @@ if (_savedLang !== 'de') {
     dekubitus: { t:'Dekubitus-Spickzettel', k:'Dekubitus-Spickzettel', d:'Braden-Skala, Kategorien 1&ndash;4 nach EPUAP/NPIAP/PPPIA, Lagerung, Hautbeobachtung und Ern&auml;hrung &ndash; kompakt nach DNQP.' },
     demenz: { t:'Demenzkarte', k:'Demenzkarte', d:'Die 4 Demenzformen im Examen: Alzheimer, vaskul&auml;r, Lewy-K&ouml;rper und frontotemporal &ndash; mit Vergleichstabelle, Abgrenzung zum Delir und Kommunikationstipps.' },
     wunde: { t:'Wunddoku-Spickzettel', k:'Wunddoku-Spickzettel', d:'Wunden sicher beschreiben, messen und dokumentieren &ndash; Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung nach DNQP.' },
-    praxisexamen: { t:'Praxis-Examen-Spickzettel', k:'Praxis-Examen-Spickzettel', d:'So l&auml;uft die praktische Pr&uuml;fung ab &ndash; 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' }
+    praxisexamen: { t:'Praxis-Examen-Spickzettel', k:'Praxis-Examen-Spickzettel', d:'So l&auml;uft die praktische Pr&uuml;fung ab &ndash; 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
+    intubiert: { t:'Pflege beim intubierten Patienten', k:'Intubierter Patient', d:'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
