@@ -19619,9 +19619,13 @@ function plMeldeFrage(btn){
     /* 29.10.2026: Meldung per direktem REST-Aufruf (nur Publishable Key, ohne Login-Sitzung) –
        der Weg über window.SB scheiterte bei angemeldeten Geräten, ohne dass eine Anfrage ankam.
        Fallback: alter Weg über window.SB. Fehlertext wird klein angezeigt (Diagnose). */
+    function plFfMerken(){ /* 29.10.2026: fehlgeschlagene Meldung lokal merken, wird beim nächsten Start nachgesendet */
+      try{ var q=JSON.parse(localStorage.getItem('pl_ff_queue')||'[]'); if(q.length<20){ q.push(payload); localStorage.setItem('pl_ff_queue', JSON.stringify(q)); } }catch(e){}
+    }
     function plFfFehler(t){
+      plFfMerken();
       msg.style.color='#fb7185';
-      msg.innerHTML='Konnte nicht gesendet werden. Bitte später erneut oder an kontakt@plan-nrw.de.<br><span style="font-size:10px;color:#6f93ab">'+plFfEsc(String(t||'').slice(0,140))+'</span>';
+      msg.innerHTML='Gerade keine Verbindung – die Meldung ist gespeichert und wird beim nächsten App-Start automatisch gesendet.<br><span style="font-size:10px;color:#6f93ab">'+plFfEsc(String(t||'').slice(0,140))+'</span>';
       b.disabled=false; b.textContent='Meldung senden';
       try{ if(window.Sentry && window.Sentry.captureMessage) window.Sentry.captureMessage('Fehler melden: '+String(t||'').slice(0,140)); }catch(e){}
     }
@@ -19652,6 +19656,23 @@ function plMeldeFrage(btn){
     }).catch(function(e){ plFfFehler(e&&e.message||e); });
   });
 }
+
+/* Meldungs-Warteschlange nachsenden (29.10.2026, Key pl_ff_queue) */
+(function(){
+  function senden(){
+    var q; try{ q=JSON.parse(localStorage.getItem('pl_ff_queue')||'[]'); }catch(e){ q=[]; }
+    if(!q.length || typeof fetch!=='function' || (navigator.onLine===false)) return;
+    fetch('https://tpgverrpznsujvzbntmj.supabase.co/rest/v1/fragen_feedback',{ method:'POST',
+      headers:{ 'apikey':'sb_publishable_37Wquc-WmPgV82HqtvWEFg_tjolOcMl', 'Content-Type':'application/json', 'Prefer':'return=minimal' },
+      body: JSON.stringify(q) }).then(function(r){
+        if(!r.ok) return;
+        try{ localStorage.removeItem('pl_ff_queue'); }catch(e){}
+        fetch('/api/lead',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ zweck:'meldung' }) }).catch(function(){});
+      }).catch(function(){});
+  }
+  setTimeout(senden, 4000);
+  try{ window.addEventListener('online', senden); }catch(e){}
+})();
 
 /* ── Lerngruppe: Gruppencode ── */
 function plGruppencodeSet(){
