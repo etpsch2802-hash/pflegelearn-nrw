@@ -19616,9 +19616,31 @@ function plMeldeFrage(btn){
     var nutzer=''; try{ nutzer=(currentUser&&currentUser.name)||localStorage.getItem('pl_user')||''; }catch(e){}
     var payload={ quelle:'quiz', kategorie:kat, frage:frage,
                   grund:(g?g.value:''), kommentar:(k?k.value.trim():''), nutzer:nutzer };
-    if(!window.SB){ msg.style.color='#fb7185'; msg.textContent='Keine Verbindung – bitte später erneut.'; b.disabled=false; b.textContent='Meldung senden'; return; }
-    window.SB.from('fragen_feedback').insert(payload).then(function(res){
-      if(res && res.error){ msg.style.color='#fb7185'; msg.textContent='Konnte nicht gesendet werden.'; b.disabled=false; b.textContent='Meldung senden'; return; }
+    /* 29.10.2026: Meldung per direktem REST-Aufruf (nur Publishable Key, ohne Login-Sitzung) –
+       der Weg über window.SB scheiterte bei angemeldeten Geräten, ohne dass eine Anfrage ankam.
+       Fallback: alter Weg über window.SB. Fehlertext wird klein angezeigt (Diagnose). */
+    function plFfFehler(t){
+      msg.style.color='#fb7185';
+      msg.innerHTML='Konnte nicht gesendet werden. Bitte später erneut oder an kontakt@plan-nrw.de.<br><span style="font-size:10px;color:#6f93ab">'+plFfEsc(String(t||'').slice(0,140))+'</span>';
+      b.disabled=false; b.textContent='Meldung senden';
+      try{ if(window.Sentry && window.Sentry.captureMessage) window.Sentry.captureMessage('Fehler melden: '+String(t||'').slice(0,140)); }catch(e){}
+    }
+    function plFfDirekt(){
+      if(typeof fetch!=='function') return Promise.reject(new Error('kein fetch'));
+      return fetch('https://tpgverrpznsujvzbntmj.supabase.co/rest/v1/fragen_feedback',{
+        method:'POST', headers:{ 'apikey':'sb_publishable_37Wquc-WmPgV82HqtvWEFg_tjolOcMl', 'Content-Type':'application/json', 'Prefer':'return=minimal' },
+        body: JSON.stringify(payload)
+      }).then(function(r){ if(r.ok) return { error:null }; return r.text().then(function(t){ return { error:{ message:'HTTP '+r.status+' '+t } }; }); });
+    }
+    function plFfSb(){
+      if(!window.SB) return Promise.resolve({ error:{ message:'Supabase nicht geladen' } });
+      return window.SB.from('fragen_feedback').insert(payload);
+    }
+    plFfDirekt().catch(function(e){ return { error:{ message:'Netz: '+String(e&&e.message||e) } }; }).then(function(r1){
+      if(r1 && r1.error) return plFfSb().then(function(r2){ if(r2 && r2.error) r2.error.message=(r1.error.message||'')+' | '+(r2.error.message||''); return r2; });
+      return r1;
+    }).then(function(res){
+      if(res && res.error){ plFfFehler(res.error.message); return; }
       try{ if(typeof gaEvent==='function') gaEvent('frage_gemeldet',{ kategorie:kat }); }catch(e){}
       ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(52,211,153,.35);border-radius:18px;padding:26px 20px;max-width:340px;width:100%;text-align:center">'
         +'<div style="font-size:34px;margin-bottom:6px">✓</div>'
@@ -19626,10 +19648,7 @@ function plMeldeFrage(btn){
         +'<div style="font-size:12.5px;color:#9fc3da;line-height:1.55;margin-bottom:14px">Deine Meldung liegt jetzt bei uns. Wir prüfen sie fachlich und korrigieren, wenn nötig.</div>'
         +'<button type="button" onclick="document.getElementById(\'ff-modal\').remove()" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:11px;color:#e0f2fe;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">Schließen</button>'
         +'</div>';
-    }).catch(function(){
-      msg.style.color='#fb7185'; msg.textContent='Konnte nicht gesendet werden.';
-      b.disabled=false; b.textContent='Meldung senden';
-    });
+    }).catch(function(e){ plFfFehler(e&&e.message||e); });
   });
 }
 
