@@ -19738,7 +19738,10 @@ function renderSocialProof(){
   var host=document.getElementById('pl-socialproof');
   if(!host || !window.SB) return;
   // A: Live-Zahlen, nur ab glaubwuerdiger Schwelle (>=50)
+  // 29.10.2026: get_app_stats ist nur für Admin-Konten freigegeben (Nicht-Admins → 401 bei jedem Start).
+  // Daher hier nur noch für Admins aufrufen; für alle anderen entfällt die Zeile.
   try{
+    if(!(typeof isAdmin==='function' && isAdmin())) throw 0;
     window.SB.rpc('get_app_stats').then(function(res){
       try{
         if(res.error || !res.data) return;
