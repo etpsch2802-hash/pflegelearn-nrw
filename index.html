@@ -27168,6 +27168,63 @@ var PL_MAILPFLICHT_PUBLIC = false;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<script>
+/* ══ FEHLERMELDUNG MIT SENTRY (29.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   Sentry-Projekt plan-z6/plan-nrw-app, Region EU (ingest.de.sentry.io). Nur Fehlerüberwachung:
+   keine Sitzungsaufzeichnung, kein Tracing, keine Nutzerdaten (sendDefaultPii:false, user wird entfernt),
+   Adressen ohne Query-Parameter (pdfkey, zugang usw.). Kein neuer pl_*-Key.
+   Go = PL_SENTRY_PUBLIC=true UND Datenschutzerklärung Abschnitt 3e (Text: docs/datenschutz-sentry.md). */
+(function(){
+  var PL_SENTRY_PUBLIC = false;
+  var LOADER = 'https://js-de.sentry-cdn.com/ef2b1dbd3cc259977b67da55f2c3e5f8.min.js';
+  var geladen = false;
+  function ohneQuery(u){ try{ return String(u||'').replace(/[?#].*$/,''); }catch(e){ return ''; } }
+  function erlaubt(){ try{ return PL_SENTRY_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  window.sentryOnLoad = function(){
+    try{
+      Sentry.init({
+        environment: (location.hostname==='plan-nrw.de' || location.hostname==='www.plan-nrw.de') ? 'production' : 'test',
+        sendDefaultPii: false,
+        tracesSampleRate: 0, replaysSessionSampleRate: 0, replaysOnErrorSampleRate: 0,
+        integrations: function(def){ return def.filter(function(i){ return !/Replay|BrowserTracing|Feedback/i.test(i.name); }); },
+        allowUrls: [/plan-nrw\.de/, /localhost/],
+        ignoreErrors: ['ResizeObserver loop', 'Non-Error promise rejection captured', /^Script error\.?$/],
+        beforeSend: function(ev){
+          try{
+            delete ev.user;
+            if (ev.request){ ev.request.url = ohneQuery(ev.request.url); delete ev.request.query_string; delete ev.request.cookies; if (ev.request.headers) delete ev.request.headers.Referer; }
+          }catch(e){}
+          return ev;
+        },
+        beforeBreadcrumb: function(b){
+          try{
+            if (b.category==='console' && b.level!=='error') return null;
+            if (b.data){ if (b.data.url) b.data.url = ohneQuery(b.data.url); if (b.data.to) b.data.to = ohneQuery(b.data.to); if (b.data.from) b.data.from = ohneQuery(b.data.from); }
+          }catch(e){}
+          return b;
+        }
+      });
+      try{ Sentry.setTag('rolle', localStorage.getItem('pl_persona')||'unbekannt'); }catch(e){}
+      try{ Sentry.setTag('twa', localStorage.getItem('pl_is_twa')==='1' ? 'ja' : 'nein'); }catch(e){}
+    }catch(e){}
+  };
+  function laden(){
+    if (geladen || !erlaubt()) return;
+    geladen = true;
+    var s=document.createElement('script'); s.src=LOADER; s.crossOrigin='anonymous'; s.async=true;
+    document.head.appendChild(s);
+  }
+  window.plSentryTest = function(){ laden(); setTimeout(function(){ try{ Sentry.captureMessage('PLAN Sentry-Test'); }catch(e){} }, 3000); return 'gesendet'; };
+  function start(){
+    laden();
+    if (typeof window.showScreen==='function' && !geladen){
+      var orig=window.showScreen;
+      window.showScreen=function(){ var r=orig.apply(this,arguments); try{ laden(); }catch(e){} return r; };
+    }
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(start,1500); }); else setTimeout(start,1500);
+})();
+</script>
 
 </body>
 </html>
