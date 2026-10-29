@@ -27175,7 +27175,7 @@ var PL_MAILPFLICHT_PUBLIC = false;
    Adressen ohne Query-Parameter (pdfkey, zugang usw.). Kein neuer pl_*-Key.
    Go = PL_SENTRY_PUBLIC=true UND Datenschutzerklärung Abschnitt 3e (Text: docs/datenschutz-sentry.md). */
 (function(){
-  var PL_SENTRY_PUBLIC = false;
+  var PL_SENTRY_PUBLIC = true;   // Go P. Schenkelberger 29.10.2026
   var LOADER = 'https://js-de.sentry-cdn.com/ef2b1dbd3cc259977b67da55f2c3e5f8.min.js';
   var geladen = false;
   function ohneQuery(u){ try{ return String(u||'').replace(/[?#].*$/,''); }catch(e){ return ''; } }
