@@ -235,6 +235,33 @@ export default async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
   if (!body || typeof body !== 'object') body = {};
 
+  // 0a) Fehlermeldung zu einer Frage (29.10.2026): Server holt selbst die noch nicht gemeldeten
+  //     Eintraege aus fragen_feedback und mailt sie an REPLY_TO. Inhalte aus dem Request werden ignoriert,
+  //     daher kein Mailversand an fremde Adressen moeglich.
+  if (body.zweck === 'meldung') {
+    if (!RESEND_KEY) { res.status(200).json({ ok: false, mail: 'kein_key' }); return; }
+    const H = { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE };
+    try {
+      const r = await fetch(SB_URL + '/rest/v1/fragen_feedback?select=id,kategorie,frage,grund,kommentar,nutzer,created_at&benachrichtigt=is.false&status=eq.offen&order=created_at.asc&limit=20', { headers: H });
+      const neue = r.ok ? await r.json() : [];
+      if (!neue.length) { res.status(200).json({ ok: true, neue: 0 }); return; }
+      const esc = t => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const zeilen = neue.map(x => '<tr><td style="padding:10px;border-bottom:1px solid #ddd;vertical-align:top"><b>' + esc(x.grund || 'Ohne Grund') + '</b> &middot; ' + esc(x.kategorie || '–')
+        + '<br>' + esc(x.frage) + (x.kommentar ? '<br><i>Kommentar:</i> ' + esc(x.kommentar) : '')
+        + '<br><span style="color:#888;font-size:12px">' + esc(x.nutzer || 'ohne Namen') + ' &middot; ' + esc(new Date(x.created_at).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })) + '</span></td></tr>').join('');
+      const m = await fetch('https://api.resend.com/emails', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: FROM, to: [REPLY_TO],
+          subject: neue.length === 1 ? 'Neue Fehlermeldung: ' + (neue[0].grund || 'Frage') : neue.length + ' neue Fehlermeldungen',
+          html: '<p>Neue Meldung' + (neue.length === 1 ? '' : 'en') + ' zu Fragen in PLAN NRW:</p><table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:14px">' + zeilen + '</table><p><a href="https://plan-nrw.de/?admin=meldungen">Im Admin-Bereich &ouml;ffnen</a></p>' }) });
+      if (!m.ok) { console.error('[lead] meldung mail', m.status, await m.text()); res.status(200).json({ ok: false, mail: 'fehler' }); return; }
+      await fetch(SB_URL + '/rest/v1/fragen_feedback?id=in.(' + neue.map(x => x.id).join(',') + ')', {
+        method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, H), body: JSON.stringify({ benachrichtigt: true }) });
+      res.status(200).json({ ok: true, neue: neue.length });
+    } catch (e) { console.error('[lead] meldung', e); res.status(200).json({ ok: false }); }
+    return;
+  }
+
   const email = (body.email ? String(body.email) : '').trim().toLowerCase();
   const source = (body.source ? String(body.source) : 'gratis').slice(0, 60);
   const slug = (body.paket ? String(body.paket) : 'eselsbruecken').toLowerCase();

@@ -18,4 +18,3 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           VAPID_PUBLIC: BET7sC0bTQQxomBNnjb53GFlufCu2iWVgIvUyalI1DD1vNFoOtHsQgIeWURUfav-P9OHNMS9vR5u-QyH4ogLeHY
           VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}

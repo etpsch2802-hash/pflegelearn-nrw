@@ -19641,6 +19641,7 @@ function plMeldeFrage(btn){
       return r1;
     }).then(function(res){
       if(res && res.error){ plFfFehler(res.error.message); return; }
+      try{ fetch('/api/lead',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ zweck:'meldung' }) }).catch(function(){}); }catch(e){}
       try{ if(typeof gaEvent==='function') gaEvent('frage_gemeldet',{ kategorie:kat }); }catch(e){}
       ov.innerHTML='<div style="background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(52,211,153,.35);border-radius:18px;padding:26px 20px;max-width:340px;width:100%;text-align:center">'
         +'<div style="font-size:34px;margin-bottom:6px">✓</div>'

@@ -12,7 +12,7 @@ const jsonHeaders = { ...sbHeaders, 'Content-Type': 'application/json' };
 
 // 1) Neue, noch nicht gemeldete Fehlermeldungen holen
 const ffRes = await fetch(
-  `${SB_URL}/rest/v1/fragen_feedback?select=id,kategorie,frage,grund,kommentar,nutzer,created_at&benachrichtigt=is.false&status=eq.offen&order=created_at.asc`,
+  `${SB_URL}/rest/v1/fragen_feedback?select=id,kategorie,frage,grund&benachrichtigt=is.false&status=eq.offen&order=created_at.asc`,
   { headers: sbHeaders }
 );
 if (!ffRes.ok) { console.error('Fetch feedback failed', ffRes.status, await ffRes.text()); process.exit(1); }
@@ -25,40 +25,8 @@ const subRes = await fetch(`${SB_URL}/rest/v1/push_subs?select=endpoint,sub&admi
 if (!subRes.ok) { console.error('Fetch subs failed', subRes.status, await subRes.text()); process.exit(1); }
 const subs = await subRes.json();
 
-// 2b) E-Mail an den Admin (29.10.2026) – unabhaengig von Push-Geraeten.
-//     Braucht GitHub-Secret RESEND_API_KEY; Empfaenger ueber FEEDBACK_MAIL (Standard pflegelearn.nrw@gmail.com).
-let mailOk = false;
-const RESEND = process.env.RESEND_API_KEY;
-if (RESEND) {
-  const esc = t => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const zeilen = neue.map(x =>
-    `<tr><td style="padding:10px;border-bottom:1px solid #ddd;vertical-align:top">` +
-    `<b>${esc(x.grund || 'Ohne Grund')}</b> · ${esc(x.kategorie || '–')}<br>` +
-    `<span style="color:#333">${esc(x.frage)}</span>` +
-    (x.kommentar ? `<br><i>Kommentar:</i> ${esc(x.kommentar)}` : '') +
-    `<br><span style="color:#888;font-size:12px">${esc(x.nutzer || 'ohne Namen')} · ${esc(new Date(x.created_at).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }))}</span></td></tr>`
-  ).join('');
-  const mr = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${RESEND}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: 'PLAN NRW <kontakt@plan-nrw.de>',
-      to: [process.env.FEEDBACK_MAIL || 'pflegelearn.nrw@gmail.com'],
-      subject: neue.length === 1 ? `Neue Fehlermeldung: ${neue[0].grund || 'Frage'}` : `${neue.length} neue Fehlermeldungen`,
-      html: `<p>Neue Meldung${neue.length === 1 ? '' : 'en'} zu Fragen in PLAN NRW:</p><table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:14px">${zeilen}</table>` +
-            `<p><a href="https://plan-nrw.de/?admin=meldungen">Im Admin-Bereich öffnen</a></p>`
-    })
-  });
-  mailOk = mr.ok;
-  if (!mr.ok) console.error('Mail failed', mr.status, await mr.text());
-}
-
 if (!subs.length) {
-  if (mailOk) {
-    const ids0 = neue.map(x => x.id).join(',');
-    await fetch(`${SB_URL}/rest/v1/fragen_feedback?id=in.(${ids0})`, { method: 'PATCH', headers: { ...jsonHeaders, Prefer: 'return=minimal' }, body: JSON.stringify({ benachrichtigt: true }) });
-  }
-  console.log(JSON.stringify({ neue: neue.length, adminGeraete: 0, mail: mailOk, hinweis: 'Kein Geraet als admin markiert' }));
+  console.log(JSON.stringify({ neue: neue.length, adminGeraete: 0, hinweis: 'Kein Geraet als admin markiert' }));
   process.exit(0);
 }
 
@@ -92,7 +60,7 @@ for (const r of subs) {
 }
 
 // 3) Nur als benachrichtigt markieren, wenn wirklich etwas rausging
-if (sent > 0 || mailOk) {
+if (sent > 0) {
   const ids = neue.map(x => x.id).join(',');
   const upd = await fetch(`${SB_URL}/rest/v1/fragen_feedback?id=in.(${ids})`, {
     method: 'PATCH',
@@ -102,4 +70,4 @@ if (sent > 0 || mailOk) {
   if (!upd.ok) console.error('Mark failed', upd.status, await upd.text());
 }
 
-console.log(JSON.stringify({ neue: n, adminGeraete: subs.length, sent, removed, failed, mail: mailOk }));
+console.log(JSON.stringify({ neue: n, adminGeraete: subs.length, sent, removed, failed }));
