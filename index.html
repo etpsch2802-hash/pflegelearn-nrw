@@ -27334,6 +27334,7 @@ html.pl-heute-an #home-due, html.pl-heute-an #home-coach, html.pl-heute-an #home
 .plh-go:active{transform:scale(.97)}
 .plh-go.leise{background:rgba(var(--accent-rgb),.14);color:var(--text,#ddf0fb);box-shadow:none;border:1px solid rgba(var(--accent-rgb),.35)}
 .plh-go:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.plh-alt{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--accent);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;text-align:center;padding:6px;text-decoration:underline;text-underline-offset:3px}
 .plh-tage{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
 .plh-tag{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--text3,#bcd6ea);font-weight:600}
 .plh-tag i{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.16);display:grid;place-items:center;font-style:normal;font-size:13px;color:#04121f;font-weight:900}
@@ -27473,6 +27474,7 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
       +'<div class="zahl"><b>'+Math.min(heute,999)+'</b><small>von '+ziel+'</small></div></div>'
       +'<div class="plh-text"><h3>'+titel+'</h3><p>'+text+'</p></div></div>'
       +'<button type="button" class="plh-go'+(leise?' leise':'')+'" onclick="'+fn+'">'+knopf+' <span aria-hidden="true">→</span></button>'
+      +(fn!=='plHeuteMini()'?'<button type="button" class="plh-alt" onclick="plHeuteMini()">Lieber 5 Minuten Quiz: '+MINI+' Fragen '+esc(katName(t.kat))+' ›</button>':'')
       +'<div class="plh-tage" aria-label="Lerntage diese Woche">'+w.tage.map(function(d){ return '<div class="plh-tag'+(d.ja?' ja':'')+(d.heute?' heute':'')+(d.spaeter?' spaeter':'')+'"><i>'+(d.ja?'✓':'')+'</i>'+d.n+'</div>'; }).join('')+'</div>'
       +'<p class="plh-netz">'+WOCHENZIEL+' Lerntage pro Woche reichen – freie Tage und Schichtwochen zählen nicht gegen dich. Ein Tag endet erst um 4 Uhr.</p>';
     var ring=el.querySelector('.wert');
@@ -27504,6 +27506,32 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
     }catch(e){}
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+<style>
+/* KI-Knopf überdeckt keine Inhalte mehr (30.10.2026, Meldung P. Schenkelberger) */
+body.pl-fab-an .page.active{padding-bottom:150px}
+</style>
+<script>
+/* ══ KI-Knopf (#ki-fab) nur dort, wo er nichts verdeckt (30.10.2026, Meldung P. Schenkelberger; für alle) ══
+   Aus in Quiz, Ergebnis, Fällen, Simulationen, Karteikarten, Prüfungen und Formularen.
+   Wo er sichtbar ist, bekommt die Seite unten 150 px Platz, damit der letzte Knopf frei bleibt. */
+(function(){
+  var AUS=/^(chat|quiz|result|fall|faelle|abcde-sim|karteikarten|ce|preise|registrierung|admin|lehrer|klasse-beitreten|tester|einstufung)$|exam|klausur|pruef|sim|test/i;
+  function setz(n){
+    try{
+      var f=document.getElementById('ki-fab'); if(!f) return;
+      var aus=!n || AUS.test(String(n));
+      f.style.display=aus?'none':'flex';
+      document.body.classList.toggle('pl-fab-an', !aus);
+    }catch(e){}
+  }
+  function start(){
+    var o=window.showScreen; if(typeof o!=='function') return;
+    window.showScreen=function(n){ var r=o.apply(this,arguments); setz(n); return r; };
+    try{ var a=document.querySelector('.page.active'); if(a) setz(a.id.replace(/^screen-/,'')); }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
 </body>
