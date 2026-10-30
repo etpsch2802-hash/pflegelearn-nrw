@@ -27316,6 +27316,15 @@ html.pl-lesbar .watermark::after { content:'© PLAN'; }
 #pl-heute{display:none}
 html.pl-heute-an #pl-heute{display:block;background:var(--bg2,#0d1e33);border:1px solid rgba(var(--accent-rgb),.28);border-radius:20px;padding:18px 18px 16px;margin:2px 0 16px}
 html.pl-heute-an #home-due, html.pl-heute-an #home-coach, html.pl-heute-an #home-coach-label{display:none!important}
+/* Startseite ruhiger: alte Serien-Leiste weg (Heute-Karte zeigt Tagesziel + Woche); Suche doppelt bei Examinierten */
+html.pl-heute-an #pl-engagement{display:none!important}
+html.pl-heute-an.pl-heute-ex #screen-home > button[aria-label="Suche öffnen"]{display:none!important}
+.plh-ring.feier .wert{filter:drop-shadow(0 0 6px var(--accent))}
+.plh-ring.feier{animation:plhFeier 1.1s cubic-bezier(.34,1.56,.64,1) 2}
+@keyframes plhFeier{0%,100%{transform:scale(1)}40%{transform:scale(1.12)}}
+.plh-mut{font-weight:800;color:#fdba74;margin-bottom:8px;font-size:14px}
+body.light-mode .plh-mut{color:#c2410c}
+@media (prefers-reduced-motion: reduce){.plh-ring.feier{animation:none}}
 .plh-kopf{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px}
 .plh-ey{font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent)}
 .plh-woche{font-size:12.5px;color:var(--text3,#bcd6ea);font-variant-numeric:tabular-nums;text-align:right}
@@ -27368,7 +27377,7 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
    Neue Keys: pl_wdh_v1, pl_lerntage_v1. Go = PL_HEUTE_PUBLIC=true. */
 (function(){
   var PL_HEUTE_PUBLIC = false;
-  var WK='pl_wdh_v1', LT='pl_lerntage_v1', WOCHENZIEL=4, MINI=8, WDH_MAX=10;
+  var WK='pl_wdh_v1', LT='pl_lerntage_v1', WOCHENZIEL=4, MINI=8, WDH_MAX=10; var feierBis=0;
   function an(){ try{ return PL_HEUTE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function lese(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||'null'); return v==null?d:v; }catch(e){ return d; } }
   function schreibe(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -27456,6 +27465,7 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
     var el=document.getElementById('pl-heute');
     if(!el){ el=document.createElement('section'); el.id='pl-heute'; el.setAttribute('aria-label','Heute'); greet.parentNode.insertBefore(el, greet.nextSibling); }
     document.documentElement.classList.toggle('pl-heute-an', an());
+    try{ document.documentElement.classList.toggle('pl-heute-ex', localStorage.getItem('pl_persona')==='examiniert'); }catch(e){}
     if(!an()){ el.innerHTML=''; return; }
     var ziel=(typeof PL_DAILY_GOAL!=='undefined')?PL_DAILY_GOAL:10, heute=(typeof plAnsToday==='function')?plAnsToday():0;
     var p=Math.min(1, heute/ziel), U=2*Math.PI*30;
@@ -27480,6 +27490,7 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
     var ring=el.querySelector('.wert');
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ if(ring) ring.setAttribute('stroke-dashoffset', (U*(1-p)).toFixed(1)); }); });
     el.classList.remove('neu'); void el.offsetWidth; el.classList.add('neu');
+    try{ if(heute>=ziel && sessionStorage.getItem('pl_heute_feier')){ sessionStorage.removeItem('pl_heute_feier'); feierBis=Date.now()+2500; } if(Date.now()<feierBis){ var rg=el.querySelector('.plh-ring'); if(rg) rg.classList.add('feier'); } }catch(e){}
   }
 
   /* ── Wiederholung im Ergebnis ── */
@@ -27497,7 +27508,14 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
     try{
       var oR=window.recordQuizAnswer; if(typeof oR==='function') window.recordQuizAnswer=function(){ var r=oR.apply(this,arguments); try{ merkeTag(); }catch(e){} return r; };
       var oK=window.recordKarteikarte; if(typeof oK==='function') window.recordKarteikarte=function(){ var r=oK.apply(this,arguments); try{ merkeTag(); }catch(e){} return r; };
-      var oP=window.pickAnswer; if(typeof oP==='function') window.pickAnswer=function(i){ var vor=null, q=null; try{ vor=selectedAns; q=quizList[quizIdx]; }catch(e){} var r=oP.apply(this,arguments); try{ if(vor===null && q) merkeAntwort(q.frage, i===q.k); }catch(e){} return r; };
+      var MUT=['Fast. Genau hier lernst du am meisten.','Gut, dass es jetzt passiert und nicht im Examen.','Kein Problem – die Frage kommt in deine Wiederholung.','Knifflig. Lies kurz die Erklärung, dann sitzt es.','Daraus wird beim nächsten Mal ein Treffer.'];
+      var oP=window.pickAnswer; if(typeof oP==='function') window.pickAnswer=function(i){ var vor=null, q=null; try{ vor=selectedAns; q=quizList[quizIdx]; }catch(e){} var r=oP.apply(this,arguments);
+        try{ if(vor===null && q) merkeAntwort(q.frage, i===q.k); }catch(e){}
+        try{ if(vor===null && q && i!==q.k && an()){ var ex=document.getElementById('explanation'); if(ex && !ex.querySelector('.plh-mut')){ var m=document.createElement('div'); m.className='plh-mut'; m.textContent=MUT[Math.floor(Math.random()*MUT.length)]; ex.insertBefore(m, ex.firstChild); } } }catch(e){}
+        return r; };
+      var oG=window.plDailyGoalDone; if(typeof oG==='function') window.plDailyGoalDone=function(){ var schon=true; try{ schon=!!localStorage.getItem('pl_goaldone_'+_plDay()); }catch(e){} var r=oG.apply(this,arguments);
+        try{ var jetzt=!!localStorage.getItem('pl_goaldone_'+_plDay()); if(!schon && jetzt && an()){ try{ sessionStorage.setItem('pl_heute_feier','1'); }catch(e){} try{ if(navigator.vibrate && !(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) navigator.vibrate([30,60,30]); }catch(e){} } }catch(e){}
+        return r; };
       var oH=window.renderHomeStats; if(typeof oH==='function') window.renderHomeStats=function(){ var r=oH.apply(this,arguments); try{ karte(); }catch(e){} return r; };
       var oS=window.showResult; if(typeof oS==='function') window.showResult=function(){ var r=oS.apply(this,arguments); try{ ergebnis(); }catch(e){} return r; };
       var oW=window.plStreakWarnCheck; if(typeof oW==='function') window.plStreakWarnCheck=function(){ if(an()) return; return oW.apply(this,arguments); };
