@@ -26217,7 +26217,8 @@ var PL_RECHNER_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026
   var EINH={ 'ug_kg_min':{t:'µg/kg/min',kg:true,f:1}, 'ug_kg_h':{t:'µg/kg/h',kg:true,f:1/60}, 'mg_kg_h':{t:'mg/kg/h',kg:true,f:1000/60}, 'mg_h':{t:'mg/h',kg:false,f:1000/60}, 'ug_min':{t:'µg/min',kg:false,f:1} };
   function html(){
     var opts=Object.keys(EINH).map(function(k){ return '<option value="'+k+'">'+EINH[k].t+'</option>'; }).join('');
-    return '<div style="'+CARD+'">'
+    return '<div role="note" style="border:1.5px solid #f87171;background:rgba(248,113,113,.12);border-radius:12px;padding:11px 13px;margin-bottom:12px;font-size:13px;line-height:1.5;color:#fecaca"><b style="color:#fff">⚠️ Es gilt ausschließlich die ärztliche Anordnung.</b><br>Der Rechner ist nur eine Übungs- und Kontrollhilfe und ersetzt keine Anordnung.</div>'
+      +'<div style="'+CARD+'">'
       +'<div style="font-size:14.5px;font-weight:800;color:#e6eef7;margin-bottom:3px">💉 Perfusor: Dosis → Laufrate</div>'
       +'<div style="font-size:11.5px;color:#9fb8cc;margin-bottom:11px">z. B. Noradrenalin 5 mg in 50 ml, 0,1 µg/kg/min</div>'
       +'<div style="display:flex;gap:8px;margin-bottom:9px">'+feld('dr-kg','Gewicht','70','kg')+feld('dr-mg','Wirkstoff','5','mg')+feld('dr-ml','in','50','ml')+'</div>'
@@ -26237,7 +26238,7 @@ var PL_RECHNER_PUBLIC = true;   // Go P. Schenkelberger 23.10.2026
       +'<div style="display:flex;gap:8px;margin-bottom:9px">'+feld('ed-mg','Ampulle (optional)','0,5','mg')+feld('ed-ml','in','10','ml')+'</div>'
       +'<div id="ed-erg"></div>'
       +'</div>'
-      +'<div style="font-size:10.5px;color:#fca5a5;line-height:1.5;text-align:center;margin:4px 6px 0">⚠️ Rechenhilfe – keine Dosisempfehlung. Es gelten ärztliche Anordnung, Fachinformation und Hausstandard. Ergebnis immer im Vier-Augen-Prinzip prüfen.</div>'
+      +'<div style="font-size:10.5px;color:#fca5a5;line-height:1.5;text-align:center;margin:4px 6px 0">⚠️ Rechenhilfe – keine Dosisempfehlung. Maßgeblich ist allein die ärztliche Anordnung; zusätzlich Fachinformation und Hausstandard beachten. Ergebnis immer im Vier-Augen-Prinzip prüfen.</div>'
       +'<button onclick="renderMedTrainer()" style="width:100%;margin-top:12px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.17);border-radius:11px;padding:11px;color:#e2e8f0;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer">← Zurück zu den Übungsaufgaben</button>';
   }
   function box(zeilen,haupt,warn){
