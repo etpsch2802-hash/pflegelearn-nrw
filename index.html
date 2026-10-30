@@ -120,7 +120,9 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 <meta name="twitter:url" content="https://plan-nrw.de">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- 30.10.2026: Schrift nicht mehr renderblockierend (Lighthouse) -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 @keyframes kiNeonGlow{0%,100%{box-shadow:0 0 10px rgba(34,211,238,.45),0 0 26px rgba(34,211,238,.22),inset 0 0 8px rgba(34,211,238,.15);}50%{box-shadow:0 0 18px rgba(34,211,238,.85),0 0 42px rgba(34,211,238,.45),inset 0 0 12px rgba(34,211,238,.28);}}
 .ki-neon-btn{animation:kiNeonGlow 2.2s ease-in-out infinite;}
@@ -788,7 +790,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   </div>
 </div>
 
-<div class="watermark">© PLAN</div>
+<div class="watermark" aria-hidden="true"><span class="wm-txt">© PLAN</span></div>
 
 <!-- NAMENS-EINGABE (In-App, PLAN-Design) -->
 <div id="name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px">
@@ -27270,5 +27272,40 @@ var PL_MAILPFLICHT_PUBLIC = false;
 })();
 </script>
 
+<style>
+/* ══ Lesbarkeit & Kontrast (30.10.2026, Lighthouse; nur Admin bis Go – Klasse html.pl-lesbar) ══ */
+html.pl-lesbar #pw-screen [style*="font-size:11px"], html.pl-lesbar #pw-screen [style*="font-size:11.5px"],
+html.pl-lesbar #pw-screen [style*="font-size:10"] { font-size:12px !important; }
+html.pl-lesbar #pw-screen a[style*="rgba(var(--accent-rgb),.5)"] { color:#9fc3da !important; }
+html.pl-lesbar #pw-screen span[style*="rgba(var(--accent-rgb),.2)"] { color:#5f7f96 !important; }
+html.pl-lesbar .pw-copyright { font-size:12px; color:#8fa9bd; }
+html.pl-lesbar .bottom-nav button { font-size:12px; }
+html.pl-lesbar .watermark .wm-txt { display:none; }
+html.pl-lesbar .watermark::after { content:'© PLAN'; }
+</style>
+<script>
+/* ══ Schnellstart & Lesbarkeit (30.10.2026, Go P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   1) Service Worker: App-Hülle (/, /index.html, /data/*, Bilder) sofort aus dem Speicher, Aktualisierung im Hintergrund.
+      Neue Versionen kommen trotzdem sofort: jede Änderung zählt den SW-Cache hoch → neuer SW löscht den alten Speicher.
+      Admin: Client meldet dem SW {type:'PL_SWR', on:true}; für alle: SWR_PUBLIC in sw.js.
+   2) Größere Schrift + Kontrast auf dem Startbildschirm/unterer Leiste (CSS oben, Klasse html.pl-lesbar).
+   Go = PL_SCHNELL_PUBLIC=true hier und SWR_PUBLIC=true in sw.js. Kein neuer pl_*-Key. */
+(function(){
+  var PL_SCHNELL_PUBLIC = false;
+  function aktiv(){ try{ return PL_SCHNELL_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function los(){
+    var an=aktiv();
+    try{ document.documentElement.classList.toggle('pl-lesbar', an); }catch(e){}
+    try{
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.ready.then(function(reg){ var w=reg.active||navigator.serviceWorker.controller; if(w) w.postMessage({ type:'PL_SWR', on:an }); }).catch(function(){});
+      }
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', los); else los();
+  setTimeout(los, 3000);   /* nach Anmeldung (isAdmin) erneut */
+  try{ var o=window.showScreen; if(typeof o==='function'){ window.showScreen=function(){ var r=o.apply(this,arguments); try{ document.documentElement.classList.toggle('pl-lesbar', aktiv()); }catch(e){} return r; }; } }catch(e){}
+})();
+</script>
 </body>
 </html>
