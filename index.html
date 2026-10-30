@@ -27678,5 +27678,122 @@ body.light-mode .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 </script>
+<style>
+/* ══ Antworten in Fallbeispielen & ABCDE als erkennbare Auswahl mit Punkt (30.10.2026, Wunsch P. Schenkelberger; für alle) ══ */
+#fall-content button[onclick^="chooseFall"], #abcde-opts .nav-drop-btn{
+  display:flex!important;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,.05)!important;border:1px solid rgba(var(--accent-rgb),.28)!important;
+  border-radius:14px!important;padding:13px 14px!important;margin:9px 0!important;
+  font-size:14px!important;line-height:1.45!important;color:var(--text,#ddf0fb)!important;text-align:left!important;white-space:normal!important}
+#fall-content button[onclick^="chooseFall"]::before, #abcde-opts .nav-drop-btn::before{
+  content:"";flex:none;width:14px;height:14px;margin-top:3px;border-radius:50%;
+  border:2px solid var(--accent);box-sizing:border-box;background:transparent;transition:background .15s}
+#fall-content button[onclick^="chooseFall"]:active::before, #abcde-opts .nav-drop-btn:active::before{background:var(--accent)}
+#fall-content button[onclick^="chooseFall"]:active, #abcde-opts .nav-drop-btn:active{background:rgba(var(--accent-rgb),.14)!important}
+body.light-mode #fall-content button[onclick^="chooseFall"], body.light-mode #abcde-opts .nav-drop-btn{background:#fff!important;color:#0f2236!important}
+</style>
+<style>
+/* ══ FEIERTAGS-LOOK (30.10.2026, Idee P. Schenkelberger; nur Admin bis Go) ══ */
+.plfest-flug{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 6px);height:70px;pointer-events:none;z-index:950;overflow:hidden}
+.plfest-flug span{position:absolute;left:-40px;font-size:22px;animation:plfestFlug 6.5s ease-in-out forwards;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+@keyframes plfestFlug{0%{transform:translate(0,30px) rotate(-8deg)}25%{transform:translate(28vw,6px) rotate(6deg)}50%{transform:translate(55vw,34px) rotate(-6deg)}75%{transform:translate(80vw,10px) rotate(8deg)}100%{transform:translate(112vw,26px) rotate(0)}}
+.plfest-badge{display:inline-block;margin-left:6px;font-size:.9em;vertical-align:.05em}
+.plfest-zeile{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 2px 12px;font-size:12.5px;color:var(--text3,#bcd6ea)}
+.plfest-zeile button{white-space:nowrap;flex:none;background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px}
+@media (prefers-reduced-motion: reduce){.plfest-flug{display:none}}
+</style>
+<script>
+/* ══ FEIERTAGS-LOOK (30.10.2026, Idee P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   An festen Tagen 24 h eigener Look: Akzentfarbe + leicht getönter Hintergrund, Symbol am Logo,
+   kurze Flug-Animation beim Öffnen der Startseite (nicht im Quiz), Hinweiszeile mit „ausschalten“.
+   Wird nicht gespeichert (pl_theme bleibt) → am nächsten Tag automatisch wieder normal.
+   Tage: Halloween 31.10., Karneval (Weiberfastnacht–Veilchendienstag), Ostern (Karfreitag–Ostermontag),
+   Internationaler Tag der Pflegenden 12.5., Weihnachten 24.–26.12., Silvester/Neujahr 31.12.–1.1.
+   Vorschau (nur Admin): ?fest=halloween|karneval|ostern|pflege|weihnachten|silvester
+   Neuer Key pl_fest_aus (Datum, an dem der Nutzer den Look ausgeschaltet hat). Go = PL_FEST_PUBLIC=true. */
+(function(){
+  var PL_FEST_PUBLIC = false;
+  var FESTE={
+    halloween:{n:'Halloween-Look', i:'🎃', flug:['🦇','🦇','🦇'], a:'#f97316',a2:'#fb923c',rgb:'249,115,22',d1:'#9a3412',d2:'#c2410c', bg:['#120b1c','#1b1129','#24163a'], t:'Happy Halloween – heute gruselig gut lernen.'},
+    karneval:{n:'Karnevals-Look', i:'🎭', flug:['🎉','🎊','🎉'], a:'#e11d48',a2:'#fb7185',rgb:'225,29,72',d1:'#9f1239',d2:'#be123c', t:'Helau & Alaaf – und zwischendurch ein paar Fragen.'},
+    ostern:{n:'Oster-Look', i:'🐣', flug:['🐣','🌼','🥚'], a:'#84cc16',a2:'#a3e635',rgb:'132,204,22',d1:'#3f6212',d2:'#4d7c0f', t:'Frohe Ostern!'},
+    pflege:{n:'Tag der Pflegenden', i:'🩺', flug:['❤️','🩺','❤️'], a:'#f43f5e',a2:'#fb7185',rgb:'244,63,94',d1:'#be123c',d2:'#e11d48', t:'12. Mai – Internationaler Tag der Pflegenden. Danke für alles, was ihr jeden Tag leistet.'},
+    weihnachten:{n:'Weihnachts-Look', i:'🎄', flug:['❄️','⭐','❄️'], a:'#ef4444',a2:'#f87171',rgb:'239,68,68',d1:'#991b1b',d2:'#b91c1c', bg:['#071a14','#0b241c','#0f2e24'], t:'Frohe Weihnachten – und Danke an alle, die heute Dienst haben.'},
+    silvester:{n:'Silvester-Look', i:'🎆', flug:['✨','🎆','✨'], a:'#fbbf24',a2:'#fcd34d',rgb:'251,191,36',d1:'#b45309',d2:'#d97706', t:'Guten Rutsch – und ein starkes Prüfungsjahr!'}
+  };
+  function z2(n){ return (n<10?'0':'')+n; }
+  function heuteStr(){ var d=new Date(); return d.getFullYear()+'-'+z2(d.getMonth()+1)+'-'+z2(d.getDate()); }
+  function ostern(y){ var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+    return new Date(y,Math.floor((h+l-7*m+114)/31)-1,((h+l-7*m+114)%31)+1); }
+  function welches(){
+    try{ var q=new URLSearchParams(location.search).get('fest'); if(q && FESTE[q]) sessionStorage.setItem('plan_fest_vorschau',q); var v=sessionStorage.getItem('plan_fest_vorschau'); if(v && FESTE[v] && istAdmin()) return v; }catch(e){}
+    var n=new Date(), t=n.getDate(), m=n.getMonth()+1, y=n.getFullYear(), heute=new Date(y,n.getMonth(),t);
+    if(m===10&&t===31) return 'halloween';
+    if(m===5&&t===12) return 'pflege';
+    if(m===12&&t>=24&&t<=26) return 'weihnachten';
+    if((m===12&&t===31)||(m===1&&t===1)) return 'silvester';
+    var o=ostern(y), tag=864e5, diff=Math.round((heute-o)/tag);
+    if(diff>=-2 && diff<=1) return 'ostern';
+    if(diff>=-52 && diff<=-47) return 'karneval';
+    return null;
+  }
+  function istAdmin(){ try{ return typeof isAdmin==='function' && isAdmin(); }catch(e){ return false; } }
+  function an(){ return PL_FEST_PUBLIC || istAdmin(); }
+  function aus(){ try{ return localStorage.getItem('pl_fest_aus')===heuteStr(); }catch(e){ return false; } }
+  var aktiv=null, geflogen=false;
+  function setzen(id){
+    var f=FESTE[id], r=document.documentElement.style;
+    r.setProperty('--accent',f.a); r.setProperty('--accent2',f.a2); r.setProperty('--accent-rgb',f.rgb); r.setProperty('--accent-d1',f.d1); r.setProperty('--accent-d2',f.d2);
+    if(f.bg){ r.setProperty('--bg',f.bg[0]); r.setProperty('--bg2',f.bg[1]); r.setProperty('--bg3',f.bg[2]); }
+    document.documentElement.setAttribute('data-fest',id);
+  }
+  function zuruecksetzen(){
+    var r=document.documentElement.style; ['--bg','--bg2','--bg3'].forEach(function(k){ r.removeProperty(k); });
+    document.documentElement.removeAttribute('data-fest');
+    try{ if(typeof initTheme==='function') initTheme(); }catch(e){}
+    var b=document.querySelector('.plfest-badge'); if(b) b.remove();
+    var z=document.getElementById('plfest-zeile'); if(z) z.remove();
+  }
+  function badge(f){
+    var el=document.querySelector('.logo-title'); if(!el) return;
+    var b=el.querySelector('.plfest-badge'); if(!b){ b=document.createElement('span'); b.className='plfest-badge'; b.setAttribute('aria-hidden','true'); el.appendChild(b); }
+    b.textContent=f.i;
+  }
+  function zeile(f){
+    var g=document.getElementById('home-greeting'); if(!g) return;
+    var z=document.getElementById('plfest-zeile');
+    if(!z){ z=document.createElement('div'); z.id='plfest-zeile'; z.className='plfest-zeile'; g.parentNode.insertBefore(z, g.nextSibling); }
+    z.innerHTML='<span>'+f.i+' '+f.t+'</span><button type="button" onclick="plFestAus()">'+f.n+' aus</button>';
+  }
+  function fliegen(f){
+    if(geflogen) return; geflogen=true;
+    try{ if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; }catch(e){}
+    var c=document.createElement('div'); c.className='plfest-flug'; c.setAttribute('aria-hidden','true');
+    f.flug.forEach(function(e,i){ var s=document.createElement('span'); s.textContent=e; s.style.animationDelay=(i*0.55)+'s'; s.style.top=(i*14)+'px'; c.appendChild(s); });
+    document.body.appendChild(c); setTimeout(function(){ c.remove(); }, 9000);
+  }
+  window.plFestAus=function(){
+    try{ localStorage.setItem('pl_fest_aus', heuteStr()); }catch(e){}
+    try{ sessionStorage.removeItem('plan_fest_vorschau'); }catch(e){}
+    try{ if(typeof gaEvent==='function') gaEvent('fest_aus',{fest:aktiv||''}); }catch(e){}
+    aktiv=null; zuruecksetzen();
+  };
+  function pruefen(screen){
+    var id=an() && !aus() ? welches() : null;
+    if(!id){ if(aktiv){ aktiv=null; zuruecksetzen(); } return; }
+    var f=FESTE[id];
+    if(aktiv!==id){ aktiv=id; setzen(id); try{ if(typeof gaEvent==='function') gaEvent('fest_look',{fest:id}); }catch(e){} }
+    badge(f);
+    if(!screen || screen==='home'){ zeile(f); setTimeout(function(){ fliegen(f); }, 600); }
+  }
+  function start(){
+    try{ var o=window.showScreen; if(typeof o==='function') window.showScreen=function(n){ var r=o.apply(this,arguments); try{ pruefen(n); }catch(e){} return r; }; }catch(e){}
+    try{ var oT=window.applyTheme; if(typeof oT==='function') window.applyTheme=function(){ var r=oT.apply(this,arguments); try{ if(aktiv) setzen(aktiv); }catch(e){} return r; }; }catch(e){}
+    try{ var a=document.querySelector('.page.active'); pruefen(a?a.id.replace(/^screen-/,''):null); }catch(e){}
+    setTimeout(function(){ try{ var a=document.querySelector('.page.active'); pruefen(a?a.id.replace(/^screen-/,''):null); }catch(e){} }, 3000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 </body>
 </html>
