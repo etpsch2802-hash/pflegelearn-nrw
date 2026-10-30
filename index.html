@@ -27702,6 +27702,17 @@ body.light-mode #fall-content button[onclick^="chooseFall"], body.light-mode #ab
 .plfest-zeile{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 2px 12px;font-size:12.5px;color:var(--text3,#bcd6ea)}
 .plfest-zeile button{white-space:nowrap;flex:none;background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px}
 @media (prefers-reduced-motion: reduce){.plfest-flug{display:none}}
+.plfest-gruss{position:fixed;inset:0;z-index:99990;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 40%,rgba(var(--accent-rgb),.30),rgba(var(--accent-rgb),0) 65%),#0b0712;animation:plfgIn .35s ease-out;cursor:pointer}
+.plfest-gruss .box{text-align:center;max-width:340px}
+.plfest-gruss .ic{font-size:86px;line-height:1;display:inline-block;animation:plfgPop .9s cubic-bezier(.34,1.56,.64,1)}
+.plfest-gruss h2{margin:16px 0 6px;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:34px;color:#fff;text-wrap:balance}
+.plfest-gruss p{margin:0 0 22px;font-size:15px;line-height:1.5;color:#e7dcef}
+.plfest-gruss button{border:none;border-radius:14px;background:var(--accent);color:#120b1c;font:inherit;font-weight:900;font-size:16px;padding:13px 26px;cursor:pointer}
+.plfest-gruss.weg{animation:plfgOut .3s ease-in forwards}
+@keyframes plfgIn{from{opacity:0}to{opacity:1}}
+@keyframes plfgOut{to{opacity:0;visibility:hidden}}
+@keyframes plfgPop{0%{transform:scale(.3) rotate(-15deg);opacity:0}70%{transform:scale(1.12) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@media (prefers-reduced-motion: reduce){.plfest-gruss,.plfest-gruss .ic,.plfest-gruss.weg{animation:none}}
 /* Im Feiertags-Look auch KI-Knopf und Rollen-Karte in der Festfarbe, damit nichts Blaues herausfällt */
 html[data-fest] #ki-fab{background:linear-gradient(135deg,var(--accent),var(--accent-d2))!important;box-shadow:0 6px 20px rgba(var(--accent-rgb),.45)!important}
 html[data-fest] #home-persona > div:first-child{background:linear-gradient(135deg,var(--accent),var(--accent-d2))!important}
@@ -27725,6 +27736,30 @@ html[data-fest] #home-persona > div:first-child{background:linear-gradient(135de
     weihnachten:{n:'Weihnachts-Look', i:'🎄', flug:['❄️','⭐','❄️'], a:'#ef4444',a2:'#f87171',rgb:'239,68,68',d1:'#991b1b',d2:'#b91c1c', bg:['#071a14','#0b241c','#0f2e24'], t:'Frohe Weihnachten – und Danke an alle, die heute Dienst haben.'},
     silvester:{n:'Silvester-Look', i:'🎆', flug:['✨','🎆','✨'], a:'#fbbf24',a2:'#fcd34d',rgb:'251,191,36',d1:'#b45309',d2:'#d97706', t:'Guten Rutsch – und ein starkes Prüfungsjahr!'}
   };
+  /* Begrüßung beim ersten Öffnen am Festtag (30.10.2026, Wunsch P. Schenkelberger), einmal pro Tag, Key pl_fest_gruss */
+  var PL_FEST_GRUSS = false;
+  var GRUSS={
+    halloween:['Happy Halloween','Heute wird gruselig gut gelernt – die Fledermäuse sind schon unterwegs.'],
+    karneval:['Helau & Alaaf','Feier schön – und zwischendurch ein paar Fragen schaden nicht.'],
+    ostern:['Frohe Ostern','Schöne Feiertage – und viel Kraft, falls du Dienst hast.'],
+    pflege:['Danke!','Heute ist der Internationale Tag der Pflegenden. Danke für alles, was du jeden Tag leistest.'],
+    weihnachten:['Frohe Weihnachten','Schöne Feiertage – und Danke an alle, die heute Dienst haben.'],
+    silvester:['Guten Rutsch','Auf ein starkes neues Jahr – und ein bestandenes Examen.']
+  };
+  function gruessen(id){
+    if(!(PL_FEST_GRUSS || istAdmin())) return;
+    var key=heuteStr()+'|'+id; try{ if(localStorage.getItem('pl_fest_gruss')===key) return; localStorage.setItem('pl_fest_gruss',key); }catch(e){ return; }
+    var g=GRUSS[id]; if(!g) return; var f=FESTE[id];
+    if(id==='silvester' && new Date().getMonth()===0) g=['Frohes neues Jahr','Auf ein starkes Jahr – und ein bestandenes Examen.'];
+    var name=''; try{ name=(localStorage.getItem('pl_user_name')||'').trim().split(' ')[0]; }catch(e){}
+    var ov=document.createElement('div'); ov.className='plfest-gruss'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label',g[0]);
+    ov.innerHTML='<div class="box"><span class="ic" aria-hidden="true">'+f.i+'</span><h2></h2><p></p><button type="button">Los geht\u2019s</button></div>';
+    ov.querySelector('h2').textContent=g[0]+(name?', '+name:'')+'!'; ov.querySelector('p').textContent=g[1];
+    function zu(){ if(!ov.parentNode) return; ov.classList.add('weg'); setTimeout(function(){ ov.remove(); },320); }
+    ov.addEventListener('click', zu); setTimeout(zu, 6000);
+    document.body.appendChild(ov);
+    try{ if(typeof gaEvent==='function') gaEvent('fest_gruss',{fest:id}); }catch(e){}
+  }
   function z2(n){ return (n<10?'0':'')+n; }
   function heuteStr(){ var d=new Date(); return d.getFullYear()+'-'+z2(d.getMonth()+1)+'-'+z2(d.getDate()); }
   function ostern(y){ var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
@@ -27788,7 +27823,7 @@ html[data-fest] #home-persona > div:first-child{background:linear-gradient(135de
     var f=FESTE[id];
     if(aktiv!==id){ aktiv=id; setzen(id); try{ if(typeof gaEvent==='function') gaEvent('fest_look',{fest:id}); }catch(e){} }
     badge(f);
-    if(!screen || screen==='home'){ zeile(f); setTimeout(function(){ fliegen(f); }, 600); }
+    if(!screen || screen==='home'){ zeile(f); try{ var pw=document.getElementById('pw-screen'); if(!(pw && pw.offsetParent!==null)) gruessen(id); }catch(e){} setTimeout(function(){ fliegen(f); }, 600); }
   }
   function start(){
     try{ var o=window.showScreen; if(typeof o==='function') window.showScreen=function(n){ var r=o.apply(this,arguments); try{ pruefen(n); }catch(e){} return r; }; }catch(e){}
