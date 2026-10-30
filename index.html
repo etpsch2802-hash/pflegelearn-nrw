@@ -27552,5 +27552,131 @@ body.pl-fab-an .page.active{padding-bottom:150px}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<style>
+/* ══ FALLBEISPIELE NEU (30.10.2026, Wunsch P. Schenkelberger; nur Admin bis Go – Klasse html.pl-faelle-an) ══ */
+.plf-zuletzt{display:flex;align-items:center;gap:14px;background:var(--bg2,#0d1e33);border:1px solid rgba(var(--accent-rgb),.35);border-radius:18px;padding:14px 16px;margin:4px 0 18px;text-align:left}
+.plf-zuletzt .t{flex:1;min-width:0}
+.plf-ey{display:block;font-size:11.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent)}
+.plf-zuletzt b{display:block;font-size:16px;color:var(--text,#ddf0fb);margin-top:3px}
+.plf-zuletzt span.s{display:block;font-size:12.5px;color:var(--text3,#bcd6ea);margin-top:2px}
+.plf-go{border:none;border-radius:13px;background:var(--accent);color:#04121f;font:inherit;font-weight:900;font-size:14px;padding:11px 15px;cursor:pointer;flex:none;transition:transform .15s}
+.plf-go:active{transform:scale(.97)}
+.plf-lab{font-size:11.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--text3,#bcd6ea);margin:0 2px 8px;text-align:left}
+.plf-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.plf-chips::-webkit-scrollbar{display:none}
+.plf-chip{flex:none;display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--text,#ddf0fb);border-radius:999px;padding:9px 14px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.plf-chip i{width:9px;height:9px;border-radius:50%;flex:none}
+.plf-chip small{font-size:12px;color:var(--text3,#bcd6ea);font-weight:600}
+.plf-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#04121f}
+.plf-chip[aria-pressed="true"] small{color:#04121f;opacity:.75}
+.plf-jahr{background:var(--bg2,#0d1e33);border:1px solid rgba(255,255,255,.09);border-radius:18px;margin-bottom:12px;overflow:hidden}
+.plf-jahr.aktiv{border-color:rgba(var(--accent-rgb),.55)}
+.plf-kopf{width:100%;background:none;border:none;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:16px 16px 6px;display:block}
+.plf-kopf .zeile{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.plf-kopf .h3{display:block;margin:2px 0 0;font-size:18px;font-weight:800;color:var(--text,#ddf0fb)}
+.plf-kopf .zahl{font-size:13px;color:var(--text3,#bcd6ea);font-variant-numeric:tabular-nums;white-space:nowrap}
+.plf-kopf .p{display:block;margin:6px 0 0;font-size:13px;color:var(--text3,#bcd6ea);line-height:1.45}
+.plf-bar{display:block;height:7px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;margin:12px 0 0}
+.plf-bar span{display:block;height:100%;border-radius:5px;background:var(--accent);transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.plf-fuss{display:flex;align-items:center;gap:10px;padding:12px 16px 16px}
+.plf-weiter{flex:1;min-width:0;border:none;border-radius:13px;background:rgba(var(--accent-rgb),.16);border:1px solid rgba(var(--accent-rgb),.4);color:var(--text,#ddf0fb);font:inherit;font-size:13.5px;font-weight:800;padding:11px 12px;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plf-alle{border:none;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.plf-liste{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px}
+.plf-fall{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:12px 13px;font:inherit;color:inherit;cursor:pointer}
+.plf-fall .d{width:9px;height:9px;border-radius:50%;flex:none}
+.plf-fall .t{flex:1;min-width:0}
+.plf-fall b{display:block;font-size:14px;color:var(--text,#ddf0fb);font-weight:700}
+.plf-fall small{display:block;font-size:12px;color:var(--text3,#bcd6ea);margin-top:2px}
+.plf-st{font-size:11.5px;font-weight:800;border-radius:999px;padding:4px 9px;flex:none}
+.plf-st.gut{background:rgba(52,211,153,.16);color:#6ee7b7}
+.plf-st.mittel{background:rgba(251,191,36,.16);color:#fcd34d}
+.plf-st.schlecht{background:rgba(251,146,60,.16);color:#fdba74}
+.plf-st.offen{background:rgba(255,255,255,.07);color:var(--text3,#bcd6ea)}
+body.light-mode .plf-zuletzt,body.light-mode .plf-jahr{background:#fff}
+body.light-mode .plf-chip{background:#fff;border-color:#cbd5e1}
+@media (prefers-reduced-motion: reduce){.plf-bar span,.plf-go{transition:none}}
+</style>
+<script>
+/* ══ FALLBEISPIELE NEU (30.10.2026, Wunsch P. Schenkelberger: „sieht zu sehr nach KI aus“; Entwurf, nur Admin bis Go) ══
+   Ersetzt nur die Darstellung von renderFaelle() (Wrapper), Fall-Engine unverändert.
+   - „Zuletzt bearbeitet“ oben, Fach-Filter als wischbare Leiste mit Farbpunkt + Anzahl (ohne Symbole)
+   - Lernjahr-Karten mit echten Fall-Titeln, Fortschritt „x von y gelöst“ und „Weiter mit: …“
+   - Status je Fall (gut gelöst / mit Abstrichen / kritisch / offen)
+   Neuer Key pl_faelle_v1 {erg:{id:{e,t}}, zuletzt:id} – wird für alle mitgeschrieben (nur lokal).
+   Go = PL_FAELLE_PUBLIC=true. */
+(function(){
+  var PL_FAELLE_PUBLIC = false;
+  var K='pl_faelle_v1';
+  function an(){ try{ return PL_FAELLE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function lese(){ try{ var d=JSON.parse(localStorage.getItem(K)||'null'); return d&&typeof d==='object'?d:{erg:{}}; }catch(e){ return {erg:{}}; } }
+  function schreibe(d){ try{ localStorage.setItem(K, JSON.stringify(d)); }catch(e){} }
+  function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  var ST={gut:['gut','gut gelöst'],mittel:['mittel','mit Abstrichen'],schlecht:['schlecht','kritisch']};
+  function gesperrt(f){
+    try{ if(currentBereich && currentBereich.gratis && typeof currentBereich.faelle_max_pro_fach==='number'){ var l=FAELLE.filter(function(x){return x.fach===f.fach;}); return l.findIndex(function(x){return x.id===f.id;})>=currentBereich.faelle_max_pro_fach; } }catch(e){}
+    return false;
+  }
+  function klick(f){ return gesperrt(f) ? "showGratisLimit('faelle',"+((currentBereich&&currentBereich.faelle_max_pro_fach)||2)+")" : "startFall('"+f.id+"')"; }
+  function render(){
+    var fc=document.getElementById('faelle-faecher'), li=document.getElementById('faelle-liste'); if(!fc||!li) return;
+    var d=lese(), erg=d.erg||{};
+    var match=function(f){ return faelleFilter==='alle'||f.fach===faelleFilter; };
+    var html='';
+    /* Zuletzt bearbeitet */
+    var z=d.zuletzt && FAELLE.find(function(f){ return f.id===d.zuletzt; });
+    if(z){
+      var e=erg[z.id], s=e?ST[e.e]:null;
+      html+='<div class="plf-zuletzt"><span class="t"><span class="plf-ey">Zuletzt bearbeitet</span><b>'+esc(z.titel)+'</b><span class="s">'+esc(z.fachLabel)+' · '+z.jahr+'. Lernjahr'+(s?' · '+s[1]:' · noch nicht abgeschlossen')+'</span></span>'
+        +'<button type="button" class="plf-go" onclick="'+klick(z)+'">'+(e?'Nochmal':'Weiter')+'</button></div>';
+    }
+    /* Fach-Filter */
+    var faecher=fachListe(), chips='<button type="button" class="plf-chip" aria-pressed="'+(faelleFilter==='alle')+'" onclick="faelleFilter=\'alle\';renderFaelle()">Alle <small>'+FAELLE.length+'</small></button>';
+    faecher.forEach(function(f){ var n=FAELLE.filter(function(x){return x.fach===f.fach;}).length;
+      chips+='<button type="button" class="plf-chip" aria-pressed="'+(faelleFilter===f.fach)+'" onclick="faelleFilter=\''+f.fach+'\';renderFaelle()"><i style="background:'+f.farbe+'"></i>'+esc(f.label)+' <small>'+n+'</small></button>'; });
+    fc.style.textAlign='left';
+    fc.innerHTML='<div class="plf-lab">Fach</div><div class="plf-chips" id="plf-chips">'+chips+'</div>';
+    /* Lernjahre */
+    [1,2,3].forEach(function(j){
+      var grp=FAELLE.filter(function(f){ return match(f)&&Number(f.jahr)===j; }); if(!grp.length) return;
+      var geloest=grp.filter(function(f){ return erg[f.id]; }).length, pct=Math.round(geloest/grp.length*100);
+      var themen=grp.slice(0,3).map(function(f){ return f.titel; }).join(' · ')+(grp.length>3?' …':'');
+      var naechster=grp.find(function(f){ return !erg[f.id] && !gesperrt(f); });
+      var offen=faelleOpenJahr===j, aktiv=z && Number(z.jahr)===j && match(z);
+      html+='<div class="plf-jahr'+(aktiv?' aktiv':'')+'">'
+        +'<button type="button" class="plf-kopf" aria-expanded="'+offen+'" onclick="toggleFalljahr('+j+')">'
+          +'<span class="plf-ey">'+j+'. Lernjahr</span>'
+          +'<span class="zeile"><span class="h3">'+grp.length+(grp.length===1?' Fall':' Fälle')+'</span><span class="zahl">'+geloest+' von '+grp.length+' gelöst</span></span>'
+          +'<span class="p">'+esc(themen)+'</span>'
+          +'<span class="plf-bar" aria-hidden="true"><span style="width:'+pct+'%"></span></span>'
+        +'</button>'
+        +'<div class="plf-fuss">'
+          +(naechster?'<button type="button" class="plf-weiter" onclick="'+klick(naechster)+'">Weiter mit: '+esc(naechster.titel)+' →</button>':'<span style="flex:1;font-size:13px;color:var(--text3,#bcd6ea)">Alle Fälle bearbeitet</span>')
+          +'<button type="button" class="plf-alle" onclick="toggleFalljahr('+j+')">'+(offen?'Liste zu':'Alle '+grp.length)+'</button>'
+        +'</div>';
+      if(offen){
+        html+='<div class="plf-liste">'+grp.map(function(f){ var e=erg[f.id], s=e?ST[e.e]:null, lock=gesperrt(f);
+          return '<button type="button" class="plf-fall" onclick="'+klick(f)+'"><span class="d" style="background:'+f.farbe+'"></span><span class="t"><b>'+esc(f.titel)+'</b><small>'+esc(f.fachLabel)+(f.schwere?' · '+esc(f.schwere):'')+'</small></span>'
+            +(lock?'<span class="plf-st offen">🔒</span>':'<span class="plf-st '+(s?s[0]:'offen')+'">'+(s?s[1]:'offen')+'</span>')+'</button>'; }).join('')+'</div>';
+      }
+      html+='</div>';
+    });
+    if(!html) html='<div style="color:var(--text3,#bcd6ea);text-align:center;padding:18px">Keine Fälle für dieses Fach.</div>';
+    li.innerHTML=html;
+    try{ var c=document.getElementById('plf-chips'), a=c&&c.querySelector('[aria-pressed="true"]'); if(a&&a.offsetLeft>c.clientWidth-60) c.scrollLeft=a.offsetLeft-20; }catch(e){}
+  }
+  function start(){
+    try{
+      var oR=window.renderFaelle; if(typeof oR==='function') window.renderFaelle=function(){ if(an()){ try{ render(); return; }catch(e){} } return oR.apply(this,arguments); };
+      var oS=window.startFall; if(typeof oS==='function') window.startFall=function(id){ var r=oS.apply(this,arguments); try{ if(fallAktuell && fallAktuell.id===id){ var d=lese(); d.zuletzt=id; schreibe(d); } }catch(e){} return r; };
+      var oF=window.renderFall; if(typeof oF==='function') window.renderFall=function(){ var r=oF.apply(this,arguments);
+        try{ var n=fallAktuell && fallAktuell.nodes[fallNode]; if(n && n.ende){ var d=lese(); d.erg=d.erg||{}; var alt=d.erg[fallAktuell.id], rang={schlecht:0,mittel:1,gut:2};
+          if(!alt || (rang[n.ergebnis]||0)>=(rang[alt.e]||0)) d.erg[fallAktuell.id]={e:n.ergebnis||'mittel', t:Date.now()}; schreibe(d); } }catch(e){}
+        return r; };
+      var oSc=window.showScreen; if(typeof oSc==='function') window.showScreen=function(n){ var r=oSc.apply(this,arguments); if(n==='faelle' && an()) try{ render(); }catch(e){} return r; };
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 </body>
 </html>
