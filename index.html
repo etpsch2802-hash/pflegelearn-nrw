@@ -15212,7 +15212,8 @@ function renderTaschenkarten() {
   document.querySelectorAll('.page, .chat-page').forEach(p => p.classList.remove('active'));
   screen.classList.add('active');
 
-  const _full = !!(currentUser && currentUser.bereich === "alle");
+  // 30.10.2026 (Go P. Schenkelberger): in der Gratis-Phase (PL_PAYMENTS_ON false) alle Taschenkarten frei; Schlösser nur bei aktiver Bezahlung
+  const _full = !!(currentUser && currentUser.bereich === "alle") || !window.PL_PAYMENTS_ON;
   const _PV = 2;
   const _cards = TASCHENKARTEN.map((k, i) => {
     if (_full || i < _PV) {
@@ -15269,7 +15270,7 @@ function showTaschenLockInfo() {
 function showTaschenkarte(id) {
   const k = TASCHENKARTEN.find(function(x){ return x.id === id; });
   if (!k) return;
-  if (!(currentUser && currentUser.bereich === "alle")) {
+  if (window.PL_PAYMENTS_ON && !(currentUser && currentUser.bereich === "alle")) {
     if (TASCHENKARTEN.findIndex(function(x){ return x.id === id; }) >= 2) { showTaschenLockInfo(); return; }
   }
 
