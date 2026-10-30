@@ -27929,5 +27929,110 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 </script>
+<script>
+/* Design-Runde 2 (30.10.2026, Go zum Bau P. Schenkelberger; Entwurf, nur Admin bis Go):
+   (1) Quiz-Auswahl nach Fach gruppiert (aufklappbar) mit Fortschritt je Kategorie (getKatStats),
+   (2) größere Antwortkarten in der Quiz-Frage, (3) Krankheitsbild-Detail untereinander statt zweispaltig.
+   Additiv: Wrapper um renderQuizSelect (läuft NACH dem Fachbereich-Wrapper, dessen Block bleibt oben).
+   Kein neuer pl_*-Key. */
+(function(){
+  var PL_D2_PUBLIC = false;
+  function an(){ try{ return PL_D2_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_D2_PUBLIC; } }
+  var GRUPPEN = [
+    {id:'wege', l:'Ausbildungswege', test:function(k){ return k==='pflegehelfer'||k==='anerkennung'||k==='gpa'; }},
+    {id:'pflege', l:'Pflege & Fachgebiete', test:function(k){ return ['pflegeplanung','psychiatrie','paediatrie','altenpflege','langzeitpflege','innere','chirurgie','gynaekologie','psychologie','notfall','praevention','rehabilitation','palliation','mobilitaet'].indexOf(k)>=0; }},
+    {id:'ana', l:'Anatomie & Physiologie', test:function(k){ return k.indexOf('ana_')===0; }},
+    {id:'an', l:'Anästhesie', test:function(k){ return k.indexOf('an_')===0; }},
+    {id:'its', l:'Intensivpflege', test:function(k){ return k.indexOf('its_')===0; }},
+    {id:'ata', l:'ATA – Anästhesietechnik', test:function(k){ return k.indexOf('ata_')===0; }},
+    {id:'ota', l:'OTA – Operationstechnik', test:function(k){ return k.indexOf('ota_')===0; }},
+    {id:'sonst', l:'Weitere Themen', test:function(){ return true; }}
+  ];
+  var offen = {};
+  function katId(b){ var m=/startQuiz\('([^']+)'\)/.exec(b.getAttribute('onclick')||''); return m?m[1]:''; }
+  function stats(){ try{ return (typeof getKatStats==='function' && getKatStats()) || {}; }catch(e){ return {}; } }
+  function balken(s){
+    if(!s||!s.t) return '<span class="pld2-neu">noch nicht geübt</span>';
+    var p=Math.round(100*s.c/s.t), f=p>=75?'#22c55e':p>=50?'#f59e0b':'#fb923c';
+    return '<span class="pld2-bar"><i style="width:'+p+'%;background:'+f+'"></i></span><span class="pld2-pz">'+p+' %</span>';
+  }
+  function gruppieren(){
+    var el=document.getElementById('quiz-select-list'); if(!el||el.querySelector('.pld2-gr')) return;
+    var btns=[].slice.call(el.querySelectorAll('button.qs-btn')); if(!btns.length) return;
+    var ks=stats(), kopfRest=null;
+    [].slice.call(el.children).forEach(function(c){ if(c.tagName==='DIV' && c.textContent==='Alle Kategorien') kopfRest=c; });
+    // Fortschritt in jede Kachel (auch „Dein Bereich“)
+    btns.forEach(function(b){
+      var id=katId(b); if(!id||id==='alle'||b.querySelector('.pld2-st')) return;
+      var box=b.querySelector('div'); if(!box) return;
+      var d=document.createElement('div'); d.className='pld2-st'; d.innerHTML=balken(ks[id]); box.appendChild(d);
+    });
+    var istBereich=function(b){ return kopfRest && (kopfRest.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING); };
+    var rest=btns.filter(function(b){ var id=katId(b); return id && id!=='alle' && !istBereich(b); });
+    var alle=btns.filter(function(b){ return katId(b)==='alle'; })[0];
+    var anker=document.createElement('div'); anker.className='pld2-gr';
+    if(alle) el.insertBefore(anker, alle.nextSibling); else el.appendChild(anker);
+    if(alle) alle.classList.add('pld2-alle');
+    var verteilt={};
+    GRUPPEN.forEach(function(g){
+      var drin=rest.filter(function(b){ var id=katId(b); return !verteilt[id] && g.test(id); });
+      if(!drin.length) return;
+      drin.forEach(function(b){ verteilt[katId(b)]=1; });
+      var n=0,c=0,t=0;
+      drin.forEach(function(b){ var m=/(\d+)\s*Fragen/.exec(b.textContent); if(m) n+=+m[1]; var s=ks[katId(b)]; if(s){ c+=s.c; t+=s.t; } });
+      var det=document.createElement('details'); det.className='pld2-g'; if(offen[g.id]) det.open=true;
+      det.addEventListener('toggle', function(){ offen[g.id]=det.open; });
+      var info=drin.length+(drin.length===1?' Thema':' Themen')+' · '+n+' Fragen'+(t?' · '+Math.round(100*c/t)+' % richtig':'');
+      det.innerHTML='<summary><span class="pld2-gl">'+g.l+'</span><span class="pld2-gi">'+info+'</span><span class="pld2-pf" aria-hidden="true">›</span></summary><div class="pld2-gb"></div>';
+      var body=det.querySelector('.pld2-gb'); drin.forEach(function(b){ body.appendChild(b); });
+      anker.appendChild(det);
+    });
+    if(kopfRest) kopfRest.textContent='Alle Themen nach Fach';
+  }
+  function start(){
+    try{
+      var o=window.renderQuizSelect;
+      if(typeof o==='function') window.renderQuizSelect=function(){ var r=o.apply(this,arguments); if(an()) try{ gruppieren(); }catch(e){} return r; };
+      var s=window.showScreen;
+      if(typeof s==='function') window.showScreen=function(n){ document.documentElement.classList.toggle('pl-d2', an()); var r=s.apply(this,arguments); if(n==='quizSelect'&&an()) try{ gruppieren(); }catch(e){} return r; };
+    }catch(e){}
+    document.documentElement.classList.toggle('pl-d2', an());
+    setTimeout(function(){ document.documentElement.classList.toggle('pl-d2', an()); }, 3000);
+  }
+  var css=document.createElement('style');
+  css.textContent=
+  'html.pl-d2 .pld2-g{border:1px solid rgba(148,190,220,.16);border-radius:14px;margin:0 0 9px;background:rgba(255,255,255,.04);overflow:hidden}'+
+  'html.pl-d2 .pld2-g>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;padding:13px 14px}'+
+  'html.pl-d2 .pld2-g>summary::-webkit-details-marker{display:none}'+
+  'html.pl-d2 .pld2-gl{font-weight:800;font-size:14.5px;color:var(--text)}'+
+  'html.pl-d2 .pld2-gi{grid-column:1;font-size:12px;color:var(--text3)}'+
+  'html.pl-d2 .pld2-pf{grid-column:2;grid-row:1/3;font-size:22px;color:var(--text3);transition:transform .2s}'+
+  'html.pl-d2 .pld2-g[open]>summary .pld2-pf{transform:rotate(90deg)}'+
+  'html.pl-d2 .pld2-gb{display:flex;flex-direction:column;gap:7px;padding:0 10px 11px}'+
+  'html.pl-d2 .pld2-alle{margin-bottom:12px}'+
+  'html.pl-d2 .pld2-st{display:flex;align-items:center;gap:7px;margin-top:5px}'+
+  'html.pl-d2 .pld2-bar{flex:1;max-width:140px;height:5px;border-radius:3px;background:rgba(148,190,220,.18);overflow:hidden}'+
+  'html.pl-d2 .pld2-bar i{display:block;height:100%;border-radius:3px}'+
+  'html.pl-d2 .pld2-pz{font-size:11.5px;color:var(--text3);font-weight:700}'+
+  'html.pl-d2 .pld2-neu{font-size:11.5px;color:var(--text3)}'+
+  'html.pl-d2 #quiz-select-list .qs-btn>div{flex:1;min-width:0}'+
+  'html.pl-d2 body.light-mode .pld2-g{background:#fff;border-color:rgba(30,64,128,.16)}'+
+  /* (2) Antwortkarten */
+  'html.pl-d2 #options{gap:10px}'+
+  'html.pl-d2 #options .opt-btn{padding:14px 14px;font-size:14.5px;line-height:1.45;border-radius:14px;min-height:54px;align-items:center;gap:12px;border-width:1.5px;transition:transform .12s,border-color .15s}'+
+  'html.pl-d2 #options .opt-btn:active{transform:scale(.985)}'+
+  'html.pl-d2 #options .opt-letter{flex:0 0 30px;height:30px;min-width:30px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:13px;opacity:.85}'+
+  'html.pl-d2 #options .opt-btn.correct .opt-letter{opacity:1;background:#16a34a;border-color:#16a34a;color:#fff}'+
+  'html.pl-d2 #options .opt-btn.wrong .opt-letter{opacity:1;background:#ea580c;border-color:#ea580c;color:#fff}'+
+  'html.pl-d2 #quiz-select-list .pld2-gb .qs-btn{padding:10px 12px}'+
+  'html.pl-d2 .q-text{font-size:16.5px;line-height:1.5}'+
+  /* (3) Krankheitsbild untereinander, etwas größere Schrift */
+  'html.pl-d2 #kb-detail-content div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}'+
+  'html.pl-d2 #kb-detail-content div[style*="font-size:12px"]{font-size:13.5px !important;line-height:1.55}'+
+  'html.pl-d2 #kb-detail-content div[style*="font-size:13px"]{font-size:14px !important}';
+  document.head.appendChild(css);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 </body>
 </html>
