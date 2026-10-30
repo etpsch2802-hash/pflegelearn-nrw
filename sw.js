@@ -1,5 +1,41 @@
 // PflegeLearn NRW – Service Worker v5.0
-const CACHE = 'pflegelearn-v154';
+const CACHE = 'pflegelearn-v155';
+// 30.10.2026: Schnellstart (Stale-While-Revalidate) für die App-Hülle. Für alle: SWR_PUBLIC = true.
+// Bis dahin nur, wenn ein Admin-Client {type:'PL_SWR', on:true} meldet (Merker im Speicher CACHE).
+const SWR_PUBLIC = false;
+const SWR_FLAG = '/__pl_swr_flag';
+function swrAn() {
+  if (SWR_PUBLIC) return Promise.resolve(true);
+  return caches.open(CACHE).then(c => c.match(SWR_FLAG)).then(r => !!r).catch(() => false);
+}
+function istHuelle(req) {
+  try {
+    const u = new URL(req.url);
+    if (u.origin !== self.location.origin) return false;
+    const p = u.pathname;
+    if (p.startsWith('/api/') || p.startsWith('/wissen') || p.startsWith('/gratis') || p.startsWith('/fach/')) return false;
+    if (req.mode === 'navigate' || req.destination === 'document') return p === '/' || p === '/index.html';
+    return p.startsWith('/data/') || /\.(png|jpg|jpeg|svg|webp|ico|json)$/.test(p);
+  } catch (_) { return false; }
+}
+function netzZuerst(req, isDoc) {
+  return fetch(req, isDoc ? { cache: 'no-store' } : undefined).then(res => {
+    if (res && res.ok && sameOrigin(req)) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(isDoc ? '/index.html' : req, copy)).catch(() => {}); }
+    return res;
+  }).catch(() => caches.match(isDoc ? '/index.html' : req).then(r => r || caches.match(req)).then(r => r || caches.match('/')));
+}
+function swrAntwort(req, e) {
+  const doc = req.mode === 'navigate' || req.destination === 'document';
+  const key = doc ? '/index.html' : req;
+  const netz = fetch(req, doc ? { cache: 'no-store' } : undefined).then(res => {
+    if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(key, copy)).catch(() => {}); }
+    return res;
+  });
+  return caches.open(CACHE).then(c => c.match(key)).then(hit => {
+    if (hit) { try { e.waitUntil(netz.catch(() => {})); } catch (_) { netz.catch(() => {}); } return hit; }
+    return netz.catch(() => caches.match(key));
+  });
+}
 
 function sameOrigin(req) {
   try { return new URL(req.url).origin === self.location.origin; }
@@ -23,6 +59,11 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
 
   const isDoc = req.mode === 'navigate' || req.destination === 'document';
+
+  if (istHuelle(req)) {
+    e.respondWith(swrAn().then(an => an ? swrAntwort(req, e) : netzZuerst(req, isDoc)));
+    return;
+  }
 
   // HTML / Navigationen: IMMER frisch aus dem Netz (kein veralteter Browser-Cache),
   // nur wenn offline auf den zuletzt gespeicherten Stand zurueckfallen.
@@ -58,6 +99,9 @@ self.addEventListener('fetch', e => {
 
 self.addEventListener('message', e => {
   if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (e.data && e.data.type === 'PL_SWR') {
+    e.waitUntil(caches.open(CACHE).then(c => e.data.on ? c.put(SWR_FLAG, new Response('1')) : c.delete(SWR_FLAG)).catch(() => {}));
+  }
 });
 
 // ── Web Push (Erinnerungen) ──────────────────────────────────────────────────
