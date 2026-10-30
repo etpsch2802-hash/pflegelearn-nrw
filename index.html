@@ -26460,15 +26460,17 @@ var PL_BEREICH_PUBLIC = true;
       var alt=document.getElementById('pl-bereich-karte'); if(alt) alt.remove();
       if(!darf() || !istEx()) return;
       var id=bereich(), d=document.createElement('div'); d.id='pl-bereich-karte';
-      var KN='background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.32);border-radius:10px;padding:9px 10px;color:#e2e8f0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;flex:1;min-width:0';
+      var KN='background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.32);border-radius:10px;padding:9px 10px;color:#e2e8f0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;line-height:1.2;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word';
+      /* 30.10.2026: Symbol oben, Text darunter mittig, lange Wörter trennen (große Systemschrift) */
+      function kn(fn,ic,t){ return '<button onclick="'+fn+'" lang="de" style="'+KN+'"><span style="font-size:16px;line-height:1">'+ic+'</span><span style="display:block;max-width:100%">'+t+'</span></button>'; }
       if(!id){
         d.innerHTML='<button onclick="plBereichOeffnen()" style="width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px dashed rgba(var(--accent-rgb),.45);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;margin-bottom:14px">'
           +'<span style="font-size:20px">🏥</span><span style="flex:1"><span style="display:block;font-size:13px;font-weight:800;color:#e2e8f0">In welchem Bereich arbeitest du?</span><span style="display:block;font-size:11.5px;color:#9fb8cc;margin-top:2px">Dann zeigt dir PLAN dein Fachwissen zuerst.</span></span><span style="color:var(--accent);font-size:18px">›</span></button>';
       } else {
         var b=B[id], k=[];
-        if(b.kat.length) k.push('<button onclick="plBereichQuiz()" style="'+KN+'">📝 Quiz</button>');
-        if(b.kb) k.push('<button onclick="plBereichKB()" style="'+KN+'">🩺 Krankheitsbilder</button>');
-        k.push('<button onclick="plBereichMed()" style="'+KN+'">'+(b.med?'💊 Medikamente':'🚨 Notfall')+'</button>');
+        if(b.kat.length) k.push(kn('plBereichQuiz()','📝','Quiz'));
+        if(b.kb) k.push(kn('plBereichKB()','🩺','Krank\u00adheits\u00adbilder'));
+        k.push(b.med?kn('plBereichMed()','💊','Medika\u00admente'):kn('plBereichMed()','🚨','Notfall'));
         d.innerHTML='<div style="background:rgba(255,255,255,.06);border:1px solid rgba(var(--accent-rgb),.25);border-radius:14px;padding:13px 14px;margin-bottom:14px">'
           +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:20px">'+b.i+'</span><span style="flex:1"><span style="display:block;font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--accent)">Dein Bereich</span><span style="display:block;font-size:14px;font-weight:800;color:#e2e8f0">'+b.l+'</span></span>'
           +'<button onclick="plBereichOeffnen()" style="background:none;border:none;color:#9fb8cc;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:underline">ändern</button></div>'
