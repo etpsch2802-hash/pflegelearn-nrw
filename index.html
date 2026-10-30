@@ -27701,6 +27701,9 @@ body.light-mode #fall-content button[onclick^="chooseFall"], body.light-mode #ab
 .plfest-zeile{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 2px 12px;font-size:12.5px;color:var(--text3,#bcd6ea)}
 .plfest-zeile button{white-space:nowrap;flex:none;background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px}
 @media (prefers-reduced-motion: reduce){.plfest-flug{display:none}}
+/* Im Feiertags-Look auch KI-Knopf und Rollen-Karte in der Festfarbe, damit nichts Blaues herausfällt */
+html[data-fest] #ki-fab{background:linear-gradient(135deg,var(--accent),var(--accent-d2))!important;box-shadow:0 6px 20px rgba(var(--accent-rgb),.45)!important}
+html[data-fest] #home-persona > div:first-child{background:linear-gradient(135deg,var(--accent),var(--accent-d2))!important}
 </style>
 <script>
 /* ══ FEIERTAGS-LOOK (30.10.2026, Idee P. Schenkelberger; Entwurf, nur Admin bis Go) ══
