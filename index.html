@@ -27834,5 +27834,100 @@ html[data-fest] #home-persona > div:first-child{background:linear-gradient(135de
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 </script>
+<style>
+/* ══ RUHE-STIL (30.10.2026, Design-Prüfung „sieht nach KI aus“; nur Admin bis Go – Klasse html.pl-ruhe) ══ */
+html.pl-ruhe .hero{text-align:left;margin:4px 2px 18px;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center}
+html.pl-ruhe .hero-icon{grid-row:1/3;width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0;background:rgba(var(--accent-rgb),.13);border:1px solid rgba(var(--accent-rgb),.28);filter:none;color:var(--accent)}
+html.pl-ruhe .hero-icon svg{width:22px!important;height:22px!important}
+html.pl-ruhe .hero h1{font-family:'DM Sans',system-ui,sans-serif!important;font-weight:800;font-size:24px;letter-spacing:-.2px;margin:0;line-height:1.15;text-wrap:balance}
+html.pl-ruhe .hero h1 span{color:inherit!important}
+html.pl-ruhe .hero p{font-size:13px;margin:3px 0 0;line-height:1.4}
+html.pl-ruhe .plr-chips{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;justify-content:flex-start!important}
+html.pl-ruhe .plr-chips::-webkit-scrollbar{display:none}
+html.pl-ruhe .plr-chips > .plf-chip{all:unset;box-sizing:border-box;flex:none;display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--text,#ddf0fb);border-radius:999px;padding:9px 14px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+html.pl-ruhe .plr-chips > .plf-chip i{width:9px;height:9px;border-radius:50%;flex:none}
+html.pl-ruhe .plr-chips > .plf-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#04121f}
+html.pl-ruhe .plr-chips > .plf-chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
+</style>
+<script>
+/* ══ RUHE-STIL (30.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   1) Seitenköpfe (.hero, 28 Seiten): links ausgerichtet, kleines Symbol in getönter Kachel, Überschrift einfarbig (kein Serif-/Zweifarb-Muster).
+   2) Fach-Filter bei Krankheitsbildern, Medikamenten und Karteikarten als wischbare Pillen-Leiste mit Farbpunkt (wie Fallbeispiele), ohne Emoji.
+   3) Kachel-Raster: eine Kachel, die allein in ihrer Reihe stünde, geht über die volle Breite (Wissen, Üben).
+   Go = PL_RUHE_PUBLIC=true. Kein neuer pl_*-Key. */
+(function(){
+  var PL_RUHE_PUBLIC = false;
+  function an(){ try{ return PL_RUHE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function ohneEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,'').replace(/\s+/g,' ').trim(); }
+  function chip(btn, farbe, aktiv){
+    if(!btn) return;
+    var label=btn.getAttribute('data-plr-label'); if(!label){ label=ohneEmoji(btn.textContent); btn.setAttribute('data-plr-label',label); }
+    btn.className='plf-chip'; btn.removeAttribute('style'); btn.type='button';
+    btn.setAttribute('aria-pressed', aktiv?'true':'false');
+    btn.innerHTML=(farbe?'<i style="background:'+farbe+'"></i>':'')+esc(label);
+  }
+  function leiste(c){ if(c){ c.classList.add('plr-chips'); c.style.textAlign='left'; var a=c.querySelector('[aria-pressed="true"]'); if(a && a.offsetLeft>c.clientWidth-60) c.scrollLeft=a.offsetLeft-20; } }
+  function kb(){
+    var c=document.getElementById('kb-faecher'); if(!c) return;
+    Object.keys(KRANKHEITSBILDER).forEach(function(id){ chip(document.getElementById('kb-tab-'+id), KRANKHEITSBILDER[id].farbe, id===currentKBFach); });
+    leiste(c);
+  }
+  var MEDF={anaesthesie:'#f97316',intensiv:'#22d3ee',notfall:'#f87171',pflege:'#34d399'};
+  function med(){
+    var c=null; Object.keys(MEDF).forEach(function(k){ var b=document.getElementById('medkat-'+k); if(b){ c=b.parentNode; chip(b, MEDF[k], k===currentMedKat); } });
+    leiste(c);
+  }
+  function kk(){
+    var bs=document.querySelectorAll('#screen-karteikarten button[onclick^="setSRFilter"]'); if(!bs.length) return;
+    bs.forEach(function(b){ var id=(b.getAttribute('onclick').match(/'([^']+)'/)||[])[1]; var f=(id && typeof KRANKHEITSBILDER!=='undefined' && KRANKHEITSBILDER[id])||null; chip(b, f?f.farbe:'', id===srFilter); });
+    leiste(bs[0].parentNode);
+  }
+  /* Kachel allein in der Reihe → volle Breite */
+  function raster(){
+    document.querySelectorAll('.page.active [data-plg-neu]').forEach(function(g){
+      var cs=getComputedStyle(g); if(cs.display!=='grid') return;
+      var kids=Array.prototype.filter.call(g.children,function(k){ return k.offsetParent!==null; });
+      kids.forEach(function(k){ if(k.getAttribute('data-plr-voll')){ k.style.gridColumn=''; k.removeAttribute('data-plr-voll'); } });
+      var col=0;
+      for(var i=0;i<kids.length;i++){
+        var k=kids[i], voll=/1\s*\/\s*-1|span\s*2/.test(getComputedStyle(k).gridColumn)||k.style.gridColumn==='1 / -1';
+        if(voll){ col=0; continue; }
+        var next=kids[i+1], nextVoll=next && (/1\s*\/\s*-1|span\s*2/.test(getComputedStyle(next).gridColumn));
+        if(col===0 && (!next || nextVoll)){ k.style.gridColumn='1 / -1'; k.setAttribute('data-plr-voll','1'); continue; }
+        col=(col+1)%2;
+      }
+    });
+  }
+  /* Andere 2-spaltige Kachel-Raster (z. B. Anatomie): ungerade Anzahl → letzte Kachel volle Breite */
+  function einzelne(){
+    document.querySelectorAll('.page.active div').forEach(function(g){
+      if(g.hasAttribute('data-plg-neu') || g.closest('[data-plg-orig]') || g.classList.contains('hero') || g.closest('.hero')) return;
+      var cs=getComputedStyle(g); if(cs.display!=='grid') return;
+      if(cs.gridTemplateColumns.split(' ').length!==2) return;
+      var kids=Array.prototype.filter.call(g.children,function(k){ return k.offsetParent!==null && getComputedStyle(k).gridColumnEnd!=='-1'; });
+      if(kids.length<3 || kids.length%2===0) return;
+      var l=kids[kids.length-1]; if(!l.getAttribute('data-plr-voll')){ l.style.gridColumn='1 / -1'; l.setAttribute('data-plr-voll','1'); }
+    });
+  }
+  function anwenden(n){
+    var aktiv=an(); document.documentElement.classList.toggle('pl-ruhe', aktiv); if(!aktiv) return;
+    try{ if(n==='krankheitsbilder') kb(); }catch(e){}
+    try{ if(n==='medikamente') med(); }catch(e){}
+    try{ if(n==='karteikarten') kk(); }catch(e){}
+    setTimeout(function(){ try{ raster(); }catch(e){} try{ einzelne(); }catch(e){} },420);
+  }
+  function start(){
+    try{ var o=window.showScreen; if(typeof o==='function') window.showScreen=function(n){ var r=o.apply(this,arguments); try{ anwenden(n); }catch(e){} return r; }; }catch(e){}
+    try{ var a=window.renderKBFaecher; if(typeof a==='function') window.renderKBFaecher=function(){ var r=a.apply(this,arguments); if(an()) try{ kb(); }catch(e){} return r; }; }catch(e){}
+    try{ var m=window.showMedKat; if(typeof m==='function') window.showMedKat=function(){ var r=m.apply(this,arguments); if(an()) try{ med(); }catch(e){} return r; }; }catch(e){}
+    try{ var k=window.renderKarteikarten; if(typeof k==='function') window.renderKarteikarten=function(){ var r=k.apply(this,arguments); if(an()) try{ kk(); }catch(e){} return r; }; }catch(e){}
+    document.documentElement.classList.toggle('pl-ruhe', an());
+    setTimeout(function(){ document.documentElement.classList.toggle('pl-ruhe', an()); }, 3000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 </body>
 </html>
