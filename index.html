@@ -27857,7 +27857,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    3) Kachel-Raster: eine Kachel, die allein in ihrer Reihe stünde, geht über die volle Breite (Wissen, Üben).
    Go = PL_RUHE_PUBLIC=true. Kein neuer pl_*-Key. */
 (function(){
-  var PL_RUHE_PUBLIC = false;
+  var PL_RUHE_PUBLIC = true;   // Go P. Schenkelberger 30.10.2026
   function an(){ try{ return PL_RUHE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function ohneEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,'').replace(/\s+/g,' ').trim(); }
