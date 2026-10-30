@@ -27294,7 +27294,7 @@ html.pl-lesbar .watermark::after { content:'© PLAN'; }
    2) Größere Schrift + Kontrast auf dem Startbildschirm/unterer Leiste (CSS oben, Klasse html.pl-lesbar).
    Go = PL_SCHNELL_PUBLIC=true hier und SWR_PUBLIC=true in sw.js. Kein neuer pl_*-Key. */
 (function(){
-  var PL_SCHNELL_PUBLIC = false;
+  var PL_SCHNELL_PUBLIC = true;   // Go P. Schenkelberger 30.10.2026
   function aktiv(){ try{ return PL_SCHNELL_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function los(){
     var an=aktiv();
@@ -27377,7 +27377,7 @@ html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1
       Wird für alle mitgeschrieben (nur lokal), sichtbar nur bei aktivem Schalter.
    Neue Keys: pl_wdh_v1, pl_lerntage_v1. Go = PL_HEUTE_PUBLIC=true. */
 (function(){
-  var PL_HEUTE_PUBLIC = false;
+  var PL_HEUTE_PUBLIC = true;   // Go P. Schenkelberger 30.10.2026
   var WK='pl_wdh_v1', LT='pl_lerntage_v1', WOCHENZIEL=4, MINI=8, WDH_MAX=10; var feierBis=0;
   function an(){ try{ return PL_HEUTE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function lese(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||'null'); return v==null?d:v; }catch(e){ return d; } }
@@ -27606,7 +27606,7 @@ body.light-mode .plf-chip{background:#fff;border-color:#cbd5e1}
    Neuer Key pl_faelle_v1 {erg:{id:{e,t}}, zuletzt:id} – wird für alle mitgeschrieben (nur lokal).
    Go = PL_FAELLE_PUBLIC=true. */
 (function(){
-  var PL_FAELLE_PUBLIC = false;
+  var PL_FAELLE_PUBLIC = true;   // Go P. Schenkelberger 30.10.2026
   var K='pl_faelle_v1';
   function an(){ try{ return PL_FAELLE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function lese(){ try{ var d=JSON.parse(localStorage.getItem(K)||'null'); return d&&typeof d==='object'?d:{erg:{}}; }catch(e){ return {erg:{}}; } }
