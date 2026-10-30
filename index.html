@@ -27309,5 +27309,202 @@ html.pl-lesbar .watermark::after { content:'© PLAN'; }
   try{ var o=window.showScreen; if(typeof o==='function'){ window.showScreen=function(){ var r=o.apply(this,arguments); try{ document.documentElement.classList.toggle('pl-lesbar', aktiv()); }catch(e){} return r; }; } }catch(e){}
 })();
 </script>
+<style>
+/* ══ HEUTE-KARTE (30.10.2026, nur Admin bis Go – Klasse html.pl-heute-an) ══
+   Vorbilder laut Design-Recherche: Focus Friend/Headspace (ein klarer nächster Schritt),
+   Material 3 Expressive (großer Hauptknopf, dicker Ring), Duolingo (Sicherheitsnetz statt Druck). */
+#pl-heute{display:none}
+html.pl-heute-an #pl-heute{display:block;background:var(--bg2,#0d1e33);border:1px solid rgba(var(--accent-rgb),.28);border-radius:20px;padding:18px 18px 16px;margin:2px 0 16px}
+html.pl-heute-an #home-due, html.pl-heute-an #home-coach, html.pl-heute-an #home-coach-label{display:none!important}
+.plh-kopf{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px}
+.plh-ey{font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent)}
+.plh-woche{font-size:12.5px;color:var(--text3,#bcd6ea);font-variant-numeric:tabular-nums;text-align:right}
+.plh-mitte{display:flex;align-items:center;gap:16px}
+.plh-ring{position:relative;width:76px;height:76px;flex:none}
+.plh-ring svg{width:76px;height:76px;transform:rotate(-90deg)}
+.plh-ring .bahn{stroke:rgba(255,255,255,.12)}
+.plh-ring .wert{stroke:var(--accent);transition:stroke-dashoffset .9s cubic-bezier(.34,1.56,.64,1)}
+.plh-ring .zahl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.plh-ring .zahl b{font-size:22px;font-weight:900;color:var(--text,#ddf0fb);font-variant-numeric:tabular-nums}
+.plh-ring .zahl small{font-size:11px;color:var(--text3,#bcd6ea);margin-top:3px}
+.plh-text{min-width:0;flex:1}
+.plh-text h3{margin:0 0 4px;font-size:20px;font-weight:800;line-height:1.2;color:var(--text,#ddf0fb);text-wrap:balance}
+.plh-text p{margin:0;font-size:13.5px;color:var(--text3,#bcd6ea);line-height:1.45}
+.plh-go{width:100%;margin-top:16px;min-height:54px;border:none;border-radius:16px;background:var(--accent);color:#04121f;font:inherit;font-size:16.5px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(var(--accent-rgb),.28);transition:transform .15s ease}
+.plh-go:active{transform:scale(.97)}
+.plh-go.leise{background:rgba(var(--accent-rgb),.14);color:var(--text,#ddf0fb);box-shadow:none;border:1px solid rgba(var(--accent-rgb),.35)}
+.plh-go:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.plh-tage{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
+.plh-tag{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--text3,#bcd6ea);font-weight:600}
+.plh-tag i{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.16);display:grid;place-items:center;font-style:normal;font-size:13px;color:#04121f;font-weight:900}
+.plh-tag.ja i{background:var(--accent);border-color:var(--accent)}
+.plh-tag.heute i{border-color:var(--accent)}
+.plh-tag.heute{color:var(--accent)}
+.plh-tag.spaeter i{opacity:.45}
+.plh-netz{margin:12px 0 0;font-size:12px;color:var(--text3,#bcd6ea);line-height:1.5}
+body.light-mode #pl-heute{background:#fff;border-color:rgba(var(--accent-rgb),.35)}
+body.light-mode .plh-ring .bahn{stroke:#e2e8f0}
+body.light-mode .plh-tag i{border-color:#cbd5e1}
+/* Sanftes Fehler-Feedback (Orange statt Rot) */
+html.pl-heute-an .opt-btn.wrong{background:rgba(251,146,60,.14);border-color:#fb923c;color:#fed7aa}
+html.pl-heute-an body.light-mode .opt-btn.wrong{background:rgba(234,88,12,.08);border-color:#ea580c;color:#9a3412}
+#pl-wdh-res{background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.3);border-radius:16px;padding:14px;margin:14px 0;text-align:left}
+#pl-wdh-res b{display:block;font-size:14.5px;color:var(--text,#ddf0fb)}
+#pl-wdh-res span{display:block;font-size:12.5px;color:var(--text3,#bcd6ea);margin:3px 0 10px}
+@keyframes plhPop{0%{transform:scale(.96);opacity:.6}60%{transform:scale(1.015)}100%{transform:scale(1);opacity:1}}
+html.pl-heute-an #pl-heute.neu{animation:plhPop .45s cubic-bezier(.34,1.56,.64,1)}
+@media (prefers-reduced-motion: reduce){.plh-ring .wert,.plh-go{transition:none}html.pl-heute-an #pl-heute.neu{animation:none}}
+</style>
+<script>
+/* ══ HEUTE-KARTE, Wochenserie, Wiederholungsstapel (30.10.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   1) Startseite: oben EINE Karte mit Tagesziel-Ring und genau einem nächsten Schritt
+      (Fehlerfragen wiederholen → fällige Karteikarten → „Deine 5 Minuten“ = 8 Fragen aus Bereich/größter Lücke).
+      Blendet dafür #home-due und #home-coach aus.
+   2) Wochenserie mit Sicherheitsnetz: Ziel 4 Lerntage pro Woche statt täglicher Pflicht; ein Lerntag endet um 4 Uhr (Nachtdienst).
+      Keine Serien-Warnung mit Schuldgefühl für diese Nutzer.
+   3) Wiederholungsstapel: falsch beantwortete Quizfragen merken (Key pl_wdh_v1, max. 150), nach 2× richtig in Folge raus.
+      Wird für alle mitgeschrieben (nur lokal), sichtbar nur bei aktivem Schalter.
+   Neue Keys: pl_wdh_v1, pl_lerntage_v1. Go = PL_HEUTE_PUBLIC=true. */
+(function(){
+  var PL_HEUTE_PUBLIC = false;
+  var WK='pl_wdh_v1', LT='pl_lerntage_v1', WOCHENZIEL=4, MINI=8, WDH_MAX=10;
+  function an(){ try{ return PL_HEUTE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function lese(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||'null'); return v==null?d:v; }catch(e){ return d; } }
+  function schreibe(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function z2(n){ return (n<10?'0':'')+n; }
+  function tagVon(d){ var x=new Date(d.getTime()-4*3600e3); return x.getFullYear()+'-'+z2(x.getMonth()+1)+'-'+z2(x.getDate()); }
+  function ga(n,p){ try{ if(typeof gaEvent==='function') gaEvent(n,p||{}); }catch(e){} }
+  function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  /* ── Lerntage ── */
+  function merkeTag(){ var t=lese(LT,[]); var h=tagVon(new Date()); if(t.indexOf(h)<0){ t.push(h); if(t.length>90) t=t.slice(-90); schreibe(LT,t); } }
+  function lerntage(){
+    var t=lese(LT,[]).slice();
+    try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(/^pl_ans_\d{4}-\d{2}-\d{2}$/.test(k) && parseInt(localStorage.getItem(k)||'0',10)>0){ var d=k.slice(7); if(t.indexOf(d)<0) t.push(d); } } }catch(e){}
+    return t;
+  }
+  function woche(){
+    var jetzt=new Date(Date.now()-4*3600e3), wt=(jetzt.getDay()+6)%7, mo=new Date(jetzt.getFullYear(),jetzt.getMonth(),jetzt.getDate()-wt);
+    var t=lerntage(), heute=tagVon(new Date()), out=[], n=0, NAMEN=['Mo','Di','Mi','Do','Fr','Sa','So'];
+    for(var i=0;i<7;i++){ var d=new Date(mo.getFullYear(),mo.getMonth(),mo.getDate()+i), s=d.getFullYear()+'-'+z2(d.getMonth()+1)+'-'+z2(d.getDate());
+      var ja=t.indexOf(s)>=0; if(ja) n++; out.push({n:NAMEN[i], ja:ja, heute:s===heute, spaeter:i>wt}); }
+    return {tage:out, n:n};
+  }
+
+  /* ── Wiederholungsstapel ── */
+  function stapel(){ return lese(WK,[]); }
+  function merkeAntwort(frage, richtig){
+    if(!frage) return; var s=stapel(), i=-1;
+    for(var j=0;j<s.length;j++){ if(s[j].f===frage){ i=j; break; } }
+    if(!richtig){ if(i>=0) s[i].n=0; else s.push({f:frage,n:0,t:Date.now()}); if(s.length>150) s=s.slice(-150); }
+    else if(i>=0){ s[i].n=(s[i].n||0)+1; if(s[i].n>=2) s.splice(i,1); }
+    else return;
+    schreibe(WK,s);
+  }
+  function mischen(q){ var ix=q.opt.map(function(o,i){ return {t:o,r:i===q.k}; }); ix.sort(function(){ return Math.random()-.5; });
+    var c={}; for(var k in q) c[k]=q[k]; c.opt=ix.map(function(x){return x.t;}); c.k=ix.findIndex(function(x){return x.r;}); return c; }
+  function erlaubt(q){ try{ return !(currentBereich && currentBereich.quiz_kats) || currentBereich.quiz_kats.indexOf(q.kat)>=0; }catch(e){ return true; } }
+  function starteListe(liste, kat, art){
+    if(!liste.length) return false;
+    try{
+      quizCE=null; quizKat=kat||'alle';
+      quizList=liste.map(mischen); quizIdx=0; quizAnswers=[]; selectedAns=null; window.showExp=false;
+      showScreen('quiz'); renderQuestion(); ga('heute_start',{art:art}); return true;
+    }catch(e){ return false; }
+  }
+  function wdhFragen(){
+    var s=stapel(); if(!s.length || typeof QUIZ_FRAGEN==='undefined') return [];
+    var map={}; QUIZ_FRAGEN.forEach(function(q){ map[q.frage]=q; });
+    var out=[]; s.slice().sort(function(a,b){ return (a.n-b.n)||(a.t-b.t); }).forEach(function(x){ var q=map[x.f]; if(q && erlaubt(q) && out.length<WDH_MAX) out.push(q); });
+    return out;
+  }
+  window.plWdhStart=function(){
+    var l=wdhFragen(); var z={}; l.forEach(function(q){ z[q.kat]=(z[q.kat]||0)+1; });
+    var kat=Object.keys(z).sort(function(a,b){ return z[b]-z[a]; })[0];
+    if(!starteListe(l, kat, 'wdh')) try{ navGo('quizSelect'); }catch(e){}
+  };
+
+  /* ── Thema für „Deine 5 Minuten“ ── */
+  function thema(){
+    try{
+      var bid=localStorage.getItem('pl_fachbereich'), B=window.PL_FACHBEREICHE||{};
+      if(localStorage.getItem('pl_persona')==='examiniert' && B[bid] && B[bid].kat && B[bid].kat.length){
+        var k=B[bid].kat[Math.floor(Date.now()/864e5)%B[bid].kat.length]; return {kat:k, grund:'aus deinem Bereich'};
+      }
+    }catch(e){}
+    try{ var pr=computePruefungsreife(); if(pr && pr.luecken && pr.luecken[0] && pr.luecken[0].acc<70) return {kat:pr.luecken[0].id, grund:'deine größte Lücke'}; }catch(e){}
+    try{
+      var pool=(currentBereich && currentBereich.quiz_kats) ? currentBereich.quiz_kats : KATS.map(function(k){ return k.id; });
+      pool=pool.filter(function(id){ return QUIZ_FRAGEN.some(function(q){ return q.kat===id; }); });
+      if(pool.length) return {kat:pool[Math.floor(Date.now()/864e5)%pool.length], grund:'Thema des Tages'};
+    }catch(e){}
+    return {kat:'alle', grund:'gemischt'};
+  }
+  function katName(id){ try{ var k=KATS.find(function(x){ return x.id===id; }); return k ? (k.label||k.name||k.title||id) : (id==='alle'?'Gemischte Fragen':id); }catch(e){ return id; } }
+  window.plHeuteMini=function(){
+    var t=thema();
+    if(window.PL_PAYMENTS_ON && currentBereich && currentBereich.gratis){ try{ startQuiz(t.kat); }catch(e){} return; }
+    var pool=QUIZ_FRAGEN.filter(function(q){ return (t.kat==='alle'||q.kat===t.kat) && erlaubt(q); });
+    pool.sort(function(){ return Math.random()-.5; });
+    if(!starteListe(pool.slice(0,MINI), t.kat, 'mini')) try{ startQuiz(t.kat); }catch(e){}
+  };
+
+  /* ── Karte zeichnen ── */
+  function karte(){
+    var greet=document.getElementById('home-greeting'); if(!greet) return;
+    var el=document.getElementById('pl-heute');
+    if(!el){ el=document.createElement('section'); el.id='pl-heute'; el.setAttribute('aria-label','Heute'); greet.parentNode.insertBefore(el, greet.nextSibling); }
+    document.documentElement.classList.toggle('pl-heute-an', an());
+    if(!an()){ el.innerHTML=''; return; }
+    var ziel=(typeof PL_DAILY_GOAL!=='undefined')?PL_DAILY_GOAL:10, heute=(typeof plAnsToday==='function')?plAnsToday():0;
+    var p=Math.min(1, heute/ziel), U=2*Math.PI*30;
+    var w=woche(), wdh=wdhFragen().length, due=(typeof plDueReviews==='function')?plDueReviews():0, t=thema();
+    var titel, text, knopf, fn, leise=false;
+    if(wdh>=3){ titel='Wiederholen, was hängen blieb'; text=wdh+(wdh===1?' Frage':' Fragen')+' aus deinen letzten Runden waren falsch. Kurz wiederholen, dann sitzen sie.'; knopf=wdh+' Fragen wiederholen'; fn='plWdhStart()'; }
+    else if(due>=5){ titel='Karteikarten fällig'; text=due+' Karten warten auf dich – kurze Wiederholung, große Wirkung.'; knopf='Karten wiederholen'; fn="navGo('karteikarten')"; }
+    else { titel='Deine 5 Minuten'; text=MINI+' Fragen · '+esc(katName(t.kat))+' <span style="opacity:.75">('+t.grund+')</span>'; knopf='Jetzt starten'; fn='plHeuteMini()'; }
+    if(heute>=ziel){ titel='Tagesziel geschafft'; text='Stark. Wenn du magst: noch eine kurze Runde – sonst gönn dir die Pause.'; knopf='Noch eine Runde'; leise=true; if(fn==='plHeuteMini()'||!fn) fn='plHeuteMini()'; }
+    var wochenText = w.n>=WOCHENZIEL ? 'Wochenziel geschafft ✓' : 'Woche: <b>'+w.n+'</b> von '+WOCHENZIEL+' Lerntagen';
+    el.innerHTML=
+      '<div class="plh-kopf"><span class="plh-ey">Heute</span><span class="plh-woche">'+wochenText+'</span></div>'
+      +'<div class="plh-mitte"><div class="plh-ring" role="img" aria-label="Tagesziel: '+heute+' von '+ziel+' Fragen">'
+      +'<svg viewBox="0 0 76 76" aria-hidden="true"><circle class="bahn" cx="38" cy="38" r="30" fill="none" stroke-width="9"/>'
+      +'<circle class="wert" cx="38" cy="38" r="30" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+U.toFixed(1)+'" stroke-dashoffset="'+U.toFixed(1)+'"/></svg>'
+      +'<div class="zahl"><b>'+Math.min(heute,999)+'</b><small>von '+ziel+'</small></div></div>'
+      +'<div class="plh-text"><h3>'+titel+'</h3><p>'+text+'</p></div></div>'
+      +'<button type="button" class="plh-go'+(leise?' leise':'')+'" onclick="'+fn+'">'+knopf+' <span aria-hidden="true">→</span></button>'
+      +'<div class="plh-tage" aria-label="Lerntage diese Woche">'+w.tage.map(function(d){ return '<div class="plh-tag'+(d.ja?' ja':'')+(d.heute?' heute':'')+(d.spaeter?' spaeter':'')+'"><i>'+(d.ja?'✓':'')+'</i>'+d.n+'</div>'; }).join('')+'</div>'
+      +'<p class="plh-netz">'+WOCHENZIEL+' Lerntage pro Woche reichen – freie Tage und Schichtwochen zählen nicht gegen dich. Ein Tag endet erst um 4 Uhr.</p>';
+    var ring=el.querySelector('.wert');
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ if(ring) ring.setAttribute('stroke-dashoffset', (U*(1-p)).toFixed(1)); }); });
+    el.classList.remove('neu'); void el.offsetWidth; el.classList.add('neu');
+  }
+
+  /* ── Wiederholung im Ergebnis ── */
+  function ergebnis(){
+    var alt=document.getElementById('pl-wdh-res'); if(alt) alt.remove();
+    if(!an()) return;
+    var n=wdhFragen().length, m=document.getElementById('result-msg'); if(!n || !m) return;
+    var d=document.createElement('div'); d.id='pl-wdh-res';
+    d.innerHTML='<b>'+n+(n===1?' Frage liegt':' Fragen liegen')+' in deiner Wiederholung</b><span>Falsche Antworten merkt sich PLAN automatisch. Nach zweimal richtig sind sie raus.</span>'
+      +'<button type="button" class="plh-go" style="margin-top:0;min-height:46px;font-size:15px" onclick="plWdhStart()">Jetzt wiederholen <span aria-hidden="true">→</span></button>';
+    m.parentNode.insertBefore(d, m.nextSibling);
+  }
+
+  function start(){
+    try{
+      var oR=window.recordQuizAnswer; if(typeof oR==='function') window.recordQuizAnswer=function(){ var r=oR.apply(this,arguments); try{ merkeTag(); }catch(e){} return r; };
+      var oK=window.recordKarteikarte; if(typeof oK==='function') window.recordKarteikarte=function(){ var r=oK.apply(this,arguments); try{ merkeTag(); }catch(e){} return r; };
+      var oP=window.pickAnswer; if(typeof oP==='function') window.pickAnswer=function(i){ var vor=null, q=null; try{ vor=selectedAns; q=quizList[quizIdx]; }catch(e){} var r=oP.apply(this,arguments); try{ if(vor===null && q) merkeAntwort(q.frage, i===q.k); }catch(e){} return r; };
+      var oH=window.renderHomeStats; if(typeof oH==='function') window.renderHomeStats=function(){ var r=oH.apply(this,arguments); try{ karte(); }catch(e){} return r; };
+      var oS=window.showResult; if(typeof oS==='function') window.showResult=function(){ var r=oS.apply(this,arguments); try{ ergebnis(); }catch(e){} return r; };
+      var oW=window.plStreakWarnCheck; if(typeof oW==='function') window.plStreakWarnCheck=function(){ if(an()) return; return oW.apply(this,arguments); };
+      var oSc=window.showScreen; if(typeof oSc==='function') window.showScreen=function(n){ var r=oSc.apply(this,arguments); if(n==='home') try{ karte(); }catch(e){} return r; };
+      var h=document.getElementById('screen-home'); if(h && h.classList.contains('active')) karte();
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 </body>
 </html>
