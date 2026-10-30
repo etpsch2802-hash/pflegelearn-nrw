@@ -1,8 +1,8 @@
 // PflegeLearn NRW – Service Worker v5.0
-const CACHE = 'pflegelearn-v168';
+const CACHE = 'pflegelearn-v169';
 // 30.10.2026: Schnellstart (Stale-While-Revalidate) für die App-Hülle. Für alle: SWR_PUBLIC = true.
 // Bis dahin nur, wenn ein Admin-Client {type:'PL_SWR', on:true} meldet (Merker im Speicher CACHE).
-const SWR_PUBLIC = false;
+const SWR_PUBLIC = true;   // Go P. Schenkelberger 30.10.2026
 const SWR_FLAG = '/__pl_swr_flag';
 function swrAn() {
   if (SWR_PUBLIC) return Promise.resolve(true);
