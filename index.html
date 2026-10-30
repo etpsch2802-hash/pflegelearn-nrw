@@ -27936,7 +27936,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    Additiv: Wrapper um renderQuizSelect (läuft NACH dem Fachbereich-Wrapper, dessen Block bleibt oben).
    Kein neuer pl_*-Key. */
 (function(){
-  var PL_D2_PUBLIC = false;
+  var PL_D2_PUBLIC = true;   // Go P. Schenkelberger 30.10.2026
   function an(){ try{ return PL_D2_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_D2_PUBLIC; } }
   var GRUPPEN = [
     {id:'wege', l:'Ausbildungswege', test:function(k){ return k==='pflegehelfer'||k==='anerkennung'||k==='gpa'; }},
