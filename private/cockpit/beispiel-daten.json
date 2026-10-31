@@ -1,0 +1,24 @@
+{
+ "datum": "Sonntag, 1. November 2026",
+ "stand": "01.11.2026 00:45",
+ "fokus": "TikTok-Serie „Ausbildung meistern“: Teil 1 läuft heute um 10:00, Teil 2–12 sind noch nicht eingeplant.",
+ "nutzung": [{"t":"2026-10-22","g":14},{"t":"2026-10-23","g":20},{"t":"2026-10-24","g":19},{"t":"2026-10-25","g":17},{"t":"2026-10-26","g":13},{"t":"2026-10-27","g":23},{"t":"2026-10-28","g":18},{"t":"2026-10-29","g":15},{"t":"2026-10-30","g":11},{"t":"2026-10-31","g":12}],
+ "trend": "Start 22.–24.10.: Ø 17,7 → fallend",
+ "tiktok": {"follower": "1.494", "neu": "+32 in 7 Tagen"},
+ "leads7": 16, "leads24": 1,
+ "app": [
+  {"ok": true, "t": "Keine offenen Fehlermeldungen zu Fragen"},
+  {"ok": true, "t": "Sentry: 1 Meldung „Load failed“ (1×, Netzwerkabbruch, kein Handlungsbedarf)"}
+ ],
+ "social": [
+  "TikTok 10:00: Ausbildung meistern – Teil 1: Praxisanleitung (eingeplant)",
+  "Profil-Feinschliff offen: Name „Plan NRW | Pflegeexamen“, Notiz, Highlights „Google …“/„warum …“"
+ ],
+ "kanal": null,
+ "offen": [
+  "TikTok „Ausbildung meistern“ Teil 2–12 einplanen (ab 02.11. täglich 10:00)",
+  "Supabase: eigenes SMTP (Resend) + Vorlage mit {{ .Token }} → dann Anmeldung per E-Mail-Code freigeben",
+  "Sentry: DPF-Zertifizierung auf dataprivacyframework.gov prüfen",
+  "09.11.: Search-Console-Export für die SEO-Auswertung hochladen"
+ ]
+}

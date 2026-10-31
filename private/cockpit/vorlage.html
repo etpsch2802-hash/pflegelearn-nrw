@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLAN Morgen-Cockpit</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fa;--card:#fff;--line:#dbe4ec;--text:#0f1d2b;--text2:#3d5266;--text3:#5f7488;--accent:#0284c7;--soft:#e0f2fe;--ok:#16a34a;--warn:#c2410c;--warnsoft:#fff1e8;--bar:#0284c7;--bar2:#b9d7ea}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#081527;--card:#0d1e33;--line:#1d3550;--text:#ddf0fb;--text2:#bcd6ea;--text3:#8fb0c8;--accent:#38bdf8;--soft:#0c2a44;--ok:#4ade80;--warn:#fb923c;--warnsoft:#2a1a10;--bar:#38bdf8;--bar2:#24435f}}
+:root[data-theme="dark"]{--bg:#081527;--card:#0d1e33;--line:#1d3550;--text:#ddf0fb;--text2:#bcd6ea;--text3:#8fb0c8;--accent:#38bdf8;--soft:#0c2a44;--ok:#4ade80;--warn:#fb923c;--warnsoft:#2a1a10;--bar:#38bdf8;--bar2:#24435f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding:22px 16px 48px}
+h1{font-size:24px;margin:0;font-weight:800}
+.sub{color:var(--text3);margin:2px 0 16px;font-size:14px}
+.fokus{background:var(--soft);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.fokus b{color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.fokus p{margin:4px 0 0;font-size:16px;font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.kpi .l{font-size:12.5px;color:var(--text3);font-weight:700}
+.kpi .v{font-size:26px;font-weight:800;line-height:1.15;margin-top:2px}
+.kpi .d{font-size:12.5px;color:var(--text3)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{font-size:15.5px;margin:0 0 8px;font-weight:800}
+.ziel{height:8px;border-radius:4px;background:var(--bar2);overflow:hidden;margin:6px 0 4px}
+.ziel i{display:block;height:100%;background:var(--bar)}
+.chart{display:flex;align-items:flex-end;gap:5px;height:110px;margin-top:10px;position:relative}
+.chart .z{position:absolute;left:0;right:0;border-top:1.5px dashed var(--text3);opacity:.6}
+.chart .z span{position:absolute;right:0;top:-18px;font-size:11.5px;color:var(--text3)}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.col i{width:100%;max-width:28px;background:var(--bar);border-radius:4px 4px 0 0;min-height:2px}
+.col small{font-size:10.5px;color:var(--text3)}
+.col em{font-style:normal;font-size:11px;color:var(--text2);font-weight:700}
+ul{margin:4px 0;padding-left:18px} li{margin:4px 0}
+.ok{color:var(--ok);font-weight:700}.warn{color:var(--warn);font-weight:700}
+.offen li{list-style:none;margin-left:-18px;padding:8px 10px;border-radius:10px;background:var(--warnsoft);margin-bottom:6px}
+pre{white-space:pre-wrap;font:14px/1.5 'DM Sans',sans-serif;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0}
+.copy{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--accent);border-radius:8px;padding:5px 10px;cursor:pointer}
+a{color:var(--accent)}
+footer{color:var(--text3);font-size:12.5px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+/* Daten werden vom geplanten Task jeden Morgen ersetzt (Block zwischen DATEN-START und DATEN-ENDE). */
+// DATEN-START
+var D = __DATEN__;
+// DATEN-ENDE
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  var n=D.nutzung||[], max=Math.max(50,Math.max.apply(null,n.map(function(x){return x.g;}).concat([1])));
+  var gestern=n.length?n[n.length-1].g:0, s7=n.slice(-7), o7=s7.length?Math.round(10*s7.reduce(function(a,x){return a+x.g;},0)/s7.length)/10:0;
+  var h='<h1>Guten Morgen, Patrick</h1><div class="sub">PLAN Morgen-Cockpit · '+esc(D.datum)+' · Stand '+esc(D.stand)+'</div>';
+  if(D.fokus) h+='<div class="fokus"><b>Heute wichtig</b><p>'+esc(D.fokus)+'</p></div>';
+  h+='<div class="kpis">'
+   +'<div class="kpi"><div class="l">Geräte gestern</div><div class="v">'+gestern+'</div><div class="d">Ziel 50 / Tag</div></div>'
+   +'<div class="kpi"><div class="l">Ø 7 Tage</div><div class="v">'+String(o7).replace('.',',')+'</div><div class="d">'+esc(D.trend||'')+'</div></div>'
+   +'<div class="kpi"><div class="l">TikTok Follower</div><div class="v">'+esc(D.tiktok.follower)+'</div><div class="d">'+esc(D.tiktok.neu)+'</div></div>'
+   +'<div class="kpi"><div class="l">Neue Leads (7 T.)</div><div class="v">'+esc(D.leads7)+'</div><div class="d">'+esc(D.leads24)+' in 24 h</div></div>'
+   +'</div>';
+  h+='<div class="card"><h2>Weg zur Bezahl-Schwelle</h2><div class="ziel"><i style="width:'+Math.min(100,Math.round(100*o7/50))+'%"></i></div><div class="sub" style="margin:0">Ø '+String(o7).replace('.',',')+' von 50 Geräten pro Tag ('+Math.round(100*o7/50)+' %)</div>'
+   +'<div class="chart"><div class="z" style="bottom:'+(100*50/max)+'%"><span>50</span></div>'
+   +n.map(function(x){return '<div class="col"><em>'+x.g+'</em><i style="height:'+(100*x.g/max)+'%"></i><small>'+esc(x.t.slice(8,10))+'.</small></div>';}).join('')+'</div></div>';
+  h+='<div class="card"><h2>App-Gesundheit</h2><ul>'+D.app.map(function(x){return '<li class="'+(x.ok?'':'warn')+'">'+(x.ok?'✓ ':'⚠ ')+esc(x.t)+'</li>';}).join('')+'</ul></div>';
+  h+='<div class="card"><h2>Social Media heute</h2><ul>'+D.social.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+  if(D.kanal) h+='<div class="card"><h2>WhatsApp-Kanal · '+esc(D.kanal.format)+'</h2><pre id="kt">'+esc(D.kanal.text)+'</pre><button class="copy" id="kb">Kopieren</button></div>';
+  h+='<div class="card"><h2>Offene Punkte</h2><ul class="offen">'+D.offen.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+  h+='<footer>Automatisch erstellt um '+esc(D.stand)+' aus Supabase, Sentry und Metricool. Nur Gerätezahlen, keine personenbezogenen Daten.</footer>';
+  document.getElementById('app').innerHTML=h;
+  var kb=document.getElementById('kb'); if(kb) kb.onclick=function(){ try{ navigator.clipboard.writeText(document.getElementById('kt').innerText).then(function(){kb.textContent='Kopiert ✓';},function(){kb.textContent='Bitte markieren';}); }catch(e){kb.textContent='Bitte markieren';} };
+})();
+</script>
+</body>
+</html>
