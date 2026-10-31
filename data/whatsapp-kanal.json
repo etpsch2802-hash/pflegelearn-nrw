@@ -1746,6 +1746,11 @@
    "datum": "2026-10-30",
    "format": "spickzettel",
    "thema": "GCS Glasgow Coma Scale: 3 Kategorien, Punktwerte, ≤8 Atemwegssicherung"
+  },
+  {
+   "datum": "2026-10-31",
+   "format": "app",
+   "thema": "Gratis-PDFs (links.html)"
   }
  ]
 }
