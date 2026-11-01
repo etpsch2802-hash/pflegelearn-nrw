@@ -28185,7 +28185,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     aktuell=null; var b=box(); if(!b) return;
     b.innerHTML=(PL_HANDGRIFFE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · Schritte fachlich prüfen</div>')
       +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Schritt für Schritt, mit Animation. Danach 3 kurze Fragen.</p>'
-      +HG.map(function(h,i){ return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+      +HG.map(function(h,i){ if(h.neu2 && !(window.plHG2An && window.plHG2An())) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
   }
   function zeige(){
     var h=aktuell, b=box(); if(!h||!b) return;
@@ -28223,7 +28223,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     var anker=wh && wh.querySelector('button[onclick^="navGo(\'wissensdb\')"]');
     if(anker && !document.getElementById('pl-hg-tile')){
       var b=anker.cloneNode(false); b.id='pl-hg-tile'; b.setAttribute('onclick',"showScreen('handgriffe')");
-      b.innerHTML='<span style="font-size:24px">🖐️</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Handgriffe animiert</span><span style="font-size:11.5px;color:#a3bcd0">Infusion · s.c. · Hände'+(PL_HANDGRIFFE_PUBLIC?'':' · Entwurf')+'</span>';
+      b.innerHTML='<span style="font-size:24px">🖐️</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Handgriffe animiert</span><span style="font-size:11.5px;color:#a3bcd0">'+HG.length+' Handgriffe'+(PL_HANDGRIFFE_PUBLIC?'':' · Entwurf')+'</span>';
       anker.parentNode.appendChild(b);
     }
   }
@@ -28232,6 +28232,175 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     var orig=window.showScreen;
     if(typeof orig==='function') window.showScreen=function(n){ if(n==='handgriffe'||n==='wissenhub'){ try{ bauen(); }catch(e){} } try{ document.body.classList.toggle('pl-hg', n==='handgriffe'); }catch(e){} var r=orig.apply(this,arguments); if(n==='handgriffe'){ try{ if(!aktuell) liste(); }catch(e){} } return r; };
     setTimeout(function(){ try{ bauen(); }catch(e){} }, 3000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
+<script>
+/* ══ HANDGRIFFE ANIMIERT – Teil 2 (01.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   +4 Handgriffe (Blutdruck messen, Blutzucker messen, Reanimation Erwachsene, Handschuhe ausziehen) und
+   Verknüpfung in passende Bereiche: Knopf „Als Animation ansehen“ unter der Quiz-Erklärung (Stichwort-Abgleich
+   Frage + Erklärung) und Hinweis-Karte in den Screens Notfallmanagement und Medizintechnik.
+   Hängt an window.PL_HANDGRIFFE (Teil 1). Gleicher Schalter-Gedanke: PL_HANDGRIFFE2_PUBLIC. Kein neuer pl_*-Key. */
+(function(){
+  var PL_HANDGRIFFE2_PUBLIC = false;
+  function an(){ try{ return PL_HANDGRIFFE2_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HANDGRIFFE2_PUBLIC; } }
+  var HG=window.PL_HANDGRIFFE; if(!HG) return;
+  window.plHG2An=an;
+  var L='#cbd5e1', F='#7dd3fc', A='#fb923c', G='#4ade80', R='#f87171', HAUT='#fcd9b6', HAUT2='#f5c79f';
+  function a(cls,d,extra){ return ' class="'+cls+'" style="animation-delay:'+(d||0)+'s;'+(extra||'')+'"'; }
+  function txt(x,y,t,c,s,w){ return '<text x="'+x+'" y="'+y+'" fill="'+(c||L)+'" font-size="'+(s||13)+'" font-weight="'+(w||700)+'" text-anchor="middle" font-family="DM Sans,sans-serif">'+t+'</text>'; }
+  function haken(x,y,d){ return '<g'+a('hg-pop',d)+'><circle cx="'+x+'" cy="'+y+'" r="11" fill="'+G+'"/><path d="M'+(x-5)+' '+y+' l4 4 l7 -8" stroke="#06281a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>'; }
+  function kreuz(x,y,d){ return '<g'+a('hg-pop',d)+'><circle cx="'+x+'" cy="'+y+'" r="11" fill="'+R+'"/><path d="M'+(x-5)+' '+(y-5)+' l10 10 M'+(x+5)+' '+(y-5)+' l-10 10" stroke="#3b0a0a" stroke-width="2.6" stroke-linecap="round"/></g>'; }
+  function uhr(x,y,t,d){ return '<g><circle cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="#33506b" stroke-width="5"/><circle cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="'+G+'" stroke-width="5" stroke-dasharray="126" stroke-dashoffset="126" transform="rotate(-90 '+x+' '+y+')"'+a('hg-timer',d||0)+'/>'+txt(x,y+5,t,L,12)+'</g>'; }
+  /* Arm waagerecht (Oberarm links, Hand rechts) */
+  function arm(y){ return '<rect x="0" y="'+y+'" width="300" height="46" rx="23" fill="'+HAUT+'"/><circle cx="292" cy="'+(y+23)+'" r="26" fill="'+HAUT+'"/>'; }
+  function manometer(x,y,d){ return '<g><circle cx="'+x+'" cy="'+y+'" r="30" fill="#e2e8f0" stroke="#94a3b8" stroke-width="3"/>'
+    +[0,1,2,3,4,5,6,7].map(function(i){ var w=(-210+i*34)*Math.PI/180; return '<path d="M'+(x+Math.cos(w)*22)+' '+(y+Math.sin(w)*22)+' L'+(x+Math.cos(w)*27)+' '+(y+Math.sin(w)*27)+'" stroke="#475569" stroke-width="2"/>'; }).join('')
+    +'<g style="transform-origin:'+x+'px '+y+'px;transform-box:view-box"'+(d!==undefined?' class="hg-zeiger" ':'')+'><path d="M'+x+' '+y+' L'+(x+18)+' '+(y-14)+'" stroke="'+R+'" stroke-width="3" stroke-linecap="round"/></g><circle cx="'+x+'" cy="'+y+'" r="3" fill="#334155"/></g>'; }
+  function finger(x,y){ return '<g><rect x="'+(x-22)+'" y="'+y+'" width="44" height="120" rx="22" fill="'+HAUT+'"/><path d="M'+(x-12)+' '+(y+10)+' q12 -8 24 0" stroke="#e8b48a" stroke-width="2" fill="none"/></g>'; }
+  function koerper(){ return '<rect x="40" y="120" width="240" height="70" rx="30" fill="#64748b"/><circle cx="40" cy="140" r="26" fill="'+HAUT+'"/><rect x="120" y="128" width="70" height="10" rx="5" fill="#94a3b8"/>'; }
+
+  var NEU=[
+    { id:'blutdruck', t:'Blutdruck messen (manuell)', s:'Nach Riva-Rocci mit Stethoskop', farbe:'#f87171', schritte:[
+      { t:'Ruhe & Haltung', x:'Patient sitzt oder liegt <b>3–5 Minuten ruhig</b>. Arm frei, keine einschnürende Kleidung, nicht sprechen.',
+        svg:'<rect x="110" y="40" width="100" height="120" rx="20" fill="#475569"/><circle cx="160" cy="34" r="26" fill="'+HAUT+'"/><rect x="100" y="150" width="120" height="16" rx="8" fill="#94a3b8"/>'+uhr(260,70,'3–5',0.2)+txt(60,90,'Ruhe',G,16,800) },
+      { t:'Manschette anlegen', x:'Passende <b>Manschettengröße</b> wählen. Unterkante ca. <b>2–3 cm über der Ellenbeuge</b>, Arm auf <b>Herzhöhe</b>.',
+        svg:arm(100)+'<g'+a('hg-pop',0.3)+'><rect x="40" y="88" width="100" height="70" rx="10" fill="#1e3a52" stroke="'+F+'" stroke-width="3"/></g><path d="M150 82 v20 M140 82 h20" stroke="'+A+'" stroke-width="2"/>'+txt(160,72,'2–3 cm',A,13)+'<path d="M0 60 H320" stroke="'+G+'" stroke-dasharray="6 5" stroke-width="2"/>'+txt(260,52,'Herzhöhe',G,12) },
+      { t:'Aufpumpen', x:'Radialispuls tasten und aufpumpen, bis der Puls <b>nicht mehr tastbar</b> ist – dann noch etwa <b>30 mmHg</b> weiter.',
+        svg:arm(120)+'<rect x="40" y="108" width="100" height="70" rx="10" fill="#1e3a52" stroke="'+F+'" stroke-width="3"/>'+manometer(90,50,0)+'<g class="hg-pumpe"><ellipse cx="200" cy="60" rx="22" ry="30" fill="#1e293b"/></g><path d="M178 60 H120" stroke="#1e293b" stroke-width="4"/>'+kreuz(270,100,1.2)+txt(270,80,'Puls weg',R,11) },
+      { t:'Langsam ablassen', x:'Stethoskop auf die <b>Ellenbeugenarterie</b>. Druck langsam ablassen: <b>2–3 mmHg pro Sekunde</b>.',
+        svg:arm(120)+'<rect x="40" y="108" width="100" height="70" rx="10" fill="#1e3a52" stroke="'+F+'" stroke-width="3"/>'+manometer(90,50,0)+'<circle cx="170" cy="143" r="14" fill="#94a3b8"/><path d="M170 129 Q200 60 250 50" stroke="#334155" stroke-width="4" fill="none"/>'+txt(250,100,'2–3 mmHg/s',A,13) },
+      { t:'Erster Ton = systolisch', x:'Der <b>erste hörbare Ton</b> ist der systolische Wert.',
+        svg:manometer(110,110,0)+[0,0.5,1].map(function(d){ return '<path d="M200 '+(80+0)+' q14 30 0 60" stroke="'+F+'" stroke-width="4" fill="none"'+a('hg-pop',d)+' transform="translate('+(d*40)+' 0)"/>'; }).join('')+txt(240,190,'systolisch',G,15,800) },
+      { t:'Ton verschwindet = diastolisch', x:'Wenn die Töne <b>verschwinden</b>, liest du den diastolischen Wert ab. Danach Manschette ganz entlüften.',
+        svg:manometer(110,110,0)+'<path d="M200 80 q14 30 0 60" stroke="'+F+'" stroke-width="4" fill="none" opacity=".25"/><path d="M240 80 q14 30 0 60" stroke="'+F+'" stroke-width="4" fill="none" opacity=".12"/>'+kreuz(270,110,0.6)+txt(240,190,'diastolisch',G,15,800) },
+      { t:'Dokumentieren', x:'Wert mit <b>Uhrzeit, Arm und Position</b> dokumentieren. Auffällige Werte melden.',
+        svg:'<rect x="70" y="30" width="180" height="150" rx="12" fill="#e2e8f0"/>'+['RR 128/82 mmHg','Uhrzeit','Arm li/re','sitzend/liegend'].map(function(z,i){ return '<g'+a('hg-pop',0.3+i*0.5)+'>'+txt(160,68+i*30,z,'#0f172a',15)+'</g>'; }).join('') }
+    ], merke:'Manschette zu klein = Wert zu hoch, zu groß = Wert zu niedrig. Arm immer auf Herzhöhe.',
+      quiz:[
+        {f:'Wie schnell lässt du den Druck ab?', o:['10 mmHg pro Sekunde','2–3 mmHg pro Sekunde','Alles auf einmal','1 mmHg pro Minute'], k:1},
+        {f:'Die Manschette ist zu klein. Der Wert ist dann …', o:['zu niedrig','zu hoch','richtig','nicht messbar'], k:1},
+        {f:'Wo liegt der Arm beim Messen?', o:['Herabhängend','Über dem Kopf','Auf Herzhöhe','Egal'], k:2}
+      ]},
+    { id:'blutzucker', t:'Blutzucker messen (kapillär)', s:'Mit Stechhilfe und Messgerät', farbe:'#facc15', schritte:[
+      { t:'Hände waschen', x:'Der Patient wäscht die Hände mit <b>warmem Wasser</b> und trocknet sie gut ab. Zuckerreste an den Fingern verfälschen den Wert.',
+        svg:finger(160,60)+[0,0.4,0.8].map(function(d,i){ return '<circle cx="'+(120+i*40)+'" cy="40" r="6" fill="'+F+'"'+a('hg-drop',d,'animation-iteration-count:infinite')+'/>'; }).join('')+txt(160,205,'warm & trocken',G,14) },
+      { t:'Vorbereiten', x:'Hände desinfizieren, <b>Handschuhe</b> anziehen. Teststreifen ins Messgerät, Stechhilfe bereit.',
+        svg:'<rect x="60" y="50" width="90" height="140" rx="16" fill="#1e293b" stroke="'+L+'" stroke-width="3"/><rect x="72" y="66" width="66" height="44" rx="6" fill="#0f2740"/>'+txt(105,94,'---',G,18)+'<g'+a('hg-up',0.3)+'><rect x="96" y="190" width="18" height="26" fill="#e2e8f0"/></g><rect x="200" y="70" width="30" height="100" rx="12" fill="#94a3b8"/>'+txt(215,190,'Stechhilfe',L,11) },
+      { t:'Seitlich stechen', x:'<b>Seitlich</b> an der Fingerbeere stechen – dort tut es weniger weh. Finger wechseln.',
+        svg:finger(160,70)+'<g'+a('hg-down',0.2)+'><rect x="190" y="20" width="30" height="80" rx="12" fill="#94a3b8" transform="rotate(-25 205 60)"/></g><circle cx="178" cy="92" r="5" fill="'+R+'"'+a('hg-pop',1.2)+'/>' },
+      { t:'Nicht quetschen', x:'Blutstropfen entstehen lassen, <b>nicht quetschen</b> – sonst mischt sich Gewebeflüssigkeit bei. Ersten Tropfen nach Hausstandard abwischen.',
+        svg:finger(160,70)+'<circle cx="178" cy="88" r="9" fill="'+R+'"'+a('hg-pop',0.4)+'/>'+kreuz(70,90,0.9)+txt(70,124,'quetschen',R,12) },
+      { t:'Tropfen an den Streifen', x:'Tropfen an den Teststreifen halten, er saugt das Blut auf. Wert ablesen.',
+        svg:finger(110,70)+'<circle cx="128" cy="88" r="8" fill="'+R+'"/><g'+a('hg-pop',0.2)+'><rect x="170" y="40" width="100" height="140" rx="16" fill="#1e293b" stroke="'+L+'" stroke-width="3"/><rect x="182" y="56" width="76" height="46" rx="6" fill="#0f2740"/></g>'+'<g'+a('hg-pop',1.4)+'>'+txt(220,88,'112',G,22,800)+txt(220,124,'mg/dl',L,12)+'</g><rect x="140" y="84" width="34" height="8" fill="#e2e8f0"/>' },
+      { t:'Abschließen', x:'Tupfer auf die Einstichstelle. Lanzette in den <b>Abwurfbehälter</b>, Handschuhe aus, Hände desinfizieren, Wert dokumentieren.',
+        svg:'<rect x="200" y="110" width="80" height="90" rx="8" fill="#facc15"/><rect x="210" y="100" width="60" height="14" rx="3" fill="#ca8a04"/><g class="hg-wurf"><rect x="70" y="60" width="10" height="40" rx="3" fill="#94a3b8"/></g>'+haken(90,180,1.4)+txt(140,184,'dokumentiert',G,13) }
+    ], merke:'Nicht quetschen und keine Zuckerreste an den Fingern – beides verfälscht den Wert.',
+      quiz:[
+        {f:'Wo stichst du am Finger?', o:['Mitten auf die Fingerbeere','Seitlich an der Fingerbeere','Am Nagel','In der Handfläche'], k:1},
+        {f:'Warum nicht quetschen?', o:['Es tut mehr weh','Gewebeflüssigkeit verfälscht den Wert','Das Gerät geht kaputt','Es dauert länger'], k:1},
+        {f:'Wohin mit der Lanzette?', o:['In den Müllbeutel','In den Abwurfbehälter','Auf das Tablett','Zurück in die Verpackung'], k:1}
+      ]},
+    { id:'reanimation', t:'Reanimation (Erwachsene)', s:'Basismaßnahmen: prüfen, rufen, drücken', farbe:'#ef4444', schritte:[
+      { t:'Ansprechen', x:'Laut ansprechen und an den Schultern rütteln. <b>Keine Reaktion?</b> Weiter.',
+        svg:koerper()+'<g class="hg-rubv">'+'<rect x="50" y="70" width="50" height="16" rx="8" fill="'+HAUT2+'"/></g>'+txt(150,60,'„Hallo, hören Sie mich?“',L,14) },
+      { t:'Atmung prüfen', x:'Atemwege frei machen (Kopf überstrecken) und <b>höchstens 10 Sekunden</b> prüfen: Sehen, Hören, Fühlen. Keine normale Atmung = Reanimation.',
+        svg:koerper()+uhr(250,60,'10 s',0.2)+'<path d="M70 110 q10 -20 20 0" stroke="'+F+'" stroke-width="3" fill="none"'+a('hg-pop',0.6)+'/>'+txt(120,60,'sehen · hören · fühlen',L,13) },
+      { t:'Hilfe rufen', x:'<b>Notruf 112</b> bzw. im Krankenhaus das <b>Reanimationsteam</b>. <b>Defibrillator (AED)</b> holen lassen.',
+        svg:'<rect x="120" y="40" width="80" height="140" rx="14" fill="#1e293b" stroke="'+L+'" stroke-width="3"/>'+txt(160,120,'112',R,32,900)+'<g'+a('hg-pop',0.6)+'><rect x="220" y="120" width="70" height="60" rx="10" fill="'+G+'"/>'+txt(255,156,'AED',  '#06281a',16,900)+'</g>' },
+      { t:'Druckpunkt', x:'Handballen auf die <b>Mitte des Brustkorbs</b> (untere Hälfte des Brustbeins), zweite Hand darauf, Arme gestreckt.',
+        svg:koerper()+'<circle cx="155" cy="140" r="10" fill="'+R+'"'+a('hg-pop',0.3)+'/><g'+a('hg-down',0.8)+'><rect x="135" y="60" width="40" height="60" rx="12" fill="'+HAUT2+'"/></g>' },
+      { t:'30 × drücken', x:'<b>5–6 cm tief</b>, <b>100–120 pro Minute</b>. Nach jedem Druck vollständig entlasten.',
+        svg:koerper()+'<g class="hg-cpr"><rect x="135" y="72" width="40" height="60" rx="12" fill="'+HAUT2+'"/></g>'+txt(250,60,'100–120/min',A,15,800)+txt(250,82,'5–6 cm',A,15,800) },
+      { t:'30 : 2', x:'Nach 30 Kompressionen <b>2 Beatmungen</b> (wenn du geschult bist und Material da ist). Sonst durchgehend drücken.',
+        svg:txt(160,110,'30 : 2',L,48,900)+haken(90,170,0.4)+txt(160,175,'Unterbrechungen kurz halten',G,13) },
+      { t:'AED nutzen', x:'Sobald der AED da ist: einschalten, Elektroden aufkleben, den <b>Anweisungen folgen</b>. Beim Schock niemand berührt den Patienten.',
+        svg:koerper()+'<rect x="110" y="122" width="26" height="18" rx="4" fill="#e2e8f0"/><rect x="190" y="150" width="26" height="18" rx="4" fill="#e2e8f0"/><g'+a('hg-pop',0.5)+'><rect x="230" y="30" width="70" height="60" rx="10" fill="'+G+'"/>'+txt(265,66,'AED',  '#06281a',16,900)+'</g><path d="M200 40 l-14 22 h12 l-10 20" stroke="#facc15" stroke-width="4" fill="none"'+a('hg-pop',1.2)+'/>' }
+    ], merke:'Prüfen – Rufen – Drücken: 30:2, 100–120/min, 5–6 cm, Unterbrechungen so kurz wie möglich.',
+      quiz:[
+        {f:'Wie lange prüfst du die Atmung höchstens?', o:['10 Sekunden','30 Sekunden','1 Minute','Bis der Arzt kommt'], k:0},
+        {f:'Wie tief drückst du beim Erwachsenen?', o:['1–2 cm','3–4 cm','5–6 cm','8–10 cm'], k:2},
+        {f:'Welches Verhältnis gilt?', o:['15:2','30:2','5:1','30:5'], k:1}
+      ]},
+    { id:'handschuhe', t:'Handschuhe richtig ausziehen', s:'Ohne Kontakt zur Außenseite', farbe:'#60a5fa', schritte:[
+      { t:'Am Handgelenk greifen', x:'Mit der einen Hand den anderen Handschuh <b>außen am Handgelenk</b> greifen.',
+        svg:'<rect x="70" y="60" width="70" height="110" rx="26" fill="#60a5fa"/><rect x="180" y="60" width="70" height="110" rx="26" fill="#60a5fa"/><g'+a('hg-pop',0.4)+'><circle cx="105" cy="165" r="10" fill="'+A+'"/></g>' },
+      { t:'Abziehen und festhalten', x:'Handschuh abziehen, sodass die <b>Innenseite nach außen</b> kommt. In der behandschuhten Hand halten.',
+        svg:'<g class="hg-abziehen"><rect x="70" y="60" width="70" height="110" rx="26" fill="#93c5fd"/></g><rect x="180" y="60" width="70" height="110" rx="26" fill="#60a5fa"/><path d="M90 100 v-30" stroke="#1e3a8a" stroke-width="3"/>' },
+      { t:'Unter den zweiten Handschuh', x:'Mit dem <b>bloßen Finger innen</b> unter den Rand des zweiten Handschuhs fahren – nicht außen anfassen.',
+        svg:'<rect x="70" y="60" width="70" height="110" rx="26" fill="'+HAUT+'"/><rect x="180" y="60" width="70" height="110" rx="26" fill="#60a5fa"/><g'+a('hg-up',0.3)+'><rect x="148" y="150" width="40" height="14" rx="7" fill="'+HAUT2+'"/></g>' },
+      { t:'Darüber stülpen', x:'Den zweiten Handschuh <b>über den ersten</b> stülpen und abziehen. Beide sind jetzt ineinander.',
+        svg:'<rect x="70" y="60" width="70" height="110" rx="26" fill="'+HAUT+'"/><g class="hg-abziehen"><rect x="180" y="60" width="70" height="110" rx="26" fill="#93c5fd"/></g>' },
+      { t:'Entsorgen & desinfizieren', x:'Handschuhe entsorgen und <b>Hände desinfizieren</b> – Handschuhe ersetzen die Händedesinfektion nicht.',
+        svg:'<rect x="190" y="100" width="90" height="100" rx="10" fill="#475569"/><g class="hg-wurf"><circle cx="80" cy="70" r="20" fill="#93c5fd"/></g>'+haken(100,180,1.4)+txt(100,155,'Hände',G,13)+txt(100,170,'desinfizieren',G,13) }
+    ], merke:'Außen nur mit Handschuh anfassen, innen nur mit bloßer Hand – danach immer Händedesinfektion.',
+      quiz:[
+        {f:'Wo greifst du den ersten Handschuh?', o:['Innen','Außen am Handgelenk','An den Fingerspitzen innen','Gar nicht'], k:1},
+        {f:'Womit fasst du den zweiten Handschuh an?', o:['Mit dem bloßen Finger innen','Mit dem Handschuh außen','Mit den Zähnen','Mit einer Pinzette'], k:0},
+        {f:'Was folgt nach dem Ausziehen?', o:['Nichts','Hände eincremen','Händedesinfektion','Neue Handschuhe ohne Desinfektion'], k:2}
+      ]}
+  ];
+  if(!HG.some(function(h){ return h.id==='blutdruck'; })) NEU.forEach(function(h){ h.neu2=true; HG.push(h); });
+
+  var css=document.createElement('style');
+  css.textContent='.hg-zeiger{animation:hgZeiger 3s ease-in-out both}@keyframes hgZeiger{0%{transform:rotate(-60deg)}50%{transform:rotate(80deg)}100%{transform:rotate(20deg)}}'+
+   '.hg-pumpe{animation:hgPumpe .6s ease-in-out 4}@keyframes hgPumpe{50%{transform:scale(.8)}}'+
+   '.hg-cpr{animation:hgCpr .55s ease-in-out infinite}@keyframes hgCpr{50%{transform:translateY(14px)}}'+
+   '.hg-abziehen{animation:hgAbziehen 1.6s ease-in both}@keyframes hgAbziehen{to{transform:translateY(-50px) scaleY(.5);opacity:.6}}'+
+   '.hg-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);color:var(--accent);border-radius:999px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}'+
+   '.hg-hinweis{display:flex;gap:10px;align-items:center;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:14px;padding:12px 14px;margin:0 0 14px;color:var(--text);cursor:pointer;width:100%;text-align:left;font:inherit}.hg-hinweis b{display:block;font-size:14.5px}.hg-hinweis span{font-size:12.5px;color:var(--text3)}';
+  document.head.appendChild(css);
+
+  /* ── Öffnen per id ── */
+  window.plHandgriffOeffnen=function(id){
+    var i=-1; HG.forEach(function(h,k){ if(h.id===id) i=k; }); if(i<0) return;
+    try{ showScreen('handgriffe'); }catch(e){}
+    setTimeout(function(){ try{ window.plHandgriff(i); }catch(e){} }, 30);
+    try{ if(typeof gtag==='function') gtag('event','handgriff_link',{id:id}); }catch(e){}
+  };
+  function titel(id){ var t=''; HG.forEach(function(h){ if(h.id===id) t=h.t; }); return t; }
+
+  /* ── 1) Quiz: Knopf unter der Erklärung ── */
+  var STICH=[
+    ['infusion',/infusion(ssystem|slösung|en)?\b|tropfkammer|rollklemme/i],
+    ['sc',/subkutan|\bs\.\s?c\.|heparin.*injekt|insulin.*injekt/i],
+    ['haende',/händedesinfektion|hand(e)?desinfektion|desinfektionsmittel.*hände/i],
+    ['blutdruck',/blutdruck|riva-rocci|manschette|systolisch|diastolisch/i],
+    ['blutzucker',/blutzucker|kapillär|lanzette/i],
+    ['reanimation',/reanimation|herzdruckmassage|thoraxkompression|30\s?:\s?2|kreislaufstillstand/i],
+    ['handschuhe',/handschuh/i]
+  ];
+  function passend(t){ for(var i=0;i<STICH.length;i++){ if(STICH[i][1].test(t)) return STICH[i][0]; } return ''; }
+  function startQuizLink(){
+    var o=window.pickAnswer; if(typeof o!=='function') return;
+    window.pickAnswer=function(i){
+      var r=o.apply(this,arguments);
+      try{
+        if(!an()) return r;
+        var q=quizList[quizIdx]; var id=passend((q.frage||'')+' '+(q.erkl||'')); if(!id) return r;
+        var ex=document.getElementById('explanation'); if(!ex || ex.querySelector('.hg-link')) return r;
+        var b=document.createElement('button'); b.type='button'; b.className='hg-link'; b.innerHTML='🖐️ '+titel(id)+' als Animation ansehen';
+        b.onclick=function(){ window.plHandgriffOeffnen(id); };
+        ex.appendChild(b);
+      }catch(e){}
+      return r;
+    };
+  }
+
+  /* ── 2) Hinweis-Karten in passenden Screens ── */
+  var SCREENS={ notfallmanagement:['reanimation'], medizintechnik:['infusion'], prophylaxen:['haende','handschuhe'] };
+  function hinweise(n){
+    if(!an() || !SCREENS[n]) return;
+    var s=document.getElementById('screen-'+n); if(!s || s.querySelector('.hg-hinweis')) return;
+    var box=document.createElement('div');
+    box.innerHTML=SCREENS[n].map(function(id){ return '<button class="hg-hinweis" onclick="plHandgriffOeffnen(\''+id+'\')"><span style="font-size:24px">🖐️</span><div><b>'+titel(id)+' – als Animation</b><span>Schritt für Schritt ansehen</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+    var hero=s.querySelector('.hero'); if(hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling); else s.insertBefore(box, s.firstChild);
+  }
+  function start(){
+    startQuizLink();
+    var o=window.showScreen;
+    if(typeof o==='function') window.showScreen=function(n){ var r=o.apply(this,arguments); try{ hinweise(n); }catch(e){} return r; };
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
