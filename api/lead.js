@@ -144,7 +144,13 @@ const PAKETE = {
   intubiert: { file: 'PLAN-NRW_Intubierter-Patient.pdf', titel: 'Pflege beim intubierten Patienten', subject: 'Deine Lernhilfe zum intubierten Patienten ist da',
     text: 'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und der Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' },
   'ausbildung-meistern': { file: 'PLAN-NRW_Ausbildung-meistern.pdf', titel: 'Ausbildung meistern', subject: 'Deine 12 Tipps f\u00fcr die Pflegeausbildung sind da',
-    text: '12 Tipps aus der Praxis: wenn die Praxisanleitung keine Zeit hat, bei Pr&uuml;fungsstress, schwierigen Gespr&auml;chen und Belastung &ndash; plus deine Rechte.' }
+    text: '12 Tipps aus der Praxis: wenn die Praxisanleitung keine Zeit hat, bei Pr&uuml;fungsstress, schwierigen Gespr&auml;chen und Belastung &ndash; plus deine Rechte.' },
+  grundpflege: { file: 'PLAN-NRW_Grundpflege.pdf', titel: 'Grundpflege Schritt f&uuml;r Schritt', subject: 'Deine Grundpflege-Lernhilfe ist da',
+    text: 'K&ouml;rperpflege im Bett, an der Bettkante, am Waschbecken und unter der Dusche &ndash; mit Bildern zu jedem Schritt, Handschuh-Regeln, Material und rechtlichem Rahmen.' },
+  handgriffe: { file: 'PLAN-NRW_Handgriffe.pdf', titel: 'Handgriffe Schritt f&uuml;r Schritt', subject: 'Deine Handgriffe-Lernhilfe ist da',
+    text: '17 Pflegehandgriffe von Infusion bis Reanimation &ndash; mit Bildern zu jedem Schritt, Merksatz und Quizfragen.' },
+  handschuhe: { file: 'PLAN-NRW_Handschuh-Spickzettel.pdf', titel: 'Handschuh-Spickzettel', subject: 'Dein Handschuh-Spickzettel ist da',
+    text: 'Handschuhe bei der Grundpflege &ndash; wann mit, wann ohne? Auf einer Seite, plus Waschlappen-Regel.' }
 };
 
 function htmlSeite(titel, text) {

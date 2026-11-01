@@ -21777,6 +21777,9 @@ if (_savedLang !== 'de') {
     ['praxisexamen','PLAN-NRW_Praxis-Examen-Spickzettel.pdf','🩺','Praxis-Examen-Spickzettel','Ablauf, Fallvorstellung, Reflexion, 10 Fehler, Checkliste'],
     ['intubiert','PLAN-NRW_Intubierter-Patient.pdf','🫁','Pflege beim intubierten Patienten','Tubus, Cuffdruck, VAP-Bündel, DOPES, Pflegeplanung'],
     ['ausbildung-meistern','PLAN-NRW_Ausbildung-meistern.pdf','🧭','Ausbildung meistern','12 Tipps: Praxisanleitung, Prüfungsstress, Konflikte, Rechte'],
+    ['grundpflege','PLAN-NRW_Grundpflege.pdf','🛁','Grundpflege Schritt für Schritt','Bett, Bettkante, Waschbecken, Dusche – mit Bildern'],
+    ['handgriffe','PLAN-NRW_Handgriffe.pdf','🖐️','Handgriffe Schritt für Schritt','17 Handgriffe von Infusion bis Reanimation'],
+    ['handschuhe','PLAN-NRW_Handschuh-Spickzettel.pdf','🧤','Handschuh-Spickzettel','Grundpflege: wann mit, wann ohne – auf einer Seite'],
   ];
   window.PL_PDF_LISTE=L;   // für das Admin-Kontrollzentrum (25.10.2026)
   var BLOB={};   // geladene PDFs (slug -> Blob)
@@ -21951,7 +21954,10 @@ if (_savedLang !== 'de') {
     wunde: { t:'Wunddoku-Spickzettel', k:'Wunddoku-Spickzettel', d:'Wunden sicher beschreiben, messen und dokumentieren &ndash; Uhrzeigerprinzip, Wundgrund, Exsudat, TIME-Prinzip und Musterformulierung nach DNQP.' },
     praxisexamen: { t:'Praxis-Examen-Spickzettel', k:'Praxis-Examen-Spickzettel', d:'So l&auml;uft die praktische Pr&uuml;fung ab &ndash; 4 Bausteine, Fallvorstellung zum Ausf&uuml;llen, Reflexionsgespr&auml;ch, 10 typische Fehler und Checkliste f&uuml;r den Pr&uuml;fungstag.' },
     intubiert: { t:'Pflege beim intubierten Patienten', k:'Intubierter Patient', d:'Tubuslage, Cuffdruck, VAP-B&uuml;ndel, Kommunikation und Notfall-Check DOPES &ndash; mit fertiger Musterpflegeplanung und Pr&uuml;fungsfragen.' },
-    'ausbildung-meistern': { t:'Ausbildung meistern &ndash; 12 Tipps f&uuml;r Pflege-Azubis', k:'Ausbildung meistern', d:'Wenn die Praxisanleitung keine Zeit hat, Blackout in der Pr&uuml;fung, Kritik, fordernde Angeh&ouml;rige, erster Todesfall &ndash; 12 Tipps aus der Praxis plus deine Rechte.' }
+    'ausbildung-meistern': { t:'Ausbildung meistern &ndash; 12 Tipps f&uuml;r Pflege-Azubis', k:'Ausbildung meistern', d:'Wenn die Praxisanleitung keine Zeit hat, Blackout in der Pr&uuml;fung, Kritik, fordernde Angeh&ouml;rige, erster Todesfall &ndash; 12 Tipps aus der Praxis plus deine Rechte.' },
+    grundpflege: { t:'Grundpflege Schritt f&uuml;r Schritt', k:'Grundpflege', d:'K&ouml;rperpflege im Bett, an der Bettkante, am Waschbecken und unter der Dusche &ndash; mit Bildern zu jedem Schritt, Handschuh-Regeln, Material und rechtlichem Rahmen.' },
+    handgriffe: { t:'Handgriffe Schritt f&uuml;r Schritt', k:'Handgriffe', d:'17 Pflegehandgriffe von Infusion &uuml;ber s.c.-Injektion bis Reanimation &ndash; mit Bildern zu jedem Schritt, Merksatz und Quizfragen.' },
+    handschuhe: { t:'Handschuh-Spickzettel', k:'Handschuh-Spickzettel', d:'Handschuhe bei der Grundpflege &ndash; wann mit, wann ohne? Alles auf einer Seite, plus Waschlappen-Regel.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
