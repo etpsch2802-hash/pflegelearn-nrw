@@ -28731,5 +28731,74 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 })();
 </script>
 
+<!-- PLAN NRW: Gründer-Liste (01.11.2026, Wunsch P. Schenkelberger nach Anfrage eines zahlungsbereiten Nutzers; Entwurf, nur Admin bis Go)
+     Karte im Screen „Hilfe & Support“ + Direktlink plan-nrw.de/?gruender (öffnet die Karte als Fenster).
+     E-Mail → POST /api/lead {zweck:'gruender'} → leads.gruender_at (KEINE Mail). SQL docs/sql/2026-11-01_gruender_liste.sql, Datenschutz 3f (#gruender).
+     Kein Verkauf: App bleibt kostenlos, nur einmalige Info zum Start einer Premium-Version. Kein neuer pl_*-Key. GA gruender_eintrag. -->
+<script>
+(function(){
+  var PL_GRUENDER_PUBLIC=false;
+  function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  function an(){ return PL_GRUENDER_PUBLIC||adm(); }
+  function ga(n,p){ try{ if(window.gtag) gtag('event',n,p||{}); }catch(e){} }
+  var MAIL=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function inhalt(pre){
+    return '<div style="font-weight:800;color:#fbbf24;margin-bottom:4px">⭐ Gründer-Liste'+(PL_GRUENDER_PUBLIC?'':' <span style="font-size:11px;color:#fcd34d">(Admin-Vorschau)</span>')+'</div>'
+      +'<div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.5">PLAN ist im Moment <b>komplett kostenlos</b> – du musst nichts abschließen. Wenn es später eine Premium-Version gibt, erfährst du es als Erste/r. Alle, die von Anfang an dabei sind, bekommen dann einen <b>Vorzugspreis</b>.</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="'+pre+'-mail" type="email" placeholder="deine@email.de" autocomplete="email" style="flex:1;min-width:180px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.2);color:inherit;font-family:inherit">'
+      +'<button id="'+pre+'-btn" style="padding:10px 16px;border-radius:10px;border:0;background:#fbbf24;color:#1c1300;font-weight:800;cursor:pointer;font-family:inherit">Eintragen</button></div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:8px">Nur für diese eine Nachricht, kein Newsletter, kein Kaufzwang. Austragen jederzeit per Mail an kontakt@plan-nrw.de. <a href="/datenschutz.html#gruender" style="color:inherit">Datenschutz</a></div>'
+      +'<div id="'+pre+'-msg" style="font-size:13px;margin-top:8px"></div>';
+  }
+  function verdrahten(pre,quelle){
+    var btn=document.getElementById(pre+'-btn'); if(!btn) return;
+    try{ var m0=localStorage.getItem('pl_trial_email')||localStorage.getItem('pl_sub_email')||''; if(m0) document.getElementById(pre+'-mail').value=m0; }catch(e){}
+    btn.onclick=function(){
+      var m=(document.getElementById(pre+'-mail').value||'').trim(), msg=document.getElementById(pre+'-msg'), b=this;
+      if(!MAIL.test(m)){ msg.style.color='#fca5a5'; msg.textContent='Bitte eine gültige E-Mail eingeben.'; return; }
+      b.disabled=true; msg.style.color='var(--text2)'; msg.textContent='Wird gespeichert …';
+      fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:m,source:'gruender-'+quelle,zweck:'gruender'})})
+        .then(function(r){ return r.json().then(function(j){ return {c:r.status,j:j}; }); })
+        .then(function(x){
+          if(x.c===200&&x.j.ok){ msg.style.color='#34d399'; msg.textContent='Danke! Du stehst auf der Gründer-Liste.'; ga('gruender_eintrag',{quelle:quelle}); }
+          else if(x.c===429){ msg.style.color='#fcd34d'; msg.textContent='Zu viele Versuche. Bitte morgen noch einmal.'; b.disabled=false; }
+          else { msg.style.color='#fca5a5'; msg.textContent='Hat nicht geklappt. Bitte später noch einmal.'; b.disabled=false; }
+        }).catch(function(){ msg.style.color='#fca5a5'; msg.textContent='Keine Verbindung. Bitte später noch einmal.'; b.disabled=false; });
+    };
+  }
+  var STIL='background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);border-radius:14px;padding:14px 16px;';
+  function karte(){
+    if(!an()||document.getElementById('pl-gruender')) return;
+    var s=document.getElementById('screen-support'); if(!s) return;
+    var wrap=s.firstElementChild||s, kopf=wrap.firstElementChild;
+    var d=document.createElement('div'); d.id='pl-gruender'; d.style.cssText=STIL+'margin:0 0 16px';
+    d.innerHTML=inhalt('pl-gr'); if(kopf&&kopf.nextSibling) wrap.insertBefore(d,kopf.nextSibling); else wrap.appendChild(d);
+    verdrahten('pl-gr','support');
+  }
+  window.plGruenderListe=function(){
+    if(!an()) return;
+    var o=document.getElementById('pl-gr-over'); if(o) o.remove();
+    o=document.createElement('div'); o.id='pl-gr-over';
+    o.style.cssText='position:fixed;inset:0;z-index:10050;background:rgba(2,8,20,.72);display:flex;align-items:center;justify-content:center;padding:16px';
+    o.innerHTML='<div style="'+STIL+'background:#0f2238;max-width:440px;width:100%;position:relative"><button aria-label="Schließen" onclick="document.getElementById(\'pl-gr-over\').remove()" style="position:absolute;top:8px;right:10px;background:none;border:0;color:var(--text2);font-size:22px;cursor:pointer">×</button>'+inhalt('pl-gro')+'</div>';
+    o.addEventListener('click',function(e){ if(e.target===o) o.remove(); });
+    document.body.appendChild(o); verdrahten('pl-gro','link');
+  };
+  try{
+    var orig=window.showScreen;
+    if(typeof orig==='function') window.showScreen=function(n){ var r=orig.apply(this,arguments); if(n==='support') setTimeout(karte,50); return r; };
+  }catch(e){}
+  /* Direktlink ?gruender – nach dem Laden öffnen und Parameter aus der Adresse entfernen */
+  function ausLink(){
+    try{
+      var u=new URL(location.href); if(!u.searchParams.has('gruender')) return;
+      u.searchParams.delete('gruender'); history.replaceState(null,'',u.pathname+(u.search?u.search:'')+u.hash);
+      setTimeout(function(){ window.plGruenderListe(); },1200);
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ausLink); else ausLink();
+})();
+</script>
+
 </body>
 </html>

@@ -300,6 +300,21 @@ export default async function handler(req, res) {
     return;
   }
 
+  // 1b) Gründer-Liste (01.11.2026): wer bei einer späteren Premium-Version zuerst Bescheid bekommen will.
+  //     Nur Zeitstempel setzen (leads.gruender_at), KEINE Mail. SQL: docs/sql/2026-11-01_gruender_liste.sql
+  if (body.zweck === 'gruender') {
+    try {
+      const r = await fetch(SB_URL + '/rest/v1/leads?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH',
+        headers: { 'apikey': SB_SERVICE, 'Authorization': 'Bearer ' + SB_SERVICE, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ gruender_at: new Date().toISOString() })
+      });
+      if (!r.ok) { console.error('[lead] gruender', r.status, await r.text()); res.status(500).json({ error: 'store' }); return; }
+    } catch (e) { console.error('[lead] gruender', e); res.status(500).json({ error: 'server' }); return; }
+    res.status(200).json({ ok: true, gruender: true });
+    return;
+  }
+
   // 1a) Warteliste Pflegefachassistenz 2027 (17.10.2026): nur Zeitstempel setzen, KEINE Mail
   if (body.zweck === 'warteliste') {
     try {
