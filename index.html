@@ -28893,6 +28893,377 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   P.ersetze('blutdruck',BD); P.ersetze('reanimation',RE); P.ersetze('absaugen',AB);
 })();
 </script>
+<script>
+/* ══ HANDGRIFFE – verbesserter Stil, Teil 2 (01.11.2026, „Go für alle“ P. Schenkelberger):
+   Infusion, Händedesinfektion, Blutzucker, Handschuhe ausziehen, Stabile Seitenlage, Puls messen.
+   Nutzt window.PLHGR; ersetzt nur die Bilder. ══ */
+(function(){
+  var P=window.PLHGR; if(!P) return;
+  var T=P.T, ein=P.ein, haken=P.haken, kreuz=P.kreuz, uhr=P.uhr, GR=P.GR, RT=P.RT, OR=P.OR, TX=P.TX, TX2=P.TX2;
+  function D(){ return P.defs()+'<defs>'
+    +'<linearGradient id="hgr3Haut" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e5ad86"/><stop offset=".45" stop-color="#f8d6b9"/><stop offset="1" stop-color="#dfa47c"/></linearGradient>'
+    +'<linearGradient id="hgr3Blau" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3e5ec4"/><stop offset=".45" stop-color="#7b98f2"/><stop offset="1" stop-color="#3553b5"/></linearGradient>'
+    +'<linearGradient id="hgr3Beutel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dbe7f3" stop-opacity=".9"/><stop offset=".3" stop-color="#ffffff" stop-opacity=".95"/><stop offset="1" stop-color="#c3d3e3" stop-opacity=".9"/></linearGradient>'
+    +'<linearGradient id="hgr3Wasser" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7dd3fc" stop-opacity=".5"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".8"/><stop offset="1" stop-color="#7dd3fc" stop-opacity=".5"/></linearGradient>'
+    +'<linearGradient id="hgr3Kleid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c8ea6"/><stop offset="1" stop-color="#4b5a70"/></linearGradient>'
+    +'<linearGradient id="hgr3Hose" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f4c63"/><stop offset="1" stop-color="#28323f"/></linearGradient>'
+    +'<radialGradient id="hgr3Blut" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ef4444"/><stop offset=".6" stop-color="#b91c1c"/><stop offset="1" stop-color="#7f1d1d"/></radialGradient>'
+    +'<linearGradient id="hgr3Boden" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22405e"/><stop offset="1" stop-color="#16293d"/></linearGradient>'
+    +'<linearGradient id="hgr2Arm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9dcc2"/><stop offset=".55" stop-color="#efc29c"/><stop offset="1" stop-color="#cf9670"/></linearGradient>'
+    +'<linearGradient id="hgr2Geraet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4658"/><stop offset="1" stop-color="#1c2330"/></linearGradient>'
+    +'</defs>'; }
+
+  /* Hand von oben, Handgelenk im Ursprung, Finger zeigen nach oben (-y). f = Füllung, s = Skalierung */
+  function hand(f,s,spreiz,ohneDaumen,spiegel){ f=f||'url(#hgr3Haut)'; s=s||1; spreiz=spreiz||0;
+    var fi=[[-19,-66,44,-spreiz*1.6],[-6,-70,50,-spreiz*.5],[7,-69,46,spreiz*.5],[19,-63,36,spreiz*1.6]].map(function(q){
+      return '<g transform="translate('+q[0]+' '+q[1]+') rotate('+q[3]+')"><rect x="-6.5" y="'+(-q[2])+'" width="13" height="'+(q[2]+8)+'" rx="6.5" fill="'+f+'"/>'
+        +'<path d="M-4 '+(-q[2]*0.45)+' h8 M-4 '+(-q[2]*0.75)+' h8" stroke="#000" stroke-opacity=".12" stroke-width="1"/></g>'; }).join('');
+    var dm=ohneDaumen?'':'<g transform="translate(-24 -26) rotate('+(-50-spreiz)+')"><rect x="-7.5" y="-40" width="15" height="44" rx="7.5" fill="'+f+'"/></g>';
+    return '<g transform="scale('+(spiegel?-s:s)+' '+s+')" filter="url(#hgrSch)">'+dm+fi+'<path d="M-25 -70 Q-28 -30 -18 0 L18 0 Q28 -30 25 -66 Q0 -76 -25 -70 Z" fill="'+f+'"/>'
+      +'<path d="M-14 -40 q14 6 28 0" stroke="#000" stroke-opacity=".1" stroke-width="1.2" fill="none"/></g>'; }
+  function pose(x,y,rot,inner,anim){ return '<g transform="translate('+x+' '+y+') rotate('+(rot||0)+')">'+(anim||'')+inner+'</g>'; }
+  function reib(dx,dy,dur,n,b){ return '<animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;'+dx+' '+dy+';0 0" dur="'+(dur||0.8)+'s" repeatCount="'+(n||5)+'" begin="'+(b||0.3)+'s"/>'; }
+  function dreh(a,cx,cy,dur,n){ return '<animateTransform attributeName="transform" type="rotate" additive="sum" values="0 '+cx+' '+cy+';'+a+' '+cx+' '+cy+';0 '+cx+' '+cy+'" dur="'+(dur||0.9)+'s" repeatCount="'+(n||5)+'" begin="0.3s"/>'; }
+  function glanz(){ return [[110,80],[180,70],[150,140],[210,130]].map(function(q,i){ return '<circle cx="'+q[0]+'" cy="'+q[1]+'" r="3" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;.9;0" dur="1.4s" begin="'+(i*0.35)+'s" repeatCount="indefinite"/></circle>'; }).join(''); }
+
+  /* ── Infusion ── */
+  function flasche(x,y,kopfueber,inhalt){ /* Kunststoff-Infusionsflasche 500 ml, Ursprung = Mitte des Septums */
+    var k='<g filter="url(#hgrSch)"><rect x="-30" y="12" width="60" height="110" rx="12" fill="url(#hgr3Beutel)" stroke="#cbd5e1"/>'
+      +'<rect x="-27" y="'+(kopfueber?14:40)+'" width="54" height="'+(kopfueber?84:80)+'" rx="10" fill="#bae6fd" opacity=".35"/>'
+      +'<rect x="-22" y="52" width="44" height="40" rx="3" fill="#ffffff"/><rect x="-22" y="52" width="44" height="9" rx="2" fill="#0ea5e9"/>'
+      +'<text x="0" y="74" fill="#0f172a" font-size="8" font-weight="900" text-anchor="middle" font-family="DM Sans,sans-serif">NaCl 0,9 %</text><text x="0" y="86" fill="#475569" font-size="7" font-weight="700" text-anchor="middle" font-family="DM Sans,sans-serif">500 ml</text>'
+      +'<path d="M-14 12 L-10 0 L10 0 L14 12 Z" fill="#e2e8f0"/><rect x="-9" y="-6" width="18" height="8" rx="2" fill="'+(inhalt==='kappe'?'#2563eb':'#94a3b8')+'"/><circle cx="0" cy="-2" r="4" fill="#64748b"/></g>';
+    return '<g transform="translate('+x+' '+y+')'+(kopfueber?' rotate(180)':'')+'">'+k+'</g>'; }
+  function klemme(x,y,offen,anim){ return '<g transform="translate('+x+' '+y+')" filter="url(#hgrSch)"><path d="M-12 -26 L12 -26 L10 26 L-10 26 Z" fill="#60a5fa"/><path d="M-3 -24 L3 -24 L1 24 L-1 24 Z" fill="#1e3a8a" opacity=".5"/>'
+    +'<circle cx="0" cy="'+(offen?-14:14)+'" r="9" fill="#f8fafc" stroke="#94a3b8">'+(anim||'')+'</circle></g>'; }
+  function tropfkammer(x,y,fuell,anim){ return '<g transform="translate('+x+' '+y+')"><rect x="-6" y="-26" width="12" height="10" rx="2" fill="#e2e8f0"/>'
+    +'<rect x="-13" y="-16" width="26" height="52" rx="8" fill="url(#hgr3Beutel)" stroke="#cbd5e1" opacity=".95"/>'
+    +'<rect x="-11" y="'+(34-fuell)+'" width="22" height="'+fuell+'" rx="5" fill="#7dd3fc" opacity=".7">'+(anim||'')+'</rect>'
+    +'<circle cx="0" cy="-8" r="2.5" fill="#7dd3fc"><animate attributeName="cy" values="-10;'+(30-fuell)+'" dur=".9s" repeatCount="indefinite"/></circle></g>'; }
+  var IN=[];
+  IN[0]=D()+flasche(90,40)+['Richtige Lösung','Verfallsdatum','Verpackung heil','Lösung klar'].map(function(z,i){ return haken(176,60+i*36,0.4+i*0.45)+'<g opacity="0">'+ein(0.4+i*0.45)+T(192,64+i*36,z,TX,12,800,'start')+'</g>'; }).join('');
+  IN[1]=D()+'<path d="M160 0 V220" stroke="#e2e8f0" stroke-width="5" opacity=".8"/>'+klemme(160,110,true,'<animate attributeName="cy" from="-14" to="14" begin="0.5s" dur="1s" fill="freeze"/>')
+    +'<g transform="translate(160 110)"><g opacity="0">'+ein(0.5)+'<ellipse cx="18" cy="-14" rx="8" ry="10" fill="url(#hgr3Haut)" filter="url(#hgrSch)"><animate attributeName="cy" from="-14" to="14" begin="0.5s" dur="1s" fill="freeze"/></ellipse></g></g>'
+    +'<g opacity="0">'+ein(1.6)+T(232,128,'zu',GR,16,900)+'<path d="M206 110 l10 0" stroke="'+GR+'" stroke-width="2"/></g>'+T(232,60,'Rollklemme',TX,11,800);
+  IN[2]=D()+flasche(160,70,false,'')
+    +'<g opacity="0">'+ein(0.2)+'<g transform="translate(206 40) rotate(30)"><rect x="-9" y="-6" width="18" height="8" rx="2" fill="#2563eb"/></g></g>'
+    +'<g filter="url(#hgrSch)" transform="rotate(-24 70 60)"><rect x="50" y="40" width="34" height="62" rx="8" fill="url(#hgrPlastik)"/><rect x="58" y="26" width="16" height="16" rx="3" fill="#475569"/></g>'
+    +[0,1,2,3,4].map(function(i){ return '<circle cx="'+(102+i*10)+'" cy="'+(50+i*4)+'" r="2.5" fill="#bae6fd" opacity="0"><animate attributeName="opacity" values="0;.9;0" begin="'+(0.4+i*0.1)+'s" dur="1s" repeatCount="2"/></circle>'; }).join('')
+    +uhr(268,60,'Zeit',1.4,3)+T(268,96,'Einwirkzeit',TX,10);
+  IN[3]=D()+flasche(160,100,false,'')
+    +'<g><animateTransform attributeName="transform" type="translate" from="0 -50" to="0 0" begin="0.4s" dur="1s" fill="freeze"/>'
+    +'<g filter="url(#hgrSch)"><path d="M157 98 L160 84 L163 98 Z" fill="url(#hgrMetall)"/><rect x="152" y="58" width="16" height="28" rx="3" fill="#f1f5f9"/><rect x="146" y="40" width="28" height="20" rx="5" fill="#cbd5e1"/></g>'
+    +'<path d="M160 40 V0" stroke="#e2e8f0" stroke-width="4"/></g>'
+    +'<g opacity="0">'+ein(1.5)+T(240,70,'gerade',GR,13,900)+T(240,86,'einstechen',GR,11,800)+'</g>'
+    +'<g opacity="0">'+ein(2)+kreuz(70,80,0)+T(70,108,'Dorn nicht',RT,10,800)+T(70,121,'berühren',RT,10,800)+'</g>';
+  IN[4]=D()+'<path d="M120 0 V10" stroke="#94a3b8" stroke-width="3"/>'+flasche(120,140,true)
+    +tropfkammer(120,172,6,'<animate attributeName="height" from="6" to="20" begin="0.6s" dur="2.4s" fill="freeze"/><animate attributeName="y" from="28" to="14" begin="0.6s" dur="2.4s" fill="freeze"/>')
+    +'<path d="M120 208 V220" stroke="#e2e8f0" stroke-width="4"/>'
+    +'<g opacity="0">'+ein(0.4)+'<ellipse cx="96" cy="176" rx="8" ry="11" fill="url(#hgr3Haut)" filter="url(#hgrSch)"><animate attributeName="cx" values="96;104;96" dur=".7s" repeatCount="3" begin="0.5s"/></ellipse><ellipse cx="144" cy="176" rx="8" ry="11" fill="url(#hgr3Haut)" filter="url(#hgrSch)"><animate attributeName="cx" values="144;136;144" dur=".7s" repeatCount="3" begin="0.5s"/></ellipse></g>'
+    +'<path d="M150 190 h20 M150 176 h20" stroke="'+OR+'" stroke-width="1.6" stroke-dasharray="3 2"/>'+T(212,182,'⅓ bis ½',OR,13,900)
+    +T(236,40,'Tropfkammer',TX,11,800);
+  IN[5]=D()+tropfkammer(60,40,18)
+    +'<path d="M60 76 C60 140 120 150 160 150 C220 150 260 150 300 150" stroke="#e2e8f0" stroke-width="5" fill="none" opacity=".8"/>'
+    +'<path d="M60 76 C60 140 120 150 160 150 C220 150 260 150 300 150" stroke="#7dd3fc" stroke-width="3" fill="none" stroke-dasharray="320" stroke-dashoffset="320"><animate attributeName="stroke-dashoffset" from="320" to="0" begin="0.6s" dur="2.6s" fill="freeze"/></path>'
+    +klemme(150,150,false,'<animate attributeName="cy" values="14;-14;-14;14" keyTimes="0;.15;.85;1" begin="0.3s" dur="3.4s" fill="freeze"/>')
+    +'<rect x="296" y="144" width="14" height="12" rx="3" fill="#2563eb"/>'+T(300,134,'Kappe',TX2,8.5,800,'end')
+    +'<g opacity="0">'+ein(3.4)+haken(214,80,0)+T(232,84,'luftfrei',GR,12,800,'start')+'</g>';
+  IN[6]=D()+flasche(110,40)
+    +'<g filter="url(#hgrSch)"><rect x="164" y="40" width="140" height="132" rx="8" fill="#fef9c3"/></g>'
+    +[['Patient','M. Muster'],['Datum/Zeit','01.11. 08:00'],['Zusätze','–'],['Handzeichen','PS']].map(function(z,i){ var y=66+i*28;
+      return T(174,y,z[0],'#78716c',8.5,800,'start')+'<g opacity="0">'+ein(0.4+i*0.45)+T(296,y,z[1],'#1c1917',10,900,'end')+'</g><path d="M174 '+(y+8)+' H296" stroke="#e7e5e4"/>'; }).join('');
+
+  /* ── Händedesinfektion ── */
+  var HD=[];
+  HD[0]=D()+'<g filter="url(#hgrSch)"><rect x="196" y="10" width="64" height="96" rx="10" fill="url(#hgrPlastik)"/><rect x="204" y="34" width="48" height="40" rx="4" fill="#0ea5e9"/>'+T(228,58,'Desinf.','#fff',9,900)
+    +'<path d="M206 10 V-4 H250 V10" fill="#94a3b8"/><path d="M196 18 H170 V26 H196" fill="#64748b"/></g>'
+    +[0,1,2].map(function(i){ return '<ellipse cx="172" cy="40" rx="3.5" ry="5" fill="#bae6fd" opacity="0"><animate attributeName="cy" values="32;108" begin="'+(0.4+i*0.35)+'s" dur=".6s" fill="freeze"/><animate attributeName="opacity" values="1;1;0" begin="'+(0.4+i*0.35)+'s" dur=".6s" fill="freeze"/></ellipse>'; }).join('')
+    +pose(166,200,-10,hand(null,1.35,0))+'<ellipse cx="160" cy="118" rx="16" ry="7" fill="#bae6fd" opacity="0">'+ein(1.6)+'</ellipse>'
+    +T(70,60,'3–5 ml',P.TX,16,900)+T(70,82,'Hände trocken,',TX2,10,800)+T(70,96,'kein Schmuck',TX2,10,800);
+  HD[1]=D()+pose(150,200,8,hand(null,1.3,0))+pose(178,196,-8,hand('url(#hgr3Haut)',1.3,0,false,true),reib(0,-18,0.7,6))+glanz();
+  HD[2]=D()+pose(150,206,0,hand(null,1.3,4))+pose(176,186,-26,hand('url(#hgr3Haut)',1.25,0,false,true),reib(-10,-16,0.8,5))
+    +T(270,40,'rechts über links',TX,10.5,800)+T(270,56,'dann umgekehrt',TX2,10,800);
+  HD[3]=D()+pose(142,208,12,hand(null,1.3,10))+pose(182,208,-12,hand('url(#hgr3Haut)',1.3,10,false,true),reib(0,-14,0.7,6))
+    +T(266,44,'Finger',TX,11,800)+T(266,60,'verschränkt',TX,11,800);
+  HD[4]=D()+'<g transform="translate(130 140)" filter="url(#hgrSch)"><ellipse cx="0" cy="0" rx="44" ry="34" fill="url(#hgr3Haut)"/>'+[0,1,2,3].map(function(i){ return '<rect x="'+(-30+i*16)+'" y="-36" width="14" height="22" rx="7" fill="url(#hgr3Haut)" stroke="#000" stroke-opacity=".08"/>'; }).join('')+'</g>'
+    +pose(196,190,-90,hand(null,1.15,0),dreh(-10,0,-40,0.8,5)+reib(-12,0,0.8,5))+T(250,40,'Fingeraußenseiten',TX,10.5,800);
+  HD[5]=D()+pose(120,214,20,hand(null,1.3,0))
+    +'<g transform="translate(200 150)" filter="url(#hgrSch)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="0 0 0;-25 0 0;0 0 0;25 0 0;0 0 0" dur="1.2s" repeatCount="4" begin="0.3s"/><ellipse cx="0" cy="0" rx="34" ry="28" fill="url(#hgr3Haut)"/><path d="M-20 -6 q20 -14 40 0" stroke="#000" stroke-opacity=".12" fill="none"/></g>'
+    +'<g opacity="0">'+ein(0.4)+'<path d="M228 104 a34 34 0 1 1 -50 -4" stroke="'+OR+'" stroke-width="2" fill="none"/></g>'+T(250,40,'Daumen',TX,12,800)+T(250,56,'oft vergessen!',RT,10,800);
+  HD[6]=D()+pose(130,214,0,hand(null,1.4,6))
+    +'<g transform="translate(150 118)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="0 0 0;360 0 0" dur="1.4s" repeatCount="3" begin="0.3s"/><g transform="translate(0 -10)" filter="url(#hgrSch)">'
+    +[0,1,2,3].map(function(i){ return '<ellipse cx="'+(-12+i*8)+'" cy="0" rx="6" ry="8" fill="url(#hgr3Haut)" stroke="#000" stroke-opacity=".08"/>'; }).join('')+'</g></g>'
+    +T(250,40,'Fingerkuppen',TX,12,800)+T(250,56,'oft vergessen!',RT,10,800);
+  HD[7]=D()+pose(148,206,10,hand(null,1.25,0))+pose(178,204,-10,hand('url(#hgr3Haut)',1.25,0,false,true),reib(0,-10,0.9,6))+glanz()+uhr(262,60,'30 s',0.3,6)
+    +T(262,100,'Hände feucht',GR,11,800)+T(262,114,'halten',GR,11,800);
+
+  /* ── Blutzucker ── */
+  function fingerkuppe(x,y,s){ return '<g transform="translate('+x+' '+y+') scale('+(s||1)+')" filter="url(#hgrSch)"><path d="M-34 120 L-34 -10 Q-34 -50 0 -50 Q34 -50 34 -10 L34 120 Z" fill="url(#hgr3Haut)"/>'
+    +'<path d="M-18 -40 Q0 -48 18 -40 L16 -12 Q0 -8 -16 -12 Z" fill="#fbe7da" stroke="#e8b99a"/><path d="M-20 40 q20 6 40 0 M-20 70 q20 6 40 0" stroke="#c98d68" stroke-opacity=".5" fill="none"/></g>'; }
+  function messgeraet(x,y,wert,b){ return '<g transform="translate('+x+' '+y+')"><g filter="url(#hgrSch)"><rect x="0" y="0" width="74" height="110" rx="16" fill="url(#hgr2Geraet)"/><rect x="9" y="12" width="56" height="40" rx="5" fill="#d9f99d"/></g>'
+    +'<text x="37" y="40" fill="#1a2e05" font-size="17" font-weight="900" text-anchor="middle" font-family="DM Sans,sans-serif">'+(wert?'---':'')+(wert?'<set attributeName="visibility" to="hidden" begin="'+b+'s" fill="freeze"/>':'')+'</text>'
+    +(wert?'<text x="37" y="40" fill="#1a2e05" font-size="17" font-weight="900" text-anchor="middle" font-family="DM Sans,sans-serif" visibility="hidden">'+wert+'<set attributeName="visibility" to="visible" begin="'+b+'s" fill="freeze"/></text>':'')
+    +T(37,50,'mg/dl','#365314',6.5,800)+'<circle cx="37" cy="80" r="11" fill="#475569"/><rect x="31" y="110" width="12" height="34" rx="2" fill="#e2e8f0"/><rect x="31" y="138" width="12" height="6" fill="#facc15"/></g>'; }
+  function stechhilfe(x,y,rot,anim){ return '<g transform="translate('+x+' '+y+') rotate('+rot+')">'+(anim||'')+'<g filter="url(#hgrSch)"><rect x="-12" y="-80" width="24" height="76" rx="11" fill="#7c3aed"/><rect x="-8" y="-6" width="16" height="10" rx="3" fill="#ddd6fe"/><rect x="-6" y="-70" width="12" height="16" rx="3" fill="#a78bfa"/></g></g>'; }
+  var BZ=[];
+  BZ[0]=D()+'<g filter="url(#hgrSch)"><path d="M60 0 V40 Q60 54 74 54 H120" stroke="url(#hgrMetall)" stroke-width="12" fill="none"/></g>'
+    +'<rect x="116" y="50" width="10" height="120" fill="url(#hgr3Wasser)"><animate attributeName="opacity" values=".6;1;.6" dur=".5s" repeatCount="indefinite"/></rect>'
+    +pose(104,212,14,hand(null,1.1,0))+pose(140,212,-14,hand('url(#hgr3Haut)',1.1,0,false,true),reib(0,-8,0.6,6))
+    +T(252,70,'warmes Wasser',TX,11.5,800)+'<g opacity="0">'+ein(2)+T(252,96,'gut abtrocknen',GR,11,800)+'</g>'+'<g opacity="0">'+ein(2.6)+T(252,130,'Zuckerreste',RT,10,800)+T(252,144,'verfälschen',RT,10,800)+'</g>';
+  BZ[1]=D()+messgeraet(40,30)
+    +'<g opacity="0">'+ein(0.3)+'<rect x="71" y="190" width="12" height="34" rx="2" fill="#e2e8f0"><animate attributeName="y" from="200" to="140" begin="0.3s" dur=".8s" fill="freeze"/></rect></g>'
+    +stechhilfe(190,150,0)+'<g opacity="0">'+ein(1.2)+'<g transform="translate(262 150)">'+hand('url(#hgr3Blau)',0.75,4)+'</g>'+T(262,190,'Handschuhe',TX,10,800)+'</g>'
+    +T(190,30,'Stechhilfe',TX2,10,800);
+  BZ[2]=D()+fingerkuppe(160,90,1.1)
+    +'<g opacity="0">'+ein(0.4)+'<circle cx="126" cy="66" r="7" fill="rgba(74,222,128,.25)" stroke="'+GR+'" stroke-width="2"/><circle cx="194" cy="66" r="7" fill="rgba(74,222,128,.25)" stroke="'+GR+'" stroke-width="2"/>'+kreuz(160,40,0)+'</g>'
+    +stechhilfe(98,70,-70,'<animateTransform attributeName="transform" type="translate" additive="sum" values="-30 0;0 0;-30 0" begin="1.2s" dur=".5s" fill="freeze"/>')
+    +T(266,180,'seitlich',GR,13,900)+T(266,196,'tut weniger weh',TX2,10,800);
+  BZ[3]=D()+fingerkuppe(160,90,1.1)
+    +'<circle cx="124" cy="70" r="2" fill="url(#hgr3Blut)"><animate attributeName="r" from="2" to="10" begin="0.4s" dur="2.4s" fill="freeze"/></circle>'
+    +'<g opacity="0">'+ein(1.6)+'<g transform="translate(250 90)"><ellipse cx="-14" cy="0" rx="12" ry="18" fill="url(#hgr3Haut)" filter="url(#hgrSch)"/><ellipse cx="14" cy="0" rx="12" ry="18" fill="url(#hgr3Haut)" filter="url(#hgrSch)"/></g>'+kreuz(250,90,0)+T(250,132,'nicht quetschen',RT,11,800)+'</g>';
+  BZ[4]=D()+fingerkuppe(200,150,1.0)+'<circle cx="168" cy="134" r="9" fill="url(#hgr3Blut)"><animate attributeName="r" from="9" to="3" begin="1.2s" dur="1s" fill="freeze"/></circle>'
+    +'<g><animateTransform attributeName="transform" type="translate" from="-50 -20" to="0 0" begin="0.3s" dur=".9s" fill="freeze"/>'+messgeraet(125,-10,'98',2.4)+'</g>'
+    +'<g opacity="0">'+ein(2.4)+T(274,150,'Wert ablesen',GR,12,800)+T(274,168,'z. B. 98 mg/dl',TX2,10,800)+'</g>';
+  BZ[5]=D()+'<g filter="url(#hgrSch)"><path d="M216 96 L294 96 L288 200 Q287 206 281 206 L229 206 Q223 206 222 200 Z" fill="url(#hgrGelb)"/><rect x="210" y="84" width="90" height="16" rx="4" fill="#dc2626"/></g>'
+    +'<g><animateTransform attributeName="transform" type="translate" values="80 60;180 30;255 88" keyTimes="0;.55;1" begin="0.4s" dur="1s" fill="freeze"/><rect x="-4" y="-12" width="8" height="24" rx="2" fill="#a78bfa"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.85;1" begin="0.4s" dur="1.2s" fill="freeze"/></g>'
+    +['Tupfer drauf','Lanzette entsorgt','Hände desinfiziert','Wert dokumentiert'].map(function(z,i){ return haken(30,110+i*26,1.4+i*0.4)+'<g opacity="0">'+ein(1.4+i*0.4)+T(46,114+i*26,z,TX,11,800,'start')+'</g>'; }).join('');
+
+  /* ── Handschuhe ausziehen ── */
+  var HS=[];
+  function hsHand(x,y,rot,an,s,sp){ return pose(x,y,rot,hand(an?'url(#hgr3Blau)':'url(#hgr3Haut)',s||1.15,2,false,sp)); }
+  HS[0]=D()+hsHand(110,214,8,true)+hsHand(210,214,-8,true,1.15,true)
+    +'<g><animateTransform attributeName="transform" type="translate" from="0 0" to="74 52" begin="0.3s" dur="1s" fill="freeze"/><g transform="translate(110 130)"><ellipse cx="0" cy="0" rx="18" ry="10" fill="url(#hgr3Blau)" filter="url(#hgrSch)"/></g></g>'
+    +'<g opacity="0">'+ein(1.4)+'<circle cx="190" cy="186" r="20" fill="none" stroke="'+GR+'" stroke-width="2" stroke-dasharray="4 3"/>'+T(250,40,'außen am',TX,11,800)+T(250,56,'Handgelenk greifen',TX,11,800)+'</g>';
+  HS[1]=D()+hsHand(110,214,8,true)+'<g>'+hsHand(210,214,-8,false,1.15,true)+'</g>'
+    +'<g><animateTransform attributeName="transform" type="translate" from="210 170" to="120 120" begin="0.3s" dur="1.4s" fill="freeze"/><path d="M-26 -40 Q0 -70 26 -40 L22 20 Q0 30 -22 20 Z" fill="#a5b8f5" stroke="#3553b5" stroke-width="1.5" filter="url(#hgrSch)"/></g>'
+    +T(250,40,'Innenseite',TX,11,800)+T(250,56,'nach außen',TX,11,800);
+  HS[2]=D()+hsHand(110,214,8,true)+'<path d="M90 120 Q110 100 130 120 L128 150 Q110 156 92 150 Z" fill="#a5b8f5" stroke="#3553b5" stroke-width="1.5"/>'
+    +'<g><animateTransform attributeName="transform" type="translate" from="60 0" to="0 0" begin="0.3s" dur="1s" fill="freeze"/>'+pose(186,214,-60,hand('url(#hgr3Haut)',1.1,0,false,true))+'</g>'
+    +'<g opacity="0">'+ein(1.3)+T(250,40,'bloßer Finger',TX,11,800)+T(250,56,'innen unter den Rand',GR,11,800)+'</g>';
+  HS[3]=D()+pose(160,200,0,hand('url(#hgr3Haut)',1.15,0),'')
+    +'<g><animateTransform attributeName="transform" type="translate" from="0 0" to="0 -60" begin="0.3s" dur="1.6s" fill="freeze"/><path d="M128 120 Q160 60 192 120 L188 186 Q160 196 132 186 Z" fill="#a5b8f5" stroke="#3553b5" stroke-width="1.5" filter="url(#hgrSch)"/><path d="M140 140 Q160 110 180 140 L178 170 Q160 176 142 170 Z" fill="#7b98f2" opacity=".8"/></g>'
+    +T(258,40,'über den ersten',TX,11,800)+T(258,56,'stülpen',TX,11,800);
+  HS[4]=D()+'<g filter="url(#hgrSch)"><rect x="200" y="110" width="90" height="96" rx="8" fill="#334155"/><rect x="194" y="100" width="102" height="14" rx="4" fill="#475569"/></g>'
+    +'<g><animateTransform attributeName="transform" type="translate" values="70 60;240 90" begin="0.3s" dur=".9s" fill="freeze"/><path d="M-16 -20 Q0 -36 16 -20 L14 14 Q0 20 -14 14 Z" fill="#a5b8f5" stroke="#3553b5"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.8;1" begin="0.3s" dur="1s" fill="freeze"/></g>'
+    +'<g opacity="0">'+ein(1.4)+pose(70,214,10,hand(null,1,0))+pose(104,214,-10,hand(null,1,0,false,true))+'</g>'
+    +'<g opacity="0">'+ein(1.8)+T(160,40,'Hände desinfizieren',GR,13,900)+T(160,58,'Handschuhe ersetzen das nicht',TX2,10,800)+'</g>';
+
+  /* ── Stabile Seitenlage (Ansicht von oben) ── */
+  function person(arm1,arm2,bein,seite){ /* arm1 = naher Arm (unten im Bild), arm2 = ferner Arm, bein = fernes Bein angewinkelt? */
+    var k='<g filter="url(#hgrSch)">'
+      +'<rect x="186" y="'+(seite?92:96)+'" width="120" height="'+(seite?26:22)+'" rx="11" fill="url(#hgr3Hose)"/>'
+      +(bein?'<path d="M190 86 L238 54 L292 78" stroke="#364256" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round"/>':'<rect x="186" y="72" width="120" height="22" rx="11" fill="url(#hgr3Hose)"/>')
+      +'<path d="M80 68 Q80 58 92 58 L186 62 Q196 64 196 76 L196 112 Q196 124 186 124 L92 128 Q80 128 80 118 Z" fill="url(#hgr3Kleid)"/>'
+      +arm1+arm2
+      +'<ellipse cx="56" cy="93" rx="24" ry="22" fill="url(#hgr2Arm)"/><path d="M40 78 q16 -12 32 0 q-4 -10 -16 -12 q-12 2 -16 12 Z" fill="#5b3a29"/></g>';
+    return k; }
+  var ARM_N_GERADE='<rect x="94" y="126" width="80" height="16" rx="8" fill="url(#hgr2Arm)"/>';
+  var ARM_N_90='<path d="M110 128 L110 196" stroke="#efc29c" stroke-width="16" stroke-linecap="round"/><path d="M110 196 L60 196" stroke="#efc29c" stroke-width="15" stroke-linecap="round" opacity="0">'+ein(0.8)+'</path>';
+  var ARM_F_GERADE='<rect x="94" y="44" width="80" height="16" rx="8" fill="url(#hgr2Arm)"/>';
+  var ARM_F_WANGE='<path d="M110 60 C100 90 80 112 64 108" stroke="#efc29c" stroke-width="15" fill="none" stroke-linecap="round"/>';
+  var SL=[];
+  SL[0]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'+person(ARM_N_GERADE,ARM_F_GERADE,false,false)
+    +'<g opacity="0">'+ein(0.4)+T(160,176,'bewusstlos',OR,12,900)+'</g><g opacity="0">'+ein(1.2)+T(160,196,'Atmung normal',GR,12,900)+'</g>'
+    +'<path d="M30 70 q-8 -8 0 -16" stroke="#7dd3fc" stroke-width="2" fill="none"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></path>';
+  SL[1]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'+person(ARM_N_90,ARM_F_GERADE,false,false)+T(146,186,'90°',OR,14,900)+T(270,190,'naher Arm',TX2,10,800);
+  SL[2]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'+person(ARM_N_90.replace(' opacity="0">'+ein(0.8)+'</path>','/>'),'<g opacity="0">'+ein(0.4)+ARM_F_WANGE+'</g>',false,false)
+    +'<g opacity="0">'+ein(1.2)+T(250,30,'Handrücken an die',TX,10.5,800)+T(250,44,'nahe Wange',TX,10.5,800)+'</g>';
+  var ARM_N_FIX=ARM_N_90.replace(' opacity="0">'+ein(0.8)+'</path>','/>');
+  SL[3]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'+person(ARM_N_FIX,ARM_F_WANGE,true,false)+'<g opacity="0">'+ein(0.4)+'<circle cx="238" cy="54" r="12" fill="none" stroke="'+OR+'" stroke-width="2"/></g>'+T(270,190,'fernes Bein anwinkeln',TX2,10,800);
+  SL[4]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'
+    +'<g><animate attributeName="opacity" values="1;1;0" keyTimes="0;.4;1" dur="1.6s" fill="freeze"/>'+person(ARM_N_FIX,ARM_F_WANGE,true,false)+'</g>'
+    +'<g opacity="0"><animate attributeName="opacity" values="0;0;1" keyTimes="0;.5;1" dur="1.6s" fill="freeze"/>'
+    +'<g filter="url(#hgrSch)"><path d="M90 84 Q88 70 104 70 L188 76 Q198 78 198 92 L198 110 Q198 122 186 122 L104 126 Q90 126 90 112 Z" fill="url(#hgr3Kleid)"/>'
+    +'<path d="M196 100 L246 128 L300 104" stroke="#364256" stroke-width="24" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="196" y="78" width="110" height="18" rx="9" fill="url(#hgr3Hose)" opacity=".85"/>'
+    +'<path d="M120 122 C112 150 90 160 72 150" stroke="#efc29c" stroke-width="15" fill="none" stroke-linecap="round"/>'
+    +'<ellipse cx="62" cy="108" rx="24" ry="21" fill="url(#hgr2Arm)"/><path d="M48 90 q14 -10 30 0" stroke="#5b3a29" stroke-width="7" fill="none" stroke-linecap="round"/></g></g>'
+    +'<g><path d="M256 50 a50 50 0 0 1 0 60" stroke="'+OR+'" stroke-width="3" fill="none"/><path d="M256 110 l-8 -6 l10 -4 Z" fill="'+OR+'"/></g>'+T(270,30,'zu dir drehen',OR,11,900);
+  SL[5]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'
+    +'<g filter="url(#hgrSch)"><path d="M90 84 Q88 70 104 70 L188 76 Q198 78 198 92 L198 110 Q198 122 186 122 L104 126 Q90 126 90 112 Z" fill="url(#hgr3Kleid)"/>'
+    +'<path d="M196 100 L246 128 L300 104" stroke="#364256" stroke-width="24" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="196" y="78" width="110" height="18" rx="9" fill="url(#hgr3Hose)" opacity=".85"/>'
+    +'<path d="M120 122 C112 150 90 160 72 150" stroke="#efc29c" stroke-width="15" fill="none" stroke-linecap="round"/>'
+    +'<g transform="rotate(-20 62 108)"><ellipse cx="62" cy="108" rx="24" ry="21" fill="url(#hgr2Arm)"/><path d="M48 90 q14 -10 30 0" stroke="#5b3a29" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M44 118 q6 4 12 0" stroke="#9c5f3e" stroke-width="2" fill="none"/></g></g>'
+    +'<g opacity="0">'+ein(0.5)+'<path d="M40 134 q-6 14 4 24" stroke="#7dd3fc" stroke-width="2.4" fill="none"/>'+T(56,180,'Mund tiefster Punkt',GR,10,800)+'</g>'
+    +'<g opacity="0">'+ein(1.2)+T(250,170,'Hüfte & Knie 90°',OR,11,900)+'</g>';
+  SL[6]=D()+'<rect width="320" height="220" fill="url(#hgr3Boden)"/>'+uhr(160,80,'prüfen',0.3,4)
+    +'<g opacity="0">'+ein(0.6)+T(160,130,'Atmung regelmäßig kontrollieren',TX,11.5,800)+'</g>'
+    +'<g opacity="0">'+ein(2.4)+'<rect x="56" y="148" width="208" height="36" rx="18" fill="rgba(248,113,113,.18)"/>'+T(160,171,'Atmung weg → Reanimation',RT,12,900)+'</g>';
+
+  /* ── Puls messen ── */
+  function handgelenk(){ return '<g filter="url(#hgrSch)"><path d="M-10 90 C80 84 180 84 230 92 C262 70 300 76 316 100 C326 120 310 146 280 146 C220 146 120 152 -10 156 Z" fill="url(#hgr2Arm)"/></g>'
+    +'<path d="M20 112 C100 106 180 106 236 110" stroke="#b45309" stroke-opacity=".25" stroke-width="5" fill="none"/>'
+    +'<path d="M236 96 q30 -6 52 6" stroke="#c98d68" stroke-width="1.4" fill="none" opacity=".5"/>'; }
+  var PU=[];
+  PU[0]=D()+handgelenk()+'<circle cx="214" cy="106" r="6" fill="#ef4444"><animate attributeName="r" values="5;10;5" dur=".9s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;.4;1" dur=".9s" repeatCount="indefinite"/></circle>'
+    +T(214,72,'A. radialis',OR,11,900)+T(214,180,'daumenseitig',TX2,10,800)+'<path d="M300 110 l6 -18" stroke="'+GR+'" stroke-width="2"/>'+T(300,80,'Daumen',GR,9.5,800);
+  PU[1]=D()+handgelenk()+[0,1,2].map(function(i){ return '<g transform="translate('+(194+i*18)+' 104)"><g transform="rotate(4)">'+P.finger().replace('url(#hgrFinger)','url(#hgr3Haut)')+'</g></g>'; }).join('')
+    +'<g opacity="0">'+ein(0.8)+T(80,40,'2–3 Finger',GR,13,900)+'</g><g opacity="0">'+ein(1.4)+kreuz(70,190,0)+T(110,194,'nicht der Daumen',RT,10,800,'start')+'</g>';
+  PU[2]=D()+uhr(100,90,'30 s',0.3,3)+T(100,140,'× 2',GR,18,900)+T(100,160,'regelmäßig',TX2,10,800)
+    +uhr(230,90,'60 s',0.3,6)+T(230,140,'ganz zählen',OR,12,900)+T(230,160,'unregelmäßig',TX2,10,800);
+  PU[3]=D()+'<g filter="url(#hgrSch)"><rect x="20" y="30" width="280" height="110" rx="12" fill="#020617"/></g>'
+    +'<path d="M30 90 h30 l8 -36 l10 64 l8 -28 h40 l8 -36 l10 64 l8 -28 h40 l8 -36 l10 64 l8 -28 h44" stroke="#4ade80" stroke-width="2.5" fill="none" stroke-dasharray="420" stroke-dashoffset="420"><animate attributeName="stroke-dashoffset" from="420" to="0" dur="3s" fill="freeze"/></path>'
+    +['Frequenz','Rhythmus','Qualität'].map(function(z,i){ return '<g opacity="0">'+ein(1+i*0.5)+'<rect x="'+(20+i*96)+'" y="160" width="88" height="34" rx="17" fill="rgba(74,222,128,.15)"/>'+T(64+i*96,182,z,GR,11,900)+'</g>'; }).join('')
+    +T(160,52,'Ruhe: ca. 60–100 / min',TX2,10,800);
+  PU[4]=D()+'<g filter="url(#hgrSch)"><rect x="70" y="20" width="180" height="186" rx="10" fill="#f8fafc"/></g>'
+    +T(160,46,'Puls','#0f172a',12,800)+[['Frequenz','72 / min'],['Rhythmus','regelmäßig'],['Qualität','kräftig'],['Uhrzeit','08:15']].map(function(z,i){ var y=78+i*30;
+      return T(86,y,z[0],'#64748b',10,700,'start')+'<g opacity="0">'+ein(0.4+i*0.45)+T(234,y,z[1],'#0f172a',11,800,'end')+'</g><path d="M86 '+(y+9)+' H234" stroke="#e2e8f0"/>'; }).join('');
+
+  P.ersetze('infusion',IN); P.ersetze('haende',HD); P.ersetze('blutzucker',BZ); P.ersetze('handschuhe',HS); P.ersetze('seitenlage',SL); P.ersetze('puls',PU);
+})();
+</script>
+<script>
+/* ══ HANDGRIFFE – verbesserter Stil, Teil 3 (01.11.2026, „Go für alle“ P. Schenkelberger):
+   Fingertest & 30°, Verbandwechsel, Magensonde, MTPS, Transfer, Atemtrainer, Perfusor. Nutzt window.PLHGR. ══ */
+(function(){
+  var P=window.PLHGR; if(!P) return;
+  var T=P.T, ein=P.ein, haken=P.haken, kreuz=P.kreuz, uhr=P.uhr, GR=P.GR, RT=P.RT, OR=P.OR, TX=P.TX, TX2=P.TX2;
+  function D(){ return P.defs()+'<defs>'
+    +'<linearGradient id="hgr4Haut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9dcc2"/><stop offset=".55" stop-color="#efc29c"/><stop offset="1" stop-color="#cf9670"/></linearGradient>'
+    +'<linearGradient id="hgr4HautQ" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e5ad86"/><stop offset=".45" stop-color="#f8d6b9"/><stop offset="1" stop-color="#dfa47c"/></linearGradient>'
+    +'<linearGradient id="hgr4Geraet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4658"/><stop offset="1" stop-color="#1c2330"/></linearGradient>'
+    +'<linearGradient id="hgr4Kleid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c8ea6"/><stop offset="1" stop-color="#4b5a70"/></linearGradient>'
+    +'<linearGradient id="hgr4Hose" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f4c63"/><stop offset="1" stop-color="#28323f"/></linearGradient>'
+    +'<linearGradient id="hgr4Bett" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>'
+    +'<linearGradient id="hgr4Strumpf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d6c7b5"/><stop offset=".45" stop-color="#f3e7d8"/><stop offset="1" stop-color="#c9b8a4"/></linearGradient>'
+    +'<radialGradient id="hgr4Wunde" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#b91c1c"/><stop offset=".7" stop-color="#dc6060"/><stop offset="1" stop-color="#f2a9a0"/></radialGradient>'
+    +'<linearGradient id="hgr4Glas" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0f2fe" stop-opacity=".5"/><stop offset=".3" stop-color="#ffffff" stop-opacity=".8"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".5"/></linearGradient>'
+    +'<linearGradient id="hgr4Boden" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22405e"/><stop offset="1" stop-color="#16293d"/></linearGradient>'
+    +'</defs>'; }
+  function hautFlaeche(){ return '<g filter="url(#hgrSch)"><path d="M0 120 Q160 100 320 120 L320 220 L0 220 Z" fill="url(#hgrBauch)"/></g>'; }
+  function liste(z,b,x,y){ x=x||70; y=y||46; return z.map(function(t,i){ return haken(x,y+i*36,(b||0.3)+i*0.45)+'<g opacity="0">'+ein((b||0.3)+i*0.45)+T(x+20,y+4+i*36,t,TX,13,800,'start')+'</g>'; }).join(''); }
+
+  /* ── Fingertest & 30° ── */
+  function rueckenOben(){ /* Patient von oben, Rückenlage im Bett */
+    return '<g filter="url(#hgrSch)"><rect x="10" y="40" width="300" height="140" rx="14" fill="url(#hgr4Bett)"/></g>'
+      +'<g filter="url(#hgrSch)"><rect x="196" y="98" width="110" height="20" rx="10" fill="url(#hgr4Hose)"/><rect x="196" y="74" width="110" height="20" rx="10" fill="url(#hgr4Hose)"/>'
+      +'<path d="M80 70 Q80 62 92 62 L190 66 L196 80 L196 112 L190 122 L92 124 Q80 124 80 116 Z" fill="url(#hgr4Kleid)"/><ellipse cx="56" cy="94" rx="22" ry="20" fill="url(#hgr4Haut)"/></g>'; }
+  var FT=[];
+  FT[0]=D()+rueckenOben()+[[46,92,'Hinterkopf',134],[196,96,'Kreuzbein',30],[300,84,'',0],[300,110,'Fersen',196]].map(function(q,i){ return '<g opacity="0">'+ein(0.4+i*0.4)+'<circle cx="'+q[0]+'" cy="'+q[1]+'" r="9" fill="rgba(239,68,68,.55)" stroke="#fecaca"/>'+(q[2]?T(q[0]>280?290:q[0],q[3],q[2],'#fecaca',10,800):'')+'</g>'; }).join('');
+  FT[1]=D()+hautFlaeche()+'<ellipse cx="160" cy="168" rx="46" ry="22" fill="#ef4444" opacity=".45"/>'
+    +'<ellipse cx="160" cy="166" rx="16" ry="9" fill="#fff7ed" opacity="0"><animate attributeName="opacity" values="0;.95;.95;0" keyTimes="0;.2;.7;1" begin="1s" dur="2.4s" fill="freeze"/></ellipse>'
+    +'<g><animateTransform attributeName="transform" type="translate" values="0 0;0 22;0 22;0 0" keyTimes="0;.3;.7;1" begin="0.3s" dur="2.4s" fill="freeze"/><g transform="translate(160 140)"><g transform="rotate(0)">'+P.finger().replace('url(#hgrFinger)','url(#hgr4HautQ)')+'</g></g></g>'
+    +'<g opacity="0">'+ein(1.6)+haken(262,60,0)+T(262,90,'wird weiß',GR,11,800)+T(262,104,'= kein Dekubitus',TX2,9.5,800)+'</g>';
+  FT[2]=D()+hautFlaeche()+'<ellipse cx="160" cy="168" rx="46" ry="22" fill="#dc2626" opacity=".7"/><ellipse cx="160" cy="168" rx="28" ry="13" fill="#991b1b" opacity=".5"/>'
+    +'<g opacity="0">'+ein(0.4)+kreuz(262,60,0)+T(262,90,'bleibt rot',RT,11,800)+'</g><g opacity="0">'+ein(1)+'<rect x="70" y="20" width="150" height="34" rx="17" fill="rgba(239,68,68,.18)"/>'+T(145,42,'Kategorie 1',RT,14,900)+'</g>'
+    +'<g opacity="0">'+ein(1.8)+T(145,76,'entlasten · melden · dokumentieren',TX,10,800)+'</g>';
+  FT[3]=D()+'<g filter="url(#hgrSch)"><rect x="20" y="150" width="280" height="22" rx="8" fill="url(#hgr4Bett)"/></g>'
+    +'<g filter="url(#hgrSch)"><path d="M70 150 L250 150 L250 124 Z" fill="#cbd5e1"/></g>'
+    +'<g><animateTransform attributeName="transform" type="rotate" from="0 160 140" to="-9 160 140" begin="0.3s" dur="1.4s" fill="freeze"/>'
+    +'<g filter="url(#hgrSch)"><rect x="60" y="104" width="200" height="40" rx="18" fill="url(#hgr4Kleid)"/><ellipse cx="44" cy="118" rx="22" ry="20" fill="url(#hgr4Haut)"/></g></g>'
+    +'<g opacity="0">'+ein(1.6)+'<circle cx="214" cy="146" r="6" fill="'+GR+'"/>'+T(214,196,'Kreuzbein frei',GR,11,800)+'</g>'
+    +'<path d="M250 150 a40 40 0 0 0 -8 -22" stroke="'+OR+'" stroke-width="2" fill="none"/>'+T(272,138,'30°',OR,16,900);
+  FT[4]=D()+liste(['Haut kontrollieren','Bewegungsplan','kleine Lagewechsel']);
+
+  /* ── Aseptischer Verbandwechsel ── */
+  function wundeHaut(verband){ return hautFlaeche()+'<ellipse cx="160" cy="166" rx="40" ry="16" fill="url(#hgr4Wunde)"/>'
+    +'<path d="M128 166 q32 -6 64 0" stroke="#7f1d1d" stroke-width="1.5" fill="none" opacity=".6"/>'+(verband||''); }
+  var VW=[];
+  VW[0]=D()+liste(['Hände desinfizieren','Material steril bereit','Person informiert','Schmerzen erfragt']);
+  VW[1]=D()+wundeHaut()+'<g><animateTransform attributeName="transform" type="translate" from="0 0" to="40 -90" begin="0.6s" dur="1.4s" fill="freeze"/><g filter="url(#hgrSch)"><rect x="110" y="146" width="100" height="42" rx="8" fill="#f8fafc"/><ellipse cx="160" cy="168" rx="30" ry="12" fill="#fde68a" opacity=".6"/></g></g>'
+    +T(70,60,'Innenseite nach innen',TX,10.5,800)+T(70,76,'sofort entsorgen',TX2,10,800);
+  VW[2]=D()+wundeHaut()+'<g><animateTransform attributeName="transform" type="translate" values="-40 0;40 0;-40 0" dur="2.4s" repeatCount="2"/><circle cx="160" cy="166" r="26" fill="rgba(255,255,255,.12)" stroke="#e2e8f0" stroke-width="4"/><path d="M178 184 l20 20" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/></g>'
+    +['Größe','Belag','Geruch','Rötung','Sekret'].map(function(z,i){ return '<g opacity="0">'+ein(0.4+i*0.35)+T(20+i*62,40,z,TX,11,800,'start')+'</g>'; }).join('');
+  VW[3]=D()+wundeHaut()
+    +'<g><animateTransform attributeName="transform" type="translate" values="0 0;30 0;0 0" dur="1.2s" repeatCount="2" begin="0.3s"/><g transform="rotate(-24 150 120)" filter="url(#hgrSch)"><rect x="146" y="40" width="6" height="110" rx="2" fill="url(#hgrMetall)"/><rect x="154" y="40" width="6" height="110" rx="2" fill="url(#hgrMetall)"/><circle cx="153" cy="152" r="9" fill="#fff"/></g></g>'
+    +'<path d="M166 166 l26 0" stroke="'+OR+'" stroke-width="2.4"/><path d="M192 166 l-6 -4 v8 Z" fill="'+OR+'"/>'+T(250,40,'innen → außen',OR,14,900)+T(250,58,'steril, Non-Touch',TX2,10,800);
+  VW[4]=D()+wundeHaut('<g><animateTransform attributeName="transform" type="translate" from="0 -80" to="0 0" begin="0.4s" dur="1s" fill="freeze"/><g filter="url(#hgrSch)"><rect x="104" y="142" width="112" height="48" rx="8" fill="#f8fafc"/><rect x="118" y="152" width="84" height="28" rx="5" fill="#eef2f7" stroke="#cbd5e1"/></g></g>')
+    +'<g opacity="0">'+ein(1.6)+'<rect x="96" y="150" width="14" height="34" rx="3" fill="#fde68a" opacity=".85"/><rect x="210" y="150" width="14" height="34" rx="3" fill="#fde68a" opacity=".85"/></g>'+T(160,60,'Innenseite nicht berühren',TX,11,800);
+  VW[5]=D()+'<g filter="url(#hgrSch)"><rect x="70" y="20" width="180" height="186" rx="10" fill="#f8fafc"/></g>'+T(160,46,'Wunddokumentation','#0f172a',12,800)
+    +[['Größe','3 × 1,5 cm'],['Aussehen','sauber, rosig'],['Material','steril, Pflaster'],['Datum/HZ','01.11. · PS']].map(function(z,i){ var y=78+i*30;
+      return T(86,y,z[0],'#64748b',10,700,'start')+'<g opacity="0">'+ein(0.4+i*0.45)+T(234,y,z[1],'#0f172a',10.5,800,'end')+'</g><path d="M86 '+(y+9)+' H234" stroke="#e2e8f0"/>'; }).join('');
+
+  /* ── Magensonde ── */
+  function kopfSeite(){ return '<g filter="url(#hgrSch)"><path d="M40 210 C30 150 30 90 70 60 C100 36 150 36 170 66 C182 84 188 100 184 116 L194 132 L182 136 C184 150 176 160 160 162 L150 210 Z" fill="url(#hgr4Haut)"/></g>'
+    +'<path d="M184 116 q-8 4 -12 0" stroke="#9c5f3e" stroke-width="2" fill="none"/>'; }
+  var MS=[];
+  MS[0]=D()+kopfSeite()+'<path d="M180 120 C220 130 240 160 250 220" stroke="#facc15" stroke-width="5" fill="none"/>'
+    +'<g opacity="0">'+ein(0.4)+'<rect x="194" y="122" width="8" height="10" fill="#0f172a" transform="rotate(20 198 127)"/></g>'
+    +'<g filter="url(#hgrSch)"><rect x="176" y="112" width="22" height="12" rx="3" fill="#f8fafc" opacity=".9"/></g>'
+    +'<g opacity="0">'+ein(0.9)+T(262,90,'Markierung',OR,12,900)+T(262,106,'an der Nase?',OR,11,800)+'</g>';
+  MS[1]=D()+'<path d="M0 120 H140" stroke="#facc15" stroke-width="6"/><rect x="132" y="114" width="12" height="12" rx="2" fill="#fde047"/>'
+    +'<g filter="url(#hgrSch)"><rect x="144" y="104" width="100" height="32" rx="5" fill="url(#hgr4Glas)" stroke="#cbd5e1"/><rect x="146" y="107" width="40" height="26" fill="#fde68a" opacity="0"><animate attributeName="width" from="0" to="40" begin="0.6s" dur="1.6s" fill="freeze"/><animate attributeName="opacity" from="0" to=".8" begin="0.6s" dur=".2s" fill="freeze"/></rect>'
+    +'<g><animateTransform attributeName="transform" type="translate" from="0 0" to="40 0" begin="0.6s" dur="1.6s" fill="freeze"/><rect x="186" y="108" width="6" height="24" fill="#334155"/><rect x="192" y="117" width="68" height="6" fill="url(#hgrPlastik)"/><rect x="258" y="106" width="8" height="28" rx="2" fill="url(#hgrPlastik)"/></g></g>'
+    +T(190,70,'Magensaft aspirieren',TX,12,800);
+  MS[2]=D()+'<g filter="url(#hgrSch)"><rect x="60" y="80" width="200" height="30" rx="5" fill="#f8fafc"/></g>'
+    +['#ef4444','#f97316','#facc15','#84cc16','#22c55e','#0ea5e9'].map(function(c,i){ return '<rect x="'+(70+i*30)+'" y="132" width="24" height="16" rx="2" fill="'+c+'"/>'+T(82+i*30,162,(i*2+1),TX2,8,800); }).join('')
+    +'<rect x="68" y="84" width="40" height="22" rx="2" fill="#f97316" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="0.8s" dur="1s" fill="freeze"/></rect>'
+    +'<g opacity="0">'+ein(1.8)+T(160,46,'sauer = Magen',GR,14,900)+T(160,196,'Grenzwert nach Hausstandard',TX2,10,800)+'</g>';
+  MS[3]=D()+kopfSeite()+'<path d="M180 120 C220 130 240 160 250 220" stroke="#facc15" stroke-width="5" fill="none"/>'
+    +'<g opacity="0">'+ein(0.4)+'<rect x="196" y="34" width="116" height="54" rx="12" fill="rgba(248,113,113,.18)"/>'+T(254,58,'Lage unklar?',RT,12,900)+T(254,76,'nichts geben',RT,11,800)+'</g>'
+    +'<g opacity="0">'+ein(1.2)+T(254,110,'ärztlich abklären',TX,10.5,800)+T(254,124,'(z. B. Röntgen)',TX2,9.5,800)+'</g>';
+
+  /* ── MTPS ── */
+  function bein(strumpf,bis){ /* Unterschenkel + Fuß, Seitenansicht */
+    return '<g filter="url(#hgrSch)"><path d="M120 0 L170 0 C176 60 172 110 166 150 L168 176 C200 178 236 182 252 196 C258 204 252 212 240 212 L140 212 C126 212 118 200 120 186 L118 150 C110 100 112 50 120 0 Z" fill="url(#hgr4HautQ)"/></g>'
+      +(strumpf?'<path d="M120 '+(bis||0)+' L170 '+(bis||0)+' C176 60 172 110 166 150 L168 176 C200 178 236 182 252 196 C258 204 252 212 240 212 L140 212 C126 212 118 200 120 186 L118 150 C110 100 112 50 120 '+(bis||0)+' Z" fill="url(#hgr4Strumpf)" opacity=".95"/>':''); }
+  var MT=[];
+  MT[0]=D()+bein(false)+'<path d="M100 150 h90 M100 70 h90" stroke="'+OR+'" stroke-width="2" stroke-dasharray="5 4"/>'+T(240,74,'Wade',OR,12,900)+T(240,154,'Fessel',OR,12,900)+T(240,30,'nach Maß',TX,11,800);
+  MT[1]=D()+'<g filter="url(#hgrSch)"><rect x="10" y="120" width="300" height="40" rx="10" fill="url(#hgr4Bett)"/></g>'
+    +'<g filter="url(#hgrSch)"><rect x="196" y="106" width="110" height="20" rx="10" fill="url(#hgr4Hose)"/><rect x="70" y="96" width="130" height="34" rx="14" fill="url(#hgr4Kleid)"/><ellipse cx="50" cy="108" rx="22" ry="20" fill="url(#hgr4Haut)"/></g>'
+    +uhr(250,50,'morgens',0.3,2)+T(140,60,'vor dem Aufstehen',GR,13,900)+T(140,200,'Beine noch nicht geschwollen',TX2,10,800);
+  MT[2]=D()+'<g filter="url(#hgrSch)"><path d="M120 10 L190 10 L186 150 C186 170 170 182 150 182 C130 182 116 170 118 150 Z" fill="url(#hgr4Strumpf)"/>'
+    +'<path d="M120 10 L190 10 L188 70 L122 70 Z" fill="#c9b8a4"><animate attributeName="d" from="M120 10 L190 10 L188 20 L122 20 Z" to="M120 10 L190 10 L186 150 L118 150 Z" begin="0.4s" dur="1.6s" fill="freeze"/></path></g>'
+    +'<circle cx="152" cy="168" r="12" fill="#a8927a"/>'+T(250,170,'bis zur Ferse',TX,11,800)+T(250,186,'umstülpen',TX,11,800);
+  MT[3]=D()+bein(true,150)+'<g opacity="0">'+ein(0.8)+'<circle cx="138" cy="196" r="14" fill="none" stroke="'+GR+'" stroke-width="2.5"/>'+haken(100,196,0.2)+'</g>'+T(250,60,'Ferse genau',TX,12,900)+T(250,76,'an ihren Platz',TX,11,800);
+  MT[4]=D()+bein(false)+'<path d="M120 150 L170 150 L168 176 C200 178 236 182 252 196 C258 204 252 212 240 212 L140 212 C126 212 118 200 120 186 Z" fill="url(#hgr4Strumpf)"/>'
+    +'<path d="M120 150 L168 150 L166 150 L118 150 Z" fill="url(#hgr4Strumpf)"><animate attributeName="d" from="M120 150 L168 150 L166 150 L118 150 Z" to="M120 0 L170 0 C176 60 172 110 166 150 L118 150 C110 100 112 50 120 0 Z" begin="0.4s" dur="1.8s" fill="freeze"/></path>'
+    +'<g opacity="0">'+ein(2.4)+kreuz(262,60,0)+T(262,88,'nicht umschlagen',RT,10,800)+'</g>'+T(60,40,'faltenfrei',GR,13,900);
+  MT[5]=D()+liste(['Sitz','Haut / Druckstellen','Durchblutung']);
+
+  /* ── Transfer ── */
+  function rollstuhl(x,y){ return '<g transform="translate('+x+' '+y+')" filter="url(#hgrSch)"><circle cx="20" cy="70" r="34" fill="none" stroke="#475569" stroke-width="6"/><circle cx="20" cy="70" r="26" fill="none" stroke="#94a3b8" stroke-width="2"/>'
+    +'<rect x="-6" y="-30" width="10" height="70" rx="4" fill="#334155"/><rect x="-6" y="24" width="70" height="12" rx="4" fill="#1e293b"/><rect x="58" y="36" width="6" height="50" fill="#334155"/><circle cx="66" cy="96" r="8" fill="#475569"/></g>'; }
+  function sitzend(x,y,neig){ return '<g transform="translate('+x+' '+y+') rotate('+(neig||0)+' 0 40)" filter="url(#hgrSch)"><circle cx="0" cy="-34" r="16" fill="url(#hgr4Haut)"/><rect x="-16" y="-18" width="32" height="60" rx="14" fill="url(#hgr4Kleid)"/></g>'; }
+  var TR=[];
+  TR[0]=D()+'<rect x="0" y="196" width="320" height="24" fill="url(#hgr4Boden)"/><g filter="url(#hgrSch)"><rect x="10" y="110" width="130" height="30" rx="6" fill="url(#hgr4Bett)"/><rect x="20" y="140" width="10" height="56" fill="#64748b"/><rect x="120" y="140" width="10" height="56" fill="#64748b"/></g>'
+    +rollstuhl(200,96)+'<g opacity="0">'+ein(0.6)+haken(234,74,0)+T(272,58,'Bremsen fest',GR,10.5,800)+'</g><g opacity="0">'+ein(1.2)+T(272,40,'spitzer Winkel',TX,10.5,800)+'</g>';
+  TR[1]=D()+'<rect x="0" y="196" width="320" height="24" fill="url(#hgr4Boden)"/><g filter="url(#hgrSch)"><rect x="10" y="110" width="150" height="30" rx="6" fill="url(#hgr4Bett)"/></g>'
+    +sitzend(130,62,0)+'<g filter="url(#hgrSch)"><path d="M136 104 L150 104 L156 190" stroke="url(#hgr4Hose)" stroke-width="18" fill="none" stroke-linecap="round"/><rect x="146" y="186" width="30" height="10" rx="4" fill="#1e293b"/></g>'
+    +'<g opacity="0">'+ein(0.6)+T(250,120,'Füße fest',GR,12,900)+T(250,136,'auf dem Boden',GR,11,800)+'</g>';
+  TR[2]=D()+'<rect x="0" y="196" width="320" height="24" fill="url(#hgr4Boden)"/><g filter="url(#hgrSch)"><rect x="10" y="110" width="150" height="30" rx="6" fill="url(#hgr4Bett)"/></g>'
+    +'<g><animateTransform attributeName="transform" type="rotate" from="0 136 104" to="20 136 104" begin="0.3s" dur="1.2s" fill="freeze"/>'+sitzend(130,62,0)+'</g>'
+    +'<g filter="url(#hgrSch)"><path d="M136 104 L150 104 L156 190" stroke="url(#hgr4Hose)" stroke-width="18" fill="none" stroke-linecap="round"/></g>'
+    +'<g opacity="0">'+ein(1)+'<ellipse cx="128" cy="112" rx="14" ry="9" fill="url(#hgr4HautQ)" filter="url(#hgrSch)"/>'+T(84,170,'am Becken stützen',GR,10.5,800)+'</g>'
+    +'<g opacity="0">'+ein(1.6)+kreuz(262,60,0)+T(262,88,'nicht unter',RT,10,800)+T(262,102,'den Achseln',RT,10,800)+'</g>';
+  TR[3]=D()+'<rect x="0" y="196" width="320" height="24" fill="url(#hgr4Boden)"/>'+rollstuhl(190,96)
+    +'<g><animateTransform attributeName="transform" type="translate" values="0 0;60 -10;96 20" keyTimes="0;.5;1" begin="0.3s" dur="2s" fill="freeze"/>'+sitzend(110,70,0)+'</g>'
+    +'<path d="M120 40 a60 60 0 0 1 90 0" stroke="'+OR+'" stroke-width="3" fill="none"/><path d="M210 40 l-10 -2 l6 10 Z" fill="'+OR+'"/>'+T(64,70,'kleine Schritte',OR,11,900);
+
+  /* ── Atemtrainer (SMI) ── */
+  function trainer(kugelY,anim){ return '<g filter="url(#hgrSch)"><rect x="200" y="40" width="70" height="140" rx="10" fill="url(#hgr4Glas)" stroke="#cbd5e1"/><rect x="194" y="176" width="82" height="16" rx="6" fill="#0ea5e9"/></g>'
+    +[0,1,2,3,4].map(function(i){ return '<path d="M206 '+(60+i*24)+' h10" stroke="#475569"/>'; }).join('')
+    +'<circle cx="235" cy="'+kugelY+'" r="11" fill="#f97316">'+(anim||'')+'</circle>'
+    +'<path d="M200 184 C150 184 150 100 108 98" stroke="#93c5fd" stroke-width="7" fill="none"/>'; }
+  function oberkoerper(){ return '<g filter="url(#hgrSch)"><rect x="40" y="110" width="80" height="110" rx="26" fill="url(#hgr4Kleid)"/><circle cx="80" cy="84" r="28" fill="url(#hgr4Haut)"/></g>'; }
+  var AT=[];
+  AT[0]=D()+oberkoerper()+trainer(166)+T(80,30,'aufrecht sitzen',GR,12,900)+T(235,26,'senkrecht halten',TX2,10,800);
+  AT[1]=D()+oberkoerper()+trainer(166)+'<rect x="96" y="92" width="20" height="12" rx="4" fill="#60a5fa"/>'+T(80,30,'Lippen dicht',TX,12,900)+T(80,46,'um das Mundstück',TX2,10,800);
+  AT[2]=D()+oberkoerper()+trainer(166,'<animate attributeName="cy" from="166" to="62" begin="0.4s" dur="2.6s" fill="freeze"/>')
+    +'<g><animateTransform attributeName="transform" type="scale" values="1 1;1.06 1.06" begin="0.4s" dur="2.6s" fill="freeze" additive="sum"/></g>'+T(80,30,'langsam & tief',GR,13,900);
+  AT[3]=D()+oberkoerper()+trainer(62)+uhr(80,190,'≈ 3 s',0.3,3)+T(80,30,'oben kurz halten',TX,12,900);
+  AT[4]=D()+liste(['langsam ausatmen','kurz erholen','wiederholen nach Anordnung']);
+
+  /* ── Perfusor ── */
+  function pumpe(x,y,anzeige,b){ return '<g transform="translate('+x+' '+y+')"><g filter="url(#hgrSch)"><rect x="0" y="0" width="250" height="120" rx="14" fill="url(#hgr4Geraet)"/><rect x="12" y="12" width="226" height="36" rx="6" fill="#0b2239"/></g>'
+    +(anzeige?'<g opacity="0">'+ein(b||0.4)+'<text x="125" y="38" fill="#4ade80" font-size="20" font-weight="900" text-anchor="middle" font-family="DM Sans,sans-serif">'+anzeige+'</text></g>':'')
+    +'<rect x="12" y="58" width="226" height="50" rx="8" fill="#111827"/></g>'; }
+  function perfSpritze(x,y,anim){ return '<g transform="translate('+x+' '+y+')">'+(anim||'')+'<g filter="url(#hgrSch)"><rect x="0" y="0" width="150" height="26" rx="4" fill="url(#hgrGlas)" stroke="#e2e8f0"/><rect x="2" y="3" width="110" height="20" fill="#bfdbfe" opacity=".6"/>'
+    +'<rect x="112" y="2" width="8" height="22" fill="#334155"/><rect x="120" y="10" width="44" height="6" fill="url(#hgrPlastik)"/><rect x="164" y="2" width="6" height="22" rx="2" fill="url(#hgrPlastik)"/>'
+    +'<rect x="-10" y="9" width="10" height="8" fill="#cbd5e1"/></g></g>'; }
+  var PF=[];
+  PF[0]=D()+perfSpritze(70,96)+'<g opacity="0">'+ein(0.5)+'<rect x="78" y="70" width="90" height="20" rx="3" fill="#fef9c3"/>'+T(123,84,'Name · Wirkstoff · Dosis','#1c1917',7.5,900)+'</g>'
+    +T(160,40,'nach Anordnung aufziehen',TX,12,800)+T(160,160,'beschriften',GR,12,900);
+  PF[1]=D()+perfSpritze(150,96)+'<path d="M140 109 C100 109 60 130 10 130" stroke="#e2e8f0" stroke-width="4" fill="none" opacity=".6"/>'
+    +'<path d="M140 109 C100 109 60 130 10 130" stroke="#7dd3fc" stroke-width="2.5" fill="none" stroke-dasharray="160" stroke-dashoffset="160"><animate attributeName="stroke-dashoffset" from="160" to="0" begin="0.4s" dur="1.8s" fill="freeze"/></path>'
+    +'<g opacity="0">'+ein(2.2)+haken(60,70,0)+T(80,74,'luftfrei',GR,12,800,'start')+'</g>';
+  PF[2]=D()+pumpe(35,60)+perfSpritze(70,124,'<animateTransform attributeName="transform" type="translate" additive="sum" from="0 -60" to="0 0" begin="0.3s" dur="1s" fill="freeze"/>')
+    +'<g opacity="0">'+ein(1.4)+'<rect x="47" y="72" width="226" height="36" rx="6" fill="#0b2239"/>'+T(160,95,'Spritzentyp 50 ml ✓',GR,13,900)+'</g>';
+  PF[3]=D()+pumpe(35,60,'4,2 ml/h',0.6)+perfSpritze(70,124)+'<g opacity="0">'+ein(1.4)+T(160,40,'Laufrate laut Anordnung',TX,11.5,800)+T(160,206,'Vier-Augen-Prinzip',OR,11,900)+'</g>';
+  PF[4]=D()+liste(['Laufrate stimmt','Leitung frei','Patient beobachten']);
+
+  P.ersetze('fingertest',FT); P.ersetze('verband',VW); P.ersetze('magensonde',MS); P.ersetze('mtps',MT); P.ersetze('transfer',TR); P.ersetze('atemtrainer',AT); P.ersetze('perfusor',PF);
+})();
+</script>
 
 <!-- PLAN NRW: Gründer-Liste (01.11.2026, Wunsch P. Schenkelberger nach Anfrage eines zahlungsbereiten Nutzers; Entwurf, nur Admin bis Go)
      Karte im Screen „Hilfe & Support“ + Direktlink plan-nrw.de/?gruender (öffnet die Karte als Fenster).
