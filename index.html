@@ -28043,7 +28043,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    im Wissen-Raster (erscheint einzeln neben den Gruppen). Kein neuer pl_*-Key. GA `handgriff_start`, `handgriff_fertig`.
    Go = PL_HANDGRIFFE_PUBLIC=true (nach fachlicher Prüfung der Schritte). */
 (function(){
-  var PL_HANDGRIFFE_PUBLIC = false;
+  var PL_HANDGRIFFE_PUBLIC = true; // Go P. Schenkelberger 01.11.2026
   function an(){ try{ return PL_HANDGRIFFE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HANDGRIFFE_PUBLIC; } }
   function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
 
@@ -28243,7 +28243,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    Frage + Erklärung) und Hinweis-Karte in den Screens Notfallmanagement und Medizintechnik.
    Hängt an window.PL_HANDGRIFFE (Teil 1). Gleicher Schalter-Gedanke: PL_HANDGRIFFE2_PUBLIC. Kein neuer pl_*-Key. */
 (function(){
-  var PL_HANDGRIFFE2_PUBLIC = false;
+  var PL_HANDGRIFFE2_PUBLIC = true; // Go P. Schenkelberger 01.11.2026
   function an(){ try{ return PL_HANDGRIFFE2_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HANDGRIFFE2_PUBLIC; } }
   var HG=window.PL_HANDGRIFFE; if(!HG) return;
   window.plHG2An=an;
@@ -28412,7 +28412,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    Atemtrainer (SMI), Perfusor einspannen. Feld `neu3`, Schalter PL_HANDGRIFFE3_PUBLIC, Liste filtert über window.plHG3An.
    Verknüpfung wie Teil 2 (Quiz-Stichworte + Hinweis-Karten in Screens). Kein neuer pl_*-Key. */
 (function(){
-  var PL_HANDGRIFFE3_PUBLIC = false;
+  var PL_HANDGRIFFE3_PUBLIC = true; // Go P. Schenkelberger 01.11.2026
   function an(){ try{ return PL_HANDGRIFFE3_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HANDGRIFFE3_PUBLIC; } }
   var HG=window.PL_HANDGRIFFE; if(!HG) return; window.plHG3An=an;
   var L='#cbd5e1', F='#7dd3fc', A='#fb923c', G='#4ade80', R='#f87171', HAUT='#fcd9b6', HAUT2='#f5c79f', STOFF='#64748b';
