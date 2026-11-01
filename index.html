@@ -29555,7 +29555,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    berührt dessen Logik NICHT. Kein neuer pl_*-Key (nutzt pl_neu_geoeffnet).
    Go = PL_NEU2_PUBLIC=true. */
 (function(){
-  var PL_NEU2_PUBLIC=false;
+  var PL_NEU2_PUBLIC=true;
   function an(){ if(PL_NEU2_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   var MAX=4;
   function pdfZahl(){ try{ return (window.PL_PDF_LISTE||[]).length||''; }catch(e){ return ''; } }
