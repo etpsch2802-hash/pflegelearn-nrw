@@ -29317,7 +29317,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   /* ── A) Im Bett ── */
   var BETT={ id:'gp-bett', gp:true, t:'Ganzkörperwaschung im Bett', s:'Für Menschen, die das Bett nicht verlassen können', farbe:'#38bdf8', schritte:[
     { t:'Vorbereiten & ansprechen', x:'Person informieren und <b>Einverständnis</b> einholen, Wünsche und Gewohnheiten erfragen (z. B. Pflegemittel, Reihenfolge, gleichgeschlechtliche Pflege). Fenster schließen, Raum warm, <b>Sichtschutz</b>.', svg: D()+bett()+liegt()+sichtschutz(220)+'<g opacity="0">'+ein(0.6)+'<rect x="98" y="26" width="112" height="34" rx="14" fill="#f8fafc"/><path d="M112 60 l-8 12 l18 -12 Z" fill="#f8fafc"/>'+T(154,48,'Darf ich Sie waschen?','#0f172a',9.5,800)+'</g>'+gesetz('2 SGB XI: Selbstbestimmung & Wünsche') },
-    { t:'Material & Arbeitshöhe', x:'Material vollständig bereitlegen. Bett auf <b>Arbeitshöhe</b>, Bremsen fest. <b>Hände desinfizieren</b>, Handschuhe bei Kontakt mit Ausscheidungen, Schleimhaut oder nicht intakter Haut.', svg: D()+bett()+liegt()+'<g filter="url(#hgrSch)"><rect x="230" y="42" width="80" height="12" rx="3" fill="#94a3b8"/></g>'+schuessel(268,40,true).replace('translate(268 40)','translate(262 28)')
+    { t:'Material & Arbeitshöhe', x:'Material vollständig bereitlegen. Bett auf <b>Arbeitshöhe</b>, Bremsen fest. <b>Hände desinfizieren</b>, Handschuhe für Intimbereich, Achseln, Füße, Wunden und Hautkrankheiten (siehe „Material, Waschlappen & Handschuhe“).', svg: D()+bett()+liegt()+'<g filter="url(#hgrSch)"><rect x="230" y="42" width="80" height="12" rx="3" fill="#94a3b8"/></g>'+schuessel(268,40,true).replace('translate(268 40)','translate(262 28)')
         +'<g opacity="0">'+ein(0.8)+T(100,40,'Arbeitshöhe',GR,12,900)+'<path d="M100 50 V108" stroke="'+GR+'" stroke-width="2" stroke-dasharray="4 3"/></g><g opacity="0">'+ein(1.4)+haken(30,200,0)+T(46,204,'Bremse',GR,10,800,'start')+'</g>' },
     { t:'Wasser prüfen', x:'Wassertemperatur mit dem <b>Thermometer</b> prüfen (meist um 37 °C, nach Wunsch der Person). Nie heißer als angenehm – <b>Verbrühungsgefahr</b>, besonders bei Sensibilitätsstörungen (z. B. Diabetes).', svg: D()+schuessel(160,130,true).replace('translate(160 130)','translate(160 130) scale(2)')+'<g opacity="0">'+ein(0.6)+'<rect x="206" y="40" width="96" height="36" rx="18" fill="rgba(56,189,248,.16)"/>'+T(254,64,'ca. 37 °C',GR,15,900)+'</g><g opacity="0">'+ein(1.4)+T(254,96,'Wunsch der Person',TX2,10,800)+'</g>' },
     { t:'Selbst machen lassen', x:'<b>Ressourcen nutzen:</b> Die Person wäscht selbst, was sie kann (z. B. Gesicht, Arme). Du leitest an und übernimmst nur, was nötig ist – das ist <b>aktivierende Pflege</b>.', svg: D()+bett()+liegt()+'<g><animateTransform attributeName="transform" type="translate" values="0 0;6 4;0 0" dur="1.2s" repeatCount="3" begin="0.4s"/>'+lappen(78,90,'','#60a5fa')+'</g>'+handS(96,98,-70,false)+gesetz('28 Abs. 4 SGB XI: aktivierende Pflege') },
@@ -29378,16 +29378,59 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
            {f:'Was gehört zum sicheren Duschen?', o:['Duschstuhl mit Bremse und Antirutschmatte','Ein offenes Fenster','Sehr heißes Wasser','Stehen ohne Halt'], k:0},
            {f:'Wonach reinigst du den Duschstuhl?', o:['Nach Gefühl','Nach dem Hygieneplan der Einrichtung','Nur einmal im Monat','Gar nicht'], k:1} ]};
 
-  var GP=[BETT,KANTE,BECKEN,DUSCHE];
+
+  /* ── 0) Material & Handschuhe ── */
+  function koerperFront(){ return '<g filter="url(#hgrSch)"><circle cx="160" cy="34" r="20" fill="url(#gpHaut)"/><path d="M132 58 Q160 50 188 58 L196 120 L188 130 L132 130 L124 120 Z" fill="url(#gpHaut)"/>'
+    +'<path d="M128 62 L100 120 L108 124 L136 72 Z" fill="url(#gpHaut)"/><path d="M192 62 L220 120 L212 124 L184 72 Z" fill="url(#gpHaut)"/>'
+    +'<path d="M134 128 L186 128 L182 150 L138 150 Z" fill="#cbd5e1"/><path d="M140 148 L156 148 L152 200 L140 200 Z" fill="url(#gpHaut)"/><path d="M164 148 L180 148 L180 200 L168 200 Z" fill="url(#gpHaut)"/>'
+    +'<ellipse cx="146" cy="204" rx="12" ry="5" fill="url(#gpHaut)"/><ellipse cx="174" cy="204" rx="12" ry="5" fill="url(#gpHaut)"/></g>'; }
+  function zone(x,y,r,c,b){ return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+c+'" opacity="0" stroke="#fff" stroke-opacity=".5"><animate attributeName="opacity" from="0" to=".6" begin="'+b+'s" dur=".4s" fill="freeze"/></circle>'; }
+  function stapel(x,farbe,n,txt,b){ var g=''; for(var i=0;i<n;i++) g+='<rect x="'+(x-18)+'" y="'+(150-i*9)+'" width="36" height="12" rx="4" fill="'+farbe+'" stroke="#0f172a" stroke-opacity=".25"/>';
+    return '<g opacity="0">'+ein(b)+'<g filter="url(#hgrSch)">'+g+'</g>'+T(x,182,txt,TX,9.5,800)+T(x,196,n+'×',GR,12,900)+'</g>'; }
+  var MAT={ id:'gp-material', gp:true, t:'Material, Waschlappen & Handschuhe', s:'Was du brauchst – und wann Handschuhe Pflicht sind', farbe:'#fbbf24', schritte:[
+    { t:'Material vollständig richten', x:'Vorher alles bereitlegen, damit du die Person <b>nicht allein lassen</b> musst: Waschschüssel, Wasserthermometer, Waschlappen, Handtücher, pH-hautneutrale Waschlotion, Hautpflege nach Hautzustand, Einmalhandschuhe, ggf. Schutzschürze, frische Kleidung und Wäsche, Abwurf und Wäschesack.',
+      svg: D()+schuessel(70,120,true)+'<g filter="url(#hgrSch)"><rect x="128" y="96" width="56" height="18" rx="5" fill="#60a5fa"/><rect x="128" y="118" width="56" height="18" rx="5" fill="#f8fafc"/><rect x="196" y="78" width="22" height="58" rx="6" fill="url(#hgrPlastik)"/><rect x="226" y="98" width="26" height="38" rx="6" fill="#fde68a"/><path d="M262 108 q14 -20 30 0 v28 h-30 Z" fill="url(#gpBlau)"/></g>'
+        +T(160,40,'alles in Reichweite',GR,13,900)+T(70,170,'Schüssel + Thermometer',TX2,9,800)+T(156,150,'Lappen / Tuch',TX2,9,800)+T(224,150,'Pflegemittel',TX2,9,800)+T(277,166,'Handschuhe',TX2,9,800) },
+    { t:'Waschlappen: wie viele?', x:'Üblich (Hausstandard beachten): <b>1</b> Waschlappen für Gesicht und Oberkörper, <b>1</b> für Beine und Rücken, <b>1 eigener</b> für die Füße (Pilz) und für den Intimbereich <b>mindestens 2 Einmalwaschlappen</b> – vorn und Gesäß getrennt, bei Verschmutzung für jeden Wischvorgang einen neuen. Dazu getrennte Handtücher für oben, Füße und Intimbereich.',
+      svg: D()+stapel(50,'#60a5fa',1,'Gesicht/Oben',0.3)+stapel(118,'#818cf8',1,'Beine/Rücken',0.7)+stapel(186,'#2dd4bf',1,'Füße',1.1)+stapel(258,'#f9a8d4',2,'Intim (Einmal)',1.5)
+        +'<g opacity="0">'+ein(2)+'<rect x="40" y="26" width="240" height="36" rx="18" fill="rgba(74,222,128,.14)"/>'+T(160,49,'mind. 5 Waschlappen · 3 Handtücher',GR,11.5,900)+'</g>' },
+    { t:'Wann Handschuhe?', x:'<b>Ohne Handschuhe</b> bei intakter Haut: Gesicht, Arme, Oberkörper. <b>Mit Handschuhen:</b> Intimbereich und Gesäß, Achseln, Füße (Pilzgefahr), bei <b>Wunden</b>, <b>Hautkrankheiten</b> (z. B. Pilz, Ekzem, Krätze), Ausscheidungen, Blut, Schleimhaut (Mundpflege) und bei multiresistenten Erregern.',
+      svg: D()+koerperFront()+zone(160,34,16,'#4ade80',0.3)+zone(160,92,24,'#4ade80',0.5)+zone(112,104,10,'#4ade80',0.5)+zone(208,104,10,'#4ade80',0.5)
+        +zone(134,66,9,'#fb923c',1.1)+zone(186,66,9,'#fb923c',1.1)+zone(160,140,14,'#fb923c',1.4)+zone(146,204,10,'#fb923c',1.7)+zone(174,204,10,'#fb923c',1.7)
+        +'<g opacity="0">'+ein(0.5)+'<circle cx="236" cy="40" r="7" fill="#4ade80"/>'+T(250,44,'ohne',TX,11,800,'start')+'</g><g opacity="0">'+ein(1.1)+'<circle cx="236" cy="64" r="7" fill="#fb923c"/>'+T(250,68,'mit',TX,11,800,'start')+T(250,82,'Handschuhen',TX,11,800,'start')+'</g>'
+        +'<g opacity="0">'+ein(2.1)+T(262,150,'+ Wunden',OR,11,900)+T(262,166,'+ Hautkrankheiten',OR,11,900)+T(262,182,'+ Mundpflege',OR,11,900)+'</g>' },
+    { t:'Wechseln: unrein → rein', x:'Nach Intimbereich, Füßen oder Wunden <b>Handschuhe ausziehen, Hände desinfizieren</b> und erst dann sauber weiterarbeiten. Handschuhe nie von unrein zu rein mitnehmen – sie <b>ersetzen die Händedesinfektion nicht</b>.',
+      svg: D()+'<g opacity="0">'+ein(0.3)+'<path d="M40 110 q20 -40 40 0 v40 h-40 Z" fill="url(#gpBlau)" filter="url(#hgrSch)"/>'+T(60,176,'unrein',OR,11,900)+'</g>'
+        +'<g opacity="0">'+ein(0.9)+'<path d="M100 130 h30" stroke="'+GR+'" stroke-width="3"/><path d="M130 130 l-8 -5 v10 Z" fill="'+GR+'"/></g>'
+        +'<g opacity="0">'+ein(1.3)+'<g filter="url(#hgrSch)"><rect x="140" y="80" width="44" height="76" rx="9" fill="url(#hgrPlastik)"/><rect x="146" y="104" width="32" height="26" rx="4" fill="#0ea5e9"/></g>'+T(162,176,'Hände desinf.',TX,10,900)+'</g>'
+        +'<g opacity="0">'+ein(1.9)+'<path d="M196 130 h30" stroke="'+GR+'" stroke-width="3"/><path d="M226 130 l-8 -5 v10 Z" fill="'+GR+'"/>'+T(266,176,'rein',GR,11,900)+'<path d="M246 110 q20 -40 40 0 v40 h-40 Z" fill="url(#gpHaut)" filter="url(#hgrSch)"/></g>'
+        +gesetz('TRBA 250 & KRINKO: Händedesinfektion bleibt Pflicht') },
+    { t:'Schürze, Abwurf, Wäsche', x:'Bei Gefahr der <b>Durchfeuchtung</b> (Duschen, Inkontinenz) eine Schutzschürze tragen. Einmalwaschlappen und Handschuhe direkt entsorgen, Wäsche in den <b>Wäschesack</b> – nie auf den Boden. Schüssel nach Hygieneplan reinigen.',
+      svg: D()+'<g filter="url(#hgrSch)"><path d="M60 50 h60 l10 120 h-80 Z" fill="#e0f2fe" opacity=".9"/><path d="M70 50 q20 -20 40 0" stroke="#e0f2fe" stroke-width="3" fill="none"/></g>'+T(90,190,'Schürze',TX,10.5,900)
+        +'<g filter="url(#hgrSch)"><rect x="150" y="100" width="60" height="76" rx="8" fill="#334155"/><rect x="146" y="92" width="68" height="12" rx="4" fill="#475569"/></g>'+T(180,190,'Abwurf',TX,10.5,900)
+        +'<g filter="url(#hgrSch)"><path d="M234 90 h60 l-6 86 h-48 Z" fill="#cbd5e1"/></g>'+T(264,190,'Wäschesack',TX,10.5,900)
+        +'<g><animateTransform attributeName="transform" type="translate" values="180 30;180 96" begin="0.5s" dur=".8s" fill="freeze"/><rect x="-10" y="-6" width="20" height="12" rx="3" fill="#f9a8d4"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.85;1" begin="0.5s" dur=".9s" fill="freeze"/></g>' }
+  ], merke:'Handschuhe bei Intimbereich, Achseln, Füßen, Wunden, Hautkrankheiten und Schleimhaut – Wechsel immer von unrein zu rein mit Händedesinfektion.',
+    quiz:[ {f:'Wo trägst du bei intakter Haut meist KEINE Handschuhe?', o:['Intimbereich','Gesicht und Arme','Füße','Bei einer Wunde'], k:1},
+           {f:'Wie viele Einmalwaschlappen nimmst du mindestens für den Intimbereich?', o:['Keinen','Einen für alles','Mindestens 2 (vorn und Gesäß getrennt)','Den vom Gesicht'], k:2},
+           {f:'Was tust du nach der Intimpflege, bevor du sauber weiterarbeitest?', o:['Mit den Handschuhen weitermachen','Handschuhe aus, Hände desinfizieren','Nur Handschuhe abwischen','Nichts'], k:1} ]};
+
+  var GP=[MAT,BETT,KANTE,BECKEN,DUSCHE];
   GP.forEach(function(h){ h.schritte.forEach(function(st){ st.svg='<g class="hgr">'+st.svg+'</g>'; }); if(!HG.some(function(x){ return x.id===h.id; })) HG.push(h); });
 
   /* Rubrik-Screen */
+  var KURZ='<div style="display:grid;gap:10px;margin-bottom:14px">'
+    +'<div style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.35);border-radius:14px;padding:14px 16px"><div style="font-weight:800;color:#fb923c;margin-bottom:6px">🧤 Handschuhe – wann?</div>'
+    +'<div style="font-size:13px;color:var(--text2);line-height:1.55"><b>Mit:</b> Intimbereich & Gesäß, Achseln, Füße, Wunden, Hautkrankheiten (Pilz, Ekzem, Krätze), Ausscheidungen, Blut, Schleimhaut/Mundpflege, multiresistente Erreger.<br><b>Ohne</b> (bei intakter Haut): Gesicht, Arme, Oberkörper.<br>Wechsel von unrein zu rein immer mit <b>Händedesinfektion</b>.</div></div>'
+    +'<div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.35);border-radius:14px;padding:14px 16px"><div style="font-weight:800;color:#38bdf8;margin-bottom:6px">🧽 Waschlappen & Material</div>'
+    +'<div style="font-size:13px;color:var(--text2);line-height:1.55"><b>Waschlappen (üblich):</b> 1× Gesicht/Oberkörper · 1× Beine/Rücken · 1× Füße · mind. 2× Einmal für den Intimbereich (vorn/Gesäß getrennt). <b>Handtücher:</b> oben · Füße · Intimbereich.<br>'
+    +'<b>Außerdem:</b> Waschschüssel, Wasserthermometer, pH-hautneutrale Waschlotion, Hautpflege nach Hautzustand, Einmalhandschuhe, ggf. Schutzschürze, Mundpflege-Set (Zahnbürste, Becher, Prothesendose), Kamm, Rasierer, frische Kleidung und Wäsche, Inkontinenzmaterial, Bettschutz, Abwurf, Wäschesack, Händedesinfektion.<br><span style="color:var(--text3)">Genaue Anzahl und Material nach Hausstandard/Hygieneplan.</span></div></div></div>';
   var RECHT='<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px">'
     +'<div style="font-weight:800;color:#fbbf24;margin-bottom:6px">§ Rechtlicher Rahmen</div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text2);line-height:1.55">'
     +'<li><b>Würde & Selbstbestimmung</b> (Art. 1 GG, § 2 SGB XI): Wünsche berücksichtigen – auch den Wunsch nach gleichgeschlechtlicher Pflege, soweit möglich.</li>'
     +'<li><b>Aktivierende Pflege</b> (§ 28 Abs. 4 SGB XI): vorhandene Fähigkeiten erhalten und fördern.</li>'
     +'<li><b>Stand des Wissens</b> (§ 11 SGB XI): Expertenstandards (z. B. Dekubitus, Sturz) beachten – in der Langzeitpflege über § 113a SGB XI verbindlich.</li>'
-    +'<li><b>Hygiene</b> (§§ 23, 36 IfSG): Händedesinfektion und Hygieneplan der Einrichtung.</li>'
+    +'<li><b>Hygiene</b> (§§ 23, 36 IfSG, KRINKO-Empfehlung Händehygiene): Händedesinfektion und Hygieneplan der Einrichtung. <b>Handschuhe</b> als Schutz für dich: TRBA 250 (Arbeitsschutz).</li>'
     +'<li><b>Freiheitsentziehende Maßnahmen</b> wie Bettgitter oder Gurt nur mit Einwilligung oder Genehmigung des Betreuungsgerichts (§ 1831 BGB).</li>'
     +'<li><b>Vorbehaltene Tätigkeiten</b> (§ 4 PflBG): Pflegebedarf erheben, Pflege planen und evaluieren ist Aufgabe der Pflegefachperson. Die Körperpflege selbst darf delegiert werden.</li>'
     +'<li><b>Dokumentation</b> nach Hausstandard: Hautzustand, Ressourcen, Besonderheiten.</li></ul>'
@@ -29395,9 +29438,9 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   function render(){
     var c=document.getElementById('grundpflege-content'); if(!c) return;
     c.innerHTML=(PL_GRUNDPFLEGE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · fachlich prüfen</div>')
-      +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Körperpflege Schritt für Schritt, mit Animation – an vier Orten.</p>'
+      +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Körperpflege Schritt für Schritt, mit Animation – erst das Material, dann an vier Orten.</p>'
       +GP.map(function(h){ return '<button class="hg-card" onclick="plGrundpflegeOeffnen(\''+h.id+'\')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('')
-      +'<div style="height:10px"></div>'+RECHT; }
+      +'<div style="height:10px"></div>'+KURZ+RECHT; }
   var ausGP=false;
   window.plGrundpflegeOeffnen=function(id){ ausGP=true; ga('grundpflege_open',{id:id}); window.plHandgriffOeffnen(id); };
   var origHG=window.plHandgriff; window.plHandgriff=function(i){ ausGP=!!(HG[i]&&HG[i].gp); return origHG.apply(this,arguments); };
