@@ -1764,7 +1764,8 @@
   {
    "datum": "2026-11-01",
    "format": "mitmach-umfrage",
-   "thema": "Aktueller Einsatz (01.11. Zusatz)"
+   "thema": "Aktueller Einsatz (01.11. Zusatz)",
+   "aufgeloest": "2026-11-01"
   }
  ]
 }
