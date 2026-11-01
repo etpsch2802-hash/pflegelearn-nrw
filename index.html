@@ -662,7 +662,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
   <script src="/data/quiz-fragen.js"></script>
   <script src="/data/klausur-faelle.js"></script>
   <script src="/data/klausur-grossfaelle.js"></script>
-<style id="pl-ekg-css">.pl-ekg{position:relative;width:100%;height:60px;margin:0 auto;overflow:visible;display:block}.pl-ekg svg{width:100%;height:100%;overflow:visible;display:block}.pl-ekg__base,.pl-ekg__scan{fill:none;stroke:var(--accent,#38bdf8);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.pl-ekg__base{opacity:.22;stroke-dasharray:1000;stroke-dashoffset:1000;animation:pl-ekg-draw 1.9s ease-out .15s forwards}.pl-ekg__scan{opacity:0;filter:drop-shadow(0 0 6px rgba(var(--accent-rgb),.55));stroke-dasharray:26 974;stroke-dashoffset:1000;animation:pl-ekg-scan 2.6s linear 2s infinite}@keyframes pl-ekg-draw{to{stroke-dashoffset:0}}@keyframes pl-ekg-scan{0%{stroke-dashoffset:1000;opacity:0}8%{opacity:1}92%{opacity:1}100%{stroke-dashoffset:0;opacity:0}}.pl-ekg--slim{height:34px;opacity:.8}.pl-ekg--hero{height:42px;margin:8px auto 4px}@media(prefers-reduced-motion:reduce){.pl-ekg__base{stroke-dashoffset:0;opacity:.7;animation:none}.pl-ekg__scan{display:none}}</style>
+<style id="pl-ekg-css">.pl-ekg{position:relative;width:100%;height:60px;margin:0 auto;overflow:visible;display:block}.pl-ekg svg{width:100%;height:100%;overflow:visible;display:block}.pl-ekg__base,.pl-ekg__scan{fill:none;stroke:var(--accent,#38bdf8);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}.pl-ekg__base{opacity:.5;stroke-dasharray:1000;stroke-dashoffset:1000;animation:pl-ekg-draw 1.9s ease-out .15s forwards}.pl-ekg__scan{opacity:0;filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.8));stroke-width:4;stroke-dasharray:70 930;stroke-dashoffset:1000;animation:pl-ekg-scan 6s linear 2s infinite}@keyframes pl-ekg-draw{to{stroke-dashoffset:0}}@keyframes pl-ekg-scan{0%{stroke-dashoffset:1000;opacity:0}8%{opacity:1}92%{opacity:1}100%{stroke-dashoffset:0;opacity:0}}.pl-ekg--slim{height:44px;opacity:1}.pl-ekg--hero{height:42px;margin:8px auto 4px}@media(prefers-reduced-motion:reduce){.pl-ekg__base{stroke-dashoffset:0;opacity:.7;animation:none}.pl-ekg__scan{display:none}}</style>
 </head>
 <body>
 
@@ -28185,7 +28185,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     aktuell=null; var b=box(); if(!b) return;
     b.innerHTML=(PL_HANDGRIFFE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · Schritte fachlich prüfen</div>')
       +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Schritt für Schritt, mit Animation. Danach 3 kurze Fragen.</p>'
-      +HG.map(function(h,i){ if(h.neu2 && !(window.plHG2An && window.plHG2An())) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+      +HG.map(function(h,i){ if((h.neu2 && !(window.plHG2An && window.plHG2An())) || (h.neu3 && !(window.plHG3An && window.plHG3An()))) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
   }
   function zeige(){
     var h=aktuell, b=box(); if(!h||!b) return;
@@ -28405,5 +28405,192 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<script>
+/* ══ HANDGRIFFE ANIMIERT – Teil 3 (01.11.2026, Wunsch P. Schenkelberger „so viele wie möglich“; Entwurf, nur Admin bis Go) ══
+   +10 Handgriffe: Stabile Seitenlage, Puls messen, Fingertest & 30°-Lagerung, Aseptischer Verbandwechsel,
+   Endotracheales Absaugen, Magensonde Lagekontrolle, MTPS anziehen, Transfer Bett → Rollstuhl,
+   Atemtrainer (SMI), Perfusor einspannen. Feld `neu3`, Schalter PL_HANDGRIFFE3_PUBLIC, Liste filtert über window.plHG3An.
+   Verknüpfung wie Teil 2 (Quiz-Stichworte + Hinweis-Karten in Screens). Kein neuer pl_*-Key. */
+(function(){
+  var PL_HANDGRIFFE3_PUBLIC = false;
+  function an(){ try{ return PL_HANDGRIFFE3_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HANDGRIFFE3_PUBLIC; } }
+  var HG=window.PL_HANDGRIFFE; if(!HG) return; window.plHG3An=an;
+  var L='#cbd5e1', F='#7dd3fc', A='#fb923c', G='#4ade80', R='#f87171', HAUT='#fcd9b6', HAUT2='#f5c79f', STOFF='#64748b';
+  function a(cls,d,extra){ return ' class="'+cls+'" style="animation-delay:'+(d||0)+'s;'+(extra||'')+'"'; }
+  function txt(x,y,t,c,s,w){ return '<text x="'+x+'" y="'+y+'" fill="'+(c||L)+'" font-size="'+(s||13)+'" font-weight="'+(w||700)+'" text-anchor="middle" font-family="DM Sans,sans-serif">'+t+'</text>'; }
+  function haken(x,y,d){ return '<g'+a('hg-pop',d)+'><circle cx="'+x+'" cy="'+y+'" r="11" fill="'+G+'"/><path d="M'+(x-5)+' '+y+' l4 4 l7 -8" stroke="#06281a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>'; }
+  function kreuz(x,y,d){ return '<g'+a('hg-pop',d)+'><circle cx="'+x+'" cy="'+y+'" r="11" fill="'+R+'"/><path d="M'+(x-5)+' '+(y-5)+' l10 10 M'+(x+5)+' '+(y-5)+' l-10 10" stroke="#3b0a0a" stroke-width="2.6" stroke-linecap="round"/></g>'; }
+  function uhr(x,y,t,d){ return '<g><circle cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="#33506b" stroke-width="5"/><circle cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="'+G+'" stroke-width="5" stroke-dasharray="126" stroke-dashoffset="126" transform="rotate(-90 '+x+' '+y+')"'+a('hg-timer',d||0)+'/>'+txt(x,y+5,t,L,12)+'</g>'; }
+  function liste(z,d){ return z.map(function(t,i){ return haken(70,40+i*38,(d||0.3)+i*0.45)+'<g'+a('hg-pop',(d||0.3)+i*0.45)+'><text x="92" y="'+(45+i*38)+'" fill="'+L+'" font-size="15" font-weight="700" font-family="DM Sans,sans-serif">'+t+'</text></g>'; }).join(''); }
+  /* Person liegend (Rücken), Kopf links */
+  function liegend(){ return '<rect x="30" y="150" width="270" height="12" rx="6" fill="#33506b"/><circle cx="55" cy="128" r="20" fill="'+HAUT+'"/><rect x="78" y="114" width="130" height="34" rx="16" fill="'+STOFF+'"/><rect x="205" y="120" width="90" height="24" rx="12" fill="#475569"/>'; }
+  function wunde(x,y){ return '<ellipse cx="'+x+'" cy="'+y+'" rx="26" ry="12" fill="#b91c1c" opacity=".75"/><ellipse cx="'+x+'" cy="'+y+'" rx="38" ry="20" fill="none" stroke="#fca5a5" stroke-width="2" stroke-dasharray="4 3"/>'; }
+  function spritze(x,y,w){ return '<g><rect x="'+x+'" y="'+y+'" width="'+(w||150)+'" height="30" rx="5" fill="#e2e8f0"/><rect x="'+(x+8)+'" y="'+(y+6)+'" width="'+((w||150)*0.6)+'" height="18" fill="'+F+'" opacity=".6"/><rect x="'+(x+(w||150))+'" y="'+(y+11)+'" width="14" height="8" fill="#94a3b8"/></g>'; }
+
+  var NEU=[
+    { id:'seitenlage', t:'Stabile Seitenlage', s:'Bewusstlos, aber normale Atmung', farbe:'#f97316', schritte:[
+      { t:'Wann?', x:'Person ist <b>nicht ansprechbar</b>, atmet aber <b>normal</b>. Notruf veranlassen.', svg: liegend()+txt(160,60,'bewusstlos + Atmung normal',G,15)+'<path d="M55 100 q8 -12 16 0" stroke="'+F+'" stroke-width="3" fill="none" class="hg-rubv"/>' },
+      { t:'Nahen Arm anwinkeln', x:'Den <b>nahen Arm</b> rechtwinklig nach oben legen, Handfläche nach oben.', svg: liegend()+'<g'+a('hg-pop',0.4)+'><rect x="100" y="70" width="14" height="50" rx="7" fill="'+HAUT2+'"/></g>'+txt(107,60,'90°',A,14,800) },
+      { t:'Fernen Arm zur Wange', x:'Den <b>fernen Arm</b> über die Brust führen und den Handrücken an die <b>nahe Wange</b> halten.', svg: liegend()+'<g'+a('hg-down',0.3)+'><rect x="70" y="100" width="60" height="14" rx="7" fill="'+HAUT2+'"/></g>'+txt(160,70,'Hand an die Wange',L,13) },
+      { t:'Fernes Bein anwinkeln', x:'Das <b>ferne Bein</b> am Knie anwinkeln, der Fuß bleibt auf dem Boden.', svg: liegend()+'<g'+a('hg-pop',0.4)+'><path d="M215 132 L250 90 L290 132" stroke="#475569" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>' },
+      { t:'Zu dir drehen', x:'Am <b>Knie und an der Schulter</b> fassen und die Person zu dir auf die Seite drehen.', svg:'<g class="hg-dreh" style="transform-origin:160px 150px">'+liegend()+'</g>'+'<path d="M260 60 a60 60 0 0 1 -40 50" stroke="'+A+'" stroke-width="4" fill="none"/><path d="M220 110 l2 -14 l10 8" fill="'+A+'"/>' },
+      { t:'Kopf überstrecken', x:'Kopf <b>überstrecken</b>, Mund leicht nach unten öffnen, damit Flüssigkeit abfließen kann. Oberes Bein so legen, dass Hüfte und Knie rechtwinklig sind.', svg:'<circle cx="70" cy="110" r="22" fill="'+HAUT+'"/><path d="M60 128 q10 8 20 0" stroke="#b45309" stroke-width="3" fill="none"/><rect x="92" y="96" width="140" height="40" rx="18" fill="'+STOFF+'"/><path d="M232 116 L268 116 L268 150" stroke="#475569" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M55 150 q-10 20 5 30" stroke="'+F+'" stroke-width="3" fill="none"'+a('hg-pop',0.6)+'/>'+txt(240,70,'90° Hüfte & Knie',A,13) },
+      { t:'Atmung überwachen', x:'Bis Hilfe kommt die <b>Atmung regelmäßig prüfen</b>. Hört sie auf: sofort Reanimation.', svg: uhr(160,100,'prüfen',0.2)+txt(160,170,'Atmung weg → Reanimation',R,15) }
+    ], merke:'Seitenlage nur bei normaler Atmung – sonst Reanimation. Mund ist der tiefste Punkt.',
+      quiz:[ {f:'Wann legst du in die stabile Seitenlage?', o:['Bewusstlos ohne Atmung','Bewusstlos mit normaler Atmung','Wach mit Schmerzen','Immer nach einem Sturz'], k:1},
+             {f:'Was ist der tiefste Punkt?', o:['Der Mund','Die Füße','Das Becken','Der Hinterkopf'], k:0},
+             {f:'Die Atmung setzt aus. Was tust du?', o:['Weiter warten','Wasser geben','Sofort Reanimation','Auf den Rücken und schlafen lassen'], k:2} ]},
+    { id:'puls', t:'Puls messen', s:'An der A. radialis: Frequenz, Rhythmus, Qualität', farbe:'#f43f5e', schritte:[
+      { t:'Stelle finden', x:'Puls an der <b>Speichenarterie</b> (A. radialis) tasten – daumenseitig am Handgelenk.', svg:'<rect x="40" y="90" width="240" height="60" rx="30" fill="'+HAUT+'"/><circle cx="220" cy="105" r="8" fill="'+R+'" class="hg-puls"/>'+txt(220,80,'daumenseitig',A,13) },
+      { t:'Mit 2–3 Fingern', x:'Mit <b>Zeige-, Mittel- und Ringfinger</b> leicht auflegen. <b>Nicht mit dem Daumen</b> – der hat einen eigenen Puls.', svg:'<rect x="40" y="110" width="240" height="60" rx="30" fill="'+HAUT+'"/><g'+a('hg-down',0.2)+'>'+[0,1,2].map(function(i){ return '<rect x="'+(190+i*18)+'" y="60" width="14" height="56" rx="7" fill="'+HAUT2+'"/>'; }).join('')+'</g>'+kreuz(80,70,1)+txt(80,50,'Daumen',R,12) },
+      { t:'Zählen', x:'Bei regelmäßigem Puls <b>30 Sekunden</b> zählen und × 2. Bei <b>unregelmäßigem</b> Puls volle <b>60 Sekunden</b>.', svg: uhr(110,100,'30 s',0)+txt(110,160,'× 2',G,18,800)+uhr(230,100,'60 s',0.4)+txt(230,160,'unregelmäßig',A,13) },
+      { t:'Beurteilen', x:'<b>Frequenz</b> (Erwachsene in Ruhe ca. 60–100/min), <b>Rhythmus</b> (regelmäßig?) und <b>Qualität</b> (kräftig, schwach, fadenförmig).', svg:'<path d="M20 120 h40 l10 -40 l12 70 l10 -30 h40 l10 -40 l12 70 l10 -30 h40 l10 -40 l12 70 l10 -30 h50" fill="none" stroke="'+G+'" stroke-width="3" stroke-dasharray="600" stroke-dashoffset="600"'+a('hg-flow',0.2)+'/>'+txt(160,190,'Frequenz · Rhythmus · Qualität',L,14) },
+      { t:'Dokumentieren', x:'Wert dokumentieren, Abweichungen melden.', svg:liste(['Frequenz /min','regelmäßig?','Qualität']) }
+    ], merke:'Nie mit dem Daumen tasten. Unregelmäßig = 60 Sekunden zählen.',
+      quiz:[ {f:'Womit tastest du den Puls nicht?', o:['Zeigefinger','Mittelfinger','Daumen','Ringfinger'], k:2},
+             {f:'Der Puls ist unregelmäßig. Wie lange zählst du?', o:['15 s × 4','30 s × 2','60 s','10 s × 6'], k:2},
+             {f:'Was beurteilst du NICHT am Puls?', o:['Frequenz','Rhythmus','Qualität','Sauerstoffsättigung'], k:3} ]},
+    { id:'fingertest', t:'Fingertest & 30°-Lagerung', s:'Dekubitus erkennen und vorbeugen', farbe:'#a855f7', schritte:[
+      { t:'Rötung prüfen', x:'Gefährdete Stellen ansehen: <b>Kreuzbein, Fersen, Hüfte, Hinterkopf</b>.', svg: liegend()+[[120,130],[285,132],[200,118]].map(function(p,i){ return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="'+R+'" opacity=".8"'+a('hg-pop',0.3+i*0.4)+'/>'; }).join('') },
+      { t:'Fingertest', x:'Mit dem Finger kurz auf die Rötung drücken. <b>Wird sie weiß</b>, ist es (noch) kein Dekubitus.', svg:'<rect x="40" y="130" width="240" height="60" rx="10" fill="'+HAUT+'"/><circle cx="160" cy="150" r="28" fill="#f87171" opacity=".55"/><circle cx="160" cy="150" r="14" fill="#fff" opacity="0"'+a('hg-weiss',1)+'/><g'+a('hg-druck',0)+'><rect x="148" y="40" width="24" height="90" rx="12" fill="'+HAUT2+'"/></g>'+haken(260,60,1.6)+txt(260,90,'wird weiß',G,12) },
+      { t:'Bleibt rot?', x:'Bleibt die Rötung beim Drücken <b>rot</b>, liegt ein <b>Dekubitus Kategorie 1</b> vor: Druck entlasten, melden, dokumentieren.', svg:'<rect x="40" y="130" width="240" height="60" rx="10" fill="'+HAUT+'"/><circle cx="160" cy="150" r="28" fill="#dc2626" opacity=".75"/>'+kreuz(260,60,0.6)+txt(250,90,'bleibt rot',R,12)+txt(160,110,'Kategorie 1',R,16,800) },
+      { t:'30°-Seitenlage', x:'Ein Kissen schräg unter eine Körperseite (Rücken bis Gesäß). Das <b>Kreuzbein liegt frei</b>, der Hüftknochen auch.', svg:'<g class="hg-kipp" style="transform-origin:160px 160px"><rect x="60" y="110" width="200" height="40" rx="18" fill="'+STOFF+'"/></g><path d="M80 160 L240 160 L240 135 Z" fill="#94a3b8"'+a('hg-pop',0.3)+'/>'+txt(160,200,'30°',A,18,800)+'<circle cx="215" cy="110" r="7" fill="'+G+'"'+a('hg-pop',1.4)+'/>' },
+      { t:'Bewegen statt Uhr', x:'Wie oft umgelagert wird, richtet sich nach <b>Haut und Beweglichkeit</b> der Person (individueller Bewegungsplan). Kleine Positionswechsel zählen mit.', svg:liste(['Haut kontrollieren','Bewegungsplan','Mikrobewegungen']) }
+    ], merke:'Fingertest: weiß = gut, bleibt rot = Dekubitus Kategorie 1. Bei 30° liegen Kreuzbein und Hüfte frei.',
+      quiz:[ {f:'Die Rötung bleibt beim Fingertest rot. Das ist …', o:['normal','ein Dekubitus Kategorie 1','eine Allergie','eine Verbrennung'], k:1},
+             {f:'Was liegt bei der 30°-Lagerung frei?', o:['Kreuzbein','Die Schultern','Die Knie','Gar nichts'], k:0},
+             {f:'Wonach richtet sich das Umlagern?', o:['Immer genau alle 2 Stunden','Nach Haut und Beweglichkeit der Person','Nur nachts','Nach der Uhrzeit des Arztes'], k:1} ]},
+    { id:'verband', t:'Aseptischer Verbandwechsel', s:'Non-Touch-Technik bei einer Wunde', farbe:'#22c55e', schritte:[
+      { t:'Vorbereiten', x:'Hände desinfizieren, Material richten, Arbeitsfläche desinfizieren. Person informieren, Schmerzen erfragen.', svg:liste(['Händedesinfektion','Material steril bereit','Person informiert']) },
+      { t:'Alten Verband ab', x:'<b>Unsterile Handschuhe</b>, alten Verband abnehmen – Innenseite nach innen – und direkt entsorgen. Handschuhe aus, Hände desinfizieren.', svg:'<rect x="30" y="120" width="260" height="70" rx="12" fill="'+HAUT+'"/>'+wunde(160,155)+'<g class="hg-abziehen"><rect x="110" y="128" width="100" height="54" rx="8" fill="#e2e8f0"/></g>' },
+      { t:'Wunde ansehen', x:'Wunde beurteilen: <b>Größe, Belag, Geruch, Rötung, Sekret</b>.', svg:'<rect x="30" y="120" width="260" height="70" rx="12" fill="'+HAUT+'"/>'+wunde(160,155)+'<g class="hg-scan"><circle cx="160" cy="90" r="22" fill="rgba(255,255,255,.08)" stroke="#e2e8f0" stroke-width="4"/></g>' },
+      { t:'Steril reinigen', x:'Mit <b>steriler Pinzette oder sterilen Handschuhen</b> reinigen – Wunde nicht mit unsterilen Händen berühren. Bei aseptischen Wunden <b>von innen nach außen</b>.', svg:'<rect x="30" y="120" width="260" height="70" rx="12" fill="'+HAUT+'"/>'+wunde(160,155)+'<g class="hg-wisch"><rect x="150" y="60" width="8" height="80" fill="#94a3b8" transform="rotate(-20 154 100)"/><circle cx="140" cy="140" r="9" fill="#fff"/></g>'+txt(160,40,'innen → außen',A,14,800) },
+      { t:'Abdecken', x:'Neue sterile Wundauflage auflegen, ohne die Innenseite zu berühren. Fixieren.', svg:'<rect x="30" y="120" width="260" height="70" rx="12" fill="'+HAUT+'"/>'+wunde(160,155)+'<g'+a('hg-down',0.3)+'><rect x="105" y="128" width="110" height="54" rx="8" fill="#f8fafc" stroke="'+G+'" stroke-width="3"/></g>' },
+      { t:'Dokumentieren', x:'Hände desinfizieren und Wundzustand dokumentieren (Größe, Aussehen, Material, Datum).', svg:liste(['Wunde beschrieben','Material','Datum & Handzeichen']) }
+    ], merke:'Wunde nur steril berühren. Aseptische Wunde: von innen nach außen reinigen.',
+      quiz:[ {f:'Womit berührst du die Wunde?', o:['Mit unsterilen Handschuhen','Mit steriler Pinzette oder sterilen Handschuhen','Mit der bloßen Hand','Gar nicht, nur pusten'], k:1},
+             {f:'Aseptische Wunde – Reinigungsrichtung?', o:['Von außen nach innen','Von innen nach außen','Kreuz und quer','Egal'], k:1},
+             {f:'Was passiert direkt nach dem Abnehmen des alten Verbands?', o:['Handschuhe aus, Hände desinfizieren','Direkt die Wunde berühren','Pause machen','Neuer Verband ohne Wechsel der Handschuhe'], k:0} ]},
+    { id:'absaugen', t:'Endotracheales Absaugen', s:'Beim intubierten oder tracheotomierten Patienten', farbe:'#06b6d4', schritte:[
+      { t:'Notwendigkeit prüfen', x:'Nur bei Bedarf absaugen: <b>hörbares Sekret, Sättigungsabfall, steigender Beatmungsdruck</b>.', svg:liste(['Rasseln hörbar','SpO₂ fällt','Druck steigt']) },
+      { t:'Vorbereiten', x:'Material bereit, Sog nach Hausstandard einstellen, ggf. <b>präoxygenieren</b>. Hände desinfizieren.', svg:'<rect x="60" y="50" width="90" height="120" rx="12" fill="#1e293b" stroke="'+L+'" stroke-width="3"/>'+txt(105,115,'Sog',G,18,800)+uhr(240,100,'O₂',0.3) },
+      { t:'Ohne Sog einführen', x:'Sterilen Katheter mit <b>steriler Hand</b> einführen – dabei <b>kein Sog</b>.', svg:'<rect x="140" y="20" width="40" height="190" rx="16" fill="rgba(125,211,252,.12)" stroke="'+L+'" stroke-width="3"/><g'+a('hg-down',0.2)+'><rect x="155" y="10" width="10" height="150" rx="5" fill="#f8fafc"/></g>'+kreuz(240,60,0.8)+txt(240,90,'kein Sog',R,12) },
+      { t:'Mit Sog zurückziehen', x:'Katheter <b>unter Sog drehend zurückziehen</b>. Ein Absaugvorgang höchstens <b>10–15 Sekunden</b>.', svg:'<rect x="140" y="20" width="40" height="190" rx="16" fill="rgba(125,211,252,.12)" stroke="'+L+'" stroke-width="3"/><g class="hg-zurueck"><rect x="155" y="10" width="10" height="150" rx="5" fill="#f8fafc"/></g>'+uhr(250,100,'10–15 s',0) },
+      { t:'Patient beobachten', x:'Während und danach <b>Sättigung, Herzfrequenz und Atmung</b> beobachten. Katheter verwerfen, dokumentieren (Menge, Farbe, Konsistenz).', svg:'<path d="M20 120 h40 l10 -40 l12 70 l10 -30 h40 l10 -40 l12 70 l10 -30 h40 l10 -40 l12 70 l10 -30 h50" fill="none" stroke="'+G+'" stroke-width="3" stroke-dasharray="600" stroke-dashoffset="600"'+a('hg-flow',0.2)+'/>'+txt(160,190,'SpO₂ · HF · Atmung',L,14) }
+    ], merke:'Einführen ohne Sog, zurückziehen mit Sog – höchstens 10–15 Sekunden pro Vorgang.',
+      quiz:[ {f:'Wann ist der Sog an?', o:['Beim Einführen','Beim Zurückziehen','Immer','Nie'], k:1},
+             {f:'Wie lange dauert ein Absaugvorgang höchstens?', o:['10–15 Sekunden','1 Minute','30 Sekunden','So lange bis nichts mehr kommt'], k:0},
+             {f:'Wann saugst du ab?', o:['Fest jede Stunde','Bei Bedarf, z. B. hörbares Sekret','Nur nachts','Nie bei Beatmung'], k:1} ]},
+    { id:'magensonde', t:'Magensonde: Lage prüfen', s:'Vor jeder Gabe über die Sonde', farbe:'#eab308', schritte:[
+      { t:'Markierung prüfen', x:'Die <b>Markierung</b> an der Nase bzw. die Länge vergleichen. Ist die Sonde verrutscht?', svg:'<circle cx="110" cy="100" r="50" fill="'+HAUT+'"/><path d="M140 100 Q220 100 220 200" stroke="#facc15" stroke-width="6" fill="none"/><rect x="150" y="94" width="14" height="12" fill="#0f172a"'+a('hg-pop',0.4)+'/>'+txt(230,80,'cm-Markierung',A,13) },
+      { t:'Aspirieren', x:'Mit einer Spritze etwas <b>Magensaft</b> ansaugen.', svg:'<path d="M60 120 H160" stroke="#facc15" stroke-width="6"/>'+spritze(160,105,120)+'<g class="hg-push" style="animation-direction:reverse"><rect x="280" y="114" width="20" height="12" fill="#94a3b8"/></g>' },
+      { t:'pH messen', x:'Aspirat auf einen <b>pH-Teststreifen</b>. Ein saurer Wert (Grenzwert nach Hausstandard) spricht für die Lage im Magen.', svg:'<rect x="100" y="60" width="120" height="30" rx="6" fill="#e2e8f0"/><rect x="100" y="60" width="40" height="30" rx="6" fill="#f97316"'+a('hg-pop',0.6)+'/>'+txt(160,130,'sauer = Magen',G,16,800) },
+      { t:'Unsicher? Nicht geben!', x:'Ist die Lage unklar, <b>nichts</b> über die Sonde geben und ärztlich abklären (z. B. Röntgen). Das Einblasen von Luft mit Abhören gilt nicht als sicher.', svg:kreuz(160,90,0.2)+txt(160,140,'Lage unklar → nichts geben',R,15)+txt(160,165,'ärztlich abklären',L,13) }
+    ], merke:'Vor jeder Gabe Lage prüfen. Unsicher = nichts geben.',
+      quiz:[ {f:'Was spricht für die Lage im Magen?', o:['Basisches Aspirat','Saurer pH-Wert des Aspirats','Gurgeln beim Luft-Einblasen','Der Patient hustet'], k:1},
+             {f:'Die Lage ist unklar. Was tust du?', o:['Trotzdem Nahrung geben','Nichts geben und ärztlich abklären','Sonde tiefer schieben und geben','Wasser zum Testen geben'], k:1},
+             {f:'Wann prüfst du die Lage?', o:['Einmal pro Woche','Vor jeder Gabe','Nur beim Legen','Nie'], k:1} ]},
+    { id:'mtps', t:'Thromboseprophylaxestrümpfe', s:'MTPS richtig anziehen', farbe:'#3b82f6', schritte:[
+      { t:'Richtige Größe', x:'Größe nach <b>Maß</b> (Umfang Fessel, Wade, ggf. Oberschenkel und Länge) bestimmen.', svg:'<rect x="140" y="20" width="44" height="180" rx="20" fill="'+HAUT+'"/><path d="M130 160 h64 M130 100 h64" stroke="'+A+'" stroke-width="3" stroke-dasharray="5 4"/>'+txt(240,104,'Wade',A,13)+txt(240,164,'Fessel',A,13) },
+      { t:'Morgens, im Liegen', x:'Am besten <b>morgens vor dem Aufstehen</b> anziehen, wenn die Beine noch nicht geschwollen sind.', svg:liegend()+txt(160,60,'vor dem Aufstehen',G,16,800) },
+      { t:'Bis zur Ferse umstülpen', x:'Mit der Hand in den Strumpf greifen, die Ferse fassen und den Strumpf <b>bis zur Ferse umstülpen</b>.', svg:'<g class="hg-abziehen" style="animation-direction:reverse"><rect x="120" y="40" width="80" height="140" rx="20" fill="#60a5fa"/></g><circle cx="160" cy="170" r="14" fill="#1d4ed8"/>' },
+      { t:'Ferse genau setzen', x:'Über den Fuß ziehen, die <b>Ferse genau</b> an ihren Platz setzen.', svg:'<path d="M120 60 V170 h70" stroke="'+HAUT+'" stroke-width="40" fill="none" stroke-linecap="round" stroke-linejoin="round"/><g'+a('hg-pop',0.4)+'><path d="M120 120 V170 h70" stroke="#60a5fa" stroke-width="44" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/></g>'+haken(230,170,1.2) },
+      { t:'Faltenfrei hochziehen', x:'Den Rest <b>faltenfrei</b> hochziehen. <b>Kein Umschlagen</b> am Rand – das schnürt ein.', svg:'<g class="hg-hoch"><rect x="120" y="40" width="44" height="150" rx="20" fill="#60a5fa"/></g>'+kreuz(240,60,1)+txt(240,90,'Falten',R,12) },
+      { t:'Täglich kontrollieren', x:'Sitz und <b>Haut täglich</b> kontrollieren (Druckstellen, Durchblutung).', svg:liste(['Sitz','Haut','Durchblutung']) }
+    ], merke:'Morgens im Liegen, Ferse genau, faltenfrei – nie umschlagen.',
+      quiz:[ {f:'Wann ziehst du MTPS am besten an?', o:['Abends','Morgens vor dem Aufstehen','Nach dem Duschen im Stehen','Egal'], k:1},
+             {f:'Was darfst du am Strumpfrand NICHT tun?', o:['Glattstreichen','Umschlagen','Kontrollieren','Anziehen'], k:1},
+             {f:'Wonach bestimmst du die Größe?', o:['Nach Schuhgröße','Nach Maß am Bein','Nach Körpergröße','Nach Gefühl'], k:1} ]},
+    { id:'transfer', t:'Transfer Bett → Rollstuhl', s:'Sicher und rückenschonend', farbe:'#14b8a6', schritte:[
+      { t:'Rollstuhl stellen', x:'Rollstuhl im <b>spitzen Winkel</b> ans Bett, <b>Bremsen fest</b>, Fußstützen weg.', svg:'<rect x="20" y="100" width="130" height="40" rx="6" fill="#475569"/><g><rect x="190" y="70" width="14" height="70" rx="5" fill="#1e3a52" stroke="'+L+'" stroke-width="3"/><rect x="190" y="118" width="70" height="16" rx="5" fill="#1e3a52" stroke="'+L+'" stroke-width="3"/><circle cx="215" cy="160" r="26" fill="none" stroke="'+L+'" stroke-width="5"/><circle cx="262" cy="175" r="9" fill="none" stroke="'+L+'" stroke-width="4"/></g><path d="M155 120 l25 -18" stroke="'+A+'" stroke-width="3" stroke-dasharray="5 4"/>'+haken(270,60,0.5)+txt(270,40,'Bremse',G,12) },
+      { t:'An die Bettkante', x:'Person an die Bettkante setzen, <b>Füße fest auf dem Boden</b>, gutes Schuhwerk.', svg:'<rect x="20" y="120" width="140" height="30" rx="6" fill="#475569"/><circle cx="120" cy="50" r="18" fill="'+HAUT+'"/><rect x="104" y="68" width="34" height="56" rx="12" fill="'+STOFF+'"/><path d="M130 122 L160 122 L160 190" stroke="#475569" stroke-width="16" fill="none" stroke-linecap="round"/><rect x="150" y="186" width="34" height="10" rx="4" fill="#1e293b"/>' },
+      { t:'Gewicht nach vorn', x:'Oberkörper <b>nach vorn</b> neigen, Gewicht über die Füße bringen. Du stützt am <b>Becken</b> – nicht unter den Achseln ziehen.', svg:'<g class="hg-vor" style="transform-origin:120px 124px"><circle cx="120" cy="50" r="18" fill="'+HAUT+'"/><rect x="104" y="68" width="34" height="56" rx="12" fill="'+STOFF+'"/></g>'+kreuz(250,60,1)+txt(250,90,'Achseln',R,12) },
+      { t:'Drehen & setzen', x:'In <b>kleinen Schritten</b> zum Rollstuhl drehen und langsam hinsetzen lassen. Ressourcen der Person nutzen.', svg:'<g class="hg-dreh" style="transform-origin:160px 140px"><circle cx="160" cy="70" r="18" fill="'+HAUT+'"/><rect x="144" y="88" width="34" height="56" rx="12" fill="'+STOFF+'"/></g><path d="M220 60 a50 50 0 0 1 -20 60" stroke="'+A+'" stroke-width="4" fill="none"/>' }
+    ], merke:'Bremsen fest, Füße auf den Boden, Gewicht nach vorn – nie unter den Achseln ziehen.',
+      quiz:[ {f:'Wo unterstützt du beim Transfer?', o:['Unter den Achseln','Am Becken','Am Hals','An den Händen ziehen'], k:1},
+             {f:'Was machst du vor dem Transfer am Rollstuhl?', o:['Bremsen lösen','Bremsen feststellen','Rückenlehne entfernen','Nichts'], k:1},
+             {f:'Wohin verlagert die Person ihr Gewicht zum Aufstehen?', o:['Nach hinten','Nach vorn über die Füße','Zur Seite','Gar nicht'], k:1} ]},
+    { id:'atemtrainer', t:'Atemtrainer (SMI)', s:'Pneumonieprophylaxe mit Incentive Spirometer', farbe:'#0ea5e9', schritte:[
+      { t:'Aufrecht sitzen', x:'Person <b>aufrecht</b> hinsetzen, Gerät senkrecht halten.', svg:'<circle cx="120" cy="60" r="20" fill="'+HAUT+'"/><rect x="100" y="80" width="40" height="80" rx="14" fill="'+STOFF+'"/><rect x="200" y="60" width="50" height="110" rx="8" fill="rgba(125,211,252,.15)" stroke="'+L+'" stroke-width="3"/>' },
+      { t:'Ausatmen, dann ansetzen', x:'Normal ausatmen, Mundstück mit den Lippen <b>dicht umschließen</b>.', svg:'<rect x="200" y="60" width="50" height="110" rx="8" fill="rgba(125,211,252,.15)" stroke="'+L+'" stroke-width="3"/><path d="M200 150 H140" stroke="'+L+'" stroke-width="8"/><circle cx="130" cy="150" r="16" fill="'+HAUT+'"/>' },
+      { t:'Langsam & tief einatmen', x:'<b>Langsam und tief</b> einatmen, sodass der Kolben/die Kugel steigt.', svg:'<rect x="200" y="60" width="50" height="110" rx="8" fill="rgba(125,211,252,.15)" stroke="'+L+'" stroke-width="3"/><g class="hg-steig"><circle cx="225" cy="155" r="12" fill="'+A+'"/></g>'+txt(110,110,'langsam',G,16,800) },
+      { t:'Kurz halten', x:'Am Ende der Einatmung den Atem <b>einige Sekunden halten</b> (nach Hausstandard, meist ca. 3 s).', svg: uhr(120,100,'halten',0)+'<rect x="200" y="60" width="50" height="110" rx="8" fill="rgba(125,211,252,.15)" stroke="'+L+'" stroke-width="3"/><circle cx="225" cy="80" r="12" fill="'+A+'"/>' },
+      { t:'Ausatmen & wiederholen', x:'Langsam ausatmen, kurz erholen und mehrmals wiederholen – Anzahl und Häufigkeit nach Anordnung.', svg:liste(['langsam ausatmen','Pause','wiederholen']) }
+    ], merke:'Langsam und tief einatmen, oben kurz halten – nicht stoßartig.',
+      quiz:[ {f:'Wie wird beim SMI-Trainer eingeatmet?', o:['Schnell und stoßartig','Langsam und tief','Gar nicht','Nur durch die Nase'], k:1},
+             {f:'Was passiert am Ende der Einatmung?', o:['Sofort ausatmen','Atem kurz halten','Husten','Gerät schütteln'], k:1},
+             {f:'Wozu dient der Atemtrainer?', o:['Thromboseprophylaxe','Pneumonieprophylaxe','Dekubitusprophylaxe','Sturzprophylaxe'], k:1} ]},
+    { id:'perfusor', t:'Perfusor vorbereiten', s:'Spritze einlegen und Laufrate einstellen', farbe:'#8b5cf6', schritte:[
+      { t:'Spritze richten', x:'Medikament nach <b>Anordnung</b> aufziehen und verdünnen, Spritze <b>beschriften</b>.', svg:spritze(60,90,170)+'<rect x="80" y="70" width="80" height="16" rx="3" fill="#e2e8f0"'+a('hg-pop',0.5)+'/>'+txt(120,82,'Name · Dosis',  '#0f172a',10) },
+      { t:'Leitung entlüften', x:'Perfusorleitung anschließen und <b>luftfrei füllen</b>.', svg:spritze(30,90,150)+'<path d="M194 105 H300" stroke="#33506b" stroke-width="6"/><path d="M194 105 H300" stroke="'+F+'" stroke-width="4" stroke-dasharray="110" stroke-dashoffset="110"'+a('hg-flow',0.3)+'/>' },
+      { t:'Einlegen', x:'Spritze in die Halterung legen, <b>Kolbenhalter fixieren</b>, den angezeigten <b>Spritzentyp bestätigen</b>.', svg:'<rect x="20" y="60" width="280" height="110" rx="14" fill="#1e293b" stroke="'+L+'" stroke-width="3"/><g'+a('hg-down',0.2)+'>'+spritze(50,90,170)+'</g>'+haken(270,80,1.2) },
+      { t:'Laufrate eingeben', x:'Laufrate in <b>ml/h</b> laut Anordnung eingeben (Rechnung im Vier-Augen-Prinzip prüfen).', svg:'<rect x="40" y="50" width="240" height="120" rx="14" fill="#1e293b" stroke="'+L+'" stroke-width="3"/><rect x="70" y="75" width="180" height="50" rx="8" fill="#0f2740"/><g'+a('hg-pop',0.5)+'>'+txt(160,110,'4,2 ml/h',G,26,800)+'</g>' },
+      { t:'Starten & kontrollieren', x:'An den Zugang anschließen, starten. <b>Laufrate, Leitung und Patient</b> regelmäßig kontrollieren.', svg:liste(['Laufrate stimmt','Leitung frei','Patient beobachten']) }
+    ], merke:'Es gilt ausschließlich die ärztliche Anordnung. Laufrate immer im Vier-Augen-Prinzip prüfen.',
+      quiz:[ {f:'Was bestätigst du nach dem Einlegen der Spritze?', o:['Den Spritzentyp','Die Uhrzeit','Den Stationsnamen','Nichts'], k:0},
+             {f:'In welcher Einheit stellst du die Laufrate ein?', o:['ml/h','mg/kg','Tropfen/min','mmHg'], k:0},
+             {f:'Wonach richtet sich die Laufrate?', o:['Nach Gefühl','Nach der ärztlichen Anordnung','Nach dem letzten Patienten','Nach der Spritzengröße'], k:1} ]}
+  ];
+  if(!HG.some(function(h){ return h.id==='seitenlage'; })) NEU.forEach(function(h){ h.neu3=true; HG.push(h); });
+
+  var css=document.createElement('style');
+  css.textContent='.hg-dreh{animation:hgDreh 1.8s ease-in-out both}@keyframes hgDreh{to{transform:rotate(-25deg)}}'+
+   '.hg-puls{animation:hgPuls .9s ease-in-out infinite}@keyframes hgPuls{50%{transform:scale(1.6);opacity:.5}}'+
+   '.hg-druck{animation:hgDruck 1.2s ease-in-out both}@keyframes hgDruck{50%{transform:translateY(22px)}100%{transform:none}}'+
+   '.hg-weiss{animation:hgWeiss 1s ease-out both}@keyframes hgWeiss{to{opacity:.9}}'+
+   '.hg-kipp{animation:hgKipp 1.6s ease-in-out both}@keyframes hgKipp{to{transform:rotate(-12deg)}}'+
+   '.hg-wisch{animation:hgWisch 1.2s ease-in-out 2 both}@keyframes hgWisch{50%{transform:translateX(30px)}}'+
+   '.hg-zurueck{animation:hgZurueck 2s ease-in both}@keyframes hgZurueck{0%{transform:none}100%{transform:translateY(-120px) rotate(10deg)}}'+
+   '.hg-hoch{animation:hgHoch 1.6s ease-out both}@keyframes hgHoch{from{transform:translateY(100px) scaleY(.3)}to{transform:none}}'+
+   '.hg-vor{animation:hgVor 1.4s ease-in-out both}@keyframes hgVor{to{transform:rotate(18deg)}}'+
+   '.hg-steig{animation:hgSteig 2.4s ease-out both}@keyframes hgSteig{to{transform:translateY(-75px)}}'+
+   '.hg-leiste{margin:10px 0 14px}.hg-leiste-kopf{font-size:13px;font-weight:700;color:var(--text2);margin:0 2px 8px}.hg-leiste-zeile{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hg-leiste-zeile .hg-hinweis{flex:0 0 74%;max-width:280px;margin:0;scroll-snap-align:start}.hg-leiste-zeile .hg-hinweis b{font-size:14px}';
+  document.head.appendChild(css);
+
+  function titel(id){ var t=''; HG.forEach(function(h){ if(h.id===id) t=h.t; }); return t; }
+  var STICH=[
+    ['seitenlage',/seitenlage/i], ['puls',/puls(messung|\s?messen|frequenz)|a\.\s?radialis|radialispuls/i],
+    ['fingertest',/fingertest|30\s?°|dekubitus(prophylaxe)?.*lager|druckentlast/i],
+    ['verband',/verbandwechsel|aseptisch.*wunde|wundverband|non-touch/i],
+    ['absaugen',/absaug/i], ['magensonde',/magensonde|lagekontrolle.*sonde/i],
+    ['mtps',/kompressionsstr|thromboseprophylaxestr|mtps|antithrombosestr/i],
+    ['transfer',/transfer|rollstuhl|kinästhetik/i], ['atemtrainer',/atemtrainer|spirometer|smi-|totraum/i],
+    ['perfusor',/perfusor|spritzenpumpe/i]
+  ];
+  function passend(t){ for(var i=0;i<STICH.length;i++){ if(STICH[i][1].test(t)) return STICH[i][0]; } return ''; }
+  var SCREENS={ notfallmanagement:['seitenlage'], prophylaxen:['fingertest','mtps','atemtrainer'], wundversorgung:['verband'],
+    medizintechnik:['perfusor','absaugen','magensonde'], kinaesthetik:['transfer'], scores:['puls'] };
+  function hinweise(n){
+    if(!an() || !SCREENS[n]) return;
+    var s=document.getElementById('screen-'+n); if(!s || s.getAttribute('data-hg3')) return; s.setAttribute('data-hg3','1');
+    var box=document.createElement('div'); box.className='hg3';
+    box.innerHTML=SCREENS[n].map(function(id){ return '<button class="hg-hinweis" onclick="plHandgriffOeffnen(\''+id+'\')"><span style="font-size:24px">🖐️</span><div><b>'+titel(id)+' – als Animation</b><span>Schritt für Schritt ansehen</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+    var vorhanden=s.querySelector('.hg-hinweis'); var hero=s.querySelector('.hero');
+    if(vorhanden && vorhanden.parentNode) vorhanden.parentNode.parentNode.insertBefore(box, vorhanden.parentNode.nextSibling);
+    else if(hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling); else s.insertBefore(box, s.firstChild);
+    /* Mehrere Hinweise → eine wischbare Leiste statt vieler großer Karten */
+    var alle=s.querySelectorAll('.hg-hinweis');
+    if(alle.length>1){ var leiste=document.createElement('div'); leiste.className='hg-leiste';
+      leiste.innerHTML='<div class="hg-leiste-kopf">🖐️ Als Animation ansehen · '+alle.length+' Handgriffe</div><div class="hg-leiste-zeile"></div>';
+      var erst=alle[0].parentNode; erst.parentNode.insertBefore(leiste, erst);
+      var z=leiste.querySelector('.hg-leiste-zeile');
+      Array.prototype.forEach.call(alle,function(btn){ var hl=btn.parentNode; z.appendChild(btn); if(hl && hl!==z && !hl.querySelector('.hg-hinweis') && !hl.textContent.trim()) hl.parentNode.removeChild(hl); }); }
+  }
+  function start(){
+    var o=window.pickAnswer;
+    if(typeof o==='function') window.pickAnswer=function(){
+      var r=o.apply(this,arguments);
+      try{ if(!an()) return r; var q=quizList[quizIdx]; var ex=document.getElementById('explanation'); if(!ex || ex.querySelector('.hg-link')) return r;
+        var id=passend((q.frage||'')+' '+(q.erkl||'')); if(!id) return r;
+        var b=document.createElement('button'); b.type='button'; b.className='hg-link'; b.innerHTML='🖐️ '+titel(id)+' als Animation ansehen';
+        b.onclick=function(){ window.plHandgriffOeffnen(id); }; ex.appendChild(b); }catch(e){}
+      return r; };
+    var s=window.showScreen;
+    if(typeof s==='function') window.showScreen=function(n){ var r=s.apply(this,arguments); try{ hinweise(n); }catch(e){} return r; };
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
+
 </body>
 </html>
