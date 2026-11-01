@@ -12,8 +12,8 @@
 //   node scripts/kanal.mjs aufgeloest <id>  → Quiz-Umfrage als aufgelöst markieren
 //   node scripts/kanal.mjs fallgeloest      → letzten Mini-Fall als aufgelöst markieren
 //
-// Wochenplan ab 01.11.2026: jeden Tag eine Umfrage (Mi Mini-Fall, So Mitmach-Umfrage), jeweils mit
-// Auflösung der letzten Umfrage oben. Protokoll: daten.log
+// Wochenplan ab 01.11.2026: Mo Umfrage · Di Auflösung · Mi Mini-Fall-Umfrage · Do Auflösung + Wissen für
+// Examinierte · Fr Umfrage für Examinierte · Sa Auflösung · So Pause. Protokoll: daten.log
 //
 // Auswahl der nächsten Frage: niedrigste freie ID, deren Thema nicht unter den
 // letzten 3 gestellten Themen ist (damit nicht 5x Medikamente hintereinander kommt).
@@ -55,39 +55,48 @@ if (!cmd) {
   speichern();
   console.log(cmd === 'gestellt' ? `#${q.id} als gestellt markiert (${q.gestellt_am}).` : `#${q.id} wieder freigegeben.`);
 } else if (cmd === 'heute') {
-  // Wochenplan ab 01.11.2026 (Wunsch P. Schenkelberger: Azubis wollen mitmachen, nicht nur lesen):
-  // JEDEN Tag eine Umfrage. Mo/Di/Do/Fr/Sa Quiz-Umfrage aus dem Vorrat, Mi Mini-Fall als Umfrage,
-  // So Mitmach-Umfrage (Meinung/Alltag, keine richtige Antwort). Dazu immer die Auflösung der letzten
-  // noch nicht aufgelösten Quiz-Umfrage oben im selben Beitrag.
-  const PLAN = { 1: 'umfrage', 2: 'umfrage', 3: 'minifall-umfrage', 4: 'umfrage', 5: 'umfrage', 6: 'umfrage', 0: 'mitmach-umfrage' };
+  // Wochenplan ab 01.11.2026 (P. Schenkelberger): 3 Umfragen pro Woche, dazwischen Auflösungen, Sonntag Pause.
+  // Im Kanal kann nur Patrick schreiben → Mitmachen NUR über Umfragen (keine „schreib uns“-Fragen).
+  // Mo Quiz-Umfrage (Azubis) · Di Auflösung + Eselsbrücke · Mi Mini-Fall als Umfrage · Do Auflösung + Praxiswissen
+  // für Examinierte · Fr Umfrage für Examinierte (Fachwissen) · Sa Auflösung · So Pause.
+  const PLAN = { 1: 'umfrage', 2: 'aufloesung', 3: 'minifall-umfrage', 4: 'aufloesung+examiniert-wissen', 5: 'examiniert-umfrage', 6: 'aufloesung', 0: 'pause' };
   const wt = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin' })).getDay();
   const fmt = PLAN[wt];
   console.log(`HEUTE (${heute()}): ${fmt}`);
-  const offen = F.filter(q => q.gestellt_am && !q.aufgeloest_am && q.gestellt_am < heute()).sort((a, b) => a.gestellt_am.localeCompare(b.gestellt_am));
-  if (offen.length) {
-    console.log('\n1) ZUERST AUFLÖSEN (danach: node scripts/kanal.mjs aufgeloest <id>):');
-    offen.forEach(q => console.log(`\n#${q.id} (gestellt ${q.gestellt_am}): ${q.frage}\n${q.aufloesung}`));
+  if (fmt === 'pause') { console.log('Sonntag: kein Beitrag.'); process.exit(0); }
+  const log = daten.log || [];
+  if (fmt.startsWith('aufloesung')) {
+    const offen = F.filter(q => q.gestellt_am && !q.aufgeloest_am && q.gestellt_am < heute());
+    offen.forEach(q => console.log(`\nAUFLÖSEN #${q.id} (gestellt ${q.gestellt_am}): ${q.frage}\n${q.aufloesung}\n(danach: node scripts/kanal.mjs aufgeloest ${q.id})`));
+    log.filter(l => /umfrage$/.test(l.format) && l.format !== 'umfrage' && !l.aufgeloest).forEach(l => console.log(`\nAUFLÖSEN (${l.format} vom ${l.datum}): ${l.thema}\n(danach: node scripts/kanal.mjs fallgeloest)`));
+    if (fmt.endsWith('examiniert-wissen')) console.log('\nDAZU „FÜR EXAMINIERTE“: kurzes Praxiswissen (4–6 Zeilen) mit Beispiel und Erklärung – z. B. Medikament/Perfusor, Beatmung, Notfall, Expertenstandard-Update, Delegation/Recht. Danach: node scripts/kanal.mjs log examiniert-wissen <Thema>');
   }
-  if (fmt === 'umfrage') {
-    const q = naechste();
-    if (q) { console.log('\n2) NEUE UMFRAGE (danach: node scripts/kanal.mjs gestellt <id>):\n'); zeige(q); }
-  } else if (fmt === 'minifall-umfrage') {
-    console.log('\n2) MINI-FALL ALS UMFRAGE: 2–3 Sätze Fall (erfundene Person), Frage „Was tust du zuerst?“, 4 Optionen A–D (WhatsApp-Umfrage), Lösung morgen. Danach: node scripts/kanal.mjs log minifall-umfrage <Thema> <richtige Option + kurze Lösung>');
-  } else {
-    console.log('\n2) MITMACH-UMFRAGE (keine richtige Antwort): Frage aus dem Azubi-Alltag mit 3–4 Optionen, z. B. Lernzeit, Lieblingsfach, Angstthema im Examen, Einsatzort. Danach: node scripts/kanal.mjs log mitmach-umfrage <Thema>');
+  if (fmt === 'umfrage') { const q = naechste(); if (q) { console.log('\nNEUE UMFRAGE (danach: node scripts/kanal.mjs gestellt <id>):\n'); zeige(q); } }
+  if (fmt === 'minifall-umfrage') console.log('\nMINI-FALL ALS UMFRAGE: 2–3 Sätze Fall (erfundene Person), „Was tust du zuerst?“, 4 Optionen. Abwechselnd für Azubis und Examinierte. Danach: node scripts/kanal.mjs log minifall-umfrage <richtige Option + 1 Satz Lösung>');
+  if (fmt === 'examiniert-umfrage') {
+    try {
+      const src = fs.readFileSync(path.join(path.dirname(DATEI), 'quiz-fragen.js'), 'utf8');
+      const Q = eval(src.slice(src.indexOf('['), src.lastIndexOf(']') + 1));
+      const genutzt = new Set(log.filter(l => l.format === 'examiniert-umfrage').map(l => l.thema));
+      const kand = Q.filter(q => q.s === 'schwer' && /^(its_|an_|notfall|innere|chirurgie)/.test(q.kat) && !genutzt.has(q.frage));
+      const tag = Math.floor(new Date(heute()) / 864e5);
+      const q = kand[tag % kand.length];
+      console.log('\nUMFRAGE FÜR EXAMINIERTE (Vorlage aus der App, Optionen ggf. sauber ausformulieren, je max. 100 Zeichen):');
+      console.log(`[${q.kat}] ${q.frage}`); q.opt.forEach((o, i) => console.log(`Option ${BUCHST[i]}: ${o}${i === q.k ? '   ← richtig' : ''}`));
+      console.log('Erklärung: ' + q.erkl);
+      console.log(`\n(danach: node scripts/kanal.mjs log examiniert-umfrage "${q.frage.replace(/"/g, "'")}")`);
+    } catch (e) { console.log('\nUMFRAGE FÜR EXAMINIERTE: Frage selbst aus data/quiz-fragen.js (schwer, Intensiv/Anästhesie/Notfall) wählen.'); }
   }
-  const log = (daten.log || []).slice(-10);
-  const fallOffen = log.filter(l => l.format === 'minifall-umfrage' && !l.aufgeloest).pop();
-  if (fallOffen) console.log(`\nAUCH AUFLÖSEN: Mini-Fall vom ${fallOffen.datum}: ${fallOffen.thema}  (danach: node scripts/kanal.mjs fallgeloest)`);
   console.log('\nZuletzt gepostet (nicht wiederholen):');
-  log.forEach(l => console.log(`  ${l.datum}  ${l.format}  ${l.thema}`));
+  log.slice(-10).forEach(l => console.log(`  ${l.datum}  ${l.format}  ${l.thema}`));
 } else if (cmd === 'aufgeloest') {
   const q = F.find(x => x.id === Number(arg));
   if (!q) { console.error('Unbekannte ID: ' + arg); process.exit(1); }
   q.aufgeloest_am = datum || heute(); speichern(); console.log(`#${q.id} als aufgelöst markiert.`);
 } else if (cmd === 'fallgeloest') {
-  const l = (daten.log || []).filter(x => x.format === 'minifall-umfrage' && !x.aufgeloest).pop();
-  if (l) { l.aufgeloest = heute(); speichern(); console.log('Mini-Fall als aufgelöst markiert.'); } else console.log('Kein offener Mini-Fall.');
+  const offen = (daten.log || []).filter(x => /umfrage$/.test(x.format) && x.format !== 'umfrage' && !x.aufgeloest);
+  offen.forEach(l => { l.aufgeloest = heute(); });
+  if (offen.length) { speichern(); console.log(offen.length + ' Umfrage(n) als aufgelöst markiert.'); } else console.log('Nichts offen.');
 } else if (cmd === 'log') {
   const thema = process.argv.slice(4).join(' ');
   if (!arg || !thema) { console.error('Aufruf: log <format> <thema>'); process.exit(1); }
