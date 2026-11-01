@@ -28598,7 +28598,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    Stil: Verläufe, Schatten, Haut-Querschnitt (Haut/Unterhaut/Muskel), echte Fertigspritze, Finger mit Nagel.
    Animation per SMIL (läuft auch auf iOS/Safari), startet bei jedem Anzeigen neu. Kein neuer pl_*-Key. */
 (function(){
-  var PL_HG_REAL_PUBLIC = false;
+  var PL_HG_REAL_PUBLIC = true; // Go P. Schenkelberger 01.11.2026 (verbesserter Stil, nicht die Maximal-Version)
   function an(){ try{ return PL_HG_REAL_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HG_REAL_PUBLIC; } }
   var HG=window.PL_HANDGRIFFE; if(!HG) return;
   var sc=null; HG.forEach(function(h){ if(h.id==='sc') sc=h; }); if(!sc || sc.schritte.length!==7) return;
@@ -28723,11 +28723,174 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 
   /* Die Bühne setzt transform-origin:center für alle Elemente – hier gelten die SVG-Koordinaten (Ursprung 0 0) */
   var css=document.createElement('style'); css.textContent='.hg-buehne .hgr,.hg-buehne .hgr *{transform-box:view-box;transform-origin:0 0}'; document.head.appendChild(css);
+  /* Bausteine für weitere Handgriffe im selben Stil (Teil-Dateien „Handgriffe realistisch – <id>“) */
+  window.PLHGR={T:T,ein:ein,haken:haken,kreuz:kreuz,uhr:uhr,defs:defs,spritze:spritze,finger:finger,GR:GR,RT:RT,OR:OR,TX:TX,TX2:TX2,
+    ersetze:function(id,bilder){ var h=null; HG.forEach(function(x){ if(x.id===id) h=x; }); if(!h||h.schritte.length!==bilder.length) return false;
+      h.schritte.forEach(function(st,i){ var alt=st.svg; try{ Object.defineProperty(st,'svg',{configurable:true,enumerable:true,get:function(){ return an()?'<g class="hgr">'+bilder[i]+'</g>':alt; }}); }catch(e){} }); return true; }};
   var ENTWURF='<g>'+T(316,12,'NEUER STIL · ENTWURF',OR,8,800,'end')+'</g>';
   sc.schritte.forEach(function(st,i){
     var alt=st.svg;
     try{ Object.defineProperty(st,'svg',{configurable:true,enumerable:true,get:function(){ return an() ? '<g class="hgr">'+NEU[i]+(PL_HG_REAL_PUBLIC?'':ENTWURF)+'</g>' : alt; }}); }catch(e){}
   });
+})();
+</script>
+<script>
+/* ══ HANDGRIFFE – verbesserter Stil, Teil 1 (01.11.2026, Go P. Schenkelberger „verbesserte Animation“):
+   Blutdruck messen, Reanimation, Endotracheales Absaugen. Nutzt die Bausteine aus window.PLHGR (Muster s.c.-Injektion).
+   Ersetzt nur die Bilder, Texte/Quiz bleiben. Schalter wie s.c.-Muster (PL_HG_REAL_PUBLIC). ══ */
+(function(){
+  var P=window.PLHGR; if(!P) return;
+  var T=P.T, ein=P.ein, haken=P.haken, kreuz=P.kreuz, uhr=P.uhr, GR=P.GR, RT=P.RT, OR=P.OR, TX=P.TX, TX2=P.TX2;
+  function D(){ return P.defs()+'<defs>'
+    +'<linearGradient id="hgr2Arm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9dcc2"/><stop offset=".55" stop-color="#efc29c"/><stop offset="1" stop-color="#cf9670"/></linearGradient>'
+    +'<linearGradient id="hgr2Cuff" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b7da8"/><stop offset=".5" stop-color="#3d5f8c"/><stop offset="1" stop-color="#263f63"/></linearGradient>'
+    +'<radialGradient id="hgr2Ziff" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dbe3ec"/></radialGradient>'
+    +'<linearGradient id="hgr2Kittel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fb3a9"/><stop offset="1" stop-color="#2a7c74"/></linearGradient>'
+    +'<linearGradient id="hgr2Shirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#94a3b8"/><stop offset="1" stop-color="#5b6779"/></linearGradient>'
+    +'<linearGradient id="hgr2Geraet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4658"/><stop offset="1" stop-color="#1c2330"/></linearGradient>'
+    +'<linearGradient id="hgr2Boden" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c4a66"/><stop offset="1" stop-color="#1b3047"/></linearGradient>'
+    +'<linearGradient id="hgr2Schleim" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f3a7a0"/><stop offset=".5" stop-color="#f9c6bf"/><stop offset="1" stop-color="#e48c84"/></linearGradient>'
+    +'</defs>'; }
+
+  /* ── Blutdruck ── */
+  function arm(y){ return '<g filter="url(#hgrSch)"><path d="M-10 '+y+' C80 '+(y-6)+' 170 '+(y-2)+' 248 '+(y+4)+' C268 '+(y+2)+' 300 '+(y+6)+' 306 '+(y+22)+' C310 '+(y+40)+' 290 '+(y+52)+' 262 '+(y+50)+' C180 '+(y+54)+' 90 '+(y+56)+' -10 '+(y+60)+' Z" fill="url(#hgr2Arm)"/>'
+    +'<path d="M150 '+(y+6)+' q6 22 0 44" stroke="#c98d68" stroke-width="1.6" fill="none" opacity=".55"/>'
+    +'<path d="M268 '+(y+12)+' q20 4 30 14" stroke="#c98d68" stroke-width="1.4" fill="none" opacity=".5"/></g>'; }
+  function manschette(x,y,w){ return '<g filter="url(#hgrSch)"><rect x="'+x+'" y="'+(y-6)+'" width="'+w+'" height="'+70+'" rx="10" fill="url(#hgr2Cuff)"/>'
+    +'<rect x="'+(x+w-22)+'" y="'+(y-6)+'" width="22" height="70" rx="8" fill="#2f4c75" opacity=".9"/>'
+    +'<path d="M'+(x+8)+' '+y+' h'+(w-34)+'" stroke="#8fb0d8" stroke-width="2" opacity=".5"/>'
+    +'<circle cx="'+(x+w/2)+'" cy="'+(y+50)+'" r="5" fill="#1d3557"/><path d="M'+(x+w/2)+' '+(y+56)+' q-2 20 4 30" stroke="#1f2937" stroke-width="3" fill="none"/></g>'; }
+  function grad(p){ return 135+p*0.9; }
+  function manometer(cx,cy,r,von,bis,b,dur){
+    var t=''; for(var p=0;p<=300;p+=20){ var w=grad(p)*Math.PI/180, l=(p%100===0)?8:4;
+      t+='<path d="M'+(cx+Math.cos(w)*(r-3))+' '+(cy+Math.sin(w)*(r-3))+' L'+(cx+Math.cos(w)*(r-3-l))+' '+(cy+Math.sin(w)*(r-3-l))+'" stroke="#334155" stroke-width="'+(p%100===0?1.6:1)+'"/>';
+      if(p%100===0) t+=T((cx+Math.cos(w)*(r-17)).toFixed(1),(cy+Math.sin(w)*(r-17)+3).toFixed(1),p,'#334155',7,800); }
+    var anim=(von!==bis)?'<animateTransform attributeName="transform" type="rotate" from="'+grad(von)+' '+cx+' '+cy+'" to="'+grad(bis)+' '+cx+' '+cy+'" begin="'+(b||0)+'s" dur="'+(dur||3)+'s" fill="freeze"/>':'';
+    return '<g filter="url(#hgrSch)"><circle cx="'+cx+'" cy="'+cy+'" r="'+(r+4)+'" fill="url(#hgrMetall)"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="url(#hgr2Ziff)"/></g>'+t
+      +T(cx,cy-r*0.32,'mmHg','#64748b',6.5,700)
+      +'<g transform="rotate('+grad(von)+' '+cx+' '+cy+')">'+anim+'<path d="M'+(cx-6)+' '+cy+' L'+(cx+r-8)+' '+cy+'" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/></g>'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="3.5" fill="url(#hgrMetall)"/>'; }
+  function schlauch(x1,y1,x2,y2){ return '<path d="M'+x1+' '+y1+' C'+x1+' '+(y1-30)+' '+x2+' '+(y2+40)+' '+x2+' '+y2+'" stroke="#1f2937" stroke-width="3.5" fill="none"/>'; }
+  function stethoskop(x,y){ return '<path d="M'+x+' '+(y-8)+' C'+(x-4)+' '+(y-60)+' '+(x+40)+' '+(y-90)+' '+(x+60)+' '+(y-130)+'" stroke="#334155" stroke-width="4" fill="none"/>'
+    +'<g filter="url(#hgrSch)"><circle cx="'+x+'" cy="'+y+'" r="11" fill="url(#hgrMetall)"/><circle cx="'+x+'" cy="'+y+'" r="7" fill="#e2e8f0" stroke="#94a3b8"/></g>'; }
+  function wellen(x,y,b,wdh){ return [0,1,2].map(function(i){ return '<path d="M'+(x+8+i*8)+' '+(y-10-i*4)+' q'+(6)+' '+(10+i*4)+' 0 '+(20+i*8)+'" stroke="'+GR+'" stroke-width="2" fill="none" opacity="0"><animate attributeName="opacity" values="0;1;0" begin="'+(b+i*0.12)+'s" dur=".7s" repeatCount="'+(wdh||3)+'"/></path>'; }).join(''); }
+  var BD=[];
+  BD[0]=D()+'<rect x="0" y="0" width="320" height="220" fill="#0f2740"/>'
+    +'<g filter="url(#hgrSch)"><path d="M120 214 C112 150 120 112 160 100 C200 112 208 150 200 214 Z" fill="url(#hgr2Kittel)"/><circle cx="160" cy="70" r="26" fill="url(#hgr2Arm)"/>'
+    +'<path d="M136 62 q24 -26 48 0 q-4 -16 -24 -18 q-20 2 -24 18 Z" fill="#5b3a29"/></g>'
+    +'<rect x="40" y="180" width="240" height="40" rx="6" fill="#334155"/>'+uhr(258,58,'3–5',0.4,4)+T(258,92,'Minuten Ruhe',TX,10)
+    +'<g opacity="0">'+ein(1)+T(62,60,'nicht',RT,11,800)+T(62,74,'sprechen',RT,11,800)+'</g>';
+  BD[1]=D()+arm(110)+manschette(70,120,92)
+    +'<g opacity="0">'+ein(0.8)+'<path d="M162 176 L162 186 M150 181 h30" stroke="'+OR+'" stroke-width="2"/>'+T(190,206,'2–3 cm über der Ellenbeuge',OR,10,800)+'</g>'
+    +'<g opacity="0">'+ein(1.5)+T(80,40,'Arm auf Herzhöhe',GR,12,800)+'<path d="M40 50 h120" stroke="'+GR+'" stroke-width="1.5" stroke-dasharray="4 3"/></g>';
+  BD[2]=D()+arm(124)+manschette(70,134,92)+schlauch(116,124,92,82)+manometer(92,46,36,0,180,0.3,2.6)
+    +'<g filter="url(#hgrSch)"><ellipse cx="226" cy="58" rx="18" ry="24" fill="#1f2937"/><animateTransform attributeName="transform" type="scale" values="1;.86;1" begin="0.3s" dur=".5s" repeatCount="5" additive="sum"/></g>'
+    +'<g opacity="0">'+ein(0.4)+'<circle cx="280" cy="150" r="11" fill="rgba(248,113,113,.2)"/>'+'</g>'
+    +'<g transform="translate(280 140)"><g transform="rotate(-20)">'+P.finger().replace('url(#hgrFinger)','url(#hgr2Arm)')+'</g></g>'
+    +'<g opacity="0">'+ein(2.4)+T(258,190,'Puls weg + 30',RT,11,800)+'</g>';
+  BD[3]=D()+arm(124)+manschette(60,134,92)+schlauch(106,124,92,82)+manometer(92,46,36,180,60,0.3,6)+stethoskop(176,150)
+    +T(250,60,'2–3 mmHg/s',OR,12,800);
+  BD[4]=D()+arm(124)+manschette(60,134,92)+schlauch(106,124,92,82)+manometer(92,46,36,140,118,0.2,2.4)+stethoskop(176,150)
+    +wellen(186,150,2.0,4)+'<g opacity="0">'+ein(2.0)+'<rect x="214" y="40" width="96" height="30" rx="15" fill="rgba(74,222,128,.18)"/>'+T(262,60,'1. Ton: 120',GR,12,800)+'</g>';
+  BD[5]=D()+arm(124)+manschette(60,134,92)+schlauch(106,124,92,82)+manometer(92,46,36,92,70,0.2,2.4)+stethoskop(176,150)
+    +'<g>'+wellen(186,150,0,2)+'</g>'+'<g opacity="0">'+ein(1.6)+'<rect x="208" y="40" width="104" height="30" rx="15" fill="rgba(251,146,60,.18)"/>'+T(260,60,'Stille: 80',OR,12,800)+'</g>'
+    +'<g opacity="0">'+ein(2.4)+T(260,92,'= diastolisch',TX,10)+'</g>';
+  BD[6]=D()+'<g filter="url(#hgrSch)"><rect x="70" y="20" width="180" height="186" rx="10" fill="#f8fafc"/></g>'
+    +T(160,46,'Vitalzeichen','#0f172a',12,800)+[['RR','120/80 mmHg'],['Uhrzeit','08:15'],['Arm','links'],['Position','sitzend']].map(function(z,i){ var y=78+i*30;
+      return T(86,y,z[0],'#64748b',10,700,'start')+'<g opacity="0">'+ein(0.4+i*0.45)+T(230,y,z[1],'#0f172a',11,800,'end')+'</g><path d="M86 '+(y+9)+' H234" stroke="#e2e8f0"/>'; }).join('');
+
+  /* ── Reanimation ── */
+  function patient(x,y,neig){ /* liegend, Seitenansicht, Kopf links */
+    return '<g filter="url(#hgrSch)"><path d="M'+(x+40)+' '+(y-14)+' C'+(x+90)+' '+(y-24)+' '+(x+160)+' '+(y-22)+' '+(x+200)+' '+(y-14)+' L'+(x+200)+' '+(y+14)+' L'+(x+40)+' '+(y+14)+' Z" fill="url(#hgr2Shirt)"/>'
+      +'<rect x="'+(x+196)+'" y="'+(y-10)+'" width="110" height="22" rx="10" fill="#334155"/>'
+      +'<g transform="rotate('+(neig||0)+' '+(x+38)+' '+y+')"><ellipse cx="'+(x+22)+'" cy="'+(y-2)+'" rx="22" ry="18" fill="url(#hgr2Arm)"/><path d="M'+(x+6)+' '+(y-12)+' q14 -14 32 -4" stroke="#5b3a29" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M'+(x+4)+' '+(y+6)+' q4 3 8 0" stroke="#9c5f3e" stroke-width="1.6" fill="none"/></g></g>'; }
+  function helferArme(x,y,dy){ /* gestreckte Arme von oben, Handballen auf dem Brustbein */
+    return '<g>'+(dy?'<animateTransform attributeName="transform" type="translate" values="0 0;0 '+dy+';0 0" dur=".55s" repeatCount="indefinite"/>':'')
+      +'<path d="M'+(x-14)+' 0 L'+(x-10)+' '+(y-16)+' L'+(x+10)+' '+(y-16)+' L'+(x+14)+' 0 Z" fill="url(#hgr2Kittel)"/>'
+      +'<path d="M'+(x-10)+' '+(y-60)+' L'+(x-8)+' '+(y-12)+' L'+(x+8)+' '+(y-12)+' L'+(x+10)+' '+(y-60)+' Z" fill="url(#hgr2Arm)"/>'
+      +'<ellipse cx="'+x+'" cy="'+(y-8)+'" rx="15" ry="9" fill="url(#hgr2Arm)" filter="url(#hgrSch)"/><path d="M'+(x-12)+' '+(y-10)+' q12 -6 24 0" stroke="#c98d68" stroke-width="1.3" fill="none"/></g>'; }
+  function aed(x,y,s){ return '<g transform="translate('+x+' '+y+') scale('+(s||1)+')" filter="url(#hgrSch)"><rect x="0" y="0" width="70" height="56" rx="10" fill="#16a34a"/><rect x="6" y="6" width="58" height="44" rx="7" fill="#22c55e"/>'
+    +'<path d="M35 40 C20 30 14 22 20 16 C25 11 32 13 35 18 C38 13 45 11 50 16 C56 22 50 30 35 40 Z" fill="#fff"/><path d="M37 17 l-6 10 h6 l-4 9 l10 -12 h-6 l3 -7 Z" fill="#16a34a"/>'+T(35,54,'AED','#fff',8,900)+'</g>'; }
+  var RE=[];
+  RE[0]=D()+'<rect x="0" y="150" width="320" height="70" fill="url(#hgr2Boden)"/>'+patient(10,150,0)
+    +'<g><animateTransform attributeName="transform" type="translate" values="0 0;-4 0;4 0;0 0" dur=".35s" repeatCount="5" begin="0.3s"/>'
+    +'<path d="M60 40 L74 120 L92 120 L84 40 Z" fill="url(#hgr2Kittel)"/><path d="M118 40 L108 120 L126 120 L140 40 Z" fill="url(#hgr2Kittel)"/>'
+    +'<g filter="url(#hgrSch)"><ellipse cx="83" cy="132" rx="16" ry="11" fill="url(#hgr2Arm)"/><ellipse cx="117" cy="132" rx="16" ry="11" fill="url(#hgr2Arm)"/></g>'
+    +'<path d="M72 130 q11 -5 22 0 M106 130 q11 -5 22 0" stroke="#c98d68" stroke-width="1.2" fill="none"/></g>'
+    +'<g opacity="0">'+ein(0.3)+'<rect x="150" y="26" width="150" height="40" rx="14" fill="#f8fafc"/><path d="M170 66 l-10 14 l20 -14 Z" fill="#f8fafc"/>'+T(225,51,'Hallo, hören Sie mich?','#0f172a',10.5,800)+'</g>'
+    +'<g opacity="0">'+ein(2.2)+T(230,110,'keine Reaktion',RT,12,800)+'</g>';
+  RE[1]=D()+'<rect x="0" y="150" width="320" height="70" fill="url(#hgr2Boden)"/>'+patient(40,150,-18)
+    +'<g opacity="0">'+ein(0.4)+'<path d="M88 108 q-14 -6 -26 4" stroke="'+OR+'" stroke-width="2.4" fill="none"/><path d="M60 110 l4 -8 l4 7" fill="'+OR+'"/>'+T(84,96,'Kopf überstrecken',OR,10,800)+'</g>'
+    +'<g opacity="0">'+ein(1)+'<g filter="url(#hgrSch)"><ellipse cx="62" cy="128" rx="17" ry="10" fill="url(#hgr2Arm)" transform="rotate(-30 62 128)"/><ellipse cx="88" cy="164" rx="9" ry="6" fill="url(#hgr2Arm)"/></g><path d="M50 124 q12 -8 24 2" stroke="#c98d68" stroke-width="1.2" fill="none"/></g>'
+    +uhr(250,60,'10 s',1.2,10)+'<g opacity="0">'+ein(1.4)+T(250,100,'Sehen · Hören · Fühlen',TX,10.5,800)+'</g>'
+    +'<g opacity="0">'+ein(1.2)+'<path d="M120 140 q8 -8 0 -16" stroke="#7dd3fc" stroke-width="2" fill="none"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="5"/></path></g>';
+  RE[2]=D()+'<g filter="url(#hgrSch)"><rect x="40" y="26" width="84" height="164" rx="14" fill="#111827"/><rect x="46" y="38" width="72" height="132" rx="6" fill="#1f2937"/></g>'
+    +'<g opacity="0">'+ein(0.3)+T(82,90,'112','#4ade80',26,900)+'</g>'+'<circle cx="82" cy="140" r="12" fill="#16a34a" opacity="0">'+ein(0.9)+'</circle>'
+    +'<path d="M76 140 a6 6 0 0 1 12 0" stroke="#fff" stroke-width="2" fill="none" opacity="0">'+ein(0.9)+'</path>'
+    +'<g opacity="0">'+ein(1.4)+aed(190,70,1.4)+T(240,170,'AED holen lassen',GR,11,800)+'</g>'
+    +'<g opacity="0">'+ein(0.5)+T(82,206,'Notruf / Rea-Team',TX,10,800)+'</g>';
+  RE[3]=D()+'<g filter="url(#hgrSch)"><path d="M70 10 C60 80 64 160 80 220 L240 220 C256 160 260 80 250 10 Z" fill="url(#hgrBauch)"/></g>'
+    +'<path d="M160 30 L160 150" stroke="#c98d68" stroke-width="5" stroke-linecap="round" opacity=".55"/><path d="M96 40 q64 -16 128 0" stroke="#c98d68" stroke-width="2" fill="none" opacity=".5"/>'
+    +'<g opacity="0">'+ein(0.4)+'<rect x="146" y="96" width="28" height="56" rx="8" fill="rgba(251,146,60,.25)" stroke="'+OR+'" stroke-width="2" stroke-dasharray="4 3"/>'+T(252,124,'untere Hälfte',OR,10,800)+T(252,137,'des Brustbeins',OR,10,800)+'</g>'
+    +'<g opacity="0">'+ein(1.4)+'<g filter="url(#hgrSch)"><ellipse cx="160" cy="124" rx="34" ry="22" fill="url(#hgr2Arm)"/><ellipse cx="160" cy="118" rx="30" ry="18" fill="#f3c7a1"/>'
+    +'<path d="M134 112 q26 -10 52 0 M136 120 q24 -8 48 0 M140 128 q20 -6 40 0" stroke="#c98d68" stroke-width="1.3" fill="none"/></g></g>';
+  RE[4]=D()+'<rect x="0" y="170" width="320" height="50" fill="url(#hgr2Boden)"/>'
+    +'<g><path d="M30 148 C80 136 150 136 210 146 L210 172 L30 172 Z" fill="url(#hgr2Shirt)"><animate attributeName="d" values="M30 148 C80 136 150 136 210 146 L210 172 L30 172 Z;M30 152 C80 146 150 146 210 150 L210 172 L30 172 Z;M30 148 C80 136 150 136 210 146 L210 172 L30 172 Z" dur=".55s" repeatCount="indefinite"/></path></g>'
+    +helferArme(120,142,6)
+    +'<g transform="translate(250 30)"><rect x="-56" y="-14" width="112" height="34" rx="17" fill="rgba(74,222,128,.15)"/>'+T(0,8,'100–120 / min',GR,13,900)+'</g>'
+    +'<g transform="translate(250 92)"><path d="M-30 -14 v28 M-36 -14 h12 M-36 14 h12" stroke="'+OR+'" stroke-width="2"/>'+T(10,5,'5–6 cm',OR,13,900,'start')+'</g>'
+    +T(250,140,'ganz entlasten',TX,10.5,800);
+  RE[5]=D()+'<rect x="0" y="170" width="320" height="50" fill="url(#hgr2Boden)"/>'+patient(20,160,-14)
+    +'<g filter="url(#hgrSch)" transform="translate(-6 24)"><path d="M30 116 q20 -16 40 0 l-4 16 h-32 Z" fill="#cbd5e1" opacity=".85"/><ellipse cx="50" cy="100" rx="26" ry="16" fill="#3b82f6" opacity=".85"><animate attributeName="ry" values="16;10;16" begin="0.5s" dur="1.2s" repeatCount="2"/><animate attributeName="rx" values="26;20;26" begin="0.5s" dur="1.2s" repeatCount="2"/></ellipse></g>'
+    +'<path d="M60 146 C110 132 170 132 220 142" stroke="#cbd5e1" stroke-width="3" fill="none" opacity="0"><animate attributeName="opacity" values="0;.9;0" begin="0.6s" dur="1.2s" repeatCount="2"/></path>'
+    +'<g transform="translate(240 70)"><rect x="-60" y="-24" width="120" height="48" rx="16" fill="rgba(125,211,252,.15)"/>'+T(0,8,'30 : 2',TX,24,900)+'</g>'
+    +'<g opacity="0">'+ein(0.4)+T(240,120,'Brustkorb hebt sich',GR,10.5,800)+'</g>';
+  RE[6]=D()+'<g filter="url(#hgrSch)"><path d="M60 10 C50 80 54 160 70 220 L230 220 C246 160 250 80 240 10 Z" fill="url(#hgrBauch)"/></g>'
+    +'<g opacity="0">'+ein(0.4)+'<rect x="86" y="44" width="46" height="34" rx="6" fill="#f8fafc" stroke="#94a3b8"/><path d="M109 50 v22" stroke="#334155" stroke-width="2"/>'+T(109,40,'rechts oben',TX2,8.5,800)+'</g>'
+    +'<g opacity="0">'+ein(1)+'<rect x="182" y="124" width="46" height="34" rx="6" fill="#f8fafc" stroke="#94a3b8" transform="rotate(-20 205 141)"/>'+T(206,174,'links seitlich',TX2,8.5,800)+'</g>'
+    +'<path d="M109 78 C130 120 250 70 270 60" stroke="#111827" stroke-width="2" fill="none" opacity="0">'+ein(1.4)+'</path><path d="M205 124 C230 100 260 80 270 66" stroke="#111827" stroke-width="2" fill="none" opacity="0">'+ein(1.4)+'</path>'
+    +aed(256,22,0.9)
+    +'<g opacity="0"><animate attributeName="opacity" values="0;1;0;1;0;1" begin="2s" dur="1.6s" fill="freeze"/><path d="M160 96 l-12 22 h12 l-8 20 l22 -28 h-12 l8 -14 Z" fill="#facc15"/>'+T(160,196,'Niemand berührt den Patienten!',RT,11,900)+'</g>';
+
+  /* ── Endotracheales Absaugen ── */
+  function monitor(x,y,spo2von,spo2bis,b){ var id='m'+Math.round(x+y);
+    return '<g filter="url(#hgrSch)"><rect x="'+x+'" y="'+y+'" width="150" height="104" rx="10" fill="url(#hgr2Geraet)"/><rect x="'+(x+8)+'" y="'+(y+8)+'" width="134" height="88" rx="5" fill="#020617"/></g>'
+      +'<path d="M'+(x+12)+' '+(y+34)+' h18 l4 -12 l4 22 l4 -10 h22 l4 -12 l4 22 l4 -10 h22 l4 -12 l4 22 l4 -10 h12" stroke="#4ade80" stroke-width="1.6" fill="none" stroke-dasharray="200" stroke-dashoffset="200"><animate attributeName="stroke-dashoffset" from="200" to="0" dur="2s" repeatCount="indefinite"/></path>'
+      +'<path d="M'+(x+12)+' '+(y+70)+' q8 -14 16 0 t16 0 t16 0 t16 0 t16 0" stroke="#22d3ee" stroke-width="1.6" fill="none"/>'
+      +T(x+100,y+60,'SpO₂','#22d3ee',8,800,'start')
+      +'<text x="'+(x+138)+'" y="'+(y+84)+'" fill="#22d3ee" font-size="18" font-weight="900" text-anchor="end" font-family="DM Sans,sans-serif">'+spo2von+'<set attributeName="visibility" to="hidden" begin="'+(b+1.5)+'s" fill="freeze"/></text>'
+      +'<text x="'+(x+138)+'" y="'+(y+84)+'" fill="'+(spo2bis<92?'#f87171':'#22d3ee')+'" font-size="18" font-weight="900" text-anchor="end" font-family="DM Sans,sans-serif" visibility="hidden">'+spo2bis+'<set attributeName="visibility" to="visible" begin="'+(b+1.5)+'s" fill="freeze"/></text>'; }
+  function trachea(){ /* Querschnitt: Luftröhre senkrecht mit Tubus */
+    return '<g filter="url(#hgrSch)"><path d="M118 0 L118 220 L202 220 L202 0 Z" fill="url(#hgr2Schleim)"/></g>'
+      +[0,1,2,3,4,5,6].map(function(i){ return '<path d="M118 '+(14+i*30)+' h84" stroke="#f1d1c9" stroke-width="7" opacity=".55"/>'; }).join('')
+      +'<path d="M134 0 L134 168 Q134 176 142 176 L178 176 Q186 176 186 168 L186 0" fill="rgba(226,232,240,.35)" stroke="#e2e8f0" stroke-width="3"/>'
+      +'<ellipse cx="160" cy="150" rx="40" ry="10" fill="rgba(147,197,253,.45)" stroke="#93c5fd"/>'+T(112,154,'Cuff',TX2,9,800,'end')
+      +T(112,20,'Tubus',TX2,9,800,'end'); }
+  function katheter(y,anim){ return '<g>'+(anim||'')+'<rect x="155" y="'+(y-200)+'" width="10" height="200" rx="5" fill="#f8fafc" opacity=".95"/><path d="M155 '+(y-6)+' a5 5 0 0 0 10 0" fill="#f8fafc"/><rect x="157" y="'+(y-200)+'" width="2" height="196" fill="#ffffff"/></g>'; }
+  var AB=[];
+  AB[0]=D()+trachea()+[0,1,2,3].map(function(i){ return '<ellipse cx="'+(146+i*9)+'" cy="'+(196+(i%2)*6)+'" rx="7" ry="5" fill="#fef3c7" opacity=".9"/>'; }).join('')
+    +'<g opacity="0">'+ein(0.3)+'<path d="M40 70 q10 -10 0 -20 M50 76 q16 -16 0 -32 M60 82 q22 -22 0 -44" stroke="'+OR+'" stroke-width="2.2" fill="none"><animate attributeName="opacity" values="1;.3;1" dur="1s" repeatCount="4"/></path>'+T(48,104,'Rasseln',OR,11,800)+'</g>'
+    +'<g transform="translate(214 30) scale(.62)">'+monitor(0,0,96,89,0.3)+'</g>'+'<g opacity="0">'+ein(1.9)+T(262,124,'SpO₂ fällt',RT,10.5,800)+T(262,140,'Druck steigt',RT,10.5,800)+'</g>';
+  AB[1]=D()+'<g filter="url(#hgrSch)"><rect x="26" y="40" width="110" height="150" rx="12" fill="url(#hgr2Geraet)"/><rect x="40" y="56" width="82" height="70" rx="6" fill="rgba(186,230,253,.25)" stroke="#94a3b8"/></g>'
+    +'<rect x="44" y="96" width="74" height="26" fill="rgba(254,243,199,.5)"/>'+'<circle cx="81" cy="160" r="18" fill="url(#hgrMetall)"/><circle cx="81" cy="160" r="14" fill="url(#hgr2Ziff)"/>'
+    +'<path d="M81 160 l-10 -6" stroke="#dc2626" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 81 160" to="70 81 160" dur="1.4s" begin="0.4s" fill="freeze"/></path>'
+    +T(81,206,'Sog nach Hausstandard',TX,9.5,800)
+    +'<g opacity="0">'+ein(0.8)+'<g filter="url(#hgrSch)"><rect x="170" y="44" width="120" height="70" rx="8" fill="#e0f2fe"/><path d="M180 60 h100 M180 74 h70" stroke="#93c5fd" stroke-width="3"/></g>'+T(230,100,'steriler Katheter','#0369a1',10,800)+'</g>'
+    +'<g opacity="0">'+ein(1.5)+'<rect x="170" y="130" width="120" height="44" rx="12" fill="rgba(125,211,252,.15)"/>'+T(230,150,'präoxygenieren',TX,11,800)+T(230,166,'O₂ ↑','#7dd3fc',10,900)+'</g>';
+  AB[2]=D()+trachea()+katheter(140,'<animateTransform attributeName="transform" type="translate" from="0 -110" to="0 0" begin="0.3s" dur="1.6s" fill="freeze"/>')
+    +'<g transform="translate(48 60)"><g filter="url(#hgrSch)"><rect x="0" y="0" width="56" height="26" rx="10" fill="#e2e8f0"/><circle cx="28" cy="13" r="6" fill="#0f172a"/></g>'+T(28,44,'Daumen weg',TX,9.5,800)+T(28,58,'= kein Sog',GR,10,900)+'</g>'
+    ;
+  AB[3]=D()+trachea()+[0,1,2,3].map(function(i){ return '<ellipse cx="'+(150+i*7)+'" cy="'+(150-i*4)+'" rx="5" ry="4" fill="#fef3c7"><animate attributeName="cy" from="'+(150-i*4)+'" to="'+(-10-i*4)+'" begin="'+(0.6+i*0.25)+'s" dur="2.4s" fill="freeze"/></ellipse>'; }).join('')
+    +katheter(140,'<animateTransform attributeName="transform" type="translate" from="0 0" to="0 -120" begin="0.3s" dur="3s" fill="freeze"/>')
+    +'<g transform="translate(40 50)"><g filter="url(#hgrSch)"><rect x="0" y="0" width="56" height="26" rx="10" fill="#e2e8f0"/></g><circle cx="28" cy="13" r="6" fill="#0f172a"/>'
+    +'<ellipse cx="28" cy="11" rx="11" ry="8" fill="url(#hgr2Arm)"><animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="4" begin="0.3s"/></ellipse></g>'
+    +'<g class="hg-blink">'+T(68,104,'Sog an · aus',OR,11,800)+'</g>'+T(68,120,'kein Dauersog',RT,10,800)+uhr(262,60,'10–15 s',0.3,3)
+    +'<g opacity="0">'+ein(0.8)+'<path d="M232 120 a20 20 0 1 1 -6 -14" stroke="'+GR+'" stroke-width="2" fill="none"/><path d="M226 106 l1 -8 l6 6 Z" fill="'+GR+'"/>'+T(240,160,'drehend',GR,10,800)+'</g>';
+  AB[4]=D()+'<g transform="translate(40 30) scale(1.2)">'+monitor(0,0,88,95,0.6)+'</g>'
+    +'<g opacity="0">'+ein(2.3)+haken(250,70,0)+T(272,74,'SpO₂',TX,10,800,'start')+haken(250,98,0)+T(272,102,'HF',TX,10,800,'start')+haken(250,126,0)+T(272,130,'Atmung',TX,10,800,'start')+'</g>'
+    +'<g opacity="0">'+ein(2.8)+T(118,182,'Menge · Farbe · Konsistenz',TX,10.5,800)+T(118,198,'dokumentieren',TX2,9.5,700)+'</g>';
+
+  P.ersetze('blutdruck',BD); P.ersetze('reanimation',RE); P.ersetze('absaugen',AB);
 })();
 </script>
 
@@ -28737,7 +28900,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
      Kein Verkauf: App bleibt kostenlos, nur einmalige Info zum Start einer Premium-Version. Kein neuer pl_*-Key. GA gruender_eintrag. -->
 <script>
 (function(){
-  var PL_GRUENDER_PUBLIC=false;
+  var PL_GRUENDER_PUBLIC=true; // Go P. Schenkelberger 01.11.2026
   function adm(){ try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
   function an(){ return PL_GRUENDER_PUBLIC||adm(); }
   function ga(n,p){ try{ if(window.gtag) gtag('event',n,p||{}); }catch(e){} }
