@@ -28035,5 +28035,206 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 </script>
+<script>
+/* ══ HANDGRIFFE ANIMIERT (01.11.2026, Wunsch P. Schenkelberger nach simpleclub-Werbung; Entwurf, nur Admin bis Go) ══
+   Schritt-für-Schritt-Animationen (SVG + CSS, keine Bilder/Videos, offline) für Pflegetechniken:
+   Infusion vorbereiten · s.c.-Injektion · Hygienische Händedesinfektion. Je Schritt Animation + 1–3 Zeilen Text,
+   Zurück/Weiter/Neustart, am Ende Merksatz + 3 Quizfragen. Screen `handgriffe` (dynamisch), Kachel `#pl-hg-tile`
+   im Wissen-Raster (erscheint einzeln neben den Gruppen). Kein neuer pl_*-Key. GA `handgriff_start`, `handgriff_fertig`.
+   Go = PL_HANDGRIFFE_PUBLIC=true (nach fachlicher Prüfung der Schritte). */
+(function(){
+  var PL_HANDGRIFFE_PUBLIC = false;
+  function an(){ try{ return PL_HANDGRIFFE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_HANDGRIFFE_PUBLIC; } }
+  function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
+
+  /* ── Zeichen-Bausteine (viewBox 0 0 320 220) ── */
+  var L='#cbd5e1', F='#7dd3fc', A='#fb923c', G='#4ade80', R='#f87171';
+  function a(cls,d,extra){ return ' class="'+cls+'" style="animation-delay:'+(d||0)+'s;'+(extra||'')+'"'; }
+  function txt(x,y,t,c,s,w){ return '<text x="'+x+'" y="'+y+'" fill="'+(c||L)+'" font-size="'+(s||13)+'" font-weight="'+(w||700)+'" text-anchor="middle" font-family="DM Sans,sans-serif">'+t+'</text>'; }
+  function haken(x,y,d){ return '<g'+a('hg-pop',d)+'><circle cx="'+x+'" cy="'+y+'" r="11" fill="'+G+'"/><path d="M'+(x-5)+' '+y+' l4 4 l7 -8" stroke="#06281a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>'; }
+  function kreuz(x,y,d){ return '<g'+a('hg-pop',d)+'><circle cx="'+x+'" cy="'+y+'" r="11" fill="'+R+'"/><path d="M'+(x-5)+' '+(y-5)+' l10 10 M'+(x+5)+' '+(y-5)+' l-10 10" stroke="#3b0a0a" stroke-width="2.6" stroke-linecap="round"/></g>'; }
+  function uhr(x,y,t,d){ return '<g><circle cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="#33506b" stroke-width="5"/><circle cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="'+G+'" stroke-width="5" stroke-dasharray="126" stroke-dashoffset="126" transform="rotate(-90 '+x+' '+y+')"'+a('hg-timer',d||0)+'/>'+txt(x,y+5,t,L,12)+'</g>'; }
+  function beutel(x,y,label){ return '<g><path d="M'+x+' '+y+' h80 v110 q0 14 -14 14 h-52 q-14 0 -14 -14 z" fill="rgba(125,211,252,.18)" stroke="'+L+'" stroke-width="2.5"/>'
+    +'<rect x="'+(x+6)+'" y="'+(y+40)+'" width="68" height="76" rx="8" fill="rgba(125,211,252,.35)"/>'
+    +'<rect x="'+(x+14)+'" y="'+(y+12)+'" width="52" height="22" rx="3" fill="#e2e8f0"/>'+(label?'<rect x="'+(x+19)+'" y="'+(y+18)+'" width="30" height="3" fill="#64748b"/><rect x="'+(x+19)+'" y="'+(y+25)+'" width="40" height="3" fill="#64748b"/>':'')
+    +'<rect x="'+(x+33)+'" y="'+(y+124)+'" width="14" height="14" rx="2" fill="'+L+'"/></g>'; }
+  function hand(x,y,flip,col,op){ var s=flip?-1:1; return '<g transform="translate('+x+' '+y+') scale('+s+' 1)" opacity="'+(op||1)+'"><rect x="-30" y="0" width="60" height="64" rx="22" fill="'+(col||'#fcd9b6')+'"/>'
+    +[-22,-8,6,20].map(function(fx,i){ return '<rect x="'+(fx-6)+'" y="'+(-34+(i===0||i===3?8:0))+'" width="12" height="44" rx="6" fill="'+(col||'#fcd9b6')+'"/>'; }).join('')
+    +'<rect x="26" y="20" width="12" height="34" rx="6" fill="'+(col||'#fcd9b6')+'" transform="rotate(-35 32 37)"/></g>'; }
+
+  /* ── Inhalte ── */
+  var HG = [
+    { id:'infusion', t:'Infusion vorbereiten', s:'Schwerkraftinfusion richten, entlüften, beschriften', farbe:'#38bdf8', schritte:[
+      { t:'Prüfen', x:'Hände desinfizieren. Anordnung prüfen. Infusionslösung kontrollieren: <b>richtige Lösung, Verfallsdatum, Verpackung unversehrt, Lösung klar</b>.',
+        svg: beutel(100,20,1)+'<g class="hg-scan"><circle cx="140" cy="100" r="24" fill="rgba(255,255,255,.08)" stroke="#e2e8f0" stroke-width="4"/><path d="M157 117 l22 22" stroke="#e2e8f0" stroke-width="7" stroke-linecap="round"/></g>'+haken(240,60,0.6)+txt(272,64,'Lösung',L,11)+haken(240,100,1.2)+txt(272,104,'Datum',L,11)+haken(240,140,1.8)+txt(272,144,'klar',L,11) },
+      { t:'Rollklemme schließen', x:'Infusionssystem auspacken und die <b>Rollklemme schließen</b>, bevor du es anschließt.',
+        svg:'<path d="M160 10 V210" stroke="'+L+'" stroke-width="5"/><rect x="138" y="70" width="44" height="90" rx="10" fill="#1e3a52" stroke="'+A+'" stroke-width="3"/><g'+a('hg-slide',0.3)+'><circle cx="160" cy="88" r="12" fill="'+A+'"/></g>'+txt(222,92,'offen',L,12)+txt(222,150,'zu',A,14,800)+'<path d="M200 140 h-10" stroke="'+A+'" stroke-width="3"/>' },
+      { t:'Einstichstelle desinfizieren', x:'Schutzkappe entfernen. Das Einstichseptum <b>desinfizieren</b> und die <b>Einwirkzeit</b> abwarten.',
+        svg: beutel(120,-30,1)+'<rect x="40" y="120" width="34" height="56" rx="8" fill="#e2e8f0"/><rect x="50" y="106" width="14" height="16" fill="#94a3b8"/>'+[0,0.25,0.5,0.75].map(function(d,i){ return '<circle cx="80" cy="'+(112+i*3)+'" r="3.5" fill="'+F+'"'+a('hg-spray',d)+'/>'; }).join('')+uhr(260,150,'Zeit',0.4) },
+      { t:'Dorn einstechen', x:'Den Dorn des Systems <b>gerade</b> in das Septum stechen, <b>ohne ihn zu berühren</b>.',
+        svg: beutel(120,-40,1)+'<g'+a('hg-up',0.2)+'><path d="M160 100 l-6 -14 h12 z" fill="#e2e8f0"/><rect x="152" y="100" width="16" height="26" rx="3" fill="#94a3b8"/><rect x="146" y="126" width="28" height="60" rx="8" fill="rgba(125,211,252,.12)" stroke="'+L+'" stroke-width="2.5"/><path d="M160 186 V220" stroke="'+L+'" stroke-width="4"/></g>'+txt(255,120,'nicht',R,12)+txt(255,136,'berühren',R,12) },
+      { t:'Tropfkammer füllen', x:'Infusion aufhängen. Tropfkammer zusammendrücken, bis sie zu <b>⅓ bis ½</b> gefüllt ist.',
+        svg:'<path d="M160 0 V40" stroke="'+L+'" stroke-width="4"/><g class="hg-squeeze"><rect x="130" y="40" width="60" height="110" rx="14" fill="rgba(125,211,252,.10)" stroke="'+L+'" stroke-width="3"/></g><rect x="134" y="96" width="52" height="50" rx="10" fill="'+F+'" opacity=".75"'+a('hg-fill',0.4)+'/>'
+          +[0,0.7,1.4].map(function(d){ return '<circle cx="160" cy="52" r="4" fill="'+F+'"'+a('hg-drop',d,'animation-iteration-count:infinite')+'/>'; }).join('')
+          +'<path d="M120 113 h-22 M120 95 h-22" stroke="'+A+'" stroke-width="2" stroke-dasharray="4 3"/>'+txt(80,99,'½',A,14,800)+txt(80,117,'⅓',A,14,800)+'<path d="M160 150 V215" stroke="'+L+'" stroke-width="4"/>' },
+      { t:'System luftfrei füllen', x:'Rollklemme <b>langsam öffnen</b>, bis die Leitung luftfrei gefüllt ist. Dann wieder <b>schließen</b>. Schutzkappe am Ende bleibt drauf.',
+        svg:'<rect x="40" y="12" width="36" height="56" rx="10" fill="rgba(125,211,252,.15)" stroke="'+L+'" stroke-width="2.5"/><rect x="43" y="42" width="30" height="23" rx="6" fill="'+F+'" opacity=".7"/>'
+          +'<path id="hgpf" d="M58 68 V120 Q58 170 110 170 H230 Q270 170 270 130 V80" fill="none" stroke="#33506b" stroke-width="8" stroke-linecap="round"/>'
+          +'<path d="M58 68 V120 Q58 170 110 170 H230 Q270 170 270 130 V80" fill="none" stroke="'+F+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="420" stroke-dashoffset="420"'+a('hg-flow',0.5)+'/>'
+          +'<rect x="44" y="100" width="28" height="30" rx="6" fill="#1e3a52" stroke="'+A+'" stroke-width="2.5"/><rect x="262" y="66" width="16" height="16" rx="3" fill="#e2e8f0"/>'+txt(270,58,'Kappe',L,11)+txt(160,206,'keine Luftblasen in der Leitung',G,12) },
+      { t:'Beschriften', x:'Infusion beschriften: <b>Name des Patienten, Datum & Uhrzeit, Zusätze mit Dosis, Handzeichen</b>. Hausstandard beachten.',
+        svg:'<rect x="70" y="30" width="180" height="150" rx="12" fill="#e2e8f0"/>'
+          +['Name: ________','Datum / Uhrzeit','Zusatz + Dosis','Handzeichen'].map(function(z,i){ return '<g'+a('hg-pop',0.3+i*0.6)+'>'+txt(160,70+i*30,z,'#0f172a',15,700)+'</g>'; }).join('') }
+    ], merke:'Tropfkammer ⅓ bis ½ füllen – zu voll: keine Tropfen zählbar, zu leer: Luft im System.',
+      quiz:[
+        {f:'Wie weit füllst du die Tropfkammer?', o:['Komplett voll','Zu ⅓ bis ½','Gar nicht','Nur einen Tropfen'], k:1},
+        {f:'Was schließt du, bevor du das System anschließt?', o:['Die Rollklemme','Nichts','Den Beutel','Die Belüftung am Patienten'], k:0},
+        {f:'Was gehört NICHT auf die Beschriftung?', o:['Datum und Uhrzeit','Zusatz mit Dosis','Handzeichen','Die Diagnose des Patienten'], k:3}
+      ]},
+    { id:'sc', t:'Subkutane Injektion', s:'z. B. Heparin oder Insulin mit Fertigspritze', farbe:'#a78bfa', schritte:[
+      { t:'Anordnung prüfen', x:'Hände desinfizieren. Nach den <b>R-Regeln</b> prüfen: richtiger Patient, Wirkstoff, Dosis, Applikationsart, Zeitpunkt.',
+        svg:['Patient','Wirkstoff','Dosis','Applikation','Zeitpunkt'].map(function(z,i){ return haken(110,34+i*36,0.3+i*0.4)+'<g'+a('hg-pop',0.3+i*0.4)+'>'+txt(185,39+i*36,z,L,15)+'</g>'; }).join('') },
+      { t:'Einstichstelle wählen', x:'Am Bauch mit <b>Abstand zum Nabel</b> (ca. 5 cm) oder am Oberschenkel außen-vorne. <b>Stellen wechseln</b>, keine Hämatome oder Narben.',
+        svg:'<rect x="80" y="10" width="160" height="200" rx="60" fill="#fcd9b6" opacity=".9"/><circle cx="160" cy="110" r="5" fill="#b45309"/><circle cx="160" cy="110" r="38" fill="none" stroke="'+R+'" stroke-width="2.5" stroke-dasharray="6 5"/>'+kreuz(160,86,0.3)
+          +[[105,80],[215,80],[110,150],[210,150]].map(function(p,i){ return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="'+G+'"'+a('hg-pop',0.8+i*0.4)+'/>'; }).join('')+txt(160,200,'ca. 5 cm Abstand',R,12) },
+      { t:'Haut desinfizieren', x:'Hautdesinfektion auftragen und die <b>Einwirkzeit</b> nach Herstellerangabe abwarten. Danach nicht mehr berühren.',
+        svg:'<rect x="30" y="130" width="260" height="60" rx="10" fill="#fcd9b6"/><rect x="40" y="40" width="34" height="56" rx="8" fill="#e2e8f0"/><rect x="50" y="26" width="14" height="16" fill="#94a3b8"/>'
+          +[0,0.25,0.5,0.75].map(function(d,i){ return '<circle cx="'+(100+i*20)+'" cy="'+(80+i*14)+'" r="4" fill="'+F+'"'+a('hg-pop',d)+'/>'; }).join('')+uhr(250,70,'Zeit',0.6) },
+      { t:'Hautfalte bilden', x:'Mit Daumen und Zeigefinger eine <b>Hautfalte</b> abheben und halten.',
+        svg:'<path d="M20 160 H300 V200 H20 Z" fill="#fcd9b6"/><path class="hg-fold" d="M20 160 H120 Q160 110 200 160 H300" fill="#fcd9b6" stroke="#e8b48a" stroke-width="2"/>'
+          +'<g class="hg-pinchL"><rect x="76" y="140" width="44" height="18" rx="9" fill="#f5c79f"/></g><g class="hg-pinchR"><rect x="200" y="140" width="44" height="18" rx="9" fill="#f5c79f"/></g>' },
+      { t:'Einstechen', x:'Nadel zügig im <b>90°-Winkel</b> in die Hautfalte stechen. Bei sehr schlanken Menschen ggf. 45° (Hausstandard). <b>Nicht aspirieren.</b>',
+        svg:'<path d="M20 160 H120 Q160 112 200 160 H300 V200 H20 Z" fill="#fcd9b6"/><g'+a('hg-down',0.3)+'><rect x="152" y="20" width="16" height="70" rx="3" fill="#e2e8f0"/><rect x="146" y="12" width="28" height="8" rx="2" fill="#94a3b8"/><path d="M160 90 V150" stroke="#cbd5e1" stroke-width="2.5"/></g>'+txt(240,90,'90°',A,18,800)+'<path d="M200 100 a20 20 0 0 1 -20 20" fill="none" stroke="'+A+'" stroke-width="2"/>' },
+      { t:'Langsam injizieren', x:'Langsam injizieren. Bei Pens die Nadel nach Herstellerangabe noch <b>einige Sekunden</b> stehen lassen. Dann Nadel herausziehen und Hautfalte loslassen.',
+        svg:'<path d="M20 160 H120 Q160 112 200 160 H300 V200 H20 Z" fill="#fcd9b6"/><rect x="152" y="40" width="16" height="70" rx="3" fill="#e2e8f0"/><rect x="155" y="44" width="10" height="62" fill="'+F+'" opacity=".6"/><g class="hg-push"><rect x="157" y="6" width="6" height="38" fill="#94a3b8"/><rect x="146" y="2" width="28" height="7" rx="2" fill="#94a3b8"/></g><path d="M160 110 V140" stroke="#cbd5e1" stroke-width="2.5"/>'+uhr(250,70,'warten',1.2) },
+      { t:'Entsorgen', x:'Kanüle <b>sofort</b> in den Abwurfbehälter. <b>Kein Recapping.</b> Einstichstelle nicht massieren. Dokumentieren.',
+        svg:'<rect x="200" y="110" width="80" height="90" rx="8" fill="#facc15"/><rect x="210" y="100" width="60" height="14" rx="3" fill="#ca8a04"/>'+txt(240,165,'!',  '#713f12',30,900)
+          +'<g class="hg-wurf"><rect x="60" y="60" width="14" height="60" rx="3" fill="#e2e8f0" transform="rotate(30 67 90)"/></g>'+kreuz(90,190,1.2)+txt(90,165,'Recapping',R,12) }
+    ], merke:'Hautfalte, 90°, nicht aspirieren, nicht massieren, Kanüle sofort in den Abwurf.',
+      quiz:[
+        {f:'In welchem Winkel stichst du bei normaler Hautfalte meist ein?', o:['15°','90°','180°','Egal'], k:1},
+        {f:'Aspirierst du bei der s.c.-Injektion?', o:['Ja, immer','Nur bei Insulin','Nein','Nur am Oberschenkel'], k:2},
+        {f:'Was machst du nach einer Heparin-Injektion NICHT?', o:['Die Einstichstelle massieren','Die Kanüle in den Abwurfbehälter','Dokumentieren','Die Hände desinfizieren'], k:0}
+      ]},
+    { id:'haende', t:'Hygienische Händedesinfektion', s:'Einreiben in 30 Sekunden – mit Fingerkuppen & Daumen', farbe:'#2dd4bf', schritte:[
+      { t:'Genug Mittel', x:'Hände sind <b>trocken</b>, ohne Schmuck. Die hohle Hand mit Desinfektionsmittel füllen (ca. <b>3–5 ml</b>).',
+        svg:'<rect x="190" y="20" width="44" height="80" rx="8" fill="#e2e8f0"/><path d="M200 20 v-12 h30 v12" fill="#94a3b8"/><path d="M190 30 h-30" stroke="#94a3b8" stroke-width="6"/>'
+          +[0,0.5,1].map(function(d){ return '<circle cx="160" cy="70" r="6" fill="'+F+'"'+a('hg-drop',d,'animation-iteration-count:infinite')+'/>'; }).join('')+hand(150,140,false)+txt(70,60,'3–5 ml',F,16,800) },
+      { t:'Handfläche auf Handfläche', x:'Handflächen aneinander reiben.',
+        svg:'<g class="hg-rub">'+hand(150,90,false)+'</g>'+hand(170,100,true,'#f5c79f',.85) },
+      { t:'Handrücken', x:'Rechte Handfläche über den linken Handrücken – dann umgekehrt.',
+        svg:hand(150,100,false,'#f5c79f')+'<g class="hg-rub">'+hand(165,80,true,'#fcd9b6',.9)+'</g>' },
+      { t:'Finger verschränkt', x:'Handflächen mit <b>verschränkten, gespreizten Fingern</b> aneinander reiben.',
+        svg:'<g class="hg-rubv">'+hand(140,100,false)+'</g>'+hand(180,100,true,'#f5c79f',.85)+'<path d="M140 70 l40 0 M140 82 l40 0 M140 94 l40 0" stroke="#e8b48a" stroke-width="3"/>' },
+      { t:'Fingeraußenseiten', x:'Die Außenseiten der Finger in der jeweils anderen Handfläche reiben.',
+        svg:hand(140,110,false,'#f5c79f')+'<g class="hg-rubv"><rect x="140" y="70" width="70" height="26" rx="13" fill="#fcd9b6" stroke="#e8b48a" stroke-width="2"/></g>' },
+      { t:'Daumen', x:'Den <b>Daumen</b> kreisend in der geschlossenen anderen Hand reiben. Wird oft vergessen!',
+        svg:hand(160,110,false,'#f5c79f')+'<g class="hg-spin" style="transform-origin:200px 120px"><path d="M200 92 a28 28 0 1 1 -24 14" fill="none" stroke="'+A+'" stroke-width="4"/><path d="M176 106 l-2 -12 l10 6" fill="'+A+'"/></g>' },
+      { t:'Fingerkuppen', x:'Die <b>Fingerkuppen</b> kreisend in der anderen Handfläche reiben. Ebenfalls oft vergessen!',
+        svg:hand(160,120,false,'#f5c79f')+'<g class="hg-spin" style="transform-origin:160px 130px"><path d="M160 106 a24 24 0 1 1 -20 12" fill="none" stroke="'+A+'" stroke-width="4"/><path d="M140 118 l-2 -12 l10 6" fill="'+A+'"/></g>' },
+      { t:'30 Sekunden', x:'Das Mittel über die gesamte Einwirkzeit (meist <b>30 Sekunden</b>, Herstellerangabe) einreiben. Die Hände müssen die ganze Zeit <b>feucht</b> bleiben.',
+        svg:uhr(160,90,'30 s',0)+'<g transform="translate(0 0)">'+txt(160,160,'Hände feucht halten',G,15)+txt(160,184,'Fingerkuppen & Daumen nicht vergessen',A,13)+'</g>' }
+    ], merke:'Die Reihenfolge ist nicht entscheidend – wichtig ist, dass alle Stellen 30 Sekunden benetzt sind, vor allem Fingerkuppen und Daumen.',
+      quiz:[
+        {f:'Wie lange reibst du das Mittel ein (meist)?', o:['5 Sekunden','30 Sekunden','2 Minuten','Bis der Geruch weg ist'], k:1},
+        {f:'Welche Stellen werden am häufigsten vergessen?', o:['Handflächen','Fingerkuppen und Daumen','Handrücken','Keine'], k:1},
+        {f:'Wie sollten die Hände vor der Desinfektion sein?', o:['Nass','Eingecremt','Trocken und ohne Schmuck','Mit Handschuhen'], k:2}
+      ]}
+  ];
+  window.PL_HANDGRIFFE = HG;
+
+  /* ── Styles ── */
+  var css=document.createElement('style');
+  css.textContent=
+   '.hg-card{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(148,190,220,.18);border-radius:14px;padding:14px;margin-bottom:10px;color:var(--text);font-family:inherit;cursor:pointer}'+
+   '.hg-card .p{width:12px;height:12px;border-radius:50%;flex:0 0 12px}.hg-card b{display:block;font-size:15.5px}.hg-card span{font-size:12.5px;color:var(--text3)}'+
+   '.hg-buehne{background:#0f2740;border-radius:18px;overflow:hidden;position:relative}.hg-buehne svg{display:block;width:100%;height:auto}'+
+   '.hg-kopf{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 10px;font-size:13px;color:var(--text3);font-weight:700}'+
+   '.hg-punkte{display:flex;gap:6px}.hg-punkte i{width:8px;height:8px;border-radius:50%;background:rgba(148,190,220,.3)}.hg-punkte i.an{background:var(--accent);transform:scale(1.3)}.hg-punkte i.ok{background:var(--accent);opacity:.5}'+
+   '.hg-text{margin:14px 2px 6px}.hg-text h3{font-family:inherit;font-size:19px;margin:0 0 6px;font-weight:800;color:var(--text)}.hg-text p{margin:0;font-size:15px;line-height:1.55;color:var(--text2)}'+
+   '.hg-knoepfe{display:flex;gap:8px;margin-top:16px}.hg-knoepfe button{flex:1;border-radius:12px;padding:13px 10px;font:inherit;font-size:15px;font-weight:800;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent)}.hg-knoepfe button.h{background:var(--accent);color:#04121e;border-color:var(--accent)}.hg-knoepfe button:disabled{opacity:.35}'+
+   '.hg-merke{background:rgba(74,222,128,.1);border-left:4px solid #4ade80;border-radius:10px;padding:12px 14px;margin:14px 0;color:var(--text);font-weight:600;line-height:1.5}'+
+   '.hg-q{margin:14px 0}.hg-q b{display:block;margin-bottom:8px;color:var(--text)}.hg-q button{display:block;width:100%;text-align:left;margin:6px 0;padding:11px 12px;border-radius:12px;border:1.5px solid rgba(148,190,220,.25);background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-size:14.5px;cursor:pointer}.hg-q button.r{border-color:#16a34a;background:rgba(22,163,74,.15)}.hg-q button.f{border-color:#ea580c;background:rgba(234,88,12,.12)}'+
+   'body.pl-hg #ki-fab{display:none!important}.hg-entwurf{font-size:12px;font-weight:800;color:#fde68a;background:rgba(250,204,21,.12);border-radius:8px;padding:6px 10px;margin-bottom:10px}'+
+   'body.light-mode .hg-card{background:#fff;border-color:rgba(30,64,128,.16)}'+
+   '.hg-buehne *{transform-box:fill-box;transform-origin:center}'+
+   '.hg-pop{animation:hgPop .45s ease-out both}.hg-up{animation:hgUp 1.2s ease-out both}.hg-down{animation:hgDown 1.2s ease-out both}'+
+   '.hg-slide{animation:hgSlide 1.4s ease-in-out both}.hg-fill{transform-origin:bottom;animation:hgFill 2.4s ease-out both}'+
+   '.hg-drop{animation:hgDrop 1.4s ease-in both}.hg-spray{animation:hgSpray 1s ease-out 2 both}.hg-timer{animation:hgTimer 3s linear both}'+
+   '.hg-flow{animation:hgFlow 3s ease-in-out both}.hg-scan{animation:hgScan 2.4s ease-in-out infinite alternate}'+
+   '.hg-squeeze{animation:hgSqueeze .7s ease-in-out 3}.hg-rub{animation:hgRub .9s ease-in-out infinite}.hg-rubv{animation:hgRubV .9s ease-in-out infinite}'+
+   '.hg-spin{animation:hgSpin 1.6s linear infinite;transform-box:view-box!important}.hg-fold{animation:hgFoldIn 1.6s ease-out both}'+
+   '.hg-pinchL{animation:hgPinchL 1.6s ease-out both}.hg-pinchR{animation:hgPinchR 1.6s ease-out both}.hg-push{animation:hgPush 2.4s ease-in-out both}.hg-wurf{animation:hgWurf 1.4s ease-in both}'+
+   '@keyframes hgPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}'+
+   '@keyframes hgUp{from{transform:translateY(60px)}to{transform:none}}@keyframes hgDown{from{transform:translateY(-70px)}to{transform:none}}'+
+   '@keyframes hgSlide{from{transform:none}to{transform:translateY(50px)}}@keyframes hgFill{from{transform:scaleY(0)}to{transform:scaleY(1)}}'+
+   '@keyframes hgDrop{0%{transform:translateY(-10px);opacity:0}25%{opacity:1}100%{transform:translateY(40px);opacity:0}}'+
+   '@keyframes hgSpray{0%{opacity:0;transform:translateX(-10px)}40%{opacity:1}100%{opacity:0;transform:translateX(40px)}}'+
+   '@keyframes hgTimer{to{stroke-dashoffset:0}}@keyframes hgFlow{to{stroke-dashoffset:0}}@keyframes hgScan{from{transform:translateX(-40px)}to{transform:translateX(30px)}}'+
+   '@keyframes hgSqueeze{50%{transform:scaleX(.8)}}@keyframes hgRub{0%,100%{transform:translateX(-10px)}50%{transform:translateX(10px)}}@keyframes hgRubV{0%,100%{transform:translateY(-8px)}50%{transform:translateY(8px)}}'+
+   '@keyframes hgSpin{to{transform:rotate(360deg)}}@keyframes hgFoldIn{from{opacity:0}to{opacity:1}}'+
+   '@keyframes hgPinchL{from{transform:translateX(-50px)}to{transform:none}}@keyframes hgPinchR{from{transform:translateX(50px)}to{transform:none}}'+
+   '@keyframes hgPush{from{transform:none}to{transform:translateY(34px)}}@keyframes hgWurf{from{transform:none}to{transform:translate(150px,60px) rotate(40deg);opacity:.2}}'+
+   '@media (prefers-reduced-motion:reduce){.hg-buehne *{animation-duration:.01s!important;animation-iteration-count:1!important}}';
+  document.head.appendChild(css);
+
+  /* ── Ansicht ── */
+  var aktuell=null, schritt=0;
+  function box(){ return document.getElementById('handgriffe-content'); }
+  function liste(){
+    aktuell=null; var b=box(); if(!b) return;
+    b.innerHTML=(PL_HANDGRIFFE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · Schritte fachlich prüfen</div>')
+      +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Schritt für Schritt, mit Animation. Danach 3 kurze Fragen.</p>'
+      +HG.map(function(h,i){ return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+  }
+  function zeige(){
+    var h=aktuell, b=box(); if(!h||!b) return;
+    if(schritt>=h.schritte.length) return ende();
+    var st=h.schritte[schritt];
+    b.innerHTML='<div class="hg-kopf"><button onclick="plHandgriffListe()" style="background:none;border:none;color:var(--accent);font:inherit;font-weight:800;cursor:pointer;padding:0">‹ '+h.t+'</button><span>Schritt '+(schritt+1)+'/'+h.schritte.length+'</span></div>'
+      +'<div class="hg-punkte" style="margin:0 2px 10px">'+h.schritte.map(function(_,i){ return '<i class="'+(i===schritt?'an':(i<schritt?'ok':''))+'"></i>'; }).join('')+'</div>'
+      +'<div class="hg-buehne" onclick="plHandgriffNochmal()" title="Animation wiederholen"><svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">'+st.svg+'</svg></div>'
+      +'<div class="hg-text"><h3>'+st.t+'</h3><p>'+st.x+'</p></div>'
+      +'<div class="hg-knoepfe"><button onclick="plHandgriffSchritt(-1)"'+(schritt===0?' disabled':'')+'>Zurück</button><button onclick="plHandgriffNochmal()">↻</button><button class="h" onclick="plHandgriffSchritt(1)">'+(schritt===h.schritte.length-1?'Fertig':'Weiter')+'</button></div>';
+  }
+  function ende(){
+    var h=aktuell, b=box(); ga('handgriff_fertig',{id:h.id});
+    b.innerHTML='<div class="hg-kopf"><button onclick="plHandgriffListe()" style="background:none;border:none;color:var(--accent);font:inherit;font-weight:800;cursor:pointer;padding:0">‹ Alle Handgriffe</button><span>geschafft</span></div>'
+      +'<div class="hg-text"><h3>'+h.t+' ✅</h3></div><div class="hg-merke">📌 '+h.merke+'</div>'
+      +h.quiz.map(function(q,qi){ return '<div class="hg-q" data-k="'+q.k+'"><b>'+(qi+1)+'. '+q.f+'</b>'+q.o.map(function(o,oi){ return '<button onclick="plHandgriffAntwort(this,'+oi+')">'+o+'</button>'; }).join('')+'</div>'; }).join('')
+      +'<div class="hg-knoepfe"><button onclick="plHandgriffStart(0)">Nochmal ansehen</button><button class="h" onclick="plHandgriffListe()">Nächster Handgriff</button></div>';
+  }
+  window.plHandgriff=function(i){ aktuell=HG[i]; schritt=0; ga('handgriff_start',{id:aktuell.id}); zeige(); try{ window.scrollTo(0,0); }catch(e){} };
+  window.plHandgriffStart=function(){ schritt=0; zeige(); };
+  window.plHandgriffListe=function(){ liste(); };
+  window.plHandgriffSchritt=function(d){ schritt=Math.max(0,schritt+d); zeige(); };
+  window.plHandgriffNochmal=function(){ var s=document.querySelector('.hg-buehne svg'); if(!s) return; var c=s.cloneNode(true); s.parentNode.replaceChild(c,s); };
+  window.plHandgriffAntwort=function(btn,oi){ var q=btn.parentNode; if(q.getAttribute('data-fertig')) return; q.setAttribute('data-fertig','1'); var k=+q.getAttribute('data-k'); var bs=q.querySelectorAll('button'); bs[k].classList.add('r'); if(oi!==k) btn.classList.add('f'); };
+
+  function bauen(){
+    if(!an()) return;
+    if(!document.getElementById('screen-handgriffe')){
+      var d=document.createElement('div'); d.id='screen-handgriffe'; d.className='page';
+      d.innerHTML='<div class="hero" style="margin-bottom:14px"><div class="hero-icon">🖐️</div><h1>Handgriffe<span> animiert</span></h1><p>Pflegetechniken Schritt für Schritt</p></div><div id="handgriffe-content"></div>';
+      var ref=document.getElementById('screen-wissenhub');
+      if(ref && ref.parentNode) ref.parentNode.insertBefore(d, ref.nextSibling); else document.body.appendChild(d);
+    }
+    var wh=document.getElementById('screen-wissenhub');
+    var anker=wh && wh.querySelector('button[onclick^="navGo(\'wissensdb\')"]');
+    if(anker && !document.getElementById('pl-hg-tile')){
+      var b=anker.cloneNode(false); b.id='pl-hg-tile'; b.setAttribute('onclick',"showScreen('handgriffe')");
+      b.innerHTML='<span style="font-size:24px">🖐️</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Handgriffe animiert</span><span style="font-size:11.5px;color:#a3bcd0">Infusion · s.c. · Hände'+(PL_HANDGRIFFE_PUBLIC?'':' · Entwurf')+'</span>';
+      anker.parentNode.appendChild(b);
+    }
+  }
+  function start(){
+    try{ bauen(); }catch(e){}
+    var orig=window.showScreen;
+    if(typeof orig==='function') window.showScreen=function(n){ if(n==='handgriffe'||n==='wissenhub'){ try{ bauen(); }catch(e){} } try{ document.body.classList.toggle('pl-hg', n==='handgriffe'); }catch(e){} var r=orig.apply(this,arguments); if(n==='handgriffe'){ try{ if(!aktuell) liste(); }catch(e){} } return r; };
+    setTimeout(function(){ try{ bauen(); }catch(e){} }, 3000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 </body>
 </html>
