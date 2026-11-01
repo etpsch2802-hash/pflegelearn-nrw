@@ -29272,7 +29272,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    erscheinen aber nur in der Rubrik (Screen `grundpflege`), nicht in der Handgriffe-Liste.
    Schalter PL_GRUNDPFLEGE_PUBLIC. Kein neuer pl_*-Key. GA grundpflege_open. Fachliche Endkontrolle: P. Schenkelberger. */
 (function(){
-  var PL_GRUNDPFLEGE_PUBLIC=false;
+  var PL_GRUNDPFLEGE_PUBLIC=true; // Go P. Schenkelberger 01.11.2026
   function an(){ try{ return PL_GRUNDPFLEGE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_GRUNDPFLEGE_PUBLIC; } }
   window.plGPAn=an;
   var HG=window.PL_HANDGRIFFE, P=window.PLHGR; if(!HG||!P) return;
