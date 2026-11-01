@@ -31,20 +31,32 @@ def zeilen(liste, start, abstand):
 def seite(v):
     nr = v['nr']
     hilfe = v.get('hilfe')
+    punkte = ''.join(f'<i class="{"an" if k==nr else ("fertig" if k<nr else "")}"></i>' for k in range(1,13))
     hb = (f'<div class="wrap" style="top:842px"><div class="hilfe">{HILFE}</div></div>') if hilfe else ''
     weiter = f'Folge für <b>Teil {nr+1}</b> der Serie.' if nr < 12 else '<b>Alle 12 Tipps</b> jetzt in PLAN.'
     l1_top = 470
     s = f'''
-<!-- S1 0-14: Hook + Gefühl -->
-<div class="sc" data-von="0" data-bis="14">
+<!-- S0 0-3.2: Serien-Hook (auch Titelbild) -->
+<div class="sc" data-von="0" data-bis="3.2">
+  <div class="wrap" style="top:120px;text-align:center">
+    <div class="serie-tag">SERIE · TEIL {nr} VON 12</div>
+    <div class="serie-titel pulse">{v['serie']}</div>
+    <div class="serie-punkte">{punkte}</div>
+  </div>
+  <div class="band" style="top:560px">{band('AUSBILDUNG MEISTERN')}</div>
+  <div class="wrap" style="top:720px;text-align:center"><div class="serie-sub">2 Lösungen, die wirklich helfen 👇</div></div>
+</div>
+
+<!-- S1 3.2-14: Hook + Gefühl -->
+<div class="sc" data-von="3.2" data-bis="14">
   <div class="wrap pulse" style="top:96px">
     <div class="rot" style="font-size:24px">AUSBILDUNG MEISTERN · TEIL {nr}</div>
     <div class="weiss">{v['hook']}</div>
   </div>
   <div class="band" style="top:318px">{band('KENNST DU DAS?')}</div>
-  <div class="wrap" style="top:462px" data-pop="1.4">
+  <div class="wrap" style="top:462px" data-pop="3.8">
     <div class="gelb"><h3>DAS FÜHLST DU</h3>
-      {zeilen(v['gefuehl'], 2.8, 3.2)}
+      {zeilen(v['gefuehl'], 4.6, 3.0)}
     </div>
   </div>
 </div>
@@ -118,7 +130,7 @@ def seite(v):
   <div class="wrap" style="top:765px" data-pop="57.2" id="bio"><div class="gruen"><h3>LINK IN DER BIO</h3><p style="font-size:26px;font-weight:900">plan-nrw.de</p></div></div>
 </div>
 '''
-    extra_css = '<style>.hilfe{background:#fff;border:2px solid #0f172a;border-radius:12px;padding:9px 12px;text-align:center;font-size:17px;font-weight:600;color:#0f172a}.hilfe b{font-weight:900}.weiss{font-size:24px}.gelb .z{font-size:25px;margin-bottom:16px}.zitat{font-size:23px}.hilfe{font-size:19px}</style>'
+    extra_css = '<style>.hilfe{background:#fff;border:2px solid #0f172a;border-radius:12px;padding:9px 12px;text-align:center;font-size:17px;font-weight:600;color:#0f172a}.hilfe b{font-weight:900}.weiss{font-size:24px}.gelb .z{font-size:25px;margin-bottom:16px}.zitat{font-size:23px}.hilfe{font-size:19px}.serie-tag{display:inline-block;background:#0f172a;color:#fde68a;font-weight:900;font-size:22px;letter-spacing:1.5px;border-radius:999px;padding:8px 18px;margin-bottom:22px}.serie-titel{background:#fff;border:4px solid #dc2626;border-radius:18px;padding:26px 18px;font-size:40px;line-height:1.18;font-weight:900;color:#0f172a;box-shadow:0 10px 26px rgba(200,30,30,.25)}.serie-punkte{display:flex;justify-content:center;gap:9px;margin-top:26px}.serie-punkte i{width:16px;height:16px;border-radius:50%;background:#cbd5e1;display:block}.serie-punkte i.fertig{background:#2dd4bf}.serie-punkte i.an{background:#dc2626;transform:scale(1.35)}.serie-sub{font-size:26px;font-weight:800;color:#0f172a}</style>'
     return KOPF.replace('</head>', extra_css + '</head>') + s + SKRIPT
 
 VIDEOS = json.load(open(os.path.join(H, 'serie-ausbildung.json'), encoding='utf-8'))
