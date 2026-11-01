@@ -28185,7 +28185,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     aktuell=null; var b=box(); if(!b) return;
     b.innerHTML=(PL_HANDGRIFFE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · Schritte fachlich prüfen</div>')
       +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Schritt für Schritt, mit Animation. Danach 3 kurze Fragen.</p>'
-      +HG.map(function(h,i){ if((h.neu2 && !(window.plHG2An && window.plHG2An())) || (h.neu3 && !(window.plHG3An && window.plHG3An()))) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+      +HG.map(function(h,i){ if(h.gp || (h.neu2 && !(window.plHG2An && window.plHG2An())) || (h.neu3 && !(window.plHG3An && window.plHG3An()))) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
   }
   function zeige(){
     var h=aktuell, b=box(); if(!h||!b) return;
@@ -29262,6 +29262,170 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   PF[4]=D()+liste(['Laufrate stimmt','Leitung frei','Patient beobachten']);
 
   P.ersetze('fingertest',FT); P.ersetze('verband',VW); P.ersetze('magensonde',MS); P.ersetze('mtps',MT); P.ersetze('transfer',TR); P.ersetze('atemtrainer',AT); P.ersetze('perfusor',PF);
+})();
+</script>
+<script>
+/* ══ RUBRIK GRUNDPFLEGE (01.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   Körperpflege eines pflegebedürftigen Menschen: im Bett · an der Bettkante · am Waschbecken · in der Dusche.
+   Je Ort ein Ablauf im Stil „Handgriffe animiert“ (verbesserter Stil, window.PLHGR) + Kasten „Rechtlicher Rahmen“.
+   Die 4 Abläufe hängen als Einträge mit Feld gp:true an window.PL_HANDGRIFFE (Engine, Quiz, Merksatz),
+   erscheinen aber nur in der Rubrik (Screen `grundpflege`), nicht in der Handgriffe-Liste.
+   Schalter PL_GRUNDPFLEGE_PUBLIC. Kein neuer pl_*-Key. GA grundpflege_open. Fachliche Endkontrolle: P. Schenkelberger. */
+(function(){
+  var PL_GRUNDPFLEGE_PUBLIC=false;
+  function an(){ try{ return PL_GRUNDPFLEGE_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_GRUNDPFLEGE_PUBLIC; } }
+  window.plGPAn=an;
+  var HG=window.PL_HANDGRIFFE, P=window.PLHGR; if(!HG||!P) return;
+  var T=P.T, ein=P.ein, haken=P.haken, kreuz=P.kreuz, uhr=P.uhr, GR=P.GR, RT=P.RT, OR=P.OR, TX=P.TX, TX2=P.TX2;
+  function ga(n,p){ try{ if(window.gtag) gtag('event',n,p||{}); }catch(e){} }
+
+  function D(){ return P.defs()+'<defs>'
+    +'<linearGradient id="gpHaut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9dcc2"/><stop offset=".55" stop-color="#efc29c"/><stop offset="1" stop-color="#cf9670"/></linearGradient>'
+    +'<linearGradient id="gpDecke" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0f2fe"/><stop offset="1" stop-color="#93c5fd"/></linearGradient>'
+    +'<linearGradient id="gpLaken" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>'
+    +'<linearGradient id="gpRahmen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#94a3b8"/><stop offset="1" stop-color="#475569"/></linearGradient>'
+    +'<linearGradient id="gpWasser" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bae6fd"/><stop offset="1" stop-color="#38bdf8"/></linearGradient>'
+    +'<linearGradient id="gpSchale" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#94a3b8"/><stop offset=".5" stop-color="#f1f5f9"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>'
+    +'<linearGradient id="gpKleid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c8ea6"/><stop offset="1" stop-color="#4b5a70"/></linearGradient>'
+    +'<linearGradient id="gpFliese" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e3a52"/><stop offset="1" stop-color="#16293d"/></linearGradient>'
+    +'<linearGradient id="gpBlau" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3e5ec4"/><stop offset=".45" stop-color="#7b98f2"/><stop offset="1" stop-color="#3553b5"/></linearGradient>'
+    +'</defs>'; }
+  function liste(z,b,x,y,gr){ x=x||60; y=y||40; gr=gr||12.5; return z.map(function(t,i){ return haken(x,y+i*34,(b||0.3)+i*0.4)+'<g opacity="0">'+ein((b||0.3)+i*0.4)+T(x+18,y+4+i*34,t,TX,gr,800,'start')+'</g>'; }).join(''); }
+  /* Bett von der Seite, Kopfende links */
+  function bett(){ return '<g filter="url(#hgrSch)"><rect x="18" y="130" width="284" height="16" rx="4" fill="url(#gpRahmen)"/><rect x="24" y="146" width="8" height="58" fill="#475569"/><rect x="288" y="146" width="8" height="58" fill="#475569"/>'
+    +'<circle cx="28" cy="206" r="7" fill="#1e293b"/><circle cx="292" cy="206" r="7" fill="#1e293b"/><rect x="14" y="70" width="10" height="76" rx="4" fill="url(#gpRahmen)"/>'
+    +'<rect x="22" y="112" width="276" height="22" rx="8" fill="url(#gpLaken)"/><ellipse cx="62" cy="108" rx="34" ry="12" fill="#f8fafc"/></g>'; }
+  function liegt(decke){ return '<g filter="url(#hgrSch)"><ellipse cx="64" cy="94" rx="19" ry="17" fill="url(#gpHaut)"/><path d="M50 82 q14 -12 30 0" stroke="#9ca3af" stroke-width="6" fill="none" stroke-linecap="round"/>'
+    +'<path d="M84 96 Q90 84 110 86 L280 92 Q292 94 292 106 L292 114 L84 114 Z" fill="'+(decke===false?'url(#gpKleid)':'url(#gpDecke)')+'"/></g>'; }
+  function schuessel(x,y,thermo){ return '<g transform="translate('+x+' '+y+')" filter="url(#hgrSch)"><path d="M-34 0 L34 0 L26 26 Q24 30 18 30 L-18 30 Q-24 30 -26 26 Z" fill="url(#gpSchale)"/><ellipse cx="0" cy="0" rx="34" ry="7" fill="url(#gpWasser)"/>'
+    +[0,1].map(function(i){ return '<path d="M'+(-10+i*16)+' -8 q-5 -8 0 -16 q5 -8 0 -16" stroke="#e2e8f0" stroke-width="1.6" fill="none" opacity=".5"><animate attributeName="opacity" values=".1;.6;.1" dur="2s" repeatCount="indefinite" begin="'+(i*0.6)+'s"/></path>'; }).join('')
+    +(thermo?'<rect x="20" y="-34" width="6" height="40" rx="3" fill="#f8fafc" transform="rotate(14 23 -14)"/><rect x="21.5" y="-18" width="3" height="20" fill="#ef4444" transform="rotate(14 23 -14)"/>':'')+'</g>'; }
+  function lappen(x,y,anim,farbe){ return '<g transform="translate('+x+' '+y+')">'+(anim||'')+'<g filter="url(#hgrSch)"><rect x="-16" y="-11" width="32" height="22" rx="6" fill="'+(farbe||'#60a5fa')+'"/><path d="M-12 -4 h24 M-12 3 h24" stroke="#fff" stroke-opacity=".35"/></g></g>'; }
+  function sichtschutz(x){ return '<g filter="url(#hgrSch)">'+[0,1,2].map(function(i){ return '<rect x="'+(x+i*26)+'" y="20" width="24" height="150" rx="3" fill="#cbd5e1" opacity=".85"/><rect x="'+(x+i*26+11)+'" y="170" width="2" height="30" fill="#64748b"/>'; }).join('')+'</g>'; }
+  function sitzt(x,y){ return '<g transform="translate('+x+' '+y+')" filter="url(#hgrSch)"><circle cx="0" cy="-36" r="16" fill="url(#gpHaut)"/><path d="M-12 -46 q12 -10 26 0" stroke="#9ca3af" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="-16" y="-20" width="32" height="58" rx="14" fill="url(#gpKleid)"/>'
+    +'<path d="M0 34 L28 34 L32 88" stroke="#364256" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="22" y="86" width="28" height="9" rx="4" fill="#1e293b"/></g>'; }
+  function waschbecken(){ return '<g filter="url(#hgrSch)"><rect x="150" y="20" width="110" height="74" rx="6" fill="#bae6fd" opacity=".25" stroke="#94a3b8"/><path d="M140 112 L270 112 L262 140 Q258 150 246 150 L164 150 Q152 150 148 140 Z" fill="url(#gpSchale)"/>'
+    +'<rect x="198" y="96" width="14" height="18" rx="3" fill="url(#hgrMetall)"/><path d="M205 96 q0 -10 14 -10" stroke="#94a3b8" stroke-width="5" fill="none"/><rect x="200" y="150" width="10" height="56" fill="#64748b"/></g>'; }
+  function duschstuhl(x){ return '<g transform="translate('+x+' 0)" filter="url(#hgrSch)"><rect x="0" y="130" width="70" height="10" rx="4" fill="#f8fafc"/><rect x="62" y="80" width="8" height="54" rx="3" fill="#f8fafc"/><rect x="4" y="140" width="5" height="60" fill="#cbd5e1"/><rect x="60" y="140" width="5" height="60" fill="#cbd5e1"/><circle cx="6" cy="202" r="4" fill="#475569"/><circle cx="63" cy="202" r="4" fill="#475569"/></g>'; }
+  function dusche(wasser){ return '<rect width="320" height="220" fill="url(#gpFliese)"/>'+[0,1,2,3,4,5,6].map(function(i){ return '<path d="M'+(i*46)+' 0 V206" stroke="#2c4a66" stroke-width="1"/>'; }).join('')+[0,1,2,3].map(function(i){ return '<path d="M0 '+(i*52)+' H320" stroke="#2c4a66" stroke-width="1"/>'; }).join('')
+    +'<rect x="0" y="206" width="320" height="14" fill="#0f2238"/><rect x="60" y="200" width="200" height="8" rx="3" fill="#2dd4bf" opacity=".55"/>'
+    +'<g filter="url(#hgrSch)"><path d="M250 30 V10 H290" stroke="url(#hgrMetall)" stroke-width="6" fill="none"/><ellipse cx="250" cy="36" rx="18" ry="7" fill="url(#hgrMetall)"/><rect x="40" y="70" width="8" height="70" rx="4" fill="url(#hgrMetall)"/></g>'
+    +(wasser?[0,1,2,3,4,5].map(function(i){ return '<path d="M'+(238+i*5)+' 44 l'+(-6+i*2)+' 26" stroke="#7dd3fc" stroke-width="2" stroke-linecap="round" opacity=".8"><animate attributeName="stroke-dashoffset" from="0" to="-40" dur=".5s" repeatCount="indefinite"/></path>'; }).join(''):''); }
+  function handS(x,y,rot,blau){ var f=blau?'url(#gpBlau)':'url(#gpHaut)'; return '<g transform="translate('+x+' '+y+') rotate('+(rot||0)+')" filter="url(#hgrSch)"><ellipse cx="0" cy="0" rx="16" ry="12" fill="'+f+'"/>'+[0,1,2,3].map(function(i){ return '<rect x="'+(-11+i*6.5)+'" y="-26" width="6" height="18" rx="3" fill="'+f+'"/>'; }).join('')+'<rect x="-22" y="-10" width="7" height="16" rx="3.5" fill="'+f+'" transform="rotate(-40 -18 -2)"/></g>'; }
+  function gesetz(t){ return '<g opacity="0">'+ein(0.2)+'<rect x="10" y="190" width="300" height="24" rx="12" fill="rgba(251,191,36,.14)" stroke="rgba(251,191,36,.45)"/>'+T(160,206,'§ '+t,'#fcd34d',9.5,800)+'</g>'; }
+
+  /* ── A) Im Bett ── */
+  var BETT={ id:'gp-bett', gp:true, t:'Ganzkörperwaschung im Bett', s:'Für Menschen, die das Bett nicht verlassen können', farbe:'#38bdf8', schritte:[
+    { t:'Vorbereiten & ansprechen', x:'Person informieren und <b>Einverständnis</b> einholen, Wünsche und Gewohnheiten erfragen (z. B. Pflegemittel, Reihenfolge, gleichgeschlechtliche Pflege). Fenster schließen, Raum warm, <b>Sichtschutz</b>.', svg: D()+bett()+liegt()+sichtschutz(220)+'<g opacity="0">'+ein(0.6)+'<rect x="98" y="26" width="112" height="34" rx="14" fill="#f8fafc"/><path d="M112 60 l-8 12 l18 -12 Z" fill="#f8fafc"/>'+T(154,48,'Darf ich Sie waschen?','#0f172a',9.5,800)+'</g>'+gesetz('2 SGB XI: Selbstbestimmung & Wünsche') },
+    { t:'Material & Arbeitshöhe', x:'Material vollständig bereitlegen. Bett auf <b>Arbeitshöhe</b>, Bremsen fest. <b>Hände desinfizieren</b>, Handschuhe bei Kontakt mit Ausscheidungen, Schleimhaut oder nicht intakter Haut.', svg: D()+bett()+liegt()+'<g filter="url(#hgrSch)"><rect x="230" y="42" width="80" height="12" rx="3" fill="#94a3b8"/></g>'+schuessel(268,40,true).replace('translate(268 40)','translate(262 28)')
+        +'<g opacity="0">'+ein(0.8)+T(100,40,'Arbeitshöhe',GR,12,900)+'<path d="M100 50 V108" stroke="'+GR+'" stroke-width="2" stroke-dasharray="4 3"/></g><g opacity="0">'+ein(1.4)+haken(30,200,0)+T(46,204,'Bremse',GR,10,800,'start')+'</g>' },
+    { t:'Wasser prüfen', x:'Wassertemperatur mit dem <b>Thermometer</b> prüfen (meist um 37 °C, nach Wunsch der Person). Nie heißer als angenehm – <b>Verbrühungsgefahr</b>, besonders bei Sensibilitätsstörungen (z. B. Diabetes).', svg: D()+schuessel(160,130,true).replace('translate(160 130)','translate(160 130) scale(2)')+'<g opacity="0">'+ein(0.6)+'<rect x="206" y="40" width="96" height="36" rx="18" fill="rgba(56,189,248,.16)"/>'+T(254,64,'ca. 37 °C',GR,15,900)+'</g><g opacity="0">'+ein(1.4)+T(254,96,'Wunsch der Person',TX2,10,800)+'</g>' },
+    { t:'Selbst machen lassen', x:'<b>Ressourcen nutzen:</b> Die Person wäscht selbst, was sie kann (z. B. Gesicht, Arme). Du leitest an und übernimmst nur, was nötig ist – das ist <b>aktivierende Pflege</b>.', svg: D()+bett()+liegt()+'<g><animateTransform attributeName="transform" type="translate" values="0 0;6 4;0 0" dur="1.2s" repeatCount="3" begin="0.4s"/>'+lappen(78,90,'','#60a5fa')+'</g>'+handS(96,98,-70,false)+gesetz('28 Abs. 4 SGB XI: aktivierende Pflege') },
+    { t:'Oben nach unten, sauber nach unrein', x:'Reihenfolge: <b>Gesicht → Hals → Arme → Oberkörper → Beine</b>. Für die Augen klares Wasser und je Auge eine eigene Stelle des Waschlappens. Nur aufdecken, was gerade gewaschen wird. <b>Hautfalten gut abtrocknen</b> (Achseln, unter der Brust) und die Haut beobachten.', svg: D()+bett()+liegt()
+        +['Gesicht','Arme','Oberkörper','Beine'].map(function(z,i){ var x=[64,120,170,240][i]; return '<g opacity="0">'+ein(0.4+i*0.6)+'<circle cx="'+x+'" cy="'+(i?100:92)+'" r="12" fill="rgba(74,222,128,.25)" stroke="'+GR+'" stroke-width="2"/>'+T(x,(i%2?150:66)+(i===0?0:0),(i+1)+'. '+z,GR,10,900)+'</g>'; }).join('') },
+    { t:'Rücken & Haut kontrollieren', x:'Mit Unterstützung auf die Seite drehen, Rücken und Gesäß waschen. <b>Haut kontrollieren</b> – Rötungen mit dem Fingertest prüfen (Dekubitus), Befund weitergeben.', svg: D()+bett()+'<g filter="url(#hgrSch)"><ellipse cx="64" cy="94" rx="19" ry="17" fill="url(#gpHaut)"/><path d="M84 90 Q100 78 130 82 L280 96 Q292 98 292 108 L292 114 L84 114 Z" fill="url(#gpKleid)"/><ellipse cx="200" cy="96" rx="40" ry="10" fill="url(#gpHaut)"/></g>'
+        +'<g opacity="0">'+ein(0.8)+'<circle cx="214" cy="98" r="8" fill="rgba(239,68,68,.55)"/>'+T(214,70,'Fingertest',OR,11,900)+'</g>' },
+    { t:'Wasserwechsel & Intimpflege', x:'<b>Frisches Wasser</b> und eigene Waschlappen für den Intimbereich, Handschuhe. Bei Frauen <b>von vorn nach hinten</b> (Richtung After) waschen. Respektvoll und so kurz wie möglich aufdecken.', svg: D()+'<g>'+schuessel(90,120,false).replace('translate(90 120)','translate(90 120) scale(1.6)')+'<animate attributeName="opacity" values="1;1;.25" keyTimes="0;.5;1" dur="1.6s" fill="freeze"/></g>'+'<g opacity="0">'+ein(1.2)+'<path d="M140 120 h30" stroke="'+GR+'" stroke-width="3"/><path d="M170 120 l-8 -5 v10 Z" fill="'+GR+'"/>'+schuessel(230,120,false).replace('translate(230 120)','translate(230 120) scale(1.6)')+T(230,190,'frisches Wasser',GR,11,900)+'</g>'
+        +'<g opacity="0">'+ein(1.8)+T(160,40,'von vorn nach hinten',OR,13,900)+'</g>' },
+    { t:'Abschluss & Dokumentation', x:'Haut je nach Zustand pflegen, ankleiden, bequem lagern. Bett <b>tief</b>, Bremse fest, <b>Klingel in Reichweite</b>. Bettgitter nur mit Einwilligung oder richterlicher Genehmigung. Material entsorgen, Hände desinfizieren, <b>dokumentieren</b> (Hautzustand, Ressourcen, Besonderheiten).', svg: D()+liste(['Hautpflege & Kleidung','Bett tief, Bremse, Klingel','Hände desinfiziert','Dokumentiert'],0.3,40,36)+gesetz('1831 BGB: Bettgitter = freiheitsentziehend') }
+  ], merke:'Sauber nach unrein, Ressourcen nutzen, Intimsphäre schützen – und die Haut immer beobachten.',
+    quiz:[ {f:'Was bedeutet aktivierende Pflege bei der Körperpflege?', o:['Alles komplett übernehmen','Die Person macht selbst, was sie kann','Nur abends waschen','Waschen ohne zu sprechen'], k:1},
+           {f:'Was machst du vor der Intimpflege?', o:['Nichts Besonderes','Frisches Wasser und eigene Waschlappen','Heißeres Wasser nehmen','Die Tür öffnen'], k:1},
+           {f:'Ein Bettgitter ohne Einwilligung ist …', o:['immer erlaubt','eine freiheitsentziehende Maßnahme','nur nachts nötig','eine Prophylaxe ohne Regeln'], k:1} ]};
+
+  /* ── B) An der Bettkante ── */
+  var KANTE={ id:'gp-kante', gp:true, t:'Körperpflege an der Bettkante', s:'Teilweise selbstständig, sitzend am Bettrand', farbe:'#a78bfa', schritte:[
+    { t:'Sicher aufsetzen', x:'Bett tief, Bremse fest. Über die Seite <b>langsam</b> aufsetzen lassen und kurz sitzen bleiben. Nach <b>Schwindel</b> fragen, Puls beobachten.', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/><g filter="url(#hgrSch)"><rect x="10" y="120" width="170" height="30" rx="6" fill="url(#gpLaken)"/><rect x="20" y="150" width="8" height="46" fill="#475569"/><rect x="160" y="150" width="8" height="46" fill="#475569"/></g>'+sitzt(130,94)
+        +'<g opacity="0">'+ein(0.8)+T(250,60,'langsam',GR,13,900)+T(250,78,'Schwindel?',OR,12,900)+'</g>'+uhr(250,130,'kurz',1,2) },
+    { t:'Füße fest, Sturz vermeiden', x:'Füße stehen <b>fest auf dem Boden</b>, rutschfeste Schuhe oder Socken. Hilfsmittel und Klingel in Reichweite. Sturzrisiko einschätzen (Expertenstandard Sturzprophylaxe).', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/><g filter="url(#hgrSch)"><rect x="10" y="120" width="170" height="30" rx="6" fill="url(#gpLaken)"/></g>'+sitzt(130,94)+'<g opacity="0">'+ein(0.5)+'<circle cx="172" cy="190" r="18" fill="none" stroke="'+GR+'" stroke-width="2.5"/>'+T(250,180,'rutschfest',GR,12,900)+'</g>' },
+    { t:'Material in Reichweite', x:'Waschschüssel, Handtücher und Pflegemittel auf den <b>Nachttisch bzw. Tisch</b> vor die Person stellen. Wasser prüfen (ca. 37 °C, nach Wunsch). Spiegel hilft beim Selbermachen.', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/>'+sitzt(80,94)+'<g filter="url(#hgrSch)"><rect x="150" y="120" width="140" height="12" rx="3" fill="#94a3b8"/><rect x="214" y="132" width="10" height="64" fill="#64748b"/></g>'+schuessel(196,104,true)+'<g filter="url(#hgrSch)"><rect x="236" y="98" width="40" height="22" rx="4" fill="#f8fafc"/></g>' },
+    { t:'Selbst waschen lassen', x:'Gesicht, Arme und Oberkörper wäscht die Person <b>möglichst selbst</b>. Du leitest an, reichst Material und lobst. Rücken und Füße übernimmst du bei Bedarf.', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/>'+sitzt(120,94)
+        +'<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -10;0 0" dur="1.2s" repeatCount="3" begin="0.4s"/>'+lappen(138,70,'','#60a5fa')+'</g>'+gesetz('28 Abs. 4 SGB XI: aktivierende Pflege') },
+    { t:'Füße genau ansehen', x:'Füße waschen, <b>Zehenzwischenräume gut abtrocknen</b> (Pilz). Bei Diabetes Füße auf Druckstellen und kleine Wunden prüfen.', svg: D()+'<g filter="url(#hgrSch)"><path d="M60 60 L120 60 C126 100 122 130 118 150 L120 170 C160 172 210 176 230 190 C238 198 230 208 216 208 L100 208 C84 208 74 196 76 180 L70 150 C62 110 60 80 60 60 Z" fill="url(#gpHaut)"/></g>'
+        +[0,1,2,3].map(function(i){ return '<path d="M'+(150+i*18)+' 184 v20" stroke="#c98d68" stroke-width="1.4" opacity=".7"/>'; }).join('')+'<g opacity="0">'+ein(0.6)+'<circle cx="176" cy="194" r="26" fill="none" stroke="'+GR+'" stroke-width="2" stroke-dasharray="4 3"/>'+T(258,90,'Zehenzwischen-',GR,11,900)+T(258,104,'räume trocknen',GR,11,900)+'</g>' },
+    { t:'Intimpflege & Abschluss', x:'Intimbereich im <b>Liegen</b> oder im Stehen mit sicherem Halt waschen – nie allein stehen lassen, wenn Sturzgefahr besteht. Ankleiden, Bett tief, Klingel, <b>dokumentieren</b>.', svg: D()+liste(['Intimpflege mit Halt','Ankleiden','Bett tief, Klingel','Dokumentiert'],0.3,40,36) }
+  ], merke:'Erst sicher sitzen, dann waschen: langsam aufsetzen, Füße fest, Material in Reichweite.',
+    quiz:[ {f:'Was prüfst du nach dem Aufsetzen an der Bettkante?', o:['Schwindel und Kreislauf','Die Uhrzeit','Den Wasserverbrauch','Nichts'], k:0},
+           {f:'Warum trocknest du Zehenzwischenräume gründlich ab?', o:['Wegen der Optik','Um Pilzinfektionen vorzubeugen','Damit die Socken passen','Das ist nicht nötig'], k:1},
+           {f:'Wer wäscht Gesicht und Arme an der Bettkante?', o:['Immer die Pflegekraft','Möglichst die Person selbst','Die Angehörigen','Niemand'], k:1} ]};
+
+  /* ── C) Am Waschbecken ── */
+  var BECKEN={ id:'gp-becken', gp:true, t:'Körperpflege am Waschbecken', s:'Sitzend am Waschbecken, mit Anleitung', farbe:'#2dd4bf', schritte:[
+    { t:'Weg sicher machen', x:'Mit <b>Hilfsmittel</b> (Rollator, Rollstuhl mit Bremse) ins Bad begleiten. Boden trocken, gutes Licht, Hindernisse weg.', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/>'+waschbecken()+'<g opacity="0">'+ein(0.4)+liste(['Boden trocken','Licht an','Hilfsmittel'],0.4,20,40,11)+'</g>' },
+    { t:'Sitzen statt stehen', x:'Einen <b>stabilen Stuhl</b> (oder den Rollstuhl mit Bremse) vor das Waschbecken stellen. Im Sitzen ist die Körperpflege sicherer und weniger anstrengend.', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/>'+waschbecken()+sitzt(110,118).replace('translate(110 118)','translate(110 118)')+'<g filter="url(#hgrSch)"><rect x="84" y="150" width="50" height="8" rx="3" fill="#8b5e3c"/><rect x="86" y="158" width="6" height="40" fill="#6b4226"/><rect x="126" y="158" width="6" height="40" fill="#6b4226"/></g>' },
+    { t:'Wasser & Intimsphäre', x:'Wassertemperatur prüfen (ca. 37 °C, nach Wunsch) – bei Mischbatterien auf <b>heißes Wasser</b> achten. Tür bzw. Vorhang schließen.', svg: D()+waschbecken()+'<g opacity="0">'+ein(0.4)+'<rect x="40" y="40" width="90" height="34" rx="17" fill="rgba(56,189,248,.16)"/>'+T(85,62,'ca. 37 °C',GR,13,900)+'</g><g opacity="0">'+ein(1)+T(85,100,'Vorsicht heiß',RT,11,900)+'</g>' },
+    { t:'Selbst waschen, Mund & Haare', x:'Die Person wäscht sich <b>so selbstständig wie möglich</b>. Mundpflege/Zahnprothese, Rasur und Haare kämmen gehören dazu – das Aussehen ist Teil der Würde.', svg: D()+waschbecken()+'<g opacity="0">'+ein(0.4)+liste(['Gesicht & Oberkörper','Zähne / Prothese','Rasur, Haare'],0.4,20,30,10.5)+'</g>' },
+    { t:'Unterkörper mit Halt', x:'Für Intimbereich und Gesäß kurz <b>aufstehen mit Haltegriff</b> oder Hilfe einer zweiten Person. Auf Kreislauf achten, Stehphasen kurz halten.', svg: D()+'<rect x="0" y="196" width="320" height="24" fill="#16293d"/>'+waschbecken()+'<g filter="url(#hgrSch)"><rect x="270" y="110" width="40" height="8" rx="4" fill="url(#hgrMetall)"/></g>'
+        +'<g transform="translate(110 70)" filter="url(#hgrSch)"><circle cx="0" cy="0" r="16" fill="url(#gpHaut)"/><rect x="-16" y="16" width="32" height="64" rx="14" fill="url(#gpKleid)"/><rect x="-12" y="80" width="10" height="46" fill="#364256"/><rect x="2" y="80" width="10" height="46" fill="#364256"/></g>'
+        +'<g opacity="0">'+ein(0.6)+T(58,60,'kurz stehen,',OR,11,900)+T(58,74,'gut festhalten',OR,11,900)+'</g>' },
+    { t:'Abschluss', x:'Boden trocknen, zurückbegleiten, Material reinigen. Hände desinfizieren und <b>dokumentieren</b>, was die Person selbst konnte.', svg: D()+liste(['Boden trocken','Zurückbegleitet','Material gereinigt','Selbstständigkeit dokumentiert'],0.3,40,36) }
+  ], merke:'Am Waschbecken sitzt man: sicher, selbstständig, würdevoll.',
+    quiz:[ {f:'Warum sitzt die Person am Waschbecken?', o:['Weil es schneller geht','Mehr Sicherheit und weniger Anstrengung','Weil Stehen verboten ist','Damit das Wasser nicht spritzt'], k:1},
+           {f:'Was gehört auch zur Körperpflege am Waschbecken?', o:['Mund- und Zahnpflege','Blutzuckermessung','Verbandwechsel','Medikamentengabe'], k:0},
+           {f:'Was dokumentierst du besonders?', o:['Das Wetter','Was die Person selbst konnte','Die Farbe der Handtücher','Nichts'], k:1} ]};
+
+  /* ── D) In der Dusche ── */
+  var DUSCHE={ id:'gp-dusche', gp:true, t:'Duschen mit Unterstützung', s:'Mit Duschstuhl, Haltegriffen und Begleitung', farbe:'#f59e0b', schritte:[
+    { t:'Darf geduscht werden?', x:'Einschränkungen klären (z. B. Wunden, Katheter, Kreislauf, ärztliche Anordnung). <b>Einverständnis</b> und Wünsche erfragen, genug Zeit einplanen.', svg: D()+liste(['Einverständnis','Wunden / Zugänge geklärt','Kreislauf stabil','genug Zeit'],0.3,40,36) },
+    { t:'Bad vorbereiten', x:'Bad <b>warm</b>, Duschstuhl mit <b>Rückenlehne und Bremse</b>, Antirutschmatte, Haltegriffe, Notruf erreichbar. Handtücher und Kleidung bereitlegen.', svg: D()+dusche(false)+duschstuhl(120)+'<g opacity="0">'+ein(0.5)+T(80,40,'Duschstuhl',GR,11,900)+'</g><g opacity="0">'+ein(0.9)+T(44,60,'Haltegriff',GR,10,900)+'</g><g opacity="0">'+ein(1.3)+T(262,196,'Antirutschmatte',GR,10,900)+'</g>' },
+    { t:'Wasser an den Füßen beginnen', x:'Temperatur prüfen (ca. 37 °C, nach Wunsch). Den Wasserstrahl erst an den <b>Füßen</b> beginnen und langsam nach oben führen – schont den Kreislauf und erschreckt nicht.', svg: D()+dusche(true)+duschstuhl(120)+sitzt(150,106).replace('translate(150 106)','translate(150 106)')+'<g opacity="0">'+ein(0.4)+'<circle cx="190" cy="196" r="16" fill="none" stroke="'+GR+'" stroke-width="2.5"/>'+T(250,150,'zuerst die Füße',GR,11,900)+'</g>' },
+    { t:'Selbst duschen lassen', x:'Die Person führt den Brausekopf <b>selbst</b>, wenn sie kann. Haare und Körper von oben nach unten, Intimbereich zuletzt. Bei Sturzgefahr <b>nie allein lassen</b>.', svg: D()+dusche(true)+duschstuhl(120)+sitzt(150,106)+'<g opacity="0">'+ein(0.6)+kreuz(270,100,0)+T(270,128,'nie allein',RT,11,900)+'</g>'+gesetz('28 Abs. 4 SGB XI: aktivierende Pflege') },
+    { t:'Im Sitzen abtrocknen', x:'Im Sitzen <b>gründlich abtrocknen</b>, besonders Hautfalten und Zehenzwischenräume. Haut beobachten (Rötungen, Wunden).', svg: D()+dusche(false)+duschstuhl(120)+sitzt(150,106)+'<g><animateTransform attributeName="transform" type="translate" values="0 0;0 12;0 0" dur="1.2s" repeatCount="3" begin="0.4s"/><g filter="url(#hgrSch)"><rect x="160" y="80" width="40" height="30" rx="6" fill="#f8fafc"/></g></g>' },
+    { t:'Anziehen & Kreislauf', x:'Im Sitzen ankleiden, Hautpflege nach Hautzustand. <b>Kreislauf beobachten</b> (warmes Wasser kann ihn belasten). Langsam aufstehen.', svg: D()+dusche(false)+duschstuhl(120)+sitzt(150,106)+uhr(260,70,'Zeit',0.4,2)+T(260,104,'langsam aufstehen',OR,10,900) },
+    { t:'Nachbereiten & dokumentieren', x:'Duschstuhl und Flächen nach <b>Hygieneplan</b> reinigen/desinfizieren. Hände desinfizieren, <b>dokumentieren</b> (Haut, Selbstständigkeit, Besonderheiten).', svg: D()+liste(['Duschstuhl desinfiziert','Boden trocken','Hände desinfiziert','Dokumentiert'],0.3,40,36)+gesetz('36 IfSG: Hygieneplan der Einrichtung') }
+  ], merke:'Duschen: Bad warm, Stuhl mit Bremse, Wasser an den Füßen beginnen – nie allein lassen bei Sturzgefahr.',
+    quiz:[ {f:'Wo beginnst du mit dem Wasserstrahl?', o:['Am Kopf','An den Füßen','Am Rücken','Egal'], k:1},
+           {f:'Was gehört zum sicheren Duschen?', o:['Duschstuhl mit Bremse und Antirutschmatte','Ein offenes Fenster','Sehr heißes Wasser','Stehen ohne Halt'], k:0},
+           {f:'Wonach reinigst du den Duschstuhl?', o:['Nach Gefühl','Nach dem Hygieneplan der Einrichtung','Nur einmal im Monat','Gar nicht'], k:1} ]};
+
+  var GP=[BETT,KANTE,BECKEN,DUSCHE];
+  GP.forEach(function(h){ h.schritte.forEach(function(st){ st.svg='<g class="hgr">'+st.svg+'</g>'; }); if(!HG.some(function(x){ return x.id===h.id; })) HG.push(h); });
+
+  /* Rubrik-Screen */
+  var RECHT='<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:14px;padding:14px 16px;margin-bottom:14px">'
+    +'<div style="font-weight:800;color:#fbbf24;margin-bottom:6px">§ Rechtlicher Rahmen</div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text2);line-height:1.55">'
+    +'<li><b>Würde & Selbstbestimmung</b> (Art. 1 GG, § 2 SGB XI): Wünsche berücksichtigen – auch den Wunsch nach gleichgeschlechtlicher Pflege, soweit möglich.</li>'
+    +'<li><b>Aktivierende Pflege</b> (§ 28 Abs. 4 SGB XI): vorhandene Fähigkeiten erhalten und fördern.</li>'
+    +'<li><b>Stand des Wissens</b> (§ 11 SGB XI): Expertenstandards (z. B. Dekubitus, Sturz) beachten – in der Langzeitpflege über § 113a SGB XI verbindlich.</li>'
+    +'<li><b>Hygiene</b> (§§ 23, 36 IfSG): Händedesinfektion und Hygieneplan der Einrichtung.</li>'
+    +'<li><b>Freiheitsentziehende Maßnahmen</b> wie Bettgitter oder Gurt nur mit Einwilligung oder Genehmigung des Betreuungsgerichts (§ 1831 BGB).</li>'
+    +'<li><b>Vorbehaltene Tätigkeiten</b> (§ 4 PflBG): Pflegebedarf erheben, Pflege planen und evaluieren ist Aufgabe der Pflegefachperson. Die Körperpflege selbst darf delegiert werden.</li>'
+    +'<li><b>Dokumentation</b> nach Hausstandard: Hautzustand, Ressourcen, Besonderheiten.</li></ul>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:8px">Es gelten zusätzlich die Standards deiner Einrichtung.</div></div>';
+  function render(){
+    var c=document.getElementById('grundpflege-content'); if(!c) return;
+    c.innerHTML=(PL_GRUNDPFLEGE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · fachlich prüfen</div>')
+      +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Körperpflege Schritt für Schritt, mit Animation – an vier Orten.</p>'
+      +GP.map(function(h){ return '<button class="hg-card" onclick="plGrundpflegeOeffnen(\''+h.id+'\')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('')
+      +'<div style="height:10px"></div>'+RECHT; }
+  var ausGP=false;
+  window.plGrundpflegeOeffnen=function(id){ ausGP=true; ga('grundpflege_open',{id:id}); window.plHandgriffOeffnen(id); };
+  var origHG=window.plHandgriff; window.plHandgriff=function(i){ ausGP=!!(HG[i]&&HG[i].gp); return origHG.apply(this,arguments); };
+  var origListe=window.plHandgriffListe;
+  window.plHandgriffListe=function(){ if(ausGP){ ausGP=false; window.showScreen('grundpflege'); return; } return origListe.apply(this,arguments); };
+  function bauen(){
+    if(!an()) return;
+    if(!document.getElementById('screen-grundpflege')){
+      var d=document.createElement('div'); d.id='screen-grundpflege'; d.className='page';
+      d.innerHTML='<div class="hero" style="margin-bottom:14px"><div class="hero-icon">🧼</div><h1>Grundpflege<span> Schritt für Schritt</span></h1><p>Im Bett · Bettkante · Waschbecken · Dusche</p></div><div id="grundpflege-content"></div>';
+      var ref=document.getElementById('screen-handgriffe')||document.getElementById('screen-wissenhub');
+      if(ref && ref.parentNode) ref.parentNode.insertBefore(d, ref.nextSibling); else document.body.appendChild(d);
+    }
+    var hg=document.getElementById('pl-hg-tile');
+    if(hg && !document.getElementById('pl-gp-tile')){
+      var b=hg.cloneNode(false); b.id='pl-gp-tile'; b.setAttribute('onclick',"showScreen('grundpflege')");
+      b.innerHTML='<span style="font-size:24px">🧼</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Grundpflege</span><span style="font-size:11.5px;color:#a3bcd0">Bett · Bettkante · Waschbecken · Dusche'+(PL_GRUNDPFLEGE_PUBLIC?'':' · Entwurf')+'</span>';
+      hg.parentNode.insertBefore(b, hg.nextSibling);
+    }
+    if(hg){ var n=HG.filter(function(h){ return !h.gp; }).length; var sp=hg.querySelectorAll('span'); if(sp[2]) sp[2].textContent=n+' Handgriffe'; }
+  }
+  function start(){
+    try{ bauen(); }catch(e){}
+    var orig=window.showScreen;
+    if(typeof orig==='function') window.showScreen=function(n){ if(n==='grundpflege'||n==='wissenhub'||n==='handgriffe'){ try{ bauen(); }catch(e){} } var r=orig.apply(this,arguments); if(n==='grundpflege'){ try{ render(); }catch(e){} } return r; };
+    setTimeout(function(){ try{ bauen(); }catch(e){} }, 3500);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
 
