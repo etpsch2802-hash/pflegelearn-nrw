@@ -29547,5 +29547,59 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 })();
 </script>
 
+<script>
+/* ══ NEU-LISTE AKTUALISIERT (01.11.2026, Entwurf, nur Admin bis Go) ══════════
+   Ergänzt window.PL_NEU um die Neuerscheinungen seit Mitte Oktober, sortiert
+   nach Datum (neueste oben) und zeigt auf der Startseite nur die ersten 4 –
+   der Rest per „Alle anzeigen“. Wrappt plNeuRender() additiv (äußerster Wrapper),
+   berührt dessen Logik NICHT. Kein neuer pl_*-Key (nutzt pl_neu_geoeffnet).
+   Go = PL_NEU2_PUBLIC=true. */
+(function(){
+  var PL_NEU2_PUBLIC=false;
+  function an(){ if(PL_NEU2_PUBLIC) return true; try{ return typeof isAdmin==='function'&&!!isAdmin(); }catch(e){ return false; } }
+  var MAX=4;
+  function pdfZahl(){ try{ return (window.PL_PDF_LISTE||[]).length||''; }catch(e){ return ''; } }
+  var NEU=[
+    { id:'grundpflege', tag:'neu', ziel:'grundpflege', titel:'🛁 Grundpflege Schritt für Schritt', sub:'Bett, Bettkante, Waschbecken, Dusche – animiert, mit Handschuh-Regeln', datum:'2026-11-01b' },
+    { id:'handgriffe', tag:'neu', ziel:'handgriffe', titel:'🖐️ 17 Handgriffe animiert', sub:'Von Infusion bis Reanimation – Schritt für Schritt mit Quiz', datum:'2026-11-01a' },
+    { id:'gratispdfs-nov', tag:'neu', ziel:function(){ if(window.plPdfOpen) plPdfOpen(); }, titel:'📄 Neue Gratis-PDFs', sub:'Grundpflege, Handgriffe & Handschuh-Spickzettel zum Ausdrucken', datum:'2026-11-01' },
+    { id:'fallbeispiele-neu', tag:'neu', ziel:'faelle', titel:'🩺 Fallbeispiele neu sortiert', sub:'Fortschritt pro Lernjahr – weiter beim nächsten offenen Fall', datum:'2026-10-30' },
+    { id:'ausbildung-meistern', tag:'neu', ziel:'ausbildung', titel:'🧭 Ausbildung meistern', sub:'12 Tipps: Praxisanleitung, Prüfungsstress, Konflikte, Rechte', datum:'2026-10-28' },
+    { id:'dosisrechner', tag:'neu', ziel:function(){ try{ navGo('medtrainer'); }catch(e){ showScreen('medtrainer'); } setTimeout(function(){ if(window.plDosisRechner) plDosisRechner(); },350); }, titel:'🧮 Dosisrechner mit eigenen Werten', sub:'Perfusor-Laufrate & Einzeldosis – mit Rechenweg', datum:'2026-10-23' },
+    { id:'eigene-unterlagen', tag:'neu', ziel:function(){ if(window.plUploadOeffnen) plUploadOeffnen(); }, titel:'📸 Eigene Unterlagen → Karteikarten', sub:'Folien, PDFs oder Fotos deiner Notizen in Lernkarten verwandeln', datum:'2026-10-19' }
+  ];
+  function sortieren(arr){
+    var m=arr.map(function(x,i){ return {x:x,i:i}; });
+    m.sort(function(a,b){ var da=String(a.x.datum||''), db=String(b.x.datum||''); return da<db?1:da>db?-1:a.i-b.i; });
+    for(var i=0;i<m.length;i++) arr[i]=m[i].x;
+  }
+  function kappen(){
+    var el=document.getElementById('home-neu'); if(!el) return;
+    var box=el.firstElementChild; if(!box) return;
+    var btns=[].slice.call(box.querySelectorAll('button[onclick^="plNeuOpen"]'));
+    if(btns.length<=MAX) return;
+    btns.forEach(function(b,i){ if(i>=MAX) b.style.display='none'; });
+    var mehr=document.createElement('button'); mehr.type='button';
+    mehr.textContent='Alle '+btns.length+' Neuigkeiten anzeigen ›';
+    mehr.style.cssText='width:100%;margin-top:8px;background:none;border:1px dashed rgba(125,211,252,.35);border-radius:10px;padding:8px;color:#7dd3fc;font:700 12.5px inherit;font-family:inherit;cursor:pointer';
+    mehr.onclick=function(){ btns.forEach(function(b){ b.style.display=''; }); mehr.remove(); try{ gtag('event','neu_alle'); }catch(e){} };
+    box.appendChild(mehr);
+  }
+  var orig=window.plNeuRender; if(typeof orig!=='function') return;
+  window.plNeuRender=function(){
+    if(!an()) return orig.apply(this,arguments);
+    try{
+      var arr=window.PL_NEU=window.PL_NEU||[];
+      NEU.forEach(function(n){ var da=false; for(var i=0;i<arr.length;i++){ if(arr[i].id===n.id){ da=true; break; } } if(!da) arr.push(n); });
+      for(var j=0;j<arr.length;j++){ if(arr[j].id==='gratispdfs'){ var z=pdfZahl(); if(z) arr[j].sub=z+' Lernhilfen – Grundpflege, Handgriffe, Praxis-Examen, Reanimation & mehr'; } }
+    }catch(e){}
+    var r=orig.apply(this,arguments);   // innere Wrapper (WhatsApp, Examen-Kompass) ergänzen beim ersten Lauf
+    try{ var a2=window.PL_NEU, vor=a2.map(function(x){return x.id;}).join(); sortieren(a2); if(a2.map(function(x){return x.id;}).join()!==vor) r=orig.apply(this,arguments); kappen(); }catch(e){}
+    return r;
+  };
+  try{ if(document.readyState!=='loading') window.plNeuRender(); else document.addEventListener('DOMContentLoaded',function(){ try{ window.plNeuRender(); }catch(e){} }); }catch(e){}
+})();
+</script>
+
 </body>
 </html>
