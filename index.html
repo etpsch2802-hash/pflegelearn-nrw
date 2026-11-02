@@ -21781,6 +21781,7 @@ if (_savedLang !== 'de') {
     ['grundpflege','PLAN-NRW_Grundpflege.pdf','🛁','Grundpflege Schritt für Schritt','Bett, Bettkante, Waschbecken, Dusche – mit Bildern'],
     ['handgriffe','PLAN-NRW_Handgriffe.pdf','🖐️','Handgriffe Schritt für Schritt','17 Handgriffe von Infusion bis Reanimation'],
     ['handschuhe','PLAN-NRW_Handschuh-Spickzettel.pdf','🧤','Handschuh-Spickzettel','Grundpflege: wann mit, wann ohne – auf einer Seite'],
+    ['isolation','PLAN-NRW_Isolationsmanagement.pdf','🦠','Isolationsmanagement','20 Erreger, Schutzausrüstung, Desinfektion, Fälle & Quiz'],
   ];
   window.PL_PDF_LISTE=L;   // für das Admin-Kontrollzentrum (25.10.2026)
   var BLOB={};   // geladene PDFs (slug -> Blob)
@@ -21958,7 +21959,8 @@ if (_savedLang !== 'de') {
     'ausbildung-meistern': { t:'Ausbildung meistern &ndash; 12 Tipps f&uuml;r Pflege-Azubis', k:'Ausbildung meistern', d:'Wenn die Praxisanleitung keine Zeit hat, Blackout in der Pr&uuml;fung, Kritik, fordernde Angeh&ouml;rige, erster Todesfall &ndash; 12 Tipps aus der Praxis plus deine Rechte.' },
     grundpflege: { t:'Grundpflege Schritt f&uuml;r Schritt', k:'Grundpflege', d:'K&ouml;rperpflege im Bett, an der Bettkante, am Waschbecken und unter der Dusche &ndash; mit Bildern zu jedem Schritt, Handschuh-Regeln, Material und rechtlichem Rahmen.' },
     handgriffe: { t:'Handgriffe Schritt f&uuml;r Schritt', k:'Handgriffe', d:'17 Pflegehandgriffe von Infusion &uuml;ber s.c.-Injektion bis Reanimation &ndash; mit Bildern zu jedem Schritt, Merksatz und Quizfragen.' },
-    handschuhe: { t:'Handschuh-Spickzettel', k:'Handschuh-Spickzettel', d:'Handschuhe bei der Grundpflege &ndash; wann mit, wann ohne? Alles auf einer Seite, plus Waschlappen-Regel.' }
+    handschuhe: { t:'Handschuh-Spickzettel', k:'Handschuh-Spickzettel', d:'Handschuhe bei der Grundpflege &ndash; wann mit, wann ohne? Alles auf einer Seite, plus Waschlappen-Regel.' },
+    isolation: { t:'Isolationsmanagement', k:'Isolationsmanagement', d:'&Uuml;bertragungswege, 20 Erreger von A bis Z, Schutzausr&uuml;stung Schritt f&uuml;r Schritt, Desinfektion, Organisation, Meldepflicht &ndash; mit F&auml;llen und Quiz.' }
   };
   function slug(){ var p=(location.pathname||'').toLowerCase().replace(/\/+$/,''); var s=p.indexOf('/gratis/')===0 ? p.slice(8) : ''; return PK[s] ? s : 'eselsbruecken'; }
   var SL = slug(), C = PK[SL];
@@ -29614,7 +29616,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    2018 VRE, 2019 C. difficile), RKI-Ratgeber, TRBA 250, IfSG. Fachliche Endkontrolle: P. Schenkelberger.
    Schalter PL_ISO_PUBLIC. Kein neuer pl_*-Key. GA iso_open, iso_fall, iso_quiz. */
 (function(){
-  var PL_ISO_PUBLIC=false;
+  var PL_ISO_PUBLIC=true;
   function an(){ try{ return PL_ISO_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_ISO_PUBLIC; } }
   window.plIsoAn=an;
   function ga(n,p){ try{ if(window.gtag) gtag('event',n,p||{}); }catch(e){} }

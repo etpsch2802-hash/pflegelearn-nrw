@@ -150,7 +150,9 @@ const PAKETE = {
   handgriffe: { file: 'PLAN-NRW_Handgriffe.pdf', titel: 'Handgriffe Schritt f&uuml;r Schritt', subject: 'Deine Handgriffe-Lernhilfe ist da',
     text: '17 Pflegehandgriffe von Infusion bis Reanimation &ndash; mit Bildern zu jedem Schritt, Merksatz und Quizfragen.' },
   handschuhe: { file: 'PLAN-NRW_Handschuh-Spickzettel.pdf', titel: 'Handschuh-Spickzettel', subject: 'Dein Handschuh-Spickzettel ist da',
-    text: 'Handschuhe bei der Grundpflege &ndash; wann mit, wann ohne? Auf einer Seite, plus Waschlappen-Regel.' }
+    text: 'Handschuhe bei der Grundpflege &ndash; wann mit, wann ohne? Auf einer Seite, plus Waschlappen-Regel.' },
+  isolation: { file: 'PLAN-NRW_Isolationsmanagement.pdf', titel: 'Isolationsmanagement', subject: 'Deine Lernhilfe Isolationsmanagement ist da',
+    text: '&Uuml;bertragungswege, 20 Erreger von A bis Z, Schutzausr&uuml;stung Schritt f&uuml;r Schritt, Desinfektion, Organisation und Meldepflicht &ndash; mit F&auml;llen und Quiz.' }
 };
 
 function htmlSeite(titel, text) {
