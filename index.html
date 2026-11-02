@@ -14981,9 +14981,10 @@ const TASCHENKARTEN = [
   },
   { id:'isolation', titel:'Isolationsmaßnahmen', icon:'🦠', farbe:'#818cf8',
     vorderseite:[
-      { label:'MRSA', punkte:['Einzelzimmer · Kittel · Handschuhe · FFP2','Screening: Nasen-Rachen-Abstrich','Sanierung: Mupirocin + Ganzkörperwäsche'] },
-      { label:'C. difficile / Norovirus', punkte:['Einzelzimmer · Kittel · Handschuhe','WASCHEN statt Alkohol (Sporen!)','Sporozide Flächendesinfektion'] },
-      { label:'TBC', punkte:['Einzelzimmer mit Unterdruck!','FFP3-Maske (kein MNS!)','Meldepflicht §6 IfSG'] },
+      { label:'MRSA (Kontakt)', punkte:['Einzelzimmer (Hygieneplan) · Kittel · Handschuhe','MNS nur bei Spritz-/Aerosolgefahr','Screening: Nasen-Rachen-Abstrich','Sanierung: Mupirocin + Ganzkörperwäsche'] },
+      { label:'C. difficile', punkte:['Einzelzimmer mit eigener Toilette · Kittel · Handschuhe','Hände desinfizieren + danach WASCHEN (Sporen!)','Sporozide Flächendesinfektion'] },
+      { label:'Norovirus', punkte:['Einzelzimmer/Kohorte · Kittel · Handschuhe · MNS bei Erbrechen','Desinfektion: mind. „begrenzt viruzid PLUS“','Aufhebung frühestens 48 h nach Symptomende'] },
+      { label:'Offene TBC (Luft)', punkte:['Einzelzimmer, Tür zu (Schleuse/Unterdruck, wenn vorhanden)','Personal mind. FFP2 (kein MNS!) · Patient MNS','Meldepflicht §6 IfSG'] },
       { label:'PSA Reihenfolge', punkte:['An: Kittel→Maske→Brille→Handschuhe','Ab: Handschuhe→Kittel→Brille→Maske→HD'] }
     ]
   },
@@ -28191,7 +28192,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     aktuell=null; var b=box(); if(!b) return;
     b.innerHTML=(PL_HANDGRIFFE_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · Schritte fachlich prüfen</div>')
       +'<p style="color:var(--text2);margin:0 0 14px;font-size:14.5px">Schritt für Schritt, mit Animation. Danach 3 kurze Fragen.</p>'
-      +HG.map(function(h,i){ if(h.gp || (h.neu2 && !(window.plHG2An && window.plHG2An())) || (h.neu3 && !(window.plHG3An && window.plHG3An()))) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
+      +HG.map(function(h,i){ if(h.gp || h.iso || (h.neu2 && !(window.plHG2An && window.plHG2An())) || (h.neu3 && !(window.plHG3An && window.plHG3An()))) return ''; return '<button class="hg-card" onclick="plHandgriff('+i+')"><i class="p" style="background:'+h.farbe+'"></i><div><b>'+h.t+'</b><span>'+h.schritte.length+' Schritte · '+h.s+'</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'; }).join('');
   }
   function zeige(){
     var h=aktuell, b=box(); if(!h||!b) return;
@@ -29466,7 +29467,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       b.innerHTML='<span style="font-size:24px">🧼</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Grundpflege</span><span style="font-size:11.5px;color:#a3bcd0">Bett · Bettkante · Waschbecken · Dusche'+(PL_GRUNDPFLEGE_PUBLIC?'':' · Entwurf')+'</span>';
       hg.parentNode.insertBefore(b, hg.nextSibling);
     }
-    if(hg){ var n=HG.filter(function(h){ return !h.gp; }).length; var sp=hg.querySelectorAll('span'); if(sp[2]) sp[2].textContent=n+' Handgriffe'; }
+    if(hg){ var n=HG.filter(function(h){ return !h.gp && !h.iso; }).length; var sp=hg.querySelectorAll('span'); if(sp[2]) sp[2].textContent=n+' Handgriffe'; }
   }
   function start(){
     try{ bauen(); }catch(e){}
@@ -29598,6 +29599,355 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     return r;
   };
   try{ if(document.readyState!=='loading') window.plNeuRender(); else document.addEventListener('DOMContentLoaded',function(){ try{ window.plNeuRender(); }catch(e){} }); }catch(e){}
+})();
+</script>
+
+<script>
+/* ══ RUBRIK ISOLATIONSMANAGEMENT (02.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   Ausführliche Rubrik: Grundlagen, Übertragungswege, Erreger von A–Z (Suche), Isolierungsarten,
+   Schutzausrüstung (2 Animationen im Handgriffe-Stil, Masken, Kittel, Handschuhe), Desinfektion & Wirkbereiche,
+   Organisation & Transport, Meldepflicht & Ausbruch, Schutzisolierung, Psyche & Kommunikation,
+   5 interaktive Fälle, Quiz (15 Fragen), Recht & Quellen.
+   Daten als window.PL_ISO (auch Quelle für das Gratis-PDF, scripts/pdf/isolation.py).
+   Animationen = Einträge in window.PL_HANDGRIFFE mit Feld iso:true (nicht in der Handgriffe-Liste).
+   Grundlage: KRINKO-Empfehlungen (2015 übertragbare Krankheiten, 2016 Händehygiene, 2014 MRSA, 2012 MRGN,
+   2018 VRE, 2019 C. difficile), RKI-Ratgeber, TRBA 250, IfSG. Fachliche Endkontrolle: P. Schenkelberger.
+   Schalter PL_ISO_PUBLIC. Kein neuer pl_*-Key. GA iso_open, iso_fall, iso_quiz. */
+(function(){
+  var PL_ISO_PUBLIC=false;
+  function an(){ try{ return PL_ISO_PUBLIC || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return PL_ISO_PUBLIC; } }
+  window.plIsoAn=an;
+  function ga(n,p){ try{ if(window.gtag) gtag('event',n,p||{}); }catch(e){} }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  /* ───────────── DATEN ───────────── */
+  var D={};
+  D.begriffe=[
+    ['Basishygiene (Standardhygiene)','Maßnahmen bei <b>allen</b> Patientinnen und Patienten – unabhängig davon, ob ein Erreger bekannt ist: Händehygiene, Schutzausrüstung nach Situation, Aufbereitung von Flächen und Medizinprodukten, Umgang mit Wäsche und Abfall, Husten- und Niesetikette.'],
+    ['Erweiterte Hygienemaßnahmen','Kommen <b>zusätzlich</b> zur Basishygiene hinzu, wenn ein Erreger nachgewiesen ist oder vermutet wird. Sie richten sich nach dem <b>Übertragungsweg</b>.'],
+    ['Isolierung (Quellenisolierung)','Räumliche Trennung einer infizierten oder besiedelten Person, damit <b>andere</b> geschützt werden.'],
+    ['Kohortenisolierung','Mehrere Personen mit <b>demselben Erreger</b> (gleicher Typ bzw. gleiches Resistenzmuster) teilen sich ein Zimmer. Spart Einzelzimmer, z. B. bei Noroviren-Ausbrüchen.'],
+    ['Schutzisolierung (Umkehrisolierung)','Schützt eine <b>stark abwehrgeschwächte</b> Person vor Erregern aus der Umgebung, z. B. bei schwerer Neutropenie.'],
+    ['Kolonisation (Besiedlung)','Erreger ist nachweisbar, verursacht aber keine Krankheitszeichen. Die Person kann ihn trotzdem <b>weitergeben</b>.'],
+    ['Infektion','Erreger dringt ein, vermehrt sich und löst eine Reaktion des Körpers aus (Krankheitszeichen).'],
+    ['Nosokomiale Infektion','Infektion, die im zeitlichen Zusammenhang mit einer medizinischen Maßnahme entsteht und bei Aufnahme weder vorhanden noch in der Inkubationszeit war (§ 2 IfSG).'],
+    ['Ausbruch','Gehäuftes Auftreten nosokomialer Infektionen, bei denen ein <b>epidemischer Zusammenhang</b> wahrscheinlich ist oder vermutet wird (meist ab 2 Fällen).'],
+    ['Screening','Gezielte Abstriche bei Aufnahme oder im Verlauf, um Besiedlungen früh zu erkennen (z. B. MRSA bei Risikopatienten).']
+  ];
+  D.wege=[
+    { n:'Kontakt', f:'#f59e0b', wie:'Direkt über Hände und Haut oder indirekt über Flächen, Geräte, Wäsche, Toiletten.', bsp:'MRSA, VRE, MRGN, C. difficile, Noroviren, Rotaviren, Skabies', schutz:'Kittel + Handschuhe bei Kontakt mit Patient oder Umgebung, konsequente Händedesinfektion, patientenbezogene Utensilien' },
+    { n:'Tröpfchen', f:'#38bdf8', wie:'Größere Tröpfchen beim Husten, Niesen, Sprechen. Sie sinken schnell ab – Reichweite meist 1–2 m. Oft zusätzlich Kontakt über Hände und Flächen.', bsp:'Influenza, RSV, Pertussis, Meningokokken, Mumps, Röteln, SARS-CoV-2 (auch Aerosole)', schutz:'Medizinische Gesichtsmaske (MNS) beim Betreten bzw. bei engem Kontakt, Abstand, Patient trägt MNS außerhalb des Zimmers' },
+    { n:'Luft (aerogen)', f:'#a78bfa', wie:'Sehr kleine Partikel (Tröpfchenkerne, Aerosole) schweben lange in der Luft und werden über weite Strecken getragen – auch in Nachbarräume.', bsp:'Offene Lungentuberkulose, Masern, Windpocken, disseminierter Herpes zoster', schutz:'Einzelzimmer mit geschlossener Tür, FFP2-Maske (Atemschutz), bei Masern und Windpocken nur immunes Personal' },
+    { n:'Blut & Körperflüssigkeiten', f:'#f87171', wie:'Über Stich- und Schnittverletzungen, Schleimhautkontakt oder nicht intakte Haut.', bsp:'Hepatitis B und C, HIV', schutz:'<b>Keine Isolierung nötig</b> – Basishygiene, Handschuhe, sichere Instrumente, kein Recapping, Hepatitis-B-Impfung' }
+  ];
+  /* Erreger von A–Z: n, weg, unter(bringung), psa, des(infektion), dauer, extra */
+  D.erreger=[
+    { n:'Clostridioides difficile (CDI)', weg:'Kontakt (Sporen, fäkal-oral)', unter:'Einzelzimmer mit <b>eigener Toilette</b>, Kohortierung möglich', psa:'Kittel + Handschuhe bei jedem Kontakt', des:'Hände: desinfizieren <b>und anschließend waschen</b> (Sporen werden mechanisch entfernt). Flächen: <b>sporozid</b> (z. B. Peressigsäure oder andere Sauerstoffabspalter)', dauer:'Frühestens <b>48 Stunden nach Ende der Durchfälle</b> (Hygieneplan)', extra:'Auslöser oft Antibiotika. Steckbecken/Toilette patientenbezogen. Schwere Verläufe sind meldepflichtig (§ 6 IfSG).' },
+    { n:'Hepatitis B / C, HIV', weg:'Blut und Körperflüssigkeiten', unter:'<b>Keine Isolierung</b>, normales Zimmer', psa:'Basishygiene: Handschuhe bei Blutkontakt, Schutzbrille bei Spritzgefahr', des:'Begrenzt viruzid (behüllte Viren)', dauer:'–', extra:'Wichtigster Schutz: <b>Hepatitis-B-Impfung</b>, sichere Instrumente, kein Recapping, Abwurf direkt am Einsatzort. Nach Nadelstich sofort Durchgangsarzt/Betriebsarzt (Postexpositionsprophylaxe).' },
+    { n:'Herpes zoster (Gürtelrose)', weg:'Lokalisiert: Kontakt mit Bläscheninhalt · Disseminiert: auch aerogen', unter:'Lokalisiert: Läsionen abdecken, Einzelzimmer nach Hygieneplan · Disseminiert oder Immunsupprimierte: wie Windpocken', psa:'Handschuhe bei Kontakt mit Läsionen; bei Disseminierung nur immunes Personal', des:'Begrenzt viruzid', dauer:'Bis alle Bläschen verkrustet sind', extra:'Nicht immune Schwangere und Abwehrgeschwächte fernhalten.' },
+    { n:'Influenza', weg:'Tröpfchen (und Kontakt über Hände/Flächen)', unter:'Einzelzimmer oder Kohorte (gleicher Erreger)', psa:'MNS beim Betreten; bei aerosolbildenden Maßnahmen (z. B. Absaugen, Bronchoskopie) FFP2 nach Hygieneplan; Kittel/Handschuhe bei Kontakt mit Sekreten', des:'Begrenzt viruzid', dauer:'Nach Hygieneplan, meist bis etwa 7 Tage nach Erkrankungsbeginn bzw. bis zur Besserung (bei Abwehrschwäche länger)', extra:'Jährliche <b>Grippeimpfung</b> für Personal empfohlen (STIKO). Erkranktes Personal bleibt zu Hause.' },
+    { n:'Masern', weg:'Luft (aerogen) – sehr ansteckend', unter:'Einzelzimmer, Tür geschlossen, möglichst mit Schleuse/Unterdruck', psa:'<b>Nur Personal mit nachgewiesener Immunität</b> (Masernschutz, § 20 IfSG); Atemschutz nach Hygieneplan', des:'Begrenzt viruzid', dauer:'Bis 4 Tage nach Beginn des Hautausschlags', extra:'Meldepflicht schon bei <b>Verdacht</b> (§ 6 IfSG). Nicht immune Kontaktpersonen ermitteln (Riegelungsimpfung möglich).' },
+    { n:'Meningokokken (Meningitis/Sepsis)', weg:'Tröpfchen', unter:'Einzelzimmer', psa:'MNS bei engem Kontakt, Kittel/Handschuhe bei Kontakt mit Sekreten', des:'Bakterizid', dauer:'Bis <b>24 Stunden nach Beginn</b> der wirksamen Antibiotikatherapie', extra:'Meldepflicht schon bei Verdacht. Enge Kontaktpersonen erhalten nach ärztlicher Anordnung eine <b>Chemoprophylaxe</b>.' },
+    { n:'MRGN – 3MRGN', weg:'Kontakt', unter:'KRINKO: in <b>Normalbereichen</b> meist Basishygiene, in <b>Risikobereichen</b> (z. B. Intensiv, Neonatologie, Hämato-Onkologie) Isolierung – der Hygieneplan entscheidet', psa:'Bei Isolierung Kittel + Handschuhe bei Kontakt', des:'Bakterizid', dauer:'Nach Hygieneplan (Besiedlung oft lang anhaltend)', extra:'MRGN = multiresistente gramnegative Stäbchen (z. B. E. coli, Klebsiella, Pseudomonas, Acinetobacter). „3“ = resistent gegen 3 von 4 Antibiotikagruppen.' },
+    { n:'MRGN – 4MRGN', weg:'Kontakt', unter:'<b>In allen Bereichen Einzelzimmer</b>', psa:'Kittel + Handschuhe bei Kontakt mit Patient und Umgebung', des:'Bakterizid; besondere Sorgfalt bei Waschbecken/Siphons (Reservoir)', dauer:'Nach Hygieneplan, meist für den gesamten Aufenthalt', extra:'Auch gegen Carbapeneme resistent – kaum noch Therapieoptionen. Nachweise bei Acinetobacter und Enterobacterales mit Carbapenem-Resistenz sind meldepflichtig (§ 7 IfSG).' },
+    { n:'MRSA', weg:'Kontakt (bei Besiedlung der Atemwege auch Tröpfchen)', unter:'KRINKO: Einzelzimmer mit eigener Nasszelle empfohlen, Kohortierung möglich', psa:'Kittel + Handschuhe bei Kontakt mit Patient und Umgebung; MNS bei Tätigkeiten mit Spritz- oder Aerosolgefahr (z. B. Absaugen, Verbandwechsel) bzw. nach Hygieneplan', des:'Bakterizid', dauer:'Nach erfolgreicher <b>Sanierung</b>: Kontrollabstriche frühestens 3 Tage nach Sanierungsende an 3 aufeinanderfolgenden Tagen negativ', extra:'Sanierung nach ärztlicher Anordnung, z. B. Nasensalbe (Mupirocin 3× täglich über 5 Tage), antiseptische Ganzkörper- und Haarwaschung, Mund-Rachen-Antiseptik, täglicher Wäschewechsel, persönliche Gegenstände desinfizieren. Nachweis in Blut oder Liquor meldepflichtig (§ 7 IfSG).' },
+    { n:'Mumps', weg:'Tröpfchen', unter:'Einzelzimmer', psa:'MNS; nicht immunes Personal möglichst nicht einsetzen', des:'Begrenzt viruzid', dauer:'Bis 5 Tage nach Beginn der Ohrspeicheldrüsenschwellung', extra:'Meldepflichtig (§ 6 IfSG).' },
+    { n:'Noroviren', weg:'Kontakt (fäkal-oral) – beim <b>Erbrechen</b> auch Tröpfchen/Aerosole', unter:'Einzelzimmer oder Kohorte mit <b>eigener Toilette</b>', psa:'Kittel + Handschuhe; <b>MNS</b> bei Kontakt mit erbrechenden Personen bzw. bei Aerosolgefahr', des:'Hände und Flächen mit Mittel, das gegen Noroviren wirkt: mindestens <b>„begrenzt viruzid PLUS“</b> oder viruzid', dauer:'Frühestens <b>48 Stunden nach Ende der Symptome</b>', extra:'Sehr wenige Viren reichen für eine Ansteckung. Erkranktes Personal frühestens 48 Stunden nach Symptomende zurück. Häufungen sind meldepflichtig (§ 6 IfSG).' },
+    { n:'Pertussis (Keuchhusten)', weg:'Tröpfchen', unter:'Einzelzimmer', psa:'MNS', des:'Bakterizid', dauer:'Bis <b>5 Tage nach Beginn</b> der Antibiotikatherapie', extra:'Für Säuglinge lebensgefährlich (Apnoen). Impfschutz des Personals prüfen. Meldepflichtig (§ 6 IfSG).' },
+    { n:'Röteln', weg:'Tröpfchen', unter:'Einzelzimmer', psa:'MNS; nur immunes Personal, <b>keine nicht immunen Schwangeren</b>', des:'Begrenzt viruzid', dauer:'Bis etwa 1 Woche nach Beginn des Ausschlags', extra:'Gefahr für das ungeborene Kind (Rötelnembryopathie). Meldepflichtig (§ 6 IfSG).' },
+    { n:'Rotaviren', weg:'Kontakt (fäkal-oral)', unter:'Einzelzimmer oder Kohorte mit eigener Toilette', psa:'Kittel + Handschuhe', des:'Mindestens <b>„begrenzt viruzid PLUS“</b>', dauer:'Frühestens 48 Stunden nach Symptomende (Hygieneplan)', extra:'Häufig bei Säuglingen und Kleinkindern. Meldepflichtig (§ 7 IfSG, Labornachweis).' },
+    { n:'RSV', weg:'Tröpfchen und Kontakt (Hände, Flächen)', unter:'Einzelzimmer oder Kohorte', psa:'MNS, Kittel + Handschuhe bei Kontakt', des:'Begrenzt viruzid', dauer:'Nach Hygieneplan, meist bis zum Ende der Symptome', extra:'Gefährlich für Frühgeborene, Säuglinge und ältere Menschen.' },
+    { n:'SARS-CoV-2', weg:'Tröpfchen und Aerosole', unter:'Einzelzimmer oder Kohorte', psa:'Nach aktuellem Hygieneplan, häufig FFP2; Kittel/Handschuhe bei Kontakt', des:'Begrenzt viruzid', dauer:'Nach Hygieneplan', extra:'Vorgaben haben sich mehrfach geändert – immer den aktuellen Hygieneplan prüfen.' },
+    { n:'Skabies (Krätze)', weg:'Kontakt (längerer Hautkontakt); bei Scabies crustosa auch über Wäsche und Flächen', unter:'Einzelzimmer, bei Scabies crustosa strikt', psa:'<b>Langärmeliger Kittel + Handschuhe</b> bei Körperkontakt', des:'Händedesinfektion wirkt gegen Milben <b>nicht sicher</b> – Handschuhe sind entscheidend; Wäsche bei mindestens 50 °C waschen', dauer:'Nach Abschluss der Behandlung nach ärztlicher Vorgabe', extra:'Kontaktpersonen werden oft mitbehandelt. Juckreiz kann nach der Behandlung noch Wochen bestehen.' },
+    { n:'Tuberkulose (offene Lungen-TB)', weg:'Luft (aerogen)', unter:'Einzelzimmer, <b>Tür geschlossen</b>, möglichst Schleuse/Unterdruck', psa:'<b>FFP2-Maske</b> (Dichtsitz prüfen); bei besonderen Tätigkeiten (z. B. Bronchoskopie, resistente TB) ggf. FFP3 nach Hygieneplan; Patient trägt MNS außerhalb des Zimmers', des:'<b>Tuberkulozid</b> bzw. mykobakterizid', dauer:'Nur nach <b>ärztlicher Entscheidung</b> (Befunde, Therapieverlauf – in der Regel negative Sputumproben)', extra:'Meldepflicht für Erkrankung und Tod (§ 6 IfSG). Kontaktpersonen werden über das Gesundheitsamt untersucht.' },
+    { n:'VRE', weg:'Kontakt', unter:'Nach Risikobewertung (KRINKO 2018); in Risikobereichen Einzelzimmer', psa:'Kittel + Handschuhe bei Kontakt', des:'Bakterizid; Erreger sehr <b>umweltstabil</b> – gründliche Flächendesinfektion', dauer:'Nach Hygieneplan', extra:'VRE = Vancomycin-resistente Enterokokken. Besiedlung des Darms oft über Monate.' },
+    { n:'Windpocken (Varizellen)', weg:'Luft (aerogen) und Kontakt', unter:'Einzelzimmer, Tür geschlossen', psa:'<b>Nur immunes Personal</b>', des:'Begrenzt viruzid', dauer:'Bis <b>alle Bläschen verkrustet</b> sind (meist 5–7 Tage nach Beginn des Ausschlags)', extra:'Nicht immune Schwangere und Abwehrgeschwächte fernhalten. Meldepflichtig (§ 6 IfSG).' }
+  ];
+  D.vergleich=[
+    ['Zimmer','Einzelzimmer oder Kohorte nach Hygieneplan; eigene Toilette bei Durchfall','Einzelzimmer oder Kohorte; Abstand zu anderen','Einzelzimmer, Tür <b>geschlossen</b>; Schleuse/Unterdruck, wenn vorhanden'],
+    ['Schutzkittel','Ja, bei Kontakt mit Patient oder Umgebung','Bei engem Kontakt/Sekreten','Nach Hygieneplan'],
+    ['Handschuhe','Ja, bei Kontakt mit Patient oder Umgebung','Nach Basishygiene','Nach Basishygiene'],
+    ['Maske','MNS nur bei Spritz-/Aerosolgefahr','<b>MNS</b> beim Betreten bzw. engem Kontakt','<b>FFP2</b> (TB); bei Masern/Varizellen nur immunes Personal'],
+    ['Patient außerhalb','Frische Kleidung, Hände desinfizieren, Wunden abdecken','Trägt <b>MNS</b>','Trägt <b>MNS</b>'],
+    ['Tür','Darf offen sein (Hygieneplan)','Möglichst geschlossen','<b>Immer geschlossen</b>']
+  ];
+  D.masken=[
+    { n:'Medizinische Gesichtsmaske (MNS, „OP-Maske“)', norm:'EN 14683', txt:'Schützt vor allem <b>andere</b> vor deinen Tröpfchen und dich vor Spritzern auf Mund und Nase. Sitzt nicht dicht – kein Atemschutz gegen Aerosole.', wann:'Tröpfcheninfektionen, Spritzgefahr, Patient außerhalb des Zimmers' },
+    { n:'FFP2-Maske', norm:'EN 149', txt:'<b>Atemschutz</b>: filtert mindestens 94 % der Partikel, wenn sie <b>dicht sitzt</b>. Ein Bart oder falsch geformter Nasenbügel macht sie undicht. Tragezeiten nach Arbeitsschutz (DGUV) und Hygieneplan beachten.', wann:'Aerogene Erreger (z. B. offene Tuberkulose), aerosolbildende Maßnahmen nach Hygieneplan' },
+    { n:'FFP3-Maske', norm:'EN 149', txt:'Filtert mindestens 99 % der Partikel. Höherer Atemwiderstand.', wann:'Nur bei besonderen Tätigkeiten nach Gefährdungsbeurteilung (z. B. Bronchoskopie bei resistenter TB)' },
+    { n:'Maske mit Ausatemventil', norm:'–', txt:'Schützt nur die tragende Person – die Ausatemluft geht <b>ungefiltert</b> nach außen.', wann:'Nicht geeignet, wenn andere geschützt werden sollen (z. B. bei Schutzisolierung, im OP)' }
+  ];
+  D.fitcheck=['Maske mit beiden Händen anfassen, Bänder hinter den Kopf bzw. die Ohren','Nasenbügel mit beiden Zeigefingern an die Nase <b>anmodellieren</b> (nicht kneifen)','Maske mit den Händen abdecken und <b>kräftig ausatmen</b>: Es darf keine Luft am Rand entweichen','<b>Kräftig einatmen</b>: Die Maske zieht sich leicht an das Gesicht','Bei Undichtigkeit neu anpassen oder eine andere Größe/ein anderes Modell nehmen'];
+  D.kittel=['Langärmelig mit Bündchen, schließt im Rücken','<b>Flüssigkeitsdicht</b>, wenn Durchfeuchtung droht (z. B. Erbrechen, Durchfall, Waschen)','Wird <b>patientenbezogen</b> und nur im Zimmer getragen – nicht auf dem Flur','Bei Durchfeuchtung oder sichtbarer Verschmutzung sofort wechseln','Wiederverwendung nur, wenn der Hygieneplan es ausdrücklich regelt (dann Innenseite nach innen, im Zimmer aufhängen)'];
+  D.handschuhe=['Medizinische Einmalhandschuhe (EN 455); beim Umgang mit Desinfektionsmitteln chemikalienbeständige Handschuhe (EN ISO 374)','Erst nach der Händedesinfektion anziehen – Hände müssen <b>trocken</b> sein','Bündchen <b>über</b> die Kittelärmel ziehen','<b>Wechseln</b> zwischen Patienten, von unrein zu rein und bei Beschädigung','Nach dem Ausziehen <b>immer</b> Hände desinfizieren – Handschuhe haben Mikroperforationen','Mit Handschuhen keine Türklinken, Telefone, Kurven oder Kugelschreiber anfassen'];
+  D.wirk=[
+    ['Bakterizid','Bakterien (ohne Sporen und Mykobakterien)','z. B. MRSA, MRGN, VRE'],
+    ['Levurozid / fungizid','Hefepilze bzw. alle Pilze','z. B. Candida'],
+    ['Tuberkulozid / mykobakterizid','Tuberkulose-Erreger bzw. alle Mykobakterien','Offene Tuberkulose'],
+    ['Begrenzt viruzid','Nur <b>behüllte</b> Viren','z. B. Influenza, SARS-CoV-2, HBV, HCV, HIV, Herpes'],
+    ['Begrenzt viruzid PLUS','Behüllte Viren <b>plus</b> Adeno-, Noro- und Rotaviren','Noroviren, Rotaviren'],
+    ['Viruzid','Alle Viren, auch unbehüllte','z. B. Hepatitis A, Polio'],
+    ['Sporizid','Bakteriensporen','<b>C. difficile</b>']
+  ];
+  D.haende=['5 Momente: <b>vor</b> Patientenkontakt · <b>vor</b> aseptischen Tätigkeiten · <b>nach</b> Kontakt mit infektiösem Material · <b>nach</b> Patientenkontakt · <b>nach</b> Kontakt mit der Patientenumgebung','Ausreichend Mittel (ca. 3–5 ml, Hohlhand voll), alle Hautflächen benetzen, Einwirkzeit nach Hersteller (meist <b>30 Sekunden</b>), Hände bleiben während der ganzen Zeit feucht','Kurze, unlackierte Nägel, keine künstlichen Nägel, <b>kein Schmuck</b> an Händen und Unterarmen (TRBA 250)','Händedesinfektion ist <b>schonender</b> als Händewaschen – waschen nur bei sichtbarer Verschmutzung und bei Sporen (C. difficile)','Hautpflege gehört dazu: rissige Haut lässt sich schlechter desinfizieren'];
+  D.orga=[
+    ['Türschild','Hinweis an der Tür <b>ohne Diagnose oder Erregernamen</b> (Datenschutz, Schweigepflicht), z. B. „Bitte vor Betreten im Stationszimmer melden“ oder ein Symbol nach Hausstandard.'],
+    ['Information','Isolierung in Kurve, Pflegedokumentation, Übergabe und bei Verlegung/Entlassung weitergeben. Weiterbehandelnde (Funktionsabteilungen, Rettungsdienst, Pflegeheim) informieren.'],
+    ['Vorraum / vor der Tür','PSA, Händedesinfektionsmittel und Abwurf griffbereit. Bei aerogenen Erregern Schleuse nutzen, beide Türen nie gleichzeitig öffnen.'],
+    ['Material im Zimmer','Nur so viel wie nötig – Überschuss muss bei Entlassung oft verworfen werden. Stethoskop, Blutdruckmanschette, Thermometer, Staubinde <b>patientenbezogen</b> im Zimmer lassen.'],
+    ['Arbeitsablauf','Tätigkeiten <b>bündeln</b>, alles vorher richten. Isolierte möglichst <b>zuletzt</b> versorgen (Ausnahme: Schutzisolierung – zuerst).'],
+    ['Wäsche','Im Zimmer in den Wäschesack, nicht schütteln, nicht auf den Boden. Feuchte Wäsche in einen flüssigkeitsdichten Sack. Kennzeichnung nach Hygieneplan.'],
+    ['Abfall','Meist als normaler Krankenhausabfall (AS 18 01 04) im Zimmer entsorgen. Nur bei bestimmten Erregern bzw. Materialien als gefährlicher Abfall (AS 18 01 03*) – Hygieneplan.'],
+    ['Geschirr','Normale maschinelle, thermische Aufbereitung reicht. Kein Einmalgeschirr nötig.'],
+    ['Steckbecken & Toilette','Patientenbezogen, Aufbereitung im Steckbeckenspüler (thermisch). Bei Durchfall eigene Toilette.'],
+    ['Reinigung','Mindestens täglich Wischdesinfektion der patientennahen Flächen (Nachttisch, Bettgitter, Klingel, Türklinke) mit geeignetem Wirkbereich.'],
+    ['Besuch','Besucher anleiten: Händedesinfektion beim Betreten und Verlassen, Schutzkleidung nach Hygieneplan, nicht auf das Bett setzen, keine anderen Zimmer besuchen.'],
+    ['Aufhebung','Nur auf ärztliche Anordnung bzw. nach den Kriterien im Hygieneplan. Danach <b>Schlussdesinfektion</b>: alle Flächen und Geräte, Wechsel von Vorhängen, Einmalmaterial verwerfen, Bett aufbereiten.']
+  ];
+  D.transport=['Ist der Transport <b>wirklich nötig</b>? Kann die Untersuchung im Zimmer stattfinden?','<b>Zielbereich und Transportdienst vorher informieren</b> – möglichst Termin am Ende des Programms','Patient: frische Kleidung bzw. frisches Laken, <b>Hände desinfizieren</b>, Wunden/Drainagen/Stoma sicher abdecken','Bei Tröpfchen- oder aerogener Übertragung trägt der Patient einen <b>MNS</b> (wenn tolerierbar)','Begleitpersonal trägt PSA nur bei <b>direktem Kontakt</b> – Kittel/Handschuhe nicht über den Flur tragen','Kontakt zu anderen Patienten vermeiden, Wartebereiche meiden','Danach Bett/Rollstuhl/Trage und alle Kontaktflächen desinfizieren'];
+  D.melde=[
+    ['§ 6 IfSG – Ärztin/Arzt meldet','Namentlich u. a. Verdacht, Erkrankung oder Tod bei: Masern, Mumps, Röteln, Windpocken, Pertussis, Meningokokken-Meningitis/-Sepsis, behandlungsbedürftige Tuberkulose, schwere C.-difficile-Infektion. Außerdem akute infektiöse Gastroenteritis bei Beschäftigten in Lebensmittelbereichen oder bei ≥ 2 Fällen mit vermutetem Zusammenhang.'],
+    ['§ 7 IfSG – Labor meldet','Erregernachweise, z. B. MRSA in Blut oder Liquor, Carbapenem-resistente Enterobacterales und Acinetobacter (Infektion oder Kolonisation), Noroviren, Rotaviren, Influenza.'],
+    ['§ 6 Abs. 3 IfSG – Ausbruch','Gehäuftes Auftreten nosokomialer Infektionen mit wahrscheinlichem Zusammenhang wird <b>nichtnamentlich</b> dem Gesundheitsamt gemeldet – über Hygienefachpersonal bzw. ärztliche Leitung.'],
+    ['§ 23 IfSG – Einrichtung','Surveillance nosokomialer Infektionen und multiresistenter Erreger, Hygieneplan, Einhaltung der KRINKO-Empfehlungen (Stand der Wissenschaft).'],
+    ['Deine Aufgabe in der Pflege','Auffälligkeiten (z. B. mehrere Durchfälle auf Station) <b>sofort</b> an Stationsleitung, Ärztin/Arzt und Hygienefachkraft weitergeben. Die Meldung selbst erfolgt über die zuständigen Personen.']
+  ];
+  D.schutz=['<b>Wer?</b> Z. B. schwere Neutropenie (Neutrophile &lt; 500/µl), nach Stammzelltransplantation, unter intensiver Chemotherapie','Einzelzimmer, Tür geschlossen; je nach Klinik gefilterte Luft (HEPA) oder Überdruck','Konsequente Händedesinfektion <b>vor jedem Betreten</b>; Schutzkittel/MNS nach Hygieneplan','Personal und Besuch mit <b>Infektzeichen</b> (Schnupfen, Husten, Fieber, Herpes) betreten das Zimmer nicht – oder nur nach Absprache mit MNS','Keine Topfpflanzen, keine Blumenerde, keine Schnittblumen (Schimmelpilze, Wasserkeime)','Ernährung nach hausinterner Vorgabe (z. B. keine Rohmilchprodukte, kein rohes Fleisch)','Isolierte Person zuerst versorgen, nicht nach einem infektiösen Patienten','Fieber bei Neutropenie ist ein <b>Notfall</b> – sofort Ärztin/Arzt informieren','Beim Verlassen des Zimmers trägt die Person nach Vorgabe einen MNS oder eine FFP2-Maske (ohne Ventil)'];
+  D.psyche=['Studien zeigen bei isolierten Menschen häufiger <b>Angst, Niedergeschlagenheit, Einsamkeit</b> und das Gefühl, „gefährlich“ zu sein.','Isolierte Patienten erhalten oft <b>weniger Besuche</b> vom Team – und Komplikationen (z. B. Stürze, Dekubitus) werden später bemerkt.','Ältere Menschen und Menschen mit Demenz reagieren häufiger mit <b>Delir</b> oder Rückzug.'];
+  D.hilft=['<b>Erklären</b>, warum isoliert wird, wie lange voraussichtlich und was die Person selbst tun kann','Sich mit <b>Namen und Funktion</b> vorstellen – hinter Maske und Brille ist man kaum zu erkennen','<b>Bewusst Zeit nehmen</b>, Blickkontakt, ruhiger Tonfall – nicht nur „rein, raus“','Klingel, Telefon, Getränke, Brille, Fernbedienung <b>in Reichweite</b>','Tagesstruktur, Uhr, Kalender; Kontakt zu Angehörigen ermöglichen (z. B. Telefon, Video)','Keine abwertenden Begriffe („der Keimpatient“, „MRSA-Zimmer“) – auch nicht im Stationszimmer','Auf Stimmung, Schlaf, Orientierung und Appetit achten und dokumentieren'];
+  D.saetze=['„Ich bin Patrick, Ihre Pflegefachkraft heute. Die Schutzkleidung trage ich, damit sich der Keim nicht weiter verbreitet – nicht, weil Sie gefährlich sind.“','„Sie dürfen das Zimmer gerade nicht verlassen. Ich komme um 14 Uhr wieder vorbei – drücken Sie gern die Klingel, wenn Sie etwas brauchen.“','„Ihre Angehörigen dürfen Sie besuchen. Ich zeige ihnen gleich, wie sie sich die Hände desinfizieren und den Kittel anziehen.“'];
+  D.recht=[
+    ['Infektionsschutzgesetz (IfSG)','§ 23: Pflicht zur Infektionsprävention nach Stand der Wissenschaft (KRINKO), Surveillance, Hygieneplan · § 36: Hygienepläne in Pflegeeinrichtungen · §§ 6, 7: Meldepflichten · § 20: Masernschutz'],
+    ['KRINKO-Empfehlungen (RKI)','U. a. „Infektionsprävention im Rahmen der Pflege und Behandlung von Patienten mit übertragbaren Krankheiten“ (2015), Händehygiene (2016), MRSA (2014), MRGN (2012), VRE (2018), C. difficile (2019)'],
+    ['Landesrecht','In NRW die Krankenhaushygieneverordnung (HygMedVO): Hygienefachpersonal, Hygienekommission'],
+    ['Arbeitsschutz','Biostoffverordnung, <b>TRBA 250</b> (Schutzkleidung, Atemschutz, Handschuhe, kein Schmuck, sichere Instrumente), arbeitsmedizinische Vorsorge und Impfangebote'],
+    ['Datenschutz & Schweigepflicht','§ 203 StGB, DSGVO: Diagnosen nicht für Unbefugte erkennbar machen (Türschild ohne Erreger)'],
+    ['Hygieneplan der Einrichtung','Setzt alle Vorgaben vor Ort um – <b>verbindlich</b> für alle Mitarbeitenden. Bei Abweichungen zwischen Lehrbuch und Hygieneplan gilt im Dienst der Hygieneplan.']
+  ];
+  D.faelle=[
+    { t:'MRSA auf der Unfallchirurgie', s:'Herr K., 78 Jahre, wird nach einem Sturz mit Schenkelhalsfraktur aufgenommen. Er kommt aus einem Pflegeheim. Im Aufnahmescreening wird MRSA im Nasenabstrich nachgewiesen. Morgen ist die Operation.', fr:[
+      { f:'Wie bringst du Herrn K. unter?', o:['Im Vierbettzimmer, MRSA ist nur eine Besiedlung','Einzelzimmer mit eigener Nasszelle bzw. nach Hygieneplan, Kohortierung mit anderem MRSA-Patienten möglich','Im Zimmer mit einer abwehrgeschwächten Patientin, die ohnehin Schutz braucht','Auf dem Flur, bis ein Zimmer frei ist'], k:1, e:'Kontaktübertragung. KRINKO empfiehlt ein Einzelzimmer mit eigener Nasszelle, eine Kohorte mit anderen MRSA-Patienten ist möglich. Niemals zu abwehrgeschwächten Menschen.' },
+      { f:'Du machst einen Verbandwechsel an der OP-Wunde. Welche Schutzausrüstung?', o:['Nur Handschuhe','Kittel, Handschuhe und – bei Spritz-/Aerosolgefahr bzw. nach Hygieneplan – MNS','FFP3-Maske und Kittel','Keine – die Wunde ist ja frisch und steril'], k:1, e:'Kittel und Handschuhe bei Kontakt, MNS bei Spritzgefahr oder nach Hygieneplan. FFP3 ist bei MRSA nicht vorgesehen. Verbandwechsel natürlich aseptisch.' },
+      { f:'Herr K. muss zum Röntgen. Was ist richtig?', o:['Einfach hinbringen, Röntgen merkt das schon','Röntgen vorher informieren, frische Kleidung, Hände desinfizieren, Wunde abgedeckt; danach Transportmittel desinfizieren','Herr K. trägt Kittel und Handschuhe','Transport nur nachts'], k:1, e:'Zielbereich vorher informieren ist der wichtigste Schritt. Der Patient braucht keine Schutzkleidung – frische Kleidung, desinfizierte Hände und abgedeckte Wunden reichen.' } ] },
+    { t:'Verdacht auf offene Tuberkulose', s:'Frau D., 45 Jahre, liegt seit gestern in einem Zweibettzimmer der Inneren. Sie hustet seit Wochen, hat Nachtschweiß und 8 kg abgenommen. Im Röntgenbild zeigt sich eine Kaverne. Die Ärztin äußert den Verdacht auf eine offene Lungentuberkulose.', fr:[
+      { f:'Was tust du sofort?', o:['Abwarten, bis das Sputum ausgewertet ist','Frau D. sofort in ein Einzelzimmer mit geschlossener Tür verlegen, sie trägt bis dahin einen MNS','Fenster öffnen und weiterarbeiten','Mitpatientin entlassen'], k:1, e:'Schon bei <b>Verdacht</b> isolieren – aerogene Übertragung. Bis zur Verlegung trägt die Patientin einen MNS (Quellenschutz).' },
+      { f:'Welche Maske trägst du beim Betreten?', o:['MNS','FFP2-Maske mit Dichtsitzprüfung','Keine, wenn Abstand gehalten wird','Stoffmaske'], k:1, e:'Aerogene Erreger: Atemschutz, mindestens FFP2. Ein MNS schützt nicht vor Tröpfchenkernen.' },
+      { f:'Was passiert mit der Mitpatientin?', o:['Nichts','Sie wird als Kontaktperson erfasst und an Hygiene/Ärztin gemeldet – weitere Schritte über das Gesundheitsamt','Sie bekommt sofort Antibiotika','Sie wird ebenfalls isoliert, weil sie sicher infiziert ist'], k:1, e:'Kontaktpersonen werden erfasst; Umgebungsuntersuchungen laufen über das Gesundheitsamt. Tuberkulose ist meldepflichtig (§ 6 IfSG).' } ] },
+    { t:'Noroviren im Pflegeheim', s:'In der Nacht erbrechen zwei Bewohnerinnen eines Wohnbereichs schwallartig und haben wässrigen Durchfall. Am Morgen klagt eine Kollegin über Übelkeit. Auf dem Wohnbereich leben 28 Menschen.', fr:[
+      { f:'Welches Händedesinfektionsmittel brauchst du?', o:['Jedes Mittel reicht','Ein Mittel mit Wirkbereich mindestens „begrenzt viruzid PLUS“ oder viruzid','Nur Händewaschen, Desinfektion wirkt nicht','Ein rein bakterizides Mittel'], k:1, e:'Noroviren sind unbehüllt. Nötig ist mindestens „begrenzt viruzid PLUS“ (oder viruzid). Händewaschen ersetzt die Desinfektion nicht.' },
+      { f:'Die Kollegin fühlt sich krank. Was ist richtig?', o:['Mit MNS weiterarbeiten','Nach Hause gehen; Rückkehr frühestens 48 Stunden nach Ende der Symptome (Hygieneplan)','Sofort zurück, wenn sie nicht mehr erbricht','Nur in der Küche helfen'], k:1, e:'Erkranktes Personal ist eine häufige Quelle für Ausbrüche. Rückkehr frühestens 48 Stunden nach Symptomende, danach besonders sorgfältige Händehygiene.' },
+      { f:'Wen informierst du?', o:['Niemanden, das legt sich','Wohnbereichs-/Pflegedienstleitung, Hausärztin und Hygienebeauftragte – die Häufung wird dem Gesundheitsamt gemeldet','Nur die Angehörigen','Die Presse'], k:1, e:'Ab 2 Fällen mit vermutetem Zusammenhang handelt es sich um eine meldepflichtige Häufung. Früh reagieren verhindert große Ausbrüche.' } ] },
+    { t:'Clostridioides difficile', s:'Herr S., 66 Jahre, bekommt seit zehn Tagen Antibiotika wegen einer Pneumonie. Seit gestern hat er sechs wässrige Stühle pro Tag. Der Labornachweis auf C.-difficile-Toxin ist positiv.', fr:[
+      { f:'Wie machst du deine Hände nach dem Kontakt sauber?', o:['Nur desinfizieren','Desinfizieren und anschließend gründlich waschen','Nur Handschuhe wechseln','Nur abtrocknen'], k:1, e:'C. difficile bildet Sporen – Alkohol tötet sie nicht sicher ab. Deshalb nach der Desinfektion zusätzlich waschen (mechanische Entfernung).' },
+      { f:'Welches Flächendesinfektionsmittel?', o:['Ein Mittel auf Alkoholbasis','Ein sporozides Mittel nach Hygieneplan (z. B. Peressigsäure)','Spülmittel','Keines – Herr S. bleibt ja im Bett'], k:1, e:'Nur sporozide Mittel wirken gegen die Sporen.' },
+      { f:'Wann darf die Isolierung frühestens aufgehoben werden?', o:['Sobald das Antibiotikum abgesetzt ist','Frühestens 48 Stunden nach Ende der Durchfälle (Hygieneplan, ärztliche Anordnung)','Nach dem ersten festen Stuhl','Nach 24 Stunden'], k:1, e:'KRINKO: frühestens 48 Stunden nach Ende der Durchfälle. Danach Schlussdesinfektion mit sporozidem Mittel.' } ] },
+    { t:'Schutzisolierung bei Neutropenie', s:'Frau M., 34 Jahre, hat eine akute Leukämie. Nach der Chemotherapie liegen ihre Neutrophilen bei 300/µl. Ihr Partner möchte Blumen mitbringen; er ist leicht erkältet.', fr:[
+      { f:'Was antwortest du zu den Blumen?', o:['Gern, Blumen heben die Stimmung','Keine Topfpflanzen und keine Schnittblumen – Schimmelpilze und Wasserkeime sind gefährlich','Nur Kunstblumen aus Stoff','Nur Blumen ohne Duft'], k:1, e:'Pflanzen, Erde und Blumenwasser sind Keimreservoire (z. B. Aspergillus, Pseudomonas).' },
+      { f:'Der Partner ist erkältet. Was ist richtig?', o:['Er darf normal rein','Er soll nicht kommen oder nur nach Absprache mit MNS und Händedesinfektion – Alternative Videoanruf','Er muss FFP3 tragen','Er darf rein, wenn er Abstand hält'], k:1, e:'Personen mit Infektzeichen sind für Frau M. eine Gefahr. Besser Kontakt per Telefon/Video oder nur nach Absprache mit MNS.' },
+      { f:'In welcher Reihenfolge versorgst du deine Patienten?', o:['Frau M. zuletzt','Frau M. zuerst – vor infektiösen Patienten','Egal','Nach Zimmernummer'], k:1, e:'Bei Schutzisolierung ist die Reihenfolge umgekehrt: zuerst die abwehrgeschwächte Person, isolierte infektiöse Patienten zuletzt.' } ] }
+  ];
+  D.quiz=[
+    { f:'Welche Isolierungsart brauchst du bei offener Lungentuberkulose?', o:['Kontaktisolierung','Tröpfchenisolierung','Isolierung bei aerogener Übertragung (Luft)','Keine'], k:2, e:'Tuberkulose wird über Tröpfchenkerne in der Luft übertragen.' },
+    { f:'Warum steht auf dem Türschild kein Erregername?', o:['Weil der Platz fehlt','Datenschutz und Schweigepflicht – und um Stigmatisierung zu vermeiden','Weil es keine Rolle spielt','Damit Besucher raten'], k:1, e:'Diagnosen dürfen Unbefugte nicht erkennen (§ 203 StGB, DSGVO).' },
+    { f:'Was ziehst du beim Ablegen der PSA zuerst aus?', o:['Maske','Kittel','Handschuhe','Schutzbrille'], k:2, e:'Handschuhe sind am stärksten kontaminiert – zuerst ausziehen, dann Hände desinfizieren.' },
+    { f:'Welcher Wirkbereich reicht bei Noroviren?', o:['Bakterizid','Begrenzt viruzid','Mindestens begrenzt viruzid PLUS','Levurozid'], k:2, e:'Noroviren sind unbehüllt – „begrenzt viruzid“ reicht nicht.' },
+    { f:'Was unterscheidet eine FFP2-Maske von einem MNS?', o:['Nichts','FFP2 ist Atemschutz und schützt bei dichtem Sitz die Trägerin vor Partikeln; der MNS schützt vor allem andere','Der MNS filtert mehr','FFP2 ist nur für Patienten'], k:1, e:'MNS = Fremdschutz und Spritzschutz, FFP2 = Atemschutz (Eigenschutz).' },
+    { f:'Bei Masern dürfen ins Zimmer …', o:['alle mit FFP2','nur Personal mit nachgewiesener Immunität','nur Ärztinnen und Ärzte','nur Schwangere'], k:1, e:'Masern sind hochansteckend – nur immunes Personal (Masernschutz, § 20 IfSG).' },
+    { f:'Wann wird die Isolierung bei Meningokokken aufgehoben?', o:['Nach 7 Tagen','24 Stunden nach Beginn der wirksamen Antibiotikatherapie','Nach Entlassung','Wenn das Fieber weg ist'], k:1, e:'Nach 24 Stunden wirksamer Therapie ist die Person nicht mehr ansteckend.' },
+    { f:'Was ist eine Kohortenisolierung?', o:['Jeder Patient im eigenen Zimmer','Mehrere Patienten mit demselben Erreger in einem Zimmer','Isolierung nur nachts','Isolierung im Flur'], k:1, e:'Kohorte = gleicher Erreger, gleiches Resistenzmuster, gemeinsames Zimmer.' },
+    { f:'Welche Patienten versorgst du bei einer Schutzisolierung zuerst?', o:['Die schutzisolierte Person','Die infektiösen Patienten','Egal','Den, der klingelt'], k:0, e:'Abwehrgeschwächte zuerst, infektiöse Patienten zuletzt.' },
+    { f:'Was gilt für Hepatitis B im Krankenhaus?', o:['Strikte Einzelzimmerisolierung','Keine Isolierung – Basishygiene, sichere Instrumente, Impfung','FFP2 für alle','Kohorte mit HIV-Patienten'], k:1, e:'Übertragung über Blut – Isolierung bringt keinen zusätzlichen Schutz.' },
+    { f:'Ein isolierter Patient muss zum CT. Was ist am wichtigsten?', o:['Er trägt Kittel und Handschuhe','Den Zielbereich vorher informieren','Schnell durch den Flur','Gar nicht transportieren'], k:1, e:'So kann sich das CT vorbereiten (Termin am Ende, Desinfektion danach).' },
+    { f:'Was wirkt gegen Milben bei Skabies am sichersten?', o:['Alkoholische Händedesinfektion','Handschuhe und langärmeliger Kittel bei Körperkontakt','Nur Abstand','Ein MNS'], k:1, e:'Händedesinfektion tötet Milben nicht sicher ab – Barriereschutz ist entscheidend.' },
+    { f:'Was bedeutet 4MRGN?', o:['Resistent gegen 4 von 4 Antibiotikagruppen (inkl. Carbapeneme)','4 Patienten mit MRGN','Viertes Screening','Resistent gegen 4 Desinfektionsmittel'], k:0, e:'Resistent gegen Acylureidopenicilline, Cephalosporine der 3./4. Generation, Fluorchinolone und Carbapeneme.' },
+    { f:'Wie lange wirkt die hygienische Händedesinfektion meist ein?', o:['5 Sekunden','30 Sekunden','3 Minuten','Bis die Hände trocken sind, egal wie lange'], k:1, e:'Meist 30 Sekunden (Herstellerangabe beachten), die Hände bleiben dabei feucht.' },
+    { f:'Was hilft gegen die psychische Belastung durch Isolierung?', o:['Möglichst selten ins Zimmer gehen','Erklären, vorstellen, bewusst Zeit nehmen, Klingel in Reichweite','Die Tür immer offen lassen, auch bei TB','Nicht über die Isolierung sprechen'], k:1, e:'Isolierte Menschen fühlen sich oft allein und stigmatisiert – Kommunikation und Zeit helfen.' }
+  ];
+  D.quellen=['KRINKO: Infektionsprävention im Rahmen der Pflege und Behandlung von Patienten mit übertragbaren Krankheiten. Bundesgesundheitsblatt 2015','KRINKO: Händehygiene in Einrichtungen des Gesundheitswesens. Bundesgesundheitsblatt 2016','KRINKO: Empfehlungen zu MRSA (2014), MRGN (2012), VRE (2018) und Clostridioides difficile (2019)','RKI-Ratgeber für Ärztinnen und Ärzte (z. B. Tuberkulose, Noroviren, Masern, Skabies), www.rki.de','TRBA 250 – Biologische Arbeitsstoffe im Gesundheitswesen und in der Wohlfahrtspflege','Infektionsschutzgesetz (IfSG), insbesondere §§ 2, 6, 7, 20, 23, 36','VAH-Liste / RKI-Liste der Desinfektionsmittel (Wirkbereiche)'];
+  window.PL_ISO=D;
+
+  /* ───────────── ANIMATIONEN (Handgriffe-Stil) ───────────── */
+  var HG=window.PL_HANDGRIFFE, P=window.PLHGR;
+  if(HG && P){
+    var T=P.T, ein=P.ein, haken=P.haken, kreuz=P.kreuz, GR=P.GR, RT=P.RT, OR=P.OR, TX=P.TX, TX2=P.TX2;
+    var HAUT='#efc29c', KASACK='#0f766e', KITTEL='#fde68a', HS='#3b82f6';
+    function aus(b){ return '<animate attributeName="opacity" from="1" to="0" begin="'+b+'s" dur=".5s" fill="freeze"/>'; }
+    function kopf(){ return '<circle cx="110" cy="50" r="22" fill="'+HAUT+'"/><path d="M88 46 Q90 22 110 24 Q132 24 132 46 Q122 34 110 34 Q96 34 88 46 Z" fill="#5b4636"/>'
+      +'<circle cx="102" cy="48" r="2.4" fill="#1e293b"/><circle cx="118" cy="48" r="2.4" fill="#1e293b"/><path d="M104 62 q6 4 12 0" stroke="#9a5b3c" stroke-width="2" fill="none" stroke-linecap="round"/>'
+      +'<rect x="103" y="70" width="14" height="10" fill="'+HAUT+'"/>'; }
+    function rumpf(){ return '<path d="M76 84 Q110 74 144 84 L152 214 L68 214 Z" fill="'+KASACK+'"/><path d="M100 80 L110 96 L120 80" stroke="#0b4f49" stroke-width="3" fill="none"/>'
+      +'<path d="M80 90 L62 156" stroke="'+KASACK+'" stroke-width="18" stroke-linecap="round"/><path d="M140 90 L158 156" stroke="'+KASACK+'" stroke-width="18" stroke-linecap="round"/>'
+      +'<path d="M66 148 L60 160" stroke="'+HAUT+'" stroke-width="12" stroke-linecap="round"/><path d="M154 148 L160 160" stroke="'+HAUT+'" stroke-width="12" stroke-linecap="round"/>'; }
+    function haende(farbe){ return '<ellipse cx="59" cy="170" rx="10" ry="13" fill="'+farbe+'"/><ellipse cx="161" cy="170" rx="10" ry="13" fill="'+farbe+'"/>'; }
+    function kittel(){ return '<path d="M72 84 Q110 72 148 84 L158 216 L62 216 Z" fill="'+KITTEL+'"/><path d="M82 90 L62 158" stroke="'+KITTEL+'" stroke-width="22" stroke-linecap="round"/><path d="M138 90 L158 158" stroke="'+KITTEL+'" stroke-width="22" stroke-linecap="round"/>'
+      +'<path d="M54 156 L66 160 M154 160 L166 156" stroke="#eab308" stroke-width="4" stroke-linecap="round"/><path d="M96 78 Q110 86 124 78" stroke="#eab308" stroke-width="3" fill="none"/>'; }
+    function mns(){ return '<path d="M88 56 L80 50 M132 56 L140 50" stroke="#e2e8f0" stroke-width="1.6"/><rect x="92" y="54" width="36" height="20" rx="5" fill="#93c5fd"/><path d="M94 60 h32 M94 65 h32 M94 70 h32" stroke="#60a5fa" stroke-width="1"/>'; }
+    function ffp2(){ return '<path d="M88 52 L80 44 M132 52 L140 44 M90 66 L82 70 M130 66 L138 70" stroke="#e2e8f0" stroke-width="1.6"/><path d="M90 54 Q110 44 130 54 Q128 80 110 82 Q92 80 90 54 Z" fill="#f8fafc" stroke="#cbd5e1"/><path d="M110 46 V80" stroke="#cbd5e1" stroke-width="1"/>'; }
+    function brille(){ return '<path d="M86 44 L80 42 M134 44 L140 42" stroke="#334155" stroke-width="3"/><rect x="86" y="38" width="48" height="16" rx="7" fill="rgba(186,230,253,.45)" stroke="#7dd3fc" stroke-width="2"/>'; }
+    function spender(x,y){ return '<g transform="translate('+x+' '+y+')"><rect x="-14" y="-40" width="28" height="56" rx="7" fill="#e2e8f0"/><rect x="-10" y="-22" width="20" height="24" rx="3" fill="#0ea5e9"/><rect x="-4" y="16" width="8" height="10" fill="#94a3b8"/>'
+      +'<circle cx="0" cy="34" r="3" fill="#7dd3fc"><animate attributeName="cy" values="28;48" dur="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1s" repeatCount="indefinite"/></circle></g>'; }
+    function figur(o){ o=o||{}; var s='<g filter="url(#hgrSch)">'+kopf()+rumpf();
+      s+=haende(HAUT);
+      if(o.kittel) s+='<g'+(o.kittel==='neu'?' opacity="0">'+ein(0.3):(o.kittel==='weg'?'>'+aus(0.6):'>'))+kittel()+haende(HAUT)+'</g>';
+      if(o.maske) s+='<g'+(o.mNeu?' opacity="0">'+ein(0.3):(o.mWeg?'>'+aus(0.6):'>'))+(o.maske==='ffp2'?ffp2():mns())+'</g>';
+      if(o.brille) s+='<g'+(o.bNeu?' opacity="0">'+ein(0.3):(o.bWeg?'>'+aus(0.6):'>'))+brille()+'</g>';
+      if(o.hs) s+='<g'+(o.hNeu?' opacity="0">'+ein(0.3):(o.hWeg?'>'+aus(0.6):'>'))+haende(HS)+'<path d="M50 160 h18 M152 160 h18" stroke="#1d4ed8" stroke-width="3"/></g>';
+      return s+'</g>'; }
+    function liste(z,b,x,y){ x=x||190; y=y||46; return z.map(function(t,i){ return '<g opacity="0">'+ein((b||0.6)+i*0.4)+'<circle cx="'+x+'" cy="'+(y+i*26-4)+'" r="5.5" fill="rgba(74,222,128,.25)" stroke="'+GR+'"/>'+T(x+11,y+i*26,t,TX,10,800,'start')+'</g>'; }).join(''); }
+    function hinweis(t,b,farbe){ return '<g opacity="0">'+ein(b||1.6)+'<rect x="180" y="170" width="136" height="36" rx="10" fill="rgba(251,191,36,.14)" stroke="rgba(251,191,36,.5)"/>'+T(248,192,t,farbe||'#fcd34d',9,900)+'</g>'; }
+    function D2(){ return P.defs(); }
+    var BG='<rect x="0" y="0" width="320" height="220" fill="none"/>';
+
+    var AN={ id:'iso-psa-an', iso:true, t:'Schutzausrüstung anlegen', s:'Vor dem Isolierzimmer bzw. in der Schleuse', farbe:'#fbbf24', schritte:[
+      { t:'Vorbereiten', x:'<b>Schmuck</b> an Händen und Unterarmen ablegen, lange Haare zusammenbinden. PSA vor dem Zimmer bereitlegen und auf die <b>richtige Größe</b> achten. Alle Tätigkeiten im Zimmer vorher planen.', svg: D2()+BG+figur()+liste(['Kein Schmuck','Haare zusammen','PSA bereit','Material bereit']) },
+      { t:'Hände desinfizieren', x:'<b>Hygienische Händedesinfektion</b>: Hohlhand voll Mittel, alle Flächen benetzen, mindestens 30 Sekunden (Herstellerangabe).', svg: D2()+BG+figur()+spender(250,90)+'<g opacity="0">'+ein(0.8)+T(250,160,'30 Sekunden',GR,13,900)+'</g>' },
+      { t:'Schutzkittel anziehen', x:'Langärmeligen Kittel anziehen, <b>im Rücken schließen</b> (Bänder am Hals und an der Taille). Er muss die Arbeitskleidung vollständig bedecken. Bei Durchfeuchtungsgefahr flüssigkeitsdicht.', svg: D2()+BG+figur({kittel:'neu'})+liste(['Ärmel bis Handgelenk','Im Rücken zu','Kleidung bedeckt'],0.9)+hinweis('flüssigkeitsdicht bei Bedarf',2.2) },
+      { t:'Maske aufsetzen', x:'<b>MNS</b> bei Tröpfcheninfektionen, <b>FFP2</b> bei aerogenen Erregern (z. B. Tuberkulose). Nasenbügel anmodellieren und bei FFP2 den <b>Dichtsitz prüfen</b>: kräftig aus- und einatmen – keine Luft am Rand.', svg: D2()+BG+figur({kittel:1,maske:'ffp2',mNeu:1})+liste(['Bügel anmodellieren','Dichtsitz prüfen','Bart = undicht'],0.9)+hinweis('MNS Tröpfchen · FFP2 Luft',2.2) },
+      { t:'Schutzbrille aufsetzen', x:'Schutzbrille oder Visier, wenn mit <b>Spritzern oder Aerosolen</b> zu rechnen ist (z. B. Absaugen, Erbrechen) bzw. nach Hygieneplan. Nur am Bügel anfassen.', svg: D2()+BG+figur({kittel:1,maske:'ffp2',brille:1,bNeu:1})+liste(['Bei Spritzgefahr','Nur am Bügel'],0.9) },
+      { t:'Hände desinfizieren, Handschuhe an', x:'Nochmals <b>Hände desinfizieren</b> und trocknen lassen. Handschuhe anziehen und die Bündchen <b>über die Kittelärmel</b> ziehen. Jetzt erst das Zimmer betreten.', svg: D2()+BG+figur({kittel:1,maske:'ffp2',brille:1,hs:1,hNeu:1})+liste(['Hände trocken','Über die Ärmel','Dann ins Zimmer'],0.9) }
+    ], merke:'Anlegen: Hände desinfizieren → Kittel → Maske → Brille → Hände desinfizieren → Handschuhe über die Ärmel.',
+      quiz:[ {f:'Was legst du als Letztes an?', o:['Maske','Kittel','Handschuhe','Schutzbrille'], k:2},
+             {f:'Wann trägst du eine FFP2-Maske statt eines MNS?', o:['Bei Kontaktübertragung','Bei aerogenen Erregern wie offener Tuberkulose','Immer','Nie'], k:1},
+             {f:'Wohin gehören die Handschuhbündchen?', o:['Unter die Kittelärmel','Über die Kittelärmel','Egal','Bis zum Ellenbogen gerollt'], k:1} ]};
+
+    var AB={ id:'iso-psa-ab', iso:true, t:'Schutzausrüstung ablegen', s:'Ohne dich selbst zu kontaminieren', farbe:'#f87171', schritte:[
+      { t:'Handschuhe ausziehen', x:'Im Zimmer, nahe der Tür: Den ersten Handschuh an der <b>Außenseite</b> fassen und abziehen, in der behandschuhten Hand halten. Mit dem Finger <b>unter</b> den zweiten Handschuh fahren und ihn über den ersten stülpen. Direkt abwerfen.', svg: D2()+BG+figur({kittel:1,maske:'ffp2',brille:1,hs:1,hWeg:1})+liste(['Außen anfassen','Ineinander stülpen','Sofort abwerfen'],0.9)+hinweis('am stärksten kontaminiert',2.2,'#fca5a5') },
+      { t:'Hände desinfizieren', x:'Sofort <b>Hände desinfizieren</b> – Handschuhe haben winzige Löcher, beim Ausziehen gelangen Erreger leicht an die Hände.', svg: D2()+BG+figur({kittel:1,maske:'ffp2',brille:1})+spender(250,90)+'<g opacity="0">'+ein(0.8)+T(250,160,'30 Sekunden',GR,13,900)+'</g>' },
+      { t:'Kittel ausziehen', x:'Bänder öffnen (Nacken zuerst). Den Kittel an den Schultern von innen fassen und nach vorn abziehen, dabei die <b>Außenseite nach innen rollen</b>. Nicht schütteln, direkt in Abwurf bzw. Wäschesack.', svg: D2()+BG+figur({kittel:'weg',maske:'ffp2',brille:1})+liste(['Bänder öffnen','Außen nach innen','Nicht schütteln'],0.9) },
+      { t:'Schutzbrille abnehmen', x:'Brille nur an den <b>Bügeln</b> bzw. am Band hinten fassen und nach vorn abnehmen – nie an der Vorderseite. Mehrwegbrillen nach Hygieneplan desinfizieren.', svg: D2()+BG+figur({maske:'ffp2',brille:1,bWeg:1})+liste(['Nur am Bügel','Vorne nicht anfassen'],0.9) },
+      { t:'Maske abnehmen', x:'Bei <b>aerogenen Erregern</b> die FFP2-Maske erst <b>außerhalb des Zimmers</b> bzw. in der Schleuse abnehmen. Nur an den Bändern anfassen, Vorderseite nicht berühren, direkt entsorgen.', svg: D2()+BG+figur({maske:'ffp2',mWeg:1})+liste(['FFP2: erst draußen','Nur an den Bändern','Direkt entsorgen'],0.9)+hinweis('Atemschutz bleibt bis zuletzt',2.2) },
+      { t:'Hände desinfizieren', x:'Zum Schluss nochmals eine <b>hygienische Händedesinfektion</b>. Erst danach Kurve, Telefon oder Türklinken anfassen.', svg: D2()+BG+figur()+spender(250,90)+'<g opacity="0">'+ein(0.8)+haken(232,170,0)+T(246,174,'fertig',GR,12,900,'start')+'</g>' }
+    ], merke:'Ablegen: Handschuhe → Hände desinfizieren → Kittel → Brille → Maske (bei Luftübertragung draußen) → Hände desinfizieren.',
+      quiz:[ {f:'Was legst du beim Ausziehen zuerst ab?', o:['Maske','Handschuhe','Brille','Kittel'], k:1},
+             {f:'Wo nimmst du die FFP2-Maske bei offener Tuberkulose ab?', o:['Im Zimmer am Bett','Außerhalb des Zimmers bzw. in der Schleuse','Gar nicht','Im Stationszimmer'], k:1},
+             {f:'Wie fasst du die Schutzbrille an?', o:['An der Vorderseite','Nur an den Bügeln bzw. am Band','Mit den Handschuhen','Egal'], k:1} ]};
+    [AN,AB].forEach(function(h){ h.schritte.forEach(function(st){ st.svg='<g class="hgr">'+st.svg+'</g>'; }); if(!HG.some(function(x){ return x.id===h.id; })) HG.push(h); });
+  }
+
+  /* ───────────── DARSTELLUNG ───────────── */
+  var css=document.createElement('style'); css.textContent=
+    '.iso-sec{background:rgba(255,255,255,.05);border:1px solid rgba(148,190,220,.18);border-radius:14px;margin-bottom:10px;overflow:hidden}'+
+    '.iso-sec>summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:800;font-size:15.5px;display:flex;align-items:center;gap:10px}'+
+    '.iso-sec>summary::-webkit-details-marker{display:none}.iso-sec>summary .n{width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;background:rgba(56,189,248,.16);color:#7dd3fc;flex:0 0 26px}'+
+    '.iso-sec>summary:after{content:"›";margin-left:auto;font-size:20px;color:var(--text3);transition:transform .2s}.iso-sec[open]>summary:after{transform:rotate(90deg)}'+
+    '.iso-in{padding:0 16px 16px;font-size:14px;line-height:1.55;color:var(--text2)}.iso-in b{color:var(--text)}'+
+    '.iso-k{border:1px solid rgba(148,190,220,.18);border-radius:12px;padding:12px 14px;margin:8px 0;background:rgba(255,255,255,.035)}'+
+    '.iso-k h4{margin:0 0 6px;font-size:14.5px;color:var(--text)}.iso-k .z{display:grid;grid-template-columns:104px 1fr;gap:4px 10px;font-size:13px;margin-top:4px}.iso-k .z span:nth-child(odd){color:var(--text3);font-weight:700}'+
+    '.iso-ul{margin:6px 0 4px;padding-left:18px}.iso-ul li{margin:5px 0}'+
+    '.iso-tab{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}.iso-tab th{background:rgba(56,189,248,.14);text-align:left;padding:8px;color:var(--text)}.iso-tab td{border-top:1px solid rgba(148,190,220,.15);padding:8px;vertical-align:top}'+
+    '.iso-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}.iso-scroll .iso-tab{min-width:560px}'+
+    '.iso-box{border-radius:12px;padding:12px 14px;margin:10px 0;font-size:13.5px}.iso-box.g{background:rgba(74,222,128,.09);border:1px solid rgba(74,222,128,.3)}.iso-box.o{background:rgba(251,146,60,.09);border:1px solid rgba(251,146,60,.35)}.iso-box.b{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.3)}'+
+    '.iso-such{width:100%;box-sizing:border-box;padding:11px 14px;border-radius:12px;border:1px solid rgba(148,190,220,.3);background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-size:14px;margin:4px 0 8px}'+
+    '.iso-weg{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 8px;margin-bottom:4px}'+
+    '.iso-opt{display:block;width:100%;text-align:left;margin:6px 0;padding:11px 13px;border-radius:11px;border:1px solid rgba(148,190,220,.25);background:rgba(255,255,255,.05);color:var(--text);font:inherit;font-size:13.5px;cursor:pointer}'+
+    '.iso-opt.r{border-color:#4ade80;background:rgba(74,222,128,.14)}.iso-opt.f{border-color:#fb923c;background:rgba(251,146,60,.12)}.iso-opt[disabled]{cursor:default}'+
+    '.iso-erk{font-size:13px;margin:6px 0 2px;padding:10px 12px;border-radius:10px;background:rgba(56,189,248,.08)}'+
+    '.iso-btn{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:11px;border:none;background:var(--accent);color:#04121f;font:inherit;font-weight:800;cursor:pointer}'+
+    'body.light-mode .iso-sec,body.light-mode .iso-k{background:#fff;border-color:rgba(30,64,128,.16)}body.light-mode .iso-opt{background:#fff}body.light-mode .iso-such{background:#fff}';
+  document.head.appendChild(css);
+
+  function ul(a){ return '<ul class="iso-ul">'+a.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>'; }
+  function sec(nr,titel,inhalt,offen){ return '<details class="iso-sec"'+(offen?' open':'')+' data-iso="'+nr+'"><summary><span class="n">'+nr+'</span>'+titel+'</summary><div class="iso-in">'+inhalt+'</div></details>'; }
+  function farbeWeg(w){ w=w.toLowerCase(); return w.indexOf('luft')>=0?'#a78bfa':(w.indexOf('tröpfchen')>=0?'#38bdf8':(w.indexOf('blut')>=0?'#f87171':'#f59e0b')); }
+  function erregerHTML(filter){ var f=(filter||'').toLowerCase();
+    var l=D.erreger.filter(function(e){ return !f || (e.n+' '+e.weg+' '+e.extra).toLowerCase().indexOf(f)>=0; });
+    if(!l.length) return '<p>Kein Treffer.</p>';
+    return l.map(function(e){ var c=farbeWeg(e.weg); return '<div class="iso-k"><span class="iso-weg" style="background:'+c+'22;color:'+c+'">'+e.weg+'</span><h4>'+e.n+'</h4><div class="z">'
+      +'<span>Unterbringung</span><span>'+e.unter+'</span><span>Schutz</span><span>'+e.psa+'</span><span>Desinfektion</span><span>'+e.des+'</span><span>Dauer</span><span>'+e.dauer+'</span><span>Wichtig</span><span>'+e.extra+'</span></div></div>'; }).join(''); }
+  window.plIsoSuche=function(v){ var c=document.getElementById('iso-erreger'); if(c) c.innerHTML=erregerHTML(v); };
+
+  /* Fälle & Quiz */
+  var fz={ fall:0, frage:0, punkte:0 }, qz={ i:0, punkte:0 };
+  function optHTML(q,fn){ return q.o.map(function(o,j){ return '<button class="iso-opt" onclick="'+fn+'('+j+')">'+String.fromCharCode(65+j)+') '+o+'</button>'; }).join(''); }
+  function fallHTML(){ var F=D.faelle[fz.fall];
+    var kopf='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+D.faelle.map(function(x,i){ return '<button class="iso-opt" style="width:auto;display:inline-block;padding:6px 10px;margin:0;'+(i===fz.fall?'border-color:var(--accent)':'')+'" onclick="plIsoFall('+i+')">Fall '+(i+1)+'</button>'; }).join('')+'</div>';
+    if(fz.frage>=F.fr.length) return kopf+'<div class="iso-k"><h4>'+F.t+' – geschafft</h4><p>Du hast <b>'+fz.punkte+' von '+F.fr.length+'</b> Entscheidungen richtig getroffen.</p>'+(fz.fall<D.faelle.length-1?'<button class="iso-btn" onclick="plIsoFall('+(fz.fall+1)+')">Nächster Fall ›</button>':'<button class="iso-btn" onclick="plIsoFall(0)">Von vorn</button>')+'</div>';
+    var q=F.fr[fz.frage];
+    return kopf+'<div class="iso-k"><h4>Fall '+(fz.fall+1)+': '+F.t+'</h4><p style="margin:0 0 8px">'+F.s+'</p><div style="font-size:12px;color:var(--text3)">Entscheidung '+(fz.frage+1)+' von '+F.fr.length+'</div><p style="font-weight:800;color:var(--text);margin:6px 0">'+q.f+'</p><div id="iso-fall-opts">'+optHTML(q,'plIsoFallAntwort')+'</div></div>'; }
+  window.plIsoFall=function(i){ fz={ fall:i, frage:0, punkte:0 }; var c=document.getElementById('iso-fall'); if(c) c.innerHTML=fallHTML(); ga('iso_fall',{fall:i+1}); };
+  window.plIsoFallAntwort=function(j){ var q=D.faelle[fz.fall].fr[fz.frage]; var bs=document.querySelectorAll('#iso-fall-opts .iso-opt');
+    bs.forEach(function(b,k){ b.disabled=true; if(k===q.k) b.classList.add('r'); else if(k===j) b.classList.add('f'); });
+    if(j===q.k) fz.punkte++;
+    var d=document.createElement('div'); d.className='iso-erk'; d.innerHTML=(j===q.k?'<b>Richtig.</b> ':'<b>Nicht ganz.</b> ')+q.e+'<br><button class="iso-btn" onclick="plIsoFallWeiter()">Weiter ›</button>';
+    document.getElementById('iso-fall-opts').appendChild(d); };
+  window.plIsoFallWeiter=function(){ fz.frage++; var c=document.getElementById('iso-fall'); if(c) c.innerHTML=fallHTML(); };
+  function quizHTML(){ if(qz.i>=D.quiz.length){ return '<div class="iso-k"><h4>Ergebnis</h4><p><b>'+qz.punkte+' von '+D.quiz.length+'</b> richtig.</p><button class="iso-btn" onclick="plIsoQuiz()">Nochmal</button></div>'; }
+    var q=D.quiz[qz.i]; return '<div class="iso-k"><div style="font-size:12px;color:var(--text3)">Frage '+(qz.i+1)+' von '+D.quiz.length+'</div><p style="font-weight:800;color:var(--text);margin:6px 0">'+q.f+'</p><div id="iso-quiz-opts">'+optHTML(q,'plIsoQuizAntwort')+'</div></div>'; }
+  window.plIsoQuiz=function(){ qz={ i:0, punkte:0 }; var c=document.getElementById('iso-quiz'); if(c) c.innerHTML=quizHTML(); };
+  window.plIsoQuizAntwort=function(j){ var q=D.quiz[qz.i]; var bs=document.querySelectorAll('#iso-quiz-opts .iso-opt');
+    bs.forEach(function(b,k){ b.disabled=true; if(k===q.k) b.classList.add('r'); else if(k===j) b.classList.add('f'); });
+    if(j===q.k) qz.punkte++;
+    var d=document.createElement('div'); d.className='iso-erk'; d.innerHTML=(j===q.k?'<b>Richtig.</b> ':'<b>Nicht ganz.</b> ')+q.e+'<br><button class="iso-btn" onclick="plIsoQuizWeiter()">'+(qz.i<D.quiz.length-1?'Nächste Frage ›':'Ergebnis ›')+'</button>';
+    document.getElementById('iso-quiz-opts').appendChild(d); };
+  window.plIsoQuizWeiter=function(){ qz.i++; if(qz.i>=D.quiz.length) ga('iso_quiz',{punkte:qz.punkte}); var c=document.getElementById('iso-quiz'); if(c) c.innerHTML=quizHTML(); };
+
+  function render(){
+    var c=document.getElementById('isolation-content'); if(!c) return;
+    var h=(PL_ISO_PUBLIC?'':'<div class="hg-entwurf">ENTWURF · nur für Admin sichtbar · fachlich prüfen</div>')
+      +'<p style="color:var(--text2);margin:0 0 12px;font-size:14.5px">Alles rund um die Isolierung: vom Übertragungsweg über die richtige Schutzausrüstung bis zum Transport – mit Animationen, Fällen und Quiz.</p>'
+      +'<button class="hg-card" onclick="plIsoOeffnen(\'iso-psa-an\')"><i class="p" style="background:#fbbf24"></i><div><b>Schutzausrüstung anlegen</b><span>Animation · 6 Schritte</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'
+      +'<button class="hg-card" onclick="plIsoOeffnen(\'iso-psa-ab\')"><i class="p" style="background:#f87171"></i><div><b>Schutzausrüstung ablegen</b><span>Animation · 6 Schritte</span></div><span style="margin-left:auto;font-size:20px">›</span></button>'
+      +'<div style="height:6px"></div>';
+    h+=sec(1,'Begriffe & Grundlagen', D.begriffe.map(function(b){ return '<div class="iso-k"><h4>'+b[0]+'</h4>'+b[1]+'</div>'; }).join('')+'<div class="iso-box g"><b>Merke:</b> Basishygiene schützt immer. Erweiterte Maßnahmen kommen dazu – sie ersetzen die Basishygiene nie.</div>');
+    h+=sec(2,'Übertragungswege', D.wege.map(function(w){ return '<div class="iso-k" style="border-left:4px solid '+w.f+'"><h4>'+w.n+'</h4><div class="z"><span>So</span><span>'+w.wie+'</span><span>Beispiele</span><span>'+w.bsp+'</span><span>Schutz</span><span>'+w.schutz+'</span></div></div>'; }).join('')
+      +'<div class="iso-box b">Manche Erreger nutzen <b>mehrere Wege</b>: Noroviren über Kontakt und beim Erbrechen über Tröpfchen, Windpocken über Luft und Kontakt. Die Isolierung richtet sich nach dem Übertragungsweg – <b>nicht</b> nach der Schwere der Erkrankung.</div>');
+    h+=sec(3,'Erreger von A bis Z ('+D.erreger.length+')', '<input class="iso-such" type="search" placeholder="Erreger suchen, z. B. Noro, MRSA, Luft …" oninput="plIsoSuche(this.value)"><div id="iso-erreger">'+erregerHTML('')+'</div><div class="iso-box o">Dauer und Details legt immer der <b>Hygieneplan</b> bzw. die ärztliche Anordnung fest.</div>');
+    h+=sec(4,'Isolierungsarten im Vergleich', '<div class="iso-scroll"><table class="iso-tab"><tr><th></th><th>Kontakt</th><th>Tröpfchen</th><th>Luft (aerogen)</th></tr>'+D.vergleich.map(function(r){ return '<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td></tr>'; }).join('')+'</table></div><div style="font-size:12px;color:var(--text3)">Tabelle seitlich wischen</div>'
+      +'<h4 style="margin:14px 0 4px;color:var(--text)">Schutzisolierung (Umkehrisolierung)</h4>'+ul(D.schutz));
+    h+=sec(5,'Schutzausrüstung im Detail', '<h4 style="margin:4px 0;color:var(--text)">Masken</h4>'+D.masken.map(function(m){ return '<div class="iso-k"><h4>'+m.n+' <span style="font-weight:600;color:var(--text3);font-size:12px">'+m.norm+'</span></h4>'+m.txt+'<div style="margin-top:6px;font-size:13px"><b>Wann:</b> '+m.wann+'</div></div>'; }).join('')
+      +'<h4 style="margin:12px 0 4px;color:var(--text)">FFP2: Dichtsitz prüfen (Fit-Check)</h4><ol class="iso-ul">'+D.fitcheck.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ol>'
+      +'<h4 style="margin:12px 0 4px;color:var(--text)">Schutzkittel</h4>'+ul(D.kittel)
+      +'<h4 style="margin:12px 0 4px;color:var(--text)">Handschuhe</h4>'+ul(D.handschuhe)
+      +'<div class="iso-box o"><b>Häufige Fehler:</b> Maske unters Kinn schieben und wieder hochziehen · Vorderseite von Maske oder Brille berühren · mit Handschuhen Türklinke oder Kurve anfassen · Kittel auf dem Flur tragen · Händedesinfektion nach dem Ausziehen vergessen.</div>');
+    h+=sec(6,'Händehygiene & Desinfektion', ul(D.haende)+'<h4 style="margin:12px 0 4px;color:var(--text)">Wirkbereiche von Desinfektionsmitteln</h4><div class="iso-scroll"><table class="iso-tab"><tr><th>Wirkbereich</th><th>Wirkt gegen</th><th>Beispiel</th></tr>'+D.wirk.map(function(r){ return '<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'; }).join('')+'</table></div>'
+      +'<div class="iso-box b"><b>Behüllt oder unbehüllt?</b> Behüllte Viren (z. B. Influenza) haben eine fetthaltige Hülle, die Alkohol leicht zerstört. Unbehüllte Viren (z. B. Noroviren) sind viel widerstandsfähiger – dafür braucht es „begrenzt viruzid PLUS“ oder „viruzid“.</div>');
+    h+=sec(7,'Organisation des Isolierzimmers', D.orga.map(function(o){ return '<div class="iso-k"><h4>'+o[0]+'</h4>'+o[1]+'</div>'; }).join('')
+      +'<h4 style="margin:12px 0 4px;color:var(--text)">Transport & Untersuchungen – Schritt für Schritt</h4><ol class="iso-ul">'+D.transport.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ol>');
+    h+=sec(8,'Meldepflicht & Ausbruch', D.melde.map(function(o){ return '<div class="iso-k"><h4>'+o[0]+'</h4>'+o[1]+'</div>'; }).join(''));
+    h+=sec(9,'Psyche & Kommunikation', ul(D.psyche)+'<h4 style="margin:12px 0 4px;color:var(--text)">Was hilft?</h4>'+ul(D.hilft)+'<h4 style="margin:12px 0 4px;color:var(--text)">So kannst du es sagen</h4>'+D.saetze.map(function(s){ return '<div class="iso-box g" style="font-style:italic">'+s+'</div>'; }).join(''));
+    h+=sec(10,'Fälle zum Durchspielen ('+D.faelle.length+')', '<div id="iso-fall"></div>');
+    h+=sec(11,'Quiz ('+D.quiz.length+' Fragen)', '<div id="iso-quiz"></div>');
+    h+=sec(12,'Recht & Quellen', D.recht.map(function(o){ return '<div class="iso-k"><h4>'+o[0]+'</h4>'+o[1]+'</div>'; }).join('')+'<h4 style="margin:12px 0 4px;color:var(--text)">Quellen</h4>'+ul(D.quellen)
+      +'<div style="font-size:12px;color:var(--text3);margin-top:8px">Vereinfachte Zusammenfassung zum Lernen. Verbindlich sind die aktuellen KRINKO-Empfehlungen und der Hygieneplan deiner Einrichtung.</div>');
+    c.innerHTML=h;
+    fz={ fall:0, frage:0, punkte:0 }; qz={ i:0, punkte:0 };
+    var f=document.getElementById('iso-fall'); if(f) f.innerHTML=fallHTML();
+    var q=document.getElementById('iso-quiz'); if(q) q.innerHTML=quizHTML();
+  }
+
+  /* Öffnen der Animationen + Rückweg in die Rubrik */
+  var ausISO=false, oeffneISO=false;
+  window.plIsoOeffnen=function(id){ oeffneISO=true; ausISO=true; ga('iso_open',{id:id}); window.plHandgriffOeffnen(id); };
+  function wrapNav(){
+    var HG2=window.PL_HANDGRIFFE||[];
+    var origHG=window.plHandgriff; if(typeof origHG==='function') window.plHandgriff=function(i){ if(oeffneISO){ oeffneISO=false; } else { ausISO=!!(HG2[i]&&HG2[i].iso); } return origHG.apply(this,arguments); };
+    var origListe=window.plHandgriffListe; if(typeof origListe==='function') window.plHandgriffListe=function(){ if(ausISO){ ausISO=false; window.showScreen('isolation'); return; } return origListe.apply(this,arguments); };
+  }
+
+  function bauen(){
+    if(!an()) return;
+    if(!document.getElementById('screen-isolation')){
+      var d=document.createElement('div'); d.id='screen-isolation'; d.className='page';
+      d.innerHTML='<div class="hero" style="margin-bottom:14px"><div class="hero-icon">🦠</div><h1>Isolations<span>management</span></h1><p>Übertragungswege · Schutzausrüstung · Organisation</p></div><div id="isolation-content"></div>';
+      var ref=document.getElementById('screen-grundpflege')||document.getElementById('screen-handgriffe')||document.getElementById('screen-wissenhub');
+      if(ref && ref.parentNode) ref.parentNode.insertBefore(d, ref.nextSibling); else document.body.appendChild(d);
+    }
+    var anker=document.getElementById('pl-gp-tile')||document.getElementById('pl-hg-tile');
+    if(anker && !document.getElementById('pl-iso-tile')){
+      var b=anker.cloneNode(false); b.id='pl-iso-tile'; b.setAttribute('onclick',"showScreen('isolation')");
+      b.innerHTML='<span style="font-size:24px">🦠</span><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Isolationsmanagement</span><span style="font-size:11.5px;color:#a3bcd0">'+D.erreger.length+' Erreger · Schutzausrüstung'+(PL_ISO_PUBLIC?'':' · Entwurf')+'</span>';
+      anker.parentNode.insertBefore(b, anker.nextSibling);
+    }
+    try{ var arr=window.PL_NEU; if(arr && !arr.some(function(x){ return x.id==='isolation'; })) arr.push({ id:'isolation', tag:'neu', ziel:'isolation', titel:'🦠 Isolationsmanagement', sub:D.erreger.length+' Erreger, Schutzausrüstung animiert, Fälle & Quiz', datum:'2026-11-02' }); }catch(e){}
+  }
+  function start(){
+    wrapNav();
+    try{ bauen(); }catch(e){}
+    var orig=window.showScreen;
+    if(typeof orig==='function') window.showScreen=function(n){ if(n==='isolation'||n==='wissenhub'||n==='handgriffe'||n==='grundpflege'||n==='home'){ try{ bauen(); }catch(e){} } var r=orig.apply(this,arguments); if(n==='isolation'){ try{ render(); window.scrollTo(0,0); }catch(e){} ga('iso_open',{id:'rubrik'}); } return r; };
+    setTimeout(function(){ try{ bauen(); }catch(e){} }, 3600);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
 

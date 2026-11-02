@@ -71,7 +71,7 @@ body+=loesungen(L)+'<div class="tip" style="margin-top:4mm">Alle Abläufe gibt e
 build(f'{OUT}/PLAN-NRW_Grundpflege.pdf','Grundpflege Schritt für Schritt',body,X)
 
 # 2) Handgriffe
-HH=[h for h in HG if not h['gp']]
+HH=[h for h in HG if not h['gp'] and not h.get('iso')]
 body=cover('Gratis-Lernhilfe · Praxis','Handgriffe<br>Schritt für Schritt',
  'Von der Infusion über die s.c.-Injektion bis zur Reanimation: '+str(len(HH))+' Pflegehandgriffe mit Bildern zu jedem Schritt, Merksatz und Quizfragen.',
  ['Infusion','Injektion','Vitalzeichen','Notfall','Prophylaxen','Hygiene'],[(str(len(HH)),'Handgriffe'),(str(sum(len(h['schritte']) for h in HH)),'Schritte mit Bild'),(str(sum(len(h.get('quiz',[])) for h in HH)),'Quizfragen')],
