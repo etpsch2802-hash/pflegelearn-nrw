@@ -194,6 +194,7 @@ const SEO = {
   'beatmungsmodi': { t: 'Beatmungsmodi: VCV, PCV, BIPAP, CPAP im Vergleich | PLAN', d: 'Beatmungsmodi einfach erklärt: volumen- und druckkontrolliert, BIPAP, SIMV, PSV/ASB und CPAP im Vergleich, Richtwerte und Pflege.' },
   'pleuraerguss': { t: 'Pleuraerguss: Ursachen, Transsudat vs. Exsudat | PLAN', d: 'Pleuraerguss: Ursachen, Unterschied Transsudat und Exsudat als Tabelle, Symptome, Pleurapunktion und Pflege – Prüfungswissen kostenlos.' },
   'delir': { t: 'Delir: Formen, Delir vs. Demenz, Screening | PLAN', d: 'Delir erkennen: hyperaktiv, hypoaktiv, gemischt, Unterschied zur Demenz als Tabelle, Risikofaktoren, Screening (4AT, CAM) und Pflege.' },
+  'isolationsmassnahmen': { t: 'Isolationsmaßnahmen in der Pflege: Erreger-Tabelle & PSA | PLAN', d: 'Kontakt-, Tröpfchen- und Luftisolierung: 20 Erreger von MRSA bis Tuberkulose als Tabelle, Schutzausrüstung an- und ablegen, Desinfektion. Gratis-PDF.' },
   'ventilations-perfusions-verhaeltnis': { t: 'Ventilations-Perfusions-Verhältnis erklärt | PLAN', d: 'Ventilations-Perfusions-Verhältnis: Belüftung und Durchblutung der Lunge müssen zusammenpassen, z. B. gestört bei Lungenembolie. Mit Prüfungsfragen.' }
 };
 /* Vollständig öffentliche Seiten (Go P. Schenkelberger, 19.10.2026): Fachwissen frei lesbar,
@@ -203,7 +204,9 @@ const OFFEN = new Set(['lagerungsarten', 'blasenkatheter', 'magnesium-notfall', 
   'peripherer-venenzugang', 'verbandwechsel', 'orale-antidiabetika',
   /* neu geschrieben mit Normwert-Tabellen (19.10.2026, Freigabe P. Schenkelberger) */
   'entzuendungswerte', 'nierenwerte', 'lungenfunktion', 'gasaustausch',
-  'dekubitus-vertieft', 'gcs', 'beatmungsmodi', 'pleuraerguss', 'delir']);
+  'dekubitus-vertieft', 'gcs', 'beatmungsmodi', 'pleuraerguss', 'delir',
+  /* ausführlich aus der Rubrik Isolationsmanagement (02.11.2026, Go P. Schenkelberger) */
+  'isolationsmassnahmen']);
 /* Pflegeplanung-Seiten (Kategorie „Pflegeplanung“, Slug pflegeplanung-…) sind immer vollständig öffentlich */
 function istOffen(slug) { return OFFEN.has(slug) || /^(pflegeplanung|ausbildung)-/.test(String(slug || '')); }
 /* Tipp-Seiten „Ausbildung meistern“ (Slug ausbildung-…, 29.10.2026): Situation = definition, was_hilft[], gut_zu_wissen, merksatz, hilfe */
@@ -324,7 +327,8 @@ function renderDetail(e, geschwister) {
   b += `<h1>${esc(e.titel)}</h1>`;
   if (definition) b += `<p class="lead">${esc(definition)}</p>`;
   if (/^pflegeplanung-/.test(e.slug)) b += '<p class="pphint">Dies ist ein Beispiel. <a href="' + PP_APP + '">Alle Pflegeplanungen zu über 120 Krankheitsbildern stehen in der App →</a></p>';
-  if (offen && d.tabelle) b += `<h2>Normwerte im Überblick</h2>` + tabelleHTML(d.tabelle);
+  if (offen && d.tabelle) b += `<h2>${esc(d.tabelle_titel || 'Normwerte im Überblick')}</h2>` + tabelleHTML(d.tabelle);
+  if (offen && d.pdf) b += `<div class="box mehr">Alles zum Ausdrucken: <a href="${SITE}/gratis/${encodeURIComponent(d.pdf)}"><b>Gratis-PDF „${esc(d.pdf_titel || e.titel)}“</b></a></div>`;
   if (offen) b += pflegeplanungHTML(d);
   const ausb = /^ausbildung-/.test(e.slug);
   if (ausb && Array.isArray(d.was_hilft)) {
