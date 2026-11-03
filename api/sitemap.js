@@ -51,12 +51,18 @@ export default async function handler(req, res) {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
       + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-    xml += eintrag(SITE + '/', heute, 'weekly', '1.0');
-    xml += eintrag(urlIndex(), heute, 'weekly', '0.9');
+    /* Echte Änderungsdaten statt „heute“ (04.11.2026): ein täglich wechselndes lastmod
+       wertet Google als unzuverlässig und ignoriert es dann für die ganze Sitemap. */
+    function tag(x) { return x && x.stand ? String(x.stand).slice(0, 10) : ''; }
+    const neu = {}; let neuAlle = '';
+    rows.forEach(function (x) { const k = x.kategorie || 'Sonstiges', t = tag(x);
+      if (t > (neu[k] || '')) neu[k] = t; if (t > neuAlle) neuAlle = t; });
+    xml += eintrag(SITE + '/', null, 'weekly', '1.0');
+    xml += eintrag(urlIndex(), neuAlle || null, 'weekly', '0.9');
 
     const kats = Array.from(new Set(rows.map(function (x) { return x.kategorie || 'Sonstiges'; })));
     kats.sort(function (a, b) { return a.localeCompare(b, 'de'); });
-    kats.forEach(function (k) { xml += eintrag(urlKat(k), heute, 'weekly', '0.8'); });
+    kats.forEach(function (k) { xml += eintrag(urlKat(k), neu[k] || null, 'weekly', '0.8'); });
 
     rows.forEach(function (x) {
       if (!x.slug) return;

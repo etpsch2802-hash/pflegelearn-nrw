@@ -557,9 +557,15 @@ export default async function handler(req, res) {
       const e = rows[0];
       let gesch = [];
       try {
-        gesch = await sb('lerninhalte?select=titel,slug&aktiv=is.true&kategorie=eq.'
-          + encodeURIComponent(e.kategorie || '') + '&slug=neq.' + encodeURIComponent(slug)
-          + '&order=titel.asc&limit=10');
+        /* Nachbarn statt immer der ersten 10 (04.11.2026): vorher verlinkte jede Seite einer
+           Kategorie dieselben 10 alphabetisch ersten Titel – die übrigen bekamen kaum interne
+           Links und wurden von Google nie gecrawlt. Jetzt 5 davor + 5 danach (ringförmig). */
+        const alle = await sb('lerninhalte?select=titel,slug&aktiv=is.true&kategorie=eq.'
+          + encodeURIComponent(e.kategorie || '') + '&order=titel.asc&limit=1000');
+        const i = alle.findIndex(function (x) { return x.slug === slug; });
+        const n = alle.length;
+        if (i < 0 || n <= 11) gesch = alle.filter(function (x) { return x.slug !== slug; }).slice(0, 10);
+        else for (let k = -5; k <= 5; k++) { if (k) gesch.push(alle[(i + k + n) % n]); }
       } catch (_) { /* Geschwister sind optional */ }
       return res.end(renderDetail(e, gesch));
     }
