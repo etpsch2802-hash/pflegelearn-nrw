@@ -6,6 +6,10 @@
 // 1) Speichert E-Mail in public.leads (Service Role / Policy).
 // 2) Verschickt das angeforderte Gratis-PDF (paket) als Anhang von kontakt@plan-nrw.de.
 // Beruehrt NICHT: chat.js, vercel.json, Stripe-Button, stripe-webhook.js.
+// 04.11.2026: Zeitgrenze für alle externen Aufrufe (Supabase, Resend, Stripe, Groq …). Antwortet ein Dienst nicht,
+// bricht der Aufruf nach timeoutMs (Standard 9 s) ab, statt bis zum Vercel-Limit zu hängen. Eigenes signal hat Vorrang.
+const _plFetch = globalThis.fetch;
+const fetch = (u, o = {}) => _plFetch(u, (o && o.signal) ? o : Object.assign({}, o, { signal: AbortSignal.timeout((o && o.timeoutMs) || 9000) }));
 
 // Gratis-PDFs (seit 16.10.2026): privater Supabase-Speicher, Bucket 'gratis-pdfs' (befuellt von
 // .github/workflows/pdf-sync.yml aus private/gratis-pdfs/). Kein oeffentlicher Link mehr.

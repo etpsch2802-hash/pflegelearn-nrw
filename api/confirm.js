@@ -5,6 +5,10 @@
 //   Idempotent: erneuter Klick liefert denselben Token.
 //
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE (bereits gesetzt).
+// 04.11.2026: Zeitgrenze für alle externen Aufrufe (Supabase, Resend, Stripe, Groq …). Antwortet ein Dienst nicht,
+// bricht der Aufruf nach timeoutMs (Standard 9 s) ab, statt bis zum Vercel-Limit zu hängen. Eigenes signal hat Vorrang.
+const _plFetch = globalThis.fetch;
+const fetch = (u, o = {}) => _plFetch(u, (o && o.signal) ? o : Object.assign({}, o, { signal: AbortSignal.timeout((o && o.timeoutMs) || 9000) }));
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

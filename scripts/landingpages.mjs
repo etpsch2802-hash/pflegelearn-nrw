@@ -41,7 +41,7 @@ ${LIVE ? '' : '<meta name="robots" content="noindex">\n'}<meta property="og:titl
 <link rel="icon" href="/favicon.png">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
 ${LIVE ? GA_HEAD + '<script defer src="/_vercel/insights/script.js"></script>\n' : ''}<style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,900&family=DM+Serif+Display&display=swap');
+@import url('/fonts/fonts.css');
 :root{--navy:#0b1a35;--text:#ddf0fb;--muted:#9fb6c9;--akzent:${f.farbe}}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--text);line-height:1.6}
