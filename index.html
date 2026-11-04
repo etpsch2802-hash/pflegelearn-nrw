@@ -8578,9 +8578,12 @@ if ('serviceWorker' in navigator) {
           });
         });
       }).catch(err => console.warn('[PLAN] SW Fehler:', err));
+    // 04.11.2026 (Meldung P. Schenkelberger „App lädt zweimal“): kein automatisches Neuladen
+    // mehr, wenn ein neuer Service Worker übernimmt. Die neue Version gilt ab dem nächsten
+    // Start. Neu geladen wird nur, wenn jemand im Update-Hinweis „Jetzt“ tippt.
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) { refreshing = true; window.location.reload(); }
+      if (window._plUpdateGewuenscht && !refreshing) { refreshing = true; window.location.reload(); }
     });
   });
 }
@@ -8593,6 +8596,7 @@ function showUpdateBanner() {
   document.body.appendChild(banner);
 }
 function applyUpdate() {
+  window._plUpdateGewuenscht = true;
   if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
   const b = document.getElementById('sw-update-banner'); if (b) b.remove();
 }
