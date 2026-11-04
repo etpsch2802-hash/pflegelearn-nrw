@@ -11,6 +11,10 @@
 // Muster wie api/tester.js / api/lead.js: Service-Role-Zugriff auf Supabase REST (umgeht RLS bewusst).
 // Beruehrt NICHT: lead.js, tester.js, chat.js, stripe-webhook.js.
 // Pilot-Grade: Auth laeuft ueber die per Magic-Link bekannte E-Mail (Client). Haertung (echte JWT-Pruefung) folgt.
+// 04.11.2026: Zeitgrenze für alle externen Aufrufe (Supabase, Resend, Stripe, Groq …). Antwortet ein Dienst nicht,
+// bricht der Aufruf nach timeoutMs (Standard 9 s) ab, statt bis zum Vercel-Limit zu hängen. Eigenes signal hat Vorrang.
+const _plFetch = globalThis.fetch;
+const fetch = (u, o = {}) => _plFetch(u, (o && o.signal) ? o : Object.assign({}, o, { signal: AbortSignal.timeout((o && o.timeoutMs) || 9000) }));
 
 const DEFAULT_TAGE = 365;   // Pilot-Lizenz: 1 Jahr
 const DEFAULT_SEATS = 30;

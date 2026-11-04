@@ -129,11 +129,14 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 <meta name="twitter:description" content="Lern-App für die generalistische Pflegeausbildung nach PflBG 2020 – bundesweit einsetzbar. Mit Prüfungsfragen, Scores, Krankheitsbildern und Pflegeplanungen.">
 <meta name="twitter:image" content="https://plan-nrw.de/icon-512.png">
 <meta name="twitter:url" content="https://plan-nrw.de">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- 30.10.2026: Schrift nicht mehr renderblockierend (Lighthouse) -->
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<!-- 04.11.2026: Schriften selbst gehostet (/fonts, DSGVO: keine Verbindung zu Google Fonts) -->
+<link rel="preload" href="/fonts/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<script>
+/* 04.11.2026: Suchfelder mit kurzer Verzögerung – gesucht wird erst, wenn 180 ms nichts getippt wurde
+   (vorher bei jedem Buchstaben über alle Inhalte, ruckelt auf langsamen Handys). */
+window.plDeb=function(k,fn){try{var T=window._plDebT||(window._plDebT={});clearTimeout(T[k]);T[k]=setTimeout(function(){try{fn();}catch(e){}},180);}catch(e){try{fn();}catch(_){}}};
+</script>
 <style>
 @keyframes kiNeonGlow{0%,100%{box-shadow:0 0 10px rgba(34,211,238,.45),0 0 26px rgba(34,211,238,.22),inset 0 0 8px rgba(34,211,238,.15);}50%{box-shadow:0 0 18px rgba(34,211,238,.85),0 0 42px rgba(34,211,238,.45),inset 0 0 12px rgba(34,211,238,.28);}}
 .ki-neon-btn{animation:kiNeonGlow 2.2s ease-in-out infinite;}
@@ -932,7 +935,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
 <div id="search-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:400;padding:16px">
   <div style="max-width:650px;margin:0 auto">
     <div style="display:flex;gap:10px;margin-bottom:16px">
-      <input id="search-input" type="text" placeholder="Stichworte, z. B. Sepsis Antibiotikum · Elisa Alarm · Furosemid" oninput="doSearch()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif" aria-label="Stichworte suchen">
+      <input id="search-input" type="text" placeholder="Stichworte, z. B. Sepsis Antibiotikum · Elisa Alarm · Furosemid" oninput="plDeb('such',function(){doSearch()})" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 16px;color:#ddf0fb;font-size:14px;outline:none;font-family:'DM Sans',sans-serif" aria-label="Stichworte suchen">
       <button onclick="plSearchClear()" id="search-clear-btn" aria-label="Suche leeren" title="Neue Frage (leeren)" style="background:rgba(255,255,255,.08);border:1px solid rgba(var(--accent-rgb),.28);border-radius:11px;padding:12px 13px;color:#8ab4d0;font-size:15px;font-family:inherit;cursor:pointer;display:flex;align-items:center;line-height:1">✕</button>
       <button onclick="plSearchVoice()" id="search-mic-btn" aria-label="Sprachsuche" title="Sprachsuche – antippen und sprechen" style="background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.35);border-radius:11px;padding:12px 14px;color:#7dd3fc;font-family:inherit;cursor:pointer;display:flex;align-items:center"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><use href="#i-mic"/></svg></button>
       <button onclick="closeSearchOverlay()" id="search-back-btn" style="background:rgba(var(--accent-rgb),.18);border:1px solid rgba(var(--accent-rgb),.45);border-radius:11px;padding:12px 18px;color:#7dd3fc;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">← Zurück</button>
@@ -1154,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
     <h1>Medikamente<span> nachschlagen</span></h1>
     <p>Wirkstoff, Handelsname oder Krankheitsbild &middot; Teilbarkeit &middot; Antidot</p>
   </div>
-  <input id="medapo-search" type="text" inputmode="search" autocomplete="off" oninput="renderMedApo(this.value)" placeholder="z.B. KHK, Metoprolol, Beloc, Sepsis, Antidot..." aria-label="Medikament oder Krankheitsbild suchen" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:13px 15px;color:var(--text,#e0f2fe);font-size:15px;outline:none;font-family:inherit;margin-bottom:6px">
+  <input id="medapo-search" type="text" inputmode="search" autocomplete="off" oninput="var v=this.value;plDeb('medapo',function(){renderMedApo(v)})" placeholder="z.B. KHK, Metoprolol, Beloc, Sepsis, Antidot..." aria-label="Medikament oder Krankheitsbild suchen" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:13px 15px;color:var(--text,#e0f2fe);font-size:15px;outline:none;font-family:inherit;margin-bottom:6px">
   <div id="medapo-hint" style="font-size:11px;color:#8ab4d0;margin:0 2px 12px">Tippe ein Krankheitsbild (z.B. KHK) &ndash; passende Wirkstoffe erscheinen automatisch.</div>
   <div id="medapo-container"></div>
 </div>
@@ -1260,7 +1263,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ _plInitSB(); }cat
       <h1 data-i18n="merk_hero">Merk<span>sätze</span></h1>
       <p data-i18n="merk_sub">Suche z. B. „Myokardinfarkt" und sieh die Eselsbrücke</p>
     </div>
-    <input id="merk-search" type="text" oninput="renderMerksaetze(this.value)" placeholder="Krankheitsbild oder Stichwort suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;margin-bottom:10px" aria-label="Krankheitsbild oder Stichwort suchen…">
+    <input id="merk-search" type="text" oninput="var v=this.value;plDeb('merk',function(){renderMerksaetze(v)})" placeholder="Krankheitsbild oder Stichwort suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.10);border:1px solid rgba(var(--accent-rgb),.3);border-radius:11px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;margin-bottom:10px" aria-label="Krankheitsbild oder Stichwort suchen…">
     <div id="merk-count" style="font-size:11px;color:var(--text2);margin-bottom:10px"></div>
     <div id="merk-list"></div>
   </div>
@@ -12270,7 +12273,7 @@ async function renderWissensDB(){
   data.forEach(function(e){ if (e.kategorie === 'Ausbildung meistern') return; /* eigener Bildschirm */ const k=e.kategorie||'Sonstiges'; (groups[k]=groups[k]||[]).push(e); });
   const cats = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b,'de'); });
   var html = '';
-  html += '<input id="wdb-search" oninput="_wdbFilter()" placeholder="Suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.12);border:1px solid rgba(var(--accent-rgb),.25);border-radius:12px;padding:11px 13px;color:#e2e8f0;font-size:14px;font-family:inherit;margin-bottom:6px">';
+  html += '<input id="wdb-search" oninput="plDeb(\'wdb\',function(){_wdbFilter()})" placeholder="Suchen…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.12);border:1px solid rgba(var(--accent-rgb),.25);border-radius:12px;padding:11px 13px;color:#e2e8f0;font-size:14px;font-family:inherit;margin-bottom:6px">';
   html += '<div id="wdb-count" style="font-size:11px;color:#9aabc0;margin-bottom:6px">'+cats.reduce(function(n,c){ return n+groups[c].length; },0)+' Lerneinheiten in '+cats.length+' Kategorien</div>';
   html += '<button onclick="startWdbQuiz(null)" style="width:100%;background:linear-gradient(135deg,var(--accent),var(--accent));border:none;border-radius:12px;padding:12px;color:#04121f;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px"><svg class="ic" style="width:1em;height:1em;vertical-align:-.14em" viewBox="0 0 24 24"><use href="#i-play"/></svg> Alle Fragen üben</button>';
   cats.forEach(function(cat){
@@ -12999,9 +13002,12 @@ function doSearch() {
   var kiHtml = isFrage ? plSearchKIBox(qRaw) : '';
   // Wissensdatenbank nachladen, sobald sie fehlt - unabhaengig davon, ob es andere Treffer gibt
   if (!Array.isArray(_wdbData) || !_wdbData.length) {
-    if (!window._wdbLoading) {
+    /* 04.11.2026: kein Endlos-Nachladen, wenn die Wissensdatenbank leer zurückkommt (z. B. offline) –
+       erneut suchen nur bei echten Daten, neuer Versuch frühestens nach 30 s. */
+    if (!window._wdbLoading && !(window._wdbLeerBis > Date.now())) {
       window._wdbLoading = true;
-      try{ loadWissensDB().then(function(){ window._wdbLoading = false; doSearch(); })
+      try{ loadWissensDB().then(function(){ window._wdbLoading = false;
+             if (Array.isArray(_wdbData) && _wdbData.length) doSearch(); else window._wdbLeerBis = Date.now() + 30000; })
                           .catch(function(){ window._wdbLoading = false; }); }
       catch(e){ window._wdbLoading = false; }
     }
@@ -15434,7 +15440,7 @@ function getTaschenkarteHTML(karten) {
 <meta charset="UTF-8">
 <title>PLAN – Taschenkarten</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;900&display=swap');
+  @import url('https://plan-nrw.de/fonts/fonts.css');
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:'DM Sans',sans-serif; background:#f1f5f9; }
 
