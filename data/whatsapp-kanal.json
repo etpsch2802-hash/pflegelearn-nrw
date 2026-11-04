@@ -1767,6 +1767,11 @@
    "format": "mitmach-umfrage",
    "thema": "Aktueller Einsatz (01.11. Zusatz)",
    "aufgeloest": "2026-11-01"
+  },
+  {
+   "datum": "2026-11-04",
+   "format": "minifall-umfrage",
+   "thema": "Anaphylaxie unter Antibiotika-Kurzinfusion (Examinierte): richtig = Infusion sofort stoppen und Hilfe rufen; danach Lagerung und Adrenalin i.m. nach Anordnung, Antihistaminikum/Kortison erst nachrangig"
   }
  ]
 }
