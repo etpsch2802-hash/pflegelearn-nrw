@@ -396,7 +396,7 @@
    "richtig": 2,
    "aufloesung": "Auflösung: 30:2 ✅\n\n30 Kompressionen : 2 Beatmungen. Pausen so kurz wie möglich halten.",
    "gestellt_am": "2026-11-02",
-   "aufgeloest_am": "2026-11-03"
+   "aufgeloest_am": "2026-11-05"
   },
   {
    "id": 29,
@@ -1767,12 +1767,6 @@
    "format": "mitmach-umfrage",
    "thema": "Aktueller Einsatz (01.11. Zusatz)",
    "aufgeloest": "2026-11-01"
-  },
-  {
-   "datum": "2026-11-04",
-   "format": "minifall-umfrage",
-   "thema": "Anaphylaxie unter Antibiotika-Kurzinfusion (Examinierte): richtig = Infusion sofort stoppen und Hilfe rufen; danach Lagerung und Adrenalin i.m. nach Anordnung, Antihistaminikum/Kortison erst nachrangig",
-   "aufgeloest": "2026-11-05"
   },
   {
    "datum": "2026-11-05",
