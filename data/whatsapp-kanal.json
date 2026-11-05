@@ -1771,7 +1771,13 @@
   {
    "datum": "2026-11-04",
    "format": "minifall-umfrage",
-   "thema": "Anaphylaxie unter Antibiotika-Kurzinfusion (Examinierte): richtig = Infusion sofort stoppen und Hilfe rufen; danach Lagerung und Adrenalin i.m. nach Anordnung, Antihistaminikum/Kortison erst nachrangig"
+   "thema": "Anaphylaxie unter Antibiotika-Kurzinfusion (Examinierte): richtig = Infusion sofort stoppen und Hilfe rufen; danach Lagerung und Adrenalin i.m. nach Anordnung, Antihistaminikum/Kortison erst nachrangig",
+   "aufgeloest": "2026-11-05"
+  },
+  {
+   "datum": "2026-11-05",
+   "format": "examiniert-wissen",
+   "thema": "Noradrenalin-Perfusor: Spritzenwechsel überlappend, kein Bolus, Pumpe auf Herzhöhe"
   }
  ]
 }
