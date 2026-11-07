@@ -1,0 +1,110 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
+/* Perfusor Teil 2: Heparin IE/h → ml/h (30 s, 540×960 @2x). Stil wie Teil 1 (PLAN_Perfusor-Falle_final.mp4). */
+html,body{margin:0;width:540px;height:960px;overflow:hidden;background:#f2fbfd;font-family:Inter,"DejaVu Sans",sans-serif;color:#0f172a}
+*{box-sizing:border-box}
+.deko{position:absolute;border-radius:50%;background:#d6eef7}
+.kopf{position:absolute;left:26px;top:70px;display:flex;align-items:center;gap:10px}
+.kopf img{width:40px;height:40px;border-radius:50%;background:#0b1626}
+.kopf b{display:block;font-size:17px;font-weight:900;color:#0f2a44}
+.kopf span{display:block;font-size:11px;font-weight:600;color:#475569}
+.sc{position:absolute;left:26px;right:62px;top:150px;display:none}
+.tag{display:inline-block;color:#fff;font-weight:900;font-size:16px;letter-spacing:.6px;padding:6px 12px;border-radius:6px}
+.rot{background:#dc2626}.gr{background:#15803d}.bl{background:#0369a1}
+h1{margin:16px 0 0;font-size:46px;line-height:1.08;font-weight:900;color:#0f2a44}
+h1 em{font-style:normal;color:#15803d}
+.unter{margin-top:14px;font-size:21px;font-weight:700;color:#334155}
+.karte{background:#fff;border-radius:16px;padding:20px 22px;box-shadow:0 10px 28px rgba(15,42,68,.12);margin-top:18px}
+.karte small{display:block;font-size:13px;font-weight:800;letter-spacing:.8px;color:#64748b}
+.karte .gross{font-size:34px;font-weight:900;line-height:1.15;color:#0f2a44;margin-top:4px}
+.chips{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.chip{background:#d1fae5;color:#065f46;font-weight:900;font-size:24px;padding:10px 16px;border-radius:12px}
+.frage{text-align:center;margin-top:34px;font-size:24px;font-weight:800}
+.riesig{text-align:center;font-size:70px;font-weight:900;color:#dc2626;margin-top:6px}
+.schritt{display:flex;gap:14px;margin:14px 0}
+.schritt .n{flex:none;width:36px;height:36px;border-radius:50%;background:#15803d;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:19px}
+.schritt b{display:block;font-size:23px;font-weight:900;color:#0f2a44}
+.schritt span{display:block;font-size:22px;font-weight:700;color:#15803d;margin-top:3px}
+.pumpe{margin:26px auto 0;width:400px;height:130px;background:#e2e8f0;border:3px solid #94a3b8;border-radius:16px;position:relative}
+.spritze{position:absolute;left:18px;top:30px;width:230px;height:46px;background:#fff;border:3px solid #94a3b8;border-radius:8px;overflow:hidden}
+.spritze i{position:absolute;left:0;top:0;bottom:0;width:150px;background:#bae6fd}
+.kolben{position:absolute;left:150px;top:-6px;width:14px;height:58px;background:#64748b;border-radius:3px}
+.anz{position:absolute;right:18px;top:24px;width:118px;height:58px;background:#0f172a;color:#5eead4;font:900 30px "DejaVu Sans Mono",monospace;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.anz2{position:absolute;right:52px;bottom:12px;font-size:14px;font-weight:800;color:#334155}
+.lampe{position:absolute;left:26px;bottom:16px;width:14px;height:14px;border-radius:50%;background:#f87171}
+.merke{background:linear-gradient(180deg,#16a34a,#15803d);color:#fff;border-radius:16px;padding:20px;font-size:28px;font-weight:900;line-height:1.25;margin-top:18px}
+.warn{background:#fef3c7;border:2px solid #f59e0b;border-radius:14px;padding:14px 16px;font-size:19px;font-weight:700;line-height:1.35;margin-top:16px}
+.pdf{display:flex;gap:16px;align-items:center}
+.pdf .ico{font-size:60px}
+.link{background:#0f2a44;color:#fde68a;border-radius:14px;padding:16px;text-align:center;font-size:24px;font-weight:900;margin-top:18px}
+svg.ekg{position:absolute;left:0;bottom:70px;width:540px;height:60px}
+</style></head><body>
+<div class="deko" style="width:300px;height:300px;left:-170px;top:430px"></div>
+<div class="deko" style="width:240px;height:240px;right:-150px;top:250px"></div>
+<div class="kopf"><img src="logo.png"><div><b>PLAN NRW</b><span>Pflegeexamen · Station · Intensiv</span></div></div>
+
+<!-- 1 Hook -->
+<div class="sc" data-von="0" data-bis="5.8">
+ <div class="tag rot" data-pop="0">EXAMENS-FALLE · TEIL 2</div>
+ <h1 data-pop="0">Heparin-Perfusor:<br>IE/h <em>→ ml/h?</em></h1>
+ <div class="unter" data-rein="0.5">Rechnest du das richtig?</div>
+ <div class="pumpe" data-pop="1.6"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz">??</div><div class="anz2">ml/h</div><div class="lampe pulse2"></div></div>
+</div>
+
+<!-- 2 Anordnung -->
+<div class="sc" data-von="5.8" data-bis="12.6">
+ <div class="tag rot" data-pop="5.8">DIE ANORDNUNG</div>
+ <div class="karte" data-pop="5.9"><small>SPRITZE</small><div class="gross">Heparin<br>25.000 IE in 50 ml</div></div>
+ <div class="chips"><div class="chip" data-rein="8.6">💉 1.000 IE/h</div></div>
+ <div class="frage" data-rein="10.9">Wie viel stellst du ein?</div>
+ <div class="riesig pulse" data-pop="11.4">? ml/h</div>
+</div>
+
+<!-- 3 Rechnung -->
+<div class="sc" data-von="12.6" data-bis="21.2">
+ <div class="tag gr" data-pop="12.6">IN 2 SCHRITTEN</div>
+ <div class="karte">
+  <div class="schritt" data-rein="12.8"><div class="n">1</div><div><b>Konzentration</b><span>25.000 IE ÷ 50 ml = 500 IE/ml</span></div></div>
+  <div class="schritt" data-rein="17.1"><div class="n">2</div><div><b>Laufrate</b><span>1.000 IE/h ÷ 500 IE/ml = 2 ml/h</span></div></div>
+ </div>
+ <div class="pumpe" data-pop="20.0"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz">2,0</div><div class="anz2">ml/h</div><div class="lampe" style="background:#22c55e"></div></div>
+</div>
+
+<!-- 4 Umgekehrt -->
+<div class="sc" data-von="21.2" data-bis="26.3">
+ <div class="tag bl" data-pop="21.2">UND UMGEKEHRT?</div>
+ <div class="karte" data-pop="21.4"><small>DER PERFUSOR LÄUFT MIT</small><div class="gross">3 ml/h</div></div>
+ <div class="frage" data-rein="23.0">Wie viel Heparin pro Stunde?</div>
+ <div class="karte" data-pop="24.0"><div class="schritt" style="margin:0"><div class="n">=</div><div><b>3 ml/h × 500 IE/ml</b><span>= 1.500 IE/h</span></div></div></div>
+</div>
+
+<!-- 5 Merke -->
+<div class="sc" data-von="26.3" data-bis="36.1">
+ <div class="tag gr" data-pop="26.3">MERKE</div>
+ <div class="merke" data-pop="27.5">Erst ausrechnen, wie viele IE in 1 ml sind – dann teilen.</div>
+ <div class="warn" data-rein="32.5">⚠️ Konzentration und Anpassung (z. B. nach aPTT) nach Hausstandard und ärztlicher Anordnung. Immer Vier-Augen-Prinzip.</div>
+</div>
+
+<!-- 6 CTA -->
+<div class="sc" data-von="36.1" data-bis="41.3">
+ <div class="tag gr" data-pop="36.1">GRATIS-PDF</div>
+ <div class="karte pdf" data-pop="36.3"><div class="ico">🧮</div><div><div class="gross" style="font-size:30px">Dosierungsrechnen</div><div style="font-size:19px;font-weight:700;color:#334155;margin-top:4px">Alle Formeln + 12 Übungsaufgaben mit Lösungen</div></div></div>
+ <div class="link pulse" data-pop="39.7">PLAN NRW · Link in der Bio</div>
+ <div class="unter" style="text-align:center" data-rein="40.2">Teil 1 verpasst? µg/kg/min → ml/h im Profil</div>
+</div>
+
+<svg class="ekg" viewBox="0 0 540 60"><path id="ekg" fill="none" stroke="#14b8a6" stroke-width="2.4" d=""/></svg>
+<script>
+function cl(x){return x<0?0:x>1?1:x;}
+function ease(x){x=cl(x);return 1-Math.pow(1-x,3);}
+// EKG-Linie: wiederholtes PQRST-Muster, läuft nach links
+function ekgPfad(off){var d='',w=135;for(var k=-1;k<6;k++){var x=k*w-off;d+=(k===-1?'M':'L')+x+',36 L'+(x+40)+',36 L'+(x+48)+',30 L'+(x+56)+',36 L'+(x+64)+',36 L'+(x+68)+',40 L'+(x+74)+',6 L'+(x+80)+',52 L'+(x+85)+',36 L'+(x+100)+',36 L'+(x+110)+',29 L'+(x+120)+',36 L'+(x+w)+',36 ';}return d;}
+window.setT=function(t){
+  document.querySelectorAll('.sc').forEach(function(s){s.style.display=(t>=+s.dataset.von&&t<+s.dataset.bis)?'block':'none';});
+  document.querySelectorAll('[data-pop]').forEach(function(el){var p=+el.dataset.pop,e=ease((t-p)/.35);var erste=document.querySelector('.sc[data-von="'+p+'"]');el.style.opacity=(p===0)?1:e;el.style.transform='scale('+((p===0)?1:(.85+.15*e))+')';});
+  document.querySelectorAll('[data-rein]').forEach(function(el){var e=ease((t-el.dataset.rein)/.35);el.style.opacity=e;el.style.transform='translateX('+((1-e)*-30)+'px)';});
+  document.querySelectorAll('.pulse').forEach(function(el){if(+el.style.opacity>=.99)el.style.transform='scale('+(1+.03*Math.sin(t*6))+')';});
+  document.querySelectorAll('.pulse2').forEach(function(el){el.style.opacity=.4+.6*Math.abs(Math.sin(t*4));});
+  document.getElementById('ekg').setAttribute('d',ekgPfad((t*90)%135));
+};
+setT(0);
+</script></body></html>
