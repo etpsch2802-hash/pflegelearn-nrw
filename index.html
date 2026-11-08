@@ -30149,7 +30149,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
      Schalter PL_REKORD_PUBLIC=false → nur Admin (Startseite). Abruf einmal pro Sitzung (sessionStorage plan_rekord). Kein pl_*-Key. -->
 <script>
 (function(){
-  window.PL_REKORD_PUBLIC = false;
+  window.PL_REKORD_PUBLIC = true; /* Go P. Schenkelberger 08.11.2026 */
   var MIN=50;
   function an(){ try{ return window.PL_REKORD_PUBLIC===true || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function zahl(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
