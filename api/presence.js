@@ -73,14 +73,19 @@ export default async function handler(req, res) {
       try { await fetch(`${SB_URL}/rest/v1/app_nutzung?tag=lt.${tagVon(60)}`, { method: 'DELETE', headers: H }); } catch (e) {}
       let rows = [];
       for (let off = 0; off < 200000; off += 1000) {
-        const r = await fetch(`${SB_URL}/rest/v1/app_nutzung?tag=gte.${tagVon(29)}&select=tag,modus,angemeldet&order=tag.asc`, { headers: Object.assign({}, H, { Range: off + '-' + (off + 999) }) });
+        const r = await fetch(`${SB_URL}/rest/v1/app_nutzung?tag=gte.${tagVon(29)}&select=tag,kennung,modus,angemeldet&order=tag.asc`, { headers: Object.assign({}, H, { Range: off + '-' + (off + 999) }) });
         if (!r.ok) return res.status(200).json({ ok: false, error: 'tabelle' });
         const t = await r.json(); rows = rows.concat(t); if (t.length < 1000) break;
       }
       const tage = {};
       for (let i = 29; i >= 0; i--) tage[tagVon(i)] = { app: 0, installiert: 0, browser: 0, angemeldet: 0 };
-      rows.forEach(x => { const t = tage[x.tag]; if (!t) return; t[x.modus] = (t[x.modus] || 0) + 1; if (x.angemeldet) t.angemeldet++; });
-      const liste = Object.keys(tage).sort().map(k => Object.assign({ tag: k, gesamt: tage[k].app + tage[k].installiert + tage[k].browser }, tage[k]));
+      // 08.11.2026: Gesamt und „angemeldet“ zählen eindeutige Geräte (kennung). Wer PLAN im Browser UND installiert öffnet,
+      // steht in beiden Arten, aber nur einmal in „gesamt“ – gleiche Zählung wie der Rekord (nutzung_rekord).
+      const ger = {}, anm = {};
+      rows.forEach(x => { const t = tage[x.tag]; if (!t) return; t[x.modus] = (t[x.modus] || 0) + 1;
+        (ger[x.tag] = ger[x.tag] || new Set()).add(x.kennung); if (x.angemeldet) (anm[x.tag] = anm[x.tag] || new Set()).add(x.kennung); });
+      Object.keys(tage).forEach(k => { tage[k].angemeldet = anm[k] ? anm[k].size : 0; });
+      const liste = Object.keys(tage).sort().map(k => Object.assign({ tag: k, gesamt: ger[k] ? ger[k].size : 0 }, tage[k]));
       const schnitt = (n, f) => { const a = liste.slice(-n); return Math.round(a.reduce((s, x) => s + x[f], 0) / a.length * 10) / 10; };
       return res.status(200).json({ ok: true, tage: liste, heute: liste[liste.length - 1], gestern: liste[liste.length - 2],
         schnitt7: { gesamt: schnitt(7, 'gesamt'), app: schnitt(7, 'app'), installiert: schnitt(7, 'installiert'), browser: schnitt(7, 'browser') },
