@@ -30839,7 +30839,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 
 <!-- PLAN NRW: Gastmodus + Installations-Hinweis (08.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go)
      Anlass: 08.11. 170 Geräte, nur 67 angemeldet, nur 15 installiert.
-     (1) Gastmodus: Startbildschirm-Knopf „Erst ausprobieren – 5 Fragen ohne Anmeldung“ → eigenes Fenster #pl-gast
+     (1) Gastmodus: Startbildschirm „Erst ausprobieren – ohne Anmeldung“: 5 Prüfungsfragen oder Perfusor-Rechner (plGastRechner), → eigenes Fenster #pl-gast
          mit 5 Fragen aus QUIZ_FRAGEN (leicht/mittel), danach „Jetzt kostenlos loslegen“ (startHeroCTA). Kein Login, nichts gespeichert.
          Schalter PL_GAST_PUBLIC=false; Test vor Go: ?gasttest=1 (sessionStorage plan_gasttest) oder eigenes Gerät (pl_nicht_zaehlen=1).
      (2) Installations-Hinweis: ab dem 2. Quiz-Ergebnis, nicht installiert/nicht Android-App, nur Handy, max. 2× mit 7 Tagen Abstand,
@@ -30875,6 +30875,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
      +'#pl-gast .o.r{border-color:#34d399;background:rgba(52,211,153,.18)}#pl-gast .o.w{border-color:#f59e0b;background:rgba(245,158,11,.16)}'
      +'#pl-gast .e{font-size:13.5px;line-height:1.5;color:#b3c4d6;background:rgba(255,255,255,.05);border-radius:10px;padding:10px 12px;margin:4px 0 12px}'
      +'#pl-gast .h{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#34d399,#10b981);color:#04221a;font-size:15.5px;font-weight:900;cursor:pointer;font-family:inherit}'
+     +'#pl-gast button[onclick^="renderMedTrainer"]{display:none}'
      +'#pl-gast .n{width:100%;padding:10px;border:0;background:none;color:#7fa6c2;font-size:13px;cursor:pointer;font-family:inherit;margin-top:6px}';
     document.head.appendChild(st);
   }
@@ -30912,21 +30913,48 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     document.getElementById('pl-gast-los').onclick=function(){ ga('gast_weiter',{weg:'loslegen'}); o.remove(); try{ window.startHeroCTA(); }catch(e){} };
     document.getElementById('pl-gast-nochmal').onclick=function(){ ga('gast_weiter',{weg:'nochmal'}); o.remove(); window.plGastStart(); };
   }
-  window.plGastZu=function(){ var o=document.getElementById('pl-gast'); if(o) o.remove(); };
+  window.plGastZu=function(){ var o=document.getElementById('pl-gast'); if(o){ o.remove(); try{ if(o._zurueck) o._zurueck(); }catch(e){} } };
   window.plGastStart=function(){
     F=fragen(); i=0; richtig=0; if(!F.length) return;
     stil(); window.plGastZu();
     var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog'); o.innerHTML='<div class="k"></div>';
     document.body.appendChild(o); zeige(); ga('gast_start',{});
   };
+  /* Perfusor-Rechner ohne Anmeldung (Wunsch P. Schenkelberger 08.11.2026): nutzt plDosisRechner() in einem eigenen #medt-card */
+  window.plGastRechner=function(){
+    if(typeof window.plDosisRechner!=='function') return;
+    stil(); window.plGastZu();
+    var alt=document.getElementById('medt-card'); if(alt) alt.id='medt-card-pause';
+    var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog');
+    o.innerHTML='<div class="k"><button class="x" aria-label="Schließen" onclick="plGastZu()">×</button>'
+      +'<div style="font-size:12px;color:#9fc3da;font-weight:700;margin-bottom:10px">Perfusor-Rechner · ohne Anmeldung</div>'
+      +'<div id="medt-card"></div>'
+      +'<div style="text-align:center;font-size:13.5px;color:#b3c4d6;line-height:1.5;margin:14px 0 10px">Mit kostenlosem Konto: 2.000+ Prüfungsfragen, Medikamente, Fallbeispiele und mehr.</div>'
+      +'<button class="h" id="pl-gast-los">Jetzt kostenlos loslegen</button>'
+      +'<button class="n" id="pl-gast-quiz">Lieber 5 Prüfungsfragen ausprobieren</button></div>';
+    document.body.appendChild(o);
+    o._zurueck=function(){ var c=document.getElementById('medt-card-pause'); if(c) c.id='medt-card'; };
+    try{ window.plDosisRechner(); }catch(e){}
+    document.getElementById('pl-gast-los').onclick=function(){ ga('gast_weiter',{weg:'loslegen_rechner'}); window.plGastZu(); try{ window.startHeroCTA(); }catch(e){} };
+    document.getElementById('pl-gast-quiz').onclick=function(){ ga('gast_weiter',{weg:'quiz_rechner'}); window.plGastStart(); };
+    ga('gast_rechner',{});
+  };
   function knopf(){
     if(!gastAn()||document.getElementById('pl-gast-btn')) return;
     var lb=document.getElementById('pl-login-btn'); if(!lb) return;
-    var b=document.createElement('button'); b.id='pl-gast-btn'; b.type='button';
-    b.style.cssText='width:100%;max-width:340px;margin-top:12px;background:none;border:0;color:#9fd8ff;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:3px;padding:6px';
-    b.textContent='Erst ausprobieren – 5 Fragen ohne Anmeldung';
-    b.onclick=window.plGastStart;
-    lb.parentNode.insertBefore(b,lb.nextSibling);
+    var w=document.createElement('div'); w.id='pl-gast-btn';
+    w.style.cssText='width:100%;max-width:340px;margin-top:12px;text-align:center';
+    var B='flex:1;padding:11px 8px;border-radius:12px;border:1.5px solid rgba(159,216,255,.35);background:rgba(159,216,255,.07);color:#cfeaff;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit';
+    w.innerHTML='<div style="font-size:12px;color:#9fc3da;font-weight:700;margin-bottom:7px">Erst ausprobieren – ohne Anmeldung</div>'
+      +'<div style="display:flex;gap:8px"><button type="button" id="pl-gast-b-quiz" style="'+B+'">📝 5 Prüfungsfragen</button>'
+      +'<button type="button" id="pl-gast-b-rechner" style="'+B+'">💉 Perfusor-Rechner</button></div>';
+    lb.parentNode.insertBefore(w,lb.nextSibling);
+    document.getElementById('pl-gast-b-quiz').onclick=window.plGastStart;
+    document.getElementById('pl-gast-b-rechner').onclick=window.plGastRechner;
+    /* Instagram-Link ?fach=rechner: noch nicht angemeldet → Rechner gleich öffnen */
+    try{ var ps=document.getElementById('pw-screen');
+      if(sessionStorage.getItem('plan_insta_ziel')==='rechner'&&ps&&ps.classList.contains('active')&&!sessionStorage.getItem('plan_gast_rechner_auf')){
+        sessionStorage.setItem('plan_gast_rechner_auf','1'); setTimeout(window.plGastRechner,900); } }catch(e){}
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',knopf); else knopf();
 
