@@ -16726,6 +16726,9 @@ function toggleEffekte() {
 
 function showNeueFeaturesBanner() {
   const key = "pl_news_v3";
+  /* 08.11.2026: Hinweis veraltet (Theme-Picker, Saisoneffekte) – abgeschaltet, aktuelle Neuheiten stehen in der NEU-Karte */
+  try{ localStorage.setItem(key,"1"); }catch(e){}
+  return;
   if (localStorage.getItem(key)) return;
   setTimeout(() => {
     const banner = document.createElement("div");
@@ -19856,6 +19859,7 @@ function renderSocialProof(){
 function maybeAskTestimonial(pct){
   try{
     if(pct<70) return;
+    if(window.plRuhe&&window.plRuhe('bewertung')) return; /* Ruhe für Neue (08.11.2026) */
     if(localStorage.getItem('pl_testimonial_asked')==='1') return;
     localStorage.setItem('pl_testimonial_asked','1');
   }catch(e){}
@@ -20150,6 +20154,7 @@ function maybeSaveProgressPrompt(){
 }
 
 function maybeAskRating(pct){
+  if(window.plRuhe&&window.plRuhe('bewertung')) return; /* Ruhe für Neue (08.11.2026) */
   try{
     if(pct<70) return;
     if(localStorage.getItem('pl_rating_prompted')==='1') return;
@@ -22193,6 +22198,7 @@ if (_savedLang !== 'de') {
       var _p=''; try{ _p=localStorage.getItem('pl_persona')||''; }catch(e){}
       if(_p==='examiniert'||_p==='lehrkraft') return;                   // nur Azubis haben ein Examensdatum
       if(hatDatum() || fertig()) return;                               // nur einmal, wenn kein Datum
+      if(window.plRuhe&&window.plRuhe('examdate')) return;              // Ruhe für Neue (08.11.2026): später erneut
       setTimeout(zeige, 1100);
     }catch(e){}
   };
@@ -24760,7 +24766,7 @@ window.renderLiveUsers=function(start){
     }catch(e){}
     renderRadar(); renderPolls();
     var loggedIn=false; try{ loggedIn=!!currentUser; }catch(e){}
-    if(loggedIn&&!myStatus()&&home.classList.contains('active')) setTimeout(function(){ if(!myStatus()&&home.classList.contains('active')&&!document.getElementById('plc-lt')) openSheet(); },1500);
+    if(loggedIn&&!myStatus()&&home.classList.contains('active')) setTimeout(function(){ if(!myStatus()&&home.classList.contains('active')&&!document.getElementById('plc-lt')) if(!(window.plRuhe&&window.plRuhe('tagesfrage'))) openSheet(); },1500);
   }
 
   function hookNav(){
@@ -29986,17 +29992,50 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
      Schalter PL_INSTA_PUBLIC=false → nur Admin bis Go. GA: insta_willkommen, kurs_teilen {weg}, push_frage {antwort}. -->
 <script>
 (function(){
-  window.PL_INSTA_PUBLIC = false;
+  window.PL_INSTA_PUBLIC = true; /* Go P. Schenkelberger 08.11.2026 */
+  /* ---------- Ruhe für Neue: höchstens EIN Fenster pro Besuch (08.11.2026) ----------
+     Neu = erster Besuch vor < 3 Tagen ODER < 5 Quizze. Tour/Onboarding zählen nicht.
+     Bewertungsbitte für Neue ganz aus. Nach Instagram/TikTok-Einstieg hat das Willkommen Vorrang. Key pl_erster_tag. */
+  (function(){
+    try{
+      if(!localStorage.getItem('pl_erster_tag')){
+        var pr={}; try{ pr=JSON.parse(localStorage.getItem('pl_progress_v2')||'{}'); }catch(e){}
+        localStorage.setItem('pl_erster_tag', (pr.quizTotal>0||localStorage.getItem('pl_testimonial_asked'))?'2000-01-01':new Date().toISOString().slice(0,10));
+      }
+    }catch(e){}
+  })();
+  window.plIstNeu=function(){
+    try{
+      var d=localStorage.getItem('pl_erster_tag')||'2000-01-01', tage=(Date.now()-new Date(d).getTime())/864e5;
+      var pr={}; try{ pr=JSON.parse(localStorage.getItem('pl_progress_v2')||'{}'); }catch(e){}
+      return tage<3 || (pr.quizTotal||0)<5;
+    }catch(e){ return false; }
+  };
+  window.plRuhe=function(name){
+    try{
+      if(window.PL_INSTA_PUBLIC!==true && !(typeof isAdmin==='function'&&isAdmin())) return false;
+      if(!window.plIstNeu()) return false;
+      if(name==='bewertung') return true;
+      if(name==='examdate' && localStorage.getItem('pl_kurs_teilen')!=='1') return true; /* erst Kurs-Teilen, dann Prüfungsdatum */
+      var hatZiel=!!sessionStorage.getItem('plan_insta_ziel');
+      if(hatZiel && name!=='willkommen') return true;
+      var schon=sessionStorage.getItem('pl_fenster');
+      if(schon && schon!==name) return true;
+      sessionStorage.setItem('pl_fenster',name); return false;
+    }catch(e){ return false; }
+  };
   function an(){ try{ return window.PL_INSTA_PUBLIC===true || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
   function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
 
   /* ---------- (1) Quelle + Rechner-Einstieg ---------- */
+  var QUELLEN={insta:'Instagram',instagram:'Instagram',tiktok:'TikTok',youtube:'YouTube',facebook:'Facebook',whatsapp:''};
   var ziel=null;
   try{
     var p=new URLSearchParams(location.search), q=p.get('quelle'), f=p.get('fach'), aendern=false;
     if(q){ q=String(q).replace(/[^a-z0-9_-]/gi,'').slice(0,20); ga('landing_quelle',{quelle:q}); try{ if(typeof gtag==='function') gtag('set','user_properties',{quelle:q}); }catch(e){} aendern=true; }
     if(f==='rechner'){ sessionStorage.setItem('plan_insta_ziel','rechner'); aendern=true; }
+    if(q&&QUELLEN[q.toLowerCase()]){ sessionStorage.setItem('plan_quelle',q.toLowerCase()); if(!sessionStorage.getItem('plan_insta_ziel')) sessionStorage.setItem('plan_insta_ziel','hallo'); }
     if(aendern){ var u=new URL(location.href); u.searchParams.delete('quelle'); if(f==='rechner') u.searchParams.delete('fach'); history.replaceState(null,'',u.pathname+(u.search||'')+u.hash); }
     ziel=sessionStorage.getItem('plan_insta_ziel');
   }catch(e){}
@@ -30011,17 +30050,20 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     document.body.appendChild(o); return o;
   }
   function willkommen(){
+    var quelle='', rechner=(ziel==='rechner'), name='';
+    try{ quelle=sessionStorage.getItem('plan_quelle')||''; }catch(e){}
+    name=QUELLEN[quelle]||(rechner?'Instagram':'');
+    if(window.plRuhe&&window.plRuhe('willkommen')) return;
     var o=fenster('pl-insta-hi',
       '<div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#5eead4;text-transform:uppercase;margin-bottom:6px">Willkommen bei PLAN NRW 👋</div>'
-     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">Schön, dass du von Instagram da bist!</div>'
-     +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6">Hier ist der Perfusor-Rechner aus dem Video – mit deinen eigenen Werten. Alles in PLAN ist aktuell kostenlos.</div>'
-     +btn('pl-ih-rechner','🧮 Perfusor-Rechner öffnen',true)
-     +btn('pl-ih-quiz','❓ Prüfungsfragen üben')
+     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">'+(name?'Schön, dass du von '+name+' da bist!':'Schön, dass du da bist!')+'</div>'
+     +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6">'+(rechner?'Hier ist der Perfusor-Rechner aus dem Video – mit deinen eigenen Werten. ':(quelle==='whatsapp'?'Hat dir jemand aus deinem Kurs PLAN geschickt? ':'Hier lernst du fürs Pflegeexamen – mit Erklärungen zu jeder Antwort. '))+'Alles in PLAN ist aktuell kostenlos.</div>'
+     +(rechner?btn('pl-ih-rechner','🧮 Perfusor-Rechner öffnen',true)+btn('pl-ih-quiz','❓ Prüfungsfragen üben'):btn('pl-ih-quiz','❓ Prüfungsfragen üben',true)+btn('pl-ih-rechner','🧮 Perfusor-Rechner'))
      +btn('pl-ih-pdf','📄 Gratis-PDFs fürs Examen')
      +btn('pl-ih-tk','🗂️ Taschenkarten für Station')
      +'<button id="pl-ih-x" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">Erst mal umschauen</button>');
     if(!o) return;
-    ga('insta_willkommen',{});
+    ga('insta_willkommen',{quelle:quelle||'ohne',rechner:rechner?1:0}); ls('pl_quelle_hallo','1');
     function zu(w,fn){ document.getElementById(w).onclick=function(){ o.remove(); ga('insta_willkommen_klick',{ziel:w.replace('pl-ih-','')}); try{ fn(); }catch(e){} }; }
     zu('pl-ih-rechner',function(){ showScreen('medtrainer'); setTimeout(function(){ try{ window.plDosisRechner(); }catch(e){} },400); });
     zu('pl-ih-quiz',function(){ showScreen('quizSelect'); });
@@ -30044,14 +30086,14 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     if(!bereit()){ los.ok=0; if(++n<900) setTimeout(los,1000); return; }
     if((los.ok=(los.ok||0)+1)<4){ setTimeout(los,1000); return; } /* 4 s am Stück frei, damit Tour/Tagesfrage nicht dazwischenkommen */
     if(!an()) return;
-    try{ sessionStorage.removeItem('plan_insta_ziel'); }catch(e){}
-    setTimeout(willkommen,600);
+    setTimeout(function(){ willkommen(); try{ sessionStorage.removeItem('plan_insta_ziel'); }catch(e){} },600);
   }
-  if(ziel==='rechner') setTimeout(los,1500);
+  if(ziel==='rechner'||(ziel==='hallo'&&ls('pl_quelle_hallo')!=='1')) setTimeout(los,1500);
 
   /* ---------- (2)+(3) nach dem Quiz-Ergebnis ---------- */
   var TEXT='Ich lerne fürs Pflegeexamen mit PLAN NRW: 2.000+ Prüfungsfragen, Gratis-PDFs, Taschenkarten und ein Perfusor-Rechner – aktuell kostenlos. Lern doch mit: https://plan-nrw.de/?quelle=whatsapp';
   function teilenKarte(){
+    if(window.plRuhe&&window.plRuhe('teilen')) return false;
     var o=fenster('pl-kurs-teilen',
       '<div style="font-size:30px;margin-bottom:4px">👥</div>'
      +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">Lernst du mit deinem Kurs?</div>'
@@ -30067,6 +30109,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     return true;
   }
   function pushKarte(){
+    if(window.plRuhe&&window.plRuhe('push')) return false;
     try{
       if(typeof plPushAvailable!=='function'||!plPushAvailable()) return false;
       if(ls('pl_push_on')==='1'||Notification.permission==='denied') return false;
