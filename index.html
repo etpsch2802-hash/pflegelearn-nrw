@@ -31036,5 +31036,35 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 })();
 </script>
 
+<!-- PLAN NRW: Nutzungsbedingungen als eigene Seite (08.11.2026, Go P. Schenkelberger)
+     /agb.html (Gratis-Stand, ohne Abo/Widerruf). showAGB() zeigt die Seite in einem Fenster, solange PL_PAYMENTS_ON nicht true ist;
+     bei eingeschalteter Bezahlung bleibt das alte Fenster mit Abo-Bedingungen + Kündigungsknopf. Link auch für Google Play (Händlerstatus). -->
+<script>
+(function(){
+  function neu(){
+    var alt=window.showAGB;
+    if(typeof alt!=='function'||alt._plSeite) return;
+    var f=function(){
+      if(window.PL_PAYMENTS_ON===true) return alt.apply(this,arguments);
+      var o=document.createElement('div');
+      o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;flex-direction:column;padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))';
+      o.innerHTML='<div style="max-width:760px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;background:#0b1a35;border:1px solid rgba(var(--accent-rgb),.2);border-radius:18px;overflow:hidden">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08)"><div style="font-size:17px;font-weight:800;color:#e0f2fe">Nutzungsbedingungen</div>'
+        +'<button aria-label="Schließen" style="background:rgba(255,255,255,.17);border:none;border-radius:8px;padding:6px 12px;color:#b3c4d6;cursor:pointer;font-size:15px">✕</button></div>'
+        +'<iframe src="/agb.html" title="Nutzungsbedingungen" style="flex:1;width:100%;border:0;background:#0b1a35" loading="lazy"></iframe>'
+        +'<div style="padding:8px 14px;font-size:12px;color:#93b9d1;text-align:center">Lädt nicht? <a href="https://plan-nrw.de/agb.html" target="_blank" rel="noopener" style="color:var(--accent)">plan-nrw.de/agb.html öffnen</a></div></div>';
+      document.body.appendChild(o);
+      o.querySelector('button').onclick=function(){ o.remove(); };
+      o.addEventListener('click',function(e){ if(e.target===o) o.remove(); });
+    };
+    f._plSeite=true; window.showAGB=f;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',neu); else neu();
+  /* Beschriftung „AGB & Widerruf“ → „Nutzungsbedingungen“, solange kostenlos */
+  function text(){ try{ if(window.PL_PAYMENTS_ON===true) return; document.querySelectorAll('[data-i18n="nav_agb"]').forEach(function(e){ if(/Widerruf/.test(e.textContent)) e.innerHTML=e.innerHTML.replace('AGB &amp; Widerruf','Nutzungsbedingungen'); }); }catch(e){} }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(text,500); }); else setTimeout(text,500);
+})();
+</script>
+
 </body>
 </html>
