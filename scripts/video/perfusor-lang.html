@@ -1,0 +1,256 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
+/* Perfusor rechnen – komplett erklärt (YouTube Querformat, 960×540 @2x = 1920×1080).
+   Szenen-Dauer wird aus dem Voiceover-Text berechnet (VO-Array unten, ca. 2,2 Wörter/s + Pause).
+   Elemente: data-p = erscheint (Sekunden ab Szenenstart, Anteil 0–1 möglich als "a0.5"), data-r = gleitet rein. */
+html,body{margin:0;width:960px;height:540px;overflow:hidden;background:#f2fbfd;font-family:Inter,"DejaVu Sans",sans-serif;color:#0f172a}
+*{box-sizing:border-box}
+.deko{position:absolute;border-radius:50%;background:#d6eef7}
+.kopf{position:absolute;left:34px;top:24px;display:flex;align-items:center;gap:10px;z-index:2}
+.kopf img{width:34px;height:34px;border-radius:50%;background:#0b1626}
+.kopf b{display:block;font-size:15px;font-weight:900;color:#0f2a44}
+.kopf span{display:block;font-size:10px;font-weight:600;color:#475569}
+.kapitel{position:absolute;right:34px;top:30px;font-size:12px;font-weight:800;color:#64748b;letter-spacing:.5px}
+.sc{position:absolute;left:34px;right:34px;top:84px;bottom:70px;display:none}
+.zwei{display:flex;gap:28px;height:100%;zoom:1.14}
+.zwei>div{flex:1;min-width:0}
+.tag{display:inline-block;color:#fff;font-weight:900;font-size:13px;letter-spacing:.6px;padding:5px 11px;border-radius:6px}
+.rot{background:#dc2626}.gr{background:#15803d}.bl{background:#0369a1}.or{background:#c2410c}
+h1{margin:12px 0 0;font-size:44px;line-height:1.08;font-weight:900;color:#0f2a44}
+h1 em,h2 em{font-style:normal;color:#15803d}
+h2{margin:10px 0 0;font-size:30px;line-height:1.12;font-weight:900;color:#0f2a44}
+.unter{margin-top:12px;font-size:18px;font-weight:700;color:#334155;line-height:1.4}
+.karte{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 10px 28px rgba(15,42,68,.12);margin-top:14px}
+.karte small{display:block;font-size:11px;font-weight:800;letter-spacing:.8px;color:#64748b}
+.karte .gross{font-size:26px;font-weight:900;line-height:1.2;color:#0f2a44;margin-top:3px}
+.chips{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:#d1fae5;color:#065f46;font-weight:900;font-size:18px;padding:8px 13px;border-radius:10px}
+.schritt{display:flex;gap:12px;margin:11px 0}
+.schritt .n{flex:none;width:30px;height:30px;border-radius:50%;background:#15803d;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:16px}
+.schritt b{display:block;font-size:18px;font-weight:900;color:#0f2a44}
+.schritt span{display:block;font-size:18px;font-weight:700;color:#15803d;margin-top:2px}
+.formel{background:#0f2a44;color:#fff;border-radius:16px;padding:22px 24px;margin-top:16px;text-align:center}
+.formel .z{font-size:28px;font-weight:900}
+.formel .bruch{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin-left:12px}
+.formel .bruch span{padding:4px 10px;font-size:24px;font-weight:900;color:#fde68a}
+.formel .bruch span+span{border-top:3px solid #fff}
+.ergebnis{margin-top:14px;font-size:44px;font-weight:900;color:#15803d;text-align:center}
+.pumpe{margin:20px auto 0;width:360px;height:118px;background:#e2e8f0;border:3px solid #94a3b8;border-radius:16px;position:relative}
+.spritze{position:absolute;left:16px;top:27px;width:205px;height:42px;background:#fff;border:3px solid #94a3b8;border-radius:8px;overflow:hidden}
+.spritze i{position:absolute;left:0;top:0;bottom:0;width:135px;background:#bae6fd}
+.kolben{position:absolute;left:135px;top:-6px;width:13px;height:54px;background:#64748b;border-radius:3px}
+.anz{position:absolute;right:16px;top:22px;width:106px;height:52px;background:#0f172a;color:#5eead4;font:900 27px "DejaVu Sans Mono",monospace;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.anz2{position:absolute;right:48px;bottom:10px;font-size:13px;font-weight:800;color:#334155}
+.lampe{position:absolute;left:24px;bottom:14px;width:13px;height:13px;border-radius:50%;background:#22c55e}
+.einheit{display:flex;align-items:center;justify-content:center;gap:14px;background:#fff;border-radius:14px;padding:18px;box-shadow:0 10px 28px rgba(15,42,68,.12);margin-top:14px;font-size:28px;font-weight:900;color:#0f2a44}
+.einheit .pf{color:#c2410c;font-size:20px}
+.fehler{display:flex;gap:12px;align-items:flex-start;background:#fff;border-left:6px solid #dc2626;border-radius:10px;padding:11px 14px;margin-top:10px;box-shadow:0 6px 18px rgba(15,42,68,.08)}
+.fehler .x{flex:none;font-size:20px;font-weight:900;color:#dc2626}
+.fehler b{display:block;font-size:17px;color:#0f2a44}
+.fehler span{display:block;font-size:14px;font-weight:700;color:#475569;margin-top:2px}
+.merke{background:linear-gradient(180deg,#16a34a,#15803d);color:#fff;border-radius:16px;padding:18px 20px;font-size:24px;font-weight:900;line-height:1.3;margin-top:14px}
+.warn{background:#fef3c7;border:2px solid #f59e0b;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:700;line-height:1.4;margin-top:12px}
+.haken{display:flex;gap:10px;align-items:center;font-size:20px;font-weight:800;color:#0f2a44;margin:12px 0}
+.haken i{font-style:normal;flex:none;width:30px;height:30px;border-radius:50%;background:#15803d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+.link{background:#0f2a44;color:#fde68a;border-radius:14px;padding:14px;text-align:center;font-size:22px;font-weight:900;margin-top:14px}
+.inhalt{list-style:none;padding:0;margin:14px 0 0;counter-reset:k}
+.inhalt li{counter-increment:k;font-size:19px;font-weight:800;color:#0f2a44;margin:9px 0;display:flex;gap:10px;align-items:center}
+.inhalt li:before{content:counter(k);width:26px;height:26px;border-radius:50%;background:#0369a1;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center}
+svg.ekg{position:absolute;left:0;bottom:14px;width:960px;height:50px}
+.hinweis{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:10px;color:#64748b;font-weight:600}
+</style></head><body>
+<div class="deko" style="width:320px;height:320px;right:-150px;top:-120px"></div>
+<div class="deko" style="width:240px;height:240px;left:-140px;bottom:-90px"></div>
+<div class="kopf"><img src="logo.png"><div><b>PLAN NRW</b><span>Pflegeexamen · Station · Intensiv</span></div></div>
+<div class="kapitel" id="kap"></div>
+
+<!-- 1 Einstieg -->
+<div class="sc" data-k="Einstieg"><div class="zwei">
+ <div>
+  <div class="tag rot" data-p="0">PERFUSOR RECHNEN</div>
+  <h1 data-p="0">Eine Formel für<br><em>jede Laufrate</em></h1>
+  <div class="unter" data-r="2">µg/kg/min · mg/h · IE/h – in ml/h umrechnen, Schritt für Schritt.</div>
+  <div class="pumpe" data-p="4"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz pulse">??</div><div class="anz2">ml/h</div><div class="lampe"></div></div>
+ </div>
+ <div>
+  <div class="karte" data-p="9"><small>IN DIESEM VIDEO</small>
+   <ol class="inhalt">
+    <li data-r="9.5">Die Grundformel</li><li data-r="10.5">Einheiten umrechnen</li><li data-r="11.5">3 Beispiele: Noradrenalin, Heparin, Midazolam</li><li data-r="13">Umgekehrt: ml/h → Dosis</li><li data-r="14.5">Die 4 häufigsten Fehler</li>
+   </ol></div>
+ </div>
+</div></div>
+
+<!-- 2 Grundformel -->
+<div class="sc" data-k="1 · Grundformel"><div class="zwei">
+ <div>
+  <div class="tag gr" data-p="0">DIE GRUNDFORMEL</div>
+  <div class="formel" data-p="0.5"><span class="z">Laufrate (ml/h) =</span><span class="bruch"><span>Dosis pro Stunde</span><span>Konzentration</span></span></div>
+  <div class="karte" data-p="8"><small>KONZENTRATION</small><div class="gross" style="font-size:22px">Wirkstoffmenge ÷ Volumen der Spritze</div><div class="unter" style="font-size:15px;margin-top:6px">= wie viel Wirkstoff in 1&nbsp;ml steckt</div></div>
+ </div>
+ <div>
+  <div class="warn" data-p="15" style="font-size:18px;margin-top:40px">⚠️ Dosis und Konzentration immer in <b>derselben Einheit</b> – also beide in µg, beide in mg oder beide in IE.</div>
+ </div>
+</div></div>
+
+<!-- 3 Einheiten -->
+<div class="sc" data-k="2 · Einheiten"><div class="zwei">
+ <div>
+  <div class="tag or" data-p="0">ZWEI UMRECHNUNGEN</div>
+  <h2 data-p="0">Mehr brauchst du nicht</h2>
+  <div class="einheit" data-p="2.5">1&nbsp;mg <span class="pf">=</span> 1.000&nbsp;µg</div>
+  <div class="einheit" data-p="5">1&nbsp;h <span class="pf">=</span> 60&nbsp;min</div>
+ </div>
+ <div>
+  <div class="karte" data-p="8" style="margin-top:58px"><small>PRO MINUTE ANGEORDNET?</small><div class="gross">× 60 = pro Stunde</div></div>
+  <div class="karte" data-p="10"><small>ANGEORDNET IN µg, SPRITZE IN mg?</small><div class="gross">mg × 1.000 = µg</div></div>
+ </div>
+</div></div>
+
+<!-- 4 Beispiel 1 Anordnung -->
+<div class="sc" data-k="3 · Beispiel Noradrenalin"><div class="zwei">
+ <div>
+  <div class="tag rot" data-p="0">BEISPIEL 1 · µg/kg/min</div>
+  <div class="karte" data-p="1"><small>SPRITZE</small><div class="gross">Noradrenalin<br>5&nbsp;mg in 50&nbsp;ml</div></div>
+  <div class="chips"><div class="chip" data-r="6">⚖️ 70&nbsp;kg</div><div class="chip" data-r="8">💉 0,1&nbsp;µg/kg/min</div></div>
+ </div>
+ <div><div class="pumpe" data-p="2" style="margin-top:70px"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz pulse">??</div><div class="anz2">ml/h</div><div class="lampe"></div></div></div>
+</div></div>
+
+<!-- 5 Beispiel 1 Rechnung -->
+<div class="sc" data-k="3 · Beispiel Noradrenalin"><div class="zwei">
+ <div>
+  <div class="tag gr" data-p="0">IN 3 SCHRITTEN</div>
+  <div class="karte" style="margin-top:12px">
+   <div class="schritt" data-r="0.5"><div class="n">1</div><div><b>Konzentration</b><span>5&nbsp;mg ÷ 50&nbsp;ml = 0,1&nbsp;mg/ml = 100&nbsp;µg/ml</span></div></div>
+   <div class="schritt" data-r="a0.36"><div class="n">2</div><div><b>Dosis pro Stunde</b><span>0,1 × 70&nbsp;kg = 7&nbsp;µg/min × 60 = 420&nbsp;µg/h</span></div></div>
+   <div class="schritt" data-r="a0.78"><div class="n">3</div><div><b>Laufrate</b><span>420&nbsp;µg/h ÷ 100&nbsp;µg/ml</span></div></div>
+  </div>
+ </div>
+ <div>
+  <div class="ergebnis pulse" data-p="a0.88" style="margin-top:90px">= 4,2&nbsp;ml/h</div>
+  <div class="pumpe" data-p="a0.88"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz">4,2</div><div class="anz2">ml/h</div><div class="lampe"></div></div>
+ </div>
+</div></div>
+
+<!-- 6 Beispiel 2 Heparin -->
+<div class="sc" data-k="4 · Beispiel Heparin"><div class="zwei">
+ <div>
+  <div class="tag rot" data-p="0">BEISPIEL 2 · IE/h</div>
+  <div class="karte" data-p="0.5"><small>SPRITZE</small><div class="gross">Heparin<br>25.000&nbsp;IE in 50&nbsp;ml</div></div>
+  <div class="chips"><div class="chip" data-r="a0.2">💉 1.000&nbsp;IE/h</div></div>
+  <div class="warn" data-p="a0.8">Kein Gewicht, keine Minuten – die Anordnung steht schon pro Stunde.</div>
+ </div>
+ <div>
+  <div class="karte" style="margin-top:36px">
+   <div class="schritt" data-r="a0.36"><div class="n">1</div><div><b>Konzentration</b><span>25.000&nbsp;IE ÷ 50&nbsp;ml = 500&nbsp;IE/ml</span></div></div>
+   <div class="schritt" data-r="a0.58"><div class="n">2</div><div><b>Laufrate</b><span>1.000&nbsp;IE/h ÷ 500&nbsp;IE/ml</span></div></div>
+  </div>
+  <div class="ergebnis pulse" data-p="a0.7">= 2&nbsp;ml/h</div>
+ </div>
+</div></div>
+
+<!-- 7 Beispiel 3 Midazolam -->
+<div class="sc" data-k="5 · Beispiel Midazolam"><div class="zwei">
+ <div>
+  <div class="tag rot" data-p="0">BEISPIEL 3 · mg/h</div>
+  <div class="karte" data-p="0.5"><small>SPRITZE</small><div class="gross">Midazolam<br>50&nbsp;mg in 50&nbsp;ml</div></div>
+  <div class="chips"><div class="chip" data-r="a0.28">💉 5&nbsp;mg/h</div></div>
+ </div>
+ <div>
+  <div class="karte" style="margin-top:36px">
+   <div class="schritt" data-r="a0.45"><div class="n">1</div><div><b>Konzentration</b><span>50&nbsp;mg ÷ 50&nbsp;ml = 1&nbsp;mg/ml</span></div></div>
+   <div class="schritt" data-r="a0.65"><div class="n">2</div><div><b>Laufrate</b><span>5&nbsp;mg/h ÷ 1&nbsp;mg/ml</span></div></div>
+  </div>
+  <div class="ergebnis pulse" data-p="a0.75">= 5&nbsp;ml/h</div>
+ </div>
+</div></div>
+
+<!-- 8 Umgekehrt -->
+<div class="sc" data-k="6 · Umgekehrt"><div class="zwei">
+ <div>
+  <div class="tag bl" data-p="0">UND UMGEKEHRT?</div>
+  <div class="karte" data-p="0.5"><small>NORADRENALIN 100&nbsp;µg/ml · 70&nbsp;kg · PERFUSOR LÄUFT MIT</small><div class="gross">6&nbsp;ml/h</div></div>
+  <div class="formel" data-p="a0.2" style="padding:14px"><span class="z" style="font-size:22px">Dosis = Laufrate × Konzentration</span></div>
+ </div>
+ <div>
+  <div class="karte" style="margin-top:36px">
+   <div class="schritt" data-r="a0.36"><div class="n">1</div><div><b>Pro Stunde</b><span>6&nbsp;ml/h × 100&nbsp;µg/ml = 600&nbsp;µg/h</span></div></div>
+   <div class="schritt" data-r="a0.52"><div class="n">2</div><div><b>Pro Minute</b><span>600 ÷ 60 = 10&nbsp;µg/min</span></div></div>
+   <div class="schritt" data-r="a0.66"><div class="n">3</div><div><b>Pro kg</b><span>10 ÷ 70&nbsp;kg ≈ 0,14&nbsp;µg/kg/min</span></div></div>
+  </div>
+ </div>
+</div></div>
+
+<!-- 9 Fehler -->
+<div class="sc" data-k="7 · Typische Fehler"><div class="zwei">
+ <div>
+  <div class="tag rot" data-p="0">DIE 4 HÄUFIGSTEN FEHLER</div>
+  <div class="fehler" data-r="a0.12"><div class="x">✕</div><div><b>mg und µg verwechselt</b><span>→ Faktor 1.000 daneben</span></div></div>
+  <div class="fehler" data-r="a0.32"><div class="x">✕</div><div><b>Minuten und Stunden verwechselt</b><span>→ Faktor 60 daneben</span></div></div>
+ </div>
+ <div style="padding-top:28px">
+  <div class="fehler" data-r="a0.5"><div class="x">✕</div><div><b>Körpergewicht vergessen</b><span>obwohl pro kg angeordnet</span></div></div>
+  <div class="fehler" data-r="a0.7"><div class="x">✕</div><div><b>Konzentration nicht geprüft</b><span>Standards sind nicht überall gleich – Spritze lesen!</span></div></div>
+ </div>
+</div></div>
+
+<!-- 10 Sicherheit -->
+<div class="sc" data-k="8 · Sicherheit"><div class="zwei">
+ <div>
+  <div class="tag gr" data-p="0">SO RECHNEST DU SICHER</div>
+  <div class="haken" data-r="a0.1"><i>✓</i>Rechnung aufschreiben</div>
+  <div class="haken" data-r="a0.25"><i>✓</i>Ergebnis auf Plausibilität prüfen</div>
+  <div class="haken" data-r="a0.4"><i>✓</i>Vier-Augen-Prinzip</div>
+ </div>
+ <div><div class="warn" data-p="a0.6" style="font-size:18px;margin-top:40px">Maßgeblich ist immer die <b>ärztliche Anordnung</b> und der Standard deiner Einrichtung.</div></div>
+</div></div>
+
+<!-- 11 Merke + Outro -->
+<div class="sc" data-k="Zum Mitnehmen"><div class="zwei">
+ <div>
+  <div class="tag gr" data-p="0">MERKE</div>
+  <div class="merke" data-p="0.3">Laufrate = Dosis pro Stunde ÷ Konzentration</div>
+  <div class="karte" data-p="a0.35"><small>KOSTENLOS IN PLAN NRW</small><div class="gross" style="font-size:20px">🧮 Perfusor-Rechner mit Rechenweg<br>📄 Gratis-PDF Dosierungsrechnen</div></div>
+ </div>
+ <div>
+  <div class="link pulse" data-p="a0.75" style="margin-top:70px">Link in der Beschreibung<br><span style="font-size:17px;color:#fff">plan-nrw.de</span></div>
+ </div>
+</div></div>
+
+<svg class="ekg" viewBox="0 0 960 50"><path id="ekg" fill="none" stroke="#14b8a6" stroke-width="2.2" stroke-linejoin="round"/></svg>
+<div class="hinweis">Rechenbeispiele zum Üben – keine Dosisempfehlung. Immer Vier-Augen-Prinzip, maßgeblich ist die ärztliche Anordnung.</div>
+
+<script>
+/* Voiceover je Szene (gleiche Reihenfolge wie .sc). Daraus wird die Szenendauer berechnet. */
+var VO=[
+"Perfusor rechnen – das kommt in jeder Prüfung und auf jeder Intensivstation. In diesem Video lernst du eine einzige Formel, mit der du jede Laufrate ausrechnen kannst: egal ob Mikrogramm pro Kilo und Minute, Milligramm pro Stunde oder Internationale Einheiten. Dazu drei Beispiele, den Rückweg und die typischen Fehler.",
+"Die Grundformel lautet: Laufrate in Milliliter pro Stunde gleich Dosis pro Stunde geteilt durch die Konzentration. Die Konzentration sagt dir, wie viel Wirkstoff in einem Milliliter steckt – also Wirkstoffmenge geteilt durch das Volumen der Spritze. Wichtig: Dosis und Konzentration müssen in derselben Einheit stehen.",
+"Dafür brauchst du nur zwei Umrechnungen. Ein Milligramm sind tausend Mikrogramm. Und eine Stunde hat sechzig Minuten. Ist die Dosis pro Minute angeordnet, nimmst du mal sechzig, um auf die Stunde zu kommen.",
+"Beispiel eins: Noradrenalin. In der Spritze sind fünf Milligramm in fünfzig Millilitern. Der Patient wiegt siebzig Kilo, angeordnet sind null Komma eins Mikrogramm pro Kilo und Minute.",
+"Schritt eins, die Konzentration: fünf Milligramm geteilt durch fünfzig Milliliter sind null Komma eins Milligramm pro Milliliter, also hundert Mikrogramm pro Milliliter. Schritt zwei, die Dosis pro Stunde: null Komma eins mal siebzig Kilo sind sieben Mikrogramm pro Minute, mal sechzig sind vierhundertzwanzig Mikrogramm pro Stunde. Schritt drei: vierhundertzwanzig geteilt durch hundert. Die Laufrate ist vier Komma zwei Milliliter pro Stunde.",
+"Beispiel zwei: Heparin. Fünfundzwanzigtausend Internationale Einheiten in fünfzig Millilitern, angeordnet sind tausend Einheiten pro Stunde. Die Konzentration: fünfundzwanzigtausend geteilt durch fünfzig sind fünfhundert Einheiten pro Milliliter. Die Laufrate: tausend geteilt durch fünfhundert sind zwei Milliliter pro Stunde. Hier gibt es kein Gewicht und keine Minuten – die Anordnung steht schon pro Stunde.",
+"Beispiel drei: Midazolam, fünfzig Milligramm in fünfzig Millilitern. Angeordnet sind fünf Milligramm pro Stunde. Die Konzentration ist ein Milligramm pro Milliliter. Fünf geteilt durch eins – die Laufrate ist fünf Milliliter pro Stunde.",
+"Und umgekehrt? Der Noradrenalin-Perfusor aus Beispiel eins läuft mit sechs Millilitern pro Stunde. Dann rechnest du Laufrate mal Konzentration: sechs mal hundert sind sechshundert Mikrogramm pro Stunde. Geteilt durch sechzig sind zehn Mikrogramm pro Minute. Geteilt durch siebzig Kilo sind gerundet null Komma eins vier Mikrogramm pro Kilo und Minute.",
+"Die vier häufigsten Fehler: Erstens, Milligramm und Mikrogramm verwechselt – dann liegst du um den Faktor tausend daneben. Zweitens, Minuten und Stunden verwechselt – Faktor sechzig. Drittens, das Körpergewicht vergessen, obwohl die Dosis pro Kilo angeordnet ist. Und viertens: die Konzentration nicht auf der Spritze geprüft. Standardkonzentrationen sind nicht überall gleich.",
+"Deshalb immer: Rechnung aufschreiben, das Ergebnis auf Plausibilität prüfen und nach dem Vier-Augen-Prinzip gegenchecken. Maßgeblich ist immer die ärztliche Anordnung und der Standard deiner Einrichtung.",
+"Merke dir: Laufrate gleich Dosis pro Stunde geteilt durch Konzentration. Wenn du das üben willst: In der kostenlosen App PLAN NRW gibt es einen Perfusor-Rechner, der dir den Rechenweg zeigt, und ein Gratis-PDF Dosierungsrechnen mit Übungsaufgaben. Den Link findest du in der Beschreibung."
+];
+var WPS=2.2, PAUSE=1.6;
+var SZ=[].slice.call(document.querySelectorAll('.sc')), START=[], DAUER=[], t0=0;
+SZ.forEach(function(s,i){ var w=VO[i].split(/\s+/).length; var d=Math.round((w/WPS+PAUSE)*10)/10; START.push(t0); DAUER.push(d); s.dataset.von=t0; s.dataset.bis=t0+d; t0+=d; });
+window.GESAMT=t0; window.ZEITPLAN=SZ.map(function(s,i){return {nr:i+1,kapitel:s.dataset.k,von:START[i],bis:START[i]+DAUER[i],text:VO[i]};});
+function cl(x){return x<0?0:x>1?1:x;} function ease(x){x=cl(x);return 1-Math.pow(1-x,3);}
+function rel(v,d){ return String(v).charAt(0)==='a' ? parseFloat(String(v).slice(1))*d : parseFloat(v); }
+function ekgPfad(off){var d='',w=160;for(var k=-1;k<8;k++){var x=k*w-off;d+=(k===-1?'M':'L')+x+',30 L'+(x+48)+',30 L'+(x+56)+',25 L'+(x+64)+',30 L'+(x+72)+',30 L'+(x+76)+',34 L'+(x+82)+',4 L'+(x+88)+',44 L'+(x+93)+',30 L'+(x+110)+',30 L'+(x+120)+',24 L'+(x+130)+',30 L'+(x+w)+',30 ';}return d;}
+window.setT=function(t){
+  SZ.forEach(function(s,i){
+    var an=t>=START[i]&&t<START[i]+DAUER[i]; s.style.display=an?'block':'none'; if(!an) return;
+    document.getElementById('kap').textContent=s.dataset.k;
+    var lt=t-START[i], d=DAUER[i];
+    s.querySelectorAll('[data-p]').forEach(function(el){var p=rel(el.dataset.p,d),e=ease((lt-p)/.4);el.style.opacity=(p===0)?1:e;el.style.transform='scale('+((p===0)?1:(.88+.12*e))+')';});
+    s.querySelectorAll('[data-r]').forEach(function(el){var p=rel(el.dataset.r,d),e=ease((lt-p)/.4);el.style.opacity=e;el.style.transform='translateX('+((1-e)*-26)+'px)';});
+    s.querySelectorAll('.pulse').forEach(function(el){ if(+getComputedStyle(el.closest('[data-p]')||el).opacity>=.99) el.style.transform='scale('+(1+.025*Math.sin(t*5))+')'; });
+  });
+  document.getElementById('ekg').setAttribute('d',ekgPfad((t*70)%160));
+};
+setT(0);
+</script></body></html>
