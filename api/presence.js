@@ -38,6 +38,27 @@ export default async function handler(req, res) {
       return res.status(204).end();
     }
 
+    // ── Öffentlicher Rekord (08.11.2026): höchste Zahl eindeutiger Geräte an einem Tag ──
+    // Nur Zahl + Datum, keine Einzeldaten. RPC nutzung_rekord (speichert den Rekord dauerhaft in kennzahlen);
+    // fehlt die RPC noch, wird aus app_nutzung (60 Tage) gezählt. Eine Stunde im CDN zwischengespeichert.
+    if (req.method === 'GET' && req.query && req.query.rekord) {
+      res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+      try {
+        const r = await fetch(`${SB_URL}/rest/v1/rpc/nutzung_rekord`, { method: 'POST', headers: H, body: '{}' });
+        if (r.ok) { const j = await r.json(); return res.status(200).json({ ok: true, rekord: j.rekord || 0, datum: j.datum || null }); }
+      } catch (e) {}
+      const proTag = {}; let rows = [];
+      for (let off = 0; off < 40000; off += 1000) {
+        const r = await fetch(`${SB_URL}/rest/v1/app_nutzung?select=tag,kennung`, { headers: Object.assign({}, H, { Range: off + '-' + (off + 999) }) });
+        if (!r.ok) break;
+        const t = await r.json(); rows = rows.concat(t); if (t.length < 1000) break;
+      }
+      rows.forEach(x => { (proTag[x.tag] = proTag[x.tag] || new Set()).add(x.kennung); });
+      let rekord = 0, datum = null;
+      Object.keys(proTag).sort().forEach(t => { if (proTag[t].size > rekord) { rekord = proTag[t].size; datum = t; } });
+      return res.status(200).json({ ok: true, rekord, datum });
+    }
+
     // Secret robust: zuerst Header, dann Query, dann Body (String/Objekt)
     let secret = (req.headers['x-admin-secret'] || (req.query && req.query.secret) || '') + '';
     if (!secret) secret = B.secret ? String(B.secret) : '';

@@ -30143,6 +30143,40 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(wrap,800); }); else setTimeout(wrap,800);
 })();
 </script>
+<!-- PLAN NRW: Rekord „Lernende an einem Tag“ (08.11.2026, Wunsch P. Schenkelberger)
+     Echte Zahl aus GET /api/presence?rekord=1 (höchste Zahl eindeutiger Geräte an einem Tag, eigene Geräte/Bots ausgeschlossen),
+     kann nur steigen. Gezeigt erst ab 50. Startbildschirm über „Jetzt kostenlos loslegen“ + Startseite unter der Begrüßung.
+     Schalter PL_REKORD_PUBLIC=false → nur Admin (Startseite). Abruf einmal pro Sitzung (sessionStorage plan_rekord). Kein pl_*-Key. -->
+<script>
+(function(){
+  window.PL_REKORD_PUBLIC = false;
+  var MIN=50;
+  function an(){ try{ return window.PL_REKORD_PUBLIC===true || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function zahl(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+  function holen(cb){
+    try{ var c=JSON.parse(sessionStorage.getItem('plan_rekord')||'null'); if(c&&c.rekord) return cb(c); }catch(e){}
+    try{ fetch('/api/presence?rekord=1').then(function(r){ return r.json(); }).then(function(j){ if(j&&j.ok){ try{ sessionStorage.setItem('plan_rekord',JSON.stringify(j)); }catch(e){} cb(j); } }).catch(function(){}); }catch(e){}
+  }
+  function zeile(id,n,klein){
+    var d=document.createElement('div'); d.id=id;
+    d.style.cssText=klein
+      ? 'margin:8px 2px 2px;font-size:12.5px;font-weight:700;color:#5eead4'
+      : 'width:100%;max-width:340px;margin:2px auto 10px;text-align:center;font-size:13px;font-weight:800;color:#fbbf24';
+    d.innerHTML='🔥 Bis zu <b style="color:#fff">'+zahl(n)+'</b> Lernende an einem Tag'+(klein?'':' in PLAN');
+    return d;
+  }
+  function zeigen(j){
+    var n=+j.rekord||0; if(n<MIN) return;
+    var cta=document.getElementById('pw-hero-cta');
+    if(cta&&window.PL_REKORD_PUBLIC===true&&!document.getElementById('pl-rekord-start')) cta.parentNode.insertBefore(zeile('pl-rekord-start',n,false),cta);
+    var g=document.getElementById('home-greeting');
+    if(g&&an()&&!document.getElementById('pl-rekord-home')) g.parentNode.insertBefore(zeile('pl-rekord-home',n,true),g.nextSibling);
+  }
+  function start(){ holen(zeigen); setTimeout(function(){ holen(zeigen); },4000); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+  try{ var o=window.showScreen; if(typeof o==='function'){ window.showScreen=function(n){ var r=o.apply(this,arguments); if(n==='home') setTimeout(function(){ holen(zeigen); },300); return r; }; } }catch(e){}
+})();
+</script>
 
 </body>
 </html>
