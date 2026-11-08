@@ -30227,6 +30227,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 #plgs .kopf .t b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #plgs .kopf .t span{display:block;font-size:11.5px;color:#93b4cc}
 #plgs .x{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e0f2fe;border-radius:10px;padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;flex:none}
+#plgs .x.frag{background:rgba(220,38,38,.25);border-color:#f87171;color:#fecaca;font-weight:700}
 #plgs .rumpf{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #plgs .w{max-width:560px;margin:0 auto;padding:16px 16px 28px}
 #plgs h2{font-family:'DM Serif Display',serif;font-size:23px;margin:0 0 6px;font-weight:400}
@@ -30701,13 +30702,17 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 
   window.plGespraechOeffnen = function(){ if(!erlaubt()) return; el('plgs').classList.add('on'); document.body.style.overflow = 'hidden'; liste(); ga('gespraech_open'); };
   function schliessen(){ stopMikro(); el('plgs').classList.remove('on'); document.body.style.overflow = ''; zuege = 0; }
+  /* 08.11.2026 (Meldung P. Schenkelberger: „Schließen geht nicht“): Die Rückfrage stand unten in der Leiste und wurde übersehen.
+     Jetzt direkt am Knopf: 1. Tippen → „Wirklich schließen?“ (rot, 4 s), 2. Tippen → zu. Ohne laufendes Gespräch sofort zu. */
+  var zuTimer = null;
   window.plGespraechZu = function(){
-    var u = el('plgs-u');
-    if(zuege > 0 && u && el('plgs-in')){
-      u.innerHTML = '<span>Gespräch wirklich abbrechen?</span><span><button onclick="plGespraechZuSicher()" style="border-color:rgba(251,146,60,.6);color:#fb923c">Abbrechen</button> <button onclick="plGespraechWeiter()">Weiter üben</button></span>';
+    var k = document.querySelector('#plgs .kopf .x');
+    if(zuege > 0 && el('plgs-in') && k && !k.classList.contains('frag')){
+      k.classList.add('frag'); k.textContent = 'Wirklich schließen?';
+      clearTimeout(zuTimer); zuTimer = setTimeout(function(){ if(k.isConnected){ k.classList.remove('frag'); k.textContent = 'Schließen'; } }, 4000);
       return;
     }
-    schliessen();
+    clearTimeout(zuTimer); schliessen();
   };
   window.plGespraechZuSicher = schliessen;
   window.plGespraechWeiter = unterzeile;
