@@ -274,6 +274,32 @@ export default async function handler(req, res) {
     return;
   }
 
+  // 0b) Kontaktformular (08.11.2026, Go P. Schenkelberger): zweiter schneller Kontaktweg fürs Impressum (§ 5 DDG).
+  //     Nachricht geht nur an REPLY_TO (fest), Absender als reply_to. Nichts wird gespeichert außer dem
+  //     Missbrauchs-Zähler (lead_limits, IP-Hash, 2 Tage). Feld „website“ ist eine Falle für Bots.
+  if (body.zweck === 'kontakt') {
+    const esc = t => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const kMail = String(body.email || '').trim().toLowerCase().slice(0, 200);
+    const kName = String(body.name || '').trim().slice(0, 100);
+    const kText = String(body.nachricht || '').trim().slice(0, 4000);
+    const kBetreff = String(body.betreff || 'Allgemeine Frage').trim().slice(0, 80);
+    if (body.website) { res.status(200).json({ ok: true }); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(kMail) || kText.length < 5) { res.status(400).json({ error: 'eingabe' }); return; }
+    if (!RESEND_KEY) { res.status(500).json({ error: 'mail' }); return; }
+    const lim = await limitPruefen(req, kMail);
+    if (!lim.ok) { res.status(429).json({ error: 'limit' }); return; }
+    try {
+      const m = await fetch('https://api.resend.com/emails', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: FROM, to: [REPLY_TO], reply_to: kMail,
+          subject: 'Kontaktformular: ' + kBetreff.replace(/[\r\n]/g, ' '),
+          html: '<p><b>Von:</b> ' + esc(kName || '–') + ' &lt;' + esc(kMail) + '&gt;<br><b>Thema:</b> ' + esc(kBetreff) + '</p><p style="white-space:pre-wrap">' + esc(kText) + '</p><p style="color:#888;font-size:12px">Gesendet über plan-nrw.de/kontakt.html – einfach auf diese Mail antworten.</p>' }) });
+      if (!m.ok) { console.error('[lead] kontakt', m.status, await m.text()); res.status(502).json({ error: 'mail' }); return; }
+      res.status(200).json({ ok: true });
+    } catch (e) { console.error('[lead] kontakt', e); res.status(500).json({ error: 'server' }); }
+    return;
+  }
+
   const email = (body.email ? String(body.email) : '').trim().toLowerCase();
   const source = (body.source ? String(body.source) : 'gratis').slice(0, 60);
   const slug = (body.paket ? String(body.paket) : 'eselsbruecken').toLowerCase();
