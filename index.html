@@ -29977,6 +29977,129 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<!-- PLAN NRW: Instagram-Einstieg, Kurs-Teilen, Erinnerung nach dem ersten Quiz (08.11.2026, Wunsch P. Schenkelberger)
+     Anlass: seit 07.11. über 100 neue Geräte/Tag über Instagram (Perfusor-Reel).
+     (1) ?quelle=<x> → GA-Event 'landing_quelle' + Nutzer-Eigenschaft 'quelle'. ?fach=rechner → nach Login Medikamenten-Trainer
+         + Willkommens-Fenster mit „Perfusor-Rechner öffnen“, Quiz, Gratis-PDFs, Taschenkarten (nur sessionStorage, kein pl_*-Key).
+     (2) Nach dem ersten abgeschlossenen Quiz einmal „Schick PLAN deinem Kurs“ (WhatsApp / Teilen), Key pl_kurs_teilen.
+     (3) Beim nächsten Quiz-Ergebnis einmal „Abends erinnern?“ → plEnableReminders(); zählt in pl_push_offered_n/at mit.
+     Schalter PL_INSTA_PUBLIC=false → nur Admin bis Go. GA: insta_willkommen, kurs_teilen {weg}, push_frage {antwort}. -->
+<script>
+(function(){
+  window.PL_INSTA_PUBLIC = false;
+  function an(){ try{ return window.PL_INSTA_PUBLIC===true || (typeof isAdmin==='function' && isAdmin()); }catch(e){ return false; } }
+  function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+
+  /* ---------- (1) Quelle + Rechner-Einstieg ---------- */
+  var ziel=null;
+  try{
+    var p=new URLSearchParams(location.search), q=p.get('quelle'), f=p.get('fach'), aendern=false;
+    if(q){ q=String(q).replace(/[^a-z0-9_-]/gi,'').slice(0,20); ga('landing_quelle',{quelle:q}); try{ if(typeof gtag==='function') gtag('set','user_properties',{quelle:q}); }catch(e){} aendern=true; }
+    if(f==='rechner'){ sessionStorage.setItem('plan_insta_ziel','rechner'); aendern=true; }
+    if(aendern){ var u=new URL(location.href); u.searchParams.delete('quelle'); if(f==='rechner') u.searchParams.delete('fach'); history.replaceState(null,'',u.pathname+(u.search||'')+u.hash); }
+    ziel=sessionStorage.getItem('plan_insta_ziel');
+  }catch(e){}
+
+  function btn(id,txt,haupt){ return '<button id="'+id+'" style="width:100%;padding:'+(haupt?'14px':'12px')+';border:'+(haupt?'0':'1px solid rgba(255,255,255,.18)')+';border-radius:12px;background:'+(haupt?'#14b8a6':'rgba(255,255,255,.05)')+';color:'+(haupt?'#04121f':'#ddf0fb')+';font-weight:'+(haupt?'900':'700')+';font-size:'+(haupt?'15px':'14px')+';cursor:pointer;font-family:inherit;margin-top:8px;text-align:'+(haupt?'center':'left')+'">'+txt+'</button>'; }
+  function fenster(id,inhalt){
+    if(document.getElementById(id)) return null;
+    var o=document.createElement('div'); o.id=id;
+    o.style.cssText='position:fixed;inset:0;background:rgba(3,10,20,.82);z-index:1450;display:flex;align-items:flex-end;justify-content:center;padding:14px';
+    o.innerHTML='<div style="background:linear-gradient(160deg,#0b1a2e,#0d2135);border:1px solid rgba(20,184,166,.45);border-radius:20px;padding:20px;max-width:440px;width:100%;color:#ddf0fb;font-family:inherit;margin-bottom:10px">'+inhalt+'</div>';
+    o.addEventListener('click',function(e){ if(e.target===o) o.remove(); });
+    document.body.appendChild(o); return o;
+  }
+  function willkommen(){
+    var o=fenster('pl-insta-hi',
+      '<div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#5eead4;text-transform:uppercase;margin-bottom:6px">Willkommen bei PLAN NRW 👋</div>'
+     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">Schön, dass du von Instagram da bist!</div>'
+     +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6">Hier ist der Perfusor-Rechner aus dem Video – mit deinen eigenen Werten. Alles in PLAN ist aktuell kostenlos.</div>'
+     +btn('pl-ih-rechner','🧮 Perfusor-Rechner öffnen',true)
+     +btn('pl-ih-quiz','❓ Prüfungsfragen üben')
+     +btn('pl-ih-pdf','📄 Gratis-PDFs fürs Examen')
+     +btn('pl-ih-tk','🗂️ Taschenkarten für Station')
+     +'<button id="pl-ih-x" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">Erst mal umschauen</button>');
+    if(!o) return;
+    ga('insta_willkommen',{});
+    function zu(w,fn){ document.getElementById(w).onclick=function(){ o.remove(); ga('insta_willkommen_klick',{ziel:w.replace('pl-ih-','')}); try{ fn(); }catch(e){} }; }
+    zu('pl-ih-rechner',function(){ showScreen('medtrainer'); setTimeout(function(){ try{ window.plDosisRechner(); }catch(e){} },400); });
+    zu('pl-ih-quiz',function(){ showScreen('quizSelect'); });
+    zu('pl-ih-pdf',function(){ window.plPdfOpen(); });
+    zu('pl-ih-tk',function(){ showScreen('taschenkarten'); });
+    document.getElementById('pl-ih-x').onclick=function(){ o.remove(); };
+  }
+  /* Nicht über Tour, Tagesfrage, Onboarding oder anderen Fenstern zeigen – warten, bis der Weg frei ist */
+  function frei(){
+    var e=document.querySelector('#pl-tour-back,#onboarding-overlay,.plc-sheet.in,.plc-sheet-bg.in,#push-modal,#pl-zugang-hint,#pl-mailgate'); if(e&&e.offsetParent!==null) return true;
+    /* allgemein: jedes andere bildschirmfüllende Fenster (Prüfungsdatum, Bewertung, Folien …) */
+    var W=innerWidth*.9, H=innerHeight*.9, alle=document.body.children;
+    for(var i=0;i<alle.length;i++){ var x=alle[i]; if(/^pl-(insta-hi|kurs-teilen|push-frage)$/.test(x.id)) continue;
+      try{ var cs=getComputedStyle(x); if(cs.position==='fixed'&&cs.display!=='none'&&cs.visibility!=='hidden'&&+cs.opacity>0.05&&x.offsetWidth>=W&&x.offsetHeight>=H) return true; }catch(err){} }
+    return false;
+  }
+  var n=0;
+  function bereit(){ try{ return typeof currentUser!=='undefined'&&currentUser&&typeof showScreen==='function'&&!frei(); }catch(e){ return false; } }
+  function los(){
+    if(!bereit()){ los.ok=0; if(++n<900) setTimeout(los,1000); return; }
+    if((los.ok=(los.ok||0)+1)<4){ setTimeout(los,1000); return; } /* 4 s am Stück frei, damit Tour/Tagesfrage nicht dazwischenkommen */
+    if(!an()) return;
+    try{ sessionStorage.removeItem('plan_insta_ziel'); }catch(e){}
+    setTimeout(willkommen,600);
+  }
+  if(ziel==='rechner') setTimeout(los,1500);
+
+  /* ---------- (2)+(3) nach dem Quiz-Ergebnis ---------- */
+  var TEXT='Ich lerne fürs Pflegeexamen mit PLAN NRW: 2.000+ Prüfungsfragen, Gratis-PDFs, Taschenkarten und ein Perfusor-Rechner – aktuell kostenlos. Lern doch mit: https://plan-nrw.de/?quelle=whatsapp';
+  function teilenKarte(){
+    var o=fenster('pl-kurs-teilen',
+      '<div style="font-size:30px;margin-bottom:4px">👥</div>'
+     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">Lernst du mit deinem Kurs?</div>'
+     +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6">Zusammen lernt es sich leichter. Schick PLAN in eure Kursgruppe – für alle kostenlos.</div>'
+     +btn('pl-kt-wa','💬 In WhatsApp teilen',true)
+     +(navigator.share?btn('pl-kt-andere','📤 Anders teilen'):'')
+     +'<button id="pl-kt-x" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">Später</button>');
+    if(!o) return false;
+    ls('pl_kurs_teilen','1');
+    document.getElementById('pl-kt-wa').onclick=function(){ ga('kurs_teilen',{weg:'whatsapp'}); window.open('https://wa.me/?text='+encodeURIComponent(TEXT),'_blank'); o.remove(); };
+    var a=document.getElementById('pl-kt-andere'); if(a) a.onclick=function(){ ga('kurs_teilen',{weg:'teilen'}); try{ navigator.share({title:'PLAN NRW',text:TEXT}).catch(function(){}); }catch(e){} o.remove(); };
+    document.getElementById('pl-kt-x').onclick=function(){ ga('kurs_teilen',{weg:'spaeter'}); o.remove(); };
+    return true;
+  }
+  function pushKarte(){
+    try{
+      if(typeof plPushAvailable!=='function'||!plPushAvailable()) return false;
+      if(ls('pl_push_on')==='1'||Notification.permission==='denied') return false;
+      var nn=parseInt(ls('pl_push_offered_n')||'0',10)||0, last=parseInt(ls('pl_push_offered_at')||'0',10)||0;
+      if(nn>=3||(last&&Date.now()-last<7*24*3600*1000)) return false;
+      ls('pl_push_offered','1'); ls('pl_push_offered_n',String(nn+1)); ls('pl_push_offered_at',String(Date.now()));
+    }catch(e){ return false; }
+    var o=fenster('pl-push-frage',
+      '<div style="font-size:30px;margin-bottom:4px">🔔</div>'
+     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">Soll ich dich abends erinnern?</div>'
+     +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6">Einmal am Tag eine kurze Nachricht um 18 Uhr – damit du dranbleibst. Jederzeit im Profil abschaltbar.</div>'
+     +btn('pl-pf-ja','Ja, erinner mich',true)
+     +'<button id="pl-pf-nein" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">Nein danke</button>');
+    if(!o) return false;
+    document.getElementById('pl-pf-ja').onclick=function(){ o.remove(); ga('push_frage',{antwort:'ja'}); try{ plEnableReminders().then(function(ok){ if(ok){ var t=document.createElement('div'); t.textContent='🔔 Erinnerung ist an – jeden Abend um 18 Uhr'; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1700;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){ t.remove(); },3200); } }); }catch(e){} };
+    document.getElementById('pl-pf-nein').onclick=function(){ o.remove(); ga('push_frage',{antwort:'nein'}); };
+    return true;
+  }
+  function nachErgebnis(){
+    if(!an()) return;
+    if(frei()){ if((nachErgebnis.v=(nachErgebnis.v||0)+1)<20) setTimeout(nachErgebnis,1500); return; }
+    if(ls('pl_kurs_teilen')!=='1'){ teilenKarte(); return; }
+    pushKarte();
+  }
+  function wrap(){
+    var orig=window.showResult;
+    if(typeof orig!=='function'||orig._plInsta) return;
+    var neu=function(){ var r=orig.apply(this,arguments); setTimeout(nachErgebnis,2600); return r; };
+    neu._plInsta=true; window.showResult=neu;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(wrap,800); }); else setTimeout(wrap,800);
+})();
+</script>
 
 </body>
 </html>
