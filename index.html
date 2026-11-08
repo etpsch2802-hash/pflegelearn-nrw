@@ -27074,7 +27074,7 @@ var PL_MAILPFLICHT_PUBLIC = false;
       {t:'Prüfung', tEx:'Training', s:'Simulator · Fachklausuren · §53', sEx:'Notfall · Fachweiterbildung · Scores', k:["openExamenIntro()","openFachklausuren()","openCEHub()"]},
       {t:'Karteikarten', k:["navGo('karteikarten')"], einzeln:true},
       {t:'Fallbeispiele', k:["navGo('faelle')"], einzeln:true},
-      {t:'KI-Training', s:'Mündliche Prüfung · Fachgespräch', k:["openKIChooser()","openExamPicker('fachgespraech')"], kEx:[]},
+      {t:'KI-Training', s:'Mündliche Prüfung · Fachgespräch', k:["openKIChooser()","openExamPicker('fachgespraech')","plGespraechOeffnen()"], kEx:[]},
       {t:'', k:["navGo('medtrainer')"], weg:true}
     ]},
     profil: { anker:"showThemePicker()", gruppen:[
@@ -30215,6 +30215,344 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   function start(){ holen(zeigen); setTimeout(function(){ holen(zeigen); },4000); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
   try{ var o=window.showScreen; if(typeof o==='function'){ window.showScreen=function(n){ var r=o.apply(this,arguments); if(n==='home') setTimeout(function(){ holen(zeigen); },300); return r; }; } }catch(e){}
+})();
+</script>
+
+<style>
+/* ══ PATIENTENGESPRÄCH ÜBEN (08.11.2026, Idee P. Schenkelberger nach App „Medizinisches Deutsch“) ══ */
+#plgs{position:fixed;inset:0;z-index:10020;background:#050c18;color:#e0f2fe;font-family:'DM Sans',sans-serif;display:none;flex-direction:column}
+#plgs.on{display:flex}
+#plgs .kopf{flex:none;display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.1);background:#081424}
+#plgs .kopf .t{flex:1;min-width:0}
+#plgs .kopf .t b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#plgs .kopf .t span{display:block;font-size:11.5px;color:#93b4cc}
+#plgs .x{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e0f2fe;border-radius:10px;padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;flex:none}
+#plgs .rumpf{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#plgs .w{max-width:560px;margin:0 auto;padding:16px 16px 28px}
+#plgs h2{font-family:'DM Serif Display',serif;font-size:23px;margin:0 0 6px;font-weight:400}
+#plgs p{color:#b3c4d6;font-size:14px;line-height:1.6;margin:0 0 12px}
+#plgs .hinweis{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.3);border-radius:12px;padding:11px 12px;font-size:12.5px;color:#bae6fd;line-height:1.5;margin-bottom:14px}
+#plgs .fall{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:13px;margin-bottom:9px;color:#e0f2fe;font:inherit;cursor:pointer}
+#plgs .fall .ic{font-size:26px;flex:none;width:34px;text-align:center}
+#plgs .fall b{display:block;font-size:14px}
+#plgs .fall span.s{display:block;font-size:12px;color:#a3bcd0;margin-top:2px;line-height:1.35}
+#plgs .fall .erg{flex:none;font-size:11.5px;font-weight:800;color:#34d399}
+#plgs .lage{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:13px 14px;margin-bottom:12px}
+#plgs .lage small{display:block;font-size:11px;letter-spacing:1px;color:#7dd3fc;font-weight:800;margin-bottom:5px}
+#plgs .lage div{font-size:14px;line-height:1.55;color:#e2e8f0}
+#plgs ul.ziele{margin:6px 0 0;padding-left:18px;color:#cbd5e1;font-size:13.5px;line-height:1.6}
+#plgs .btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font:700 15px 'DM Sans',sans-serif;cursor:pointer;margin-top:10px;background:linear-gradient(135deg,var(--accent-d1,#0369a1),var(--accent-d2,#38bdf8));color:#fff}
+#plgs .btn.g{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);color:#e0f2fe;font-weight:600}
+#plgs .msg{display:flex;gap:8px;margin:10px 0;align-items:flex-end}
+#plgs .msg .av{flex:none;width:30px;height:30px;border-radius:50%;background:#12304d;display:flex;align-items:center;justify-content:center;font-size:17px}
+#plgs .msg .bl{max-width:80%;padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+#plgs .msg.p .bl{background:#13283f;border:1px solid rgba(255,255,255,.1);border-bottom-left-radius:5px;color:#e2e8f0}
+#plgs .msg.ich{justify-content:flex-end}
+#plgs .msg.ich .bl{background:rgba(var(--accent-rgb,56,189,248),.22);border:1px solid rgba(var(--accent-rgb,56,189,248),.45);border-bottom-right-radius:5px;color:#fff}
+#plgs .msg .wer{display:block;font-size:11px;color:#7dd3fc;font-weight:700;margin-bottom:3px}
+#plgs .tippt{font-size:12.5px;color:#93b4cc;margin:8px 0 0 38px}
+#plgs .leiste{flex:none;border-top:1px solid rgba(255,255,255,.1);background:#081424;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+#plgs .leiste .zeile{max-width:560px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
+#plgs textarea{flex:1;resize:none;min-height:44px;max-height:130px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:11px 12px;color:#fff;font:15px/1.4 'DM Sans',sans-serif}
+#plgs .rund{flex:none;width:44px;height:44px;border-radius:50%;border:0;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+#plgs .senden{background:var(--accent,#38bdf8);color:#04131f}
+#plgs .mikro{background:rgba(255,255,255,.1);color:#e0f2fe}
+#plgs .mikro.an{background:#dc2626;color:#fff;animation:plgsPuls 1s infinite}
+@keyframes plgsPuls{50%{box-shadow:0 0 0 6px rgba(220,38,38,.3)}}
+#plgs .unter{max-width:560px;margin:6px auto 0;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:#8fb0c8}
+#plgs .unter button{background:none;border:1px solid rgba(52,211,153,.5);color:#34d399;border-radius:10px;padding:6px 10px;font:700 12px 'DM Sans',sans-serif;cursor:pointer}
+#plgs .ziel{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:13.5px;line-height:1.45}
+#plgs .ziel .m{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+#plgs .ziel .m.ja{background:rgba(52,211,153,.2);color:#34d399}
+#plgs .ziel .m.teil{background:rgba(250,204,21,.18);color:#facc15}
+#plgs .ziel .m.nein{background:rgba(251,146,60,.18);color:#fb923c}
+#plgs .ziel em{display:block;font-style:normal;font-size:12px;color:#93b4cc;margin-top:2px}
+#plgs .punkte{font-size:40px;font-weight:900;color:var(--accent,#38bdf8);line-height:1}
+#plgs .beispiel{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.35);border-radius:12px;padding:12px;font-size:14px;line-height:1.55;color:#d1fae5;font-style:italic}
+</style>
+<div id="plgs" role="dialog" aria-modal="true" aria-label="Patientengespräch üben"></div>
+<script>
+/* ══ PATIENTENGESPRÄCH ÜBEN (08.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go) ══
+   Die KI spielt Patientin, Patient, Angehörige oder Ärztin, die Nutzerin spricht als Pflegefachkraft.
+   Am Ende Auswertung anhand fester Gesprächsziele. Nutzt nur callKI() → /api/chat (unverändert).
+   Speicher nur lokal: pl_gespraech_v1 {id:{best,max,n}}. GA: gespraech_start, gespraech_auswertung. */
+(function(){
+  window.PL_GESPRAECH_PUBLIC = false;
+  var MAX_ZUEGE = 12, MIN_ZUEGE = 3, KEY = 'pl_gespraech_v1';
+  function erlaubt(){ try{ return window.PL_GESPRAECH_PUBLIC === true || (typeof isAdmin === 'function' && isAdmin()); }catch(e){ return false; } }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function ga(n, p){ try{ if(typeof gtag === 'function') gtag('event', n, p || {}); }catch(e){} }
+  function laden(){ try{ return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ return {}; } }
+  function merken(id, p, max){ try{ var d = laden(), x = d[id] || {best:0, n:0}; x.n++; x.max = max; if(p > x.best) x.best = p; d[id] = x; localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+
+  /* Fälle: rolle = wen die KI spielt, lage = was die Nutzerin weiß, geheim = was die KI nur auf Nachfrage verrät */
+  var FAELLE = [
+    { id:'aufnahme', ic:'🛏️', titel:'Aufnahmegespräch', kurz:'Neue Patientin auf Station, etwas schwerhörig und unsicher',
+      wer:'Frau Berger, 78 Jahre', av:'👵',
+      lage:'Frau Berger kommt mit einer Lungenentzündung von der Notaufnahme auf deine Station. Du führst das pflegerische Aufnahmegespräch.',
+      rolle:'Du bist Frau Gisela Berger, 78 Jahre, verwitwet, lebst allein in einer Wohnung im 2. Stock. Du hast eine Lungenentzündung, bist erschöpft, hustest und bist etwas schwerhörig auf dem linken Ohr. Du bist höflich, aber unsicher, weil du zum ersten Mal im Krankenhaus bist.',
+      geheim:'Penicillin-Allergie (Hautausschlag). Medikamente: Ramipril morgens, ASS 100. Du gehst mit Rollator, bist zu Hause zweimal gestürzt. Deine Tochter Petra kümmert sich um dich. Du trägst eine Brille und hast eine Teilprothese oben. Du hast Angst, nachts nicht zur Toilette zu finden.',
+      start:'Guten Tag … sind Sie die Schwester? Ich weiß gar nicht genau, was jetzt hier passiert.',
+      ziele:['Stellt sich mit Namen und Funktion vor','Spricht deutlich, prüft, ob sie gut verstanden wird','Fragt nach Allergien','Fragt nach Medikamenten','Fragt nach Mobilität oder Stürzen','Fragt nach Hilfsmitteln (Brille, Prothese, Hörgerät)','Erklärt Klingel und Orientierung im Zimmer','Fasst zusammen oder fragt nach offenen Fragen'] },
+    { id:'schmerz', ic:'🩹', titel:'Schmerzen erfassen', kurz:'Patient am ersten Tag nach Hüft-OP',
+      wer:'Herr Yilmaz, 52 Jahre', av:'👨',
+      lage:'Herr Yilmaz hat gestern eine Hüftprothese rechts bekommen. Er klingelt. Du sollst seine Schmerzen erfassen.',
+      rolle:'Du bist Murat Yilmaz, 52 Jahre, Busfahrer. Gestern hast du eine Hüft-TEP rechts bekommen. Du hast Schmerzen und bist etwas gereizt, aber nicht unfreundlich. Du willst kein „Weichei“ sein und spielst die Schmerzen zuerst herunter.',
+      geheim:'Schmerz in Ruhe 4 von 10, bei Bewegung 7 von 10, ziehend-stechend an der rechten Hüfte, seit etwa einer Stunde stärker. Du hast heute Nacht kaum geschlafen. Die letzte Tablette hast du um 6 Uhr bekommen und sie hat etwas geholfen. Du hast Angst vor dem Aufstehen mit der Physiotherapie gleich.',
+      start:'Ja … ich hab geklingelt. Ist nicht so schlimm, aber es zieht halt ganz schön.',
+      ziele:['Fragt nach der Schmerzstärke mit einer Skala (z. B. 0–10)','Unterscheidet Ruhe und Bewegung','Fragt nach Ort und Art des Schmerzes','Fragt nach Beginn oder Verlauf','Fragt nach Auswirkungen (Schlaf, Mobilisation)','Fragt nach der letzten Schmerzmedikation und ihrer Wirkung','Bespricht nächste Schritte (Bedarfsmedikation laut Anordnung, Arzt informieren, nicht-medikamentöse Maßnahmen)','Kündigt eine erneute Einschätzung an'] },
+    { id:'angehoerige', ic:'👩‍👦', titel:'Besorgte Angehörige', kurz:'Tochter ist aufgebracht, weil ihr Vater nachts gestürzt ist',
+      wer:'Frau Hoffmann, Tochter', av:'👩',
+      lage:'Herr Hoffmann (84, Demenz) ist heute Nacht im Zimmer gestürzt, hat eine Platzwunde an der Stirn und ist ärztlich versorgt. Seine Tochter kommt aufgebracht auf dich zu.',
+      rolle:'Du bist Sabine Hoffmann, 55, Tochter von Herrn Hoffmann. Du bist wütend und besorgt, weil dein Vater nachts gestürzt ist, und du hast es erst beim Besuch gesehen. Du wirst laut, beruhigst dich aber, wenn man dich ernst nimmt und sachlich informiert. Wenn man dich abwimmelt oder sich rechtfertigt, wirst du noch ärgerlicher.',
+      geheim:'Du hast eine Vorsorgevollmacht für deinen Vater, sagst das aber nur, wenn danach gefragt wird. Du hättest gern, dass man dich nachts anruft, wenn etwas passiert. Du hast Angst, dass er „ins Heim muss“.',
+      start:'Entschuldigung! Können Sie mir mal erklären, warum mein Vater eine Wunde am Kopf hat? Hier passt ja wohl keiner auf!',
+      ziele:['Bleibt ruhig und stellt sich vor','Erkennt das Gefühl an (Sorge, Ärger), ohne sich zu rechtfertigen','Klärt, ob Auskunft erlaubt ist (Vollmacht oder Einverständnis)','Informiert sachlich, was passiert ist und wie versorgt wurde','Macht keine Schuldzuweisungen und keine Versprechen, die nicht zu halten sind','Erklärt Maßnahmen zur Sturzprophylaxe','Bietet ein Gespräch mit der Ärztin oder dem Arzt an','Vereinbart, wie Angehörige künftig informiert werden'] },
+    { id:'ablehnung', ic:'💉', titel:'Patient lehnt Spritze ab', kurz:'Thromboseprophylaxe wird verweigert',
+      wer:'Herr Schulz, 66 Jahre', av:'👴',
+      lage:'Herr Schulz liegt nach einer Knie-OP auf Station. Laut ärztlicher Anordnung bekommt er abends eine Thromboseprophylaxe als Spritze unter die Haut. Er will sie heute nicht.',
+      rolle:'Du bist Klaus Schulz, 66, Rentner, früher Elektriker. Du willst die abendliche „Bauchspritze“ heute nicht. Du bist bestimmt, aber nicht aggressiv. Du lässt dich überzeugen, wenn man dich ernst nimmt, deine Gründe erfragt und verständlich erklärt. Bei Druck oder Drohungen bleibst du beim Nein.',
+      geheim:'Deine Gründe: Dein Bauch hat überall blaue Flecken, und du denkst, die Spritze „verdünnt das Blut zu sehr“. Du weißt nicht genau, wofür sie ist. Wenn man dir eine andere Einstichstelle (z. B. Oberschenkel) anbietet und den Zweck erklärt, bist du einverstanden.',
+      start:'Nee, lassen Sie mal stecken. Die Spritze will ich heute nicht.',
+      ziele:['Fragt nach den Gründen','Akzeptiert grundsätzlich das Recht auf Ablehnung','Erklärt Zweck und Nutzen verständlich, ohne Fachchinesisch','Geht auf die konkrete Sorge ein (blaue Flecken, Blutung)','Übt keinen Druck aus und droht nicht','Bietet eine Lösung oder Alternative an oder zieht die Ärztin/den Arzt hinzu','Erwähnt die Dokumentation'] },
+    { id:'insulin', ic:'🩸', titel:'Beratung: Insulinpen', kurz:'Patientin mit neuem Diabetes vor der Entlassung',
+      wer:'Frau Krämer, 59 Jahre', av:'👩‍🦳',
+      lage:'Frau Krämer hat einen neu entdeckten Diabetes und soll ab morgen zu Hause selbst Insulin spritzen. Du sollst sie zum Pen und zur Unterzuckerung beraten.',
+      rolle:'Du bist Renate Krämer, 59, Verkäuferin. Du hast seit einer Woche einen Diabetes und sollst nun selbst spritzen. Du bist nervös und hast Angst vor Nadeln. Du sagst oft „ja ja“, auch wenn du etwas nicht verstanden hast.',
+      geheim:'Du weißt nicht, was eine Unterzuckerung ist. Du würdest immer in dieselbe Stelle spritzen, weil es dort „weniger wehtut“. Dein Mann kocht zu Hause. Wenn man dich bittet, etwas mit eigenen Worten zu wiederholen, merkst du, was du noch nicht verstanden hast.',
+      start:'Also ich soll das jetzt wirklich selber machen? Ich hab ja schon Angst, wenn ich nur die Nadel sehe …',
+      ziele:['Fragt nach Vorwissen und Ängsten','Erklärt in kleinen Schritten und einfacher Sprache','Erklärt den Wechsel der Spritzstellen','Erklärt Anzeichen einer Unterzuckerung','Erklärt, was bei Unterzuckerung zu tun ist (schnelle Kohlenhydrate)','Lässt sie das Wichtigste mit eigenen Worten wiederholen','Nennt Ansprechpartner oder bietet Angehörigenschulung an'] },
+    { id:'angst', ic:'😟', titel:'Angst vor der OP', kurz:'Junger Patient am Abend vor einer Operation',
+      wer:'Jonas, 24 Jahre', av:'🧑',
+      lage:'Jonas wird morgen früh am Knie operiert (Kreuzband). Es ist 21 Uhr, er klingelt und wirkt unruhig.',
+      rolle:'Du bist Jonas Becker, 24, Student. Morgen früh ist deine erste Operation. Du hast Angst vor der Narkose und davor, „nicht mehr aufzuwachen“. Du sprichst das nicht sofort direkt an, sondern sagst zuerst, du kannst nicht schlafen.',
+      geheim:'Du weißt nicht mehr genau, ab wann du nichts mehr essen und trinken darfst. Du hast Fragen zur Narkose, die eigentlich die Narkoseärztin beantworten muss. Dein Onkel hatte nach einer OP Komplikationen.',
+      start:'Sorry, dass ich klingel … ich kann irgendwie nicht schlafen.',
+      ziele:['Nimmt sich Zeit und fragt offen nach','Spricht die Angst an oder lässt sie aussprechen','Hört zu, ohne die Angst kleinzureden','Klärt pflegerische Fragen (z. B. Nüchternheit nach Anordnung, Ablauf am Morgen)','Gibt medizinische Aufklärungsfragen an die Narkoseärztin oder den Arzt weiter','Macht keine falschen Versprechen („Da passiert nichts“)','Bietet Hilfe zum Schlafen an (Gespräch, Bedarfsmedikation nur nach Anordnung)'] },
+    { id:'sbar', ic:'📞', titel:'Arzt anrufen (SBAR)', kurz:'Patientin hat plötzlich Atemnot – du rufst den Dienstarzt an',
+      wer:'Dr. Wagner, Dienstarzt', av:'🩺',
+      lage:'Nachtdienst. Frau Lange (71, Tag 2 nach Darm-OP) hat plötzlich Atemnot. Werte: Atemfrequenz 28/min, SpO₂ 89 % ohne Sauerstoff, Puls 112/min, RR 105/70, Temperatur 38,4 °C, wach und ängstlich. Du rufst den Dienstarzt an.',
+      rolle:'Du bist Dr. Wagner, Dienstarzt in der Nacht, gerade in der Notaufnahme beschäftigt und etwas gehetzt. Du willst schnell und strukturiert informiert werden. Wenn die Pflegekraft ungeordnet berichtet, fragst du ungeduldig nach. Wenn sie gut strukturiert berichtet (Situation, Hintergrund, Einschätzung, Empfehlung), bist du kooperativ, gibst eine Anordnung (z. B. 2 Liter Sauerstoff, Blutgasanalyse, Röntgen, du kommst in 15 Minuten) und erwartest, dass sie die Anordnung wiederholt.',
+      geheim:'Du fragst nach Vorerkrankungen und ob sie Sauerstoff bekommt. Wenn die Pflegekraft deine Anordnung nicht wiederholt, sagst du am Ende nichts dazu.',
+      start:'Wagner, Dienstarzt. Ja bitte?',
+      ziele:['Nennt Namen, Station und Patientin (Situation)','Beschreibt das akute Problem klar am Anfang','Nennt relevanten Hintergrund (OP, Tag, Vorerkrankungen)','Nennt die Vitalwerte vollständig','Gibt eine eigene Einschätzung ab','Formuliert eine klare Bitte oder Empfehlung','Wiederholt die ärztliche Anordnung (Read-back)'] },
+    { id:'demenz', ic:'🏠', titel:'Bewohnerin will nach Hause', kurz:'Unruhige Bewohnerin mit Demenz am späten Nachmittag',
+      wer:'Frau Weber, 86 Jahre', av:'👵',
+      lage:'Frau Weber (86, fortgeschrittene Demenz) lebt im Pflegeheim. Es ist 17 Uhr, sie steht mit Handtasche an der Tür und will nach Hause, „die Kinder kommen gleich aus der Schule“.',
+      rolle:'Du bist Frau Hildegard Weber, 86, mit fortgeschrittener Demenz. Du glaubst, es ist 1970 und deine Kinder kommen gleich aus der Schule. Du bist unruhig und willst nach Hause, um das Essen zu kochen. Wenn man dir widerspricht oder sagt „Ihre Kinder sind längst erwachsen“, wirst du ängstlich und ärgerlich. Wenn man dein Gefühl aufgreift und mit dir über deine Kinder oder das Kochen spricht, wirst du ruhiger.',
+      geheim:'Du hast drei Kinder: Uwe, Monika und Karin. Du warst früher eine sehr gute Köchin, dein bestes Gericht war Rinderroulade. Du liebst Schlager.',
+      start:'Lassen Sie mich durch, ich muss nach Hause! Die Kinder kommen gleich aus der Schule und es ist noch nichts gekocht!',
+      ziele:['Bleibt ruhig und spricht langsam','Greift das Gefühl auf (Sorge um die Kinder, Pflichtgefühl)','Korrigiert und streitet nicht über die Realität','Fragt nach Erinnerungen oder nutzt Biografie (Kinder, Kochen)','Lügt nicht direkt, bleibt wertschätzend','Lenkt behutsam um (z. B. gemeinsam etwas tun, begleiten)'] }
+  ];
+
+  var aktiv = null, verlauf = [], zuege = 0, wartet = false, erkennung = null;
+  function el(id){ return document.getElementById(id); }
+  function name(){ try{ var n = (typeof currentUser !== 'undefined' && currentUser && (currentUser.name || currentUser)) || localStorage.getItem('pl_user_name') || ''; return String(n).split(' ')[0] || ''; }catch(e){ return ''; } }
+
+  function rahmen(titel, sub, rumpf, leiste){
+    el('plgs').innerHTML = '<div class="kopf"><div class="t"><b>' + titel + '</b><span>' + sub + '</span></div><button class="x" onclick="plGespraechZu()">Schließen</button></div>'
+      + '<div class="rumpf" id="plgs-r"><div class="w" id="plgs-w">' + rumpf + '</div></div>' + (leiste || '');
+  }
+
+  function liste(){
+    stopMikro();
+    var d = laden();
+    var h = '<h2>Patientengespräch üben</h2>'
+      + '<p>Die KI spielt Patientin, Patient, Angehörige oder Arzt. Du antwortest als Pflegefachkraft – schriftlich oder per Mikrofon. Am Ende bekommst du eine Auswertung mit Tipps.</p>'
+      + '<div class="hinweis">Alle Fälle sind erfunden. Bitte keine echten Patientendaten eingeben. Die Auswertung ist eine Übungshilfe der KI und ersetzt keine Bewertung durch Lehrkräfte.</div>';
+    FAELLE.forEach(function(f){
+      var x = d[f.id];
+      h += '<button class="fall" onclick="plGespraechFall(\'' + f.id + '\')"><span class="ic">' + f.ic + '</span><span style="flex:1;min-width:0"><b>' + esc(f.titel) + '</b><span class="s">' + esc(f.kurz) + '</span></span>'
+        + (x && x.max ? '<span class="erg">' + x.best + '/' + x.max + '</span>' : '') + '</button>';
+    });
+    rahmen('Patientengespräch üben', 'KI-Rollenspiel' + (window.PL_GESPRAECH_PUBLIC ? '' : ' · Admin-Vorschau'), h);
+  }
+
+  function fallInfo(id){
+    var f = FAELLE.filter(function(x){ return x.id === id; })[0]; if(!f) return;
+    aktiv = f;
+    var h = '<h2>' + f.ic + ' ' + esc(f.titel) + '</h2>'
+      + '<div class="lage"><small>DIE SITUATION</small><div>' + esc(f.lage) + '</div></div>'
+      + '<div class="lage"><small>DAS GEGENÜBER</small><div>' + esc(f.wer) + '</div></div>'
+      + '<div class="lage"><small>DARAUF ACHTET DIE AUSWERTUNG</small><ul class="ziele">' + f.ziele.map(function(z){ return '<li>' + esc(z) + '</li>'; }).join('') + '</ul></div>'
+      + '<p style="font-size:13px">Du hast bis zu ' + MAX_ZUEGE + ' Antworten. Beende das Gespräch, wenn du fertig bist.</p>'
+      + '<button class="btn" onclick="plGespraechStart()">Gespräch beginnen</button>'
+      + '<button class="btn g" onclick="plGespraechListe()">Anderen Fall wählen</button>';
+    rahmen(f.titel, f.wer, h);
+  }
+
+  function systemPrompt(f){
+    return 'Du bist in einem Rollenspiel zur Ausbildung von Pflegefachkräften in Deutschland. ' + f.rolle
+      + ' Situation: ' + f.lage
+      + ' Diese Informationen gibst du nur preis, wenn passend danach gefragt wird: ' + f.geheim
+      + ' Dein Gegenüber ist eine Pflegefachkraft oder Auszubildende' + (name() ? ' namens ' + name() : '') + '.'
+      + ' REGELN: Bleib immer in deiner Rolle. Antworte nur als diese Person, auf Deutsch, in 1 bis 3 kurzen Sätzen, natürlich und alltagsnah, so wie diese Person wirklich spricht.'
+      + ' Keine Regieanweisungen in Sternchen, keine Aufzählungen, keine Erklärungen außerhalb der Rolle, keine Bewertung des Gesprächs.'
+      + ' Reagiere realistisch: Wenn du gut behandelt wirst (Vorstellung, Zuhören, Verständnis), wirst du offener; bei Fachsprache fragst du nach, was das heißt; bei Druck reagierst du ablehnend.'
+      + ' Erfinde keine neuen Diagnosen oder Werte, die der Situation widersprechen.';
+  }
+
+  function blase(wer, text){
+    var w = el('plgs-w'); if(!w) return;
+    var d = document.createElement('div');
+    if(wer === 'ich'){ d.className = 'msg ich'; d.innerHTML = '<div class="bl"></div>'; d.querySelector('.bl').textContent = text; }
+    else { d.className = 'msg p'; d.innerHTML = '<div class="av">' + aktiv.av + '</div><div class="bl"><span class="wer"></span></div>'; d.querySelector('.wer').textContent = aktiv.wer.split(',')[0]; d.querySelector('.bl').appendChild(document.createTextNode(text)); }
+    w.appendChild(d); runter();
+  }
+  function runter(){ var r = el('plgs-r'); if(r) setTimeout(function(){ r.scrollTop = r.scrollHeight; }, 30); }
+  function unterzeile(){
+    var u = el('plgs-u'); if(!u) return;
+    u.innerHTML = '<span>Antwort ' + zuege + ' von ' + MAX_ZUEGE + '</span>' + (zuege >= MIN_ZUEGE ? '<button onclick="plGespraechEnde()">Gespräch beenden & auswerten</button>' : '<span>Auswertung ab ' + MIN_ZUEGE + ' Antworten</span>');
+  }
+
+  function start(){
+    if(!aktiv) return;
+    verlauf = [{ role:'assistant', content: aktiv.start }]; zuege = 0; wartet = false;
+    var mikro = (window.SpeechRecognition || window.webkitSpeechRecognition) ? '<button class="rund mikro" id="plgs-mic" aria-label="Sprechen" onclick="plGespraechMikro()">🎤</button>' : '';
+    var leiste = '<div class="leiste"><div class="zeile">' + mikro
+      + '<textarea id="plgs-in" rows="1" placeholder="Deine Antwort …" aria-label="Deine Antwort"></textarea>'
+      + '<button class="rund senden" aria-label="Senden" onclick="plGespraechSenden()">➤</button></div><div class="unter" id="plgs-u"></div></div>';
+    rahmen(aktiv.titel, aktiv.wer, '<div class="lage" style="margin-bottom:6px"><small>SITUATION</small><div style="font-size:13px">' + esc(aktiv.lage) + '</div></div>', leiste);
+    blase('p', aktiv.start); unterzeile();
+    var ta = el('plgs-in');
+    ta.addEventListener('input', function(){ ta.style.height = 'auto'; ta.style.height = Math.min(130, ta.scrollHeight) + 'px'; });
+    ta.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftKey && window.innerWidth > 700){ e.preventDefault(); senden(); } });
+    ga('gespraech_start', { fall: aktiv.id });
+  }
+
+  function senden(){
+    var ta = el('plgs-in'); if(!ta || wartet) return;
+    var t = ta.value.trim(); if(!t) return;
+    stopMikro();
+    if(zuege >= MAX_ZUEGE){ ende(); return; }
+    ta.value = ''; ta.style.height = 'auto';
+    zuege++; verlauf.push({ role:'user', content: t }); blase('ich', t); unterzeile();
+    if(zuege >= MAX_ZUEGE){ setTimeout(ende, 400); return; }
+    wartet = true;
+    var w = el('plgs-w'), tp = document.createElement('div'); tp.className = 'tippt'; tp.id = 'plgs-tippt'; tp.textContent = aktiv.wer.split(',')[0] + ' antwortet …'; w.appendChild(tp); runter();
+    callKI(verlauf.slice(-16), systemPrompt(aktiv)).then(function(r){
+      r = String(r || '').replace(/<think>[\s\S]*?<\/think>/g, '').replace(/^\s*\*[^*]+\*\s*/g, '').trim();
+      verlauf.push({ role:'assistant', content: r }); blase('p', r);
+    }).catch(function(e){
+      blase('p', e && e.kiLimit ? '⏳ Die KI ist für heute ausgelastet. Bitte versuch es morgen wieder.' : '(Verbindung unterbrochen – bitte die Antwort noch einmal senden.)');
+      if(!(e && e.kiLimit)){ zuege--; verlauf.pop(); unterzeile(); }
+    }).then(function(){ wartet = false; var x = el('plgs-tippt'); if(x) x.remove(); });
+  }
+
+  function ende(){
+    if(!aktiv || zuege < 1) return;
+    stopMikro();
+    var f = aktiv;
+    var protokoll = verlauf.map(function(m){ return (m.role === 'user' ? 'PFLEGEKRAFT: ' : (f.wer.split(',')[0].toUpperCase() + ': ')) + m.content; }).join('\n');
+    rahmen('Auswertung', f.titel, '<h2>Auswertung läuft …</h2><p>Die KI liest das Gespräch und prüft die Gesprächsziele.</p>');
+    var sys = 'Du bist eine erfahrene Praxisanleiterin in der Pflege in Deutschland und wertest ein Übungsgespräch aus. Antworte NUR mit gültigem JSON ohne Text davor oder danach.';
+    var frage = 'Fall: ' + f.titel + '. Situation: ' + f.lage + '\n\nGESPRÄCH:\n' + protokoll
+      + '\n\nPrüfe nur die Aussagen der PFLEGEKRAFT gegen diese Gesprächsziele:\n' + f.ziele.map(function(z, i){ return (i + 1) + '. ' + z; }).join('\n')
+      + '\n\nGib zurück: {"ziele":[{"nr":1,"status":"ja|teilweise|nein","beleg":"kurzes Zitat oder kurze Begründung"}],"staerken":["…"],"tipps":["…"],"beispiel":"ein besserer Satz, den die Pflegekraft an einer Stelle hätte sagen können"}'
+      + '\nRegeln: "ja" nur, wenn es im Gespräch wirklich vorkommt. Höchstens 3 Stärken und 3 Tipps, jeweils ein kurzer Satz, Du-Form, freundlich und konkret. Keine Diagnosen, keine Dosierungen.';
+    callKI([{ role:'user', content: frage }], sys).then(function(r){
+      var j = null;
+      try{ var s = String(r).replace(/<think>[\s\S]*?<\/think>/g, ''); j = JSON.parse(s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1)); }catch(e){}
+      zeigeAuswertung(f, j, r);
+    }).catch(function(e){
+      rahmen('Auswertung', f.titel, '<h2>Auswertung nicht möglich</h2><p>' + (e && e.kiLimit ? 'Die KI ist für heute ausgelastet.' : 'Die Verbindung ist abgebrochen.') + '</p><button class="btn" onclick="plGespraechEnde()">Noch einmal versuchen</button><button class="btn g" onclick="plGespraechListe()">Zur Übersicht</button>');
+    });
+  }
+
+  function zeigeAuswertung(f, j, roh){
+    var h = '';
+    if(j && Array.isArray(j.ziele)){
+      var pk = 0;
+      var zeilen = f.ziele.map(function(z, i){
+        var e = j.ziele.filter(function(x){ return +x.nr === i + 1; })[0] || {}, st = String(e.status || 'nein');
+        var k = st === 'ja' ? 'ja' : (st.indexOf('teil') === 0 ? 'teil' : 'nein');
+        pk += k === 'ja' ? 1 : (k === 'teil' ? 0.5 : 0);
+        return '<div class="ziel"><span class="m ' + k + '">' + (k === 'ja' ? '✓' : (k === 'teil' ? '½' : '–')) + '</span><span>' + esc(z) + (e.beleg ? '<em>' + esc(e.beleg) + '</em>' : '') + '</span></div>';
+      }).join('');
+      var p = Math.round(pk * 2) / 2;
+      merken(f.id, p, f.ziele.length);
+      ga('gespraech_auswertung', { fall: f.id, punkte: p, max: f.ziele.length, zuege: zuege });
+      h += '<div style="display:flex;align-items:baseline;gap:10px;margin:4px 0 14px"><span class="punkte">' + String(p).replace('.', ',') + '</span><span style="color:#93b4cc;font-size:14px">von ' + f.ziele.length + ' Gesprächszielen</span></div>'
+        + '<div class="lage">' + zeilen + '</div>';
+      if((j.staerken || []).length) h += '<div class="lage"><small>DAS WAR GUT</small><ul class="ziele">' + j.staerken.slice(0, 3).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+      if((j.tipps || []).length) h += '<div class="lage"><small>DAS NÄCHSTE MAL</small><ul class="ziele">' + j.tipps.slice(0, 3).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+      if(j.beispiel) h += '<div class="lage"><small>SO KÖNNTEST DU ES SAGEN</small><div class="beispiel">„' + esc(String(j.beispiel).replace(/^[„"]|[“"]$/g, '')) + '“</div></div>';
+    } else {
+      h += '<div class="lage"><small>RÜCKMELDUNG</small><div style="white-space:pre-wrap">' + esc(roh) + '</div></div>';
+    }
+    h += '<p style="font-size:12px;margin-top:6px">Die Auswertung macht eine KI und kann sich irren. Sie ist eine Übungshilfe, keine Note.</p>'
+      + '<button class="btn" onclick="plGespraechStart()">Fall noch einmal üben</button><button class="btn g" onclick="plGespraechListe()">Anderen Fall wählen</button>';
+    rahmen('Auswertung', f.titel, '<h2>' + f.ic + ' ' + esc(f.titel) + '</h2>' + h);
+  }
+
+  /* Spracheingabe (Chrome/Android) */
+  function stopMikro(){ try{ if(erkennung){ erkennung.stop(); } }catch(e){} erkennung = null; var b = el('plgs-mic'); if(b) b.classList.remove('an'); }
+  function mikro(){
+    if(erkennung){ stopMikro(); return; }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition; if(!SR) return;
+    var ta = el('plgs-in'), basis = ta.value ? ta.value.replace(/\s*$/, ' ') : '';
+    try{
+      erkennung = new SR(); erkennung.lang = 'de-DE'; erkennung.interimResults = true; erkennung.continuous = true;
+      erkennung.onresult = function(ev){ var t = ''; for(var i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; ta.value = basis + t; ta.dispatchEvent(new Event('input')); };
+      erkennung.onend = function(){ erkennung = null; var b = el('plgs-mic'); if(b) b.classList.remove('an'); };
+      erkennung.onerror = erkennung.onend;
+      erkennung.start(); el('plgs-mic').classList.add('an');
+    }catch(e){ erkennung = null; }
+  }
+
+  window.plGespraechOeffnen = function(){ if(!erlaubt()) return; el('plgs').classList.add('on'); document.body.style.overflow = 'hidden'; liste(); ga('gespraech_open'); };
+  function schliessen(){ stopMikro(); el('plgs').classList.remove('on'); document.body.style.overflow = ''; zuege = 0; }
+  window.plGespraechZu = function(){
+    var u = el('plgs-u');
+    if(zuege > 0 && u && el('plgs-in')){
+      u.innerHTML = '<span>Gespräch wirklich abbrechen?</span><span><button onclick="plGespraechZuSicher()" style="border-color:rgba(251,146,60,.6);color:#fb923c">Abbrechen</button> <button onclick="plGespraechWeiter()">Weiter üben</button></span>';
+      return;
+    }
+    schliessen();
+  };
+  window.plGespraechZuSicher = schliessen;
+  window.plGespraechWeiter = unterzeile;
+  window.plGespraechListe = liste;
+  window.plGespraechFall = fallInfo;
+  window.plGespraechStart = start;
+  window.plGespraechSenden = senden;
+  window.plGespraechEnde = ende;
+  window.plGespraechMikro = mikro;
+  window.PL_GESPRAECH_FAELLE = FAELLE;
+
+  /* Kachel im Üben-Bereich (landet in der Gruppe „KI-Training“) + Eintrag im KI-Auswahlfenster */
+  function kachel(){
+    try{
+      if(!erlaubt() || document.querySelector('#screen-ueben button[onclick="plGespraechOeffnen()"]')) return;
+      var grid = document.querySelector('#screen-ueben div[style*="grid-template-columns"]'); if(!grid) return;
+      var b = document.createElement('button');
+      b.setAttribute('onclick', 'plGespraechOeffnen()');
+      b.style.cssText = 'background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:15px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;font-family:inherit;text-align:left';
+      b.innerHTML = '<svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px"><use href="#i-chat"/></svg><span style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.2">Patientengespräch üben</span><span style="font-size:11.5px;color:#a3bcd0;line-height:1.3">KI spielt Patient, Angehörige, Arzt' + (window.PL_GESPRAECH_PUBLIC ? '' : ' · Admin') + '</span>';
+      grid.appendChild(b);
+    }catch(e){}
+  }
+  try{
+    var _ss = window.showScreen;
+    if(typeof _ss === 'function'){ window.showScreen = function(n){ var r = _ss.apply(this, arguments); if(n === 'ueben') setTimeout(kachel, 0); return r; }; }
+    var _kc = window.openKIChooser;
+    if(typeof _kc === 'function'){
+      window.openKIChooser = function(){
+        var r = _kc.apply(this, arguments);
+        try{
+          if(erlaubt()){
+            var ov = el('ki-chooser'), erste = ov && ov.querySelector('button[onclick*="startChat"]');
+            if(erste){ var b = document.createElement('button'); b.setAttribute('style', erste.getAttribute('style').replace(/#22d3ee/g, '#34d399'));
+              b.innerHTML = '<span style="font-size:24px">🗨️</span><span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:#34d399">Patientengespräch üben</span><span style="display:block;font-size:11px;color:#a9cbe0;margin-top:2px">KI spielt Patient, Angehörige oder Arzt</span></span><span style="font-size:18px;color:#34d399">›</span>';
+              b.onclick = function(){ ov.remove(); window.plGespraechOeffnen(); };
+              erste.parentNode.insertBefore(b, erste.nextSibling); }
+          }
+        }catch(e){}
+        return r;
+      };
+    }
+  }catch(e){}
+  window.addEventListener('load', function(){ setTimeout(kachel, 1500); });
 })();
 </script>
 
