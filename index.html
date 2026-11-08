@@ -30837,5 +30837,153 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 })();
 </script>
 
+<!-- PLAN NRW: Gastmodus + Installations-Hinweis (08.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go)
+     Anlass: 08.11. 170 Geräte, nur 67 angemeldet, nur 15 installiert.
+     (1) Gastmodus: Startbildschirm-Knopf „Erst ausprobieren – 5 Fragen ohne Anmeldung“ → eigenes Fenster #pl-gast
+         mit 5 Fragen aus QUIZ_FRAGEN (leicht/mittel), danach „Jetzt kostenlos loslegen“ (startHeroCTA). Kein Login, nichts gespeichert.
+         Schalter PL_GAST_PUBLIC=false; Test vor Go: ?gasttest=1 (sessionStorage plan_gasttest) oder eigenes Gerät (pl_nicht_zaehlen=1).
+     (2) Installations-Hinweis: ab dem 2. Quiz-Ergebnis, nicht installiert/nicht Android-App, nur Handy, max. 2× mit 7 Tagen Abstand,
+         nicht wenn gerade ein anderes Fenster offen ist; Android → installApp(), iPhone → Anleitung. Neuer Key pl_install_frage {n,at}.
+         Schalter PL_INSTALL_PUBLIC=false (Admin sieht ihn). GA: gast_start, gast_fertig {richtig}, gast_weiter, install_frage {antwort}. -->
+<script>
+(function(){
+  window.PL_GAST_PUBLIC = false;
+  window.PL_INSTALL_PUBLIC = false;
+  function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  try{ if(/[?&]gasttest=1/.test(location.search)) sessionStorage.setItem('plan_gasttest','1'); }catch(e){}
+  function gastAn(){ try{ return window.PL_GAST_PUBLIC===true || sessionStorage.getItem('plan_gasttest')==='1' || ls('pl_nicht_zaehlen')==='1'; }catch(e){ return false; } }
+
+  /* ---------- (1) Gastmodus ---------- */
+  var KATS_GAST=/^(innere|chirurgie|hygiene|notfall|pharmakologie|prophylaxen|ana_|its_|geriatrie|altenpflege|paediatrie|neurologie)/;
+  function fragen(){
+    var Q=(typeof QUIZ_FRAGEN!=='undefined'&&QUIZ_FRAGEN)||[], pool=Q.filter(function(q){ return q&&q.opt&&q.opt.length===4&&q.s!=='schwer'&&KATS_GAST.test(q.kat||''); });
+    if(pool.length<5) pool=Q.filter(function(q){ return q&&q.opt&&q.opt.length===4; });
+    var aus=[]; while(aus.length<5&&pool.length){ aus.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
+    return aus;
+  }
+  function stil(){
+    if(document.getElementById('pl-gast-st')) return;
+    var st=document.createElement('style'); st.id='pl-gast-st';
+    st.textContent='#pl-gast{position:fixed;inset:0;z-index:3000;background:rgba(2,10,20,.94);display:flex;align-items:center;justify-content:center;padding:16px;font-family:inherit;color:#e6eef7}'
+     +'#pl-gast .k{background:linear-gradient(160deg,#0c2642,#07162a);border:1px solid rgba(52,211,153,.3);border-radius:18px;padding:20px 18px;max-width:420px;width:100%;max-height:92vh;overflow:auto;position:relative}'
+     +'#pl-gast .x{position:absolute;top:8px;right:10px;background:none;border:0;color:#9fc3da;font-size:22px;cursor:pointer;padding:6px}'
+     +'#pl-gast .bar{height:5px;border-radius:3px;background:rgba(255,255,255,.1);margin:6px 0 14px}#pl-gast .bar i{display:block;height:100%;border-radius:3px;background:#34d399}'
+     +'#pl-gast .f{font-size:16.5px;font-weight:700;line-height:1.45;margin-bottom:12px}'
+     +'#pl-gast .o{display:block;width:100%;text-align:left;margin:0 0 8px;padding:12px 13px;border-radius:12px;border:1.5px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#e6eef7;font-size:14.5px;line-height:1.4;cursor:pointer;font-family:inherit}'
+     +'#pl-gast .o.r{border-color:#34d399;background:rgba(52,211,153,.18)}#pl-gast .o.w{border-color:#f59e0b;background:rgba(245,158,11,.16)}'
+     +'#pl-gast .e{font-size:13.5px;line-height:1.5;color:#b3c4d6;background:rgba(255,255,255,.05);border-radius:10px;padding:10px 12px;margin:4px 0 12px}'
+     +'#pl-gast .h{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#34d399,#10b981);color:#04221a;font-size:15.5px;font-weight:900;cursor:pointer;font-family:inherit}'
+     +'#pl-gast .n{width:100%;padding:10px;border:0;background:none;color:#7fa6c2;font-size:13px;cursor:pointer;font-family:inherit;margin-top:6px}';
+    document.head.appendChild(st);
+  }
+  var F=[], i=0, richtig=0;
+  function zeige(){
+    var o=document.getElementById('pl-gast'); if(!o) return;
+    var q=F[i], k=o.querySelector('.k');
+    k.innerHTML='<button class="x" aria-label="Schließen" onclick="plGastZu()">×</button>'
+      +'<div style="font-size:12px;color:#9fc3da;font-weight:700">Frage '+(i+1)+' von '+F.length+' · ohne Anmeldung</div>'
+      +'<div class="bar"><i style="width:'+(i/F.length*100)+'%"></i></div>'
+      +'<div class="f">'+esc(q.frage)+'</div>'
+      +q.opt.map(function(t,j){ return '<button class="o" data-j="'+j+'">'+String.fromCharCode(65+j)+') '+esc(t)+'</button>'; }).join('')
+      +'<div id="pl-gast-unten"></div>';
+    [].forEach.call(k.querySelectorAll('.o'),function(b){ b.onclick=function(){ antwort(+b.getAttribute('data-j')); }; });
+  }
+  function antwort(j){
+    var o=document.getElementById('pl-gast'); if(!o||o._fertig) return;
+    var q=F[i], bt=o.querySelectorAll('.o'); if(bt[0].disabled) return;
+    [].forEach.call(bt,function(b){ b.disabled=true; });
+    bt[q.k].classList.add('r'); if(j!==q.k) bt[j].classList.add('w'); else richtig++;
+    document.getElementById('pl-gast-unten').innerHTML=(q.erkl?'<div class="e">'+(j===q.k?'✅ Richtig! ':'Fast – ')+esc(q.erkl)+'</div>':'')
+      +'<button class="h" id="pl-gast-w">'+(i<F.length-1?'Nächste Frage →':'Ergebnis ansehen')+'</button>';
+    document.getElementById('pl-gast-w').onclick=function(){ if(++i<F.length) zeige(); else ende(); };
+  }
+  function ende(){
+    var o=document.getElementById('pl-gast'); if(!o) return; o._fertig=1;
+    ga('gast_fertig',{richtig:richtig});
+    var txt=richtig>=4?'Stark! Du bist gut dabei.':richtig>=2?'Gut gemacht – da geht noch mehr.':'Kein Problem – genau dafür ist PLAN da.';
+    o.querySelector('.k').innerHTML='<button class="x" aria-label="Schließen" onclick="plGastZu()">×</button>'
+      +'<div style="text-align:center"><div style="font-size:38px">'+(richtig>=4?'🎉':'💪')+'</div>'
+      +'<div style="font-size:22px;font-weight:900;margin:4px 0">'+richtig+' von '+F.length+' richtig</div>'
+      +'<div style="font-size:14px;color:#b3c4d6;line-height:1.55;margin-bottom:14px">'+txt+'<br>In PLAN warten 2.000+ Prüfungsfragen, Fallbeispiele, Medikamente und der Perfusor-Rechner – aktuell kostenlos.</div></div>'
+      +'<button class="h" id="pl-gast-los">Jetzt kostenlos loslegen</button>'
+      +'<button class="n" id="pl-gast-nochmal">Noch 5 Fragen ausprobieren</button>';
+    document.getElementById('pl-gast-los').onclick=function(){ ga('gast_weiter',{weg:'loslegen'}); o.remove(); try{ window.startHeroCTA(); }catch(e){} };
+    document.getElementById('pl-gast-nochmal').onclick=function(){ ga('gast_weiter',{weg:'nochmal'}); o.remove(); window.plGastStart(); };
+  }
+  window.plGastZu=function(){ var o=document.getElementById('pl-gast'); if(o) o.remove(); };
+  window.plGastStart=function(){
+    F=fragen(); i=0; richtig=0; if(!F.length) return;
+    stil(); window.plGastZu();
+    var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog'); o.innerHTML='<div class="k"></div>';
+    document.body.appendChild(o); zeige(); ga('gast_start',{});
+  };
+  function knopf(){
+    if(!gastAn()||document.getElementById('pl-gast-btn')) return;
+    var lb=document.getElementById('pl-login-btn'); if(!lb) return;
+    var b=document.createElement('button'); b.id='pl-gast-btn'; b.type='button';
+    b.style.cssText='width:100%;max-width:340px;margin-top:12px;background:none;border:0;color:#9fd8ff;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:3px;padding:6px';
+    b.textContent='Erst ausprobieren – 5 Fragen ohne Anmeldung';
+    b.onclick=window.plGastStart;
+    lb.parentNode.insertBefore(b,lb.nextSibling);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',knopf); else knopf();
+
+  /* ---------- (2) Installations-Hinweis ---------- */
+  function installAn(){ try{ return window.PL_INSTALL_PUBLIC===true || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
+  function installiert(){
+    try{ if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone) return true; }catch(e){}
+    try{ if(ls('pl_is_twa')==='1'||(document.referrer||'').indexOf('android-app://')===0) return true; }catch(e){}
+    return false;
+  }
+  function ios(){ return /iPad|iPhone|iPod/.test(navigator.userAgent); }
+  function android(){ return /Android/.test(navigator.userAgent); }
+  function prompt_(){ try{ return deferredPrompt; }catch(e){ return null; } }
+  function fensterOffen(){
+    var W=innerWidth*.9, H=innerHeight*.9, alle=document.body.children;
+    for(var x=0;x<alle.length;x++){ var el=alle[x]; try{ var cs=getComputedStyle(el); if(cs.position==='fixed'&&cs.display!=='none'&&cs.visibility!=='hidden'&&+cs.opacity>0.05&&el.offsetWidth>=W&&el.offsetHeight>=H) return true; }catch(e){} }
+    return !!document.querySelector('.plc-sheet.in,#pl-tour-back,#pl-tour-frage');
+  }
+  function darf(){
+    if(!installAn()||installiert()) return false;
+    if(!(ios()||android())) return false;
+    var pr={}; try{ pr=JSON.parse(ls('pl_progress_v2')||'{}'); }catch(e){}
+    if((pr.quizTotal||0)<2) return false;
+    var d={}; try{ d=JSON.parse(ls('pl_install_frage')||'{}'); }catch(e){}
+    if((d.n||0)>=2||(d.at&&Date.now()-d.at<7*864e5)) return false;
+    return true;
+  }
+  function hinweis(){
+    if(!darf()||fensterOffen()) return;
+    if(window.plRuhe&&window.plRuhe('install')) return;
+    var d={}; try{ d=JSON.parse(ls('pl_install_frage')||'{}'); }catch(e){}
+    ls('pl_install_frage',JSON.stringify({n:(d.n||0)+1,at:Date.now()}));
+    var p=prompt_(), anl=ios()?'Tippe unten in Safari auf <b>Teilen</b> (□↑) und dann auf <b>„Zum Home-Bildschirm“</b>.'
+      :(p?'':'Tippe in Chrome oben rechts auf <b>⋮</b> und dann auf <b>„Zum Startbildschirm hinzufügen“</b>.');
+    stil();
+    var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog');
+    o.innerHTML='<div class="k" style="text-align:center"><div style="font-size:34px">📲</div>'
+      +'<div style="font-size:19px;font-weight:800;margin:4px 0 6px">PLAN auf deinen Startbildschirm?</div>'
+      +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6;margin-bottom:14px">Dann ist PLAN mit einem Tipp da – wie eine App, ohne Store und ohne Speicherfresser.'+(anl?'<br><br>'+anl:'')+'</div>'
+      +(p?'<button class="h" id="pl-in-ja">Ja, hinzufügen</button>':'<button class="h" id="pl-in-ok">Verstanden</button>')
+      +'<button class="n" id="pl-in-nein">Später</button></div>';
+    document.body.appendChild(o);
+    var ja=document.getElementById('pl-in-ja');
+    if(ja) ja.onclick=function(){ o.remove(); ga('install_frage',{antwort:'ja'}); try{ installApp(); }catch(e){} };
+    var ok=document.getElementById('pl-in-ok'); if(ok) ok.onclick=function(){ o.remove(); ga('install_frage',{antwort:'anleitung'}); };
+    document.getElementById('pl-in-nein').onclick=function(){ o.remove(); ga('install_frage',{antwort:'spaeter'}); };
+  }
+  function wrap(){
+    var orig=window.showResult;
+    if(typeof orig!=='function'||orig._plInstall) return;
+    var neu=function(){ var r=orig.apply(this,arguments); setTimeout(hinweis,5200); return r; };
+    neu._plInstall=true; for(var k in orig) try{ neu[k]=orig[k]; }catch(e){}
+    window.showResult=neu;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(wrap,1200); }); else setTimeout(wrap,1200);
+})();
+</script>
+
 </body>
 </html>
