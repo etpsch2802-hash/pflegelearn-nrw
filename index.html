@@ -23681,15 +23681,29 @@ window.renderWebBesucher=function(force){
     naechster();
   };
   // Erststart: erst wenn der Nutzer eingeloggt und wirklich in der App ist
+  // 08.11.2026: Tour/Frage erst, wenn kein anderes Fenster offen ist (Willkommensfolien, Rollenfrage, Tagesfrage,
+  // Prüfungsdatum …) – sonst lag der Ring auf Abschnitten dieser Fenster und sprang hin und her.
+  function blockiert(){
+    try{
+      var e=document.querySelector('#onboarding-overlay,.plc-sheet.in,.plc-sheet-bg.in,#push-modal,#pl-zugang-hint,#pl-mailgate,#pl-insta-hi,#pl-kurs-teilen,#pl-push-frage'); if(e&&e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden') return true;
+      var W=innerWidth*.9, H=innerHeight*.9, alle=document.body.children;
+      for(var k=0;k<alle.length;k++){ var x=alle[k]; if(/^pl-tour-/.test(x.id)) continue;
+        var cs=getComputedStyle(x); if(cs.position==='fixed'&&cs.display!=='none'&&cs.visibility!=='hidden'&&+cs.opacity>0.05&&x.offsetWidth>=W&&x.offsetHeight>=H) return true; }
+    }catch(err){}
+    return false;
+  }
+  var frei=0;
   var v=0, w=setInterval(function(){
-    if(++v>40){ clearInterval(w); return; }
+    if(++v>200){ clearInterval(w); return; }
+    if(blockiert()){ frei=0; return; }
+    if(++frei<2) return;
     if(done()||running) { clearInterval(w); return; }
     var aktiv=document.querySelector('.page.active');
     // currentUser ist mit let deklariert und haengt NICHT an window (Fix 08.10.2026: Autostart lief vorher nie)
     var _cu=null; try{ _cu=(typeof currentUser!=='undefined')?currentUser:null; }catch(e){}
     if(_cu && aktiv && aktiv.id==='screen-home' && sichtbar(el('bottom-nav'))){
       clearInterval(w);
-      setTimeout(function(){ if(!done()) window.plTourStart(false); },1400);
+      (function versuch(nr){ setTimeout(function(){ if(done()) return; if(!blockiert()) window.plTourStart(false); else if(nr<200) versuch(nr+1); }, nr?1500:1400); })(0);
     }
   },1500);
 })();
