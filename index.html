@@ -30268,6 +30268,13 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 #plgs .ziel .m.nein{background:rgba(251,146,60,.18);color:#fb923c}
 #plgs .ziel em{display:block;font-style:normal;font-size:12px;color:#93b4cc;margin-top:2px}
 #plgs .punkte{font-size:40px;font-weight:900;color:var(--accent,#38bdf8);line-height:1}
+#plgs .unter .tipp{border-color:rgba(250,204,21,.5);color:#facc15;padding:3px 8px;margin-left:4px}
+#plgs .coach{background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.4);border-radius:14px;padding:12px 13px;margin:12px 0}
+#plgs .coach small{display:block;font-size:10.5px;letter-spacing:1px;font-weight:800;color:#facc15;margin-bottom:5px}
+#plgs .coach .h{font-size:13.5px;line-height:1.5;color:#fef3c7}
+#plgs .coach .s{font-size:14px;line-height:1.5;color:#fff;font-style:italic;margin-top:7px}
+#plgs .coach .ueb{margin-top:9px;margin-right:6px;background:rgba(250,204,21,.18);border:1px solid rgba(250,204,21,.5);color:#fde68a;border-radius:10px;padding:7px 11px;font:700 12.5px 'DM Sans',sans-serif;cursor:pointer}
+#plgs .coach .ueb.g{background:none;border-color:rgba(52,211,153,.5);color:#34d399}
 #plgs .beispiel{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.35);border-radius:12px;padding:12px;font-size:14px;line-height:1.55;color:#d1fae5;font-style:italic}
 </style>
 <div id="plgs" role="dialog" aria-modal="true" aria-label="Patientengespräch üben"></div>
@@ -30290,7 +30297,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     { id:'aufnahme', ic:'🛏️', titel:'Aufnahmegespräch', kurz:'Neue Patientin auf Station, etwas schwerhörig und unsicher',
       wer:'Frau Berger, 78 Jahre', av:'👵',
       lage:'Frau Berger kommt mit einer Lungenentzündung von der Notaufnahme auf deine Station. Du führst das pflegerische Aufnahmegespräch.',
-      rolle:'Du bist Frau Gisela Berger, 78 Jahre, verwitwet, lebst allein in einer Wohnung im 2. Stock. Du hast eine Lungenentzündung, bist erschöpft, hustest und bist etwas schwerhörig auf dem linken Ohr. Du bist höflich, aber unsicher, weil du zum ersten Mal im Krankenhaus bist.',
+      rolle:'Du bist Frau Gisela Berger, 78 Jahre, verwitwet, lebst allein in einer Wohnung im 2. Stock. Du hast eine Lungenentzündung, bist erschöpft und hustest. Du hörst auf dem linken Ohr schlecht: Wenn jemand leise, schnell oder undeutlich spricht, fragst du nach („Wie bitte?“). Schmerzen am Ohr hast du nicht. Du bist höflich, aber unsicher, weil du zum ersten Mal im Krankenhaus bist.',
       geheim:'Penicillin-Allergie (Hautausschlag). Medikamente: Ramipril morgens, ASS 100. Du gehst mit Rollator, bist zu Hause zweimal gestürzt. Deine Tochter Petra kümmert sich um dich. Du trägst eine Brille und hast eine Teilprothese oben. Du hast Angst, nachts nicht zur Toilette zu finden.',
       start:'Guten Tag … sind Sie die Schwester? Ich weiß gar nicht genau, was jetzt hier passiert.',
       ziele:['Stellt sich mit Namen und Funktion vor','Spricht deutlich, prüft, ob sie gut verstanden wird','Fragt nach Allergien','Fragt nach Medikamenten','Fragt nach Mobilität oder Stürzen','Fragt nach Hilfsmitteln (Brille, Prothese, Hörgerät)','Erklärt Klingel und Orientierung im Zimmer','Fasst zusammen oder fragt nach offenen Fragen'] },
@@ -30345,7 +30352,133 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       ziele:['Bleibt ruhig und spricht langsam','Greift das Gefühl auf (Sorge um die Kinder, Pflichtgefühl)','Korrigiert und streitet nicht über die Realität','Fragt nach Erinnerungen oder nutzt Biografie (Kinder, Kochen)','Lügt nicht direkt, bleibt wertschätzend','Lenkt behutsam um (z. B. gemeinsam etwas tun, begleiten)'] }
   ];
 
-  var aktiv = null, verlauf = [], zuege = 0, wartet = false, erkennung = null;
+  /* Beispielgespräche (08.11.2026): eine von vielen guten Möglichkeiten, deckt alle Gesprächsziele ab.
+     p = Pflegekraft, x = Gegenüber. Fachliche Freigabe durch P. Schenkelberger vor Go. */
+  var MUSTER = {
+    aufnahme: [
+      ['p','Guten Tag, Frau Berger. Ich bin Lisa, Pflegefachkraft hier auf der Station, und betreue Sie heute. Verstehen Sie mich gut, wenn ich so spreche?'],
+      ['x','Etwas lauter bitte, links höre ich schlecht.'],
+      ['p','Dann setze ich mich auf Ihre rechte Seite. Ich würde Ihnen gern ein paar Fragen stellen, damit wir Sie gut versorgen können. Passt das gerade?'],
+      ['x','Ja, natürlich.'],
+      ['p','Haben Sie Allergien oder Unverträglichkeiten, zum Beispiel gegen Medikamente?'],
+      ['x','Gegen Penicillin, da bekomme ich Ausschlag.'],
+      ['p','Danke, das trage ich gleich ein. Welche Medikamente nehmen Sie zu Hause regelmäßig?'],
+      ['x','Morgens Ramipril und eine ASS 100.'],
+      ['p','Wie kommen Sie zu Hause zurecht? Gehen Sie allein oder mit Hilfsmittel? Sind Sie in letzter Zeit gestürzt?'],
+      ['x','Ich habe einen Rollator. Zweimal bin ich gestürzt.'],
+      ['p','Dann klingeln Sie bitte, bevor Sie aufstehen, gerade nachts. Wir begleiten Sie. Tragen Sie eine Brille, ein Hörgerät oder eine Zahnprothese?'],
+      ['x','Eine Brille und oben eine Teilprothese.'],
+      ['p','Hier ist Ihre Klingel, hier das Licht, und die Toilette ist gleich rechts neben der Tür. Nachts lassen wir ein kleines Licht an.'],
+      ['x','Das beruhigt mich. Ich hatte Angst, die Toilette nicht zu finden.'],
+      ['p','Ich fasse kurz zusammen: Penicillin-Allergie, Ramipril und ASS, Rollator, zwei Stürze, Brille und Teilprothese. Stimmt das so, und haben Sie noch Fragen?'],
+      ['x','Ja, das stimmt. Danke, das war sehr freundlich.']
+    ],
+    schmerz: [
+      ['p','Guten Morgen, Herr Yilmaz, ich bin Tom, Ihre Pflegefachkraft heute. Sie haben geklingelt – was kann ich für Sie tun?'],
+      ['x','Ist nicht so schlimm, aber es zieht ganz schön.'],
+      ['p','Das nehme ich ernst. Auf einer Skala von 0 bis 10 – 0 heißt keine Schmerzen, 10 die stärksten vorstellbaren: Wie stark ist es gerade in Ruhe?'],
+      ['x','So eine 4.'],
+      ['p','Und wenn Sie sich bewegen, zum Beispiel das Bein ein wenig anwinkeln?'],
+      ['x','Dann eher eine 7.'],
+      ['p','Wo genau tut es weh, und wie fühlt es sich an – eher ziehend, stechend oder brennend?'],
+      ['x','An der rechten Hüfte. Ziehend, manchmal stechend.'],
+      ['p','Seit wann ist es stärker geworden?'],
+      ['x','Seit ungefähr einer Stunde.'],
+      ['p','Konnten Sie heute Nacht schlafen? Und wie klappt es mit dem Bewegen?'],
+      ['x','Kaum geschlafen. Und gleich kommt die Physio, davor hab ich Angst.'],
+      ['p','Wann haben Sie zuletzt etwas gegen die Schmerzen bekommen, und hat es geholfen?'],
+      ['x','Um sechs eine Tablette. Hat etwas geholfen.'],
+      ['p','Ich schaue gleich, was für Sie als Bedarfsmedikation angeordnet ist, und spreche bei Bedarf mit der Ärztin. Vor der Physiotherapie sollen die Schmerzen gut eingestellt sein. Außerdem lagere ich Ihr Bein bequemer.'],
+      ['x','Das wäre gut.'],
+      ['p','In etwa einer halben Stunde frage ich noch einmal nach, wie stark die Schmerzen dann sind. Klingeln Sie gern vorher, wenn es schlimmer wird.']
+    ],
+    angehoerige: [
+      ['p','Guten Tag, ich bin Lisa, Pflegefachkraft auf dieser Station und heute für Ihren Vater zuständig. Ich sehe, dass Sie sich große Sorgen machen.'],
+      ['x','Sorgen? Ich bin wütend! Er hat eine Wunde am Kopf!'],
+      ['p','Das verstehe ich. Es ist erschreckend, den eigenen Vater so zu sehen. Bevor ich Ihnen Auskunft gebe, muss ich kurz fragen: Haben Sie eine Vollmacht für Ihren Vater?'],
+      ['x','Ja, ich habe eine Vorsorgevollmacht.'],
+      ['p','Danke. Ihr Vater ist heute Nacht in seinem Zimmer gestürzt. Er wurde schnell gefunden, die Ärztin hat ihn untersucht und die Platzwunde versorgt.'],
+      ['x','Und warum passt hier keiner auf?'],
+      ['p','Ich kann Ihren Ärger gut verstehen. Wir sehen regelmäßig nach ihm, können aber nicht dauerhaft im Zimmer sein. Damit es möglichst nicht wieder passiert, haben wir Maßnahmen zur Sturzvorbeugung besprochen, zum Beispiel ein niedrig gestelltes Bett, ein Nachtlicht, rutschfeste Socken und häufigere Rundgänge in der Nacht.'],
+      ['x','Hätte man mich nicht anrufen können?'],
+      ['p','Das nehme ich auf. Wenn Sie möchten, notieren wir, dass Sie bei einem solchen Ereignis auch nachts angerufen werden. Welche Nummer soll ich eintragen?'],
+      ['x','Meine Handynummer, ja bitte.'],
+      ['p','Mache ich. Möchten Sie heute noch mit der Stationsärztin sprechen? Ich frage gern nach einem Termin.'],
+      ['x','Ja, das wäre gut. Entschuldigung, dass ich so laut war.'],
+      ['p','Schon gut. Sie haben sich Sorgen um Ihren Vater gemacht, das ist verständlich.']
+    ],
+    ablehnung: [
+      ['p','Guten Abend, Herr Schulz. Sie möchten die Spritze heute nicht – darf ich fragen, was Sie daran stört?'],
+      ['x','Mein Bauch ist überall blau. Und die verdünnt doch das Blut viel zu sehr.'],
+      ['p','Das sind berechtigte Fragen. Darf ich mir die blauen Flecken einmal ansehen?'],
+      ['x','Bitte.'],
+      ['p','Die Spritze soll verhindern, dass sich nach der Knie-OP in den Beinvenen ein Blutgerinnsel bildet, weil Sie gerade weniger laufen. Kleine blaue Flecken an der Einstichstelle kommen dabei häufig vor und sind meist harmlos.'],
+      ['x','Und wenn ich trotzdem nicht will?'],
+      ['p','Das ist Ihre Entscheidung, und ich respektiere sie. Dann würde ich die Ärztin informieren und Ihre Entscheidung dokumentieren. Ich hätte aber einen Vorschlag: Wir können eine andere Einstichstelle nehmen, zum Beispiel den Oberschenkel, wenn das bei Ihnen möglich ist.'],
+      ['x','Am Oberschenkel? Das ginge.'],
+      ['p','Gut. Wenn Sie zur Blutverdünnung noch Fragen haben, sage ich der Ärztin Bescheid, damit sie mit Ihnen spricht. Den Wechsel der Einstichstelle dokumentiere ich.'],
+      ['x','Na gut, dann machen wir das so.']
+    ],
+    insulin: [
+      ['p','Frau Krämer, ich bin Sarah und zeige Ihnen heute, wie Sie zu Hause mit dem Pen spritzen. Was wissen Sie schon darüber?'],
+      ['x','Eigentlich nichts. Und ich hab Angst vor der Nadel.'],
+      ['p','Das geht vielen am Anfang so. Die Nadel ist sehr kurz und dünn. Wir gehen alles in kleinen Schritten durch, und Sie dürfen jederzeit unterbrechen.'],
+      ['x','Gut.'],
+      ['p','Gespritzt wird ins Unterhautfettgewebe, meistens am Bauch oder am Oberschenkel. Wichtig: Wechseln Sie die Stelle jedes Mal ein Stück. Sonst verhärtet die Haut, und das Insulin wirkt schlechter.'],
+      ['x','Oh, ich hätte immer dieselbe Stelle genommen.'],
+      ['p','Gut, dass wir darüber sprechen. Jetzt zur Unterzuckerung: Zittern, Schwitzen, Herzklopfen, Heißhunger oder Verwirrtheit können Zeichen dafür sein.'],
+      ['x','Und was mache ich dann?'],
+      ['p','Dann sofort schnellen Zucker nehmen, zum Beispiel Traubenzucker oder ein Glas Saft, und danach den Blutzucker messen. Tragen Sie immer Traubenzucker bei sich.'],
+      ['x','Ja, ja.'],
+      ['p','Damit ich sicher bin, dass ich es gut erklärt habe: Können Sie mir mit eigenen Worten sagen, wo Sie spritzen und was Sie bei einer Unterzuckerung tun?'],
+      ['x','Bauch oder Oberschenkel, jedes Mal woanders. Und wenn ich zittere, Traubenzucker essen und messen.'],
+      ['p','Genau so. Möchten Sie, dass Ihr Mann beim nächsten Termin dabei ist? Bei Fragen zu Hause sind Ihre Hausarztpraxis und die Diabetesberatung für Sie da.'],
+      ['x','Ja, das wäre gut. Er kocht ja auch.']
+    ],
+    angst: [
+      ['p','Kein Problem, dafür bin ich da. Ich bin Mia aus dem Nachtdienst. Mögen Sie mir erzählen, was Sie wach hält?'],
+      ['x','Weiß nicht … ich denk die ganze Zeit an morgen.'],
+      ['p','Das ist vor einer Operation ganz normal. Was genau geht Ihnen durch den Kopf?'],
+      ['x','Ehrlich gesagt hab ich Angst vor der Narkose. Mein Onkel hatte nach einer OP Probleme. Was, wenn ich nicht aufwache?'],
+      ['p','Danke, dass Sie das so offen sagen. Die Sorge ist verständlich, dafür müssen Sie sich nicht schämen.'],
+      ['x','Es kann ja nichts passieren, oder?'],
+      ['p','Ganz ausschließen kann man nie alles, das wäre nicht ehrlich. Aber Sie werden während der ganzen Narkose ununterbrochen überwacht. Ihre Fragen zur Narkose kann Ihnen die Narkoseärztin am besten beantworten. Ich sage ihr Bescheid, damit sie morgen vor der OP noch einmal zu Ihnen kommt.'],
+      ['x','Das wäre gut. Und ab wann darf ich nichts mehr essen?'],
+      ['p','Ich schaue gleich in Ihren Unterlagen nach, ab wann Sie nüchtern sein müssen und bis wann Sie noch etwas trinken dürfen, und sage es Ihnen genau.'],
+      ['x','Okay.'],
+      ['p','Morgen früh wecken wir Sie, Sie ziehen das OP-Hemd an, und dann werden Sie abgeholt. Möchten Sie noch etwas, um besser schlafen zu können? Ich kann nachsehen, ob etwas zum Schlafen angeordnet ist.'],
+      ['x','Ja, vielleicht. Danke, dass Sie sich Zeit genommen haben.']
+    ],
+    sbar: [
+      ['p','Guten Abend, Herr Dr. Wagner. Hier ist Lisa, Pflegefachkraft von der Chirurgie. Ich rufe an wegen Frau Lange: Sie hat plötzlich Atemnot.'],
+      ['x','Okay, erzählen Sie.'],
+      ['p','Frau Lange ist 71 Jahre alt und am zweiten Tag nach einer Darmoperation.'],
+      ['x','Werte?'],
+      ['p','Atemfrequenz 28 pro Minute, Sauerstoffsättigung 89 Prozent ohne Sauerstoff, Puls 112, Blutdruck 105 zu 70, Temperatur 38,4 Grad. Sie ist wach, aber ängstlich. Ich habe den Oberkörper hochgelagert.'],
+      ['x','Und was denken Sie?'],
+      ['p','Ich mache mir Sorgen, dass sich ihr Zustand verschlechtert – ich denke an eine Lungenentzündung oder eine Lungenembolie.'],
+      ['x','Was brauchen Sie von mir?'],
+      ['p','Ich bitte Sie, sie sich jetzt anzusehen. Soll ich bis dahin Sauerstoff geben?'],
+      ['x','Ja, 2 Liter über Nasenbrille, Blutgasanalyse und Röntgen-Thorax vorbereiten. Ich komme in 15 Minuten.'],
+      ['p','Ich wiederhole: 2 Liter Sauerstoff über Nasenbrille, Blutgasanalyse und Röntgen-Thorax vorbereiten, Sie kommen in 15 Minuten. Bis dahin messe ich die Werte weiter und rufe sofort an, wenn es schlechter wird.'],
+      ['x','Genau so. Danke.']
+    ],
+    demenz: [
+      ['p','(ruhig, auf Augenhöhe) Frau Weber, ich sehe, Sie wollen los. Sie machen sich Sorgen um Ihre Kinder.'],
+      ['x','Ja! Die kommen gleich aus der Schule, und es ist nichts gekocht!'],
+      ['p','Sie sind eine Mutter, die immer für ihre Kinder da war. Wie heißen Ihre Kinder denn?'],
+      ['x','Uwe, Monika und Karin.'],
+      ['p','Drei Kinder – da hatten Sie viel zu tun. Was haben Sie denn am liebsten für sie gekocht?'],
+      ['x','Rinderrouladen! Die mochten alle.'],
+      ['p','Rouladen, das klingt nach viel Arbeit und viel Liebe. Wie haben Sie die gemacht?'],
+      ['x','Mit Gurke und Speck, und die Soße ganz lange schmoren … (wird ruhiger)'],
+      ['p','Darf ich Sie ein Stück begleiten? Wir könnten uns in die Küche setzen, dort wird gerade das Abendessen vorbereitet, und Sie erzählen mir mehr von Ihren Rouladen.'],
+      ['x','Ja … aber nur kurz.'],
+      ['p','Gern. Ich gehe mit Ihnen.']
+    ]
+  };
+
+  var aktiv = null, verlauf = [], zuege = 0, wartet = false, erkennung = null, coachLaeuft = false;
   function el(id){ return document.getElementById(id); }
   function name(){ try{ var n = (typeof currentUser !== 'undefined' && currentUser && (currentUser.name || currentUser)) || localStorage.getItem('pl_user_name') || ''; return String(n).split(' ')[0] || ''; }catch(e){ return ''; } }
 
@@ -30377,6 +30510,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       + '<div class="lage"><small>DARAUF ACHTET DIE AUSWERTUNG</small><ul class="ziele">' + f.ziele.map(function(z){ return '<li>' + esc(z) + '</li>'; }).join('') + '</ul></div>'
       + '<p style="font-size:13px">Du hast bis zu ' + MAX_ZUEGE + ' Antworten. Beende das Gespräch, wenn du fertig bist.</p>'
       + '<button class="btn" onclick="plGespraechStart()">Gespräch beginnen</button>'
+      + '<button class="btn g" onclick="plGespraechMuster()">Erst ein Beispielgespräch ansehen</button>'
       + '<button class="btn g" onclick="plGespraechListe()">Anderen Fall wählen</button>';
     rahmen(f.titel, f.wer, h);
   }
@@ -30389,6 +30523,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       + ' REGELN: Bleib immer in deiner Rolle. Antworte nur als diese Person, auf Deutsch, in 1 bis 3 kurzen Sätzen, natürlich und alltagsnah, so wie diese Person wirklich spricht.'
       + ' Keine Regieanweisungen in Sternchen, keine Aufzählungen, keine Erklärungen außerhalb der Rolle, keine Bewertung des Gesprächs.'
       + ' Reagiere realistisch: Wenn du gut behandelt wirst (Vorstellung, Zuhören, Verständnis), wirst du offener; bei Fachsprache fragst du nach, was das heißt; bei Druck reagierst du ablehnend.'
+      + ' Gib pro Antwort höchstens die Information preis, nach der gerade gefragt wurde, nicht alles auf einmal.'
       + ' Erfinde keine neuen Diagnosen oder Werte, die der Situation widersprechen.';
   }
 
@@ -30402,7 +30537,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   function runter(){ var r = el('plgs-r'); if(r) setTimeout(function(){ r.scrollTop = r.scrollHeight; }, 30); }
   function unterzeile(){
     var u = el('plgs-u'); if(!u) return;
-    u.innerHTML = '<span>Antwort ' + zuege + ' von ' + MAX_ZUEGE + '</span>' + (zuege >= MIN_ZUEGE ? '<button onclick="plGespraechEnde()">Gespräch beenden & auswerten</button>' : '<span>Auswertung ab ' + MIN_ZUEGE + ' Antworten</span>');
+    u.innerHTML = '<span>Antwort ' + zuege + ' von ' + MAX_ZUEGE + ' · <button class="tipp" onclick="plGespraechTipp()">💡 Tipp</button></span>' + (zuege >= MIN_ZUEGE ? '<button onclick="plGespraechEnde()">Gespräch beenden & auswerten</button>' : '<span>Auswertung ab ' + MIN_ZUEGE + ' Antworten</span>');
   }
 
   function start(){
@@ -30433,6 +30568,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     callKI(verlauf.slice(-16), systemPrompt(aktiv)).then(function(r){
       r = String(r || '').replace(/<think>[\s\S]*?<\/think>/g, '').replace(/^\s*\*[^*]+\*\s*/g, '').trim();
       verlauf.push({ role:'assistant', content: r }); blase('p', r);
+      if(zuege === 4 || zuege === 8) coach(false);
     }).catch(function(e){
       blase('p', e && e.kiLimit ? '⏳ Die KI ist für heute ausgelastet. Bitte versuch es morgen wieder.' : '(Verbindung unterbrochen – bitte die Antwort noch einmal senden.)');
       if(!(e && e.kiLimit)){ zuege--; verlauf.pop(); unterzeile(); }
@@ -30481,8 +30617,71 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       h += '<div class="lage"><small>RÜCKMELDUNG</small><div style="white-space:pre-wrap">' + esc(roh) + '</div></div>';
     }
     h += '<p style="font-size:12px;margin-top:6px">Die Auswertung macht eine KI und kann sich irren. Sie ist eine Übungshilfe, keine Note.</p>'
-      + '<button class="btn" onclick="plGespraechStart()">Fall noch einmal üben</button><button class="btn g" onclick="plGespraechListe()">Anderen Fall wählen</button>';
+      + '<button class="btn" onclick="plGespraechMuster()">So könnte es gut laufen – Beispielgespräch</button>'
+      + '<button class="btn g" onclick="plGespraechStart()">Fall noch einmal üben</button><button class="btn g" onclick="plGespraechListe()">Anderen Fall wählen</button>';
     rahmen('Auswertung', f.titel, '<h2>' + f.ic + ' ' + esc(f.titel) + '</h2>' + h);
+  }
+
+  /* Gesprächs-Coach (08.11.2026, Wunsch P. Schenkelberger: „Wenn man zu doll abschweift, muss man sehen, wie es richtig gemacht wird“).
+     manuell = Knopf „Tipp“ (zeigt immer einen Hinweis); automatisch nach Antwort 4 und 8 nur, wenn die KI ein Abschweifen erkennt. */
+  function coach(manuell){
+    if(!aktiv || coachLaeuft) return;
+    var f = aktiv; coachLaeuft = true;
+    var protokoll = verlauf.map(function(m){ return (m.role === 'user' ? 'PFLEGEKRAFT: ' : 'GEGENÜBER: ') + m.content; }).join('\n');
+    if(manuell){ var w0 = el('plgs-w'), t0 = document.createElement('div'); t0.className = 'tippt'; t0.id = 'plgs-coach-l'; t0.textContent = 'Tipp wird erstellt …'; w0.appendChild(t0); runter(); }
+    var sys = 'Du bist eine erfahrene Praxisanleiterin in der Pflege und begleitest ein Übungsgespräch. Antworte NUR mit gültigem JSON.';
+    var frage = 'Fall: ' + f.titel + '. Situation: ' + f.lage + '\nGesprächsziele:\n' + f.ziele.map(function(z, i){ return (i + 1) + '. ' + z; }).join('\n')
+      + '\n\nBISHERIGES GESPRÄCH:\n' + protokoll
+      + '\n\nPrüfe, ob die Pflegekraft beim Thema bleibt und auf die Gesprächsziele hinarbeitet. Gib zurück: {"abgeschweift":true|false,"hinweis":"ein kurzer Satz in Du-Form, was als Nächstes wichtig ist","satz":"ein konkreter Satz, den die Pflegekraft jetzt sagen kann"}.'
+      + ' abgeschweift = true nur, wenn die letzten Antworten deutlich vom Ziel wegführen, unpassend oder unprofessionell sind. Der Satz soll zum letzten Satz des Gegenübers passen. Keine Diagnosen, keine Dosierungen.';
+    callKI([{ role:'user', content: frage }], sys).then(function(r){
+      var j = null; try{ var x = String(r).replace(/<think>[\s\S]*?<\/think>/g, ''); j = JSON.parse(x.slice(x.indexOf('{'), x.lastIndexOf('}') + 1)); }catch(e){}
+      if(!j || !j.satz) { if(manuell) coachKarte('Gerade kein Tipp verfügbar. Schau dir sonst das Beispielgespräch an.', '', true); return; }
+      if(manuell || j.abgeschweift === true) coachKarte((j.abgeschweift === true ? 'Du bist gerade etwas vom Ziel abgekommen. ' : '') + (j.hinweis || ''), j.satz, j.abgeschweift === true);
+    }).catch(function(e){ if(manuell) coachKarte(e && e.kiLimit ? 'Die KI ist für heute ausgelastet.' : 'Tipp gerade nicht möglich.', '', false); })
+      .then(function(){ coachLaeuft = false; var l = el('plgs-coach-l'); if(l) l.remove(); });
+  }
+  function coachKarte(hinweis, satz, mitBeispiel){
+    var w = el('plgs-w'); if(!w) return;
+    var d = document.createElement('div'); d.className = 'coach';
+    d.innerHTML = '<small>💡 TIPP VON DER PRAXISANLEITUNG</small><div class="h"></div>'
+      + (satz ? '<div class="s"></div><button class="ueb">Satz übernehmen</button>' : '')
+      + (mitBeispiel ? '<button class="ueb g" onclick="plGespraechMuster(1)">Beispielgespräch ansehen</button>' : '');
+    d.querySelector('.h').textContent = hinweis;
+    if(satz){ d.querySelector('.s').textContent = '„' + String(satz).replace(/^[„"]|[“"]$/g, '') + '“';
+      d.querySelector('.ueb').onclick = function(){ var ta = el('plgs-in'); if(ta){ ta.value = String(satz).replace(/^[„"]|[“"]$/g, ''); ta.dispatchEvent(new Event('input')); ta.focus(); } }; }
+    w.appendChild(d); runter();
+    ga('gespraech_tipp', { fall: aktiv && aktiv.id, auto: mitBeispiel ? 1 : 0 });
+  }
+
+  /* Beispielgespräch: fest geschrieben, deckt alle Ziele ab. zurueck=1 → aus dem laufenden Gespräch (Gespräch bleibt erhalten) */
+  var gespeichert = null;
+  function muster(zurueck){
+    var f = aktiv; if(!f || !MUSTER[f.id]) return;
+    stopMikro();
+    if(zurueck && el('plgs-w')) gespeichert = { html: el('plgs-w').innerHTML, leiste: (document.querySelector('#plgs .leiste') || {}).outerHTML || '' };
+    else gespeichert = null;
+    var h = '<h2>Beispielgespräch</h2><p style="font-size:13px">So könnte das Gespräch gut laufen. Es ist eine von vielen guten Möglichkeiten – wichtig ist, dass die Gesprächsziele erreicht werden.</p>';
+    MUSTER[f.id].forEach(function(z){
+      h += z[0] === 'p'
+        ? '<div class="msg ich"><div class="bl" style="background:rgba(52,211,153,.16);border-color:rgba(52,211,153,.45)"><span class="wer" style="color:#34d399">Pflegekraft</span>' + esc(z[1]) + '</div></div>'
+        : '<div class="msg p"><div class="av">' + f.av + '</div><div class="bl"><span class="wer">' + esc(f.wer.split(',')[0]) + '</span>' + esc(z[1]) + '</div></div>';
+    });
+    h += '<div class="lage" style="margin-top:14px"><small>DIESE ZIELE WERDEN ERREICHT</small><ul class="ziele">' + f.ziele.map(function(z){ return '<li>' + esc(z) + '</li>'; }).join('') + '</ul></div>'
+      + (gespeichert ? '<button class="btn" onclick="plGespraechZurueck()">Zurück zu meinem Gespräch</button>' : '<button class="btn" onclick="plGespraechStart()">Jetzt selbst üben</button>')
+      + '<button class="btn g" onclick="plGespraechListe()">Anderen Fall wählen</button>';
+    rahmen('Beispielgespräch', f.titel, h);
+    var r = el('plgs-r'); if(r) r.scrollTop = 0;
+    ga('gespraech_muster', { fall: f.id });
+  }
+  function zurueck(){
+    if(!gespeichert || !aktiv) return start();
+    var g = gespeichert; gespeichert = null;
+    rahmen(aktiv.titel, aktiv.wer, g.html, g.leiste);
+    var ta = el('plgs-in');
+    if(ta){ ta.addEventListener('input', function(){ ta.style.height = 'auto'; ta.style.height = Math.min(130, ta.scrollHeight) + 'px'; });
+      ta.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftKey && window.innerWidth > 700){ e.preventDefault(); senden(); } }); }
+    unterzeile(); runter();
   }
 
   /* Spracheingabe (Chrome/Android) */
@@ -30518,6 +30717,9 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   window.plGespraechSenden = senden;
   window.plGespraechEnde = ende;
   window.plGespraechMikro = mikro;
+  window.plGespraechTipp = function(){ coach(true); };
+  window.plGespraechMuster = muster;
+  window.plGespraechZurueck = zurueck;
   window.PL_GESPRAECH_FAELLE = FAELLE;
 
   /* Kachel im Üben-Bereich (landet in der Gruppe „KI-Training“) + Eintrag im KI-Auswahlfenster */
