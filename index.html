@@ -30506,6 +30506,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     var d = laden();
     var h = '<h2>Patientengespräch üben</h2>'
       + '<p>Die KI spielt Patientin, Patient, Angehörige oder Arzt. Du antwortest als Pflegefachkraft – schriftlich oder per Mikrofon. Am Ende bekommst du eine Auswertung mit Tipps.</p>'
+      + (istAdmin() ? '' : '<p style="font-size:12.5px">Heute noch ' + Math.max(0, TAGESLIMIT - heuteGenutzt()) + ' von ' + TAGESLIMIT + ' Gesprächen frei.</p>')
       + '<div class="hinweis">Alle Fälle sind erfunden. Bitte keine echten Patientendaten eingeben. Die Auswertung ist eine Übungshilfe der KI und ersetzt keine Bewertung durch Lehrkräfte.</div>';
     FAELLE.forEach(function(f){
       var x = d[f.id];
@@ -30554,8 +30555,34 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     u.innerHTML = '<span>Antwort ' + zuege + ' von ' + MAX_ZUEGE + '</span>' + (zuege >= MIN_ZUEGE ? '<button onclick="plGespraechEnde()">Gespräch beenden & auswerten</button>' : '<span>Auswertung ab ' + MIN_ZUEGE + ' Antworten</span>');
   }
 
+  /* Tageslimit (08.11.2026, Entscheidung P. Schenkelberger): 2 Gespräche pro Tag und Gerät, Admin ausgenommen.
+     Gezählt wird beim ersten eigenen Satz. Wunsch nach mehr → GA gespraech_mehr + Gründer-Liste (späteres Bezahlmodell).
+     Neuer Key pl_gespraech_tag {d,n}, nur lokal. */
+  var TAGESLIMIT = 2, TKEY = 'pl_gespraech_tag';
+  function istAdmin(){ try{ return typeof isAdmin === 'function' && isAdmin(); }catch(e){ return false; } }
+  function heute(){ var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function heuteGenutzt(){ try{ var x = JSON.parse(localStorage.getItem(TKEY) || '{}'); return x.d === heute() ? (x.n || 0) : 0; }catch(e){ return 0; } }
+  function zaehlen(){ try{ localStorage.setItem(TKEY, JSON.stringify({ d: heute(), n: heuteGenutzt() + 1 })); }catch(e){} }
+  function limitErreicht(){ return !istAdmin() && heuteGenutzt() >= TAGESLIMIT; }
+  function limitSeite(){
+    var h = '<h2>Für heute geschafft 💪</h2>'
+      + '<p>Du hast heute schon ' + TAGESLIMIT + ' Gespräche geübt. Morgen kannst du weitermachen – die Beispielgespräche kannst du dir jederzeit ansehen.</p>'
+      + (aktiv && MUSTER[aktiv.id] ? '<button class="btn" onclick="plGespraechMuster()">Beispielgespräch ansehen</button>' : '')
+      + '<div class="lage" style="margin-top:14px"><small>DU MÖCHTEST MEHR ÜBEN?</small><div style="font-size:13.5px">Sag uns Bescheid. Wenn viele mehr Gespräche pro Tag möchten, bauen wir das aus.</div>'
+      + '<button class="btn g" onclick="plGespraechMehr()">Ich möchte mehr Gespräche üben</button></div>'
+      + '<button class="btn g" onclick="plGespraechListe()">Zur Übersicht</button>';
+    rahmen('Patientengespräch üben', 'Tageslimit erreicht', h);
+    ga('gespraech_limit');
+  }
+  window.plGespraechMehr = function(){
+    ga('gespraech_mehr');
+    if(typeof window.plGruenderListe === 'function'){ schliessen(); window.plGruenderListe(); }
+    else { var w = el('plgs-w'); if(w) w.insertAdjacentHTML('beforeend', '<p style="color:#34d399;margin-top:10px">Danke, ist notiert!</p>'); }
+  };
+
   function start(){
     if(!aktiv) return;
+    if(limitErreicht()) return limitSeite();
     verlauf = [{ role:'assistant', content: aktiv.start }]; zuege = 0; wartet = false;
     var mikro = (window.SpeechRecognition || window.webkitSpeechRecognition) ? '<button class="rund mikro" id="plgs-mic" aria-label="Sprechen" onclick="plGespraechMikro()">🎤</button>' : '';
     var leiste = '<div class="leiste"><div class="zeile">' + mikro
@@ -30576,6 +30603,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     stopMikro();
     if(zuege >= MAX_ZUEGE){ ende(); return; }
     ta.value = ''; ta.style.height = 'auto';
+    if(zuege === 0){ if(limitErreicht()){ limitSeite(); return; } zaehlen(); }
     zuege++; verlauf.push({ role:'user', content: t }); blase('ich', t); unterzeile();
     if(zuege >= MAX_ZUEGE){ setTimeout(ende, 400); return; }
     wartet = true;

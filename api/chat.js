@@ -44,6 +44,9 @@ export default async function handler(req, res) {
     messages: groqMessages,
     temperature: 0.7,
     max_tokens: 1024,
+    // 08.11.2026 (Go P. Schenkelberger): gpt-oss ist ein Denk-Modell. Ohne diese Einstellung verbrauchte das Nachdenken
+    // bei langen Aufträgen alle 1.024 Token → leere Antwort („Keine Antwort vom KI-Modell“). „low“ = kurz nachdenken.
+    reasoning_effort: 'low',
   };
 
   try {
