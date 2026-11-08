@@ -30847,8 +30847,8 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
          Schalter PL_INSTALL_PUBLIC=false (Admin sieht ihn). GA: gast_start, gast_fertig {richtig}, gast_weiter, install_frage {antwort}. -->
 <script>
 (function(){
-  window.PL_GAST_PUBLIC = false;
-  window.PL_INSTALL_PUBLIC = false;
+  window.PL_GAST_PUBLIC = true; /* Go P. Schenkelberger 08.11.2026 */
+  window.PL_INSTALL_PUBLIC = true; /* Go P. Schenkelberger 08.11.2026 */
   function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
   function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
