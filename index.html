@@ -30286,7 +30286,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
    Am Ende Auswertung anhand fester Gesprächsziele. Nutzt nur callKI() → /api/chat (unverändert).
    Speicher nur lokal: pl_gespraech_v1 {id:{best,max,n}}. GA: gespraech_start, gespraech_auswertung. */
 (function(){
-  window.PL_GESPRAECH_PUBLIC = false;
+  window.PL_GESPRAECH_PUBLIC = true;   // Go P. Schenkelberger 08.11.2026
   var MAX_ZUEGE = 12, MIN_ZUEGE = 3, KEY = 'pl_gespraech_v1';
   function erlaubt(){ try{ return window.PL_GESPRAECH_PUBLIC === true || (typeof isAdmin === 'function' && isAdmin()); }catch(e){ return false; } }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
