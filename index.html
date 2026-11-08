@@ -30761,6 +30761,18 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   window.plGespraechZurueck = zurueck;
   window.PL_GESPRAECH_FAELLE = FAELLE;
 
+  /* Eintrag in „Neu & bald in PLAN“ (08.11.2026, Wunsch P. Schenkelberger) – nur, wer die Funktion öffnen darf */
+  function neuEintrag(){
+    try{
+      if(!erlaubt()) return;
+      var arr = window.PL_NEU = window.PL_NEU || [];
+      if(arr.some(function(x){ return x.id === 'patientengespraech'; })) return;
+      arr.push({ id:'patientengespraech', tag:'neu', ziel:function(){ window.plGespraechOeffnen(); }, titel:'🗨️ Patientengespräch üben', sub:'KI spielt Patient, Angehörige oder Arzt – mit Tipps und Auswertung', datum:'2026-11-08' });
+      if(typeof window.plNeuRender === 'function') window.plNeuRender();
+    }catch(e){}
+  }
+  window.addEventListener('load', function(){ setTimeout(neuEintrag, 1800); });
+
   /* Kachel im Üben-Bereich (landet in der Gruppe „KI-Training“) + Eintrag im KI-Auswahlfenster */
   function kachel(){
     try{
@@ -30775,7 +30787,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   }
   try{
     var _ss = window.showScreen;
-    if(typeof _ss === 'function'){ window.showScreen = function(n){ var r = _ss.apply(this, arguments); if(n === 'ueben') setTimeout(kachel, 0); return r; }; }
+    if(typeof _ss === 'function'){ window.showScreen = function(n){ if(n === 'home') neuEintrag(); var r = _ss.apply(this, arguments); if(n === 'ueben') setTimeout(kachel, 0); return r; }; }
     var _kc = window.openKIChooser;
     if(typeof _kc === 'function'){
       window.openKIChooser = function(){
