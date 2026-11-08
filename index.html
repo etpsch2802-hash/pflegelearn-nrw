@@ -30908,35 +30908,58 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       +'<div style="text-align:center"><div style="font-size:38px">'+(richtig>=4?'🎉':'💪')+'</div>'
       +'<div style="font-size:22px;font-weight:900;margin:4px 0">'+richtig+' von '+F.length+' richtig</div>'
       +'<div style="font-size:14px;color:#b3c4d6;line-height:1.55;margin-bottom:14px">'+txt+'<br>In PLAN warten 2.000+ Prüfungsfragen, Fallbeispiele, Medikamente und der Perfusor-Rechner – aktuell kostenlos.</div></div>'
+      +'<div style="text-align:center;font-size:12.5px;color:#fbbf24;font-weight:700;margin-bottom:10px">'+restText()+'</div>'
       +'<button class="h" id="pl-gast-los">Jetzt kostenlos loslegen</button>'
-      +'<button class="n" id="pl-gast-nochmal">Noch 5 Fragen ausprobieren</button>';
+      +(gastN()<GAST_MAX?'<button class="n" id="pl-gast-nochmal">Noch 5 Fragen ausprobieren</button>':'');
     document.getElementById('pl-gast-los').onclick=function(){ ga('gast_weiter',{weg:'loslegen'}); o.remove(); try{ window.startHeroCTA(); }catch(e){} };
-    document.getElementById('pl-gast-nochmal').onclick=function(){ ga('gast_weiter',{weg:'nochmal'}); o.remove(); window.plGastStart(); };
+    var nm=document.getElementById('pl-gast-nochmal'); if(nm) nm.onclick=function(){ ga('gast_weiter',{weg:'nochmal'}); o.remove(); window.plGastStart(); };
+  }
+  /* Gast-Limit (Wunsch P. Schenkelberger 08.11.2026): 3 Proberunden pro Gerät (Quiz-Runde oder Rechner öffnen), danach Anmeldung.
+     Key pl_gast_n (Zahl). Zählt beim Öffnen. Nur lokal – reicht als sanfte Schwelle. */
+  var GAST_MAX=3;
+  function gastN(){ return parseInt(ls('pl_gast_n')||'0',10)||0; }
+  function gastZaehlen(){ var n=gastN()+1; ls('pl_gast_n',String(n)); return n; }
+  function restText(){ var r=GAST_MAX-gastN(); return r<=0?'Das war deine letzte Proberunde.':r===1?'Noch 1 Proberunde ohne Anmeldung.':'Noch '+r+' Proberunden ohne Anmeldung.'; }
+  function gesperrt(){
+    if(gastN()<GAST_MAX) return false;
+    stil(); window.plGastZu();
+    var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog');
+    o.innerHTML='<div class="k" style="text-align:center"><button class="x" aria-label="Schließen" onclick="plGastZu()">×</button>'
+      +'<div style="font-size:36px">🙌</div><div style="font-size:20px;font-weight:900;margin:4px 0 8px">Du hast PLAN 3× ausprobiert</div>'
+      +'<div style="font-size:14px;color:#b3c4d6;line-height:1.55;margin-bottom:14px">Weiter geht es mit einem kostenlosen Konto – dauert 30 Sekunden. Dann hast du den Perfusor-Rechner, 2.000+ Prüfungsfragen und dein Lernstand bleibt gespeichert.</div>'
+      +'<button class="h" id="pl-gast-los">Jetzt kostenlos loslegen</button>'
+      +'<button class="n" onclick="plGastZu();try{plOpenLogin()}catch(e){}">Ich habe schon ein Konto</button></div>';
+    document.body.appendChild(o);
+    document.getElementById('pl-gast-los').onclick=function(){ ga('gast_weiter',{weg:'loslegen_limit'}); window.plGastZu(); try{ window.startHeroCTA(); }catch(e){} };
+    ga('gast_limit',{}); return true;
   }
   window.plGastZu=function(){ var o=document.getElementById('pl-gast'); if(o){ o.remove(); try{ if(o._zurueck) o._zurueck(); }catch(e){} } };
   window.plGastStart=function(){
+    if(gesperrt()) return;
     F=fragen(); i=0; richtig=0; if(!F.length) return;
-    stil(); window.plGastZu();
+    stil(); window.plGastZu(); gastZaehlen();
     var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog'); o.innerHTML='<div class="k"></div>';
     document.body.appendChild(o); zeige(); ga('gast_start',{});
   };
   /* Perfusor-Rechner ohne Anmeldung (Wunsch P. Schenkelberger 08.11.2026): nutzt plDosisRechner() in einem eigenen #medt-card */
   window.plGastRechner=function(){
     if(typeof window.plDosisRechner!=='function') return;
-    stil(); window.plGastZu();
+    if(gesperrt()) return;
+    stil(); window.plGastZu(); gastZaehlen();
     var alt=document.getElementById('medt-card'); if(alt) alt.id='medt-card-pause';
     var o=document.createElement('div'); o.id='pl-gast'; o.setAttribute('role','dialog');
     o.innerHTML='<div class="k"><button class="x" aria-label="Schließen" onclick="plGastZu()">×</button>'
       +'<div style="font-size:12px;color:#9fc3da;font-weight:700;margin-bottom:10px">Perfusor-Rechner · ohne Anmeldung</div>'
       +'<div id="medt-card"></div>'
-      +'<div style="text-align:center;font-size:13.5px;color:#b3c4d6;line-height:1.5;margin:14px 0 10px">Mit kostenlosem Konto: 2.000+ Prüfungsfragen, Medikamente, Fallbeispiele und mehr.</div>'
+      +'<div style="text-align:center;font-size:12.5px;color:#fbbf24;font-weight:700;margin-top:14px">'+restText()+'</div>'
+      +'<div style="text-align:center;font-size:13.5px;color:#b3c4d6;line-height:1.5;margin:6px 0 10px">Mit kostenlosem Konto: 2.000+ Prüfungsfragen, Medikamente, Fallbeispiele und mehr.</div>'
       +'<button class="h" id="pl-gast-los">Jetzt kostenlos loslegen</button>'
-      +'<button class="n" id="pl-gast-quiz">Lieber 5 Prüfungsfragen ausprobieren</button></div>';
+      +(gastN()<GAST_MAX?'<button class="n" id="pl-gast-quiz">Lieber 5 Prüfungsfragen ausprobieren</button>':'')+'</div>';
     document.body.appendChild(o);
     o._zurueck=function(){ var c=document.getElementById('medt-card-pause'); if(c) c.id='medt-card'; };
     try{ window.plDosisRechner(); }catch(e){}
     document.getElementById('pl-gast-los').onclick=function(){ ga('gast_weiter',{weg:'loslegen_rechner'}); window.plGastZu(); try{ window.startHeroCTA(); }catch(e){} };
-    document.getElementById('pl-gast-quiz').onclick=function(){ ga('gast_weiter',{weg:'quiz_rechner'}); window.plGastStart(); };
+    var gq=document.getElementById('pl-gast-quiz'); if(gq) gq.onclick=function(){ ga('gast_weiter',{weg:'quiz_rechner'}); window.plGastStart(); };
     ga('gast_rechner',{});
   };
   function knopf(){
