@@ -30257,6 +30257,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 #plgs textarea{flex:1;resize:none;min-height:44px;max-height:130px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:11px 12px;color:#fff;font:15px/1.4 'DM Sans',sans-serif}
 #plgs .rund{flex:none;width:44px;height:44px;border-radius:50%;border:0;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
 #plgs .senden{background:var(--accent,#38bdf8);color:#04131f}
+#plgs .hilfe{background:rgba(250,204,21,.2);border:1px solid rgba(250,204,21,.55)}
 #plgs .mikro{background:rgba(255,255,255,.1);color:#e0f2fe}
 #plgs .mikro.an{background:#dc2626;color:#fff;animation:plgsPuls 1s infinite}
 @keyframes plgsPuls{50%{box-shadow:0 0 0 6px rgba(220,38,38,.3)}}
@@ -30480,6 +30481,18 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   };
 
   var aktiv = null, verlauf = [], zuege = 0, wartet = false, erkennung = null, coachLaeuft = false;
+  /* 08.11.2026: /api/chat nutzt ein Denk-Modell mit 1.024 Token. Lange Aufgaben (Auswertung) verbrauchten alles fürs Nachdenken →
+     leere Antwort „⚠️ Keine Antwort vom KI-Modell“. Daher „Reasoning: low“ im Auftrag, leere Antwort = Fehler, ein stiller zweiter Versuch. */
+  function ki(nachrichten, sys, zweiter){
+    return callKI(nachrichten, 'Reasoning: low\n' + sys).then(function(r){
+      r = String(r || '').replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+      if(!r || /^⚠️\s*Keine Antwort vom KI-Modell/.test(r)){
+        if(zweiter){ var e = new Error('leer'); e.leer = true; throw e; }
+        return ki(nachrichten, sys, true);
+      }
+      return r;
+    });
+  }
   function el(id){ return document.getElementById(id); }
   function name(){ try{ var n = (typeof currentUser !== 'undefined' && currentUser && (currentUser.name || currentUser)) || localStorage.getItem('pl_user_name') || ''; return String(n).split(' ')[0] || ''; }catch(e){ return ''; } }
 
@@ -30538,7 +30551,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   function runter(){ var r = el('plgs-r'); if(r) setTimeout(function(){ r.scrollTop = r.scrollHeight; }, 30); }
   function unterzeile(){
     var u = el('plgs-u'); if(!u) return;
-    u.innerHTML = '<span>Antwort ' + zuege + ' von ' + MAX_ZUEGE + ' · <button class="tipp" onclick="plGespraechTipp()">💡 Tipp</button></span>' + (zuege >= MIN_ZUEGE ? '<button onclick="plGespraechEnde()">Gespräch beenden & auswerten</button>' : '<span>Auswertung ab ' + MIN_ZUEGE + ' Antworten</span>');
+    u.innerHTML = '<span>Antwort ' + zuege + ' von ' + MAX_ZUEGE + '</span>' + (zuege >= MIN_ZUEGE ? '<button onclick="plGespraechEnde()">Gespräch beenden & auswerten</button>' : '<span>Auswertung ab ' + MIN_ZUEGE + ' Antworten</span>');
   }
 
   function start(){
@@ -30546,6 +30559,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     verlauf = [{ role:'assistant', content: aktiv.start }]; zuege = 0; wartet = false;
     var mikro = (window.SpeechRecognition || window.webkitSpeechRecognition) ? '<button class="rund mikro" id="plgs-mic" aria-label="Sprechen" onclick="plGespraechMikro()">🎤</button>' : '';
     var leiste = '<div class="leiste"><div class="zeile">' + mikro
+      + '<button class="rund hilfe" aria-label="Tipp" title="Tipp: Wie geht es weiter?" onclick="plGespraechTipp()">💡</button>'
       + '<textarea id="plgs-in" rows="1" placeholder="Deine Antwort …" aria-label="Deine Antwort"></textarea>'
       + '<button class="rund senden" aria-label="Senden" onclick="plGespraechSenden()">➤</button></div><div class="unter" id="plgs-u"></div></div>';
     rahmen(aktiv.titel, aktiv.wer, '<div class="lage" style="margin-bottom:6px"><small>SITUATION</small><div style="font-size:13px">' + esc(aktiv.lage) + '</div></div>', leiste);
@@ -30566,8 +30580,8 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     if(zuege >= MAX_ZUEGE){ setTimeout(ende, 400); return; }
     wartet = true;
     var w = el('plgs-w'), tp = document.createElement('div'); tp.className = 'tippt'; tp.id = 'plgs-tippt'; tp.textContent = aktiv.wer.split(',')[0] + ' antwortet …'; w.appendChild(tp); runter();
-    callKI(verlauf.slice(-16), systemPrompt(aktiv)).then(function(r){
-      r = String(r || '').replace(/<think>[\s\S]*?<\/think>/g, '').replace(/^\s*\*[^*]+\*\s*/g, '').trim();
+    ki(verlauf.slice(-16), systemPrompt(aktiv)).then(function(r){
+      r = String(r || '').replace(/^\s*\*[^*]+\*\s*/g, '').trim();
       verlauf.push({ role:'assistant', content: r }); blase('p', r);
       if(zuege === 4 || zuege === 8) coach(false);
     }).catch(function(e){
@@ -30582,17 +30596,37 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     var f = aktiv;
     var protokoll = verlauf.map(function(m){ return (m.role === 'user' ? 'PFLEGEKRAFT: ' : (f.wer.split(',')[0].toUpperCase() + ': ')) + m.content; }).join('\n');
     rahmen('Auswertung', f.titel, '<h2>Auswertung läuft …</h2><p>Die KI liest das Gespräch und prüft die Gesprächsziele.</p>');
-    var sys = 'Du bist eine erfahrene Praxisanleiterin in der Pflege in Deutschland und wertest ein Übungsgespräch aus. Antworte NUR mit gültigem JSON ohne Text davor oder danach.';
-    var frage = 'Fall: ' + f.titel + '. Situation: ' + f.lage + '\n\nGESPRÄCH:\n' + protokoll
-      + '\n\nPrüfe nur die Aussagen der PFLEGEKRAFT gegen diese Gesprächsziele:\n' + f.ziele.map(function(z, i){ return (i + 1) + '. ' + z; }).join('\n')
-      + '\n\nGib zurück: {"ziele":[{"nr":1,"status":"ja|teilweise|nein","beleg":"kurzes Zitat oder kurze Begründung"}],"staerken":["…"],"tipps":["…"],"beispiel":"ein besserer Satz, den die Pflegekraft an einer Stelle hätte sagen können"}'
-      + '\nRegeln: "ja" nur, wenn es im Gespräch wirklich vorkommt. Höchstens 3 Stärken und 3 Tipps, jeweils ein kurzer Satz, Du-Form, freundlich und konkret. Keine Diagnosen, keine Dosierungen.';
-    callKI([{ role:'user', content: frage }], sys).then(function(r){
-      var j = null;
-      try{ var s = String(r).replace(/<think>[\s\S]*?<\/think>/g, ''); j = JSON.parse(s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1)); }catch(e){}
-      zeigeAuswertung(f, j, r);
+    var ziele = f.ziele.map(function(z, i){ return (i + 1) + '. ' + z; }).join('\n');
+    var sys = 'Du bist Praxisanleiterin in der Pflege und wertest ein Übungsgespräch aus. Antworte NUR mit gültigem JSON, ohne Text davor oder danach. Fasse dich kurz.';
+    var frage = 'Fall: ' + f.titel + '.\n\nGESPRÄCH:\n' + protokoll
+      + '\n\nPrüfe nur die Aussagen der PFLEGEKRAFT gegen diese Gesprächsziele:\n' + ziele
+      + '\n\nGib zurück: {"ziele":[{"nr":1,"status":"ja|teilweise|nein","beleg":"höchstens 10 Wörter"}],"staerken":["…"],"tipps":["…"],"beispiel":"ein besserer Satz für eine Stelle im Gespräch"}'
+      + '\nRegeln: "ja" nur, wenn es wirklich im Gespräch vorkommt. Höchstens 2 Stärken und 2 Tipps, je ein kurzer Satz in Du-Form. Keine Diagnosen, keine Dosierungen.';
+    function lies(r){ try{ var x = String(r); return JSON.parse(x.slice(x.indexOf('{'), x.lastIndexOf('}') + 1)); }catch(e){ return null; } }
+    /* Ersatzweg: nur je Ziel ja/teilweise/nein als kurze Zeile, wenn das große JSON nicht klappt */
+    function knapp(){
+      var f2 = 'GESPRÄCH:\n' + protokoll + '\n\nZIELE:\n' + ziele
+        + '\n\nAntworte NUR mit einer Zeile pro Ziel im Format „Nummer: ja“ oder „Nummer: teilweise“ oder „Nummer: nein“. Danach eine Zeile „Tipp: …“ mit einem kurzen Tipp in Du-Form.';
+      return ki([{ role:'user', content: f2 }], 'Du bist Praxisanleiterin in der Pflege. Antworte extrem kurz.').then(function(r){
+        var j = { ziele: [], staerken: [], tipps: [] };
+        String(r).split(/\n+/).forEach(function(z){
+          var m = z.match(/^\s*(\d+)\s*[:.)-]\s*(ja|teilweise|teils|nein)/i); if(m) j.ziele.push({ nr: +m[1], status: m[2].toLowerCase() });
+          var t = z.match(/^\s*Tipp\s*:\s*(.+)/i); if(t) j.tipps.push(t[1].trim());
+        });
+        if(!j.ziele.length) throw new Error('format');
+        return j;
+      });
+    }
+    ki([{ role:'user', content: frage }], sys).then(function(r){
+      var j = lies(r); if(j && Array.isArray(j.ziele)) return j;
+      return knapp();
+    }, function(e){ if(e && e.kiLimit) throw e; return knapp(); }).then(function(j){
+      zeigeAuswertung(f, j, '');
     }).catch(function(e){
-      rahmen('Auswertung', f.titel, '<h2>Auswertung nicht möglich</h2><p>' + (e && e.kiLimit ? 'Die KI ist für heute ausgelastet.' : 'Die Verbindung ist abgebrochen.') + '</p><button class="btn" onclick="plGespraechEnde()">Noch einmal versuchen</button><button class="btn g" onclick="plGespraechListe()">Zur Übersicht</button>');
+      rahmen('Auswertung', f.titel, '<h2>Auswertung gerade nicht möglich</h2><p>' + (e && e.kiLimit ? 'Die KI ist für heute ausgelastet. Morgen geht es weiter.' : 'Die KI hat keine Auswertung geliefert. Versuch es gleich noch einmal.') + '</p>'
+        + '<button class="btn" onclick="plGespraechEnde()">Noch einmal auswerten</button>'
+        + (MUSTER[f.id] ? '<button class="btn g" onclick="plGespraechMuster()">Beispielgespräch ansehen</button>' : '')
+        + '<button class="btn g" onclick="plGespraechListe()">Zur Übersicht</button>');
     });
   }
 
@@ -30615,7 +30649,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       if((j.tipps || []).length) h += '<div class="lage"><small>DAS NÄCHSTE MAL</small><ul class="ziele">' + j.tipps.slice(0, 3).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
       if(j.beispiel) h += '<div class="lage"><small>SO KÖNNTEST DU ES SAGEN</small><div class="beispiel">„' + esc(String(j.beispiel).replace(/^[„"]|[“"]$/g, '')) + '“</div></div>';
     } else {
-      h += '<div class="lage"><small>RÜCKMELDUNG</small><div style="white-space:pre-wrap">' + esc(roh) + '</div></div>';
+      if(roh) h += '<div class="lage"><small>RÜCKMELDUNG</small><div style="white-space:pre-wrap">' + esc(roh) + '</div></div>';
     }
     h += '<p style="font-size:12px;margin-top:6px">Die Auswertung macht eine KI und kann sich irren. Sie ist eine Übungshilfe, keine Note.</p>'
       + '<button class="btn" onclick="plGespraechMuster()">So könnte es gut laufen – Beispielgespräch</button>'
@@ -30635,8 +30669,8 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       + '\n\nBISHERIGES GESPRÄCH:\n' + protokoll
       + '\n\nPrüfe, ob die Pflegekraft beim Thema bleibt und auf die Gesprächsziele hinarbeitet. Gib zurück: {"abgeschweift":true|false,"hinweis":"ein kurzer Satz in Du-Form, was als Nächstes wichtig ist","satz":"ein konkreter Satz, den die Pflegekraft jetzt sagen kann"}.'
       + ' abgeschweift = true nur, wenn die letzten Antworten deutlich vom Ziel wegführen, unpassend oder unprofessionell sind. Der Satz soll zum letzten Satz des Gegenübers passen. Keine Diagnosen, keine Dosierungen.';
-    callKI([{ role:'user', content: frage }], sys).then(function(r){
-      var j = null; try{ var x = String(r).replace(/<think>[\s\S]*?<\/think>/g, ''); j = JSON.parse(x.slice(x.indexOf('{'), x.lastIndexOf('}') + 1)); }catch(e){}
+    ki([{ role:'user', content: frage }], sys).then(function(r){
+      var j = null; try{ var x = String(r); j = JSON.parse(x.slice(x.indexOf('{'), x.lastIndexOf('}') + 1)); }catch(e){}
       if(!j || !j.satz) { if(manuell) coachKarte('Gerade kein Tipp verfügbar. Schau dir sonst das Beispielgespräch an.', '', true); return; }
       if(manuell || j.abgeschweift === true) coachKarte((j.abgeschweift === true ? 'Du bist gerade etwas vom Ziel abgekommen. ' : '') + (j.hinweis || ''), j.satz, j.abgeschweift === true);
     }).catch(function(e){ if(manuell) coachKarte(e && e.kiLimit ? 'Die KI ist für heute ausgelastet.' : 'Tipp gerade nicht möglich.', '', false); })
