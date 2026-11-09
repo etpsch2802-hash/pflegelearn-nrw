@@ -26081,12 +26081,14 @@ window.plLzpHinweis=function(kicker,titel,test){
     return 'browser';
   }
   function angemeldet(){ try{ return typeof currentUser!=='undefined' && !!currentUser; }catch(e){ return false; } }
+  /* 09.11.2026: wiederkehrend = PLAN wurde auf diesem Gerät schon an einem früheren Tag geöffnet (pl_erster_tag, nur ja/nein) */
+  function wieder(){ try{ var d=localStorage.getItem('pl_erster_tag'); return !!d && d<new Date().toISOString().slice(0,10); }catch(e){ return false; } }
   var gesendet={};
   function eigenesGeraet(){ try{ return localStorage.getItem('pl_nicht_zaehlen')==='1'; }catch(e){ return false; } }   // 25.10.2026: Admin-Geräte nicht mitzählen
   function ping(){
     if(eigenesGeraet()) return;
     var a=angemeldet(); var k=a?'a':'g'; if(gesendet[k]) return; gesendet[k]=1;
-    try{ fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping',modus:modus(),angemeldet:a}),keepalive:true}).catch(function(){}); }catch(e){}
+    try{ fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping',modus:modus(),angemeldet:a,wieder:wieder()}),keepalive:true}).catch(function(){}); }catch(e){}
   }
   setTimeout(ping,3000);
   var w=setInterval(function(){ if(angemeldet()){ ping(); clearInterval(w); } },5000);
@@ -26113,11 +26115,15 @@ window.plLzpHinweis=function(kicker,titel,test){
       d.schnitt7={gesamt:s7,app:schnitt(v7,'app'),installiert:schnitt(v7,'installiert'),browser:schnitt(v7,'browser')};
       d.schnitt30={gesamt:sAlle};
       var beginn=gemessen.length?gemessen[0].tag:null, ZIEL=50, ueber=voll.filter(function(t){ return t.gesamt>=ZIEL; }).length;
-      var proz=Math.min(100,Math.round((s7||0)/ZIEL*100));
+      /* 09.11.2026 (Entscheidung P. Schenkelberger): Bezahlung erst nach 14 vollen Tagen IN FOLGE mit ≥ 50 Geräten */
+      var SERIE_ZIEL=14, serie=0; for(var i1=voll.length-1;i1>=0;i1--){ if(voll[i1].gesamt>=ZIEL) serie++; else break; }
+      var proz=Math.min(100,Math.round(serie/SERIE_ZIEL*100));
       var zielHTML='<div style="margin-top:12px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:11px 12px">'
-        +'<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#a7f3d0"><span>Ziel für Bezahlung: 50 Geräte jeden Tag</span><span>'+zahl(s7)+' / 50</span></div>'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#a7f3d0"><span>Ziel für Bezahlung: 14 Tage in Folge ≥ 50 Geräte</span><span>'+serie+' / '+SERIE_ZIEL+'</span></div>'
         +'<div style="height:8px;background:rgba(255,255,255,.1);border-radius:5px;margin-top:7px;overflow:hidden"><div style="height:100%;width:'+proz+'%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>'
-        +'<div style="font-size:11px;color:var(--text3);margin-top:6px">Ø der letzten '+v7.length+' vollen Tage · Tage mit ≥ 50: '+ueber+' von '+voll.length+'</div></div>';
+        +'<div style="font-size:11px;color:var(--text3);margin-top:6px">'+(serie>=SERIE_ZIEL?'✅ Schwelle erreicht – Bezahlstart möglich (Vorher: Vercel Pro, Texte „aktuell kostenlos“ zurückstellen). ':'Serie zählt nur volle Tage, heute läuft noch. ')+'Ø 7 volle Tage: '+zahl(s7)+' · Tage mit ≥ 50 gesamt: '+ueber+' von '+voll.length+'</div></div>';
+      var wHTML='';
+      if(d.mitWieder){ var wv=voll.slice(-7); wHTML='<div style="font-size:12px;color:var(--text2);margin-top:6px">Davon wiederkehrend heute: <b>'+esc(h.wiederkehrend||0)+'</b> · Ø 7 T.: <b>'+esc(zahl(schnitt(wv,'wiederkehrend')))+'</b> <span style="color:var(--text3)">(Gerät hat PLAN schon an einem früheren Tag geöffnet)</span></div>'; }
       var eigen=false; try{ if(localStorage.getItem('pl_nicht_zaehlen')==null) localStorage.setItem('pl_nicht_zaehlen','1'); eigen=localStorage.getItem('pl_nicht_zaehlen')==='1'; }catch(e){}
       var eigenHTML='<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" '+(eigen?'checked':'')+' onchange="try{localStorage.setItem(\'pl_nicht_zaehlen\',this.checked?\'1\':\'0\')}catch(e){}" style="width:16px;height:16px;accent-color:var(--accent)"> Dieses Gerät nicht mitzählen (deine eigenen Aufrufe)</label>';
       var reihe=gemessen.slice(-14);
@@ -26145,7 +26151,7 @@ window.plLzpHinweis=function(kicker,titel,test){
         +karte('Android-App',h.app,'Ø 7 T.: '+zahl(d.schnitt7.app))
         +karte('Installiert (Startbildschirm)',h.installiert,'Ø 7 T.: '+zahl(d.schnitt7.installiert))
         +karte('Browser',h.browser,'Ø 7 T.: '+zahl(d.schnitt7.browser))+'</div>'
-        +'<div style="font-size:12px;color:var(--text2);margin-top:8px">Davon angemeldet heute: <b>'+esc(h.angemeldet||0)+'</b></div>'
+        +'<div style="font-size:12px;color:var(--text2);margin-top:8px">Davon angemeldet heute: <b>'+esc(h.angemeldet||0)+'</b></div>'+wHTML
         +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">'+(reihe.length<14?'Seit Messbeginn':'Letzte 14 Tage')+'</div>'
         +'<div style="display:flex;gap:4px;align-items:flex-end;justify-content:flex-start">'+balken+'</div>'
         +'<div style="font-size:10.5px;color:var(--text3);margin-top:6px">'+leg('var(--accent)','Android-App')+leg('#a78bfa','Installiert')+leg('#64748b','Browser')+'</div>'
@@ -30101,6 +30107,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
      +(rechner?btn('pl-ih-rechner','🧮 Perfusor-Rechner öffnen',true)+btn('pl-ih-quiz','❓ Prüfungsfragen üben'):btn('pl-ih-quiz','❓ Prüfungsfragen üben',true)+btn('pl-ih-rechner','🧮 Perfusor-Rechner'))
      +btn('pl-ih-pdf','📄 Gratis-PDFs fürs Examen')
      +btn('pl-ih-tk','🗂️ Taschenkarten für Station')
+     +(typeof window.plGruenderListe==='function'?'<button id="pl-ih-gruender" style="width:100%;padding:8px;border:0;background:none;color:#facc15;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">⭐ Gründer-Liste: Vorzugspreis sichern, falls Premium kommt</button>':'')
      +'<button id="pl-ih-x" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">Erst mal umschauen</button>');
     if(!o) return;
     ga('insta_willkommen',{quelle:quelle||'ohne',rechner:rechner?1:0}); ls('pl_quelle_hallo','1');
@@ -30109,6 +30116,8 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     zu('pl-ih-quiz',function(){ showScreen('quizSelect'); });
     zu('pl-ih-pdf',function(){ window.plPdfOpen(); });
     zu('pl-ih-tk',function(){ showScreen('taschenkarten'); });
+    /* 09.11.2026: Gründer-Liste auch für neue Quellen-Nutzer (bisher 0 Einträge) */
+    if(document.getElementById('pl-ih-gruender')) zu('pl-ih-gruender',function(){ window.plGruenderListe(); });
     document.getElementById('pl-ih-x').onclick=function(){ o.remove(); };
   }
   /* Nicht über Tour, Tagesfrage, Onboarding oder anderen Fenstern zeigen – warten, bis der Weg frei ist */

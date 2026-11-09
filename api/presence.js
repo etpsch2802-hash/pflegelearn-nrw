@@ -28,12 +28,20 @@ export default async function handler(req, res) {
       const { createHmac } = await import('node:crypto');
       const kennung = createHmac('sha256', String(ADMIN_SECRET) + '|nutzung|' + tag).update(ip + '|' + ua).digest('hex').slice(0, 20);
       const angemeldet = B.angemeldet === true;
+      // 09.11.2026: wiederkehrend = App wurde auf diesem Gerät schon an einem früheren Tag geöffnet (nur ja/nein,
+      // vom Gerät gemeldet, keine Verknüpfung über Tage). Fehlt die Spalte noch, wird ohne sie gespeichert.
+      const wieder = B.wieder === true;
+      const zeile = { tag, kennung, modus };
+      if (angemeldet) zeile.angemeldet = true;
+      if (wieder) zeile.wiederkehrend = true;
+      const senden = z => fetch(`${SB_URL}/rest/v1/app_nutzung?on_conflict=tag,kennung,modus`, {
+        method: 'POST',
+        headers: Object.assign({}, H, { Prefer: ((angemeldet || wieder) ? 'resolution=merge-duplicates' : 'resolution=ignore-duplicates') + ',return=minimal' }),
+        body: JSON.stringify(z)
+      });
       try {
-        await fetch(`${SB_URL}/rest/v1/app_nutzung?on_conflict=tag,kennung,modus`, {
-          method: 'POST',
-          headers: Object.assign({}, H, { Prefer: (angemeldet ? 'resolution=merge-duplicates' : 'resolution=ignore-duplicates') + ',return=minimal' }),
-          body: JSON.stringify(angemeldet ? { tag, kennung, modus, angemeldet: true } : { tag, kennung, modus })
-        });
+        const r = await senden(zeile);
+        if (!r.ok && wieder) { delete zeile.wiederkehrend; await senden(zeile); }
       } catch (e) {}
       return res.status(204).end();
     }
@@ -73,7 +81,7 @@ export default async function handler(req, res) {
       try { await fetch(`${SB_URL}/rest/v1/app_nutzung?tag=lt.${tagVon(60)}`, { method: 'DELETE', headers: H }); } catch (e) {}
       let rows = [];
       for (let off = 0; off < 200000; off += 1000) {
-        const r = await fetch(`${SB_URL}/rest/v1/app_nutzung?tag=gte.${tagVon(29)}&select=tag,kennung,modus,angemeldet&order=tag.asc`, { headers: Object.assign({}, H, { Range: off + '-' + (off + 999) }) });
+        const r = await fetch(`${SB_URL}/rest/v1/app_nutzung?tag=gte.${tagVon(29)}&select=*&order=tag.asc`, { headers: Object.assign({}, H, { Range: off + '-' + (off + 999) }) });
         if (!r.ok) return res.status(200).json({ ok: false, error: 'tabelle' });
         const t = await r.json(); rows = rows.concat(t); if (t.length < 1000) break;
       }
@@ -81,13 +89,16 @@ export default async function handler(req, res) {
       for (let i = 29; i >= 0; i--) tage[tagVon(i)] = { app: 0, installiert: 0, browser: 0, angemeldet: 0 };
       // 08.11.2026: Gesamt und „angemeldet“ zählen eindeutige Geräte (kennung). Wer PLAN im Browser UND installiert öffnet,
       // steht in beiden Arten, aber nur einmal in „gesamt“ – gleiche Zählung wie der Rekord (nutzung_rekord).
-      const ger = {}, anm = {};
+      const ger = {}, anm = {}, wie = {};
+      let mitWieder = false;
       rows.forEach(x => { const t = tage[x.tag]; if (!t) return; t[x.modus] = (t[x.modus] || 0) + 1;
-        (ger[x.tag] = ger[x.tag] || new Set()).add(x.kennung); if (x.angemeldet) (anm[x.tag] = anm[x.tag] || new Set()).add(x.kennung); });
-      Object.keys(tage).forEach(k => { tage[k].angemeldet = anm[k] ? anm[k].size : 0; });
+        (ger[x.tag] = ger[x.tag] || new Set()).add(x.kennung); if (x.angemeldet) (anm[x.tag] = anm[x.tag] || new Set()).add(x.kennung);
+        if ('wiederkehrend' in x) mitWieder = true;
+        if (x.wiederkehrend) (wie[x.tag] = wie[x.tag] || new Set()).add(x.kennung); });
+      Object.keys(tage).forEach(k => { tage[k].angemeldet = anm[k] ? anm[k].size : 0; tage[k].wiederkehrend = wie[k] ? wie[k].size : 0; });
       const liste = Object.keys(tage).sort().map(k => Object.assign({ tag: k, gesamt: ger[k] ? ger[k].size : 0 }, tage[k]));
       const schnitt = (n, f) => { const a = liste.slice(-n); return Math.round(a.reduce((s, x) => s + x[f], 0) / a.length * 10) / 10; };
-      return res.status(200).json({ ok: true, tage: liste, heute: liste[liste.length - 1], gestern: liste[liste.length - 2],
+      return res.status(200).json({ ok: true, mitWieder, tage: liste, heute: liste[liste.length - 1], gestern: liste[liste.length - 2],
         schnitt7: { gesamt: schnitt(7, 'gesamt'), app: schnitt(7, 'app'), installiert: schnitt(7, 'installiert'), browser: schnitt(7, 'browser') },
         schnitt30: { gesamt: schnitt(30, 'gesamt'), app: schnitt(30, 'app'), installiert: schnitt(30, 'installiert'), browser: schnitt(30, 'browser') } });
     }
