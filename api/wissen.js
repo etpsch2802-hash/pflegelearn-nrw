@@ -180,7 +180,7 @@ function faqPairs(d) {
 /* ---------- SEO: eigene Titel/Beschreibungen für Seiten mit Ranking-Chance (GSC-Auswertung 18.10.2026) ----------
    Nur Aussagen, die die Seite auch enthält. Titel ≤ 60 Zeichen, Beschreibung ≤ 155 Zeichen. */
 const SEO = {
-  'zvd-messung': { t: 'ZVD Normwert & Messung: Nullpunkt, Werte | PLAN', d: 'ZVD-Normwert ca. 2–8 mmHg, Nullpunkt in der mittleren Axillarlinie, Einfluss von PEEP. Prüfungswissen, Merksatz und Prüfungsfragen für die Pflege.' },
+  'zvd-messung': { t: 'ZVD Normwert 2–8 mmHg (3–11 cmH₂O) – Messung | PLAN', d: 'Der ZVD liegt normal bei etwa 2–8 mmHg. Nullpunkt in der mittleren Axillarlinie, Einfluss von PEEP und Lagerung, Merksatz und Prüfungsfragen.' },
   'gcs': { t: 'GCS: Glasgow Coma Scale & ab wann intubieren | PLAN', d: 'Glasgow Coma Scale von 3 bis 15 Punkten: ab GCS 8 oder darunter in der Regel Intubation. Prüfungswissen, Merksatz und Prüfungsfragen für die Pflege.' },
   'pflegeevaluation': { t: 'Pflegeevaluation: Bedeutung einfach erklärt | PLAN', d: 'Was bedeutet Evaluation in der Pflege? Die Pflegeevaluation prüft, ob Pflegeziele erreicht wurden. Mit Merksatz und Prüfungsfragen – kostenlos.' },
   'zystitisprophylaxe': { t: 'Zystitisprophylaxe bei Dauerkatheter (DK) | PLAN', d: 'Zystitisprophylaxe bei Blasendauerkatheter: geschlossenes System, tiefe Beutellage, Liegedauer minimieren. Prüfungswissen und Prüfungsfragen.' },
@@ -190,12 +190,13 @@ const SEO = {
   'infusionsberechnung': { t: 'Tropfenformel & Perfusor berechnen | PLAN', d: 'Infusionen berechnen: Tropfenformel mit Tropffaktor 20 und Perfusorlaufrate aus Dosis und Konzentration. Mit Merksatz und Prüfungsfragen.' },
   'resistance': { t: 'Resistance (Atemwegswiderstand) einfach erklärt | PLAN', d: 'Resistance = Atemwegswiderstand: Er steigt bei verengten Bronchien wie bei Asthma und COPD. Prüfungswissen, Merksatz und Prüfungsfragen.' },
   'frank-starling-mechanismus': { t: 'Frank-Starling-Mechanismus einfach erklärt | PLAN', d: 'Frank-Starling-Mechanismus: Mehr Füllung (Vorlast) ergibt mehr Schlagvolumen – bis zur Grenze. Bedeutung bei Herzinsuffizienz, mit Prüfungsfragen.' },
-  'entzuendungswerte': { t: 'Entzündungswerte Tabelle: CRP, PCT, Leukozyten | PLAN', d: 'Entzündungswerte mit Normwert-Tabelle: CRP, PCT, Leukozyten, BSG und IL-6 – was erhöhte Werte bedeuten und was die Pflege beobachtet.' },
+  'entzuendungswerte': { t: 'CRP-Wert Tabelle (mg/l und mg/dl): Entzündungswerte | PLAN', d: 'CRP-Normwert unter 5 mg/l (0,5 mg/dl), Tabelle in mg/l und mg/dl, dazu PCT, Leukozyten, BSG und IL-6 – was erhöhte Entzündungswerte bedeuten.' },
   'nierenwerte': { t: 'Nierenwerte: Kreatinin, eGFR, Harnstoff Normwerte | PLAN', d: 'Nierenwerte mit Normwert-Tabelle: Kreatinin, eGFR, Harnstoff, Kalium, Cystatin C, GFR-Stadien nach KDIGO und Pflegeaufgaben.' },
-  'lungenfunktion': { t: 'Lungenfunktion: Spirometrie, FEV1 & Tiffeneau | PLAN', d: 'Spirometrie verständlich: VC, FEV1, Tiffeneau-Index und Peak-Flow, obstruktiv oder restriktiv, GOLD-Stadien und Pflegeaufgaben.' },
+  'lungenfunktion': { t: 'Lungenfunktion & COPD: FEV1-Tabelle, Tiffeneau, GOLD | PLAN', d: 'COPD-Stadien nach GOLD mit FEV1-Tabelle, Tiffeneau-Index unter 0,7, Bronchospasmolysetest, BGA-Werte bei COPD und Pflegeaufgaben.' },
+  'lagerungsarten': { t: 'Lagerungsarten: 30, 90 und 135 Grad, Herzbett, VATI | PLAN', d: 'Alle Lagerungen auf einen Blick: 30-Grad-Seitenlage, Oberkörperhochlage, 90- und 135-Grad-Lagerung, Herzbett und VATI – wofür, wie und worauf achten.' },
   'gasaustausch': { t: 'Gasaustausch der Lunge: BGA-Normwerte & Störungen | PLAN', d: 'Wo findet der Gasaustausch statt? Alveolen, BGA-Normwerte (pO2, pCO2, pH), Störungen wie Shunt und V/Q-Missverhältnis, Pflege.' },
   'dekubitus-vertieft': { t: 'Dekubitus: Kategorien 1–4 & Prophylaxe nach DNQP | PLAN', d: 'Dekubitus-Kategorien 1–4 nach EPUAP/NPIAP als Tabelle, Risikofaktoren, Prädilektionsstellen und Dekubitusprophylaxe nach DNQP-Expertenstandard.' },
-  'beatmungsmodi': { t: 'Beatmungsmodi: VCV, PCV, BIPAP, CPAP im Vergleich | PLAN', d: 'Beatmungsmodi einfach erklärt: volumen- und druckkontrolliert, BIPAP, SIMV, PSV/ASB und CPAP im Vergleich, Richtwerte und Pflege.' },
+  'beatmungsmodi': { t: 'Beatmungsmodi einfach erklärt: BIPAP, PCV, VCV | PLAN', d: 'BIPAP einfach erklärt, druck- und volumenkontrollierte Beatmung im Vergleich, SIMV, ASB, CPAP und alle Abkürzungen der Beatmungsparameter mit Richtwerten.' },
   'pleuraerguss': { t: 'Pleuraerguss: Ursachen, Transsudat vs. Exsudat | PLAN', d: 'Pleuraerguss: Ursachen, Unterschied Transsudat und Exsudat als Tabelle, Symptome, Pleurapunktion und Pflege – Prüfungswissen kostenlos.' },
   'delir': { t: 'Delir: Formen, Delir vs. Demenz, Screening | PLAN', d: 'Delir erkennen: hyperaktiv, hypoaktiv, gemischt, Unterschied zur Demenz als Tabelle, Risikofaktoren, Screening (4AT, CAM) und Pflege.' },
   'isolationsmassnahmen': { t: 'Isolationsmaßnahmen in der Pflege: Erreger-Tabelle & PSA | PLAN', d: 'Kontakt-, Tröpfchen- und Luftisolierung: 20 Erreger von MRSA bis Tuberkulose als Tabelle, Schutzausrüstung an- und ablegen, Desinfektion. Gratis-PDF.' },
@@ -332,6 +333,11 @@ function renderDetail(e, geschwister) {
   if (definition) b += `<p class="lead">${esc(definition)}</p>`;
   if (/^pflegeplanung-/.test(e.slug)) b += '<p class="pphint">Dies ist ein Beispiel. <a href="' + PP_APP + '">Alle Pflegeplanungen zu über 120 Krankheitsbildern stehen in der App →</a></p>';
   if (offen && d.tabelle) b += `<h2>${esc(d.tabelle_titel || 'Normwerte im Überblick')}</h2>` + tabelleHTML(d.tabelle);
+  // Zusatzabschnitte (09.11.2026, Suchbegriffe aus GSC): d.abschnitte = [{titel, text?, tabelle?, nach?}]
+  if (offen && Array.isArray(d.abschnitte)) d.abschnitte.forEach(function (a) {
+    if (!a || !a.titel) return;
+    b += `<h2>${esc(a.titel)}</h2>` + (a.text ? absaetze(a.text) : '') + (a.tabelle ? tabelleHTML(a.tabelle) : '') + (a.nach ? absaetze(a.nach) : '');
+  });
   if (offen && d.pdf) b += `<div class="box mehr">Alles zum Ausdrucken: <a href="${SITE}/gratis/${encodeURIComponent(d.pdf)}"><b>Gratis-PDF „${esc(d.pdf_titel || e.titel)}“</b></a></div>`;
   if (offen) b += pflegeplanungHTML(d);
   const ausb = /^ausbildung-/.test(e.slug);

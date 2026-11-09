@@ -3099,7 +3099,7 @@ const LOKAL_WISSEN = {
   "noradrenalin": "Noradrenalin: Vasopressor (α₁-Agonist). First-Line bei septischem Schock. Dosis: 0,01-1,0 µg/kg/min. Nur über ZVK! Backup-Perfusor immer vorbereitet. Nie unterbrechen!",
   "nyha": "NYHA-Klassifikation Herzinsuffizienz: I=keine Symptome, II=bei stärkerer Belastung, III=bei leichter Belastung, IV=Ruhedyspnoe.",
   "dekubitus": "Dekubitus-Kategorien (EPUAP/NPIAP/PPPIA): 1=nicht-wegdrückbare Rötung, 2=Blasen/Erosion, 3=Vollhautverlust bis Subkutis, 4=Muskeln/Knochen; zusätzlich nicht klassifizierbar und Verdacht auf DTI. Prophylaxe: Umlagerung alle 2h, Druckentlastung.",
-  "copd": "COPD: chronisch obstruktive Lungenerkrankung. O₂-Ziel 88-92% (nicht höher → hypoxischer Atemantrieb!). Kutschersitz, Lippenbremse. GOLD-Stadien I-IV.",
+  "copd": "COPD: chronisch obstruktive Lungenerkrankung. O₂-Ziel 88-92% (nicht höher → Gefahr des CO₂-Anstiegs bis zur CO₂-Narkose). Kutschersitz, Lippenbremse. GOLD-Stadien I-IV.",
   "hypothermie": "Perioperative Hypothermie (<36°C): erhöht Wundinfektionsrisiko, Blutung, Herzprobleme. Prophylaxe: Warm Touch, Wärmematte, angewärmte Infusionen, Raumtemperatur ≥21°C.",
   "sugammadex": "Sugammadex: spezifischer Antagonist für Rocuronium/Vecuronium. Vollständige Reversal in 3-5 Min. Sicherer als Neostigmin-Atropin.",
   "maligne hyperthermie": "Maligne Hyperthermie: pharmakogenetische Krise durch Succinylcholin/volatile Anästhetika. Symptome: Muskelrigidität, Hyperkapnie, Hyperthermie. Antidot: Dantrolen i.v.! Sofort Trigger stoppen.",
@@ -3989,12 +3989,12 @@ const KRANKHEITSBILDER = {
             problem: "Ineffektives Atemmuster r/t bronchialer Obstruktion m/d/s Dyspnoe NRS 6, AF 26/min, SpO₂ 88%",
             ressourcen: ["Kann Lippenbremse anwenden", "Motiviert zur Mitarbeit"],
             ziel: "SpO₂ ≥ 90% (COPD-Ziel!), Dyspnoe NRS ≤ 3 nach 24h",
-            massnahmen: ["O₂-Gabe VORSICHTIG: Ziel SpO₂ 88-92% (nicht höher! Atemantriebreduktion!)", "Kutschersitz anleiten (sitzend, Arme aufgestützt → Atemhilfsmuskulatur)", "Lippenbremse üben und anwenden", "Bronchodilatator-Inhalation nach Anordnung, Technik kontrollieren", "Sekretmobilisation: atemunterstützende Lagerung, PEP-Geräte", "Atemgymnastik 3x täglich", "Körperliche Schonung, Aktivität nach Befinden"],
+            massnahmen: ["O₂-Gabe VORSICHTIG: Ziel SpO₂ 88-92% (nicht höher! Gefahr des CO₂-Anstiegs)", "Kutschersitz anleiten (sitzend, Arme aufgestützt → Atemhilfsmuskulatur)", "Lippenbremse üben und anwenden", "Bronchodilatator-Inhalation nach Anordnung, Technik kontrollieren", "Sekretmobilisation: atemunterstützende Lagerung, PEP-Geräte", "Atemgymnastik 3x täglich", "Körperliche Schonung, Aktivität nach Befinden"],
             evaluation: "4-stündlich SpO₂, AF, Dyspnoe-NRS"
           }
         ],
         fragen: [
-          {f:"Warum darf COPD-Patienten NICHT unkontrolliert hochdosiert O₂ gegeben werden?", opt:["O₂ ist zu teuer","Hypoxischer Atemantrieb: zu viel O₂ → Atemdepression","O₂ verschlimmert Bronchitis","Keine Kontraindikation"], k:1, e:"COPD-Patienten mit chronischer Hyperkapnie haben einen hypoxischen Atemantrieb. Zu viel O₂ (SpO₂ > 92%) → Atemdepression → CO₂-Narkose. Ziel-SpO₂: 88-92%!"},
+          {f:"Warum darf COPD-Patienten NICHT unkontrolliert hochdosiert O₂ gegeben werden?", opt:["O₂ ist zu teuer","Zu viel O₂ kann das pCO₂ ansteigen lassen (Gefahr der CO₂-Narkose)","O₂ verschlimmert Bronchitis","Keine Kontraindikation"], k:1, e:"Bei COPD mit Hyperkapnie-Risiko lässt zu viel O₂ das pCO₂ ansteigen: Vor allem verschlechtert sich das Ventilations-Perfusions-Verhältnis, dazu kommt der Haldane-Effekt; ein verminderter Atemantrieb spielt nur eine kleinere Rolle. Folge kann eine CO₂-Narkose sein. Ziel-SpO₂: 88–92 %."},
           {f:"Was ist der Kutschersitz bei Dyspnoe?", opt:["Flachlagerung","Sitzend, Arme auf Oberschenkeln/Tisch aufgestützt – entlastet Atemhilfsmuskulatur","Linksseitenlage","Stehend an Wand gelehnt"], k:1, e:"Kutschersitz: Patient sitzt, lehnt sich nach vorne, stützt Arme auf Oberschenkeln oder Tisch. Fixiert Schultergürtel → Atemhilfsmuskulatur (Mm. scaleni, sternocleidomastoideus) kann effizienter arbeiten."},
           {f:"Was ist die Lippenbremse?", opt:["Medikament","Atemtechnik: Ausatmung durch halb geöffnete Lippen – erhöht Atemwegsdruck → verhindert Bronchiolenkollaps","Eine Lagerungstechnik","Ein Absaugverfahren"], k:1, e:"Lippenbremse: durch locker aufeinanderliegende Lippen langsam ausatmen. Erzeugt leichten Gegendruck → verhindert Bronchiolenkollaps beim Emphysem → effektivere Entleerung der Lungen."},
         ]
@@ -12315,6 +12315,25 @@ async function renderWissensDB(){
               + d.tabelle.kopf.map(function(h){ return '<th style="'+_tc+';color:#e2e8f0;background:rgba(var(--accent-rgb),.1)">'+_wdbEsc(h)+'</th>'; }).join('') + '</tr>'
               + d.tabelle.zeilen.map(function(z){ return '<tr>'+z.map(function(c){ return '<td style="'+_tc+'">'+_wdbEsc(c)+'</td>'; }).join('')+'</tr>'; }).join('')
               + '</table></div>';
+          } catch(err){}
+        }
+        // Zusatzabschnitte (09.11.2026): d.abschnitte = [{titel, text?, tabelle?, nach?}]
+        if (k === 'definition' && Array.isArray(d.abschnitte)) {
+          try {
+            var _ac = 'border:1px solid rgba(var(--accent-rgb),.2);padding:6px 8px;text-align:left;vertical-align:top';
+            d.abschnitte.forEach(function(a){
+              if (!a || !a.titel) return;
+              body += '<div style="margin:8px 0"><div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(var(--accent-rgb),.75);text-transform:uppercase;margin-bottom:2px">'+_wdbEsc(a.titel)+'</div>';
+              if (a.text) body += '<div style="font-size:13px;color:#cbd5e1;line-height:1.5">'+_wdbEsc(a.text)+'</div>';
+              if (a.tabelle && Array.isArray(a.tabelle.kopf) && Array.isArray(a.tabelle.zeilen)) {
+                body += '<div style="overflow-x:auto;margin:4px 0"><table style="border-collapse:collapse;width:100%;font-size:12px;color:#cbd5e1"><tr>'
+                  + a.tabelle.kopf.map(function(h){ return '<th style="'+_ac+';color:#e2e8f0;background:rgba(var(--accent-rgb),.1)">'+_wdbEsc(h)+'</th>'; }).join('') + '</tr>'
+                  + a.tabelle.zeilen.map(function(z){ return '<tr>'+z.map(function(c){ return '<td style="'+_ac+'">'+_wdbEsc(c)+'</td>'; }).join('')+'</tr>'; }).join('')
+                  + '</table></div>';
+              }
+              if (a.nach) body += '<div style="font-size:13px;color:#cbd5e1;line-height:1.5">'+_wdbEsc(a.nach)+'</div>';
+              body += '</div>';
+            });
           } catch(err){}
         }
       });
