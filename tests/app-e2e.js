@@ -262,7 +262,7 @@ const isLoggedIn = page => page.evaluate(() => typeof currentUser !== 'undefined
     await page.waitForTimeout(600);
     // Tour muss fuer Bestandsnutzer von selbst erneut starten
     let auto = false;
-    for (let k = 0; k < 20 && !auto; k++) { await page.waitForTimeout(500); auto = await page.evaluate(() => !!document.getElementById('pl-tour-tip')); }
+    for (let k = 0; k < 20 && !auto; k++) { await page.waitForTimeout(500); auto = await page.evaluate(() => { const j = document.getElementById('pl-tour-ja'); if (j) j.click(); return !!document.getElementById('pl-tour-tip'); }); }  // seit 08.11.2026 erst Frage „Kurze Tour?“ → Ja
     check('Tour ' + rolle + ': startet für Bestandsnutzer automatisch neu', auto);
     if (!auto) { await page.evaluate(() => plTourStart(true)); await page.waitForTimeout(900); }
     const titel = [];
