@@ -1,0 +1,121 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
+/* Rechen-Reihe Teil 4: Kalium-Perfusor mmol/h → ml/h (61 s mit Voiceover, 540×960 @2x). */
+html,body{margin:0;width:540px;height:960px;overflow:hidden;background:#f2fbfd;font-family:Inter,"DejaVu Sans",sans-serif;color:#0f172a}
+*{box-sizing:border-box}
+.deko{position:absolute;border-radius:50%;background:#d6eef7}
+.kopf{position:absolute;left:26px;top:70px;display:flex;align-items:center;gap:10px}
+.kopf img{width:40px;height:40px;border-radius:50%;background:#0b1626}
+.kopf b{display:block;font-size:17px;font-weight:900;color:#0f2a44}
+.kopf span{display:block;font-size:11px;font-weight:600;color:#475569}
+.sc{position:absolute;left:26px;right:62px;top:150px;display:none}
+.tag{display:inline-block;color:#fff;font-weight:900;font-size:16px;letter-spacing:.6px;padding:6px 12px;border-radius:6px}
+.rot{background:#dc2626}.gr{background:#15803d}.bl{background:#0369a1}
+h1{margin:16px 0 0;font-size:46px;line-height:1.08;font-weight:900;color:#0f2a44}
+h1 em{font-style:normal;color:#15803d}
+.unter{margin-top:14px;font-size:21px;font-weight:700;color:#334155}
+.karte{background:#fff;border-radius:16px;padding:20px 22px;box-shadow:0 10px 28px rgba(15,42,68,.12);margin-top:18px}
+.karte small{display:block;font-size:13px;font-weight:800;letter-spacing:.8px;color:#64748b}
+.karte .gross{font-size:34px;font-weight:900;line-height:1.15;color:#0f2a44;margin-top:4px}
+.chips{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.chip{background:#d1fae5;color:#065f46;font-weight:900;font-size:24px;padding:10px 16px;border-radius:12px}
+.frage{text-align:center;margin-top:34px;font-size:24px;font-weight:800}
+.riesig{text-align:center;font-size:70px;font-weight:900;color:#dc2626;margin-top:6px}
+.schritt{display:flex;gap:14px;margin:14px 0}
+.schritt .n{flex:none;width:36px;height:36px;border-radius:50%;background:#15803d;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:19px}
+.schritt b{display:block;font-size:23px;font-weight:900;color:#0f2a44}
+.schritt span{display:block;font-size:22px;font-weight:700;color:#15803d;margin-top:3px}
+.pumpe{margin:26px auto 0;width:400px;height:130px;background:#e2e8f0;border:3px solid #94a3b8;border-radius:16px;position:relative}
+.spritze{position:absolute;left:18px;top:30px;width:230px;height:46px;background:#fff;border:3px solid #94a3b8;border-radius:8px;overflow:hidden}
+.spritze i{position:absolute;left:0;top:0;bottom:0;width:150px;background:#bae6fd}
+.kolben{position:absolute;left:150px;top:-6px;width:14px;height:58px;background:#64748b;border-radius:3px}
+.anz{position:absolute;right:18px;top:24px;width:118px;height:58px;background:#0f172a;color:#5eead4;font:900 30px "DejaVu Sans Mono",monospace;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.anz2{position:absolute;right:52px;bottom:12px;font-size:14px;font-weight:800;color:#334155}
+.lampe{position:absolute;left:26px;bottom:16px;width:14px;height:14px;border-radius:50%;background:#f87171}
+.merke{background:linear-gradient(180deg,#16a34a,#15803d);color:#fff;border-radius:16px;padding:20px;font-size:28px;font-weight:900;line-height:1.25;margin-top:18px}
+.warn{background:#fef3c7;border:2px solid #f59e0b;border-radius:14px;padding:14px 16px;font-size:19px;font-weight:700;line-height:1.35;margin-top:16px}
+.pdf{display:flex;gap:16px;align-items:center}
+.pdf .ico{font-size:60px}
+.link{background:#0f2a44;color:#fde68a;border-radius:14px;padding:16px;text-align:center;font-size:24px;font-weight:900;margin-top:18px}
+svg.ekg{position:absolute;left:0;bottom:70px;width:540px;height:60px}
+.liste{margin-top:14px}.liste div{background:#fff;border-left:6px solid #dc2626;border-radius:10px;padding:12px 14px;margin:10px 0;font-size:22px;font-weight:800;color:#0f2a44;box-shadow:0 6px 16px rgba(15,42,68,.08)}
+.liste div.gr2{border-left-color:#15803d}
+</style></head><body>
+<div class="deko" style="width:300px;height:300px;left:-170px;top:430px"></div>
+<div class="deko" style="width:240px;height:240px;right:-150px;top:250px"></div>
+<div class="kopf"><img src="logo.png"><div><b>PLAN NRW</b><span>Pflegeexamen · Station · Intensiv</span></div></div>
+
+<!-- 1 Hook (0–7,5) -->
+<div class="sc" data-von="0" data-bis="7.5">
+ <div class="tag rot" data-pop="0">EXAMENS-FALLE · TEIL 4</div>
+ <h1 data-pop="0">Kalium-Perfusor:<br>mmol/h <em>→ ml/h?</em></h1>
+ <div class="chips"><div class="chip" data-rein="2.2">💉 10 mmol/h angeordnet</div></div>
+ <div class="unter" data-rein="5">Wie viel stellst du ein?</div>
+ <div class="pumpe" data-pop="5.5"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz">??</div><div class="anz2">ml/h</div><div class="lampe pulse2" style="background:#f87171"></div></div>
+</div>
+
+<!-- 2 Spritze (7,5–12,2) -->
+<div class="sc" data-von="7.5" data-bis="12.2">
+ <div class="tag rot" data-pop="7.5">DIE SPRITZE</div>
+ <div class="karte" data-pop="7.7"><small>RECHENBEISPIEL</small><div class="gross">Kaliumchlorid<br>40 mmol in 50 ml</div></div>
+ <div class="chips"><div class="chip" data-rein="9.6">Ziel: 10 mmol/h</div></div>
+</div>
+
+<!-- 3 Rechnung (12,2–31,2) -->
+<div class="sc" data-von="12.2" data-bis="31.2">
+ <div class="tag gr" data-pop="12.2">IN 2 SCHRITTEN</div>
+ <div class="karte">
+  <div class="schritt" data-rein="12.4"><div class="n">1</div><div><b>Konzentration</b><span data-rein="15.5">40 mmol ÷ 50 ml</span><span data-rein="18.7">= 0,8 mmol/ml</span></div></div>
+  <div class="schritt" data-rein="22.2"><div class="n">2</div><div><b>Laufrate</b><span data-rein="24.9">10 mmol/h ÷ 0,8 mmol/ml</span><span data-rein="28.4">= 12,5 ml/h</span></div></div>
+ </div>
+ <div class="pumpe" data-pop="28.6"><div class="spritze"><i></i><div class="kolben"></div></div><div class="anz">12,5</div><div class="anz2">ml/h</div><div class="lampe" style="background:#22c55e"></div></div>
+</div>
+
+<!-- 4 Hochrisiko (31,2–41,5) -->
+<div class="sc" data-von="31.2" data-bis="41.5">
+ <div class="tag rot" data-pop="31.2">⚠️ HOCHRISIKO-MEDIKAMENT</div>
+ <div class="liste">
+  <div data-rein="34">Niemals als Bolus</div>
+  <div data-rein="35.3" class="gr2">Immer über eine Pumpe</div>
+  <div data-rein="37.1" class="gr2">Regelmäßige Laborkontrollen</div>
+  <div data-rein="39.7" class="gr2">Herzrhythmus im Blick</div>
+ </div>
+</div>
+
+<!-- 5 Merke (41,5–49,4) -->
+<div class="sc" data-von="41.5" data-bis="49.4">
+ <div class="tag gr" data-pop="41.5">MERKE</div>
+ <div class="merke" data-pop="41.8">Konzentration und Höchstrate legt dein Hausstandard fest.</div>
+ <div class="warn" data-rein="45.6">Immer nach ärztlicher Anordnung und mit Vier-Augen-Prinzip.</div>
+</div>
+
+<!-- 6 Kommentar (49,4–53,8) -->
+<div class="sc" data-von="49.4" data-bis="53.8">
+ <div class="tag bl" data-pop="49.4">DEINE STATION</div>
+ <h1 data-pop="49.6">Wie viel Kalium ist<br><em>bei euch</em> in der Spritze?</h1>
+ <div class="link" data-pop="52.3">💬 Schreib es in die Kommentare</div>
+</div>
+
+<!-- 7 Outro (53,8–61,5) -->
+<div class="sc" data-von="53.8" data-bis="61.5">
+ <div class="tag gr" data-pop="53.8">TEILEN</div>
+ <h1 data-pop="54" style="font-size:40px">Schick das deiner <em>Lerngruppe</em> 📲</h1>
+ <div class="karte pdf" data-pop="55.7"><div class="ico">🧮</div><div><div class="gross" style="font-size:30px">Rechner kostenlos</div><div style="font-size:19px;font-weight:700;color:#334155;margin-top:4px">in PLAN NRW – mit eigenen Werten</div></div></div>
+ <div class="link pulse" data-pop="59">PLAN NRW · Link in der Bio</div>
+</div>
+
+<svg class="ekg" viewBox="0 0 540 60"><path id="ekg" fill="none" stroke="#14b8a6" stroke-width="2.4" d=""/></svg>
+<script>
+function cl(x){return x<0?0:x>1?1:x;}
+function ease(x){x=cl(x);return 1-Math.pow(1-x,3);}
+// EKG-Linie: wiederholtes PQRST-Muster, läuft nach links
+function ekgPfad(off){var d='',w=135;for(var k=-1;k<6;k++){var x=k*w-off;d+=(k===-1?'M':'L')+x+',36 L'+(x+40)+',36 L'+(x+48)+',30 L'+(x+56)+',36 L'+(x+64)+',36 L'+(x+68)+',40 L'+(x+74)+',6 L'+(x+80)+',52 L'+(x+85)+',36 L'+(x+100)+',36 L'+(x+110)+',29 L'+(x+120)+',36 L'+(x+w)+',36 ';}return d;}
+window.setT=function(t){
+  document.querySelectorAll('.sc').forEach(function(s){s.style.display=(t>=+s.dataset.von&&t<+s.dataset.bis)?'block':'none';});
+  document.querySelectorAll('[data-pop]').forEach(function(el){var p=+el.dataset.pop,e=ease((t-p)/.35);var erste=document.querySelector('.sc[data-von="'+p+'"]');el.style.opacity=(p===0)?1:e;el.style.transform='scale('+((p===0)?1:(.85+.15*e))+')';});
+  document.querySelectorAll('[data-rein]').forEach(function(el){var e=ease((t-el.dataset.rein)/.35);el.style.opacity=e;el.style.transform='translateX('+((1-e)*-30)+'px)';});
+  document.querySelectorAll('.pulse').forEach(function(el){if(+el.style.opacity>=.99)el.style.transform='scale('+(1+.03*Math.sin(t*6))+')';});
+  document.querySelectorAll('.pulse2').forEach(function(el){el.style.opacity=.4+.6*Math.abs(Math.sin(t*4));});
+  document.getElementById('ekg').setAttribute('d',ekgPfad((t*90)%135));
+};
+setT(0);
+</script></body></html>
