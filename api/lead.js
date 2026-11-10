@@ -214,7 +214,7 @@ export default async function handler(req, res) {
         const rows = r.ok ? await r.json() : [];
         if (!rows.length) { res.status(404).send(htmlSeite('Link ung&uuml;ltig', 'Dieser Link ist nicht (mehr) g&uuml;ltig.')); return; }
         res.status(200).send(ab ? htmlSeite('Abgemeldet', 'Du bekommst keine Neuigkeiten mehr per E-Mail von uns.')
-          : htmlSeite('Danke, best&auml;tigt!', 'Wir melden uns nur, wenn es in PLAN wirklich etwas Neues gibt. Abmelden kannst du dich jederzeit &uuml;ber den Link in jeder Mail.'));
+          : htmlSeite('Danke, best&auml;tigt!', 'In den n&auml;chsten Tagen bekommst du drei kurze Lerntipps, danach melden wir uns nur, wenn es in PLAN wirklich etwas Neues gibt. Abmelden kannst du dich jederzeit &uuml;ber den Link in jeder Mail.'));
       } catch (e) { console.error('[lead] nl', e); res.status(500).send(htmlSeite('Fehler', 'Bitte versuch es sp&auml;ter nochmal.')); }
       return;
     }

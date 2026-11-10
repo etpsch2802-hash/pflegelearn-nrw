@@ -7882,7 +7882,9 @@ function startGratis(){
   if(!email || !email.includes('@')){ alert('Bitte gültige E-Mail eingeben!'); return; }
   try { if(typeof emailjs!=='undefined'){ emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { name:name, email:email, ausbildung:'Gratis-Zugang (eingeschränkt)', datum:new Date().toLocaleString('de-DE'), message:'Neuer Gratis-Nutzer' }); } } catch(e){}
   try{ plSaveLead(email, name, 'gratis', null, gconsent); }catch(e){}
-  try{ if(email) fetch('/api/welcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}); }catch(e){}
+  /* 10.11.2026: Häkchen „Erinnerung & Lerntipps“ wird jetzt mitgeschickt → Willkommensmail mit Bestätigungsknopf (Double-Opt-In) */
+  try{ if(email) fetch('/api/welcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,tipps:!!gconsent})}); }catch(e){}
+  try{ if(gconsent&&typeof gaEvent==='function') gaEvent('lerntipps_gewuenscht',{}); }catch(e){}
   const m=document.getElementById('gratis-modal'); if(m) m.remove();
   currentUser={ token:'GRATIS', name:name, email:email, bereich:'gratis', ablauf:'2099-12-31' };
   currentBereich=BEREICH_CONFIG['gratis'];
@@ -26102,12 +26104,15 @@ window.plLzpHinweis=function(kicker,titel,test){
   function angemeldet(){ try{ return typeof currentUser!=='undefined' && !!currentUser; }catch(e){ return false; } }
   /* 09.11.2026: wiederkehrend = PLAN wurde auf diesem Gerät schon an einem früheren Tag geöffnet (pl_erster_tag, nur ja/nein) */
   function wieder(){ try{ var d=localStorage.getItem('pl_erster_tag'); return !!d && d<new Date().toISOString().slice(0,10); }catch(e){ return false; } }
+  /* 10.11.2026: seit = Tage seit dem ersten Öffnen auf diesem Gerät (0–60, nur für neue Geräte ab 08.11.; Bestand → null).
+     Damit zeigt der Nutzungs-Tab, wie viele Neue am Tag 1 / Tag 7 wiederkommen – ohne Geräte über Tage zu verknüpfen. */
+  function seit(){ try{ var d=localStorage.getItem('pl_erster_tag'); if(!d||d<'2026-11-01') return null; var n=Math.round((new Date(new Date().toISOString().slice(0,10))-new Date(d))/864e5); return (n>=0&&n<=60)?n:null; }catch(e){ return null; } }
   var gesendet={};
   function eigenesGeraet(){ try{ return localStorage.getItem('pl_nicht_zaehlen')==='1'; }catch(e){ return false; } }   // 25.10.2026: Admin-Geräte nicht mitzählen
   function ping(){
     if(eigenesGeraet()) return;
     var a=angemeldet(); var k=a?'a':'g'; if(gesendet[k]) return; gesendet[k]=1;
-    try{ fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping',modus:modus(),angemeldet:a,wieder:wieder()}),keepalive:true}).catch(function(){}); }catch(e){}
+    try{ fetch('/api/presence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping',modus:modus(),angemeldet:a,wieder:wieder(),seit:seit()}),keepalive:true}).catch(function(){}); }catch(e){}
   }
   setTimeout(ping,3000);
   var w=setInterval(function(){ if(angemeldet()){ ping(); clearInterval(w); } },5000);
@@ -26142,6 +26147,16 @@ window.plLzpHinweis=function(kicker,titel,test){
         +'<div style="height:8px;background:rgba(255,255,255,.1);border-radius:5px;margin-top:7px;overflow:hidden"><div style="height:100%;width:'+proz+'%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>'
         +'<div style="font-size:11px;color:var(--text3);margin-top:6px">'+(serie>=SERIE_ZIEL?'✅ Schwelle erreicht – Bezahlstart möglich (Vorher: Vercel Pro, Texte „aktuell kostenlos“ zurückstellen). ':'Serie zählt nur volle Tage, heute läuft noch. ')+'Ø 7 volle Tage: '+zahl(s7)+' · Tage mit ≥ 50 gesamt: '+ueber+' von '+voll.length+'</div></div>';
       var wHTML='';
+      var rHTML='';
+      /* 10.11.2026: Rückkehr neuer Geräte (seit_tagen) – Tag 1 = am Folgetag wieder da, Tag 7 = eine Woche später */
+      if(d.mitSeit){ var T=d.tage||[], zeilen='';
+        for(var ri=T.length-1;ri>=0&&ri>=T.length-9;ri--){ var t0=T[ri]; if(!t0.seit0) continue;
+          var n1=T[ri+1]?T[ri+1].seit1:null, n7=T[ri+7]?T[ri+7].seit7:null;
+          var q=function(n){ return n==null?'<span style="color:var(--text3)">–</span>':(n+' <span style="color:var(--text3)">('+Math.round(n/t0.seit0*100)+' %)</span>'); };
+          zeilen+='<tr><td style="padding:3px 6px">'+esc(t0.tag.slice(8,10)+'.'+t0.tag.slice(5,7))+'</td><td style="padding:3px 6px;text-align:right">'+t0.seit0+'</td><td style="padding:3px 6px;text-align:right">'+q(n1)+'</td><td style="padding:3px 6px;text-align:right">'+q(n7)+'</td></tr>'; }
+        rHTML='<div style="margin-top:12px;font-size:12px;color:var(--text2)"><div style="font-weight:700;margin-bottom:4px">Kommen neue Geräte wieder?</div>'
+          +(zeilen?'<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="color:var(--text3)"><th style="text-align:left;padding:3px 6px">Erster Tag</th><th style="text-align:right;padding:3px 6px">Neu</th><th style="text-align:right;padding:3px 6px">Tag 1 zurück</th><th style="text-align:right;padding:3px 6px">Tag 7 zurück</th></tr>'+zeilen+'</table>':'<div style="color:var(--text3)">Noch keine Daten – wird ab heute gezählt.</div>')
+          +'<div style="font-size:10.5px;color:var(--text3);margin-top:4px">Gezählt ab 10.11.2026. Neue Geräte melden die Tage seit dem ersten Öffnen; keine Verknüpfung über Tage.</div></div>'; }
       if(d.mitWieder){ var wv=voll.slice(-7); wHTML='<div style="font-size:12px;color:var(--text2);margin-top:6px">Davon wiederkehrend heute: <b>'+esc(h.wiederkehrend||0)+'</b> · Ø 7 T.: <b>'+esc(zahl(schnitt(wv,'wiederkehrend')))+'</b> <span style="color:var(--text3)">(Gerät hat PLAN schon an einem früheren Tag geöffnet)</span></div>'; }
       var eigen=false; try{ if(localStorage.getItem('pl_nicht_zaehlen')==null) localStorage.setItem('pl_nicht_zaehlen','1'); eigen=localStorage.getItem('pl_nicht_zaehlen')==='1'; }catch(e){}
       var eigenHTML='<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" '+(eigen?'checked':'')+' onchange="try{localStorage.setItem(\'pl_nicht_zaehlen\',this.checked?\'1\':\'0\')}catch(e){}" style="width:16px;height:16px;accent-color:var(--accent)"> Dieses Gerät nicht mitzählen (deine eigenen Aufrufe)</label>';
@@ -26170,7 +26185,7 @@ window.plLzpHinweis=function(kicker,titel,test){
         +karte('Android-App',h.app,'Ø 7 T.: '+zahl(d.schnitt7.app))
         +karte('Installiert (Startbildschirm)',h.installiert,'Ø 7 T.: '+zahl(d.schnitt7.installiert))
         +karte('Browser',h.browser,'Ø 7 T.: '+zahl(d.schnitt7.browser))+'</div>'
-        +'<div style="font-size:12px;color:var(--text2);margin-top:8px">Davon angemeldet heute: <b>'+esc(h.angemeldet||0)+'</b></div>'+wHTML
+        +'<div style="font-size:12px;color:var(--text2);margin-top:8px">Davon angemeldet heute: <b>'+esc(h.angemeldet||0)+'</b></div>'+wHTML+rHTML
         +'<div style="font-size:11px;font-weight:700;color:#8ab4d0;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">'+(reihe.length<14?'Seit Messbeginn':'Letzte 14 Tage')+'</div>'
         +'<div style="display:flex;gap:4px;align-items:flex-end;justify-content:flex-start">'+balken+'</div>'
         +'<div style="font-size:10.5px;color:var(--text3);margin-top:6px">'+leg('var(--accent)','Android-App')+leg('#a78bfa','Installiert')+leg('#64748b','Browser')+'</div>'
@@ -30085,6 +30100,9 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       var hatZiel=!!sessionStorage.getItem('plan_insta_ziel');
       if(hatZiel && name!=='willkommen') return true;
       var schon=sessionStorage.getItem('pl_fenster');
+      /* 10.11.2026: „Bleib dran“ (Erinnerung/Installieren) nach dem ersten Quiz darf als zweites Fenster kommen,
+         wenn vorher nur Tagesfrage oder Willkommen dran waren – sonst sahen Neue es beim ersten Besuch nie. */
+      if(name==='push' && (schon==='tagesfrage'||schon==='willkommen') && !sessionStorage.getItem('pl_fenster2')){ sessionStorage.setItem('pl_fenster2','push'); return false; }
       if(schon && schon!==name) return true;
       sessionStorage.setItem('pl_fenster',name); return false;
     }catch(e){ return false; }
@@ -30176,31 +30194,68 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     document.getElementById('pl-kt-x').onclick=function(){ ga('kurs_teilen',{weg:'spaeter'}); o.remove(); };
     return true;
   }
-  function pushKarte(){
-    if(window.plRuhe&&window.plRuhe('push')) return false;
+  /* 10.11.2026 (Go P. Schenkelberger): „Bleib dran“ gleich nach dem ERSTEN Quiz statt erst nach dem zweiten.
+     Ein Fenster mit Erinnerung (Push) und – auf dem Handy, nicht installiert – „Auf den Startbildschirm“.
+     iPhone im Safari: Push geht erst nach der Installation → dann nur der Installations-Teil.
+     Zählt in pl_push_offered_n/at (max. 3, 7 Tage Abstand) und pl_install_frage {n,at} (max. 2, 7 Tage). Kurs-Teilen kommt danach. */
+  function pushMoeglich(){
     try{
       if(typeof plPushAvailable!=='function'||!plPushAvailable()) return false;
       if(ls('pl_push_on')==='1'||Notification.permission==='denied') return false;
       var nn=parseInt(ls('pl_push_offered_n')||'0',10)||0, last=parseInt(ls('pl_push_offered_at')||'0',10)||0;
-      if(nn>=3||(last&&Date.now()-last<7*24*3600*1000)) return false;
-      ls('pl_push_offered','1'); ls('pl_push_offered_n',String(nn+1)); ls('pl_push_offered_at',String(Date.now()));
+      return !(nn>=3||(last&&Date.now()-last<7*24*3600*1000));
     }catch(e){ return false; }
+  }
+  function istInstalliert(){
+    try{ if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone) return true; }catch(e){}
+    try{ if(ls('pl_is_twa')==='1'||(document.referrer||'').indexOf('android-app://')===0) return true; }catch(e){}
+    return false;
+  }
+  function installMoeglich(){
+    try{
+      if(istInstalliert()) return false;
+      if(!/Android|iPad|iPhone|iPod/.test(navigator.userAgent)) return false;
+      var d={}; try{ d=JSON.parse(ls('pl_install_frage')||'{}'); }catch(e){}
+      return !((d.n||0)>=2||(d.at&&Date.now()-d.at<7*864e5));
+    }catch(e){ return false; }
+  }
+  function pushKarte(){
+    var mitPush=pushMoeglich(), mitInst=installMoeglich();
+    if(!mitPush&&!mitInst) return false;
+    if(window.plRuhe&&window.plRuhe('push')) return false;
+    var ios=/iPad|iPhone|iPod/.test(navigator.userAgent), dp=null; try{ dp=deferredPrompt; }catch(e){}
+    var erstes=false; try{ erstes=((JSON.parse(ls('pl_progress_v2')||'{}').quizTotal)||0)<=1; }catch(e){}
+    var anl=ios?'Tippe unten in Safari auf <b>Teilen</b> (□↑) und dann auf <b>„Zum Home-Bildschirm“</b>.':(dp?'':'Tippe in Chrome oben rechts auf <b>⋮</b> und dann auf <b>„Zum Startbildschirm hinzufügen“</b>.');
     var o=fenster('pl-push-frage',
-      '<div style="font-size:30px;margin-bottom:4px">🔔</div>'
-     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">Soll ich dich abends erinnern?</div>'
-     +'<div style="font-size:14px;line-height:1.55;color:#b3c4d6">Einmal am Tag eine kurze Nachricht um 18 Uhr – damit du dranbleibst. Jederzeit im Profil abschaltbar.</div>'
-     +btn('pl-pf-ja','Ja, erinner mich',true)
-     +'<button id="pl-pf-nein" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">Nein danke</button>');
+      '<div style="font-size:30px;margin-bottom:4px">'+(mitPush?'🔔':'📲')+'</div>'
+     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">'+(erstes?'Stark, dein erstes Quiz!':'Bleib dran!')+'</div>'
+     +'<div id="pl-pf-txt" style="font-size:14px;line-height:1.55;color:#b3c4d6">'+(mitPush?'Soll ich dich abends kurz erinnern? Einmal am Tag um 18 Uhr – damit du dranbleibst. Jederzeit im Profil abschaltbar.':'Leg dir PLAN auf den Startbildschirm – dann ist es mit einem Tipp da, wie eine App.'+(anl?'<br><br>'+anl:''))+'</div>'
+     +(mitPush?btn('pl-pf-ja','🔔 Ja, erinner mich',true):'')
+     +(mitPush&&mitInst?btn('pl-pf-inst',(dp?'📲 Auf den Startbildschirm':'📲 Auf den Startbildschirm – so geht’s')):'')
+     +(!mitPush&&mitInst&&dp?btn('pl-pf-inst','📲 Jetzt hinzufügen',true):'')
+     +'<button id="pl-pf-nein" style="width:100%;padding:8px;border:0;background:none;color:#7fa6c2;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px">'+(!mitPush&&mitInst&&!dp?'Verstanden':'Später')+'</button>');
     if(!o) return false;
-    document.getElementById('pl-pf-ja').onclick=function(){ o.remove(); ga('push_frage',{antwort:'ja'}); try{ plEnableReminders().then(function(ok){ if(ok){ var t=document.createElement('div'); t.textContent='🔔 Erinnerung ist an – jeden Abend um 18 Uhr'; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1700;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){ t.remove(); },3200); } }); }catch(e){} };
-    document.getElementById('pl-pf-nein').onclick=function(){ o.remove(); ga('push_frage',{antwort:'nein'}); };
+    try{
+      if(mitPush){ var nn=parseInt(ls('pl_push_offered_n')||'0',10)||0; ls('pl_push_offered','1'); ls('pl_push_offered_n',String(nn+1)); ls('pl_push_offered_at',String(Date.now())); }
+      if(mitInst){ var d={}; try{ d=JSON.parse(ls('pl_install_frage')||'{}'); }catch(e){} ls('pl_install_frage',JSON.stringify({n:(d.n||0)+1,at:Date.now()})); }
+    }catch(e){}
+    ga('bleib_dran',{push:mitPush?1:0,install:mitInst?1:0});
+    var ja=document.getElementById('pl-pf-ja');
+    if(ja) ja.onclick=function(){ o.remove(); ga('push_frage',{antwort:'ja'}); try{ plEnableReminders().then(function(ok){ if(ok){ var t=document.createElement('div'); t.textContent='🔔 Erinnerung ist an – jeden Abend um 18 Uhr'; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1700;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){ t.remove(); },3200); } }); }catch(e){} };
+    var ib=document.getElementById('pl-pf-inst');
+    if(ib) ib.onclick=function(){
+      ga('install_frage',{antwort:dp?'ja':'anleitung',weg:'bleib_dran'});
+      if(dp){ o.remove(); try{ installApp(); }catch(e){} return; }
+      var k=document.getElementById('pl-pf-txt'); if(k) k.innerHTML=anl; ib.remove();
+    };
+    document.getElementById('pl-pf-nein').onclick=function(){ o.remove(); ga('push_frage',{antwort:'spaeter'}); };
     return true;
   }
   function nachErgebnis(){
     if(!an()) return;
     if(frei()){ if((nachErgebnis.v=(nachErgebnis.v||0)+1)<20) setTimeout(nachErgebnis,1500); return; }
-    if(ls('pl_kurs_teilen')!=='1'){ teilenKarte(); return; }
-    pushKarte();
+    if(pushKarte()) return;
+    if(ls('pl_kurs_teilen')!=='1') teilenKarte();
   }
   function wrap(){
     var orig=window.showResult;
@@ -31094,5 +31149,47 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 })();
 </script>
 
+<!-- PLAN NRW: Dankeschön an alle Nutzer (10.11.2026, Wunsch P. Schenkelberger)
+     Persönliche Karte auf der Startseite unter der Begrüßung, bis 30.11.2026, bis sie geschlossen wird (neuer Key pl_danke_1).
+     Knöpfe: Feedback geben (showFeedback), PLAN teilen. GA danke_karte {aktion}. Keine Zahl außer der echten (3 Tage > 100 Geräte). -->
+<script>
+(function(){
+  var BIS='2026-11-30';
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  function ga(a,b){ try{ if(typeof gtag==='function') gtag('event','danke_karte',{aktion:a}); }catch(e){} }
+  var TEXT='Ich lerne fürs Pflegeexamen mit PLAN NRW – 2.000+ Prüfungsfragen, aktuell kostenlos: https://plan-nrw.de/?quelle=danke';
+  function zeigen(){
+    try{
+      if(ls('pl_danke_1')==='1'||new Date().toISOString().slice(0,10)>BIS) return;
+      if(typeof currentUser==='undefined'||!currentUser) return;
+      if(document.getElementById('pl-danke')) return;
+      var anker=document.getElementById('pl-heute')||document.getElementById('pl-test-banner')||document.getElementById('home-greeting'); if(!anker||!anker.parentNode) return;
+      var vn=''; try{ vn=String(currentUser.name||'').trim().split(/\s+/)[0]; if(/^lernende/i.test(vn)) vn=''; }catch(e){}
+      var d=document.createElement('div'); d.id='pl-danke';
+      d.style.cssText='position:relative;margin:10px 0 14px;padding:16px 16px 14px;border-radius:16px;background:linear-gradient(160deg,rgba(20,184,166,.13),rgba(250,204,21,.07));border:1px solid rgba(20,184,166,.35);color:var(--text,#e6f2fb)';
+      d.innerHTML='<button id="pl-danke-x" aria-label="Schließen" style="position:absolute;top:8px;right:8px;background:none;border:0;color:var(--text3,#8aa);font-size:17px;cursor:pointer;padding:4px 8px">✕</button>'
+        +'<div style="font-size:17px;font-weight:800;margin:0 26px 8px 0">🙏 Danke'+(vn?', '+vn.replace(/[<>&"]/g,''):'')+'!</div>'
+        +'<div style="font-size:13.5px;line-height:1.6;color:var(--text2,#b3c4d6)">An den letzten Tagen haben jeden Tag über 100 Menschen mit PLAN gelernt. Damit hätte ich nie gerechnet.<br><br>'
+        +'Ich entwickle PLAN allein, neben meiner Arbeit als Fachpfleger für Anästhesie und Intensivmedizin. Jede Rückmeldung, jede gemeldete Frage und jedes Teilen in eurer Kursgruppe hilft mir, die App schneller besser zu machen. <b>Nur durch dich funktioniert das.</b></div>'
+        +'<div style="font-size:13px;margin-top:10px;font-weight:700">Patrick</div>'
+        +'<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">'
+        +'<button id="pl-danke-fb" style="flex:1;min-width:130px;padding:10px;border-radius:11px;border:0;background:#14b8a6;color:#04121f;font-weight:800;font-family:inherit;cursor:pointer">💬 Feedback geben</button>'
+        +'<button id="pl-danke-teilen" style="flex:1;min-width:130px;padding:10px;border-radius:11px;border:1px solid rgba(20,184,166,.45);background:transparent;color:inherit;font-weight:700;font-family:inherit;cursor:pointer">📤 PLAN teilen</button></div>';
+      anker.parentNode.insertBefore(d,anker.nextSibling);
+      ga('zeigen');
+      document.getElementById('pl-danke-x').onclick=function(){ ls('pl_danke_1','1'); d.remove(); ga('zu'); };
+      document.getElementById('pl-danke-fb').onclick=function(){ ga('feedback'); try{ showFeedback(); }catch(e){ location.href='mailto:kontakt@plan-nrw.de'; } };
+      document.getElementById('pl-danke-teilen').onclick=function(){ ga('teilen');
+        try{ if(navigator.share){ navigator.share({title:'PLAN NRW',text:TEXT}).catch(function(){}); return; } }catch(e){}
+        window.open('https://wa.me/?text='+encodeURIComponent(TEXT),'_blank'); };
+    }catch(e){}
+  }
+  function hook(){
+    var o=window.showScreen; if(typeof o==='function'&&!o._plDanke){ var n=function(name){ var r=o.apply(this,arguments); if(name==='home') setTimeout(zeigen,300); return r; }; for(var k in o) try{ n[k]=o[k]; }catch(e){} n._plDanke=true; window.showScreen=n; }
+    var v=0; (function warte(){ zeigen(); if(!document.getElementById('pl-danke')&&++v<20) setTimeout(warte,1500); })();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(hook,1500); }); else setTimeout(hook,1500);
+})();
+</script>
 </body>
 </html>

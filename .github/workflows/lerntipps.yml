@@ -1,0 +1,25 @@
+name: lerntipps
+# 10.11.2026 (Go P. Schenkelberger): Lerntipps-Serie per E-Mail (nur Double-Opt-In, Abmeldelink in jeder Mail).
+# Ruft täglich POST /api/welcome {serie:true} auf. Der Server schickt Tipp 1/2/3 an alle, die vor genau 2/4/7 Tagen bestätigt haben.
+# Schutz: Header x-plan-cron = HMAC-SHA256(SUPABASE_SERVICE_KEY, "lerntipps|<Tag in Berlin>") – der Schlüssel selbst wird nicht gesendet.
+# Nur einmal am Tag starten (sonst doppelte Mails).
+on:
+  schedule:
+    - cron: '17 16 * * *'
+  workflow_dispatch:
+concurrency:
+  group: lerntipps
+  cancel-in-progress: false
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lerntipps senden
+        env:
+          KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          TAG=$(TZ=Europe/Berlin date +%F)
+          SIG=$(printf '%s' "lerntipps|$TAG" | openssl dgst -sha256 -hmac "$KEY" -hex | sed 's/^.*= //')
+          curl -sS -f -X POST https://plan-nrw.de/api/welcome \
+            -H 'Content-Type: application/json' -H "x-plan-cron: $SIG" \
+            -d '{"serie":true}'

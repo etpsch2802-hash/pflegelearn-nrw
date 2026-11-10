@@ -34,14 +34,18 @@ export default async function handler(req, res) {
       const zeile = { tag, kennung, modus };
       if (angemeldet) zeile.angemeldet = true;
       if (wieder) zeile.wiederkehrend = true;
+      // 10.11.2026: Tage seit dem ersten Öffnen (0–60), nur vom Gerät gemeldet. Fehlt die Spalte seit_tagen, ohne speichern.
+      const seit = Number.isInteger(B.seit) && B.seit >= 0 && B.seit <= 60 ? B.seit : null;
+      if (seit !== null) zeile.seit_tagen = seit;
       const senden = z => fetch(`${SB_URL}/rest/v1/app_nutzung?on_conflict=tag,kennung,modus`, {
         method: 'POST',
-        headers: Object.assign({}, H, { Prefer: ((angemeldet || wieder) ? 'resolution=merge-duplicates' : 'resolution=ignore-duplicates') + ',return=minimal' }),
+        headers: Object.assign({}, H, { Prefer: ((angemeldet || wieder || seit !== null) ? 'resolution=merge-duplicates' : 'resolution=ignore-duplicates') + ',return=minimal' }),
         body: JSON.stringify(z)
       });
       try {
         const r = await senden(zeile);
-        if (!r.ok && wieder) { delete zeile.wiederkehrend; await senden(zeile); }
+        if (!r.ok && seit !== null) { delete zeile.seit_tagen; const r2 = await senden(zeile); if (!r2.ok && wieder) { delete zeile.wiederkehrend; await senden(zeile); } }
+        else if (!r.ok && wieder) { delete zeile.wiederkehrend; await senden(zeile); }
       } catch (e) {}
       return res.status(204).end();
     }
@@ -97,8 +101,13 @@ export default async function handler(req, res) {
         if (x.wiederkehrend) (wie[x.tag] = wie[x.tag] || new Set()).add(x.kennung); });
       Object.keys(tage).forEach(k => { tage[k].angemeldet = anm[k] ? anm[k].size : 0; tage[k].wiederkehrend = wie[k] ? wie[k].size : 0; });
       const liste = Object.keys(tage).sort().map(k => Object.assign({ tag: k, gesamt: ger[k] ? ger[k].size : 0 }, tage[k]));
+      // 10.11.2026: Rückkehr neuer Geräte. Pro Tag: Geräte mit seit_tagen 0 (neu), 1 (Tag 1), 7 (Tag 7). Quote im Client.
+      const seitT = {}; let mitSeit = false;
+      rows.forEach(x => { if (!('seit_tagen' in x)) return; mitSeit = true; if (x.seit_tagen == null) return;
+        const k = x.tag + '|' + x.seit_tagen; (seitT[k] = seitT[k] || new Set()).add(x.kennung); });
+      liste.forEach(t => { [0, 1, 2, 3, 7].forEach(n => { t['seit' + n] = seitT[t.tag + '|' + n] ? seitT[t.tag + '|' + n].size : 0; }); });
       const schnitt = (n, f) => { const a = liste.slice(-n); return Math.round(a.reduce((s, x) => s + x[f], 0) / a.length * 10) / 10; };
-      return res.status(200).json({ ok: true, mitWieder, tage: liste, heute: liste[liste.length - 1], gestern: liste[liste.length - 2],
+      return res.status(200).json({ ok: true, mitWieder, mitSeit, tage: liste, heute: liste[liste.length - 1], gestern: liste[liste.length - 2],
         schnitt7: { gesamt: schnitt(7, 'gesamt'), app: schnitt(7, 'app'), installiert: schnitt(7, 'installiert'), browser: schnitt(7, 'browser') },
         schnitt30: { gesamt: schnitt(30, 'gesamt'), app: schnitt(30, 'app'), installiert: schnitt(30, 'installiert'), browser: schnitt(30, 'browser') } });
     }
