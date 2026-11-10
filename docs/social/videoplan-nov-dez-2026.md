@@ -19,8 +19,8 @@ Kanäle: TikTok, Instagram, YouTube Shorts, je 10:00 über Metricool (Brand 7230
 
 | Datum | Format | Thema | Status |
 | --- | --- | --- | --- |
-| Mi 11.11. | Rechnen | Teil 3: Tropfen pro Minute | eingeplant |
-| Fr 13.11. | Rechnen | Teil 4: Kalium-Perfusor | Voiceover-Text verschickt 10.11. |
+| Mi 11.11. | Rechnen | Teil 3: Tropfen pro Minute | eingeplant (Video `private/social/PLAN_Tropfen-pro-Minute_final.mp4`) |
+| Fr 13.11. | Rechnen | Teil 4: Kalium-Perfusor | eingeplant (Video `private/social/PLAN_Kalium-Perfusor_final.mp4`) |
 | So 15.11. | Examens-Falle | Luftembolie | offen |
 | Di 17.11. | Übersicht | Links- vs. Rechtsherzinsuffizienz | offen |
 | Do 19.11. | Quiz | Hypo oder Hyper? | offen |
