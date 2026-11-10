@@ -1,0 +1,138 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
+/* Examens-Falle Luftembolie (68 s mit Voiceover, 540×960 @2x). Stil wie Perfusor Teil 1/2. */
+html,body{margin:0;width:540px;height:960px;overflow:hidden;background:#f2fbfd;font-family:Inter,"DejaVu Sans",sans-serif;color:#0f172a}
+*{box-sizing:border-box}
+.deko{position:absolute;border-radius:50%;background:#d6eef7}
+.kopf{position:absolute;left:26px;top:70px;display:flex;align-items:center;gap:10px}
+.kopf img{width:40px;height:40px;border-radius:50%;background:#0b1626}
+.kopf b{display:block;font-size:17px;font-weight:900;color:#0f2a44}
+.kopf span{display:block;font-size:11px;font-weight:600;color:#475569}
+.sc{position:absolute;left:26px;right:62px;top:150px;display:none}
+.tag{display:inline-block;color:#fff;font-weight:900;font-size:16px;letter-spacing:.6px;padding:6px 12px;border-radius:6px}
+.rot{background:#dc2626}.gr{background:#15803d}.bl{background:#0369a1}
+h1{margin:16px 0 0;font-size:46px;line-height:1.08;font-weight:900;color:#0f2a44}
+h1 em{font-style:normal;color:#15803d}
+.unter{margin-top:14px;font-size:21px;font-weight:700;color:#334155}
+.karte{background:#fff;border-radius:16px;padding:20px 22px;box-shadow:0 10px 28px rgba(15,42,68,.12);margin-top:18px}
+.karte small{display:block;font-size:13px;font-weight:800;letter-spacing:.8px;color:#64748b}
+.karte .gross{font-size:34px;font-weight:900;line-height:1.15;color:#0f2a44;margin-top:4px}
+.chips{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.chip{background:#d1fae5;color:#065f46;font-weight:900;font-size:24px;padding:10px 16px;border-radius:12px}
+.frage{text-align:center;margin-top:34px;font-size:24px;font-weight:800}
+.riesig{text-align:center;font-size:70px;font-weight:900;color:#dc2626;margin-top:6px}
+.schritt{display:flex;gap:14px;margin:14px 0}
+.schritt .n{flex:none;width:36px;height:36px;border-radius:50%;background:#15803d;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:19px}
+.schritt b{display:block;font-size:23px;font-weight:900;color:#0f2a44}
+.schritt span{display:block;font-size:22px;font-weight:700;color:#15803d;margin-top:3px}
+.pumpe{margin:26px auto 0;width:400px;height:130px;background:#e2e8f0;border:3px solid #94a3b8;border-radius:16px;position:relative}
+.spritze{position:absolute;left:18px;top:30px;width:230px;height:46px;background:#fff;border:3px solid #94a3b8;border-radius:8px;overflow:hidden}
+.spritze i{position:absolute;left:0;top:0;bottom:0;width:150px;background:#bae6fd}
+.kolben{position:absolute;left:150px;top:-6px;width:14px;height:58px;background:#64748b;border-radius:3px}
+.anz{position:absolute;right:18px;top:24px;width:118px;height:58px;background:#0f172a;color:#5eead4;font:900 30px "DejaVu Sans Mono",monospace;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.anz2{position:absolute;right:52px;bottom:12px;font-size:14px;font-weight:800;color:#334155}
+.lampe{position:absolute;left:26px;bottom:16px;width:14px;height:14px;border-radius:50%;background:#f87171}
+.merke{background:linear-gradient(180deg,#16a34a,#15803d);color:#fff;border-radius:16px;padding:20px;font-size:28px;font-weight:900;line-height:1.25;margin-top:18px}
+.warn{background:#fef3c7;border:2px solid #f59e0b;border-radius:14px;padding:14px 16px;font-size:19px;font-weight:700;line-height:1.35;margin-top:16px}
+.pdf{display:flex;gap:16px;align-items:center}
+.pdf .ico{font-size:60px}
+.link{background:#0f2a44;color:#fde68a;border-radius:14px;padding:16px;text-align:center;font-size:24px;font-weight:900;margin-top:18px}
+svg.ekg{position:absolute;left:0;bottom:70px;width:540px;height:60px}
+.infu{position:relative;margin:22px auto 0;width:200px;height:300px}
+.fl{position:absolute;left:50px;top:0;width:100px;height:150px;background:#fff;border:3px solid #94a3b8;border-radius:14px 14px 30px 30px;overflow:hidden}
+.fl i{position:absolute;left:0;right:0;bottom:0;height:78%;background:#bae6fd}
+.fl b{position:absolute;left:0;right:0;top:42%;text-align:center;font-size:20px;font-weight:900;color:#0f2a44}
+.hals{position:absolute;left:94px;top:150px;width:12px;height:20px;background:#94a3b8}
+.kammer{position:absolute;left:78px;top:170px;width:44px;height:70px;border:3px solid #94a3b8;border-radius:10px;background:#f8fafc;overflow:hidden}
+.kammer u{position:absolute;left:0;right:0;bottom:0;height:22px;background:#bae6fd}
+.tropfen{position:absolute;left:15px;top:4px;width:10px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#0284c7}
+.schlauch{position:absolute;left:97px;top:240px;width:6px;height:60px;background:#94a3b8}
+.zahl{position:absolute;right:-62px;top:186px;background:#0f172a;color:#5eead4;font:900 22px "DejaVu Sans Mono",monospace;border-radius:8px;padding:6px 8px}
+.formel{background:#0f2a44;color:#fff;border-radius:16px;padding:18px 16px;text-align:center;font-size:27px;font-weight:900;line-height:1.35;margin-top:18px}
+.formel hr{border:0;border-top:3px solid #fde68a;margin:8px 30px}
+.vs{display:flex;gap:12px;margin-top:16px}.vs .karte{flex:1;margin-top:0;text-align:center}
+.liste{margin-top:14px}.liste div{background:#fff;border-left:6px solid #15803d;border-radius:10px;padding:12px 14px;margin:10px 0;font-size:22px;font-weight:800;color:#0f2a44;box-shadow:0 6px 16px rgba(15,42,68,.08)}
+.liste div.r{border-left-color:#dc2626}
+.blase{position:absolute;left:94px;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid #0284c7}
+.zeichen{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.zeichen div{background:#fee2e2;color:#991b1b;font-weight:900;font-size:22px;padding:10px 14px;border-radius:12px}
+.gut{background:#dcfce7;border:2px solid #16a34a;border-radius:14px;padding:16px;font-size:23px;font-weight:800;margin-top:18px;line-height:1.3}
+.boes{background:#fee2e2;border:2px solid #dc2626;border-radius:14px;padding:16px;font-size:23px;font-weight:800;margin-top:14px;line-height:1.3}
+</style></head><body>
+<div class="deko" style="width:300px;height:300px;left:-170px;top:430px"></div>
+<div class="deko" style="width:240px;height:240px;right:-150px;top:250px"></div>
+<div class="kopf"><img src="logo.png"><div><b>PLAN NRW</b><span>Pflegeexamen · Station · Intensiv</span></div></div>
+
+<div class="sc" data-von="0" data-bis="7">
+ <div class="tag rot" data-pop="0">EXAMENS-FALLE</div>
+ <h1 data-pop="0">Luft im<br><em style="color:#dc2626">Infusionssystem</em></h1>
+ <div class="unter" data-rein="2.1">Dein Patient wird plötzlich luftnötig …</div>
+ <div class="unter" data-rein="4.6" style="color:#0f2a44">Was tust du in den ersten 10 Sekunden?</div>
+ <div class="infu" data-pop="1"><div class="fl"><i></i><b>💧</b></div><div class="hals"></div><div class="kammer"><u></u><div class="tropfen"></div></div><div class="schlauch"></div><div class="blase" style="top:250px"></div><div class="blase" style="top:276px;width:12px;height:12px;left:97px"></div></div>
+</div>
+
+<div class="sc" data-von="7" data-bis="19.4">
+ <div class="tag gr" data-pop="7">ERST MAL ENTWARNUNG</div>
+ <div class="gut" data-rein="9.2">✅ Kleine Bläschen im Schlauch eines peripheren Zugangs sind meist harmlos.</div>
+ <div class="boes" data-rein="13.9">⚠️ Gefährlich: größere Mengen Luft</div>
+ <div class="boes" data-rein="16.6">🚨 vor allem über einen ZVK</div>
+</div>
+
+<div class="sc" data-von="19.4" data-bis="27.6">
+ <div class="tag rot" data-pop="19.4">TYPISCHE ZEICHEN</div>
+ <div class="zeichen">
+  <div data-pop="20.8">Plötzliche Atemnot</div><div data-pop="21.8">Brustschmerz</div><div data-pop="23.1">Herzrasen</div>
+  <div data-pop="24.2">Blutdruck ↓</div><div data-pop="25.4">SpO₂ ↓</div><div data-pop="26.4">Zyanose</div>
+ </div>
+</div>
+
+<div class="sc" data-von="27.6" data-bis="46.1">
+ <div class="tag rot" data-pop="27.6">JEDE SEKUNDE ZÄHLT</div>
+ <div class="karte">
+  <div class="schritt" data-rein="30"><div class="n">1</div><div><b>Zufuhr stoppen</b><span>System sofort abklemmen</span></div></div>
+  <div class="schritt" data-rein="34.5"><div class="n">2</div><div><b>Hilfe holen</b><span>Arzt rufen</span></div></div>
+  <div class="schritt" data-rein="38"><div class="n">3</div><div><b>Sauerstoff geben</b></div></div>
+  <div class="schritt" data-rein="40.5"><div class="n">4</div><div><b>Linksseitenlage + Kopftief</b><span data-rein="43">Luft bleibt im rechten Herzen</span></div></div>
+ </div>
+</div>
+
+<div class="sc" data-von="46.1" data-bis="56.5">
+ <div class="tag gr" data-pop="46.1">NOCH BESSER: VORBEUGEN</div>
+ <div class="liste">
+  <div data-rein="48.1">System vollständig entlüften</div>
+  <div data-rein="50.3">Verbindungen fest verschließen</div>
+  <div data-rein="52.4">ZVK nur im Liegen ziehen</div>
+  <div data-rein="54.4">Luftdichter Verband</div>
+ </div>
+</div>
+
+<div class="sc" data-von="56.5" data-bis="60.5">
+ <div class="tag bl" data-pop="56.5">DU BIST DRAN</div>
+ <h1 data-pop="56.7">Schon mal Luft<br>im System <em>gesehen?</em></h1>
+ <div class="link" data-pop="58.9">💬 Schreib es in die Kommentare</div>
+</div>
+
+<div class="sc" data-von="60.5" data-bis="68.5">
+ <div class="tag gr" data-pop="60.5">TEILEN</div>
+ <h1 data-pop="60.7" style="font-size:40px">Schick das deiner <em>Lerngruppe</em> 📲</h1>
+ <div class="karte pdf" data-pop="62.5"><div class="ico">🚑</div><div><div class="gross" style="font-size:30px">Mehr Notfallwissen</div><div style="font-size:19px;font-weight:700;color:#334155;margin-top:4px">kostenlos in PLAN NRW</div></div></div>
+ <div class="link pulse" data-pop="66.2">PLAN NRW · Link in der Bio</div>
+ <div class="warn" data-rein="63.5" style="font-size:16px">Maßnahmen nach Hausstandard und ärztlicher Anordnung.</div>
+</div>
+
+<svg class="ekg" viewBox="0 0 540 60"><path id="ekg" fill="none" stroke="#14b8a6" stroke-width="2.4" d=""/></svg>
+<script>
+function cl(x){return x<0?0:x>1?1:x;}
+function ease(x){x=cl(x);return 1-Math.pow(1-x,3);}
+// EKG-Linie: wiederholtes PQRST-Muster, läuft nach links
+function ekgPfad(off){var d='',w=135;for(var k=-1;k<6;k++){var x=k*w-off;d+=(k===-1?'M':'L')+x+',36 L'+(x+40)+',36 L'+(x+48)+',30 L'+(x+56)+',36 L'+(x+64)+',36 L'+(x+68)+',40 L'+(x+74)+',6 L'+(x+80)+',52 L'+(x+85)+',36 L'+(x+100)+',36 L'+(x+110)+',29 L'+(x+120)+',36 L'+(x+w)+',36 ';}return d;}
+window.setT=function(t){
+  document.querySelectorAll('.sc').forEach(function(s){s.style.display=(t>=+s.dataset.von&&t<+s.dataset.bis)?'block':'none';});
+  document.querySelectorAll('[data-pop]').forEach(function(el){var p=+el.dataset.pop,e=ease((t-p)/.35);var erste=document.querySelector('.sc[data-von="'+p+'"]');el.style.opacity=(p===0)?1:e;el.style.transform='scale('+((p===0)?1:(.85+.15*e))+')';});
+  document.querySelectorAll('[data-rein]').forEach(function(el){var e=ease((t-el.dataset.rein)/.35);el.style.opacity=e;el.style.transform='translateX('+((1-e)*-30)+'px)';});
+  document.querySelectorAll('.pulse').forEach(function(el){if(+el.style.opacity>=.99)el.style.transform='scale('+(1+.03*Math.sin(t*6))+')';});
+  document.querySelectorAll('.pulse2').forEach(function(el){el.style.opacity=.4+.6*Math.abs(Math.sin(t*4));});
+  document.querySelectorAll('.tropfen').forEach(function(el){var ph=(t*1.4)%1;el.style.top=(4+ph*36)+'px';el.style.opacity=ph>.92?0:1;});
+  document.querySelectorAll('.blase').forEach(function(el,i){var b=+(el.dataset.b||(el.dataset.b=el.style.top.replace('px','')));el.style.top=(b+((t*18+i*9)%20))+'px';});
+  document.getElementById('ekg').setAttribute('d',ekgPfad((t*90)%135));
+};
+setT(0);
+</script></body></html>
