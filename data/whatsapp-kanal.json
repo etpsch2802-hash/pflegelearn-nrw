@@ -1784,6 +1784,11 @@
    "datum": "2026-11-09",
    "format": "aufloesung",
    "thema": "Dialyse-Notfallindikation: therapierefraktäre Hyperkaliämie (AEIOU)"
+  },
+  {
+   "datum": "2026-11-11",
+   "format": "minifall-umfrage",
+   "thema": "Examinierte: Anaphylaxie unter Antibiotika-Infusion – C: Infusion sofort stoppen + Hilfe/Notfallteam rufen; danach Adrenalin i.m. nach Anordnung/Standard"
   }
  ]
 }
