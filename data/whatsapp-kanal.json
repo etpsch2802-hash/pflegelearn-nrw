@@ -1788,7 +1788,13 @@
   {
    "datum": "2026-11-11",
    "format": "minifall-umfrage",
-   "thema": "Examinierte: Anaphylaxie unter Antibiotika-Infusion – C: Infusion sofort stoppen + Hilfe/Notfallteam rufen; danach Adrenalin i.m. nach Anordnung/Standard"
+   "thema": "Examinierte: Anaphylaxie unter Antibiotika-Infusion – C: Infusion sofort stoppen + Hilfe/Notfallteam rufen; danach Adrenalin i.m. nach Anordnung/Standard",
+   "aufgeloest": "2026-11-12"
+  },
+  {
+   "datum": "2026-11-12",
+   "format": "examiniert-wissen",
+   "thema": "Adrenalin bei Anaphylaxie: i.m. statt i.v., Dosis, Oberschenkel, Nachbeobachtung"
   }
  ]
 }
