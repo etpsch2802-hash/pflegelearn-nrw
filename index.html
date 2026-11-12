@@ -30221,7 +30221,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       return !((d.n||0)>=2||(d.at&&Date.now()-d.at<7*864e5));
     }catch(e){ return false; }
   }
-  function pushKarte(){
+  function pushKarte(kontext){
     var mitPush=pushMoeglich(), mitInst=installMoeglich();
     if(!mitPush&&!mitInst) return false;
     if(window.plRuhe&&window.plRuhe('push')) return false;
@@ -30230,8 +30230,8 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     var anl=ios?'Tippe unten in Safari auf <b>Teilen</b> (□↑) und dann auf <b>„Zum Home-Bildschirm“</b>.':(dp?'':'Tippe in Chrome oben rechts auf <b>⋮</b> und dann auf <b>„Zum Startbildschirm hinzufügen“</b>.');
     var o=fenster('pl-push-frage',
       '<div style="font-size:30px;margin-bottom:4px">'+(mitPush?'🔔':'📲')+'</div>'
-     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">'+(erstes?'Stark, dein erstes Quiz!':'Bleib dran!')+'</div>'
-     +'<div id="pl-pf-txt" style="font-size:14px;line-height:1.55;color:#b3c4d6">'+(mitPush?'Soll ich dich abends kurz erinnern? Einmal am Tag um 18 Uhr – damit du dranbleibst. Jederzeit im Profil abschaltbar.':'Leg dir PLAN auf den Startbildschirm – dann ist es mit einem Tipp da, wie eine App.'+(anl?'<br><br>'+anl:''))+'</div>'
+     +'<div style="font-size:19px;font-weight:800;margin-bottom:6px">'+(kontext==='rechner'?'Gut gerechnet! 🧮':(erstes?'Stark, dein erstes Quiz!':'Bleib dran!'))+'</div>'
+     +'<div id="pl-pf-txt" style="font-size:14px;line-height:1.55;color:#b3c4d6">'+(mitPush?(kontext==='rechner'?'Jeden Tag gibt es in PLAN eine neue Rechenaufgabe mit Lösung. Soll ich dich abends um 18 Uhr daran erinnern? Jederzeit im Profil abschaltbar.':'Soll ich dich abends kurz erinnern? Einmal am Tag um 18 Uhr – damit du dranbleibst. Jederzeit im Profil abschaltbar.'):'Leg dir PLAN auf den Startbildschirm – dann ist es mit einem Tipp da, wie eine App.'+(anl?'<br><br>'+anl:''))+'</div>'
      +(mitPush?btn('pl-pf-ja','🔔 Ja, erinner mich',true):'')
      +(mitPush&&mitInst?btn('pl-pf-inst',(dp?'📲 Auf den Startbildschirm':'📲 Auf den Startbildschirm – so geht’s')):'')
      +(!mitPush&&mitInst&&dp?btn('pl-pf-inst','📲 Jetzt hinzufügen',true):'')
@@ -30241,7 +30241,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       if(mitPush){ var nn=parseInt(ls('pl_push_offered_n')||'0',10)||0; ls('pl_push_offered','1'); ls('pl_push_offered_n',String(nn+1)); ls('pl_push_offered_at',String(Date.now())); }
       if(mitInst){ var d={}; try{ d=JSON.parse(ls('pl_install_frage')||'{}'); }catch(e){} ls('pl_install_frage',JSON.stringify({n:(d.n||0)+1,at:Date.now()})); }
     }catch(e){}
-    ga('bleib_dran',{push:mitPush?1:0,install:mitInst?1:0});
+    ga('bleib_dran',{push:mitPush?1:0,install:mitInst?1:0,ort:kontext||'quiz'});
     var ja=document.getElementById('pl-pf-ja');
     if(ja) ja.onclick=function(){ o.remove(); ga('push_frage',{antwort:'ja'}); try{ plEnableReminders().then(function(ok){ if(ok){ var t=document.createElement('div'); t.textContent='🔔 Erinnerung ist an – jeden Abend um 18 Uhr'; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:1700;background:rgba(6,18,30,.96);color:#e6eef7;border:1px solid rgba(52,211,153,.4);border-radius:12px;padding:11px 16px;font-size:13px;max-width:88vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){ t.remove(); },3200); } }); }catch(e){} };
     var ib=document.getElementById('pl-pf-inst');
@@ -30253,6 +30253,22 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
     document.getElementById('pl-pf-nein').onclick=function(){ o.remove(); ga('push_frage',{antwort:'spaeter'}); };
     return true;
   }
+  /* 12.11.2026 (Go P. Schenkelberger): „Bleib dran“ auch nach dem Perfusor-/Dosisrechner – die meisten Instagram-Neuen
+     nutzen nur den Rechner und machen nie ein Quiz. Auslöser: 7 s nach der letzten Eingabe im Rechner, einmal pro Sitzung. */
+  window.plBleibDranRechner=function(){
+    try{ if(sessionStorage.getItem('pl_bleib_rechner')) return; }catch(e){}
+    if(!an()||typeof currentUser==='undefined'||!currentUser) return;
+    if(frei()) return;
+    if(pushKarte('rechner')){ try{ sessionStorage.setItem('pl_bleib_rechner','1'); }catch(e){} }
+  };
+  (function(){
+    var t=null;
+    document.addEventListener('input',function(ev){
+      try{ var c=document.getElementById('medt-card'); if(!c||!c.contains(ev.target)) return;
+        clearTimeout(t); t=setTimeout(function(){ var c2=document.getElementById('medt-card'); if(c2&&c2.getClientRects().length) window.plBleibDranRechner(); },7000);
+      }catch(e){}
+    },true);
+  })();
   function nachErgebnis(){
     if(!an()) return;
     if(frei()){ if((nachErgebnis.v=(nachErgebnis.v||0)+1)<20) setTimeout(nachErgebnis,1500); return; }
@@ -31214,6 +31230,47 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
       +'<div><b>Stärken:</b> '+mark(x.s)+'</div><div><b>Üblich:</b> '+mark(x.d)+'</div>'
       +'<div style="font-size:10.5px;color:#8fb3c9;margin-top:4px">Lernwerte nach Fachinformation. Es gilt ausschließlich die ärztliche Anordnung – Dosis an Alter, Gewicht, Niere und Leber anpassen.</div></div>';
   };
+})();
+</script>
+<!-- PLAN NRW: Rechenaufgabe des Tages (12.11.2026, Go P. Schenkelberger)
+     Grund zum Wiederkommen für Rechner-Nutzer: jeden Tag eine Aufgabe auf der Startseite (unter „Heute“), Lösung per Tipp.
+     Aufgaben = die 12 freigegebenen Übungsaufgaben aus dem Gratis-PDF „Dosierungsrechnen“ (scripts/pdf/neu4.py) + Heparin-Perfusor aus dem Video.
+     Neuer Key pl_rechnen_v1 {d: Tag der gelösten Aufgabe}. GA rechnen_aufgabe {aktion}. Push-Text wechselt an geraden Tagen (send-reminders.mjs). -->
+<script>
+(function(){
+  var A=[{"f": "Metamizol 500 mg i.v. sind angeordnet. Die Ampulle enthält 1 g in 2 ml. Wie viel ml ziehst du auf?", "l": "500 mg ÷ 1000 mg × 2 ml = <b>1 ml</b>"}, {"f": "Paracetamol 1 g (100 ml) soll als Kurzinfusion über 15 Minuten laufen. Welche Laufrate stellst du ein?", "l": "100 ml ÷ 0,25 h = <b>400 ml/h</b>"}, {"f": "1000 ml NaCl 0,9 % sollen über 8 Stunden laufen. Laufrate und Tropfenzahl (20 Tr./ml)?", "l": "1000 ÷ 8 = <b>125 ml/h</b> · 125 ÷ 3 ≈ <b>42 Tropfen/Min.</b>"}, {"f": "Wie viel Gramm Natriumchlorid sind in 500 ml NaCl 0,9 % enthalten?", "l": "0,9 g pro 100 ml × 5 = <b>4,5 g</b>"}, {"f": "Wie viel Gramm Glukose enthalten 20 ml Glukose 40 %?", "l": "40 g pro 100 ml → 0,4 g/ml × 20 ml = <b>8 g</b>"}, {"f": "Lidocain 2 %: Wie viel mg sind in 1 ml enthalten?", "l": "2 % = 2 g/100 ml = <b>20 mg/ml</b>"}, {"f": "Heparin 25.000 IE in 5 ml. Angeordnet sind 5.000 IE s.c. Wie viel ml?", "l": "5.000 ÷ 25.000 × 5 ml = <b>1 ml</b>"}, {"f": "Furosemid 40 mg i.v. sind angeordnet. Die Ampulle enthält 20 mg in 2 ml. Wie viel ml?", "l": "40 ÷ 20 × 2 ml = <b>4 ml</b>"}, {"f": "Morphin 10 mg/1 ml wird mit NaCl 0,9 % auf 10 ml verdünnt. Angeordnet sind 3 mg. Wie viel ml gibst du?", "l": "Neue Konzentration 10 mg ÷ 10 ml = 1 mg/ml → <b>3 ml</b>"}, {"f": "Noradrenalin-Perfusor: 5 mg auf 50 ml. Patient 70 kg, angeordnet 0,1 µg/kg/min. Laufrate?", "l": "Konzentration 100 µg/ml · (0,1 × 70 × 60) ÷ 100 = <b>4,2 ml/h</b>"}, {"f": "KCl 7,45 % (1 ml = 1 mmol): 20 mmol sollen in 500 ml Infusion über 4 Stunden laufen. Wie viel ml KCl und welche Laufrate?", "l": "<b>20 ml KCl</b> · (500 + 20) ml ÷ 4 h = <b>130 ml/h</b>"}, {"f": "Kind, 18 kg, soll Paracetamol 15 mg/kg erhalten. Saft: 200 mg in 5 ml. Wie viel ml?", "l": "18 × 15 = 270 mg · Konzentration 40 mg/ml → 270 ÷ 40 = <b>6,75 ml</b>"}, {"f": "Heparin-Perfusor: 25.000 IE auf 50 ml. Angeordnet sind 1.000 IE/h. Welche Laufrate stellst du ein?", "l": "Konzentration 25.000 IE ÷ 50 ml = 500 IE/ml · 1.000 ÷ 500 = <b>2 ml/h</b>"}];
+  window.PL_RECHEN_AUFGABEN=A;
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  function heute(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  function idx(){ return Math.floor(Date.now()/864e5) % A.length; }
+  function ga(a){ try{ if(typeof gtag==='function') gtag('event','rechnen_aufgabe',{aktion:a}); }catch(e){} }
+  function zeigen(){
+    try{
+      if(typeof currentUser==='undefined'||!currentUser) return;
+      var alt=document.getElementById('pl-rechnen'); if(alt) alt.remove();
+      var anker=document.getElementById('pl-danke')||document.getElementById('pl-heute')||document.getElementById('pl-test-banner')||document.getElementById('home-greeting'); if(!anker||!anker.parentNode) return;
+      var x=A[idx()], fertig=false; try{ fertig=(JSON.parse(ls('pl_rechnen_v1')||'{}').d===heute()); }catch(e){}
+      var d=document.createElement('div'); d.id='pl-rechnen';
+      d.style.cssText='margin:10px 0 14px;padding:14px 15px;border-radius:16px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.28);color:var(--text,#e6f2fb)';
+      d.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-size:18px">🧮</span><b style="font-size:14.5px">Rechenaufgabe des Tages</b>'+(fertig?'<span style="margin-left:auto;font-size:11.5px;color:#34d399;font-weight:700">✓ heute gelöst</span>':'')+'</div>'
+        +'<div style="font-size:13.5px;line-height:1.55;color:var(--text2,#cfe0ee)">'+x.f+'</div>'
+        +'<div id="pl-rechnen-l" style="display:'+(fertig?'block':'none')+';margin-top:9px;padding:9px 11px;border-radius:10px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);font-size:13px;line-height:1.5">'+x.l+'</div>'
+        +'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'
+        +(fertig?'':'<button id="pl-rechnen-b" style="flex:1;min-width:120px;padding:10px;border-radius:11px;border:0;background:#38bdf8;color:#04121f;font-weight:800;font-family:inherit;cursor:pointer">Lösung zeigen</button>')
+        +'<button id="pl-rechnen-r" style="flex:1;min-width:120px;padding:10px;border-radius:11px;border:1px solid rgba(56,189,248,.4);background:transparent;color:inherit;font-weight:700;font-family:inherit;cursor:pointer">🧮 Zum Rechner</button></div>'
+        +'<div style="font-size:10.5px;color:var(--text3,#8fb3c9);margin-top:7px">Übungsbeispiel. In der Praxis gelten ärztliche Anordnung, Klinikstandard und das 4-Augen-Prinzip.</div>';
+      anker.parentNode.insertBefore(d,anker.nextSibling);
+      var b=document.getElementById('pl-rechnen-b');
+      if(b) b.onclick=function(){ document.getElementById('pl-rechnen-l').style.display='block'; b.remove(); ls('pl_rechnen_v1',JSON.stringify({d:heute()})); ga('loesung'); };
+      document.getElementById('pl-rechnen-r').onclick=function(){ ga('rechner'); try{ if(typeof navGo==='function') navGo('medtrainer'); else showScreen('medtrainer'); setTimeout(function(){ if(typeof window.plDosisRechner==='function') window.plDosisRechner(); },450); }catch(e){} };
+    }catch(e){}
+  }
+  window.plRechenAufgabeZeigen=zeigen;
+  function hook(){
+    var o=window.showScreen; if(typeof o==='function'&&!o._plRechnen){ var n=function(name){ var r=o.apply(this,arguments); if(name==='home') setTimeout(zeigen,400); return r; }; for(var k in o) try{ n[k]=o[k]; }catch(e){} n._plRechnen=true; window.showScreen=n; }
+    var v=0; (function warte(){ zeigen(); if(!document.getElementById('pl-rechnen')&&++v<20) setTimeout(warte,1500); })();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(hook,1800); }); else setTimeout(hook,1800);
 })();
 </script>
 </body>

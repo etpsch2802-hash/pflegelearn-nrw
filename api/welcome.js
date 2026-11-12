@@ -89,9 +89,9 @@ function mailHtml(token) {
     <div style="color:#38bdf8;font-size:20px;font-weight:800;letter-spacing:.5px">PLAN</div>
     <div style="color:#9fc3da;font-size:12px;margin-top:2px">Pflege Learn App NRW</div>
   </div>
-  <div style="background:#ffffff;border-radius:0 0 16px 16px;padding:26px 24px;line-height:1.6;font-size:15px">
+  <div style="background:#ffffff;border-radius:0 0 16px 16px;padding:26px 24px;line-height:1.6;font-size:15px">${token ? doiBox(token) : ''}
     <p style="margin:0 0 14px">Hi,</p>
-    <p style="margin:0 0 14px">sch&ouml;n, dass du dabei bist. PLAN begleitet dich durch die Pflegeausbildung &ndash; hier das Wichtigste auf einen Blick:</p>${token ? doiBox(token) : ''}
+    <p style="margin:0 0 14px">sch&ouml;n, dass du dabei bist. PLAN begleitet dich durch die Pflegeausbildung &ndash; hier das Wichtigste auf einen Blick:</p>
     <p style="margin:0 0 6px"><b>Was drin ist</b></p>
     <p style="margin:0 0 16px;color:#475569">2.000+ Pr&uuml;fungsfragen, 400 Lerneinheiten, &uuml;ber 150 Krankheitsbilder, Fallbeispiele, Karteikarten und ein KI-Lernassistent, der dir Fragen erkl&auml;rt.</p>
     <p style="margin:0 0 6px"><b>Dein Fortschritt</b></p>
@@ -215,7 +215,7 @@ export default async function handler(req, res) {
         from: FROM,
         to: [email],
         reply_to: REPLY_TO,
-        subject: 'Willkommen bei PLAN \u2013 so holst du alles raus',
+        subject: token ? 'Willkommen bei PLAN \u2013 bitte kurz best\u00e4tigen' : 'Willkommen bei PLAN \u2013 so holst du alles raus',
         html: mailHtml(token)
       })
     });

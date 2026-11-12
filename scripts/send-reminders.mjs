@@ -41,7 +41,9 @@ const _day = new Date().getDate();
 // Einmalige Ankuendigung: Workflow-Eingaben ueberschreiben den Tagestext (leer = normale Erinnerung)
 const ANK_TITEL = (process.env.PUSH_TITEL || '').trim();
 const ANK_TEXT = (process.env.PUSH_TEXT || '').trim();
-const text = ANK_TEXT || TEXTE[_day % TEXTE.length];
+// 12.11.2026 (Go P. Schenkelberger): an geraden Tagen Hinweis auf die Rechenaufgabe des Tages (Startseite der App)
+const RECHEN_TEXT = '🧮 Deine Rechenaufgabe von heute wartet – 1 Minute, mit Lösung.';
+const text = ANK_TEXT || (_day % 2 === 0 ? RECHEN_TEXT : TEXTE[_day % TEXTE.length]);
 const titelBase = ANK_TITEL || TITEL[_day % TITEL.length];
 
 // Examens-Countdown (16.10.2026): Texte nach Tagen bis zum Examen staffeln.

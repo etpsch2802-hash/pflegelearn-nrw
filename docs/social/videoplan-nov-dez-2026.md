@@ -24,7 +24,7 @@ Kanäle: TikTok, Instagram, YouTube Shorts, je 10:00 über Metricool (Brand 7230
 | So 15.11. | Examens-Falle | Luftembolie | eingeplant (Video `private/social/PLAN_Luftembolie_final.mp4`) |
 | Di 17.11. | Übersicht | Links- vs. Rechtsherzinsuffizienz | offen |
 | Do 19.11. | Quiz | Hypo oder Hyper? | offen |
-| Sa 21.11. | Rechnen | Teil 5: Noradrenalin – wie lange reicht die Spritze? | offen |
+| Sa 14.11. | Rechnen | Teil 5: Noradrenalin – wie lange reicht die Spritze? (vorgezogen vom 21.11., Perfusor-Reihe läuft am besten) | Voiceover angefragt |
 | Mo 23.11. | Mythos vs. Fakt | ERC-Leitlinien 2025: Was ist neu? | offen |
 | Mi 25.11. | Übersicht | Patientenvorstellung in 3 Minuten | offen |
 | Fr 27.11. | Quiz | Ist das schon eine FEM? | offen |
