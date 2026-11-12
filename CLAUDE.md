@@ -200,6 +200,7 @@ Es gibt **keine einzelne `hasAccess()`-Funktion.** Das Entitlement wird an den r
 
 ## 12. Coding Standards & Konventionen
 
+- **Design:** Neue UI immer nach `docs/DESIGN.md` (Farben über Variablen, Schrift ≥ 12 px, ein Hauptknopf, Falsch = Orange, Checkliste vor dem Commit).
 - **Sprache:** Alle nutzerseitigen Strings, Code-Kommentare und Commit-Messages auf **Deutsch**.
 - **Client-JS:** Schlichtes ES5/ES2015 für Browser, viele **IIFEs** und `var`, defensive `try/catch` um **jeden** `localStorage`/JSON/Netzwerk-Zugriff, keine Module/kein Bundler. Neuer Client-Code soll **additiv und in sich geschlossen** im selben Stil sein. Mehrere Skripte tragen bewusst Kommentare wie „berührt NICHT …", um isoliert zu bleiben – diese Isolation respektieren.
 - **`localStorage` `pl_*`-Keys = De-facto-Schema:** Bestehende Keys vor dem Anlegen neuer prüfen, niemals umbenennen.
