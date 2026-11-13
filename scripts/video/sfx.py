@@ -2,7 +2,7 @@
 """Soundeffekte genau auf die Animationen eines Video-HTMLs legen.
 
 Liest die Zeiten direkt aus der Seite (wir kennen jedes Bild, keine Analyse nötig):
-  data-von  (Szenenwechsel)      -> leises Wischen
+  data-von  (Szenenwechsel)      -> Wischen nur mit --wischen (Standard aus)
   data-pop  (Element springt auf) -> Pop
   data-rein (Element gleitet rein)-> kurzer Klick
   .merke / .riesig mit data-pop   -> heller Ton (Ergebnis/Merksatz)
@@ -70,7 +70,8 @@ def zeiten(html):
 
 def main():
     src, dauer, ziel = sys.argv[1], float(sys.argv[2]), sys.argv[3]
-    laut = float(sys.argv[4]) if len(sys.argv) > 4 else 0.35
+    args = [a for a in sys.argv if not a.startswith('--')]
+    laut = float(args[4]) if len(args) > 4 else 0.35
     html = open(src, encoding='utf-8').read()
     von, pops, reins, dings = zeiten(html)
     spur = np.zeros(int(SR * (dauer + 1)))
@@ -83,7 +84,8 @@ def main():
         i = int(t * SR); spur[i:i + len(klang)] += klang[:len(spur) - i]
 
     for t in sorted(dings): setze(t, ding(), 0.05)
-    for t in von: setze(t, wisch(), 0.05)
+    if '--wischen' in sys.argv:  # aus seit 13.11.2026 (klang wie Nase hochziehen)
+        for t in von: setze(t, wisch(), 0.05)
     for t in pops: setze(t, pop())
     for t in reins: setze(t, klick())
 
