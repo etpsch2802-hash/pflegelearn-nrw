@@ -31423,5 +31423,127 @@ window.PL_ATAOTA_PUBLIC = false;
   var oS=window.showScreen; if(typeof oS==='function') window.showScreen=function(n){ if(n==='quizSelect') laden(); return oS.apply(this,arguments); };
 })();
 </script>
+<script>
+/* ══ OP-HANDGRIFFE (ATA/OTA-Ausbau Teil 2, 14.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go):
+   Chirurgische Händedesinfektion, Steril einkleiden (geschlossen), Instrumententisch aufbauen, Team-Time-out.
+   Einträge in window.PL_HANDGRIFFE (Feld op:true), nur eingetragen wenn an(). Schalter PL_HG_OP_PUBLIC=false. Nutzt window.PLHGR. ══ */
+window.PL_HG_OP_PUBLIC = false;
+(function(){
+  var HG=window.PL_HANDGRIFFE, P=window.PLHGR; if(!HG||!P) return;
+  function an(){ try{ return window.PL_HG_OP_PUBLIC===true || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
+  var T=P.T, ein=P.ein, haken=P.haken, kreuz=P.kreuz, uhr=P.uhr, GR=P.GR, RT=P.RT, OR=P.OR, TX=P.TX, TX2=P.TX2;
+  var HAUT='url(#hgrHaut)', KITTEL='#3b82f6', KDUNKEL='#1d4ed8', HS='#c4b5fd', GRUEN='#14b8a6';
+  function D(){ return P.defs()+'<rect x="0" y="0" width="320" height="220" fill="none"/>'; }
+  /* Unterarm + Hand, Hand oben (Fingerspitzen nach oben) */
+  function arm(x,y,o){ o=o||{}; var c=o.farbe||HAUT, hc=o.hand||HAUT;
+    return '<g transform="translate('+x+' '+y+') rotate('+(o.rot||0)+')" filter="url(#hgrSch)">'
+      +(o.aermel?'<rect x="-17" y="38" width="34" height="80" rx="10" fill="'+o.aermel+'"/>':'<rect x="-13" y="38" width="26" height="80" rx="11" fill="'+c+'"/>')
+      +'<rect x="-17" y="-6" width="34" height="48" rx="15" fill="'+hc+'"/>'
+      +[-11,-4,3,10].map(function(fx,i){ return '<rect x="'+(fx-3.5)+'" y="'+(-30+(i===0||i===3?6:0))+'" width="7" height="32" rx="3.5" fill="'+hc+'"/>'; }).join('')
+      +'<rect x="13" y="6" width="8" height="24" rx="4" fill="'+hc+'" transform="rotate(25 17 18)"/></g>'; }
+  function liste(z,b,x,y){ x=x||200; y=y||44; return z.map(function(t,i){ return '<g opacity="0">'+ein((b||0.6)+i*0.4)+'<circle cx="'+x+'" cy="'+(y+i*26-4)+'" r="5.5" fill="rgba(74,222,128,.25)" stroke="'+GR+'"/>'+T(x+11,y+i*26,t,TX,10,800,'start')+'</g>'; }).join(''); }
+  function verbot(z,b,x,y){ x=x||200; y=y||44; return z.map(function(t,i){ return '<g opacity="0">'+ein((b||0.6)+i*0.4)+kreuz(x,y+i*26-4,0)+T(x+14,y+i*26,t,'#fca5a5',10,800,'start')+'</g>'; }).join(''); }
+  function hinweis(t,b,farbe){ return '<g opacity="0">'+ein(b||1.6)+'<rect x="16" y="176" width="288" height="32" rx="10" fill="rgba(251,191,36,.14)" stroke="rgba(251,191,36,.5)"/>'+T(160,196,t,farbe||'#fcd34d',10.5,900)+'</g>'; }
+  function spender(x,y){ return '<g transform="translate('+x+' '+y+')" filter="url(#hgrSch)"><rect x="-16" y="-44" width="32" height="64" rx="7" fill="url(#hgrPlastik)"/><rect x="-11" y="-26" width="22" height="26" rx="3" fill="#0ea5e9"/>'
+    +'<rect x="-30" y="-50" width="44" height="7" rx="3" fill="#64748b"/><rect x="-4" y="20" width="8" height="10" fill="#94a3b8"/>'
+    +'<circle cx="0" cy="38" r="3" fill="#7dd3fc"><animate attributeName="cy" values="32;54" dur="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1s" repeatCount="indefinite"/></circle></g>'; }
+  function tropfen(x,y,b){ return [0,1,2,3,4].map(function(i){ return '<circle cx="'+(x+(i%2?8:-8))+'" cy="'+(y+i*14)+'" r="2.4" fill="#7dd3fc" opacity="0"><animate attributeName="opacity" values="0;.9;0" begin="'+(b+i*0.15)+'s" dur="1.2s" repeatCount="3"/></circle>'; }).join(''); }
+  function kopf(x,y,o){ o=o||{}; return '<g transform="translate('+x+' '+y+')" filter="url(#hgrSch)"><circle r="26" fill="'+HAUT+'"/>'
+    +'<path d="M-28 -6 Q-28 -34 0 -34 Q28 -34 28 -6 Q14 -14 0 -14 Q-14 -14 -28 -6Z" fill="'+GRUEN+'"/>'
+    +'<path d="M-22 4 Q0 0 22 4 Q20 26 0 28 Q-20 26 -22 4Z" fill="#e0f2fe" stroke="#93c5fd"/></g>'; }
+  function rumpf(x,y,farbe){ return '<path d="M'+(x-46)+' '+(y+120)+' Q'+(x-48)+' '+(y+10)+' '+x+' '+y+' Q'+(x+48)+' '+(y+10)+' '+(x+46)+' '+(y+120)+'Z" fill="'+(farbe||GRUEN)+'" filter="url(#hgrSch)"/>'; }
+  function tisch(x,y,w,o){ o=o||{}; return '<g filter="url(#hgrSch)"><rect x="'+x+'" y="'+y+'" width="'+w+'" height="10" rx="3" fill="'+(o.steril?'#2563eb':'url(#hgrMetall)')+'"/>'
+    +(o.steril?'<rect x="'+x+'" y="'+(y+8)+'" width="'+w+'" height="26" fill="#1d4ed8" opacity=".85"/>':'')
+    +'<rect x="'+(x+8)+'" y="'+(y+10)+'" width="6" height="56" fill="#94a3b8"/><rect x="'+(x+w-14)+'" y="'+(y+10)+'" width="6" height="56" fill="#94a3b8"/></g>'; }
+  function instr(x,y,typ){ var s='<g transform="translate('+x+' '+y+')">';
+    if(typ==='schere') s+='<path d="M0 0 L26 -3 M0 0 L26 3" stroke="url(#hgrMetall)" stroke-width="3" stroke-linecap="round"/><circle cx="-6" cy="-5" r="5" fill="none" stroke="#cbd5e1" stroke-width="2.4"/><circle cx="-6" cy="5" r="5" fill="none" stroke="#cbd5e1" stroke-width="2.4"/>';
+    else if(typ==='klemme') s+='<path d="M0 -2 L28 -1 M0 2 L28 1" stroke="#cbd5e1" stroke-width="2.6" stroke-linecap="round"/><circle cx="-6" cy="-5" r="4.5" fill="none" stroke="#cbd5e1" stroke-width="2.2"/><circle cx="-6" cy="5" r="4.5" fill="none" stroke="#cbd5e1" stroke-width="2.2"/>';
+    else if(typ==='pinzette') s+='<path d="M-6 -3 L26 0 L-6 3" stroke="#cbd5e1" stroke-width="2.4" fill="none"/>';
+    else if(typ==='skalpell') s+='<rect x="-8" y="-2.5" width="22" height="5" rx="2" fill="#94a3b8"/><path d="M14 -2.5 L30 0 L14 3 Z" fill="#e2e8f0"/>';
+    else if(typ==='tupfer') s+='<rect x="-8" y="-7" width="18" height="14" rx="3" fill="#f8fafc" stroke="#cbd5e1"/><path d="M-6 5 h14" stroke="#0ea5e9" stroke-width="1.6"/>';
+    return s+'</g>'; }
+  function brett(x,y,zeilen,b){ return '<g filter="url(#hgrSch)"><rect x="'+x+'" y="'+y+'" width="150" height="'+(36+zeilen.length*24)+'" rx="8" fill="#a16207"/><rect x="'+(x+8)+'" y="'+(y+14)+'" width="134" height="'+(16+zeilen.length*24)+'" rx="3" fill="#f8fafc"/>'
+    +'<rect x="'+(x+50)+'" y="'+(y-6)+'" width="50" height="16" rx="4" fill="url(#hgrMetall)"/></g>'
+    +zeilen.map(function(z,i){ var yy=y+36+i*24; return T(x+16,yy,z,'#334155',10,800,'start')+haken(x+130,yy-4,(b||0.4)+i*0.45); }).join(''); }
+
+  var OP=[
+  { id:'op-haende', op:true, t:'Chirurgische Händedesinfektion', s:'Vor dem sterilen Einkleiden – Einwirkzeit nach Herstellerangabe', farbe:'#14b8a6', schritte:[
+    { t:'Vorbereiten', x:'Bereichskleidung, <b>Haube</b> und <b>Mund-Nasen-Schutz</b> sitzen. Kein Schmuck, keine Uhr an Händen und Unterarmen. Nägel kurz, <b>unlackiert</b>, keine künstlichen Nägel.',
+      svg:D()+kopf(80,70)+rumpf(80,100)+liste(['Haube + MNS','Kein Schmuck, Uhr','Nägel kurz, kein Lack'],0.5,190)+verbot(['Künstliche Nägel'],1.9,196,134) },
+    { t:'Waschen – nur wenn nötig', x:'Hände und Unterarme <b>zu Dienstbeginn</b> und bei <b>sichtbarer Verschmutzung</b> waschen. Eine Bürste allenfalls für Nägel und Nagelfalz, nicht für die Haut. Danach <b>gründlich abtrocknen</b> – Wasser verdünnt das Desinfektionsmittel.',
+      svg:D()+arm(110,70)+arm(160,70)+tropfen(135,30,0.3)+'<g opacity="0">'+ein(1.6)+T(250,60,'gut abtrocknen',GR,12,900)+T(250,78,'Wasser verdünnt',TX2,10)+T(250,92,'das Mittel',TX2,10)+'</g>'+hinweis('Bürste nur für Nägel – nicht für die Haut',2.4) },
+    { t:'Mittel entnehmen', x:'Spender mit dem <b>Ellenbogen</b> bedienen. Hände und Unterarme <b>bis zum Ellenbogen</b> vollständig benetzen – so viel Mittel, dass alles die ganze Zeit feucht bleibt.',
+      svg:D()+spender(240,78)+arm(140,64,{rot:-8})+'<g opacity="0">'+ein(1)+'<path d="M200 36 q-20 -6 -36 10" stroke="'+OR+'" stroke-width="2" fill="none"/>'+T(206,28,'Ellenbogen',OR,10,800,'start')+'</g>'+hinweis('Bis zum Ellenbogen benetzen',1.8) },
+    { t:'Einreiben', x:'Über die gesamte <b>Einwirkzeit nach Herstellerangabe</b> einreiben. <b>Fingerkuppen, Daumen und Nagelfalz</b> besonders beachten. Hände dabei <b>über Ellenbogenhöhe</b> halten, damit nichts zurück auf die Hände läuft.',
+      svg:D()+'<g><animateTransform attributeName="transform" type="translate" values="0 0;6 -3;0 0;-6 3;0 0" dur="1.1s" repeatCount="indefinite"/>'+arm(130,70,{rot:-6})+'</g>'+arm(165,74,{rot:6})+uhr(262,56,'Zeit',0.6,4)+T(262,96,'Herstellerangabe',TX,9.5)+'<g opacity="0">'+ein(1.4)+'<path d="M138 196 v-24 m-6 6 l6 -6 6 6" stroke="'+GR+'" stroke-width="2.4" fill="none"/>'+T(150,212,'Hände oben',GR,10,800,'start')+'</g>' },
+    { t:'Trocknen lassen', x:'Hände an der <b>Luft trocknen</b> lassen, nicht abtrocknen und nichts mehr berühren. Danach direkt <b>steril einkleiden</b>.',
+      svg:D()+arm(120,64)+arm(170,64)+'<g opacity="0">'+ein(0.6)+haken(250,60,0)+T(264,64,'trocken',GR,12,900,'start')+'</g>'+verbot(['Abtrocknen','Etwas anfassen'],1.2,206,110)+hinweis('Danach: steril einkleiden',2) }
+  ], merke:'Kein Schmuck, Nägel kurz → waschen nur wenn nötig, gut trocknen → bis zum Ellenbogen benetzen → Einwirkzeit einhalten, Hände oben → an der Luft trocknen.',
+    quiz:[ {f:'Wofür darf eine Bürste bei der chirurgischen Händedesinfektion verwendet werden?', o:['Für die ganze Haut der Unterarme','Allenfalls für Nägel und Nagelfalz','Gar nicht, auch nicht für Nägel','Nur für die Handrücken'], k:1},
+           {f:'Warum werden die Hände nach dem Waschen gründlich abgetrocknet?', o:['Weil Wasser das Desinfektionsmittel verdünnt','Damit die Haube nicht nass wird','Das ist nicht nötig','Damit die Hände wärmer sind'], k:0},
+           {f:'Wie werden die Hände während des Einreibens gehalten?', o:['Unter Taillenhöhe','Über Ellenbogenhöhe','Hinter dem Rücken','Auf dem Waschbecken abgestützt'], k:1} ]},
+
+  { id:'op-einkleiden', op:true, t:'Steril einkleiden (geschlossen)', s:'Kittel und Handschuhe, ohne die Außenseite zu berühren', farbe:'#3b82f6', schritte:[
+    { t:'Kittel aufnehmen', x:'Den sterilen Kittel an der <b>Innenseite</b> (am Halsausschnitt) fassen, vom Tisch wegtreten und ihn mit Abstand zu allem <b>auseinanderfallen</b> lassen.',
+      svg:D()+kopf(110,56)+'<g opacity="0">'+ein(0.4)+'<path d="M70 100 Q110 84 150 100 L160 210 L60 210 Z" fill="'+KITTEL+'" filter="url(#hgrSch)"><animate attributeName="d" from="M95 100 Q110 96 125 100 L128 130 L92 130 Z" to="M70 100 Q110 84 150 100 L160 210 L60 210 Z" begin="0.6s" dur="0.8s" fill="freeze"/></path></g>'+liste(['Innen anfassen','Abstand halten','Fallen lassen'],1) },
+    { t:'In die Ärmel schlüpfen', x:'Arme in die Ärmel schieben. Bei der <b>geschlossenen Methode</b> bleiben die Hände <b>in den Kittelbündchen</b> und kommen nicht heraus.',
+      svg:D()+kopf(110,56)+'<path d="M70 100 Q110 84 150 100 L160 210 L60 210 Z" fill="'+KITTEL+'" filter="url(#hgrSch)"/>'+arm(60,120,{rot:-28,aermel:KDUNKEL,hand:KDUNKEL})+arm(160,120,{rot:28,aermel:KDUNKEL,hand:KDUNKEL})+'<g opacity="0">'+ein(0.8)+T(250,70,'Hände bleiben',GR,11,900)+T(250,86,'im Bündchen',GR,11,900)+'</g>' },
+    { t:'Schließen durch den Springer', x:'Die <b>springende Person</b> schließt den Kittel im Rücken und fasst dabei nur die <b>Innenseite</b> bzw. die Bänder an.',
+      svg:D()+kopf(110,56)+'<path d="M70 100 Q110 84 150 100 L160 210 L60 210 Z" fill="'+KITTEL+'" filter="url(#hgrSch)"/>'+'<g opacity="0">'+ein(0.5)+'<path d="M150 112 h40 M150 150 h40" stroke="#e2e8f0" stroke-width="3"/>'+arm(212,110,{rot:90,aermel:'#64748b'})+'</g>'+'<g opacity="0">'+ein(1.2)+T(250,60,'Springer:',TX,11,800)+T(250,76,'nur innen',GR,11,900)+'</g>' },
+    { t:'Handschuhe geschlossen anziehen', x:'Ersten Handschuh mit der Hand im Bündchen aufnehmen, <b>Handfläche auf Handfläche</b> auf das Handgelenk legen und über das Bündchen stülpen. Dann die Hand hineingleiten lassen. Zweiten Handschuh genauso.',
+      svg:D()+arm(150,50,{aermel:KITTEL,hand:KDUNKEL})+'<g opacity="0">'+ein(0.4)+'<g><animateTransform attributeName="transform" type="translate" from="0 -40" to="0 0" begin="0.4s" dur="1s" fill="freeze"/>'+arm(150,50,{aermel:'none',hand:HS})+'</g></g>'+'<g opacity="0">'+ein(1.6)+T(250,70,'Bündchen',GR,11,900)+T(250,86,'überstülpen',GR,11,900)+'</g>'+hinweis('Haut berührt nie die Außenseite',2.2) },
+    { t:'Gürtel binden (Wickelkittel)', x:'Bei Wickelkitteln reicht man der springenden Person die <b>Karte am Gürtelband</b>, dreht sich und nimmt das Band wieder. So wird auch der Rücken umhüllt.',
+      svg:D()+kopf(110,56)+'<path d="M70 100 Q110 84 150 100 L160 210 L60 210 Z" fill="'+KITTEL+'" filter="url(#hgrSch)"/><rect x="66" y="150" width="90" height="6" fill="#e2e8f0"/>'+'<g><animateTransform attributeName="transform" type="translate" values="0 0;90 0;0 0" begin="0.5s" dur="2.4s" fill="freeze"/><rect x="152" y="140" width="22" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/></g>'+T(250,60,'Karte reichen,',TX,11,800)+T(250,76,'drehen, Band nehmen',TX,11,800) },
+    { t:'Steriler Bereich', x:'Steril gilt <b>vorn</b> von der Brust bis zur Tischhöhe sowie die <b>Ärmel</b>. Rücken, Schultern und alles unter Tischhöhe gelten als unsteril. Hände <b>vor dem Körper</b> über der Taille halten.',
+      svg:D()+kopf(110,56)+'<path d="M70 100 Q110 84 150 100 L160 210 L60 210 Z" fill="'+KITTEL+'" filter="url(#hgrSch)"/>'+'<rect x="72" y="104" width="76" height="66" rx="6" fill="rgba(74,222,128,.28)" stroke="'+GR+'" stroke-width="2" stroke-dasharray="5 4" opacity="0">'+ein(0.4)+'</rect>'+'<rect x="62" y="176" width="96" height="34" fill="rgba(248,113,113,.25)" stroke="'+RT+'" stroke-width="2" stroke-dasharray="5 4" opacity="0">'+ein(1)+'</rect>'+liste(['Vorn bis Tischhöhe','Ärmel'],1.4,200,60)+verbot(['Rücken, Schultern','Unter Tischhöhe'],2.2,200,130) }
+  ], merke:'Innen anfassen → Ärmel, Hände im Bündchen → Springer schließt innen → Handschuhe geschlossen → Gürtelkarte → steril nur vorn bis Tischhöhe.',
+    quiz:[ {f:'Was kennzeichnet die geschlossene Methode beim Handschuhanziehen?', o:['Die Hände bleiben in den Kittelbündchen','Die Handschuhe werden vor dem Kittel angezogen','Die springende Person zieht die Handschuhe an','Die Hände sind bereits draußen'], k:0},
+           {f:'Welcher Bereich des sterilen Kittels gilt als steril?', o:['Der Rücken','Vorn von der Brust bis zur Tischhöhe und die Ärmel','Der ganze Kittel bis zum Boden','Nur die Schultern'], k:1},
+           {f:'Wo fasst die springende Person den Kittel beim Schließen an?', o:['Vorn auf der Brust','An der Außenseite der Ärmel','Nur an der Innenseite bzw. den Bändern','Am sterilen Gürtel'], k:2} ]},
+
+  { id:'op-tisch', op:true, t:'Instrumententisch aufbauen', s:'Sterilgut prüfen, steril abdecken, ordnen, zählen', farbe:'#2563eb', schritte:[
+    { t:'Sterilgut prüfen', x:'Vor dem Öffnen: Verpackung <b>unversehrt und trocken</b>, <b>Indikator</b> umgeschlagen, <b>Verfallsdatum</b> nicht überschritten. Bei Zweifel das Sterilgut nicht verwenden.',
+      svg:D()+'<g filter="url(#hgrSch)"><rect x="40" y="70" width="130" height="80" rx="6" fill="#cbd5e1"/><rect x="40" y="70" width="130" height="14" fill="#94a3b8"/><rect x="120" y="100" width="36" height="12" rx="2" fill="#16a34a"/></g>'+liste(['Verpackung heil','Indikator ok','Datum gültig'],0.5,192,70)+hinweis('Zweifel = nicht verwenden',2.2) },
+    { t:'Tisch steril abdecken', x:'Die Tischabdeckung wird so geöffnet, dass nur ihre <b>Innenseite</b> mit der sterilen Person in Kontakt kommt. Sie muss den Tisch vollständig bedecken und an den Seiten überhängen.',
+      svg:D()+tisch(60,110,200)+'<rect x="60" y="100" width="200" height="0" fill="#2563eb" opacity=".9"><animate attributeName="height" from="0" to="44" begin="0.4s" dur="1s" fill="freeze"/></rect>'+'<g opacity="0">'+ein(1.6)+T(160,90,'Tisch komplett bedeckt',GR,11,900)+'</g>' },
+    { t:'Sterilgut anreichen lassen', x:'Die <b>springende Person</b> öffnet die Verpackung so, dass der Inhalt ohne Berührung der Außenseite auf den Tisch gleitet oder steril entnommen wird. Ränder der Verpackung gelten als unsteril.',
+      svg:D()+tisch(60,130,200,{steril:1})+'<g><animateTransform attributeName="transform" type="translate" from="210 40" to="150 118" begin="0.4s" dur="1.2s" fill="freeze"/>'+instr(0,0,'klemme')+'</g>'+'<g opacity="0">'+ein(0.2)+T(250,24,'aus der Peel-Packung',TX2,10,700)+'</g>'+hinweis('Verpackungsrand = unsteril',2) },
+    { t:'Systematisch ordnen', x:'Instrumente in der <b>Reihenfolge des Eingriffs</b> und nach dem Standard des Hauses ordnen – so findet man jedes Teil sofort und behält den Überblick.',
+      svg:D()+tisch(40,120,240,{steril:1})+['skalpell','pinzette','schere','klemme','klemme','tupfer'].map(function(t,i){ return '<g opacity="0">'+ein(0.4+i*0.35)+instr(62+i*38,116,t)+'</g>'; }).join('')+T(160,90,'in OP-Reihenfolge',GR,11,900) },
+    { t:'Zählen', x:'Tupfer, Bauchtücher, Nadeln, Klingen und Instrumente <b>gemeinsam mit der springenden Person laut zählen</b> und dokumentieren – vor der OP, vor dem Verschluss und am Ende.',
+      svg:D()+brett(160,40,['Tupfer','Bauchtücher','Nadeln','Instrumente'],0.4)+'<g opacity="0">'+ein(0.2)+instr(70,100,'tupfer')+instr(100,100,'tupfer')+instr(85,124,'tupfer')+'</g>'+hinweis('Zu zweit, laut, dokumentiert',2.4) },
+    { t:'Beaufsichtigen', x:'Bis zum Beginn der OP bleibt der vorbereitete Tisch <b>beaufsichtigt</b> oder wird <b>steril abgedeckt</b>. Ein unbeaufsichtigter offener Tisch gilt nicht mehr als sicher steril.',
+      svg:D()+tisch(60,120,200,{steril:1})+'<rect x="60" y="106" width="200" height="16" rx="4" fill="#3b82f6" opacity="0">'+ein(0.6)+'</rect>'+'<g opacity="0">'+ein(1.2)+haken(110,80,0)+T(124,84,'beaufsichtigt oder abgedeckt',GR,11,900,'start')+'</g>' }
+  ], merke:'Sterilgut prüfen → Tisch steril abdecken → Springer reicht an → in OP-Reihenfolge ordnen → zu zweit zählen → nie unbeaufsichtigt.',
+    quiz:[ {f:'Was prüfst du vor dem Öffnen von Sterilgut?', o:['Nur das Gewicht','Unversehrtheit, Indikator und Verfallsdatum','Nur die Farbe der Verpackung','Gar nichts, Sterilgut ist immer steril'], k:1},
+           {f:'Wer zählt Tupfer und Instrumente?', o:['Die instrumentierende Person allein','Die Anästhesie','Instrumentierende und springende Person gemeinsam','Der Operateur am Ende'], k:2},
+           {f:'Was gilt für einen vorbereiteten offenen Instrumententisch?', o:['Er darf unbeaufsichtigt stehen','Er bleibt beaufsichtigt oder wird steril abgedeckt','Er wird mit Desinfektionsmittel besprüht','Er muss sofort benutzt werden'], k:1} ]},
+
+  { id:'op-timeout', op:true, t:'Team-Time-out', s:'Letzte Sicherheitsprüfung unmittelbar vor dem Schnitt', farbe:'#f59e0b', schritte:[
+    { t:'Alles stoppen', x:'<b>Unmittelbar vor dem Hautschnitt</b> unterbrechen alle ihre Tätigkeit. Das ganze Team ist anwesend und hört zu – Operateur, Anästhesie und OP-Pflege.',
+      svg:D()+[60,160,260].map(function(x,i){ return '<g opacity="0">'+ein(0.3+i*0.3)+kopf(x,80)+rumpf(x,108,i===1?KITTEL:GRUEN)+'</g>'; }).join('')+'<g opacity="0">'+ein(1.4)+'<rect x="110" y="10" width="100" height="26" rx="13" fill="'+RT+'"/>'+T(160,28,'STOPP',"#fff",13,900)+'</g>' },
+    { t:'Vorstellung', x:'Alle stellen sich mit <b>Namen und Funktion</b> vor, wenn sich das Team nicht kennt.',
+      svg:D()+[60,160,260].map(function(x,i){ return kopf(x,80)+rumpf(x,108,i===1?KITTEL:GRUEN)+'<g opacity="0">'+ein(0.4+i*0.5)+'<rect x="'+(x-38)+'" y="18" width="76" height="22" rx="8" fill="rgba(56,189,248,.18)" stroke="#38bdf8"/>'+T(x,33,['Anästhesie','Operateur','OP-Pflege'][i],TX,9.5,800)+'</g>'; }).join('') },
+    { t:'Patient, Eingriff, Seite', x:'Gemeinsam laut bestätigen: <b>richtiger Patient</b>, <b>richtiger Eingriff</b>, <b>richtige Seite</b> – die Markierung ist sichtbar.',
+      svg:D()+brett(20,30,['Patient','Eingriff','Seite / Markierung'],0.4)+'<g opacity="0">'+ein(1.8)+'<rect x="200" y="60" width="90" height="130" rx="40" fill="url(#hgrHaut)" filter="url(#hgrSch)"/><path d="M232 110 l14 14 m0 -14 l-14 14" stroke="#1d4ed8" stroke-width="4"/>'+T(245,206,'markiert',GR,10,800)+'</g>' },
+    { t:'Antibiotika & Bildgebung', x:'Ist die <b>Antibiotikaprophylaxe</b> zeitgerecht gegeben (meist bis 60 Minuten vor dem Schnitt)? Ist die <b>nötige Bildgebung</b> da?',
+      svg:D()+brett(20,40,['Antibiose gegeben','Bildgebung da'],0.4)+uhr(250,90,'60 min',1,3)+T(250,134,'vor dem Schnitt',TX2,10) },
+    { t:'Kritische Punkte ansprechen', x:'<b>Operateur:</b> besondere Schritte, Dauer, erwarteter Blutverlust. <b>Anästhesie:</b> Besonderheiten des Patienten. <b>OP-Pflege:</b> Sterilität bestätigt (Indikatoren), Geräte und Implantate bereit.',
+      svg:D()+[['Operateur','Dauer, Blutverlust'],['Anästhesie','Risiken des Patienten'],['OP-Pflege','Sterilität, Geräte, Implantate']].map(function(z,i){ return '<g opacity="0">'+ein(0.4+i*0.6)+'<rect x="20" y="'+(30+i*56)+'" width="280" height="46" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(148,190,220,.3)"/>'+T(34,(54+i*56),z[0],'#7dd3fc',11,900,'start')+T(34,(70+i*56),z[1],TX,10.5,700,'start')+'</g>'; }).join('') },
+    { t:'Erst dann schneiden', x:'Erst wenn <b>alle Punkte bestätigt</b> sind, wird geschnitten. Jede Unklarheit heißt: <b>Stopp</b>, klären, dann weiter. Das Time-out wird dokumentiert.',
+      svg:D()+'<g opacity="0">'+ein(0.3)+haken(110,80,0)+T(126,85,'alles bestätigt → Schnitt',GR,12,900,'start')+'</g>'+'<g opacity="0">'+ein(1.2)+kreuz(110,130,0)+T(126,135,'Unklarheit → Stopp, klären',RT,12,900,'start')+'</g>'+hinweis('Time-out dokumentieren',2) }
+  ], merke:'Stopp → Vorstellung → Patient, Eingriff, Seite → Antibiose, Bildgebung → kritische Punkte aller drei Berufsgruppen → erst dann Schnitt.',
+    quiz:[ {f:'Wann findet das Team-Time-out statt?', o:['Bei der Aufnahme auf Station','Vor der Narkoseeinleitung','Unmittelbar vor dem Hautschnitt','Nach dem Hautverschluss'], k:2},
+           {f:'Was bestätigt die OP-Pflege im Time-out?', o:['Den erwarteten Blutverlust','Sterilität (Indikatoren) und bereite Geräte','Die Narkoseform','Die Verlegung auf Station'], k:1},
+           {f:'Was gilt, wenn im Time-out etwas unklar ist?', o:['Trotzdem anfangen','Stopp – erst klären, dann weiter','Nach der OP klären','Nur dokumentieren'], k:1} ]}
+  ];
+  function eintragen(){ if(!an()) return; OP.forEach(function(h){ h.schritte.forEach(function(st){ if(st.svg.indexOf('class="hgr"')<0) st.svg='<g class="hgr">'+st.svg+'</g>'; }); if(!HG.some(function(x){ return x.id===h.id; })) HG.push(h); }); }
+  eintragen(); setTimeout(eintragen,3000);
+  /* isAdmin() ist erst nach der Anmeldung wahr → auch beim Öffnen der Liste eintragen */
+  var oL=window.plHandgriffListe; if(typeof oL==='function') window.plHandgriffListe=function(){ eintragen(); return oL.apply(this,arguments); };
+  var oS=window.showScreen; if(typeof oS==='function') window.showScreen=function(n){ if(n==='handgriffe') eintragen(); return oS.apply(this,arguments); };
+  window.plHGOpEintragen=eintragen;
+})();
+</script>
 </body>
 </html>
