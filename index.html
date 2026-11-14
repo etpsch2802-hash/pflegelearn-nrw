@@ -31311,7 +31311,7 @@ window.PL_BRIEF_PUBLIC = true;
 /* Quiz: „Vorherige Frage“ ansehen + Nachfrage beim Verlassen (14.11.2026, Wunsch Verena über P. Schenkelberger).
    Nur Ansicht: Wertung, quizIdx und quizAnswers bleiben unverändert. Zurück (Knopf/Geste) während eines
    angefangenen Blocks fragt „Quiz verlassen?“. Schalter PL_QBACK_PUBLIC=false; Test: Admin oder pl_nicht_zaehlen=1. Kein pl_*-Key. */
-window.PL_QBACK_PUBLIC = false;
+window.PL_QBACK_PUBLIC = true;
 (function(){
   function an(){ try{ return window.PL_QBACK_PUBLIC===true || localStorage.getItem('pl_nicht_zaehlen')==='1' || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
   function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
