@@ -31307,5 +31307,97 @@ window.PL_BRIEF_PUBLIC = true;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<script>
+/* Quiz: „Vorherige Frage“ ansehen + Nachfrage beim Verlassen (14.11.2026, Wunsch Verena über P. Schenkelberger).
+   Nur Ansicht: Wertung, quizIdx und quizAnswers bleiben unverändert. Zurück (Knopf/Geste) während eines
+   angefangenen Blocks fragt „Quiz verlassen?“. Schalter PL_QBACK_PUBLIC=false; Test: Admin oder pl_nicht_zaehlen=1. Kein pl_*-Key. */
+window.PL_QBACK_PUBLIC = false;
+(function(){
+  function an(){ try{ return window.PL_QBACK_PUBLIC===true || localStorage.getItem('pl_nicht_zaehlen')==='1' || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
+  function ga(n,p){ try{ if(typeof gtag==='function') gtag('event',n,p||{}); }catch(e){} }
+  var sieht=-1; /* Index in quizAnswers, der gerade angesehen wird; -1 = normale Frage */
+  var LIVE=['question-card','options','explanation','next-btn'], gemerkt={};
+  function el(id){ return document.getElementById(id); }
+  function antworten(){ try{ return quizAnswers||[]; }catch(e){ return []; } }
+  function vorIdx(){ var a=antworten(); var akt=false; try{ akt=(selectedAns!==null); }catch(e){} return a.length-(akt?2:1); }
+  function stil(){
+    if(el('pl-qb-stil')) return; var s=document.createElement('style'); s.id='pl-qb-stil';
+    s.textContent='#pl-qb-zeile{display:flex;justify-content:flex-start;margin:-4px 0 10px}'
+      +'#pl-qb-zeile button,#pl-qb .plqb-nav button{background:none;border:1px solid var(--border,rgba(255,255,255,.18));border-radius:999px;padding:7px 14px;color:var(--text2,#b3c4d6);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}'
+      +'#pl-qb .plqb-hin{font-size:12px;color:var(--text3,#8ba6bd);font-weight:700;margin-bottom:8px}'
+      +'#pl-qb .opt-btn{cursor:default}#pl-qb .plqb-nav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}'
+      +'#pl-qb .plqb-nav .plqb-haupt{background:var(--accent,#0ea5e9);border-color:transparent;color:#fff}'
+      /* gleicher Antwortstil wie Design-Runde 2 (#options) */
+      +'html.pl-d2 #pl-qb .options{gap:10px}html.pl-d2 #pl-qb .opt-btn{padding:14px;font-size:14.5px;line-height:1.45;border-radius:14px;min-height:54px;align-items:center;gap:12px;border-width:1.5px}'
+      +'html.pl-d2 #pl-qb .opt-letter{flex:0 0 30px;height:30px;min-width:30px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:13px;opacity:.85}'
+      +'html.pl-d2 #pl-qb .opt-btn.correct .opt-letter{opacity:1;background:#16a34a;border-color:#16a34a;color:#fff}html.pl-d2 #pl-qb .opt-btn.wrong .opt-letter{opacity:1;background:#ea580c;border-color:#ea580c;color:#fff}';
+    document.head.appendChild(s);
+  }
+  function knopf(){
+    if(!an()) return; stil();
+    var z=el('pl-qb-zeile'), card=el('question-card'); if(!card) return;
+    if(!z){ z=document.createElement('div'); z.id='pl-qb-zeile'; z.innerHTML='<button type="button" id="pl-qb-zurueck">‹ Vorherige Frage</button>';
+      card.parentNode.insertBefore(z,card); el('pl-qb-zurueck').onclick=function(){ zeige(vorIdx()); ga('quiz_zurueck',{}); }; }
+    z.style.display=(sieht<0&&vorIdx()>=0)?'flex':'none';
+  }
+  function esc(t){ return String(t==null?'':t); }
+  function zeige(j){
+    var a=antworten(); if(j<0||j>=a.length) return;
+    if(sieht<0) LIVE.forEach(function(id){ var e=el(id); if(e){ gemerkt[id]=e.style.display; e.style.display='none'; } });
+    sieht=j; var x=a[j], q=x.q, box=el('pl-qb');
+    if(!box){ box=document.createElement('div'); box.id='pl-qb'; var c=el('question-card'); c.parentNode.insertBefore(box,c); }
+    var opts=q.opt.map(function(o,i){ var k=i===q.k?' correct':(i===x.sel?' wrong':'');
+      return '<button type="button" class="opt-btn'+k+'" disabled><span class="opt-letter">'+['A','B','C','D'][i]+'.</span>'+esc(o)+'</button>'; }).join('');
+    var letzte=(j>=vorIdx());
+    box.innerHTML='<div class="plqb-hin">Frage '+(j+1)+' · nur ansehen – deine Antwort zählt wie gegeben</div>'
+      +'<div class="question-card"><div class="q-text">'+esc(q.frage)+'</div></div>'
+      +'<div class="options">'+opts+'</div>'
+      +'<div class="explanation" style="display:block"><div class="exp-label">💡 Erklärung</div>'+esc(q.erkl)+'</div>'
+      +'<div class="plqb-nav">'+(j>0?'<button type="button" id="plqb-vor">‹ Vorherige</button>':'<span></span>')
+      +(letzte?'<button type="button" class="plqb-haupt" id="plqb-live">Zurück zur aktuellen Frage ›</button>':'<button type="button" id="plqb-nach">Nächste ›</button>')+'</div>';
+    box.style.display='block';
+    var v=el('plqb-vor'); if(v) v.onclick=function(){ zeige(j-1); };
+    var n=el('plqb-nach'); if(n) n.onclick=function(){ zeige(j+1); };
+    var l=el('plqb-live'); if(l) l.onclick=zurueck;
+    knopf(); try{ box.scrollIntoView({block:'start'}); }catch(e){}
+  }
+  function zurueck(){
+    if(sieht<0) return; sieht=-1; var b=el('pl-qb'); if(b){ b.style.display='none'; b.innerHTML=''; }
+    LIVE.forEach(function(id){ var e=el(id); if(e&&id in gemerkt) e.style.display=gemerkt[id]; }); gemerkt={}; knopf();
+  }
+  var oR=window.renderQuestion; if(typeof oR==='function') window.renderQuestion=function(){ if(sieht>=0) zurueck(); var r=oR.apply(this,arguments); try{ knopf(); }catch(e){} return r; };
+  var oP=window.pickAnswer; if(typeof oP==='function') window.pickAnswer=function(){ var r=oP.apply(this,arguments); try{ knopf(); }catch(e){} return r; };
+
+  /* Nachfrage beim Verlassen eines angefangenen Blocks */
+  var raus=false;
+  function frage(){
+    if(el('pl-qb-frage')) return;
+    var o=document.createElement('div'); o.id='pl-qb-frage';
+    o.style.cssText='position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;padding:16px';
+    o.innerHTML='<div role="dialog" aria-modal="true" style="background:var(--card,#0d2135);border:1px solid var(--border,rgba(255,255,255,.15));border-radius:16px;padding:20px;width:100%;max-width:420px;color:var(--text,#e0f2fe)">'
+      +'<div style="font-size:17px;font-weight:800;margin-bottom:6px">Quiz verlassen?</div>'
+      +'<div style="font-size:14px;color:var(--text2,#b3c4d6);line-height:1.5;margin-bottom:16px">Deine bisherigen Antworten sind gespeichert, aber dieser Block wird nicht zu Ende gebracht.</div>'
+      +'<button type="button" id="pl-qb-bleib" style="width:100%;border:none;border-radius:12px;padding:13px;background:var(--accent,#0ea5e9);color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:8px">Weiter üben</button>'
+      +'<button type="button" id="pl-qb-raus" style="width:100%;border:1px solid var(--border,rgba(255,255,255,.18));border-radius:12px;padding:12px;background:none;color:var(--text2,#b3c4d6);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">Verlassen</button></div>';
+    document.body.appendChild(o);
+    el('pl-qb-bleib').onclick=function(){ o.remove(); ga('quiz_verlassen',{antwort:'bleiben'}); };
+    el('pl-qb-raus').onclick=function(){ o.remove(); ga('quiz_verlassen',{antwort:'raus'}); raus=true; try{ history.back(); }catch(e){ raus=false; } };
+  }
+  /* Die App verarbeitet popstate vor eigenen Listenern → Haken an showScreen (nur bei Zurück-Navigation, _navPopping). */
+  var oS=window.showScreen;
+  if(typeof oS==='function') window.showScreen=function(ziel){
+    try{
+      var pop=false; try{ pop=(_navPopping===true); }catch(x){}
+      if(raus){ raus=false; }
+      else if(pop && an() && currentScreen==='quiz' && ziel!=='quiz' && ziel!=='result'){
+        if(sieht>=0){ try{ history.pushState({screen:'quiz'},''); }catch(x){} zurueck(); return; }
+        var a=antworten(), fertig=false; try{ fertig=(quizIdx+1>=quizList.length&&selectedAns!==null); }catch(x){}
+        if(a.length&&!fertig){ try{ history.pushState({screen:'quiz'},''); }catch(x){} frage(); return; }
+      }
+    }catch(e){}
+    return oS.apply(this,arguments);
+  };
+})();
+</script>
 </body>
 </html>
