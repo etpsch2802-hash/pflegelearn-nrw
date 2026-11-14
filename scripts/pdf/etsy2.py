@@ -1,11 +1,11 @@
 # Etsy-Pakete Teil 2 (18.10.2026): Probeklausur, Fallbeispiele, Krankheitsbilder, Medikamente, Taschenkarten, ATA/OTA, Komplettpaket.
 # Quellen (alle bereits live in der App): /tmp/appdata.json (KRANKHEITSBILDER, MEDIKAMENTE(_NEU), FAELLE, TASCHENKARTEN aus index.html),
-# /tmp/klausur_u.json (data/klausur-*.js, Umlaute ergänzt), /tmp/q.json (QUIZ_FRAGEN). Ausgabe: private/etsy/ (nicht ausgeliefert).
+# /tmp/klausur_u.json (data/klausur-*.js, Umlaute ergänzt), /tmp/q.json (QUIZ_FRAGEN). Ausgabe: ../plan-nrw-privat/etsy/ (privates Repo) (nicht ausgeliefert).
 import json,random,html,os,sys
 from base import *
 from pypdf import PdfReader,PdfWriter
-OUT=os.path.join(D,'..','..','private','etsy'); os.makedirs(OUT,exist_ok=True)
-GR=os.path.join(D,'..','..','private','gratis-pdfs')
+OUT=os.path.join(D,'..','..','..','plan-nrw-privat','etsy'); os.makedirs(OUT,exist_ok=True)
+GR=os.path.join(D,'..','..','..','plan-nrw-privat','gratis-pdfs')
 E=lambda x: html.escape(str(x))
 A=json.load(open('/tmp/appdata.json')); K=json.load(open('/tmp/klausur_u.json')); Q=json.load(open('/tmp/q.json'))
 WARN='Lernhilfe, mit KI-Unterstützung erstellt und fachlich geprüft. Maßgeblich sind Lehrinhalte, Leitlinien und Standards deiner Einrichtung.'

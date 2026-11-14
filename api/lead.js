@@ -12,7 +12,7 @@ const _plFetch = globalThis.fetch;
 const fetch = (u, o = {}) => _plFetch(u, (o && o.signal) ? o : Object.assign({}, o, { signal: AbortSignal.timeout((o && o.timeoutMs) || 9000) }));
 
 // Gratis-PDFs (seit 16.10.2026): privater Supabase-Speicher, Bucket 'gratis-pdfs' (befuellt von
-// .github/workflows/pdf-sync.yml aus private/gratis-pdfs/). Kein oeffentlicher Link mehr.
+// .github/workflows/pdf-sync.yml im privaten Repo plan-nrw-privat, Ordner gratis-pdfs/). Kein oeffentlicher Link mehr.
 // BASE (altes oeffentliches Repo) bleibt nur als Notfall-Fallback, solange es erreichbar ist.
 const BASE = 'https://raw.githubusercontent.com/etpsch2802-hash/plan-nrw-gratis-pdfs/main/';
 async function ladePdf(file) {

@@ -1,9 +1,9 @@
 # Etsy-Pakete (17.10.2026): Fragenhefte aus data/quiz-fragen.js im PLAN-Design.
-# Aufruf: node-Export nach /tmp/q.json (siehe README), dann: python3 etsy.py  → private/etsy/*.pdf (nicht ausgeliefert)
+# Aufruf: node-Export nach /tmp/q.json (siehe README), dann: python3 etsy.py  → ../plan-nrw-privat/etsy/ (privates Repo)*.pdf (nicht ausgeliefert)
 import json,random,html,os
 from base import *
 Q=json.load(open('/tmp/q.json'))
-OUT=os.path.join(D,'..','..','private','etsy'); os.makedirs(OUT,exist_ok=True)
+OUT=os.path.join(D,'..','..','..','plan-nrw-privat','etsy'); os.makedirs(OUT,exist_ok=True)
 E=lambda x: html.escape(str(x))
 LV={'leicht':'●','mittel':'●●','schwer':'●●●'}
 X=""".area{page-break-before:always}.grp{margin-top:7mm}.grp h2{break-after:avoid}.q{break-inside:avoid;padding:2.6mm 0 2.2mm;border-bottom:0.6pt solid #e2e8f0}

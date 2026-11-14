@@ -20,7 +20,10 @@ Erzeugt alle PLAN-Lernhilfen im einheitlichen Design (Logo + „Bestehen ist pla
 | mp.py | Mündliche Prüfungssimulation | Text des alten PDFs |
 | pf.py | Prüfungsfragen-Sammlung (300) | data/quiz-fragen.js (/tmp/q.json), seed 42 |
 | kp.py | Komplettpaket (Zusammenführung) | fertige PDFs |
-| etsy2.py | 6 weitere Etsy-Produkte (Probeklausur, 92 Fallbeispiele, Krankheitsbilder & Pflegeplanung, Medikamente, Taschenkarten, ATA/OTA) + Komplettpaket → `private/etsy/` | /tmp/appdata.json (aus index.html), /tmp/klausur_u.json (data/klausur-*.js, Umlaute ergänzt), /tmp/q.json |
-| etsy.py | 3 Etsy-Fragenhefte (Langzeitpflege, Intensiv/Anästhesie, Examen 300) → `private/etsy/` (nicht ausgeliefert) | data/quiz-fragen.js (/tmp/q.json) + /tmp/lzp_thema.json (Themen-Zuordnung Langzeitpflege) |
+| etsy2.py | 6 weitere Etsy-Produkte (Probeklausur, 92 Fallbeispiele, Krankheitsbilder & Pflegeplanung, Medikamente, Taschenkarten, ATA/OTA) + Komplettpaket → `../plan-nrw-privat/etsy/` (privates Repo) | /tmp/appdata.json (aus index.html), /tmp/klausur_u.json (data/klausur-*.js, Umlaute ergänzt), /tmp/q.json |
+| etsy.py | 3 Etsy-Fragenhefte (Langzeitpflege, Intensiv/Anästhesie, Examen 300) → `../plan-nrw-privat/etsy/` (privates Repo) (nicht ausgeliefert) | data/quiz-fragen.js (/tmp/q.json) + /tmp/lzp_thema.json (Themen-Zuordnung Langzeitpflege) |
 
 Stand: 03.10.2026. Fertige PDFs liegen in `assets/pdf/`.
+
+## Ablage (seit 14.11.2026)
+Gratis-PDFs und Etsy-Produkte liegen im **privaten** Repo `etpsch2802-hash/plan-nrw-privat` (`gratis-pdfs/`, `etsy/`), nicht mehr hier. Repo daneben klonen (`../plan-nrw-privat`), PDF dort ablegen, committen – der Workflow dort lädt Gratis-PDFs in den Supabase-Speicher.
