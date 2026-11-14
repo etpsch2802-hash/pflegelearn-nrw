@@ -31399,5 +31399,29 @@ window.PL_QBACK_PUBLIC = true;
   };
 })();
 </script>
+<script>
+/* ATA/OTA-Ausbau (14.11.2026, Wunsch P. Schenkelberger): Entwurfsfragen aus data/entwurf/ataota.js.
+   Nur für Admin (bzw. PL_ATAOTA_PUBLIC=true) nachgeladen und in QUIZ_FRAGEN eingereiht; Frage zeigt „Entwurf“.
+   Freigabe = Fragen nach data/quiz-fragen.js übernehmen, dann diese IIFE + Datei entfernen. Kein pl_*-Key. */
+window.PL_ATAOTA_PUBLIC = false;
+(function(){
+  function an(){ try{ return window.PL_ATAOTA_PUBLIC===true || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
+  var geladen=false;
+  function laden(){
+    if(geladen||!an()) return; geladen=true;
+    var s=document.createElement('script'); s.src='/data/entwurf/ataota.js?v=1';
+    s.onload=function(){ try{ var L=window.PL_ENTWURF_ATAOTA||[]; var da={}; QUIZ_FRAGEN.forEach(function(q){ da[q.frage]=1; });
+      L.forEach(function(q){ if(!da[q.frage]) QUIZ_FRAGEN.push(q); }); if(typeof plSyncFragenCount==='function') plSyncFragenCount(); }catch(e){} };
+    document.head.appendChild(s);
+  }
+  var oR=window.renderQuestion; if(typeof oR==='function') window.renderQuestion=function(){ var r=oR.apply(this,arguments);
+    try{ var q=quizList[quizIdx]; if(q&&q.entwurf){ var c=document.getElementById('question-card'); if(c&&!c.querySelector('.pl-entwurf')){ var b=document.createElement('div'); b.className='pl-entwurf';
+      b.style.cssText='display:inline-block;margin-bottom:8px;padding:3px 9px;border-radius:999px;background:#fbbf2433;color:#fbbf24;font-size:12px;font-weight:800'; b.textContent='Entwurf – noch nicht freigegeben'; c.insertBefore(b,c.firstChild); } } }catch(e){}
+    return r; };
+  function start(){ laden(); setTimeout(laden,4000); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+  var oS=window.showScreen; if(typeof oS==='function') window.showScreen=function(n){ if(n==='quizSelect') laden(); return oS.apply(this,arguments); };
+})();
+</script>
 </body>
 </html>
