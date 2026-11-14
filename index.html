@@ -31277,7 +31277,7 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
 /* Persönlicher Brief „Wer steckt hinter PLAN?“ (14.11.2026, Text freigegeben von P. Schenkelberger 13.11.2026).
    Aufklappbarer Kasten auf dem Startbildschirm vor dem Login, unter den Gast-Knöpfen. Kein pl_*-Key.
    Schalter PL_BRIEF_PUBLIC=false; Test vor Go: ?brieftest=1 oder eigenes Gerät (pl_nicht_zaehlen=1). */
-window.PL_BRIEF_PUBLIC = false;
+window.PL_BRIEF_PUBLIC = true;
 (function(){
   try{ if(/[?&]brieftest=1/.test(location.search)) sessionStorage.setItem('plan_brieftest','1'); }catch(e){}
   function an(){ try{ return window.PL_BRIEF_PUBLIC===true || sessionStorage.getItem('plan_brieftest')==='1' || localStorage.getItem('pl_nicht_zaehlen')==='1' || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
