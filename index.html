@@ -31273,5 +31273,39 @@ body.light-mode .plr-chips > .plf-chip{background:#fff;border-color:#cbd5e1}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(hook,1800); }); else setTimeout(hook,1800);
 })();
 </script>
+<script>
+/* Persönlicher Brief „Wer steckt hinter PLAN?“ (14.11.2026, Text freigegeben von P. Schenkelberger 13.11.2026).
+   Aufklappbarer Kasten auf dem Startbildschirm vor dem Login, unter den Gast-Knöpfen. Kein pl_*-Key.
+   Schalter PL_BRIEF_PUBLIC=false; Test vor Go: ?brieftest=1 oder eigenes Gerät (pl_nicht_zaehlen=1). */
+window.PL_BRIEF_PUBLIC = false;
+(function(){
+  try{ if(/[?&]brieftest=1/.test(location.search)) sessionStorage.setItem('plan_brieftest','1'); }catch(e){}
+  function an(){ try{ return window.PL_BRIEF_PUBLIC===true || sessionStorage.getItem('plan_brieftest')==='1' || localStorage.getItem('pl_nicht_zaehlen')==='1' || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
+  var TEXT="<p>Schön, dass du da bist.</p><p>Ich bin Patrick, Fachpfleger für Anästhesie und Intensivmedizin und Praxisanleiter. Seit Jahren begleite ich Azubis durch ihre Ausbildung und ihr Examen.</p><p>Ich kenne die Fragen, die nachts wach halten: <em>Schaffe ich das? Wo fange ich an?</em></p><p>Darum habe ich PLAN gebaut: alles, was du fürs Examen brauchst, an einem Ort, geprüft von jemandem, der selbst täglich am Bett steht. Kostenlos.</p><p><strong>Du musst nicht alles auf einmal können. Du musst nur anfangen – jeden Tag ein bisschen.</strong></p><p>Ich drück dir die Daumen.</p>";
+  function bau(){
+    if(!an()||document.getElementById('pl-brief')) return;
+    var anker=document.getElementById('pl-gast-btn')||document.getElementById('pl-login-btn'); if(!anker) return;
+    var st=document.createElement('style');
+    st.textContent='#pl-brief{width:100%;max-width:340px;margin-top:14px;text-align:left;border:1px solid rgba(159,216,255,.22);border-radius:14px;background:rgba(255,255,255,.035)}'
+      +'#pl-brief summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;color:#cfeaff;font-size:14px;font-weight:800}'
+      +'#pl-brief summary::-webkit-details-marker{display:none}'
+      +'#pl-brief summary img{width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:center 30%;border:1.5px solid rgba(127,240,255,.5);flex:0 0 auto}'
+      +'#pl-brief summary .plb-pfeil{margin-left:auto;transition:transform .2s;color:#9fc3da}'
+      +'#pl-brief[open] summary .plb-pfeil{transform:rotate(180deg)}'
+      +'#pl-brief .plb-text{padding:2px 16px 14px;color:#dbeaf5;font-size:14px;line-height:1.55}'
+      +'#pl-brief .plb-text p{margin:0 0 9px}#pl-brief .plb-text strong{color:#fff}'
+      +'#pl-brief .plb-gruss{font-family:"DM Serif Display",serif;font-style:italic;font-size:19px;color:#7ff0ff;margin-top:4px}'
+      +'@media (prefers-reduced-motion:reduce){#pl-brief summary .plb-pfeil{transition:none}}';
+    document.head.appendChild(st);
+    var d=document.createElement('details'); d.id='pl-brief';
+    d.innerHTML='<summary><img src="/patrick.jpg?v=3" alt="Patrick in OP-Kleidung" loading="lazy"><span>Wer steckt hinter PLAN?</span><span class="plb-pfeil" aria-hidden="true">▾</span></summary>'
+      +'<div class="plb-text">'+TEXT+'<div class="plb-gruss">Patrick</div></div>';
+    d.addEventListener('toggle',function(){ if(d.open){ try{ if(typeof gtag==='function') gtag('event','brief_auf',{ort:'app'}); }catch(e){} } });
+    anker.parentNode.insertBefore(d,anker.nextSibling);
+  }
+  function start(){ bau(); setTimeout(bau,600); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 </body>
 </html>

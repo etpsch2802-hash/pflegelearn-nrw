@@ -347,6 +347,21 @@ footer {
   </div>
 </div>
 
+<!-- PERSÖNLICHER BRIEF (14.11.2026, Text freigegeben P. Schenkelberger; sichtbar erst nach Go: PL_BRIEF_PUBLIC, Vorschau ?brief=1) -->
+<div id="pl-brief" hidden style="position:relative;z-index:1;max-width:620px;margin:0 auto 34px;padding:0 16px">
+  <div style="display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px">
+    <img src="patrick.jpg?v=3" alt="Patrick in OP-Kleidung" loading="lazy" style="width:64px;height:80px;border-radius:12px;object-fit:cover;object-position:center 30%;flex:0 0 auto;border:2px solid rgba(56,189,248,.45)">
+    <div style="font-size:15px;line-height:1.6;color:var(--text)">
+      <p style="margin:0 0 10px">Schön, dass du da bist.</p><p style="margin:0 0 10px">Ich bin Patrick, Fachpfleger für Anästhesie und Intensivmedizin und Praxisanleiter. Seit Jahren begleite ich Azubis durch ihre Ausbildung und ihr Examen.</p><p style="margin:0 0 10px">Ich kenne die Fragen, die nachts wach halten: <em>Schaffe ich das? Wo fange ich an?</em></p><p style="margin:0 0 10px">Darum habe ich PLAN gebaut: alles, was du fürs Examen brauchst, an einem Ort, geprüft von jemandem, der selbst täglich am Bett steht. Kostenlos.</p><p style="margin:0 0 10px"><strong>Du musst nicht alles auf einmal können. Du musst nur anfangen – jeden Tag ein bisschen.</strong></p><p style="margin:0 0 10px">Ich drück dir die Daumen.</p>
+      <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:21px;color:var(--sky)">Patrick</div>
+    </div>
+  </div>
+</div>
+<script>
+window.PL_BRIEF_PUBLIC=false;
+(function(){ try{ if(window.PL_BRIEF_PUBLIC===true||/[?&]brief=1/.test(location.search)||localStorage.getItem('pl_nicht_zaehlen')==='1') document.getElementById('pl-brief').hidden=false; }catch(e){} })();
+</script>
+
 <!-- STATS -->
 <div class="stats-bar">
   <div class="stat"><div class="stat-num">7</div><div class="stat-label">Ausbildungswege</div></div>
