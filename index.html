@@ -31545,5 +31545,144 @@ window.PL_HG_OP_PUBLIC = false;
   window.plHGOpEintragen=eintragen;
 })();
 </script>
+<script>
+/* ══ OP- & ANÄSTHESIE-FÄLLE (ATA/OTA-Ausbau Teil 3, 14.11.2026, Wunsch P. Schenkelberger; Entwurf, nur Admin bis Go):
+   6 Fallbeispiele im FAELLE-Format (fach 'op'), nur eingereiht wenn an(). Schalter PL_FAELLE_OP_PUBLIC=false. ══ */
+window.PL_FAELLE_OP_PUBLIC = false;
+(function(){
+  function an(){ try{ return window.PL_FAELLE_OP_PUBLIC===true || (typeof isAdmin==='function'&&isAdmin()); }catch(e){ return false; } }
+  var IC='<svg class="ic" style="width:1.05em;height:1.05em;vertical-align:-.15em" viewBox="0 0 24 24"><use href="#i-shield"/></svg>';
+  function F(id,titel,schwere,grad,jahr,vig,nodes){ return {id:id,fach:'op',fachLabel:'OP & Anästhesie (ATA/OTA)',icon:IC,farbe:'#14b8a6',titel:titel+' (Entwurf)',schwere:schwere,grad:grad,jahr:jahr,vignette:vig,start:'n1',nodes:nodes,entwurf:true}; }
+  function o(text,ziel,typ,fb){ return {text:text,ziel:ziel,typ:typ,fb:fb}; }
+  var NEU=[
+  F('op_rsi','Einleitung bei Ileus','akut · hoch','Fortgeschritten',2,
+    'Herr M., 72 J., Notfall-Laparotomie bei Ileus. Er hat mehrfach erbrochen, eine Magensonde liegt noch nicht. Du bereitest als ATA die Narkoseeinleitung vor.',
+    { n1:{ titel:'VORBEREITUNG', text:'Was muss vor der Einleitung bereitstehen?', optionen:[
+        o('Funktionierende Absaugung mit großlumigem Katheter, Material für den schwierigen Atemweg, Medikamente beschriftet','n2','gut','Richtig – bei hohem Aspirationsrisiko muss die Absaugung vor dem Einschlafen laufen.'),
+        o('Nach ärztlicher Anordnung vorher eine Magensonde legen und den Magen absaugen','n2','gut','Sehr gut – das Entlasten des Magens senkt das Aspirationsrisiko bei Ileus.'),
+        o('Nur das Standard-Intubationsset, die Absaugung wird bei Bedarf geholt','bad_asp','fehler','Gefährlich – bei Erbrechen zählen Sekunden, die Absaugung muss schon laufen.') ]},
+      n2:{ titel:'PRÄOXYGENIERUNG', text:'Wie wird präoxygeniert?', optionen:[
+        o('Dicht sitzende Maske, 100 % Sauerstoff, über mehrere Minuten nach Standard','n3','gut','Richtig – so entsteht eine Sauerstoffreserve für die Zeit ohne Beatmung.'),
+        o('Maske locker vorhalten, eine Minute reicht','n3','warn','Zu wenig – bei undichter Maske wird kaum Stickstoff ausgewaschen.'),
+        o('Weglassen, damit es schneller geht','bad_desat','fehler','Ohne Reserve fällt die Sättigung während der Intubation schnell ab.') ]},
+      n3:{ titel:'NACH DER MEDIKAMENTENGABE', text:'Hypnotikum und Relaxans sind gegeben. Was gilt bis zur bestätigten Tubuslage?', optionen:[
+        o('Keine routinemäßige Zwischenbeatmung, Absaugung in der Hand, Tubus sofort blocken, Lage per Kapnographie bestätigen','end_gut','gut','Genau das Prinzip der Rapid Sequence Induction.'),
+        o('Kräftig mit der Maske zwischenbeatmen','bad_asp','warn','Kräftige Maskenbeatmung bläst Luft in den Magen und fördert Erbrechen. Nur nach ärztlicher Entscheidung, z. B. bei Sättigungsabfall, vorsichtig.'),
+        o('Den Cuff erst nach dem Fixieren blocken','bad_asp','warn','Bis zum Blocken ist die Luftröhre ungeschützt – sofort blocken.') ]},
+      bad_asp:{ text:'Im Rachen ist Mageninhalt zu sehen. Was tust du?', optionen:[
+        o('Absaugen, Anästhesist sichert den Atemweg, Ereignis dokumentieren','end_mittel','warn','Richtig reagiert – das Aspirationsrisiko war aber vermeidbar.'),
+        o('Weiter mit der Maske beatmen','end_schlecht','fehler','Das drückt Mageninhalt in die Lunge.') ]},
+      bad_desat:{ text:'Während der Intubation fällt die Sättigung auf 82 %. Was jetzt?', optionen:[
+        o('Anästhesist sofort informieren, Versuch abbrechen, nach Anweisung vorsichtig beatmen','end_mittel','warn','Richtig – Oxygenierung geht vor Intubation.'),
+        o('Weiter intubieren, gleich ist der Tubus drin','end_schlecht','fehler','Gefährliche Hypoxie.') ]},
+      end_gut:{ ende:true, ergebnis:'gut', text:'Die Einleitung verläuft ohne Aspiration.', fazit:'Ileus = Aspirationsgefahr: Magen entlasten, Absaugung bereit, gut präoxygenieren, RSI ohne Routine-Zwischenbeatmung, sofort blocken, Kapnographie.' },
+      end_mittel:{ ende:true, ergebnis:'mittel', text:'Der Patient ist versorgt, aber es gab eine vermeidbare Komplikation.', fazit:'Vorbereitung entscheidet: Absaugung, Präoxygenierung und sofortiges Blocken.' },
+      end_schlecht:{ ende:true, ergebnis:'schlecht', text:'Aspiration bzw. schwere Hypoxie.', fazit:'Bei Aspirationsgefahr nie ohne laufende Absaugung, ohne Sauerstoffreserve oder mit kräftiger Maskenbeatmung einleiten.' } }),
+
+  F('op_mh','Plötzlich steigt das CO₂','akut · hoch','Fortgeschritten',3,
+    'Frau T., 24 J., Kreuzbandplastik in Narkose mit Sevofluran. Nach Succinylcholin war der Kiefer auffällig steif. 30 Minuten später steigt das etCO₂ von 38 auf 65 mmHg trotz höherer Beatmung, Puls 130/min, die Muskulatur wirkt steif.',
+    { n1:{ titel:'ERKENNEN', text:'Woran denkst du?', optionen:[
+        o('Maligne Hyperthermie – sofort Anästhesist und Hilfe rufen','n2','gut','Richtig – unerklärter etCO₂-Anstieg, Tachykardie und Rigor nach Triggern sind typisch.'),
+        o('Beatmung weiter erhöhen und abwarten','bad_wait','warn','Damit verliert man wertvolle Zeit.'),
+        o('Fieber messen und Paracetamol vorbereiten','bad_wait','warn','Fieber kommt oft erst spät – nicht darauf warten.') ]},
+      n2:{ titel:'SOFORTMASSNAHMEN', text:'Was wird nach ärztlicher Anordnung sofort umgesetzt?', optionen:[
+        o('Volatile Anästhetika stoppen, mit 100 % Sauerstoff und hohem Frischgasfluss beatmen, auf intravenöse Narkose umstellen, Operateur informieren','n3','gut','Genau – Trigger weg, CO₂ abatmen.'),
+        o('Nur die Konzentration des Narkosegases etwas senken','n3','warn','Nicht genug – die Trigger müssen ganz weg.'),
+        o('Succinylcholin nachgeben, weil die Muskeln steif sind','bad_wait','fehler','Succinylcholin ist selbst ein Auslöser.') ]},
+      n3:{ titel:'DANTROLEN', text:'Der Anästhesist ordnet Dantrolen an. Was ist wichtig?', optionen:[
+        o('Dantrolen sofort holen, mehrere Helfer zum Auflösen, kühlen, Blutgase und Kalium kontrollieren','end_gut','gut','Richtig – Auflösen dauert, deshalb Hilfe holen. Kalium und Säure-Basen-Haushalt engmaschig.'),
+        o('Erst nur kühlen, Dantrolen erst bei über 40 °C','end_mittel','warn','Zu spät – Dantrolen ist die ursächliche Therapie.'),
+        o('Eine einzige Flasche reicht sicher aus','end_mittel','warn','Meist werden mehrere Flaschen gebraucht – deshalb viele Helfer.') ]},
+      bad_wait:{ text:'Das etCO₂ steigt auf 80 mmHg, die Temperatur auf 39,2 °C, das Kalium steigt. Was jetzt?', optionen:[
+        o('Jetzt den MH-Ablauf starten: Trigger stoppen, 100 % O₂, Dantrolen','end_mittel','warn','Richtig, aber verspätet.'),
+        o('Weiter beobachten','end_schlecht','fehler','Die maligne Hyperthermie ist ohne Therapie lebensbedrohlich.') ]},
+      end_gut:{ ende:true, ergebnis:'gut', text:'Die Krise wird früh erkannt und beherrscht.', fazit:'MH: unerklärter etCO₂-Anstieg + Tachykardie + Rigor → Trigger stoppen, 100 % O₂, Dantrolen, Hilfe holen. Danach Abklärung und Hinweis im Notfallausweis.' },
+      end_mittel:{ ende:true, ergebnis:'mittel', text:'Die Patientin übersteht die Krise mit Verzögerung.', fazit:'Je früher Trigger gestoppt und Dantrolen gegeben wird, desto besser.' },
+      end_schlecht:{ ende:true, ergebnis:'schlecht', text:'Lebensbedrohliche Entgleisung.', fazit:'Bei MH-Verdacht nie abwarten.' } }),
+
+  F('op_zaehl','Ein Bauchtuch fehlt','dringlich','Grundlagen',2,
+    'Laparotomie (Hemikolektomie). Vor dem Verschluss der Faszie zählst du als instrumentierende OTA mit der springenden Person: Ein Bauchtuch fehlt.',
+    { n1:{ titel:'ERSTE REAKTION', text:'Was tust du?', optionen:[
+        o('Operateur sofort laut informieren, Verschluss anhalten','n2','gut','Richtig – Zähldifferenz wird sofort angesprochen.'),
+        o('Erst still selbst noch einmal suchen','n2','warn','Zeitverlust – das Team muss es sofort wissen.'),
+        o('Die Zahl im Protokoll anpassen, es wird schon stimmen','bad_doku','fehler','Das ist eine Falschdokumentation und gefährdet den Patienten.') ]},
+      n2:{ titel:'SUCHE', text:'Wie wird gesucht?', optionen:[
+        o('Systematisch: Situs durch den Operateur, Instrumententisch, Abwurf, Boden, Wäsche – Springer zählt nach','n3','gut','Genau – an allen Orten, gemeinsam.'),
+        o('Nur im Abwurfeimer','bad_nicht','warn','Zu eng – das Tuch kann auch im Situs sein.') ]},
+      n3:{ titel:'NICHT GEFUNDEN', text:'Das Tuch bleibt verschwunden. Wie geht es weiter?', optionen:[
+        o('Nach ärztlicher Entscheidung Röntgen im OP, Ergebnis dokumentieren, Ereignis melden','end_gut','gut','Richtig – erst Klarheit, dann Verschluss.'),
+        o('Wunde verschließen und morgen röntgen','end_mittel','warn','Riskant – wenn es im Bauch liegt, folgt eine zweite OP.') ]},
+      bad_doku:{ text:'Dir ist unwohl bei der Anpassung. Was tust du?', optionen:[
+        o('Doch offen ansprechen und suchen','n2','warn','Gut korrigiert – Fehler offen ansprechen schützt den Patienten.'),
+        o('Dabei bleiben','end_schlecht','fehler','Ein Fremdkörper kann im Bauch bleiben.') ]},
+      bad_nicht:{ text:'Im Abwurf ist es nicht. Was jetzt?', optionen:[
+        o('Doch alles systematisch absuchen','n3','warn','Richtig.'),
+        o('Aufgeben und verschließen','end_schlecht','fehler','Unklarheit darf nicht verschlossen werden.') ]},
+      end_gut:{ ende:true, ergebnis:'gut', text:'Das Bauchtuch wird gefunden bzw. sicher ausgeschlossen.', fazit:'Zähldifferenz: sofort laut melden, Verschluss stoppen, systematisch suchen, ggf. Röntgen, alles dokumentieren.' },
+      end_mittel:{ ende:true, ergebnis:'mittel', text:'Am Ende ist alles geklärt, aber mit vermeidbarem Risiko.', fazit:'Erst Klarheit, dann Verschluss.' },
+      end_schlecht:{ ende:true, ergebnis:'schlecht', text:'Ein Fremdkörper bleibt im Patienten.', fazit:'Zählkontrolle ist Patientensicherheit – nie Zahlen anpassen.' } }),
+
+  F('op_lagerung','Lange OP in Steinschnittlage','geplant','Grundlagen',2,
+    'Herr S., 66 J., deutlich übergewichtig, geplante Prostatektomie über ca. 4 Stunden in Steinschnittlage mit Kopftieflage.',
+    { n1:{ titel:'LAGERN', text:'Wie wird gelagert?', optionen:[
+        o('Gemeinsam lagern, Beinschalen polstern, Wadenbeinköpfchen frei, Gelenke nicht überstrecken, Arme höchstens 90°, dokumentieren','n2','gut','Richtig – so werden N. peroneus und Plexus geschützt.'),
+        o('Beine maximal abspreizen, damit mehr Platz ist','bad_nerv','fehler','Überdehnung schädigt Nerven und Gelenke.'),
+        o('Eine Person lagert allein, es soll schnell gehen','n2','warn','Riskant – Lagerung ist Teamarbeit.') ]},
+      n2:{ titel:'UMLAGERUNG', text:'Nach 2 Stunden wird der Tisch verstellt. Was nun?', optionen:[
+        o('Polster, Zugänge, Tubus und Auflagepunkte erneut kontrollieren','n3','gut','Genau – bei jeder Umlagerung kann etwas verrutschen.'),
+        o('Kontrolle erst am Ende','bad_nerv','warn','Druckschäden entstehen während der OP.') ]},
+      n3:{ titel:'OP-ENDE', text:'Wie geht es am Ende weiter?', optionen:[
+        o('Beine langsam und gemeinsam ablegen, Haut an Auflagepunkten prüfen, Befund dokumentieren und übergeben','end_gut','gut','Richtig – langsames Ablegen vermeidet Blutdruckabfall.'),
+        o('Beide Beine gleichzeitig schnell ablegen','end_mittel','warn','Das kann den Blutdruck plötzlich abfallen lassen.') ]},
+      bad_nerv:{ text:'Nach der OP hat der Patient eine Fußheberschwäche links. Was tust du?', optionen:[
+        o('Befund dokumentieren, Arzt informieren, Ereignis melden','end_mittel','warn','Richtig – offen weitergeben, damit gehandelt werden kann.'),
+        o('Nicht weitergeben','end_schlecht','fehler','Verschweigen verhindert Behandlung und Lernen.') ]},
+      end_gut:{ ende:true, ergebnis:'gut', text:'Keine Lagerungsschäden.', fazit:'Lagerung: gemeinsam, gepolstert, Fibulaköpfchen frei, Arme ≤ 90°, nach jeder Umlagerung neu prüfen, langsam ablegen, dokumentieren.' },
+      end_mittel:{ ende:true, ergebnis:'mittel', text:'Der Patient ist versorgt, aber mit vermeidbarer Komplikation.', fazit:'Lagerungsschäden sind meist vermeidbar.' },
+      end_schlecht:{ ende:true, ergebnis:'schlecht', text:'Schaden ohne Weitergabe.', fazit:'Komplikationen immer offen dokumentieren und melden.' } }),
+
+  F('op_hf','Schrittmacher und Neutralelektrode','geplant','Fortgeschritten',3,
+    'Frau R., 78 J., Hüft-TEP. Sie hat einen Herzschrittmacher. Geplant ist monopolare HF-Chirurgie, die Haut wird mit alkoholischem Mittel desinfiziert.',
+    { n1:{ titel:'VORBEREITUNG', text:'Was ist wegen des Schrittmachers zu tun?', optionen:[
+        o('Im Sign-in ansprechen, Vorgehen ärztlich klären (z. B. bipolar bevorzugen), Defibrillator bereit','n2','gut','Richtig – Strom kann Schrittmacher stören, das Team muss es wissen.'),
+        o('Nichts, moderne Schrittmacher sind geschützt','n2','warn','Nicht sicher – das Vorgehen legen Ärzte fest.') ]},
+      n2:{ titel:'NEUTRALELEKTRODE', text:'Wohin kommt die Neutralelektrode?', optionen:[
+        o('Vollflächig auf trockene, gut durchblutete Muskulatur nahe dem OP-Gebiet, nicht über Knochen oder Implantaten, Stromweg nicht über den Schrittmacher','n3','gut','Genau – kurzer Stromweg, gute Auflage.'),
+        o('Über einem Knochenvorsprung, Hauptsache sie hält','bad_burn','fehler','Schlechte Auflage und hohe Stromdichte → Verbrennung.'),
+        o('Weit weg auf die Wade der Gegenseite','bad_burn','warn','Langer Stromweg, ggf. über Implantate – ungünstig.') ]},
+      n3:{ titel:'DESINFEKTION', text:'Die Haut ist mit alkoholischem Mittel desinfiziert. Was gilt?', optionen:[
+        o('Einwirken und vollständig trocknen lassen, keine Pfützen unter der Patientin, erst dann HF-Gerät benutzen','end_gut','gut','Richtig – alkoholische Pfützen können sich entzünden.'),
+        o('Gleich beginnen, eine Pfütze unter dem Gesäß stört nicht','bad_burn','fehler','Brandgefahr und feuchte Haut unter Strom.') ]},
+      bad_burn:{ text:'Nach der OP hat die Patientin eine Brandblase. Was tust du?', optionen:[
+        o('Arzt informieren, dokumentieren, Elektrode/Gerät sichern, Ereignis melden','end_mittel','warn','Richtig reagiert – der Schaden war aber vermeidbar.'),
+        o('Pflaster drauf und nichts sagen','end_schlecht','fehler','Verschweigen gefährdet Patientin und Team.') ]},
+      end_gut:{ ende:true, ergebnis:'gut', text:'Sichere HF-Chirurgie ohne Zwischenfall.', fazit:'Schrittmacher ansprechen, Neutralelektrode richtig platzieren, Desinfektionsmittel abtrocknen lassen.' },
+      end_mittel:{ ende:true, ergebnis:'mittel', text:'Die Patientin hat einen vermeidbaren Hautschaden.', fazit:'Neutralelektrode und Desinfektion sind die häufigsten Brandursachen.' },
+      end_schlecht:{ ende:true, ergebnis:'schlecht', text:'Schaden ohne Meldung.', fazit:'Zwischenfälle immer dokumentieren und melden.' } }),
+
+  F('op_anaphylaxie','Allergische Reaktion bei der Einleitung','akut · hoch','Fortgeschritten',3,
+    'Herr K., 45 J. Kurz nach Antibiotikum und Rocuronium: Hautrötung am Oberkörper, RR 70/40, Puls 135/min, der Beatmungsdruck steigt deutlich.',
+    { n1:{ titel:'ERKENNEN', text:'Was ist am wahrscheinlichsten und was tust du?', optionen:[
+        o('Anaphylaxie – Hilfe rufen, Anästhesist informieren, Zufuhr möglicher Auslöser stoppen','n2','gut','Richtig – Hautzeichen, Hypotonie und Bronchospasmus kurz nach Medikamenten.'),
+        o('Zu tiefe Narkose – nur abwarten','bad_late','warn','Das erklärt Rötung und Bronchospasmus nicht.') ]},
+      n2:{ titel:'THERAPIE', text:'Was wird nach ärztlicher Anordnung vorbereitet?', optionen:[
+        o('Adrenalin, 100 % Sauerstoff, großzügig Volumen, Beine hoch','n3','gut','Richtig – Adrenalin ist das Mittel der Wahl.'),
+        o('Zuerst Antihistaminikum und Kortison','bad_late','warn','Nur ergänzend – sie wirken zu langsam.') ]},
+      n3:{ titel:'DANACH', text:'Der Kreislauf stabilisiert sich. Was noch?', optionen:[
+        o('Operateur informieren, über das weitere Vorgehen ärztlich entscheiden lassen, Blutprobe (Tryptase) nach Anordnung, dokumentieren, Allergieabklärung','end_gut','gut','Richtig – auch die Abklärung danach gehört dazu.'),
+        o('Weiter wie geplant, ohne jemandem etwas zu sagen','end_mittel','warn','Das Team und spätere Behandler müssen davon wissen.') ]},
+      bad_late:{ text:'Der Blutdruck fällt auf 55/30 mmHg. Was jetzt?', optionen:[
+        o('Jetzt Adrenalin und Volumen nach Anordnung, Reanimationsbereitschaft','end_mittel','warn','Richtig, aber verspätet.'),
+        o('Weiter abwarten','end_schlecht','fehler','Ein anaphylaktischer Schock kann zum Herzstillstand führen.') ]},
+      end_gut:{ ende:true, ergebnis:'gut', text:'Die Anaphylaxie wird schnell beherrscht.', fazit:'Anaphylaxie bei Einleitung: Auslöser stoppen, Hilfe, Adrenalin, O₂, Volumen – danach dokumentieren und abklären.' },
+      end_mittel:{ ende:true, ergebnis:'mittel', text:'Der Patient übersteht die Reaktion mit Verzögerung.', fazit:'Adrenalin früh – Antihistaminika und Kortison nur ergänzend.' },
+      end_schlecht:{ ende:true, ergebnis:'schlecht', text:'Kreislaufstillstand droht.', fazit:'Anaphylaxie ist ein Notfall, nicht abwarten.' } })
+  ];
+  function eintragen(){ if(!an()||typeof FAELLE==='undefined') return; NEU.forEach(function(f){ if(!FAELLE.some(function(x){ return x.id===f.id; })) FAELLE.push(f); }); }
+  eintragen(); setTimeout(eintragen,3000);
+  var oS=window.showScreen; if(typeof oS==='function') window.showScreen=function(n){ if(n==='faelle') eintragen(); return oS.apply(this,arguments); };
+  window.plFaelleOpEintragen=eintragen;
+})();
+</script>
 </body>
 </html>
